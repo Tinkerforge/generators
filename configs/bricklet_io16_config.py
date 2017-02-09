@@ -41,7 +41,7 @@ pins 4-7 low for the specified port.
 
 .. note::
  This function does nothing for pins that are configured as input.
- Pull-up resistors can be switched on with :func:`SetPortConfiguration`.
+ Pull-up resistors can be switched on with :func:`Set Port Configuration`.
 """,
 'de':
 """
@@ -54,7 +54,7 @@ Pins 4-7 auf logisch 0.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
- Pull-Up Widerstände können mit :func:`SetPortConfiguration` zugeschaltet werden.
+ Pull-Up Widerstände können mit :func:`Set Port Configuration` zugeschaltet werden.
 """
 }]
 })
@@ -180,7 +180,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the debounce period of the :func:`Interrupt` callback in ms.
+Sets the debounce period of the :cb:`Interrupt` callback in ms.
 
 For example: If you set this value to 100, you will get the interrupt
 maximal every 100ms. This is necessary if something that bounces is
@@ -190,7 +190,7 @@ The default value is 100.
 """,
 'de':
 """
-Setzt die Entprellperiode der :func:`Interrupt` Callback in ms.
+Setzt die Entprellperiode der :cb:`Interrupt` Callback in ms.
 
 Beispiel: Wenn dieser Wert auf 100 gesetzt wird, erhält man den Interrupt
 maximal alle 100ms. Dies ist notwendig falls etwas prellendes an
@@ -209,11 +209,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -235,7 +235,7 @@ i.e. changes from high to low and low to high.
 For example: ('a', 129) or ('a', 0b10000001) will enable the interrupt for
 pins 0 and 7 of port a.
 
-The interrupt is delivered with the callback :func:`Interrupt`.
+The interrupt is delivered with the :cb:`Interrupt` callback.
 """,
 'de':
 """
@@ -246,7 +246,7 @@ z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 Beispiel: ('a', 129) bzw. ('a', 0b10000001) aktiviert den Interrupt für die
 Pins 0 und 7 des Ports a.
 
-Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
+Der Interrupt wird mit dem :cb:`Interrupt` Callback zugestellt.
 """
 }]
 })
@@ -261,12 +261,12 @@ com['packets'].append({
 'en':
 """
 Returns the interrupt bitmask for the specified port as set by
-:func:`SetPortInterrupt`.
+:func:`Set Port Interrupt`.
 """,
 'de':
 """
 Gibt die Interrupt Bitmaske für den angegebenen Port zurück, wie von
-:func:`SetPortInterrupt` gesetzt.
+:func:`Set Port Interrupt` gesetzt.
 """
 }]
 })
@@ -282,7 +282,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered whenever a change of the voltage level is detected
-on pins where the interrupt was activated with :func:`SetPortInterrupt`.
+on pins where the interrupt was activated with :func:`Set Port Interrupt`.
 
 The values are the port, a bitmask that specifies which interrupts occurred
 and the current value bitmask of the port.
@@ -298,7 +298,7 @@ For example:
 'de':
 """
 Dieser Callback wird ausgelöst sobald eine Änderung des Spannungspegels
-detektiert wird, an Pins für welche der Interrupt mit :func:`SetPortInterrupt`
+detektiert wird, an Pins für welche der Interrupt mit :func:`Set Port Interrupt`
 aktiviert wurde.
 
 Die Rückgabewerte sind der Port, eine Bitmaske der aufgetretenen Interrupts und
@@ -388,7 +388,7 @@ com['packets'].append({
 'en':
 """
 Returns (for the given pin) the current value and the time as set by
-:func:`SetPortMonoflop` as well as the remaining time until the value flips.
+:func:`Set Port Monoflop` as well as the remaining time until the value flips.
 
 If the timer is not running currently, the remaining time will be returned
 as 0.
@@ -396,7 +396,7 @@ as 0.
 'de':
 """
 Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
-:func:`SetPortMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
+:func:`Set Port Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
@@ -446,7 +446,7 @@ will turn pin 7 high and pin 6 low on port A, pins 0-6 will remain untouched.
 
 .. note::
  This function does nothing for pins that are configured as input.
- Pull-up resistors can be switched on with :func:`SetPortConfiguration`.
+ Pull-up resistors can be switched on with :func:`Set Port Configuration`.
 """,
 'de':
 """
@@ -461,7 +461,7 @@ setzen den Pin 7 auf logisch 1 und den Pin 6 auf logisch 0 an Port A. Die Pins
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
- Pull-Up Widerstände können mit :func:`SetPortConfiguration` zugeschaltet werden.
+ Pull-Up Widerstände können mit :func:`Set Port Configuration` zugeschaltet werden.
 """
 }]
 })
@@ -477,7 +477,7 @@ com['packets'].append({
 'en':
 """
 Returns the current value of the edge counter for the selected pin on port A.
-You can configure the edges that are counted with :func:`SetEdgeCountConfig`.
+You can configure the edges that are counted with :func:`Set Edge Count Config`.
 
 If you set the reset counter to *true*, the count is set back to 0
 directly after it is read.
@@ -485,7 +485,7 @@ directly after it is read.
 'de':
 """
 Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Pin von Port A
-zurück. Die zu zählenden Flanken können mit :func:`SetEdgeCountConfig`
+zurück. Die zu zählenden Flanken können mit :func:`Set Edge Count Config`
 konfiguriert werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
@@ -563,12 +563,12 @@ com['packets'].append({
 'en':
 """
 Returns the edge type and debounce time for the selected pin of port A as set by
-:func:`SetEdgeCountConfig`.
+:func:`Set Edge Count Config`.
 """,
 'de':
 """
 Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Pin von Port A
-zurück, wie von :func:`SetEdgeCountConfig` gesetzt.
+zurück, wie von :func:`Set Edge Count Config` gesetzt.
 """
 }]
 })

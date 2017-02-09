@@ -143,7 +143,7 @@ com['packets'].append({
 Configures if the cursor (shown as "_") should be visible and if it
 should be blinking (shown as a blinking block). The cursor position
 is one character behind the the last text written with 
-:func:`WriteLine`.
+:func:`Write Line`.
 
 The default is (false, false).
 """,
@@ -151,7 +151,7 @@ The default is (false, false).
 """
 Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist und ob er 
 blinkt (angezeigt als blinkender Block). Die Cursor Position ist ein 
-Zeichen hinter dem zuletzt mit :func:`WriteLine` geschriebenen Text.
+Zeichen hinter dem zuletzt mit :func:`Write Line` geschriebenen Text.
 
 Der Standardwert ist (false, false).
 """
@@ -167,11 +167,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfig`.
+Returns the configuration as set by :func:`Set Config`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfig` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Config` gesetzt.
 """
 }]
 })
@@ -188,14 +188,14 @@ com['packets'].append({
 Returns *true* if the button (0 to 2) is pressed.
 
 If you want to react on button presses and releases it is recommended to use the
-:func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
+:cb:`Button Pressed` and :cb:`Button Released` callbacks.
 """,
 'de':
 """
 Gibt *true* zurück wenn die Taste (0 bis 2) gedrückt ist.
 
 Wenn auf Tastendrücken und -loslassen reagiert werden soll, wird empfohlen die
-:func:`ButtonPressed` und :func:`ButtonReleased` Callbacks zu nutzen.
+:cb:`Button Pressed` und :cb:`Button Released` Callbacks zu nutzen.
 """
 }]
 })
@@ -261,7 +261,7 @@ a custom character "H", you should transfer the following:
 * ``character[6] = 0b00010001`` (decimal value 17)
 * ``character[7] = 0b00000000`` (decimal value 0)
 
-The characters can later be written with :func:`WriteLine` by using the
+The characters can later be written with :func:`Write Line` by using the
 characters with the byte representation 8 to 15.
 
 You can play around with the custom characters in Brick Viewer since
@@ -287,7 +287,7 @@ sollte das folgende Array gesendet werden:
 * ``character[6] = 0b00010001`` (Dezimalwert 17)
 * ``character[7] = 0b00000000`` (Dezimalwert 0)
 
-Die Buchstaben können später mit :func:`WriteLine` mit den chars mit
+Die Buchstaben können später mit :func:`Write Line` mit den chars mit
 den Byterepräsentationen 8 bis 15 geschrieben werden.
 
 Es ist möglich die benutzerdefinierten Buchstaben im Brick Viewer ab
@@ -309,12 +309,12 @@ com['packets'].append({
 'en':
 """
 Returns the custom character for a given index, as set with
-:func:`SetCustomCharacter`.
+:func:`Set Custom Character`.
 """,
 'de':
 """
 Gibt den benutzerdefinierten Buchstaben für den gegebenen
-Index zurück, wie von :func:`GetCustomCharacter` gesetzt.
+Index zurück, wie von :func:`Get Custom Character` gesetzt.
 """
 }]
 })

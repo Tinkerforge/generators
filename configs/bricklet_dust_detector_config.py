@@ -37,16 +37,16 @@ com['packets'].append({
 Returns the dust density in µg/m³.
 
 If you want to get the dust density periodically, it is recommended 
-to use the callback :func:`DustDensity` and set the period with 
-:func:`SetDustDensityCallbackPeriod`.
+to use the :cb:`Dust Density` callback and set the period with
+:func:`Set Dust Density Callback Period`.
 """,
 'de':
 """
 Gibt die Staubdichte in µg/m³ zurück.
 
 Wenn die Staubdichte periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`DustDensity` zu nutzen und die Periode mit 
-:func:`SetDustDensityCallbackPeriod` vorzugeben.
+den :cb:`Dust Density` Callback zu nutzen und die Periode mit
+:func:`Set Dust Density Callback Period` vorzugeben.
 """
 }]
 })
@@ -59,21 +59,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`DustDensity` callback is triggered
+Sets the period in ms with which the :cb:`Dust Density` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`DustDensity` is only triggered if the dust density has changed since the
-last triggering.
+The :cb:`Dust Density` callback is only triggered if the dust density has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`DustDensity` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Dust Density` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`DustDensity` wird nur ausgelöst wenn sich die Staubdichte seit der
-letzten Auslösung geändert hat.
+Der :cb:`Dust Density` Callback wird nur ausgelöst wenn sich die Staubdichte
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -88,11 +88,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetDustDensityCallbackPeriod`.
+Returns the period as set by :func:`Set Dust Density Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetDustDensityCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Dust Density Callback Period`
 gesetzt.
 """
 }]
@@ -108,7 +108,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`DustDensityReached` callback. 
+Sets the thresholds for the :cb:`Dust Density Reached` callback.
 
 The following options are possible:
 
@@ -126,7 +126,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`DustDensityReached` Callback.
+Setzt den Schwellwert für den :cb:`Dust Density Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -155,11 +155,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetDustDensityCallbackThreshold`.
+Returns the threshold as set by :func:`Set Dust Density Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetDustDensityCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Dust Density Callback Threshold`
 gesetzt.
 """
 }]
@@ -175,11 +175,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`DustDensityReached`
+* :cb:`Dust Density Reached`
 
 is triggered, if the threshold
 
-* :func:`SetDustDensityCallbackThreshold`
+* :func:`Set Dust Density Callback Threshold`
 
 keeps being reached.
 
@@ -189,11 +189,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`DustDensityReached`
+* :cb:`Dust Density Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetDustDensityCallbackThreshold`
+* :func:`Set Dust Density Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -210,11 +210,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -229,19 +229,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetDustDensityCallbackPeriod`. The :word:`parameter` is the 
+:func:`Set Dust Density Callback Period`. The :word:`parameter` is the
 dust density of the sensor.
 
-:func:`DustDensity` is only triggered if the dust density value has changed since the
-last triggering.
+Der :cb:`Dust Density` callback is only triggered if the dust density value has
+changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetDustDensityCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Dust Density Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Staubdichte des Sensors.
 
-:func:`DustDensity` wird nur ausgelöst wenn sich die Staubdichte seit der
-letzten Auslösung geändert hat.
+Der :cb:`Dust Density` Callback wird nur ausgelöst wenn sich die Staubdichte
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -255,20 +255,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetDustDensityCallbackThreshold` is reached.
+:func:`Set Dust Density Callback Threshold` is reached.
 The :word:`parameter` is the dust density of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetDustDensityCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Dust Density Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Staubdichte des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -313,12 +313,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length moving average as set by :func:`SetMovingAverage`.
+Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
 Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
-:func:`SetMovingAverage` gesetzt.
+:func:`Set Moving Average` gesetzt.
 """
 }]
 })

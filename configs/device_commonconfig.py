@@ -52,7 +52,7 @@ ID parameter. It is *true* if the function is expected to send a response,
 For getter functions this is enabled by default and cannot be disabled,
 because those functions will always send a response. For callback configuration
 functions it is enabled by default too, but can be disabled by
-:func:`SetResponseExpected`. For setter functions it is disabled by default
+:func:`Set Response Expected`. For setter functions it is disabled by default
 and can be enabled.
 
 Enabling the response expected flag for a setter function allows to detect
@@ -61,8 +61,8 @@ device will then send a response for this purpose. If this flag is disabled for
 a setter function then no response is send and errors are silently ignored,
 because they cannot be detected.
 
-See :func:`SetResponseExpected`
-for the list of function ID :word:`constants` available for this function.
+See :func:`Set Response Expected` for the list of function ID :word:`constants`
+available for this function.
 """,
 'de':
 """
@@ -73,7 +73,7 @@ erwartet wird, *false* andernfalls.
 Für Getter-Funktionen ist diese Flag immer gesetzt und kann nicht entfernt
 werden, da diese Funktionen immer eine Antwort senden. Für
 Konfigurationsfunktionen für Callbacks ist es standardmäßig gesetzt, kann aber
-entfernt werden mittels :func:`SetResponseExpected`. Für Setter-Funktionen ist
+entfernt werden mittels :func:`Set Response Expected`. Für Setter-Funktionen ist
 es standardmäßig nicht gesetzt, kann aber gesetzt werden.
 
 Wenn das Response-Expected-Flag für eine Setter-Funktion gesetzt ist, können
@@ -83,8 +83,8 @@ Wenn das Flag für eine Setter-Funktion nicht gesetzt ist, dann wird keine
 Antwort vom Gerät gesendet und Fehler werden stillschweigend ignoriert, da sie
 nicht detektiert werden können.
 
-Siehe :func:`SetResponseExpected`
-für die Liste der verfügbaren Funktions ID :word:`constants` für diese Funktion.
+Siehe :func:`Set Response Expected` für die Liste der verfügbaren Funktions
+ID :word:`constants` für diese Funktion.
 """
 }]
 })

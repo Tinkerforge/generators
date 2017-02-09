@@ -30,7 +30,8 @@ baudrate can be in the range 400000 to 2000000.
 
 If you want to increase the throughput of Bricklets you can increase
 the baudrate. If you get a high error count because of high
-interference (see :func:`GetSPITFPErrorCount`) you can decrease the baudrate.
+interference (see :func:`Get SPITFP Error Count`) you can decrease the
+baudrate.
 
 Regulatory testing is done with the default baudrate. If CE compatability
 or similar is necessary in you applications we recommend to not change
@@ -45,11 +46,11 @@ Baudrate hat einen möglichen Wertebereich von 400000 bis 2000000.
 
 Für einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden.
 Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist
-(siehe :func:`GetSPITFPErrorCount`) kann die Baudrate verringert werden.
+(siehe :func:`Get SPITFP Error Count`) kann die Baudrate verringert werden.
 
 EMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine
-CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die Baudrate
-nicht zu ändern.
+CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die
+Baudrate nicht zu ändern.
 
 Die Standardbaudrate für alle Ports ist 1400000.
 """
@@ -73,11 +74,12 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Returns the baudrate for a given Bricklet port, see :func:`SetSPITFPBaudrate`.
+Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
 """,
 'de':
 """
-Gibt die Baudrate für einen Bricklet Port zurück, siehe :func:`SetSPITFPBaudrate`.
+Gibt die Baudrate für einen Bricklet Port zurück, siehe
+:func:`Set SPITFP Baudrate`.
 """
 }]
 })

@@ -37,9 +37,9 @@ com['packets'].append({
 Returns the calibrated acceleration from the accelerometer for the 
 x, y and z axis in 1/100 m/s².
 
-If you want to get the acceleration periodically, it is recommended 
-to use the callback :func:`Acceleration` and set the period with 
-:func:`SetAccelerationPeriod`.
+If you want to get the acceleration periodically, it is recommended
+to use the :cb:`Acceleration` callback and set the period with
+:func:`Set Acceleration Period`.
 """,
 'de':
 """
@@ -47,8 +47,8 @@ Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die
 X-, Y- und Z-Achse in 1/100 m/s².
 
 Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Acceleration` zu nutzen und die Periode mit :func:`SetAccelerationPeriod`
-vorzugeben.
+den :cb:`Acceleration` Callback zu nutzen und die Periode mit
+:func:`Set Acceleration Period` vorzugeben.
 """
 }]
 })
@@ -66,9 +66,9 @@ com['packets'].append({
 Returns the calibrated magnetic field from the magnetometer for the 
 x, y and z axis in 1/16 µT (Microtesla).
 
-If you want to get the magnetic field periodically, it is recommended 
-to use the callback :func:`MagneticField` and set the period with 
-:func:`SetMagneticFieldPeriod`.
+If you want to get the magnetic field periodically, it is recommended
+to use the :cb:`Magnetic Field` callback and set the period with
+:func:`Set Magnetic Field Period`.
 """,
 'de':
 """
@@ -76,8 +76,8 @@ Gibt das kalibrierte magnetische Feld des Magnetometers mit den X-, Y- und
 Z-Komponenten in 1/16 µT zurück (Microtesla).
 
 Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`MagneticField` zu nutzen und die Periode mit :func:`SetMagneticFieldPeriod`
-vorzugeben.
+den :cb:`Magnetic Field` Callback zu nutzen und die Periode mit
+:func:`Set Magnetic Field Period` vorzugeben.
 """
 }] 
 })
@@ -95,18 +95,18 @@ com['packets'].append({
 Returns the calibrated angular velocity from the gyroscope for the 
 x, y and z axis in 1/16 °/s.
 
-If you want to get the angular velocity periodically, it is recommended 
-to use the callback :func:`AngularVelocity` and set the period with 
-:func:`SetAngularVelocityPeriod`.
+If you want to get the angular velocity periodically, it is recommended
+to use the :cb:`Angular Velocity` acallback nd set the period with
+:func:`Set Angular Velocity Period`.
 """,
 'de':
 """
 Gibt die kalibrierte Winkelgeschwindigkeiten des Gyroskops für die X-, Y- und
 Z-Achse in 1/16 °/s zurück.
 
-Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird empfohlen
-den Callback :func:`AngularVelocity` zu nutzen und die Periode mit
-:func:`SetAngularVelocityPeriod` vorzugeben.
+Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird
+empfohlen den :cb:`Angular Velocity` Callback zu nutzen und die Periode mit
+:func:`Set Angular Velocity Period` vorzugeben.
 """
 }] 
 })
@@ -152,9 +152,9 @@ The rotation angle has the following ranges:
 * roll: -90° to +90°
 * pitch: -180° to +180°
 
-If you want to get the orientation periodically, it is recommended 
-to use the callback :func:`Orientation` and set the period with 
-:func:`SetOrientationPeriod`.
+If you want to get the orientation periodically, it is recommended
+to use the :cb:`Orientation` callback and set the period with
+:func:`Set Orientation Period`.
 """,
 'de':
 """
@@ -171,8 +171,8 @@ Die Rotationswinkel haben den folgenden Wertebereich:
 * Nickwinkel: -180° bis +180°
 
 Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
-Callback :func:`Orientation` zu nutzen und die Periode mit :func:`SetOrientationPeriod`
-vorzugeben.
+:cb:`Orientation` Callback zu nutzen und die Periode mit
+:func:`Set Orientation Period` vorzugeben.
 """
 }] 
 })
@@ -194,11 +194,11 @@ The linear acceleration is the acceleration in each of the three
 axis of the IMU Brick with the influences of gravity removed.
 
 It is also possible to get the gravity vector with the influence of linear
-acceleration removed, see :func:`GetGravityVector`.
+acceleration removed, see :func:`Get Gravity Vector`.
 
-If you want to get the linear acceleration periodically, it is recommended 
-to use the callback :func:`LinearAcceleration` and set the period with 
-:func:`SetLinearAccelerationPeriod`.
+If you want to get the linear acceleration periodically, it is recommended
+to use the :cb:`Linear Acceleration` callback and set the period with
+:func:`Set Linear Acceleration Period`.
 """,
 'de':
 """
@@ -209,11 +209,11 @@ Die lineare Beschleunigung ist die Beschleunigung in jede der drei
 Achsen. Der Einfluss von Erdbeschleunigung ist entfernt.
 
 Es ist auch möglich einen Vektor der Erdbeschleunigung zu bekommen, siehe
-:func:GetGravityVector`
+:func:Get Gravity Vector`
 
 Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`LinearAcceleration` zu nutzen und die Periode mit 
-:func:`SetLinearAccelerationPeriod` vorzugeben.
+den :cb:`Linear Acceleration` Callback zu nutzen und die Periode mit
+:func:`Set Linear Acceleration Period` vorzugeben.
 """
 }] 
 })
@@ -234,12 +234,12 @@ x, y and z axis in 1/100 m/s².
 The gravity vector is the acceleration that occurs due to gravity.
 Influences of additional linear acceleration are removed.
 
-It is also possible to get the linear acceleration with the influence 
-of gravity removed, see :func:`GetLinearAcceleration`.
+It is also possible to get the linear acceleration with the influence
+of gravity removed, see :func:`Get Linear Acceleration`.
 
-If you want to get the gravity vector periodically, it is recommended 
-to use the callback :func:`GravityVector` and set the period with 
-:func:`SetGravityVectorPeriod`.
+If you want to get the gravity vector periodically, it is recommended
+to use the :cb:`Gravity Vector` callback and set the period with
+:func:`Set Gravity Vector Period`.
 """,
 'de':
 """
@@ -250,11 +250,11 @@ Die Erdbeschleunigung ist die Beschleunigung die auf Grund von Schwerkraft
 entsteht. Einflüsse von linearen Beschleunigungen sind entfernt.
 
 Es ist auch möglich die lineare Beschleunigung zu bekommen, siehe
-:func:`GetLinearAcceleration`
+:func:`Get Linear Acceleration`
 
 Wenn die Erdbeschleunigungen periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`GravityVector` zu nutzen und die Periode mit 
-:func:`SetGravityVectorPeriod` vorzugeben.
+den :cb:`Gravity Vector` Callback zu nutzen und die Periode mit
+:func:`Set Gravity Vector Period` vorzugeben.
 """
 }] 
 })
@@ -276,9 +276,9 @@ Returns the current orientation (w, x, y, z) of the IMU Brick as
 You have to divide the returns values by 16383 (14 bit) to get
 the usual range of -1.0 to +1.0 for quaternions.
 
-If you want to get the quaternions periodically, it is recommended 
-to use the callback :func:`Quaternion` and set the period with 
-:func:`SetQuaternionPeriod`.
+If you want to get the quaternions periodically, it is recommended
+to use the :cb:`Quaternion` callback and set the period with
+:func:`Set Quaternion Period`.
 """,
 'de':
 """
@@ -289,8 +289,8 @@ Die zurückgegebenen Werte müssen mit 16383 (14 Bit) dividiert werden um
 in den üblichen Wertebereich für Quaternionen (-1,0 bis +1,0) gebracht zu werden.
 
 Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
-Callback :func:`Quaternion` zu nutzen und die Periode mit :func:`SetQuaternionPeriod`
-vorzugeben.
+:cb:`Quaternion` Callback zu nutzen und die Periode mit
+:func:`Set Quaternion Period` vorzugeben.
 """
 }] 
 })
@@ -313,14 +313,14 @@ com['packets'].append({
 """
 Return all of the available data of the IMU Brick.
 
-* acceleration in 1/100 m/s² (see :func:`GetAcceleration`)
-* magnetic field in 1/16 µT (see :func:`GetMagneticField`)
-* angular velocity in 1/16 °/s (see :func:`GetAngularVelocity`)
-* Euler angles in 1/16 ° (see :func:`GetOrientation`)
-* quaternion 1/16383 (see :func:`GetQuaternion`)
-* linear acceleration 1/100 m/s² (see :func:`GetLinearAcceleration`)
-* gravity vector 1/100 m/s² (see :func:`GetGravityVector`)
-* temperature in 1 °C (see :func:`GetTemperature`)
+* acceleration in 1/100 m/s² (see :func:`Get Acceleration`)
+* magnetic field in 1/16 µT (see :func:`Get Magnetic Field`)
+* angular velocity in 1/16 °/s (see :func:`Get Angular Velocity`)
+* Euler angles in 1/16 ° (see :func:`Get Orientation`)
+* quaternion 1/16383 (see :func:`Get Quaternion`)
+* linear acceleration 1/100 m/s² (see :func:`Get Linear Acceleration`)
+* gravity vector 1/100 m/s² (see :func:`Get Gravity Vector`)
+* temperature in 1 °C (see :func:`Get Temperature`)
 * calibration status (see below)
 
 The calibration status consists of four pairs of two bits. Each pair
@@ -338,22 +338,22 @@ window of the Brick Viewer and it can be ignored after the first
 calibration. See the documentation in the calibration window for
 more information regarding the calibration of the IMU Brick.
 
-If you want to get the data periodically, it is recommended 
-to use the callback :func:`AllData` and set the period with 
-:func:`SetAllDataPeriod`.
+If you want to get the data periodically, it is recommended
+to use the :cb:`All Data` callback and set the period with
+:func:`Set All Data Period`.
 """,
 'de':
 """
 Gibt alle Daten zurück die dem IMU Brick zur Verfügung stehen.
 
-* Beschleunigung in 1/100 m/s² (see :func:`GetAcceleration`)
-* Magnetfeld in 1/16 µT (see :func:`GetMagneticField`)
-* Winkelgeschwindigkeit in 1/16 °/s (see :func:`GetAngularVelocity`)
-* Eulerwinkel in 1/16 ° (see :func:`GetOrientation`)
-* Quaternion 1/16383 (see :func:`GetQuaternion`)
-* Lineare Beschleunigung 1/100 m/s² (see :func:`GetLinearAcceleration`)
-* Erdbeschleunigungsvektor 1/100 m/s² (see :func:`GetGravityVector`)
-* Temperatur in 1 °C (see :func:`GetTemperature`)
+* Beschleunigung in 1/100 m/s² (see :func:`Get Acceleration`)
+* Magnetfeld in 1/16 µT (see :func:`Get Magnetic Field`)
+* Winkelgeschwindigkeit in 1/16 °/s (see :func:`Get Angular Velocity`)
+* Eulerwinkel in 1/16 ° (see :func:`Get Orientation`)
+* Quaternion 1/16383 (see :func:`Get Quaternion`)
+* Lineare Beschleunigung 1/100 m/s² (see :func:`Get Linear Acceleration`)
+* Erdbeschleunigungsvektor 1/100 m/s² (see :func:`Get Gravity Vector`)
+* Temperatur in 1 °C (see :func:`Get Temperature`)
 * Kalibrierungsstatus (siehe unten)
 
 Der Kalibrierungsstatus besteht aus vier paaren von je zwei Bits. Jedes
@@ -372,8 +372,8 @@ initiale Kalibrierung benötigt. Mehr Information zur Kalibrierung
 des IMU Bricks gibt es im Kalibrierungsfenster.
 
 Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
-Callback :func:`AllData` zu nutzen und die Periode mit :func:`SetAllDataPeriod`
-vorzugeben.
+:cb:`All Data` Callback zu nutzen und die Periode mit
+:func:`Set All Data Period` vorzugeben.
 """
 }] 
 })
@@ -474,15 +474,15 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Acceleration` callback is triggered
+Sets the period in ms with which the :cb:`Acceleration` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Acceleration` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Acceleration` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der Standardwert ist 0.
 """
@@ -497,11 +497,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAccelerationPeriod`.
+Returns the period as set by :func:`Set Acceleration Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAccelerationPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Acceleration Period` gesetzt.
 """
 }] 
 })
@@ -514,13 +514,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`MagneticField` callback is triggered
+Sets the period in ms with which the :cb:`Magnetic Field` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`MagneticField` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Magnetic Field` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -533,11 +533,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetMagneticFieldPeriod`.
+Returns the period as set by :func:`Set Magnetic Field Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetMagneticFieldPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Magnetic Field Period` gesetzt.
 """
 }] 
 })
@@ -550,13 +550,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`AngularVelocity` callback is triggered
-periodically. A value of 0 turns the callback off.
+Sets the period in ms with which the :cb:`Angular Velocity` callback is
+triggered periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`AngularVelocity` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Angular Velocity` Callback
+ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -569,13 +569,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAngularVelocityPeriod`.
+Returns the period as set by :func:`Set Angular Velocity Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAngularVelocityPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Angular Velocity Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -586,13 +586,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Temperature` callback is triggered
+Sets the period in ms with which the :cb:`Temperature` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Temperature` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Temperature` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -605,11 +605,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetTemperaturePeriod`.
+Returns the period as set by :func:`Set Temperature Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetTemperaturePeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Temperature Period` gesetzt.
 """
 }] 
 })
@@ -622,13 +622,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Orientation` callback is triggered
+Sets the period in ms with which the :cb:`Orientation` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Orientation` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Orientation` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -641,11 +641,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetOrientationPeriod`.
+Returns the period as set by :func:`Set Orientation Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetOrientationPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Orientation Period` gesetzt.
 """
 }] 
 })
@@ -658,13 +658,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`LinearAcceleration` callback is triggered
-periodically. A value of 0 turns the callback off.
+Sets the period in ms with which the :cb:`Linear Acceleration` callback is
+triggered periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`LinearAcceleration` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Linear Acceleration` Callback
+ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -677,11 +677,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetLinearAccelerationPeriod`.
+Returns the period as set by :func:`Set Linear Acceleration Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetLinearAccelerationPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Linear Acceleration Period`
+gesetzt.
 """
 }] 
 })
@@ -694,13 +695,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`GravityVector` callback is triggered
+Sets the period in ms with which the :cb:`Gravity Vector` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`GravityVector` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Gravity Vector` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -713,11 +714,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetGravityVectorPeriod`.
+Returns the period as set by :func:`Set Gravity Vector Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetGravityVectorPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Gravity Vector Period` gesetzt.
 """
 }] 
 })
@@ -730,13 +731,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Quaternion` callback is triggered
+Sets the period in ms with which the :cb:`Quaternion` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Quaternion` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Quaternion` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -749,11 +750,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetQuaternionPeriod`.
+Returns the period as set by :func:`Set Quaternion Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetQuaternionPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Quaternion Period` gesetzt.
 """
 }] 
 })
@@ -766,12 +767,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`AllData` callback is triggered
+Sets the period in ms with which the :cb:`All Data` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`AllData` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`All Data` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
@@ -785,11 +786,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAllDataPeriod`.
+Returns the period as set by :func:`Set All Data Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAllDataPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 """
 }] 
 })
@@ -805,13 +806,14 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAccelerationPeriod`. The :word:`parameters` are the acceleration
+:func:`Set Acceleration Period`. The :word:`parameters` are the acceleration
 for the x, y and z axis.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAccelerationPeriod`,
-ausgelöst. Die :word:`parameters` sind die Beschleunigungen der X, Y und Z-Achse.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Acceleration Period`, ausgelöst. Die :word:`parameters` sind die
+Beschleunigungen der X, Y und Z-Achse.
 """
 }] 
 })
@@ -827,13 +829,14 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetMagneticFieldPeriod`. The :word:`parameters` are the magnetic field
-for the x, y and z axis.
+:func:`Set Magnetic Field Period`. The :word:`parameters` are the magnetic
+field for the x, y and z axis.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetMagneticFieldPeriod`,
-ausgelöst. Die :word:`parameters` sind die Magnetfeldkomponenten der X, Y und Z-Achse.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Magnetic Field Period`, ausgelöst. Die :word:`parameters` sind die
+Magnetfeldkomponenten der X, Y und Z-Achse.
 """
 }] 
 })
@@ -849,13 +852,14 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAngularVelocityPeriod`. The :word:`parameters` are the angular velocity
-for the x, y and z axis.
+:func:`Set Angular Velocity Period`. The :word:`parameters` are the angular
+velocity for the x, y and z axis.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAngularVelocityPeriod`,
-ausgelöst. Die :word:`parameters` sind die Winkelgeschwindigkeiten der X, Y und Z-Achse.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Angular Velocity Period`, ausgelöst. Die :word:`parameters` sind die
+Winkelgeschwindigkeiten der X, Y und Z-Achse.
 """
 }] 
 })
@@ -869,12 +873,13 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetTemperaturePeriod`. The :word:`parameter` is the temperature.
+:func:`Set Temperature Period`. The :word:`parameter` is the temperature.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetTemperaturePeriod`,
-ausgelöst. Der :word:`parameter` ist die Temperatur.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Temperature Period`, ausgelöst. Der :word:`parameter` ist die
+Temperatur.
 """
 }] 
 })
@@ -890,13 +895,14 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetLinearAccelerationPeriod`. The :word:`parameters` are the 
+:func:`Set Linear Acceleration Period`. The :word:`parameters` are the
 linear acceleration for the x, y and z axis.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetLinearAccelerationPeriod`,
-ausgelöst. Die :word:`parameter` sind die linearen Beschleunigungen der X, Y und Z-Achse.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Linear Acceleration Period`, ausgelöst. Die :word:`parameter` sind
+die linearen Beschleunigungen der X, Y und Z-Achse.
 """
 }] 
 })
@@ -912,14 +918,14 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetGravityVectorPeriod`. The :word:`parameters` gravity vector
+:func:`Set Gravity Vector Period`. The :word:`parameters` gravity vector
 for the x, y and z axis.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetGravityVectorPeriod`,
-ausgelöst. Die :word:`parameter` sind die Erdbeschleunigungsvektor-Werte 
-der X, Y und Z-Achse.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Gravity Vector Period`, ausgelöst. Die :word:`parameter` sind die
+Erdbeschleunigungsvektor-Werte der X, Y und Z-Achse.
 """
 }] 
 })
@@ -935,15 +941,16 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetOrientationPeriod`. The :word:`parameters` are the orientation
+:func:`Set Orientation Period`. The :word:`parameters` are the orientation
 (heading (yaw), roll, pitch) of the IMU Brick in Euler angles. See
-:func:`GetOrientation` for details.
+:func:`Get Orientation` for details.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetOrientationPeriod`,
-ausgelöst. Die :word:`parameters` sind die Orientierung (Gier-, Roll-, Nickwinkel) des
-IMU Brick in Eulerwinkeln. Siehe :func:`GetOrientation` für Details.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Orientation Period`, ausgelöst. Die :word:`parameters` sind die
+Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in Eulerwinkeln. Siehe
+:func:`Get Orientation` für Details.
 """
 }] 
 })
@@ -960,15 +967,16 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetQuaternionPeriod`. The :word:`parameters` are the orientation
-(x, y, z, w) of the IMU Brick in quaternions. See :func:`GetQuaternion`
+:func:`Set Quaternion Period`. The :word:`parameters` are the orientation
+(x, y, z, w) of the IMU Brick in quaternions. See :func:`Get Quaternion`
 for details.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetQuaternionPeriod`,
-ausgelöst. Die :word:`parameters` sind die Orientierung (x, y, z, w) des
-IMU Brick in Quaternionen. Siehe :func:`GetQuaternion` für Details.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Quaternion Period`, ausgelöst. Die :word:`parameters` sind die
+Orientierung (x, y, z, w) des IMU Brick in Quaternionen. Siehe
+:func:`Get Quaternion` für Details.
 """
 }] 
 })
@@ -990,12 +998,14 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAllDataPeriod`. The :word:`parameters` are as for :func:`GetAllData`.
+:func:`Set All Data Period`. The :word:`parameters` are as for
+:func:`Get All Data`.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAllDataPeriod`,
-ausgelöst. Die :word:`parameter` sind die gleichen wie bei :func:`GetAllData`.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set All Data Period`, ausgelöst. Die :word:`parameter` sind die
+gleichen wie bei :func:`Get All Data`.
 """
 }] 
 })
@@ -1112,11 +1122,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the sensor configuration as set by :func:`SetSensorConfiguration`.
+Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
 """,
 'de':
 """
-Gibt die Sensor-Konfiguration zurück, wie von :func:`SetSensorConfiguration` gesetzt.
+Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration`
+gesetzt.
 """
 }] 
 })
@@ -1131,10 +1142,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-If the fusion mode is turned off, the functions
-:func:`GetAcceleration`, :func:`GetMagneticField` and :func:`GetAngularVelocity`
-return uncalibrated and uncompensated sensor data. All other sensor data getters
-return no data.
+If the fusion mode is turned off, the functions :func:`Get Acceleration`,
+:func:`Get Magnetic Field` and :func:`Get Angular Velocity` return uncalibrated
+and uncompensated sensor data. All other sensor data getters return no data.
 
 Since firmware version 2.0.6 you can also use a fusion mode without magnetometer.
 In this mode the calculated orientation is relative (with magnetometer it is
@@ -1146,9 +1156,9 @@ By default sensor fusion is on.
 'de':
 """
 Wenn der Fusion-Modus deaktiviert wird, geben die Funktionen
-:func:`GetAcceleration`, :func:`GetMagneticField` und :func:`GetAngularVelocity`
-unkalibrierte und umkompensierte Sensorwerte zurück. Alle anderen Sensordaten-Getter
-geben keine Daten zurück.
+:func:`Get Acceleration`, :func:`Get Magnetic Field` und
+:func:`Get Angular Velocity` unkalibrierte und umkompensierte Sensorwerte
+zurück. Alle anderen Sensordaten-Getter geben keine Daten zurück.
 
 Seit Firmware Version 2.0.6 kann auch ein Fusion-Modus ohne Magnetometer ausgewählt
 werden. In diesem Modus wird die Orientierung relativ berechnet (mit Magnetometer
@@ -1170,11 +1180,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the sensor fusion mode as set by :func:`SetSensorFusionMode`.
+Returns the sensor fusion mode as set by :func:`Set Sensor Fusion Mode`.
 """,
 'de':
 """
-Gibt den aktuellen Sensor-Fusion-Modus zurück, wie von :func:`SetSensorFusionMode` gesetzt.
+Gibt den aktuellen Sensor-Fusion-Modus zurück, wie von
+:func:`Set Sensor Fusion Mode` gesetzt.
 """
 }] 
 })

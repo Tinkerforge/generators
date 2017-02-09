@@ -54,16 +54,16 @@ com['packets'].append({
 Returns the voltage for the given channel in mV.
 
 If you want to get the voltage periodically, it is recommended to use the
-callback :func:`Voltage` and set the period with 
-:func:`SetVoltageCallbackPeriod`.
+:cb:`Voltage` callback and set the period with
+:func:`Set Voltage Callback Period`.
 """,
 'de':
 """
 Gibt die Spannung für den übergebenen Kanal in mV zurück.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Voltage` zu nutzen und die Periode mit 
-:func:`SetVoltageCallbackPeriod` vorzugeben.
+den :cb:`Voltage` Callback zu nutzen und die Periode mit
+:func:`Set Voltage Callback Period` vorzugeben.
 """
 }]
 })
@@ -77,21 +77,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Voltage` callback is triggered
+Sets the period in ms with which the :cb:`Voltage` callback is triggered
 periodically for the given channel. A value of 0 turns the callback off.
 
-:func:`Voltage` is only triggered if the voltage has changed since the
+The :cb:`Voltage` callback is only triggered if the voltage has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Voltage` Callback für den
+Setzt die Periode in ms mit welcher der :cb:`Voltage` Callback für den
 übergebenen Kanal ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+Der :cb:`Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0. 
@@ -108,11 +108,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetVoltageCallbackPeriod`.
+Returns the period as set by :func:`Set Voltage Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetVoltageCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Voltage Callback Period`
 gesetzt.
 """
 }]
@@ -129,7 +129,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`VoltageReached` callback for the given
+Sets the thresholds for the :cb:`Voltage Reached` callback for the given
 channel.
 
 The following options are possible:
@@ -148,7 +148,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert des :func:`VoltageReached` Callbacks für den übergebenen
+Setzt den Schwellwert des :cb:`Voltage Reached` Callbacks für den übergebenen
 Kanal.
 
 Die folgenden Optionen sind möglich:
@@ -179,11 +179,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
+Returns the threshold as set by :func:`Set Voltage Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetVoltageCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Voltage Callback Threshold`
 gesetzt.
 """
 }]
@@ -199,11 +199,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`VoltageReached`
+* :cb:`Voltage Reached`
 
 is triggered, if the threshold
 
-* :func:`SetVoltageCallbackThreshold`
+* :func:`Set Voltage Callback Threshold`
 
 keeps being reached.
 
@@ -213,11 +213,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher der Schwellwert Callback
 
-* :func:`VoltageReached`
+* :cb:`Voltage Reached`
  
 ausgelöst werden, wenn der Schwellwert
 
-* :func:`SetVoltageCallbackThreshold`
+* :func:`Set Voltage Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -234,11 +234,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -291,11 +291,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the sample rate as set by :func:`SetSampleRate`.
+Returns the sample rate as set by :func:`Set Sample Rate`.
 """,
 'de':
 """
-Gibt die Abtastrate zurück, wie von :func:`SetSampleRate`
+Gibt die Abtastrate zurück, wie von :func:`Set Sample Rate`
 gesetzt.
 """
 }]
@@ -336,11 +336,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the calibration as set by :func:`SetCalibration`.
+Returns the calibration as set by :func:`Set Calibration`.
 """,
 'de':
 """
-Gibt die Kalibrierung zurück, wie von :func:`SetCalibration` gesetzt.
+Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
 """
 }]
 })
@@ -354,12 +354,12 @@ com['packets'].append({
 'en':
 """
 Returns the ADC values as given by the MCP3911 IC. This function
-is needed for proper calibration, see :func:`SetCalibration`.
+is needed for proper calibration, see :func:`Set Calibration`.
 """,
 'de':
 """
 Gibt die ADC-Werte des MCP3911 ICs zurück. Diese Funktion
-wird für die Kalibrierung benötigt, siehe :func:`SetCalibration`.
+wird für die Kalibrierung benötigt, siehe :func:`Set Calibration`.
 """
 }]
 })
@@ -374,18 +374,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
+:func:`Set Voltage Callback Period`. The :word:`parameter` is the voltage of the
 channel.
 
-:func:`Voltage` is only triggered if the voltage has changed since the
+The :cb:`Voltage` callback is only triggered if the voltage has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Voltage Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Spannung des Kanals.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+Der :cb:`Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -401,20 +401,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetVoltageCallbackThreshold` is reached.
+:func:`Set Voltage Callback Threshold` is reached.
 The :word:`parameter` is the voltage of the channel.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetVoltageCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Voltage Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Kanals.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

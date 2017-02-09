@@ -138,11 +138,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the type for a given extension as set by :func:`SetExtensionType`.
+Returns the type for a given extension as set by :func:`Set Extension Type`.
 """,
 'de':
 """
-Gibt den Typ der angegebenen Extension zurück, wie von :func:`SetExtensionType`
+Gibt den Typ der angegebenen Extension zurück, wie von :func:`Set Extension Type`
 gesetzt.
 """
 }]
@@ -199,11 +199,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the address as set by :func:`SetChibiAddress`.
+Returns the address as set by :func:`Set Chibi Address`.
 """,
 'de':
 """
-Gibt die Adresse zurück, wie von :func:`SetChibiAddress` gesetzt.
+Gibt die Adresse zurück, wie von :func:`Set Chibi Address` gesetzt.
 """
 }]
 })
@@ -244,11 +244,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the address as set by :func:`SetChibiMasterAddress`.
+Returns the address as set by :func:`Set Chibi Master Address`.
 """,
 'de':
 """
-Gibt die Adresse zurück, wie von :func:`SetChibiMasterAddress` gesetzt.
+Gibt die Adresse zurück, wie von :func:`Set Chibi Master Address` gesetzt.
 """
 }]
 })
@@ -310,12 +310,12 @@ com['packets'].append({
 'en':
 """
 Returns the slave address for a given :param:`num` as set by
-:func:`SetChibiSlaveAddress`.
+:func:`Set Chibi Slave Address`.
 """,
 'de':
 """
 Gibt die Slave Adresse für eine Adressnummerierung (mittels :param:`num` Parameter)
-zurück, wie von :func:`SetChibiSlaveAddress` gesetzt.
+zurück, wie von :func:`Set Chibi Slave Address` gesetzt.
 """
 }]
 })
@@ -422,11 +422,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the frequency value as set by :func:`SetChibiFrequency`.
+Returns the frequency value as set by :func:`Set Chibi Frequency`.
 """,
 'de':
 """
-Gibt den Frequenzbereich zurück, wie von :func:`SetChibiFrequency` gesetzt.
+Gibt den Frequenzbereich zurück, wie von :func:`Set Chibi Frequency` gesetzt.
 """
 }]
 })
@@ -484,11 +484,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the channel as set by :func:`SetChibiChannel`.
+Returns the channel as set by :func:`Set Chibi Channel`.
 """,
 'de':
 """
-Gibt den Kanal zurück, wie von :func:`SetChibiChannel` gesetzt.
+Gibt den Kanal zurück, wie von :func:`Set Chibi Channel` gesetzt.
 """
 }]
 })
@@ -550,11 +550,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the address as set by :func:`SetRS485Address`.
+Returns the address as set by :func:`Set RS485 Address`.
 """,
 'de':
 """
-Gibt die Adresse zurück, wie von :func:`SetRS485Address` gesetzt.
+Gibt die Adresse zurück, wie von :func:`Set RS485 Address` gesetzt.
 """
 }]
 })
@@ -616,12 +616,12 @@ com['packets'].append({
 'en':
 """
 Returns the slave address for a given ``num`` as set by
-:func:`SetRS485SlaveAddress`.
+:func:`Set RS485 Slave Address`.
 """,
 'de':
 """
 Gibt die Slave Adresse für eine Adressnummerierung (mittels ``num`` Parameter)
-zurück, wie von :func:`SetRS485SlaveAddress` gesetzt.
+zurück, wie von :func:`Set RS485 Slave Address` gesetzt.
 """
 }]
 })
@@ -703,11 +703,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetRS485Configuration`.
+Returns the configuration as set by :func:`Set RS485 Configuration`.
 """,
 'de':
 """
-Gibt die Schnittstellenkonfiguration zurück, wie von :func:`SetRS485Configuration`
+Gibt die Schnittstellenkonfiguration zurück, wie von :func:`Set RS485 Configuration`
 gesetzt.
 """
 }]
@@ -829,11 +829,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetWifiConfiguration`.
+Returns the configuration as set by :func:`Set Wifi Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetWifiConfiguration`
+Gibt die Konfiguration zurück, wie von :func:`Set Wifi Configuration`
 gesetzt.
 """
 }]
@@ -880,7 +880,7 @@ The ``key`` has a max length of 50 characters and is used if ``encryption``
 is set to 0 or 2 (WPA/WPA2 or WEP). Otherwise the value is ignored.
 
 For WPA/WPA2 the key has to be at least 8 characters long. If you want to set
-a key with more than 50 characters, see :func:`SetLongWifiKey`.
+a key with more than 50 characters, see :func:`Set Long Wifi Key`.
 
 For WEP the key has to be either 10 or 26 hexadecimal digits long. It is
 possible to set the WEP ``key_index`` (1-4). If you don't know your
@@ -889,7 +889,7 @@ possible to set the WEP ``key_index`` (1-4). If you don't know your
 If you choose WPA Enterprise as encryption, you have to set ``eap_options`` and
 the length of the certificates (for other encryption types these parameters
 are ignored). The certificate length are given in byte and the certificates
-themselves can be set with :func:`SetWifiCertificate`. ``eap_options`` consist
+themselves can be set with :func:`Set Wifi Certificate`. ``eap_options`` consist
 of the outer authentication (bits 1-2), inner authentication (bit 3) and
 certificate type (bits 4-5):
 
@@ -928,7 +928,7 @@ wird dieser Parameter ignoriert.
 
 Für WPA/WPA2 muss der Schlüssel mindestens 8 Zeichen lang sein. Wenn ein
 Schlüssel mit mehr als 50 Zeichen gesetzt werden soll, kann
-:func:`SetLongWifiKey` genutzt werden.
+:func:`Set Long Wifi Key` genutzt werden.
 
 Für WEP muss der Schlüssel entweder 10 oder 26 hexadezimale Zeichen lang sein.
 Es ist möglich den ``key_index`` zu setzen (1-4). Fall der ``key_index``
@@ -936,7 +936,7 @@ unbekannt ist, ist er wahrscheinlich 1.
 
 Wenn WPA Enterprise als ``encryption`` gewählt wird, müssen ``eap_options`` und
 die Länge der Zertifikate gesetzt werden. Die Länge wird in Byte angegeben
-und die Zertifikate selbst können mit :func:`SetWifiCertificate` übertragen
+und die Zertifikate selbst können mit :func:`Set Wifi Certificate` übertragen
 werden. Die ``eap_options`` bestehen aus Outer Authentication (Bits 1-2),
 Inner Authentication (Bit 3) und Certificate Type (Bits 4-5):
 
@@ -984,12 +984,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the encryption as set by :func:`SetWifiEncryption`.
+Returns the encryption as set by :func:`Set Wifi Encryption`.
 """,
 'de':
 """
 Gibt die Verschlüsselungseinstellungen zurück, wie von
-:func:`SetWifiEncryption` gesetzt.
+:func:`Set Wifi Encryption` gesetzt.
 """
 }]
 })
@@ -1017,7 +1017,7 @@ com['packets'].append({
 """
 Returns the status of the WIFI Extension. The ``state`` is updated automatically,
 all of the other parameters are updated on startup and every time
-:func:`RefreshWifiStatus` is called.
+:func:`Refresh Wifi Status` is called.
 
 Possible states are:
 
@@ -1035,7 +1035,7 @@ Possible states are:
 """
 Gibt den Status der WIFI Extension zurück. ``state`` wird automatisch
 aktualisiert, alle anderen Parameter werden nur beim Starten und nach jedem
-Aufruf von :func:`RefreshWifiStatus` aktualisiert.
+Aufruf von :func:`Refresh Wifi Status` aktualisiert.
 
 Mögliche Werte für *state* sind:
 
@@ -1060,7 +1060,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Refreshes the Wi-Fi status (see :func:`GetWifiStatus`). To read the status
+Refreshes the Wi-Fi status (see :func:`Get Wifi Status`). To read the status
 of the Wi-Fi module, the Master Brick has to change from data mode to
 command mode and back. This transaction and the readout itself is
 unfortunately time consuming. This means, that it might take some ms
@@ -1069,7 +1069,7 @@ function is called.
 """,
 'de':
 """
-Aktualisiert den WLAN Status (siehe :func:`GetWifiStatus`). Um den Status
+Aktualisiert den WLAN Status (siehe :func:`Get Wifi Status`). Um den Status
 vom WLAN Modul zu lesen, muss der Master Brick vom Datenmodus in den
 Kommandomodus und wieder zurück wechseln. Dieser Wechsel und das eigentliche
 Auslesen ist leider zeitaufwändig. Dass heißt, es dauert ein paar ms bis der
@@ -1142,12 +1142,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the certificate for a given index as set by :func:`SetWifiCertificate`.
+Returns the certificate for a given index as set by :func:`Set Wifi Certificate`.
 """,
 'de':
 """
 Gibt das Zertifikat für einen Index zurück, wie von
-:func:`SetWifiCertificate` gesetzt.
+:func:`Set Wifi Certificate` gesetzt.
 """
 }]
 })
@@ -1197,11 +1197,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the power mode as set by :func:`SetWifiPowerMode`.
+Returns the power mode as set by :func:`Set Wifi Power Mode`.
 """,
 'de':
 """
-Gibt den Stromsparmodus zurück, wie von :func:`SetWifiPowerMode` gesetzt.
+Gibt den Stromsparmodus zurück, wie von :func:`Set Wifi Power Mode` gesetzt.
 """
 }]
 })
@@ -1300,11 +1300,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the regulatory domain as set by :func:`SetWifiRegulatoryDomain`.
+Returns the regulatory domain as set by :func:`Set Wifi Regulatory Domain`.
 """,
 'de':
 """
-Gibt den Geltungsbereich zurück, wie von :func:`SetWifiRegulatoryDomain` gesetzt.
+Gibt den Geltungsbereich zurück, wie von :func:`Set Wifi Regulatory Domain` gesetzt.
 """
 }]
 })
@@ -1336,7 +1336,7 @@ com['packets'].append({
 """
 Sets a long Wi-Fi key (up to 63 chars, at least 8 chars) for WPA encryption.
 This key will be used
-if the key in :func:`SetWifiEncryption` is set to "-". In the old protocol,
+if the key in :func:`Set Wifi Encryption` is set to "-". In the old protocol,
 a payload of size 63 was not possible, so the maximum key length was 50 chars.
 
 With the new protocol this is possible, since we didn't want to break API,
@@ -1346,7 +1346,7 @@ this function was added additionally.
 """
 Setzt einen langen WLAN Schlüssel (bis zu 63 Zeichen, mindestens 8 Zeichen) für
 WPA Verschlüsselung. Dieser Schlüssel wird genutzt, wenn der Schlüssel in
-:func:`SetWifiEncryption` auf "-" gesetzt wird. Im alten Protokoll war
+:func:`Set Wifi Encryption` auf "-" gesetzt wird. Im alten Protokoll war
 ein Payload der Größe 63 nicht möglich, dadurch wurde die maximale
 Schlüssellänge auf 50 gesetzt.
 
@@ -1365,12 +1365,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the encryption key as set by :func:`SetLongWifiKey`.
+Returns the encryption key as set by :func:`Set Long Wifi Key`.
 """,
 'de':
 """
 Gibt den Verschlüsselungsschlüssel zurück, wie von
-:func:`SetLongWifiKey` gesetzt.
+:func:`Set Long Wifi Key` gesetzt.
 """
 }]
 })
@@ -1407,13 +1407,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the hostname as set by :func:`SetWifiHostname`.
+Returns the hostname as set by :func:`Set Wifi Hostname`.
 
 An empty String means, that the default hostname is used.
 """,
 'de':
 """
-Gibt den Hostnamen zurück, wie von :func:`SetWifiHostname` gesetzt.
+Gibt den Hostnamen zurück, wie von :func:`Set Wifi Hostname` gesetzt.
 
 Ein leerer String bedeutet, dass der voreingestellte Hostname
 genutzt wird.
@@ -1429,21 +1429,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`StackCurrent` callback is triggered
+Sets the period in ms with which the :cb:`Stack Current` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`StackCurrent` is only triggered if the current has changed since the
-last triggering.
+The :cb:`Stack Current` callback is only triggered if the current has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`StackCurrent` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Stack Current` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`StackCurrent` wird nur ausgelöst wenn sich die Stromstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Stack Current` Callback wird nur ausgelöst wenn sich die Stromstärke
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -1458,11 +1458,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetStackCurrentCallbackPeriod`.
+Returns the period as set by :func:`Set Stack Current Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetStackCurrentCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Stack Current Callback Period`
 gesetzt
 """
 }]
@@ -1476,21 +1476,22 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`StackVoltage` callback is triggered
+Sets the period in ms with which the :cb:`Stack Voltage` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`StackVoltage` is only triggered if the voltage has changed since the
-last triggering.
+The :cb:`Stack Voltage` callback is only triggered if the voltage has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`StackVoltage` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Stack Voltage` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`StackVoltage` wird nur ausgelöst wenn sich die Spannung seit der
-letzten Auslösung geändert hat.
+
+The :cb:`Stack Voltage`Callback wird nur ausgelöst wenn sich die Spannung seit
+der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -1505,11 +1506,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetStackVoltageCallbackPeriod`.
+Returns the period as set by :func:`Set Stack Voltage Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetStackVoltageCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Stack Voltage Callback Period`
 gesetzt
 """
 }]
@@ -1524,21 +1525,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`USBVoltage` callback is triggered
+Sets the period in ms with which the :cb:`USB Voltage` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`USBVoltage` is only triggered if the voltage has changed since the
-last triggering.
+The :cb:`USB Voltage` callback is only triggered if the voltage has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`USBVoltage` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`USB Voltage` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`USBVoltage` wird nur ausgelöst wenn sich die Spannung seit der
-letzten Auslösung geändert hat.
+Der :cb:`USB Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit
+der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -1553,11 +1554,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetUSBVoltageCallbackPeriod`.
+Returns the period as set by :func:`Set USB Voltage Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetUSBVoltageCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set USB Voltage Callback Period`
 gesetzt
 """
 }]
@@ -1573,7 +1574,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`StackCurrentReached` callback.
+Sets the thresholds for the :cb:`Stack Current Reached` callback.
 
 The following options are possible:
 
@@ -1591,7 +1592,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`StackCurrentReached` Callback.
+Setzt den Schwellwert für den :cb:`Stack Current Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -1620,11 +1621,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetStackCurrentCallbackThreshold`.
+Returns the threshold as set by :func:`Set Stack Current Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetStackCurrentCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Stack Current Callback Threshold`
 gesetzt.
 """
 }]
@@ -1640,7 +1641,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`StackVoltageReached` callback.
+Sets the thresholds for the :cb:`Stack Voltage Reached` callback.
 
 The following options are possible:
 
@@ -1658,7 +1659,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`StackVoltageReached` Callback.
+Setzt den Schwellwert für den :cb:`Stack Voltage Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -1687,11 +1688,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetStackVoltageCallbackThreshold`.
+Returns the threshold as set by :func:`Set Stack Voltage Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetStackVoltageCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Stack Voltage Callback Threshold`
 gesetzt.
 """
 }]
@@ -1707,7 +1708,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`USBVoltageReached` callback.
+Sets the thresholds for the :cb:`USB Voltage Reached` callback.
 
 The following options are possible:
 
@@ -1725,7 +1726,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`USBVoltageReached` Callback.
+Setzt den Schwellwert für den :cb:`USB Voltage Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -1754,11 +1755,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetUSBVoltageCallbackThreshold`.
+Returns the threshold as set by :func:`Set USB Voltage Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetUSBVoltageCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set USB Voltage Callback Threshold`
 gesetzt.
 """
 }]
@@ -1774,15 +1775,15 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`StackCurrentReached`,
-* :func:`StackVoltageReached`,
-* :func:`USBVoltageReached`
+* :cb:`Stack Current Reached`,
+* :cb:`Stack Voltage Reached`,
+* :cb:`USB Voltage Reached`
 
 are triggered, if the thresholds
 
-* :func:`SetStackCurrentCallbackThreshold`,
-* :func:`SetStackVoltageCallbackThreshold`,
-* :func:`SetUSBVoltageCallbackThreshold`
+* :func:`Set Stack Current Callback Threshold`,
+* :func:`Set Stack Voltage Callback Threshold`,
+* :func:`Set USB Voltage Callback Threshold`
 
 keep being reached.
 
@@ -1792,15 +1793,15 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`StackCurrentReached`,
-* :func:`StackVoltageReached`,
-* :func:`USBVoltageReached`
+* :cb:`Stack Current Reached`,
+* :cb:`Stack Voltage Reached`,
+* :cb:`USB Voltage Reached`
 
 ausgelöst werden, wenn die Schwellwerte
 
-* :func:`SetStackCurrentCallbackThreshold`,
-* :func:`SetStackVoltageCallbackThreshold`,
-* :func:`SetUSBVoltageCallbackThreshold`
+* :func:`Set Stack Current Callback Threshold`,
+* :func:`Set Stack Voltage Callback Threshold`,
+* :func:`Set USB Voltage Callback Threshold`
 
 weiterhin erreicht bleiben.
 
@@ -1817,11 +1818,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -1836,19 +1837,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetStackCurrentCallbackPeriod`. The :word:`parameter` is the current of the
-sensor.
+:func:`Set Stack Current Callback Period`. The :word:`parameter` is the current
+of the sensor.
 
-:func:`StackCurrent` is only triggered if the current has changed since the
-last triggering.
+The :cb:`Stack Current` callback is only triggered if the current has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetStackCurrentCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Stack Current Callback Period`, ausgelöst. Der :word:`parameter` ist
+die Stromstärke des Sensors.
 
-:func:`StackCurrent` wird nur ausgelöst wenn sich die Stromstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Stack Current` Callback wird nur ausgelöst wenn sich die Stromstärke
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -1862,19 +1864,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetStackVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
-sensor.
+:func:`Set Stack Voltage Callback Period`. The :word:`parameter` is the voltage
+of the sensor.
 
-:func:`StackVoltage` is only triggered if the voltage has changed since the
-last triggering.
+The :cb:`Stack Voltage` callback is only triggered if the voltage has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetStackVoltageCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Spannung des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Stack Voltage Callback Period`, ausgelöst. Der :word:`parameter`
+ist die Spannung des Sensors.
 
-:func:`StackVoltage` wird nur ausgelöst wenn sich die Spannung seit der
-letzten Auslösung geändert hat.
+Der :cb:`Stack Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit
+der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -1888,21 +1891,22 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetUSBVoltageCallbackPeriod`. The :word:`parameter` is the USB voltage
-in mV.
+:func:`Set USB Voltage Callback Period`. The :word:`parameter` is the USB
+voltage in mV.
 
-:func:`USBVoltage` is only triggered if the USB voltage has changed since the
-last triggering.
+The :cb:`USB Voltage` callback is only triggered if the USB voltage has changed
+since the last triggering.
 
 Does not work with hardware version 2.1.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetUSBVoltageCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die USB Spannung in mV.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set USB Voltage Callback Period`, ausgelöst. Der :word:`parameter` ist
+die USB Spannung in mV.
 
-:func:`USBVoltage` wird nur ausgelöst wenn sich die USB Spannung seit der
-letzten Auslösung geändert hat.
+Der :cb:`USB Voltage` Callback wird nur ausgelöst wenn sich die USB Spannung
+seit der letzten Auslösung geändert hat.
 
 Funktioniert nicht mit Hardware Version 2.1.
 """
@@ -1918,20 +1922,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetStackCurrentCallbackThreshold` is reached.
+:func:`Set Stack Current Callback Threshold` is reached.
 The :word:`parameter` is the stack current in mA.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
-:func:`SetStackCurrentCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Stack Current Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Stromverbrauch des Stapels in mA.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -1945,20 +1949,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetStackVoltageCallbackThreshold` is reached.
+:func:`Set Stack Voltage Callback Threshold` is reached.
 The :word:`parameter` is the stack voltage in mV.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
-:func:`SetStackVoltageCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Stack Voltage Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Stapels in mV.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -1972,20 +1976,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetUSBVoltageCallbackThreshold` is reached.
+:func:`Set USB Voltage Callback Threshold` is reached.
 The :word:`parameter` is the voltage of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
-:func:`SetUSBVoltageCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set USB Voltage Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -2090,11 +2094,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetEthernetConfiguration`.
+Returns the configuration as set by :func:`Set Ethernet Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetEthernetConfiguration`
+Gibt die Konfiguration zurück, wie von :func:`Set Ethernet Configuration`
 gesetzt.
 """
 }]
@@ -2152,7 +2156,7 @@ by access points as the hostname in the DHCP clients table.
 
 Setting an empty String will restore the default hostname.
 
-The current hostname can be discovered with :func:`GetEthernetStatus`.
+The current hostname can be discovered with :func:`Get Ethernet Status`.
 """,
 'de':
 """
@@ -2162,7 +2166,7 @@ Access Points als Hostname in der DHCP Client Tabelle angezeigt.
 Das setzen eines leeren Strings stellt den voreingestellten Hostnamen
 wieder her.
 
-Der aktuelle Hostname kann mit :func:`GetEthernetStatus` herausgefunden werden.
+Der aktuelle Hostname kann mit :func:`Get Ethernet Status` herausgefunden werden.
 """
 }]
 })
@@ -2179,7 +2183,7 @@ Sets the MAC address of the Ethernet Extension. The Ethernet Extension should
 come configured with a valid MAC address, that is also written on a
 sticker of the extension itself.
 
-The MAC address can be read out again with :func:`GetEthernetStatus`.
+The MAC address can be read out again with :func:`Get Ethernet Status`.
 """,
 'de':
 """
@@ -2187,7 +2191,7 @@ Setzt die MAC Adresse der Ethernet Extension. Die Ethernet Extension sollte
 mit einer vorkonfigurierten MAC Adresse ausgeliefert werden. Diese MAC Adresse
 steht auch auf einem Aufkleber auf der Ethernet Extension.
 
-Die MAC Adresse kann mit :func:`GetEthernetStatus` wieder ausgelesen werden.
+Die MAC Adresse kann mit :func:`Get Ethernet Status` wieder ausgelesen werden.
 """
 }]
 })
@@ -2249,11 +2253,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetEthernetConfiguration`.
+Returns the configuration as set by :func:`Set Ethernet Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetEthernetConfiguration`
+Gibt die Konfiguration zurück, wie von :func:`Set Ethernet Configuration`
 gesetzt.
 """
 }]
@@ -2308,12 +2312,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the authentication secret as set by :func:`SetEthernetAuthenticationSecret`.
+Returns the authentication secret as set by
+:func:`Set Ethernet Authentication Secret`.
 """,
 'de':
 """
 Gibt das Authentifizierungsgeheimnis zurück, wie von
-:func:`SetEthernetAuthenticationSecret` gesetzt.
+:func:`Set Ethernet Authentication Secret` gesetzt.
 """
 }]
 })
@@ -2367,12 +2372,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
+Returns the authentication secret as set by
+:func:`Set Wifi Authentication Secret`.
 """,
 'de':
 """
 Gibt das Authentifizierungsgeheimnis zurück, wie von
-:func:`SetWifiAuthenticationSecret` gesetzt.
+:func:`Set Wifi Authentication Secret` gesetzt.
 """
 }]
 })
@@ -2429,12 +2435,12 @@ com['packets'].append({
 'en':
 """
 Starts the bootloader of the WIFI Extension 2.0. Returns 0 on success.
-Afterwards the :func:`WriteWifi2SerialPort` and :func:`ReadWifi2SerialPort`
+Afterwards the :func:`Write Wifi2 Serial Port` and :func:`Read Wifi2 Serial Port`
 functions can be used to communicate with the bootloader to flash a new
 firmware.
 
 The bootloader should only be started over a USB connection. It cannot be
-started over a WIFI2 connection, see the :func:`GetConnectionType` function.
+started over a WIFI2 connection, see the :func:`Get Connection Type` function.
 
 It is recommended to use the Brick Viewer to update the firmware of the WIFI
 Extension 2.0.
@@ -2442,13 +2448,13 @@ Extension 2.0.
 'de':
 """
 Startet den Bootloader der WIFI Extension 2.0. Gibt bei Erfolg 0 zurück.
-Danach können die :func:`WriteWifi2SerialPort` und :func:`ReadWifi2SerialPort`
+Danach können die :func:`Write Wifi2 Serial Port` und :func:`Read Wifi2 Serial Port`
 Funktionen zur Kommunikation mit dem Bootloader verwendet werden, um eine neue
 Firmware zu flashen.
 
 Der bootloader sollte nur über eine USB Verbindung gestartet werden. Er kann
 nicht über eine WIFI2 Verbindung gestartet werden, siehe die
-:func:`GetConnectionType` Funktion.
+:func:`Get Connection Type` Funktion.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die Firmware der WIFI
 Extension 2.0 zu aktualisieren.
@@ -2471,7 +2477,7 @@ to the serial port of the bootloader of the WIFI Extension 2.0. Returns 0 on
 success.
 
 Before this function can be used the bootloader has to be started using the
-:func:`StartWifi2Bootloader` function.
+:func:`Start Wifi2 Bootloader` function.
 
 It is recommended to use the Brick Viewer to update the firmware of the WIFI
 Extension 2.0.
@@ -2483,7 +2489,7 @@ auf die serielle Schnittstelle des Bootloaders der WIFI Extension 2.0. Gibt
 bei Erfolg 0 zurück.
 
 Bevor diese Funktion genutzt werden kann muss der Bootloader mit der
-:func:`StartWifi2Bootloader` Funktion gestartet werden.
+:func:`Start Wifi2 Bootloader` Funktion gestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die Firmware der WIFI
 Extension 2.0 zu aktualisieren.
@@ -2506,7 +2512,7 @@ from the serial port of the bootloader of the WIFI Extension 2.0.
 Returns the number of actually read bytes.
 
 Before this function can be used the bootloader has to be started using the
-:func:`StartWifi2Bootloader` function.
+:func:`Start Wifi2 Bootloader` function.
 
 It is recommended to use the Brick Viewer to update the firmware of the WIFI
 Extension 2.0.
@@ -2518,7 +2524,7 @@ der seriellen Schnittstelle des Bootloaders der WIFI Extension 2.0. Gibt die
 Anzahl der wirklich gelesenen Bytes zurück.
 
 Bevor diese Funktion genutzt werden kann muss der Bootloader mit der
-:func:`StartWifi2Bootloader` Funktion gestartet werden.
+:func:`Start Wifi2 Bootloader` Funktion gestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die Firmware der WIFI
 Extension 2.0 zu aktualisieren.
@@ -2542,7 +2548,7 @@ See the :ref:`authentication tutorial <tutorial_authentication>` for more
 information.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -2557,7 +2563,7 @@ Für mehr Informationen zur Authentifizierung siehe das dazugehörige
 :ref:`Tutorial <tutorial_authentication>`.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -2575,12 +2581,12 @@ com['packets'].append({
 'en':
 """
 Returns the WIFI authentication secret as set by
-:func:`SetWifi2AuthenticationSecret`.
+:func:`Set Wifi2 Authentication Secret`.
 """,
 'de':
 """
 Gibt das WLAN-Authentifizierungsgeheimnis zurück, wie von
-:func:`SetWifi2AuthenticationSecret` gesetzt.
+:func:`Set Wifi2 Authentication Secret` gesetzt.
 """
 }]
 })
@@ -2625,7 +2631,7 @@ to 1 will enable the web interface and setting it to 0 will disable the web
 interface.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -2649,7 +2655,7 @@ sinf B, G und N. Der Standardwert ist G.
 Die ``sleep_mode`` und ``website`` Parameter werden momentan nicht verwendet.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -2673,11 +2679,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the general configuration as set by :func:`SetWifi2Configuration`.
+Returns the general configuration as set by :func:`Set Wifi2 Configuration`.
 """,
 'de':
 """
-Gibt die allgemeine Konfiguration zurück, wie von :func:`SetWifi2Configuration`
+Gibt die allgemeine Konfiguration zurück, wie von :func:`Set Wifi2 Configuration`
 gesetzt.
 """
 }]
@@ -2759,7 +2765,7 @@ parameter can be used to make the WIFI Extension 2.0 only connect to an
 access point if SSID and BSSID match.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -2789,7 +2795,7 @@ die WIFI Extension 2.0 nur dann mit einem Access Point verbindet, wenn SSID
 und BSSID übereinstimmen.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -2812,12 +2818,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the client configuration as set by :func:`SetWifi2ClientConfiguration`.
+Returns the client configuration as set by :func:`Set Wifi2 Client Configuration`.
 """,
 'de':
 """
 Gibt die Client Konfiguration zurück, wie von
-:func:`SetWifi2ClientConfiguration` gesetzt.
+:func:`Set Wifi2 Client Configuration` gesetzt.
 """
 }]
 })
@@ -2835,7 +2841,7 @@ hostname will be displayed by access points as the hostname in the DHCP clients
 table.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -2846,7 +2852,7 @@ Setzt den Client Hostnamen (bis zu 32 Zeichen) der WIFI Extension 2.0. Der
 Hostname wird von Access Points als Hostname in der DHCP Client Tabelle angezeigt.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -2863,11 +2869,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the client hostname as set by :func:`SetWifi2ClientHostname`.
+Returns the client hostname as set by :func:`Set Wifi2 Client Hostname`.
 """,
 'de':
 """
-Gibt den Client Hostnamen zurück, wie von :func:`SetWifi2ClientHostname` gesetzt.
+Gibt den Client Hostnamen zurück, wie von :func:`Set Wifi2 Client Hostname`
+gesetzt.
 """
 }]
 })
@@ -2883,7 +2890,7 @@ com['packets'].append({
 Sets the client password (up to 63 chars) for WPA/WPA2 encryption.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -2893,7 +2900,7 @@ It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 Setzt das Client-Passwort (bis zu 63 Zeichen) für WPA/WPA2 Verschlüsselung.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -2910,11 +2917,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the client password as set by :func:`SetWifi2ClientPassword`.
+Returns the client password as set by :func:`Set Wifi2 Client Password`.
 """,
 'de':
 """
-Gibt das Client-Passwort zurück, wie von :func:`SetWifi2ClientPassword` gesetzt.
+Gibt das Client-Passwort zurück, wie von :func:`Set Wifi2 Client Password`
+gesetzt.
 """
 }]
 })
@@ -2953,7 +2961,7 @@ The default configuration is DHCP.
 
 The ``encryption`` parameter sets the encryption mode to be used. Possible
 values are Open (no encryption), WEP or WPA/WPA2 PSK. The default value is
-WPA/WPA2 PSK. Use the :func:`SetWifi2APPassword` function to set the encryption
+WPA/WPA2 PSK. Use the :func:`Set Wifi2 AP Password` function to set the encryption
 password.
 
 The ``hidden`` parameter makes the access point hide or show its SSID.
@@ -2967,7 +2975,7 @@ address is used. Otherwise this parameter can be used to set a custom MAC
 address.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -2988,7 +2996,7 @@ ist DHCP.
 
 Das ``encryption`` Parameter legt den Verschlüsselungsmodus fest. Mögliche Werte
 sind Open (keine  Verschlüsselung), WEP oder WPA/WPA2 PSK. Der Standardwert ist
-WPA/WPA2 PSK. Mit der :func:`SetWifi2APPassword` Kann das
+WPA/WPA2 PSK. Mit der :func:`Set Wifi2 AP Password` Kann das
 Verschlüsselungspasswort gesetzt werden.
 
 Das ``hidden`` Parameter legt fest, oder der Access Point seine SSID versteckt
@@ -3002,7 +3010,7 @@ voreingestellt MAC Adresse verwendet. Andernfalls kann mit diesem Parameter
 eine eigene MAC Adresse eingestellt werden.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -3031,12 +3039,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the access point configuration as set by :func:`SetWifi2APConfiguration`.
+Returns the access point configuration as set by :func:`Set Wifi2 AP Configuration`.
 """,
 'de':
 """
 Gibt die Access-Point-Konfiguration zurück, wie von
-:func:`SetWifi2APConfiguration` gesetzt.
+:func:`Set Wifi2 AP Configuration` gesetzt.
 """
 }]
 })
@@ -3050,10 +3058,10 @@ com['packets'].append({
 'en':
 """
 Sets the access point password (up to 63 chars) for the configured encryption
-mode, see :func:`SetWifi2APConfiguration`.
+mode, see :func:`Set Wifi2 AP Configuration`.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -3061,10 +3069,10 @@ It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 'de':
 """
 Setzt das Access-Point-Passwort (bis zu 63 Zeichen) für den eingestellten
-Verschlüsselungsmodus, siehe :func:`SetWifi2APConfiguration`.
+Verschlüsselungsmodus, siehe :func:`Set Wifi2 AP Configuration`.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -3081,11 +3089,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the access point password as set by :func:`SetWifi2APPassword`.
+Returns the access point password as set by :func:`Set Wifi2 AP Password`.
 """,
 'de':
 """
-Gibt das Access-Point-Passwort zurück, wie von :func:`SetWifi2APPassword` gesetzt.
+Gibt das Access-Point-Passwort zurück, wie von :func:`Set Wifi2 AP Password` gesetzt.
 """
 }]
 })
@@ -3217,7 +3225,7 @@ configure a static IP address. The default configuration is DHCP.
 
 If the ``router_bssid`` parameter is set to all zero then the information is
 taken from Wi-Fi scan when connecting the SSID as set by
-:func:`SetWifi2MeshRouterSSID`. This only works if the the SSID is not hidden.
+:func:`Set Wifi2 Mesh Router SSID`. This only works if the the SSID is not hidden.
 In case the router has hidden SSID this parameter must be specified, otherwise
 the node will not be able to reach the mesh router.
 
@@ -3229,7 +3237,7 @@ The ``gateway_ip`` and the ``gateway_port`` parameters specifies the location
 of the brickd that supports mesh feature.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -3251,7 +3259,7 @@ Standardeinstellung ist DHCP.
 
 Wenn das ``router_bssid`` Parameter auf Null gesetzt ist, dann verbindet sich
 die WIFI Extension 2.0 mit einem Access Point wenn die eingestellt SSID
-übereinstimmt, siehe :func:`SetWifi2MeshRouterSSID`. Andernfalls kann dieses
+übereinstimmt, siehe :func:`Set Wifi2 Mesh Router SSID`. Andernfalls kann dieses
 Parameter verwendet werden, damit sich die WIFI Extension 2.0 nur dann mit
 einem Access Point verbindet, wenn SSID und BSSID übereinstimmen. Die BSSID
 kann auch verwendet werden, um eine Verbindung mit einer verstecken SSID
@@ -3265,7 +3273,7 @@ Die ``gateway_ip`` und``gateway_port`` Parameter geben an, wie der Mesh-Gateway
 (brickd) erreicht werden kann.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -3292,13 +3300,13 @@ com['packets'].append({
 """
 Requires WIFI Extension 2.0 firmware 2.1.0.
 
-Returns the mesh configuration as set by :func:`SetWifi2MeshConfiguration`.
+Returns the mesh configuration as set by :func:`Set Wifi2 Mesh Configuration`.
 """,
 'de':
 """
 Benötigt WIFI Extension 2.0 Firmware 2.1.0.
 
-Gibt das Mesh Konfiguration zurück, wie von :func:`SetWifi2MeshConfiguration`
+Gibt das Mesh Konfiguration zurück, wie von :func:`Set Wifi2 Mesh Configuration`
 gesetzt.
 """
 }]
@@ -3323,7 +3331,7 @@ is allowed, in practice valid SSID should have a maximum of 31 characters. This
 is due to a bug in the mesh library that we use in the firmware of the extension.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -3340,7 +3348,7 @@ Moment davon nur die ersten 31 Zeichen genutzt werden bedingt durch einen Bug
 in der verwendeten Mesh-Bibliothek.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -3360,13 +3368,13 @@ com['packets'].append({
 """
 Requires WIFI Extension 2.0 firmware 2.1.0.
 
-Returns the mesh router SSID as set by :func:`SetWifi2MeshRouterSSID`.
+Returns the mesh router SSID as set by :func:`Set Wifi2 Mesh Router SSID`.
 """,
 'de':
 """
 Benötigt WIFI Extension 2.0 Firmware 2.1.0.
 
-Gibt das Mesh-Router-SSID zurück, wie von :func:`SetWifi2MeshRouterSSID`
+Gibt das Mesh-Router-SSID zurück, wie von :func:`Set Wifi2 Mesh Router SSID`
 gesetzt.
 """
 }]
@@ -3386,7 +3394,7 @@ Sets the mesh router password (up to 64 characters) for WPA/WPA2 encryption.
 The password will be used to connect to the mesh router.
 
 To apply configuration changes to the WIFI Extension 2.0 the
-:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+:func:`Save Wifi2 Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
@@ -3399,7 +3407,7 @@ Setzt das Mesh-Router-Passwort (bis zu 64 Zeichen) für WPA/WPA2 Verschlüsselun
 Das Password wird für die Verbindung zum Mesh Router verwendet.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
-:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+:func:`Save Wifi2 Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
 Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
@@ -3418,13 +3426,13 @@ com['packets'].append({
 """
 Requires WIFI Extension 2.0 firmware 2.1.0.
 
-Returns the mesh router password as set by :func:`SetWifi2MeshRouterPassword`.
+Returns the mesh router password as set by :func:`Set Wifi2 Mesh Router Password`.
 """,
 'de':
 """
 Benötigt WIFI Extension 2.0 Firmware 2.1.0.
 
-Gibt das Mesh-Router-Password zurück, wie von :func:`SetWifi2MeshRouterPassword`
+Gibt das Mesh-Router-Password zurück, wie von :func:`Set Wifi2 Mesh Router Password`
 gesetzt.
 """
 }]

@@ -37,16 +37,16 @@ com['packets'].append({
 Returns the currently measured weight in grams.
 
 If you want to get the weight periodically, it is recommended 
-to use the callback :func:`Weight` and set the period with 
-:func:`SetWeightCallbackPeriod`.
+to use the :cb:`Weight` callback and set the period with
+:func:`Set Weight Callback Period`.
 """,
 'de':
 """
 Gibt das aktuell gemessene Gewicht in Gramm zurück.
 
 Wenn das Gewicht periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Weight` zu nutzen und die Periode mit 
-:func:`SetWeightCallbackPeriod` vorzugeben.
+den :cb:`Weight` Callback zu nutzen und die Periode mit
+:func:`Set Weight Callback Period` vorzugeben.
 """
 }]
 })
@@ -59,20 +59,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Weight` callback is triggered
+Sets the period in ms with which the :cb:`Weight` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Weight` is only triggered if the weight has changed since the
+The :cb:`Weight` callback is only triggered if the weight has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Weight` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Weight` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Weight` wird nur ausgelöst wenn sich das Gewicht seit der
+Der :cb:`Weight` Callback wird nur ausgelöst wenn sich das Gewicht seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -88,11 +88,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetWeightCallbackPeriod`.
+Returns the period as set by :func:`Set Weight Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetWeightCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Weight Callback Period`
 gesetzt.
 """
 }]
@@ -108,7 +108,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`WeightReached` callback. 
+Sets the thresholds for the :cb:`Weight Reached` callback.
 
 The following options are possible:
 
@@ -126,7 +126,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`WeightReached` Callback.
+Setzt den Schwellwert für den :cb:`Weight Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -155,11 +155,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetWeightCallbackThreshold`.
+Returns the threshold as set by :func:`Set Weight Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetWeightCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Weight Callback Threshold`
 gesetzt.
 """
 }]
@@ -175,11 +175,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`WeightReached`
+* :cb:`Weight Reached`
 
 is triggered, if the threshold
 
-* :func:`SetWeightCallbackThreshold`
+* :func:`Set Weight Callback Threshold`
 
 keeps being reached.
 
@@ -189,11 +189,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`WeightReached`
+* :cb:`Weight Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetWeightCallbackThreshold`
+* :func:`Set Weight Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -210,11 +210,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -261,12 +261,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length moving average as set by :func:`SetMovingAverage`.
+Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
 Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
-:func:`SetMovingAverage` gesetzt.
+:func:`Set Moving Average` gesetzt.
 """
 }]
 })
@@ -394,7 +394,7 @@ The measurement rate and gain are configurable.
 
 The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.
 It is additionally possible to add a moving average
-(see :func:`SetMovingAverage`) to the measurements.
+(see :func:`Set Moving Average`) to the measurements.
 
 The gain can be 128x, 64x or 32x. It represents a measurement range of
 ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an
@@ -417,7 +417,7 @@ Für die Messungen sind Rate und Gain konfigurierbar.
 
 Die Rate kann auf 10Hz oder 80Hz gesetzt werden. Eine schnellere Rate
 erzeugt mehr Störungen. Zusätzlich ist es möglich einen gleitenden
-Mittelwert auf die Werte anzuwenden (siehe :func:`SetMovingAverage`).
+Mittelwert auf die Werte anzuwenden (siehe :func:`Set Moving Average`).
 
 Der Gain kann zwischen 128x, 64x und 32x konfiguriert werden. Er
 respräsentiert einenen Messbereich von ±20mV, ±40mV und ±80mV
@@ -451,11 +451,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -469,18 +469,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetWeightCallbackPeriod`. The :word:`parameter` is the weight
+:func:`Set Weight Callback Period`. The :word:`parameter` is the weight
 as measured by the load cell.
 
-:func:`Weight` is only triggered if the weight has changed since the
+The :cb:`Weight` callback is only triggered if the weight has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetWeightCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Weight Callback Period`,
 ausgelöst. Der :word:`parameter` ist das Gewicht wie von der Wägezelle gemessen.
 
-:func:`Weight` wird nur ausgelöst wenn sich das Gewicht seit der
+Der :cb:`Weight` Callback wird nur ausgelöst wenn sich das Gewicht seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -495,20 +495,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetWeightCallbackThreshold` is reached.
+:func:`Set Weight Callback Threshold` is reached.
 The :word:`parameter` is the weight as measured by the load cell.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetWeightCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Weight Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist das Gewicht wie von der Wägezelle gemessen.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

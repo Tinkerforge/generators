@@ -38,8 +38,8 @@ Returns the measured voltage. The value is in mV and
 between 0V and 42V. The resolution is approximately 10mV.
 
 If you want to get the voltage periodically, it is recommended to use the
-callback :func:`Voltage` and set the period with
-:func:`SetVoltageCallbackPeriod`.
+:cb:`Voltage` callback and set the period with
+:func:`Set Voltage Callback Period`.
 """,
 'de':
 """
@@ -47,8 +47,8 @@ Gibt die gemessene Spannung zurück. Der Wert ist in mV und im
 Bereich von 0 bis 42V. Die Auflösung ca. 10mV.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Voltage` zu nutzen und die Periode mit
-:func:`SetVoltageCallbackPeriod` vorzugeben.
+den :cb:`Voltage` Callback zu nutzen und die Periode mit
+:func:`Set Voltage Callback Period` vorzugeben.
 """
 }]
 })
@@ -65,8 +65,8 @@ Returns the value as read by a 12-bit analog-to-digital converter.
 The value is between 0 and 4095.
 
 If you want the analog value periodically, it is recommended to use the
-callback :func:`AnalogValue` and set the period with
-:func:`SetAnalogValueCallbackPeriod`.
+:cb:`Analog Value` callback and set the period with
+:func:`Set Analog Value Callback Period`.
 """,
 'de':
 """
@@ -74,8 +74,8 @@ Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`AnalogValue` zu nutzen und die Periode mit
-:func:`SetAnalogValueCallbackPeriod` vorzugeben.
+den :cb:`Analog Value` Callback zu nutzen und die Periode mit
+:func:`Set Analog Value Callback Period` vorzugeben.
 """
 }]
 })
@@ -88,20 +88,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Voltage` callback is triggered
+Sets the period in ms with which the :cb:`Voltage` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Voltage` is only triggered if the voltage has changed since the
-last triggering.
+The :cb:`Voltage` callback is only triggered if the voltage has changed since
+the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Voltage` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Voltage` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+Der :cb:`Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -117,11 +117,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetVoltageCallbackPeriod`.
+Returns the period as set by :func:`Set Voltage Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetVoltageCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Voltage Callback Period`
 gesetzt.
 """
 }]
@@ -135,21 +135,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`AnalogValue` callback is triggered
+Sets the period in ms with which the :cb:`Analog Value` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AnalogValue` is only triggered if the analog value has changed since the
-last triggering.
+The :cb:`Analog Value` callback is only triggered if the analog value has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -164,11 +164,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
+Returns the period as set by :func:`Set Analog Value Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAnalogValueCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Analog Value Callback Period`
 gesetzt.
 """
 }]
@@ -184,7 +184,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`VoltageReached` callback.
+Sets the thresholds for the :cb:`Voltage Reached` callback.
 
 The following options are possible:
 
@@ -202,7 +202,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`VoltageReached` Callback.
+Setzt den Schwellwert für den :cb:`Voltage Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -231,11 +231,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
+Returns the threshold as set by :func:`Set Voltage Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetVoltageCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Voltage Callback Threshold`
 gesetzt.
 """
 }]
@@ -251,7 +251,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`AnalogValueReached` callback.
+Sets the thresholds for the :cb:`Analog Value Reached` callback.
 
 The following options are possible:
 
@@ -269,7 +269,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
+Setzt den Schwellwert für den :cb:`Analog Value Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -298,11 +298,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
+Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetAnalogValueCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Analog Value Callback Threshold`
 gesetzt.
 """
 }]
@@ -318,13 +318,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`VoltageReached`,
-* :func:`AnalogValueReached`
+* :cb:`Voltage Reached`,
+* :cb:`Analog Value Reached`
 
 are triggered, if the thresholds
 
-* :func:`SetVoltageCallbackThreshold`,
-* :func:`SetAnalogValueCallbackThreshold`
+* :func:`Set Voltage Callback Threshold`,
+* :func:`Set Analog Value Callback Threshold`
 
 keep being reached.
 
@@ -334,13 +334,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`VoltageReached`,
-* :func:`AnalogValueReached`
+* :cb:`Voltage Reached`,
+* :cb:`Analog Value Reached`
 
 ausgelöst werden, wenn die Schwellwerte
 
-* :func:`SetVoltageCallbackThreshold`,
-* :func:`SetAnalogValueCallbackThreshold`
+* :func:`Set Voltage Callback Threshold`,
+* :func:`Set Analog Value Callback Threshold`
 
 weiterhin erreicht bleiben.
 
@@ -357,11 +357,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -408,12 +408,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length of the moving average as set by :func:`SetMovingAverage`.
+Returns the length of the moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
 Gibt die Länge des gleitenden Mittelwerts zurück, wie von
-:func:`SetMovingAverage` gesetzt.
+:func:`Set Moving Average` gesetzt.
 """
 }]
 })
@@ -427,18 +427,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
+:func:`Set Voltage Callback Period`. The :word:`parameter` is the voltage of the
 sensor.
 
-:func:`Voltage` is only triggered if the voltage has changed since the
-last triggering.
+Der :cb:`Voltage` callback is only triggered if the voltage has changed since
+the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die gemessene Spannung des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Voltage Callback Period`, ausgelöst. Der :word:`parameter` ist die
+gemessene Spannung des Sensors.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+Der :cb:`Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -453,19 +454,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value of the
-sensor.
+:func:`Set Analog Value Callback Period`. The :word:`parameter` is the analog
+value of the sensor.
 
-:func:`AnalogValue` is only triggered if the voltage has changed since the
-last triggering.
+The :cb:`Analog Value` callback is only triggered if the voltage has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Analog Value Callback Period`, ausgelöst. Der :word:`parameter` ist
+der Analogwert des Sensors.
 
-:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -479,20 +481,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetVoltageCallbackThreshold` is reached.
+:func:`Set Voltage Callback Threshold` is reached.
 The :word:`parameter` is the voltage of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
-:func:`SetVoltageCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Voltage Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die gemessene Spannung des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -506,20 +508,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetAnalogValueCallbackThreshold` is reached.
+:func:`Set Analog Value Callback Threshold` is reached.
 The :word:`parameter` is the analog value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
-:func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

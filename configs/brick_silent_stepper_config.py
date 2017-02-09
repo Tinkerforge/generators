@@ -35,16 +35,16 @@ com['packets'].append({
 Sets the maximum velocity of the stepper motor in steps per second.
 This function does *not* start the motor, it merely sets the maximum
 velocity the stepper motor is accelerated to. To get the motor running use
-either :func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` or
-:func:`DriveBackward`.
+either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
+:func:`Drive Backward`.
 """,
 'de':
 """
 Setzt die maximale Geschwindigkeit des Schrittmotors in Schritten je Sekunde.
 Diese Funktion startet *nicht* den Motor, sondern setzt nur die maximale
 Geschwindigkeit auf welche der Schrittmotor beschleunigt wird. Um den Motor zu fahren
-können :func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` oder
-:func:`DriveBackward` verwendet werden.
+können :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` oder
+:func:`Drive Backward` verwendet werden.
 """
 }]
 })
@@ -57,11 +57,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the velocity as set by :func:`SetMaxVelocity`.
+Returns the velocity as set by :func:`Set Max Velocity`.
 """,
 'de':
 """
-Gibt die Geschwindigkeit zurück, wie von :func:`SetMaxVelocity` gesetzt.
+Gibt die Geschwindigkeit zurück, wie von :func:`Set Max Velocity` gesetzt.
 """
 }]
 })
@@ -133,11 +133,11 @@ com['packets'].append({
 'en':
 """
 Returns the acceleration and deacceleration as set by 
-:func:`SetSpeedRamping`.
+:func:`Set Speed Ramping`.
 """,
 'de':
 """
-Gibt die Beschleunigung und Verzögerung zurück, wie von :func:`SetSpeedRamping` 
+Gibt die Beschleunigung und Verzögerung zurück, wie von :func:`Set Speed Ramping`
 gesetzt.
 """
 }]
@@ -205,17 +205,17 @@ com['packets'].append({
 """
 Returns the current position of the stepper motor in steps. On startup
 the position is 0. The steps are counted with all possible driving
-functions (:func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` or
-:func:`DriveBackward`). It also is possible to reset the steps to 0 or
-set them to any other desired value with :func:`SetCurrentPosition`.
+functions (:func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
+:func:`Drive Backward`). It also is possible to reset the steps to 0 or
+set them to any other desired value with :func:`Set Current Position`.
 """,
 'de':
 """
 Gibt die aktuelle Position des Schrittmotors in Schritten zurück. Nach dem 
 Hochfahren ist die Position 0. Die Schritte werden bei Verwendung aller möglichen
-Fahrfunktionen gezählt (:func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` der
-:func:`DriveBackward`). Es ist auch möglich den Schrittzähler auf 0 oder jeden anderen
-gewünschten Wert zu setzen mit :func:`SetCurrentPosition`.
+Fahrfunktionen gezählt (:func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` der
+:func:`Drive Backward`). Es ist auch möglich den Schrittzähler auf 0 oder jeden anderen
+gewünschten Wert zu setzen mit :func:`Set Current Position`.
 """
 }]
 })
@@ -229,26 +229,26 @@ com['packets'].append({
 'en':
 """
 Sets the target position of the stepper motor in steps. For example,
-if the current position of the motor is 500 and :func:`SetTargetPosition` is
+if the current position of the motor is 500 and :func:`Set Target Position` is
 called with 1000, the stepper motor will drive 500 steps forward. It will
 use the velocity, acceleration and deacceleration as set by
-:func:`SetMaxVelocity` and :func:`SetSpeedRamping`.
+:func:`Set Max Velocity` and :func:`Set Speed Ramping`.
 
-A call of :func:`SetTargetPosition` with the parameter *x* is equivalent to
-a call of :func:`SetSteps` with the parameter 
-(*x* - :func:`GetCurrentPosition`).
+A call of :func:`Set Target Position` with the parameter *x* is equivalent to
+a call of :func:`Set Steps` with the parameter
+(*x* - :func:`Get Current Position`).
 """,
 'de':
 """
 Setzt die Zielposition des Schrittmotors in Schritten. Beispiel:
-Wenn die aktuelle Position des Motors 500 ist und :func:`SetTargetPosition` mit 
+Wenn die aktuelle Position des Motors 500 ist und :func:`Set Target Position` mit
 1000 aufgerufen wird, dann verfährt der Schrittmotor 500 Schritte vorwärts. Dabei
 wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit 
-:func:`SetMaxVelocity` und :func:`SetSpeedRamping` gesetzt, verwendet.
+:func:`Set Max Velocity` und :func:`Set Speed Ramping` gesetzt, verwendet.
 
-Ein Aufruf von :func:`SetTargetPosition` mit dem Parameter *x* ist 
-äquivalent mit einem Aufruf von :func:`SetSteps` mit dem Parameter
-(*x* - :func:`GetCurrentPosition`).
+Ein Aufruf von :func:`Set Target Position` mit dem Parameter *x* ist
+äquivalent mit einem Aufruf von :func:`Set Steps` mit dem Parameter
+(*x* - :func:`Get Current Position`).
 """
 }]
 })
@@ -261,11 +261,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the last target position as set by :func:`SetTargetPosition`.
+Returns the last target position as set by :func:`Set Target Position`.
 """,
 'de':
 """
-Gibt die letzte Zielposition zurück, wie von :func:`SetTargetPosition`
+Gibt die letzte Zielposition zurück, wie von :func:`Set Target Position`
 gesetzt.
 """
 }]
@@ -282,14 +282,14 @@ com['packets'].append({
 Sets the number of steps the stepper motor should run. Positive values
 will drive the motor forward and negative values backward. 
 The velocity, acceleration and deacceleration as set by
-:func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
+:func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 """,
 'de':
 """
 Setzt die Anzahl der Schritte die der Schrittmotor fahren soll.
 Positive Werte fahren den Motor vorwärts und negative rückwärts.
 Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit 
-:func:`SetMaxVelocity` und :func:`SetSpeedRamping` gesetzt, verwendet.
+:func:`Set Max Velocity` und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
 }]
 })
@@ -302,11 +302,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the last steps as set by :func:`SetSteps`.
+Returns the last steps as set by :func:`Set Steps`.
 """,
 'de':
 """
-Gibt die letzten Schritte zurück, wie von :func:`SetSteps` gesetzt.
+Gibt die letzten Schritte zurück, wie von :func:`Set Steps` gesetzt.
 """
 }]
 })
@@ -319,16 +319,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the remaining steps of the last call of :func:`SetSteps`.
-For example, if :func:`SetSteps` is called with 2000 and 
-:func:`GetRemainingSteps` is called after the motor has run for 500 steps,
+Returns the remaining steps of the last call of :func:`Set Steps`.
+For example, if :func:`Set Steps` is called with 2000 and
+:func:`Get Remaining Steps` is called after the motor has run for 500 steps,
 it will return 1500.
 """,
 'de':
 """
-Gibt die verbleibenden Schritte des letzten Aufrufs von :func:`SetSteps`
-zurück. Beispiel: Wenn :func:`SetSteps` mit 2000 aufgerufen wird und 
-:func:`GetRemainingSteps` aufgerufen wird wenn der Motor 500 Schritte fahren
+Gibt die verbleibenden Schritte des letzten Aufrufs von :func:`Set Steps`
+zurück. Beispiel: Wenn :func:`Set Steps` mit 2000 aufgerufen wird und
+:func:`Get Remaining Steps` aufgerufen wird wenn der Motor 500 Schritte fahren
 hat, wird 1500 zurückgegeben.
 """
 }]
@@ -389,11 +389,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the step mode as set by :func:`SetStepConfiguration`.
+Returns the step mode as set by :func:`Set Step Configuration`.
 """,
 'de':
 """
-Gibt den Schrittmodus zurück, wie von :func:`SetStepConfiguration` gesetzt.
+Gibt den Schrittmodus zurück, wie von :func:`Set Step Configuration` gesetzt.
 """
 }]
 })
@@ -406,16 +406,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Drives the stepper motor forward until :func:`DriveBackward` or
+Drives the stepper motor forward until :func:`Drive Backward` or
 :func:`Stop` is called. The velocity, acceleration and deacceleration as 
-set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
+set by :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 """,
 'de':
 """
-Fährt den Schrittmotor vorwärts bis :func:`DriveBackward` oder
+Fährt den Schrittmotor vorwärts bis :func:`Drive Backward` oder
 :func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit, 
-Beschleunigung und Verzögerung, wie mit :func:`SetMaxVelocity`
-und :func:`SetSpeedRamping` gesetzt, verwendet.
+Beschleunigung und Verzögerung, wie mit :func:`Set Max Velocity`
+und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
 }]
 })
@@ -428,16 +428,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Drives the stepper motor backward until :func:`DriveForward` or
+Drives the stepper motor backward until :func:`Drive Forward` or
 :func:`Stop` is triggered. The velocity, acceleration and deacceleration as
-set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
+set by :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 """,
 'de':
 """
-Fährt den Schrittmotor rückwärts bis :func:`DriveForward` oder
+Fährt den Schrittmotor rückwärts bis :func:`Drive Forward` oder
 :func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit, 
-Beschleunigung und Verzögerung, wie mit :func:`SetMaxVelocity`
-und :func:`SetSpeedRamping` gesetzt, verwendet.
+Beschleunigung und Verzögerung, wie mit :func:`Set Max Velocity`
+und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
 }]
 })
@@ -451,12 +451,12 @@ com['packets'].append({
 'en':
 """
 Stops the stepper motor with the deacceleration as set by 
-:func:`SetSpeedRamping`.
+:func:`Set Speed Ramping`.
 """,
 'de':
 """
 Stoppt den Schrittmotor mit der Verzögerung, wie von 
-:func:`SetSpeedRamping` gesetzt.
+:func:`Set Speed Ramping` gesetzt.
 """
 }]
 })
@@ -575,11 +575,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current as set by :func:`SetMotorCurrent`.
+Returns the current as set by :func:`Set Motor Current`.
 """,
 'de':
 """
-Gibt den Strom zurück, wie von :func:`SetMotorCurrent` gesetzt.
+Gibt den Strom zurück, wie von :func:`Set Motor Current` gesetzt.
 """
 }]
 })
@@ -669,12 +669,11 @@ Sets the basic configuration parameters for the different modes (stealth, coolst
 * Standstill Current: This value can be used to lower the current during stand still. It takes
   effect after the Power Down Time and the transition time can be controlled with the Standstill Delay 
   Time. The unit is in mA and the maximum allowed value is the current motor current 
-  (see :func:`SetMotorCurrent`).
+  (see :func:`Set Motor Current`).
 
 * Motor Run Current: The value is applied as a factor to the max current when the motor is
   running. Use a value of at least 16 for good microstep performance. The unit is in mA and the 
-  maximum allowed value is the current motor current (see :func:`SetMotorCurrent`).
-
+  maximum allowed value is the current motor current (see :func:`Set Motor Current`).
 
 * Standstill Delay Time: Controls the duration for motor power down after a motion 
   as soon as standstill is detected and the Power Down Time is expired. A high Standstill Delay
@@ -735,11 +734,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the configuration as set by :func:`SetBasicConfiguration`.
+Returns the configuration as set by :func:`Set Basic Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetBasicConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Basic Configuration` gesetzt.
 """
 }]
 })
@@ -837,11 +836,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetBasicConfiguration`.
+Returns the configuration as set by :func:`Set Basic Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetBasicConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Basic Configuration` gesetzt.
 """
 }]
 })
@@ -868,7 +867,7 @@ the values as default!
 Sets the configuration relevant for stealth mode.
 
 * Enable Stealth: If set to true the stealth mode is enabled, if set to false the
-  stealth mode is disabled, even if the speed is below the threshold set in :func:`SetBasicConfiguration`.
+  stealth mode is disabled, even if the speed is below the threshold set in :func:`Set Basic Configuration`.
 
 * Amplitude: If autoscale is disabled, the PWM amplitude is scaled by this value. If autoscale is enabled,
   this value defines the maximum PWM amplitude change per half wave. The value range is 0-255.
@@ -884,7 +883,7 @@ Sets the configuration relevant for stealth mode.
   PWM cycle.
 
 * Freewheel Mode: The freewheel mode defines the behavior in stand still if the Standstill Current
-  (see :func:`SetBasicConfiguration`) is set to 0.
+  (see :func:`Set Basic Configuration`) is set to 0.
 
 The default values are:
 
@@ -919,11 +918,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetStealthConfiguration`.
+Returns the configuration as set by :func:`Set Stealth Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetStealthConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Stealth Configuration` gesetzt.
 """
 }]
 })
@@ -971,7 +970,7 @@ Sets the configuration relevant for coolstep.
 * Minimum Current: Sets the minimum current for coolstep current control. You can choose between
   half and quarter of the run current.
 
-* Stallguard Threshold Value: Sets the level for stall output (see :func:`GetDriverStatus`). The value
+* Stallguard Threshold Value: Sets the level for stall output (see :func:`Get Driver Status`). The value
   range is -64 to +63. A lower value gives a higher sensitivity. You have to find a suitable value for your
   motor by trial and error, 0 works for most motors.
 
@@ -1018,11 +1017,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetCoolstepConfiguration`.
+Returns the configuration as set by :func:`Set Coolstep Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetCoolstepConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Coolstep Configuration` gesetzt.
 """
 }]
 })
@@ -1071,11 +1070,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetMiscConfiguration`.
+Returns the configuration as set by :func:`Set Misc Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetMiscConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Misc Configuration` gesetzt.
 """
 }]
 })
@@ -1126,7 +1125,7 @@ Returns the current driver status.
   During stand still this value can not be used for stall detection, it shows the chopper on-time for motor coil A.
 
 * Stealth Voltage Amplitude: Shows the actual PWM scaling. In Stealth mode it can be used to detect motor load and
-  stall if autoscale is enabled (see :func:`SetStealthConfiguration`).
+  stall if autoscale is enabled (see :func:`Set Stealth Configuration`).
 
 """,
 'de':
@@ -1143,7 +1142,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
+Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the Stepper Brick is 8V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do 
@@ -1153,7 +1152,7 @@ The default value is 8V.
 """,
 'de':
 """
-Setzt die minimale Spannung in mV, bei welcher der :func:`UnderVoltage` Callback
+Setzt die minimale Spannung in mV, bei welcher der :cb:`Under Voltage` Callback
 ausgelöst wird. Der kleinste mögliche Wert mit dem der Stepper Brick noch funktioniert,
 ist 8V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
@@ -1172,11 +1171,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the minimum voltage as set by :func:`SetMinimumVoltage`.
+Returns the minimum voltage as set by :func:`Set Minimum Voltage`.
 """,
 'de':
 """
-Gibt die minimale Spannung zurück, wie von :func:`SetMinimumVoltage` gesetzt.
+Gibt die minimale Spannung zurück, wie von :func:`Set Minimum Voltage` gesetzt.
 """
 }]
 })
@@ -1190,13 +1189,13 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`SetMinimumVoltage`. The :word:`parameter` is the current voltage given
+:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage given
 in mV.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn die Eingangsspannung unter den, mittels
-:func:`SetMinimumVoltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
+:func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
 ist die aktuelle Spannung in mV.
 """
 }]
@@ -1210,23 +1209,23 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered when a position set by :func:`SetSteps` or
-:func:`SetTargetPosition` is reached.
+This callback is triggered when a position set by :func:`Set Steps` or
+:func:`Set Target Position` is reached.
 
 .. note::
  Since we can't get any feedback from the stepper motor, this only works if the
- acceleration (see :func:`SetSpeedRamping`) is set smaller or equal to the
+ acceleration (see :func:`Set Speed Ramping`) is set smaller or equal to the
  maximum acceleration of the motor. Otherwise the motor will lag behind the
  control value and the callback will be triggered too early.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
-:func:`SetSteps` oder :func:`SetTargetPosition` gesetzt, erreicht wird. 
+:func:`Set Steps` oder :func:`Set Target Position` gesetzt, erreicht wird.
 
 .. note::
  Da es nicht möglich ist eine Rückmeldung vom Schrittmotor zu erhalten,
- funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`SetSpeedRamping`)
+ funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`Set Speed Ramping`)
  kleiner oder gleich der maximalen Beschleunigung des Motors ist. Andernfalls
  wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
  zu früh ausgelöst.
@@ -1273,11 +1272,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the time base as set by :func:`SetTimeBase`.
+Returns the time base as set by :func:`Set Time Base`.
 """,
 'de':
 """
-Gibt die Zeitbasis zurück, wie von :func:`SetTimeBase` gesetzt.
+Gibt die Zeitbasis zurück, wie von :func:`Set Time Base` gesetzt.
 """
 }]
 })
@@ -1299,7 +1298,7 @@ Returns the following :word:`parameters`: The current velocity,
 the current position, the remaining steps, the stack voltage, the external
 voltage and the current consumption of the stepper motor.
 
-There is also a callback for this function, see :func:`AllData`.
+There is also a callback for this function, see :cb:`All Data` callback.
 """,
 'de':
 """
@@ -1308,7 +1307,8 @@ Geschwindigkeit, die aktuelle Position, die verbleibenden Schritte,
 die Spannung des Stapels, die externe Spannung und der aktuelle Stromverbrauch
 des Schrittmotors.
 
-Es existiert auch ein Callback für diese Funktion, siehe :func:`AllData`.
+Es existiert auch ein Callback für diese Funktion, siehe :cb:`All Data`
+Callback.
 """
 }]
 })
@@ -1321,12 +1321,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`AllData` callback is triggered
+Sets the period in ms with which the :cb:`All Data` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`AllData` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`AllData` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 """
 }]
@@ -1340,11 +1340,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAllDataPeriod`.
+Returns the period as set by :func:`Set All Data Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAllDataPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 """
 }]
 })
@@ -1363,13 +1363,13 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAllDataPeriod`. The :word:`parameters` are: the current velocity,
+:func:`Set All Data Period`. The :word:`parameters` are: the current velocity,
 the current position, the remaining steps, the stack voltage, the external
 voltage and the current consumption of the stepper motor.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAllDataPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set All Data Period`,
 ausgelöst. Die :word:`parameters` sind die aktuelle Geschwindigkeit,
 die aktuelle Position, die verbleibenden Schritte, die Spannung des Stapels, die
 externe Spannung und der aktuelle Stromverbrauch des Schrittmotors.

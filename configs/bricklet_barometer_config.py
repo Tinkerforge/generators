@@ -39,18 +39,18 @@ has a range of 10000 to 1200000 and is given in mbar/1000, i.e. a value
 of 1001092 means that an air pressure of 1001.092 mbar is measured.
 
 If you want to get the air pressure periodically, it is recommended to use the
-callback :func:`AirPressure` and set the period with
-:func:`SetAirPressureCallbackPeriod`.
+:cb:`Air Pressure` callback and set the period with
+:func:`Set Air Pressure Callback Period`.
 """,
 'de':
 """
 Gibt den Luftdruck des Luftdrucksensors zurück. Der Wertbereich
-geht von 10000 bis 1200000 und ist in mbar/1000 angegeben, d.h. bei einem Wert von
-1001092 wurde ein Luftdruck von 1001,092 mbar gemessen.
+geht von 10000 bis 1200000 und ist in mbar/1000 angegeben, d.h. bei einem Wert
+von 1001092 wurde ein Luftdruck von 1001,092 mbar gemessen.
 
 Wenn der Luftdruck periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`AirPressure` zu nutzen und die Periode mit 
-:func:`SetAirPressureCallbackPeriod` vorzugeben.
+den :cb:`Air Pressure` Callback zu nutzen und die Periode mit
+:func:`Set Air Pressure Callback Period` vorzugeben.
 """
 }]
 })
@@ -65,22 +65,22 @@ com['packets'].append({
 """
 Returns the relative altitude of the air pressure sensor. The value is given in
 cm and is calculated based on the difference between the current air pressure
-and the reference air pressure that can be set with :func:`SetReferenceAirPressure`.
+and the reference air pressure that can be set with :func:`Set Reference Air Pressure`.
 
 If you want to get the altitude periodically, it is recommended to use the
-callback :func:`Altitude` and set the period with
-:func:`SetAltitudeCallbackPeriod`.
+:cb:`Altitude` callback and set the period with
+:func:`Set Altitude Callback Period`.
 """,
 'de':
 """
 Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert ist in cm angegeben
 und wird auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem
-Referenzluftdruck berechnet, welcher mit :func:`SetReferenceAirPressure` gesetzt
-werden kann.
+Referenzluftdruck berechnet, welcher mit :func:`Set Reference Air Pressure`
+gesetzt werden kann.
 
-Wenn die Höhe periodisch abgefragt werden soll, wird empfohlen den Callback
-:func:`Altitude` zu nutzen und die Periode mit :func:`SetAltitudeCallbackPeriod`
-vorzugeben.
+Wenn die Höhe periodisch abgefragt werden soll, wird empfohlen den
+:cb:`Altitude` Callback zu nutzen und die Periode mit
+:func:`Set Altitude Callback Period` vorzugeben.
 """
 }]
 })
@@ -93,21 +93,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`AirPressure` callback is triggered
+Sets the period in ms with which the :cb:`Air Pressure` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AirPressure` is only triggered if the air pressure has changed since the
-last triggering.
+The :cb:`Air Pressure` callback is only triggered if the air pressure has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`AirPressure` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Air Pressure` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`AirPressure` wird nur ausgelöst wenn sich der Luftdruck seit der
-letzten Auslösung geändert hat.
+Der :cb:`Air Pressure` Callback wird nur ausgelöst wenn sich der Luftdruck
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -122,11 +122,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAirPressureCallbackPeriod`.
+Returns the period as set by :func:`Set Air Pressure Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAirPressureCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Air Pressure Callback Period`
 gesetzt.
 """
 }]
@@ -140,21 +140,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Altitude` callback is triggered
+Sets the period in ms with which the :cb:`Altitude` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Altitude` is only triggered if the altitude has changed since the
-last triggering.
+The :cb:`Altitude` callback is only triggered if the altitude has changed since
+the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Altitude` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Altitude` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Altitude` wird nur ausgelöst wenn sich Höhe seit der letzten Auslösung
-geändert hat.
+Der :cb:`Altitude` Callback wird nur ausgelöst wenn sich Höhe seit der letzten
+Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -169,11 +169,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAltitudeCallbackPeriod`.
+Returns the period as set by :func:`Set Altitude Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAltitudeCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Altitude Callback Period`
 gesetzt.
 """
 }]
@@ -189,7 +189,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`AirPressureReached` callback.
+Sets the thresholds for the :cb:`Air Pressure Reached` callback.
 
 The following options are possible:
 
@@ -207,7 +207,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`AirPressureReached` Callback.
+Setzt den Schwellwert für den :cb:`Air Pressure Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -236,11 +236,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetAirPressureCallbackThreshold`.
+Returns the threshold as set by :func:`Set Air Pressure Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetAirPressureCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Air Pressure Callback Threshold`
 gesetzt.
 """
 }]
@@ -256,7 +256,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`AltitudeReached` callback.
+Sets the thresholds for the :cb:`Altitude Reached` callback.
 
 The following options are possible:
 
@@ -274,7 +274,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`AltitudeReached` Callback.
+Setzt den Schwellwert für den :cb:`Altitude Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -303,11 +303,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetAltitudeCallbackThreshold`.
+Returns the threshold as set by :func:`Set Altitude Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetAltitudeCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Altitude Callback Threshold`
 gesetzt.
 """
 }]
@@ -323,13 +323,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`AirPressureReached`,
-* :func:`AltitudeReached`
+* :cb:`Air Pressure Reached`,
+* :cb:`Altitude Reached`
 
 are triggered, if the thresholds
 
-* :func:`SetAirPressureCallbackThreshold`,
-* :func:`SetAltitudeCallbackThreshold`
+* :func:`Set Air Pressure Callback Threshold`,
+* :func:`Set Altitude Callback Threshold`
 
 keep being reached.
 
@@ -339,13 +339,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`AirPressureReached`,
-* :func:`AltitudeReached`
+* :cb:`Air Pressure Reached`,
+* :cb:`Altitude Reached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
-* :func:`SetAirPressureCallbackThreshold`,
-* :func:`SetAltitudeCallbackThreshold`
+* :func:`Set Air Pressure Callback Threshold`,
+* :func:`Set Altitude Callback Threshold`
  
 weiterhin erreicht bleiben.
 
@@ -362,11 +362,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -450,19 +450,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAirPressureCallbackPeriod`. The :word:`parameter` is the air pressure of the
-air pressure sensor.
+:func:`Set Air Pressure Callback Period`. The :word:`parameter` is the air
+pressure of the air pressure sensor.
 
-:func:`AirPressure` is only triggered if the air pressure has changed since the
-last triggering.
+The :cb:`Air Pressure` callback is only triggered if the air pressure has
+changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAirPressureCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist der Luftdruck des Luftdrucksensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Air Pressure Callback Period`, ausgelöst. Der :word:`parameter` ist
+der Luftdruck des Luftdrucksensors.
 
-:func:`AirPressure` wird nur ausgelöst wenn sich der Luftdruck seit der
-letzten Auslösung geändert hat.
+Der :cb:`Air Pressure` Callback wird nur ausgelöst wenn sich der Luftdruck
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -476,18 +477,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAltitudeCallbackPeriod`. The :word:`parameter` is the altitude of the
-air pressure sensor.
+:func:`Set Altitude Callback Period`. The :word:`parameter` is the altitude of
+the air pressure sensor.
 
-:func:`Altitude` is only triggered if the altitude has changed since the
-last triggering.
+The :cb:`Altitude` callback is only triggered if the altitude has changed since
+the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAltitudeCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Höhe des Luftdrucksensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Altitude Callback Period`, ausgelöst. Der :word:`parameter` ist
+die Höhe des Luftdrucksensors.
 
-:func:`Altitude` wird nur ausgelöst wenn sich die Höhe seit der
+Der :cb:`Altitude` Callback wird nur ausgelöst wenn sich die Höhe seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -502,20 +504,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetAirPressureCallbackThreshold` is reached.
+:func:`Set Air Pressure Callback Threshold` is reached.
 The :word:`parameter` is the air pressure of the air pressure sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetAirPressureCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Air Pressure Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Luftdruck des Luftdrucksensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -529,20 +531,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetAltitudeCallbackThreshold` is reached.
+:func:`Set Altitude Callback Threshold` is reached.
 The :word:`parameter` is the altitude of the air pressure sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetAltitudeCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Altitude Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Höhe des Luftdrucksensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -555,11 +557,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the reference air pressure as set by :func:`SetReferenceAirPressure`.
+Returns the reference air pressure as set by :func:`Set Reference Air Pressure`.
 """,
 'de':
 """
-Gibt den Referenzluftdruckwert zurück, wie von :func:`SetReferenceAirPressure`
+Gibt den Referenzluftdruckwert zurück, wie von :func:`Set Reference Air Pressure`
 gesetzt.
 """
 }]
@@ -630,11 +632,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the averaging configuration as set by :func:`SetAveraging`.
+Returns the averaging configuration as set by :func:`Set Averaging`.
 """,
 'de':
 """
-Gibt die Averaging-Konfiguration zurück, wie von :func:`SetAveraging`
+Gibt die Averaging-Konfiguration zurück, wie von :func:`Set Averaging`
 gesetzt.
 """
 }]

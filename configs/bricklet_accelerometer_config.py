@@ -40,8 +40,8 @@ Returns the acceleration in x, y and z direction. The values
 are given in g/1000 (1g = 9.80665m/s²), not to be confused with grams.
 
 If you want to get the acceleration periodically, it is recommended 
-to use the callback :func:`Acceleration` and set the period with 
-:func:`SetAccelerationCallbackPeriod`.
+to use the :cb:`Acceleration` callback and set the period with
+:func:`Set Acceleration Callback Period`.
 """,
 'de':
 """
@@ -49,8 +49,8 @@ Gibt die Beschleunigung in X-, Y- und Z-Richtung zurück. Die Werte
 haben die Einheit g/1000 (1g = 9,80665m/s²), nicht zu verwechseln mit Gramm.
 
 Wenn die Beschleunigungswerte periodisch abgefragt werden sollen, wird empfohlen
-den Callback :func:`Acceleration` zu nutzen und die Periode mit 
-:func:`SetAccelerationCallbackPeriod` vorzugeben.
+den :cb:`Acceleration` Callback zu nutzen und die Periode mit
+:func:`Set Acceleration Callback Period` vorzugeben.
 """
 }]
 })
@@ -63,21 +63,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Acceleration` callback is triggered
+Sets the period in ms with which the :cb:`Acceleration` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Acceleration` is only triggered if the acceleration has changed since the
-last triggering.
+The :cb:`Acceleration` callback is only triggered if the acceleration has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Acceleration` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Acceleration` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Acceleration` wird nur ausgelöst wenn sich die Acceleration seit der
-letzten Auslösung geändert hat.
+Der :cb:`Acceleration` Callback wird nur ausgelöst wenn sich die Acceleration
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -92,11 +92,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAccelerationCallbackPeriod`.
+Returns the period as set by :func:`Set Acceleration Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAccelerationCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Acceleration Callback Period`
 gesetzt.
 """
 }]
@@ -116,7 +116,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`AccelerationReached` callback. 
+Sets the thresholds for the :cb:`Acceleration Reached` callback.
 
 The following options are possible:
 
@@ -134,7 +134,7 @@ The default value is ('x', 0, 0, 0, 0, 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`AccelerationReached` Callback.
+Setzt den Schwellwert für den :cb:`Acceleration Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -167,11 +167,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetAccelerationCallbackThreshold`.
+Returns the threshold as set by :func:`Set Acceleration Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetAccelerationCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Acceleration Callback Threshold`
 gesetzt.
 """
 }]
@@ -187,11 +187,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`AccelerationReached`
+* :cb:`Acceleration Reached`
 
 is triggered, if the threshold
 
-* :func:`SetAccelerationCallbackThreshold`
+* :func:`Set Acceleration Callback Threshold`
 
 keeps being reached.
 
@@ -201,11 +201,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`AccelerationReached`
+* :cb:`Acceleration Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetAccelerationCallbackThreshold`
+* :func:`Set Acceleration Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -222,11 +222,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -332,11 +332,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -403,20 +403,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAccelerationCallbackPeriod`. The :word:`parameters` are the
+:func:`Set Acceleration Callback Period`. The :word:`parameters` are the
 X, Y and Z acceleration.
 
-:func:`Acceleration` is only triggered if the acceleration has changed since the
-last triggering.
+The :cb:`Acceleration` callback is only triggered if the acceleration has
+changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAccelerationCallbackPeriod`,
-ausgelöst. Die :word:`parameter` sind die Beschleunigungen der X-, Y- und 
-Z-Achse.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Acceleration Callback Period`, ausgelöst. Die :word:`parameter`
+sind die Beschleunigungen der X-, Y- und Z-Achse.
 
-:func:`Acceleration` wird nur ausgelöst wenn sich die Beschleunigung seit der
-letzten Auslösung geändert hat.
+Der :cb:`Acceleration` Callback wird nur ausgelöst wenn sich die Beschleunigung
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -432,20 +432,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetAccelerationCallbackThreshold` is reached.
+:func:`Set Acceleration Callback Threshold` is reached.
 The :word:`parameters` are the X, Y and Z acceleration.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetAccelerationCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Acceleration Callback Threshold` gesetzt, erreicht wird.
 Die :word:`parameter` sind die Beschleunigungen der X-, Y- und Z-Achse.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

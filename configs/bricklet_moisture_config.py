@@ -39,8 +39,8 @@ Returns the current moisture value. The value has a range of
 value corresponds to much moisture.
 
 If you want to get the moisture value periodically, it is recommended 
-to use the callback :func:`Moisture` and set the period with 
-:func:`SetMoistureCallbackPeriod`.
+to use the :cb:`Moisture` callback and set the period with
+:func:`Set Moisture Callback Period`.
 """,
 'de':
 """
@@ -50,8 +50,8 @@ geringen Feuchtigkeit, ein großer Wert entspricht einer hohen
 Feuchtigkeit.
 
 Wenn der Feuchtigkeitswert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Moisture` zu nutzen und die Periode mit 
-:func:`SetMoistureCallbackPeriod` vorzugeben.
+den :cb:`Moisture` Callback zu nutzen und die Periode mit
+:func:`Set Moisture Callback Period` vorzugeben.
 """
 }]
 })
@@ -64,21 +64,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Moisture` callback is triggered
+Sets the period in ms with which the :cb:`Moisture` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Moisture` is only triggered if the moisture value has changed since the
-last triggering.
+The :cb:`Moisture` callback is only triggered if the moisture value has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Moisture` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Moisture` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Moisture` wird nur ausgelöst wenn sich der Feuchtigkeitswert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Moisture` Callback wird nur ausgelöst wenn sich der Feuchtigkeitswert
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -93,11 +93,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetMoistureCallbackPeriod`.
+Returns the period as set by :func:`Set Moisture Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetMoistureCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Moisture Callback Period`
 gesetzt.
 """
 }]
@@ -113,7 +113,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`MoistureReached` callback. 
+Sets the thresholds for the :cb:`Moisture Reached` callback.
 
 The following options are possible:
 
@@ -131,7 +131,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`MoistureReached` Callback.
+Setzt den Schwellwert für den :cb:`Moisture Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -160,11 +160,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetMoistureCallbackThreshold`.
+Returns the threshold as set by :func:`Set Moisture Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetMoistureCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Moisture Callback Threshold`
 gesetzt.
 """
 }]
@@ -180,11 +180,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`MoistureReached`
+* :cb:`Moisture Reached`
 
 is triggered, if the threshold
 
-* :func:`SetMoistureCallbackThreshold`
+* :func:`Set Moisture Callback Threshold`
 
 keeps being reached.
 
@@ -194,11 +194,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`MoistureReached`
+* :cb:`Moisture Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetMoistureCallbackThreshold`
+* :func:`Set Moisture Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -215,11 +215,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -234,19 +234,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetMoistureCallbackPeriod`. The :word:`parameter` is the moisture value
-of the sensor.
+:func:`Set Moisture Callback Period`. The :word:`parameter` is the
+moisture value of the sensor.
 
-:func:`Moisture` is only triggered if the moisture value has changed since the
-last triggering.
+The :cb:`Moisture` callback is only triggered if the moisture value has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetMoistureCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Moisture Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Feuchtigkeitswert des Sensors.
 
-:func:`Moisture` wird nur ausgelöst wenn sich der Feuchtigkeitswert seit der
-letzten Auslösung geändert hat.
+The :cb:`Moisture` Callback wird nur ausgelöst wenn sich der Feuchtigkeitswert
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -260,20 +260,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetMoistureCallbackThreshold` is reached.
+:func:`Set Moisture Callback Threshold` is reached.
 The :word:`parameter` is the moisture value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetMoistureCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Moisture Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Feuchtigkeitswert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -319,12 +319,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length moving average as set by :func:`SetMovingAverage`.
+Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
 Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
-:func:`SetMovingAverage` gesetzt.
+:func:`Set Moving Average` gesetzt.
 """
 }]
 })

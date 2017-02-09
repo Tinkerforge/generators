@@ -42,8 +42,8 @@ in the supply voltage result in deviations in the distance values) and is
 non-linear (resolution is bigger at close range).
 
 If you want to get the distance value periodically, it is recommended to
-use the callback :func:`Distance` and set the period with 
-:func:`SetDistanceCallbackPeriod`.
+use the :cb:`Distance` callback and set the period with
+:func:`Set Distance Callback Period`.
 """,
 'de':
 """
@@ -56,8 +56,8 @@ zu Abweichungen in den Entfernungswerten) und ist nicht-linear (Auflösung ist
 größer im Nahbereich).
 
 Wenn der Entfernungswert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Distance` zu nutzen und die Periode mit 
-:func:`SetDistanceCallbackPeriod` vorzugeben.
+den :cb:`Distance` Callback zu nutzen und die Periode mit
+:func:`Set Distance Callback Period` vorzugeben.
 """
 }]
 })
@@ -70,21 +70,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Distance` callback is triggered
+Sets the period in ms with which the :cb:`Distance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Distance` is only triggered if the distance value has changed since the
-last triggering.
+Der :cb:`Distance` callback is only triggered if the distance value has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Distance` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Distance` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Distance` wird nur ausgelöst wenn sich der Entfernungswert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Distance` Callback wird nur ausgelöst wenn sich der Entfernungswert
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -99,11 +99,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetDistanceCallbackPeriod`.
+Returns the period as set by :func:`Set Distance Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetDistanceCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Distance Callback Period`
 gesetzt.
 """
 }]
@@ -119,7 +119,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`DistanceReached` callback. 
+Sets the thresholds for the :cb:`Distance Reached` callback.
 
 The following options are possible:
 
@@ -137,7 +137,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`DistanceReached` Callback.
+Setzt den Schwellwert für den :cb:`Distance Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -166,11 +166,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
+Returns the threshold as set by :func:`Set Distance Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetDistanceCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Distance Callback Threshold`
 gesetzt.
 """
 }]
@@ -186,11 +186,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`DistanceReached`,
+* :cb:`Distance Reached`,
 
 are triggered, if the thresholds
 
-* :func:`SetDistanceCallbackThreshold`,
+* :func:`Set Distance Callback Threshold`,
 
 keep being reached.
 
@@ -200,11 +200,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`DistanceReached`,
+* :cb:`Distance Reached`,
  
 ausgelöst werden, wenn die Schwellwerte 
 
-* :func:`SetDistanceCallbackThreshold`,
+* :func:`Set Distance Callback Threshold`,
  
 weiterhin erreicht bleiben.
 
@@ -221,11 +221,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -240,19 +240,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetDistanceCallbackPeriod`. The :word:`parameter` is the distance value
+:func:`Set Distance Callback Period`. The :word:`parameter` is the distance value
 of the sensor.
 
-:func:`Distance` is only triggered if the distance value has changed since the
-last triggering.
+The :cb:`Distance` callback is only triggered if the distance value has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetDistanceCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Distance Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Entfernungswert des Sensors.
 
-:func:`Distance` wird nur ausgelöst wenn sich der Entfernungswert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Distance` Callback wird nur ausgelöst wenn sich der Entfernungswert
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -266,20 +266,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetDistanceCallbackThreshold` is reached.
+:func:`Set Distance Callback Threshold` is reached.
 The :word:`parameter` is the distance value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetDistanceCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Distance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Entfernungswert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -325,12 +325,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length moving average as set by :func:`SetMovingAverage`.
+Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
 Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
-:func:`SetMovingAverage` gesetzt.
+:func:`Set Moving Average` gesetzt.
 """
 }]
 })

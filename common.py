@@ -1528,24 +1528,30 @@ class Device(NameMixin):
 
         return self.get_underscore_name() + '_' + self.get_underscore_category()
 
-    def specialize_doc_function_links(self, text, specializer, prefix=None):
-        for packet in self.get_packets():
-            generic_name = ':func:`{0}`'.format(packet.get_camel_case_name())
+    def specialize_doc_links(self, keyword, type_, text, specializer, prefix=None):
+        for packet in self.get_packets(type_):
+            generic_name = ':{0}:`{1}`'.format(keyword, packet.get_name())
             special_name = specializer(packet)
 
             text = text.replace(generic_name, special_name)
 
         if prefix != None:
-            p = '(?<!:' + prefix + ')(:func:`[^`]*`)'
+            p = '(?<!:' + prefix + ')(:' + keyword + ':`[^`]*`)'
         else:
-            p = '(:func:`[^`]*`)'
+            p = '(:' + keyword + ':`[^`]*`)'
 
         m = re.search(p, text)
 
         if m != None:
-            raise GeneratorError('Unknown :func: found: ' + m.group(1))
+            raise GeneratorError('Unknown :{0}: found: {1}'.format(keyword, m.group(1)))
 
         return text
+
+    def specialize_doc_function_links(self, text, specializer, prefix=None):
+        return self.specialize_doc_links('func', 'function', text, specializer, prefix)
+
+    def specialize_doc_callback_links(self, text, specializer, prefix=None):
+        return self.specialize_doc_links('cb', 'callback', text, specializer, prefix)
 
     def get_examples(self):
         return self.examples

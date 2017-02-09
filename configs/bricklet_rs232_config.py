@@ -41,7 +41,7 @@ The length of the string has to be given as an additional parameter.
 
 The return value is the number of bytes that could be written.
 
-See :func:`SetConfiguration` for configuration possibilities
+See :func:`Set Configuration` for configuration possibilities
 regarding baudrate, parity and so on.
 """,
 'de':
@@ -53,7 +53,7 @@ Die Länge des Strings muss als ein zusätzlicher Parameter angegeben werden.
 
 Der Rückgabewert ist die Anzahl der Zeichen die geschrieben werden konnten.
 
-Siehe :func:`SetConfiguration` für Konfigurationsmöglichkeiten
+Siehe :func:`Set Configuration` für Konfigurationsmöglichkeiten
 bezüglich Baudrate, Parität usw.
 """
 }]
@@ -73,7 +73,7 @@ of message is 60. If the length is given as 0, there was no
 new data available.
 
 Instead of polling with this function, you can also use
-callbacks. See :func:`EnableReadCallback` and :func:`ReadCallback`.
+callbacks. See :func:`Enable Read Callback` and :cb:`Read Callback` callback.
 """,
 'de':
 """
@@ -82,8 +82,8 @@ beträgt 60. Wenn die Länge als 0 gegeben wird, waren keine
 neuen Daten verfügbar.
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich
-Callbacks zu nutzen. Siehe :func:`EnableReadCallback` und
-:func:`ReadCallback`.
+Callbacks zu nutzen. Siehe :func:`Enable Read Callback` und
+:cb:`Read Callback` Callback.
 """
 }]
 })
@@ -96,13 +96,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`ReadCallback`.
+Enables the :cb:`Read Callback` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :func:`ReadCallback`.
+Aktiviert den :cb:`Read Callback` Callback.
 
 Im Startzustand ist der Callback deaktiviert
 """
@@ -117,13 +117,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`ReadCallback`.
+Disables the :cb:`Read Callback` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Deaktiviert den :func:`ReadCallback`.
+Deaktiviert den :cb:`Read Callback` Callback.
 
 Im Startzustand ist der Callback deaktiviert
 """
@@ -138,12 +138,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :func:`ReadCallback` is enabled,
+Returns *true* if the :cb:`Read Callback` callback is enabled,
 *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls :func:`ReadCallback` aktiviert ist, 
+Gibt *true* zurück falls :cb:`Read Callback` Callback aktiviert ist,
 *false* sonst.
 """
 }]
@@ -246,11 +246,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -268,7 +268,7 @@ This callback is called if new data is available. The message has
 a maximum size of 60 characters. The actual length of the message
 is given in addition.
 
-To enable this callback, use :func:`EnableReadCallback`.
+To enable this callback, use :func:`Enable Read Callback`.
 """,
 'de':
 """
@@ -276,7 +276,7 @@ Dieser Callback wird aufgerufen wenn neue Daten zur Verfügung stehen.
 Die Nachricht hat eine Maximalgröße von 60 Zeichen. Die Länge
 der Nachricht wird zusätzlich übergeben.
 
-Dieser Callback kann durch :func:`EnableReadCallback` aktiviert werden.
+Dieser Callback kann durch :func:`Enable Read Callback` aktiviert werden.
 """
 }]
 })

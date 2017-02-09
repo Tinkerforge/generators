@@ -53,11 +53,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the *rgb* value of the LED as set by :func:`SetRGBValue`.
+Returns the *rgb* value of the LED as set by :func:`Set RGB Value`.
 """,
 'de':
 """
-Gibt den *rgb* Wert der LED zurück, wie von :func:`SetRGBValue` gesetzt.
+Gibt den *rgb* Wert der LED zurück, wie von :func:`Set RGB Value` gesetzt.
 """
 }]
 })

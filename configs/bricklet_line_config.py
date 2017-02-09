@@ -41,8 +41,8 @@ Usually black has a low reflectivity while white has a high
 reflectivity.
 
 If you want to get the reflectivity periodically, it is recommended 
-to use the callback :func:`Reflectivity` and set the period with 
-:func:`SetReflectivityCallbackPeriod`.
+to use the :cb:`Reflectivity` callback and set the period with
+:func:`Set Reflectivity Callback Period`.
 """,
 'de':
 """
@@ -53,8 +53,8 @@ Normalerweise hat schwarz eine geringe Reflektivität während
 weiß eine hohe Reflektivität hat.
 
 Wenn die Reflektivität periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Reflectivity` zu nutzen und die Periode mit 
-:func:`SetReflectivityCallbackPeriod` vorzugeben.
+den :cb:`Reflectivity` Callback zu nutzen und die Periode mit
+:func:`Set Reflectivity Callback Period` vorzugeben.
 """
 }]
 })
@@ -67,21 +67,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Reflectivity` callback is triggered
+Sets the period in ms with which the :cb:`Reflectivity` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Reflectivity` is only triggered if the reflectivity has changed since the
-last triggering.
+The :cb:`Reflectivity` callback is only triggered if the reflectivity has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Reflectivity` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Reflectivity` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Reflectivity` wird nur ausgelöst wenn sich die Reflektivität seit der
-letzten Auslösung geändert hat.
+Der :cb:`Reflectivity` Callback wird nur ausgelöst wenn sich die Reflektivität
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -96,11 +96,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetReflectivityCallbackPeriod`.
+Returns the period as set by :func:`Set Reflectivity Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetReflectivityCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Reflectivity Callback Period`
 gesetzt.
 """
 }]
@@ -116,7 +116,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`ReflectivityReached` callback. 
+Sets the thresholds for the :cb:`Reflectivity Reached` callback.
 
 The following options are possible:
 
@@ -134,7 +134,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`ReflectivityReached` Callback.
+Setzt den Schwellwert für den :cb:`Reflectivity Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -163,11 +163,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetReflectivityCallbackThreshold`.
+Returns the threshold as set by :func:`Set Reflectivity Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetReflectivityCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Reflectivity Callback Threshold`
 gesetzt.
 """
 }]
@@ -183,11 +183,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`ReflectivityReached`
+* :cb:`Reflectivity Reached`
 
 is triggered, if the threshold
 
-* :func:`SetReflectivityCallbackThreshold`
+* :func:`Set Reflectivity Callback Threshold`
 
 keeps being reached.
 
@@ -197,11 +197,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`ReflectivityReached`
+* :cb:`Reflectivity Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetReflectivityCallbackThreshold`
+* :func:`Set Reflectivity Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -218,11 +218,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -237,19 +237,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetReflectivityCallbackPeriod`. The :word:`parameter` is the reflectivity
-of the sensor.
+:func:`Set Reflectivity Callback Period`. The :word:`parameter` is the
+reflectivity of the sensor.
 
-:func:`Reflectivity` is only triggered if the reflectivity has changed since the
-last triggering.
+The :cb:`Reflectivity` callback is only triggered if the reflectivity has
+changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetReflectivityCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Reflectivity Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Reflektivität des Sensors.
 
-:func:`Reflectivity` wird nur ausgelöst wenn sich die Reflektivität seit der
-letzten Auslösung geändert hat.
+Der :cb:`Reflectivity` Callback wird nur ausgelöst wenn sich die Reflektivität
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -263,20 +263,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetReflectivityCallbackThreshold` is reached.
+:func:`Set Reflectivity Callback Threshold` is reached.
 The :word:`parameter` is the reflectivity of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetReflectivityCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Reflectivity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Reflektivität des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

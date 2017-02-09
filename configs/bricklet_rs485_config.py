@@ -43,7 +43,7 @@ The length of the string has to be given as an additional parameter.
 
 The return value is the number of bytes that could be written.
 
-See :func:`SetConfiguration` for configuration possibilities
+See :func:`Set Configuration` for configuration possibilities
 regarding baudrate, parity and so on.
 """,
 'de':
@@ -55,7 +55,7 @@ Die Länge des Strings muss als ein zusätzlicher Parameter angegeben werden.
 
 Der Rückgabewert ist die Anzahl der Zeichen die geschrieben werden konnten.
 
-Siehe :func:`SetConfiguration` für Konfigurationsmöglichkeiten
+Siehe :func:`Set Configuration` für Konfigurationsmöglichkeiten
 bezüglich Baudrate, Parität usw.
 """
 }]
@@ -75,7 +75,7 @@ of message is 60. If the length is given as 0, there was no
 new data available.
 
 Instead of polling with this function, you can also use
-callbacks. See :func:`EnableReadCallback` and :func:`ReadCallback`.
+callbacks. See :func:`Enable Read Callback` and :cb:`Read Callback` callback.
 """,
 'de':
 """
@@ -84,8 +84,8 @@ beträgt 60. Wenn die Länge als 0 gegeben wird, waren keine
 neuen Daten verfügbar.
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich
-Callbacks zu nutzen. Siehe :func:`EnableReadCallback` und
-:func:`ReadCallback`.
+Callbacks zu nutzen. Siehe :func:`Enable Read Callback` und
+:cb:`Read Callback` Callback.
 """
 }]
 })
@@ -98,15 +98,15 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`ReadCallback`.
+Enables the :cb:`Read Callback` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :func:`ReadCallback`.
+Aktiviert den :cb:`Read Callback` Callback.
 
-Im Startzustand ist der Callback deaktiviert
+Im Startzustand ist der Callback deaktiviert.
 """
 }]
 })
@@ -119,15 +119,15 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`ReadCallback`.
+Disables the :cb:`Read Callback` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Deaktiviert den :func:`ReadCallback`.
+Deaktiviert den :cb:`Read Callback` Callback.
 
-Im Startzustand ist der Callback deaktiviert
+Im Startzustand ist der Callback deaktiviert.
 """
 }]
 })
@@ -140,12 +140,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :func:`ReadCallback` is enabled,
+Returns *true* if the :cb:`Read Callback` callback is enabled,
 *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls :func:`ReadCallback` aktiviert ist,
+Gibt *true* zurück falls :cb:`Read Callback` Callback aktiviert ist,
 *false* sonst.
 """
 }]
@@ -223,11 +223,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -274,11 +274,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetCommunicationLEDConfig`
+Returns the configuration as set by :func:`Set Communication LED Config`
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetCommunicationLEDConfig` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` gesetzt.
 """
 }]
 })
@@ -296,9 +296,9 @@ com['packets'].append({
 """
 Sets the error LED configuration.
 
-By default the error LED turns on if there is any error (see :func:`ErrorCount`).
-If you call this function with the SHOW ERROR option again, the LED will turn off until the
-next error occurs.
+By default the error LED turns on if there is any error (see :cb:`Error Count`
+callback). If you call this function with the SHOW ERROR option again, the LED
+will turn off until the next error occurs.
 
 You can also turn the LED permanently on/off or show a heartbeat.
 
@@ -308,11 +308,12 @@ If the Bricklet is in bootloader mode, the LED is off.
 """
 Setzt die Konfiguration der Error-LED.
 
-Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :func:`ErrorCount`).
-Wenn diese Funktion danach nochmal mit der "SHOW ERROR"-Option aufgerufen wird, geht die
-LED wieder aus bis der nächste Error auftritt.
+Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :cb:`Error Count`
+Callback). Wenn diese Funktion danach nochmal mit der "SHOW ERROR"-Option
+aufgerufen wird, geht die LED wieder aus bis der nächste Error auftritt.
 
-Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag
+anzeigen.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 """
@@ -330,11 +331,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetErrorLEDConfig`.
+Returns the configuration as set by :func:`Set Error LED Config`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetErrorLEDConfig` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Error LED Config` gesetzt.
 """
 }]
 })
@@ -357,7 +358,7 @@ The current buffer content is lost if this function is called.
 The send buffer holds data that is given by :func:`Write` and
 can not be written yet. The receive buffer holds data that is
 received through RS485 but could not yet be send to the
-user, either by :func:`Read` or through :func:`ReadCallback`.
+user, either by :func:`Read` or through :cb:`Read Callback` callback.
 
 The default configuration is 5120 byte (5kb) per buffer.
 """,
@@ -372,7 +373,7 @@ Der aktuelle Bufferinhalt geht bei einem Aufruf dieser Funktion verloren.
 Der Sendenbuffer hält die Daten welche über :func:`Write` übergeben und noch
 nicht geschrieben werden konnten. Der Empfangsbuffer hält Daten welche
 über RS485 empfangen wurden aber noch nicht über :func:`Read` oder
-:func:`ReadCallback` an ein Nutzerprogramm übertragen werden konnten.
+:cb:`Read Callback` Callback an ein Nutzerprogramm übertragen werden konnten.
 
 Die Standardkonfiguration ist 5120 Byte (5kb) pro Buffer.
 """
@@ -388,11 +389,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the buffer configuration as set by :func:`SetBufferConfig`.
+Returns the buffer configuration as set by :func:`Set Buffer Config`.
 """,
 'de':
 """
-Gibt die Buffer-Konfiguration zurück, wie von :func:`SetBufferConfig` gesetzt.
+Gibt die Buffer-Konfiguration zurück, wie von :func:`Set Buffer Config` gesetzt.
 """
 }]
 })
@@ -408,13 +409,13 @@ com['packets'].append({
 """
 Returns the currently used bytes for the send and received buffer.
 
-See :func:`SetBufferConfig` for buffer size configuration.
+See :func:`Set Buffer Config` for buffer size configuration.
 """,
 'de':
 """
 Gibt die aktuell genutzten Bytes des Sende- und Empfangsbuffers zurück.
 
-Siehe :func:`SetBufferConfig` zur Konfiguration der Buffergrößen.
+Siehe :func:`Set Buffer Config` zur Konfiguration der Buffergrößen.
 """
 }]
 })
@@ -427,15 +428,15 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`ErrorCount`.
+Enables the :cb:`Error Count` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :func:`ErrorCount`.
+Aktiviert den :cb:`Error Count` Callback.
 
-Im Startzustand ist der Callback deaktiviert
+Im Startzustand ist der Callback deaktiviert.
 """
 }]
 })
@@ -448,15 +449,15 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`ErrorCount`.
+Disables the :cb:`Error Count` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Deaktiviert den :func:`ErrorCount`.
+Deaktiviert den :cb:`Error Count` Callback.
 
-Im Startzustand ist der Callback deaktiviert
+Im Startzustand ist der Callback deaktiviert.
 """
 }]
 })
@@ -469,12 +470,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :func:`ErrorCount` is enabled,
+Returns *true* if the :cb:`Error Count` callback is enabled,
 *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls :func:`ErrorCount` aktiviert ist,
+Gibt *true* zurück falls :cb:`Error Count` Callback aktiviert ist,
 *false* sonst.
 """
 }]
@@ -532,7 +533,7 @@ This callback is called if new data is available. The message has
 a maximum size of 60 characters. The actual length of the message
 is given in addition.
 
-To enable this callback, use :func:`EnableReadCallback`.
+To enable this callback, use :func:`Enable Read Callback`.
 """,
 'de':
 """
@@ -540,7 +541,7 @@ Dieser Callback wird aufgerufen wenn neue Daten zur Verfügung stehen.
 Die Nachricht hat eine Maximalgröße von 60 Zeichen. Die Länge
 der Nachricht wird zusätzlich übergeben.
 
-Dieser Callback kann durch :func:`EnableReadCallback` aktiviert werden.
+Dieser Callback kann durch :func:`Enable Read Callback` aktiviert werden.
 """
 }]
 })

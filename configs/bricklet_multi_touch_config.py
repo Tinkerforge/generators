@@ -103,7 +103,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Enables/disables electrodes with a bitfield (see :func:`GetTouchState`).
+Enables/disables electrodes with a bitfield (see :func:`Get Touch State`).
 
 *True* enables the electrode, *false* disables the electrode. A
 disabled electrode will always return *false* as its state. If you
@@ -112,7 +112,7 @@ not needed.
 
 It is recommended that you disable the proximity bit (bit 12) if
 the proximity feature is not needed. This will reduce the amount of
-traffic that is produced by the :func:`TouchState` callback.
+traffic that is produced by the :cb:`Touch State` callback.
 
 Disabling electrodes will also reduce power consumption.
 
@@ -120,7 +120,7 @@ Default: 8191 = 0x1FFF = 0b1111111111111 (all electrodes enabled)
 """,
 'de':
 """
-Aktiviert/deaktiviert Elektroden mit einem Bitfeld (siehe :func:`GetTouchState`).
+Aktiviert/deaktiviert Elektroden mit einem Bitfeld (siehe :func:`Get Touch State`).
 
 *True* aktiviert eine Elektrode, *false* deaktiviert eine Elektrode. Eine
 deaktivierte Elektrode hat immer den Zustand *false*. Wenn nicht alle
@@ -128,7 +128,7 @@ Elektroden gebraucht werden können die ungebrauchten deaktiviert werden.
 
 Wir empfehlen das Proximity Bit (Bit 12) zu deaktivieren wenn
 das Proximity-Feature nicht benötigt wird. Das verringert den Datenverkehr
-der durch den :func:`TouchState` Callback ausgelöst wird.
+der durch den :cb:`Touch State` Callback ausgelöst wird.
 
 Eine deaktivierte Elektrode verringert zusätzlich den Stromverbrauch.
 
@@ -145,11 +145,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the electrode configuration, as set by :func:`SetElectrodeConfig`.
+Returns the electrode configuration, as set by :func:`Set Electrode Config`.
 """,
 'de':
 """
-Gibt die Elektrodenkonfiguration zurück, wie von :func:`SetElectrodeConfig`
+Gibt die Elektrodenkonfiguration zurück, wie von :func:`Set Electrode Config`
 gesetzt.
 """
 }]
@@ -163,14 +163,14 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-Returns the current touch state, see :func:`GetTouchState` for
+Returns the current touch state, see :func:`Get Touch State` for
 information about the state.
 
 This callback is triggered every time the touch state changes.
 """,
 'de':
 """
-Gibt den aktuellen Tastzustand zurück, siehe :func:`GetTouchState`
+Gibt den aktuellen Tastzustand zurück, siehe :func:`Get Touch State`
 für mehr Informationen über den Zustand.
 
 Dieser Callback wird ausgelöst wenn sich ein Tastzustand ändert.
@@ -230,12 +230,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current sensitivity, as set by :func:`SetElectrodeSensitivity`.
+Returns the current sensitivity, as set by :func:`Set Electrode Sensitivity`.
 """,
 'de':
 """
 Gibt die aktuelle Empfindlichkeit zurück, wie von 
-:func:`SetElectrodeSensitivity` gesetzt.
+:func:`Set Electrode Sensitivity` gesetzt.
 """
 }]
 })

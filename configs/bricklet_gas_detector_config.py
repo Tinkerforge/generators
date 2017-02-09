@@ -39,8 +39,8 @@ Returns a value between 0 and 4095.
 See `here <TODO>`__ for more information about the measurements.
 
 If you want to get the value periodically, it is recommended 
-to use the callback :func:`Value` and set the period with 
-:func:`SetValueCallbackPeriod`.
+to use the :cb:`Value` callback and set the period with
+:func:`Set Value Callback Period`.
 """,
 'de':
 """
@@ -49,8 +49,8 @@ Gibt einen Wert zwischen 0 und 4095 zurück.
 Siehe `hier <TODO>`__ für mehr Informationen zu den Messwerten.
 
 Wenn der Wert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Value` zu nutzen und die Periode mit 
-:func:`SetValueCallbackPeriod` vorzugeben.
+den :cb:`Value` Callback zu nutzen und die Periode mit
+:func:`Set Value Callback Period` vorzugeben.
 """
 }]
 })
@@ -63,20 +63,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Value` callback is triggered
+Sets the period in ms with which the :cb:`Value` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Value` is only triggered if the value value has changed since the
-last triggering.
+The :cb:`Value` callback is only triggered if the value value has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Value` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Value` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Value` wird nur ausgelöst wenn sich der Wert seit der
+Der :cb:`Value` Callback wird nur ausgelöst wenn sich der Wert seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -92,11 +92,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetValueCallbackPeriod`.
+Returns the period as set by :func:`Set Value Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetValueCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Value Callback Period`
 gesetzt.
 """
 }]
@@ -112,7 +112,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`ValueReached` callback. 
+Sets the thresholds for the :cb:`Value Reached` callback.
 
 The following options are possible:
 
@@ -130,7 +130,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`ValueReached` Callback.
+Setzt den Schwellwert für den :cb:`Value Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -159,11 +159,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetValueCallbackThreshold`.
+Returns the threshold as set by :func:`Set Value Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetValueCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Value Callback Threshold`
 gesetzt.
 """
 }]
@@ -179,11 +179,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`ValueReached`
+* :cb:`Value Reached`
 
 is triggered, if the threshold
 
-* :func:`SetValueCallbackThreshold`
+* :func:`Set Value Callback Threshold`
 
 keeps being reached.
 
@@ -193,11 +193,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`ValueReached`
+* :cb:`Value Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetValueCallbackThreshold`
+* :func:`Set Value Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -214,11 +214,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -265,12 +265,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length moving average as set by :func:`SetMovingAverage`.
+Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
 Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
-:func:`SetMovingAverage` gesetzt.
+:func:`Set Moving Average` gesetzt.
 """
 }]
 })
@@ -328,11 +328,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the detector type as set by :func:`SetDetectorType`.
+Returns the detector type as set by :func:`Set Detector Type`.
 """,
 'de':
 """
-Gibt den Detektortyp zurück, wie von :func:`SetDetectorType` gesetzt.
+Gibt den Detektortyp zurück, wie von :func:`Set Detector Type` gesetzt.
 """
 }]
 })
@@ -397,18 +397,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetValueCallbackPeriod`. The :word:`parameter` is the value value
+:func:`Set Value Callback Period`. The :word:`parameter` is the value value
 of the sensor.
 
-:func:`Value` is only triggered if the value has changed since the
+The :cb:`Value` callback is only triggered if the value has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetValueCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Value Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Wert.
 
-:func:`Value` wird nur ausgelöst wenn sich der Wert seit der
+Der :cb:`Value` Callback wird nur ausgelöst wenn sich der Wert seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -423,20 +423,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetValueCallbackThreshold` is reached.
+:func:`Set Value Callback Threshold` is reached.
 The :word:`parameter` is the value of the detector.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetValueCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Wert des Detektors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

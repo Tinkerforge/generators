@@ -37,30 +37,30 @@ com['packets'].append({
 Returns the measured distance. The value has a range of 0 to 4000
 and is given in cm.
 
-Sensor hardware version 1 (see :func:`GetSensorHardwareVersion`) cannot
+Sensor hardware version 1 (see :func:`Get Sensor Hardware Version`) cannot
 measure distance and velocity at the same time. Therefore, the distance mode
-has to be enabled using :func:`SetMode`.
+has to be enabled using :func:`Set Mode`.
 Sensor hardware version 3 can measure distance and velocity at the same
-time. Also the laser has to be enabled, see :func:`EnableLaser`.
+time. Also the laser has to be enabled, see :func:`Enable Laser`.
 
 If you want to get the distance periodically, it is recommended to
-use the callback :func:`Distance` and set the period with 
-:func:`SetDistanceCallbackPeriod`.
+use the :cb:`Distance` callback and set the period with
+:func:`Set Distance Callback Period`.
 """,
 'de':
 """
 Gibt die gemessene Distanz zurück. Der Wertebereich ist 0 bis 4000
 und die Werte haben die Einheit cm.
 
-Sensor Hardware Version 1 (siehe :func:`GetSensorHardwareVersion`) kann nicht
+Sensor Hardware Version 1 (siehe :func:`Get Sensor Hardware Version`) kann nicht
 gleichzeitig Distanz und Geschwindigkeit messen. Daher muss mittels
-:func:`SetMode` der Distanzmodus aktiviert sein.
+:func:`Set Mode` der Distanzmodus aktiviert sein.
 Sensor Hardware Version 3 kann gleichzeitig Distanz und Geschwindigkeit
-messen. Zusätzlich muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
+messen. Zusätzlich muss der Laser aktiviert werden, siehe :func:`Enable Laser`.
 
 Wenn der Entfernungswert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Distance` zu nutzen und die Periode mit 
-:func:`SetDistanceCallbackPeriod` vorzugeben.
+den :cb:`Distance` Callback zu nutzen und die Periode mit
+:func:`Set Distance Callback Period` vorzugeben.
 """
 }]
 })
@@ -76,34 +76,34 @@ com['packets'].append({
 Returns the measured velocity. The value has a range of -12800 to 12700
 and is given in 1/100 m/s.
 
-Sensor hardware version 1 (see :func:`GetSensorHardwareVersion`) cannot
+Sensor hardware version 1 (see :func:`Get Sensor Hardware Version`) cannot
 measure distance and velocity at the same time. Therefore, the velocity mode
-has to be enabled using :func:`SetMode`.
+has to be enabled using :func:`Set Mode`.
 Sensor hardware version 3 can measure distance and velocity at the same
 time, but the velocity measurement only produces stables results if a fixed
-measurement rate (see :func:`SetConfiguration`) is configured. Also the laser
-has to be enabled, see :func:`EnableLaser`.
+measurement rate (see :func:`Set Configuration`) is configured. Also the laser
+has to be enabled, see :func:`Enable Laser`.
 
 If you want to get the velocity periodically, it is recommended to
-use the callback :func:`Velocity` and set the period with 
-:func:`SetVelocityCallbackPeriod`.
+use the :cb:`Velocity` callback and set the period with
+:func:`Set Velocity Callback Period`.
 """,
 'de':
 """
 Gibt die gemessene Geschwindigkeit zurück. Der Wertebereich ist -12800 bis 12700
 und die Werte haben die Einheit 1/100 m/s.
 
-Sensor Hardware Version 1 (siehe :func:`GetSensorHardwareVersion`) kann nicht
+Sensor Hardware Version 1 (siehe :func:`Get Sensor Hardware Version`) kann nicht
 gleichzeitig Distanz und Geschwindigkeit messen. Daher muss mittels
-:func:`SetMode` ein Geschwindigkeitsmodus aktiviert sein.
+:func:`Set Mode` ein Geschwindigkeitsmodus aktiviert sein.
 Sensor Hardware Version 3 kann gleichzeitig Distanz und Geschwindigkeit
 messen, jedoch liefert die Geschwindigkeitsmessung nur dann stabile Werte,
-wenn eine feste Messfrequenz (siehe :func:`SetConfiguration`) eingestellt ist.
-Zusätzlich muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
+wenn eine feste Messfrequenz (siehe :func:`Set Configuration`) eingestellt ist.
+Zusätzlich muss der Laser aktiviert werden, siehe :func:`Enable Laser`.
 
 Wenn der Geschwindigkeitswert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Velocity` zu nutzen und die Periode mit 
-:func:`SetVelocityCallbackPeriod` vorzugeben.
+den :cb:`Velocity` Callback zu nutzen und die Periode mit
+:func:`Set Velocity Callback Period` vorzugeben.
 """
 }]
 })
@@ -116,21 +116,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Distance` callback is triggered
+Sets the period in ms with which the :cb:`Distance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Distance` is only triggered if the distance value has changed since the
-last triggering.
+The :cb:`Distance` callback is only triggered if the distance value has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Distance` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Distance` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Distance` wird nur ausgelöst wenn sich der Entfernungswert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Distance` Callback wird nur ausgelöst wenn sich der Entfernungswert
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -145,11 +145,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetDistanceCallbackPeriod`.
+Returns the period as set by :func:`Set Distance Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetDistanceCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Distance Callback Period`
 gesetzt.
 """
 }]
@@ -163,21 +163,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Velocity` callback is triggered
+Sets the period in ms with which the :cb:`Velocity` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Velocity` is only triggered if the velocity value has changed since the
-last triggering.
+The :cb:`Velocity` callback is only triggered if the velocity value has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Velocity` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Velocity` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Velocity` wird nur ausgelöst wenn sich der Geschwindigkeitswert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Velocity` Callback wird nur ausgelöst wenn sich der
+Geschwindigkeitswert seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -192,11 +192,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetVelocityCallbackPeriod`.
+Returns the period as set by :func:`Set Velocity Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetVelocityCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Velocity Callback Period`
 gesetzt.
 """
 }]
@@ -212,7 +212,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`DistanceReached` callback. 
+Sets the thresholds for the :cb:`Distance Reached` callback.
 
 The following options are possible:
 
@@ -230,7 +230,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`DistanceReached` Callback.
+Setzt den Schwellwert für den :cb:`Distance Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -259,11 +259,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
+Returns the threshold as set by :func:`Set Distance Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetDistanceCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Distance Callback Threshold`
 gesetzt.
 """
 }]
@@ -279,7 +279,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`VelocityReached` callback. 
+Sets the thresholds for the :cb:`Velocity Reached` callback.
 
 The following options are possible:
 
@@ -297,7 +297,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`VelocityReached` Callback.
+Setzt den Schwellwert für den :cb:`Velocity Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -326,11 +326,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetVelocityCallbackThreshold`.
+Returns the threshold as set by :func:`Set Velocity Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetVelocityCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Velocity Callback Threshold`
 gesetzt.
 """
 }]
@@ -346,13 +346,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`DistanceReached`,
-* :func:`VelocityReached`,
+* :cb:`Distance Reached`,
+* :cb:`Velocity Reached`,
 
 are triggered, if the thresholds
 
-* :func:`SetDistanceCallbackThreshold`,
-* :func:`SetVelocityCallbackThreshold`,
+* :func:`Set Distance Callback Threshold`,
+* :func:`Set Velocity Callback Threshold`,
 
 keep being reached.
 
@@ -362,13 +362,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`DistanceReached`,
-* :func:`VelocityReached`,
+* :cb:`Distance Reached`,
+* :cb:`Velocity Reached`,
  
 ausgelöst werden, wenn die Schwellwerte 
 
-* :func:`SetDistanceCallbackThreshold`,
-* :func:`SetVelocityCallbackThreshold`,
+* :func:`Set Distance Callback Threshold`,
+* :func:`Set Velocity Callback Threshold`,
  
 weiterhin erreicht bleiben.
 
@@ -385,11 +385,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -438,12 +438,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length moving average as set by :func:`SetMovingAverage`.
+Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
 Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
-:func:`SetMovingAverage` gesetzt.
+:func:`Set Moving Average` gesetzt.
 """
 }]
 })
@@ -462,8 +462,8 @@ com['packets'].append({
 """
 .. note::
  This function is only available if you have a LIDAR-Lite sensor with hardware
- version 1. Use :func:`SetConfiguration` for hardware version 3. You can check
- the sensor hardware version using :func:`GetSensorHardwareVersion`.
+ version 1. Use :func:`Set Configuration` for hardware version 3. You can check
+ the sensor hardware version using :func:`Get Sensor Hardware Version`.
 
 The LIDAR-Lite sensor (hardware version 1) has five different modes. One mode is
 for distance measurements and four modes are for velocity measurements with
@@ -483,8 +483,8 @@ The default mode is 0 (distance is measured).
 """
 .. note::
  Diese Funktion ist nur verfügbar, wenn ein LIDAR-Lite Sensor mit Hardware
- Version 1 verbaut ist. Für Hardware Version 3 gibt es :func:`SetConfiguration`.
- die Hardware Version des Sensors kann mittels :func:`GetSensorHardwareVersion`
+ Version 1 verbaut ist. Für Hardware Version 3 gibt es :func:`Set Configuration`.
+ die Hardware Version des Sensors kann mittels :func:`Get Sensor Hardware Version`
  abgefragt werden.
 
 Der LIDAR-Lite Sensor (Hardware Version 1) hat fünf verschiedene Modi. Ein Modus
@@ -516,11 +516,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the mode as set by :func:`SetMode`.
+Returns the mode as set by :func:`Set Mode`.
 """,
 'de':
 """
-Gibt den Modus zurück, wie von :func:`SetMode` gesetzt.
+Gibt den Modus zurück, wie von :func:`Set Mode` gesetzt.
 """
 }]
 })
@@ -536,14 +536,14 @@ com['packets'].append({
 Activates the laser of the LIDAR.
 
 We recommend that you wait 250ms after enabling the laser before
-the first call of :func:`GetDistance` to ensure stable measurements.
+the first call of :func:`Get Distance` to ensure stable measurements.
 """,
 'de':
 """
 Aktiviert den Laser des LIDAR.
 
 Wir empfehlen nach dem aktivieren des Lasers 250ms zu warten bis zum
-ersten Aufruf von :func:`GetDistance` um stabile Messwerte zu garantieren.
+ersten Aufruf von :func:`Get Distance` um stabile Messwerte zu garantieren.
 """
 }]
 })
@@ -592,19 +592,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetDistanceCallbackPeriod`. The :word:`parameter` is the distance value
-of the sensor.
+:func:`Set Distance Callback Period`. The :word:`parameter` is the distance
+value of the sensor.
 
-:func:`Distance` is only triggered if the distance value has changed since the
-last triggering.
+The :cb:`Distance` callback is only triggered if the distance value has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetDistanceCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Distance Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Entfernungswert des Sensors.
 
-:func:`Distance` wird nur ausgelöst wenn sich der Entfernungswert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Distance` Callback wird nur ausgelöst wenn sich der Entfernungswert
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -618,19 +618,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetVelocityCallbackPeriod`. The :word:`parameter` is the velocity value
-of the sensor.
+:func:`Set Velocity Callback Period`. The :word:`parameter` is the velocity
+value of the sensor.
 
-:func:`Velocity` is only triggered if the velocity has changed since the
-last triggering.
+The :cb:`Velocity` callback is only triggered if the velocity has changed since
+the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVelocityCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Velocity Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Geschwindigkeit des Sensors.
 
-:func:`Velocity` wird nur ausgelöst wenn sich der Geschwindigkeitswert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Velocity` Callback wird nur ausgelöst wenn sich der
+Geschwindigkeitswert seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -644,20 +644,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetDistanceCallbackThreshold` is reached.
+:func:`Set Distance Callback Threshold` is reached.
 The :word:`parameter` is the distance value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetDistanceCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Distance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Entfernungswert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -671,20 +671,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetVelocityCallbackThreshold` is reached.
+:func:`Set Velocity Callback Threshold` is reached.
 The :word:`parameter` is the velocity value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetVelocityCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Velocity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Geschwindigkeitswert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -720,8 +720,8 @@ com['packets'].append({
 """
 .. note::
  This function is only available if you have a LIDAR-Lite sensor with hardware
- version 3. Use :func:`SetMode` for hardware version 1. You can check
- the sensor hardware version using :func:`GetSensorHardwareVersion`.
+ version 3. Use :func:`Set Mode` for hardware version 1. You can check
+ the sensor hardware version using :func:`Get Sensor Hardware Version`.
 
 The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
 will integrate acquisitions to find a correlation record peak. With a higher count,
@@ -755,8 +755,8 @@ Measurement Frequency are 128, false, 0 and 0.
 """
 .. note::
  Diese Funktion ist nur verfügbar, wenn ein LIDAR-Lite Sensor mit Hardware
- Version 3 verbaut ist. Für Hardware Version 1 gibt es :func:`SetMode`.
- Die Hardware Version des Sensors kann mittels :func:`GetSensorHardwareVersion`
+ Version 3 verbaut ist. Für Hardware Version 1 gibt es :func:`Set Mode`.
+ Die Hardware Version des Sensors kann mittels :func:`Get Sensor Hardware Version`
  abgefragt werden.
 
 Der Parameter **Aquisition Count** definiert die Anzahl der Datenerfassungen die integriert
@@ -801,11 +801,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration`
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration`
 gesetzt.
 """
 }]

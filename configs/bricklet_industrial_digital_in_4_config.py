@@ -38,7 +38,7 @@ refers to high and *false* refers to low.
 For example: The value 3 or 0b0011 means that pins 0-1 are high and the other
 pins are low.
 
-If no groups are used (see :func:`SetGroup`), the pins correspond to the
+If no groups are used (see :func:`Set Group`), the pins correspond to the
 markings on the Digital In 4 Bricklet.
 
 If groups are used, the pins correspond to the element in the group.
@@ -53,7 +53,7 @@ Gibt die Ausgabewerte mit einer Bitmaske zurück. Die Bitmaske ist 16Bit lang.
 Zum Beispiel: Der Wert 3 bzw. 0b0011 bedeutet, dass die Pins 0-1 auf logisch 1
 und alle anderen auf logisch 0 sind.
 
-Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
+Falls keine Gruppen verwendet werden (siehe :func:`Set Group`), entsprechen
 die Pins der Beschriftung auf dem Digital In 4 Bricklet.
 
 Falls Gruppen verwendet werden, entsprechen die Pins den Elementen der
@@ -72,7 +72,7 @@ com['packets'].append({
 'en':
 """
 Sets a group of Digital In 4 Bricklets that should work together. You can
-find Bricklets that can be grouped together with :func:`GetAvailableForGroup`.
+find Bricklets that can be grouped together with :func:`Get Available For Group`.
 
 The group consists of 4 elements. Element 1 in the group will get pins 0-3,
 element 2 pins 4-7, element 3 pins 8-11 and element 4 pins 12-15.
@@ -85,7 +85,7 @@ port B respectively, you could call with |abnn|.
 
 Now the pins on the Digital In 4 on port A are assigned to 0-3 and the
 pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
-to call :func:`GetValue` and read out two Bricklets at the same time.
+to call :func:`Get Value` and read out two Bricklets at the same time.
 
 Changing the group configuration resets all edge counter configurations
 and values.
@@ -93,7 +93,7 @@ and values.
 'de':
 """
 Setzt eine Gruppe von Digital In 4 Bricklets die zusammenarbeiten sollen.
-Mögliche Gruppierungen können mit der Funktion :func:`GetAvailableForGroup`
+Mögliche Gruppierungen können mit der Funktion :func:`Get Available For Group`
 gefunden werden.
 
 Eine Gruppe besteht aus 4 Element. Element 1 in der Gruppe bekommt Pins 0-3,
@@ -107,7 +107,7 @@ sind, könnte diese Funktion mit |abnn| aufgerufen werden.
 
 In diesem Fall wären die Pins von Port A den Werten 0-3 zugewiesen und
 die Pins von Port B den Werten 4-7. Es ist jetzt möglich mit der Funktion
-:func:`GetValue` beide Bricklets gleichzeitig auszulesen.
+:func:`Get Value` beide Bricklets gleichzeitig auszulesen.
 
 Änderungen an der Gruppeneinteilung setzt die Konfiguration und Zählerwerte
 aller Flankenzähler zurück.
@@ -129,11 +129,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the group as set by :func:`SetGroup`
+Returns the group as set by :func:`Set Group`
 """,
 'de':
 """
-Gibt die Gruppierung zurück, wie von :func:`SetGroup` gesetzt.
+Gibt die Gruppierung zurück, wie von :func:`Set Group` gesetzt.
 """
 }]
 })
@@ -167,7 +167,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the debounce period of the :func:`Interrupt` callback in ms.
+Sets the debounce period of the :cb:`Interrupt` callback in ms.
 
 For example: If you set this value to 100, you will get the interrupt
 maximal every 100ms. This is necessary if something that bounces is
@@ -177,7 +177,7 @@ The default value is 100.
 """,
 'de':
 """
-Setzt die Entprellperiode der :func:`Interrupt` Callback in ms.
+Setzt die Entprellperiode der :cb:`Interrupt` Callback in ms.
 
 Beispiel: Wenn dieser Wert auf 100 gesetzt wird, erhält man den Interrupt
 maximal alle 100ms. Dies ist notwendig falls etwas prellendes an
@@ -196,11 +196,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -221,9 +221,9 @@ i.e. changes from high to low and low to high.
 For example: An interrupt bitmask of 9 or 0b1001 will enable the interrupt for
 pins 0 and 3.
 
-The interrupts use the grouping as set by :func:`SetGroup`.
+The interrupts use the grouping as set by :func:`Set Group`.
 
-The interrupt is delivered with the callback :func:`Interrupt`.
+The interrupt is delivered with the :cb:`Interrupt` callback.
 """,
 'de':
 """
@@ -234,10 +234,10 @@ z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 Beispiel: Eine Interrupt Bitmaske von 9 bzw. 0b1001 aktiviert den Interrupt für
 die Pins 0 und 3.
 
-Die Interrupts benutzen die Gruppierung, wie von :func:`SetGroup`
+Die Interrupts benutzen die Gruppierung, wie von :func:`Set Group`
 gesetzt.
 
-Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
+Der Interrupt wird mit dem :cb:`Interrupt` Callback zugestellt.
 """
 }]
 })
@@ -250,11 +250,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the interrupt bitmask as set by :func:`SetInterrupt`.
+Returns the interrupt bitmask as set by :func:`Set Interrupt`.
 """,
 'de':
 """
-Gibt die Interrupt Bitmaske zurück, wie von :func:`SetInterrupt` gesetzt.
+Gibt die Interrupt Bitmaske zurück, wie von :func:`Set Interrupt` gesetzt.
 """
 }]
 })
@@ -269,7 +269,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered whenever a change of the voltage level is detected
-on pins where the interrupt was activated with :func:`SetInterrupt`.
+on pins where the interrupt was activated with :func:`Set Interrupt`.
 
 The values are a bitmask that specifies which interrupts occurred
 and the current value bitmask.
@@ -284,7 +284,7 @@ For example:
 'de':
 """
 Dieser Callback wird ausgelöst sobald eine Änderung des Spannungspegels
-detektiert wird, an Pins für welche der Interrupt mit :func:`SetInterrupt`
+detektiert wird, an Pins für welche der Interrupt mit :func:`Set Interrupt`
 aktiviert wurde.
 
 Die Rückgabewerte sind eine Bitmaske der aufgetretenen Interrupts und der
@@ -311,7 +311,7 @@ com['packets'].append({
 'en':
 """
 Returns the current value of the edge counter for the selected pin. You can
-configure the edges that are counted with :func:`SetEdgeCountConfig`.
+configure the edges that are counted with :func:`Set Edge Count Config`.
 
 If you set the reset counter to *true*, the count is set back to 0
 directly after it is read.
@@ -319,7 +319,7 @@ directly after it is read.
 'de':
 """
 Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Pin zurück. Die
-zu zählenden Flanken können mit :func:`SetEdgeCountConfig` konfiguriert werden.
+zu zählenden Flanken können mit :func:`Set Edge Count Config` konfiguriert werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
@@ -396,12 +396,12 @@ com['packets'].append({
 'en':
 """
 Returns the edge type and debounce time for the selected pin as set by
-:func:`SetEdgeCountConfig`.
+:func:`Set Edge Count Config`.
 """,
 'de':
 """
 Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Pin zurück,
-wie von :func:`SetEdgeCountConfig` gesetzt.
+wie von :func:`Set Edge Count Config` gesetzt.
 """
 }]
 })

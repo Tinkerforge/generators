@@ -109,11 +109,11 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Returns the current bootloader mode, see :func:`SetBootloaderMode`.
+Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
 """,
 'de':
 """
-Gibt den aktuellen Bootloader-Modus zurück, siehe :func:`SetBootloaderMode`.
+Gibt den aktuellen Bootloader-Modus zurück, siehe :func:`Set Bootloader Mode`.
 """
 }]
 })
@@ -160,7 +160,7 @@ common_packets.append({
 'en':
 """
 Writes 64 Bytes of firmware at the position as written by 
-:func:`SetWriteFirmwarePointer` before. The firmware is written
+:func:`Set Write Firmware Pointer` before. The firmware is written
 to flash every 4 chunks.
 
 You can only write firmware in bootloader mode.
@@ -171,7 +171,7 @@ necessary to call it in a normal user program.
 'de':
 """
 Schreibt 64 Bytes Firmware an die Position die vorher von
-:func:`SetWriteFirmwarePointer` gesetzt wurde. Die Firmware wird
+:func:`Set Write Firmware Pointer` gesetzt wurde. Die Firmware wird
 alle 4 Datenblöcke in den Flash geschrieben.
 
 Eine Firmware kann nur im Bootloader-Mode geschrieben werden.
@@ -228,11 +228,11 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetStatusLEDConfig`
+Returns the configuration as set by :func:`Set Status LED Config`
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetStatusLEDConfig` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Status LED Config` gesetzt.
 """
 }]
 })

@@ -41,8 +41,8 @@ To get UV Index you have to divide the value by 250. For example, a UV Light
 intensity of 500µW/cm² is equivalent to an UV Index of 2.
 
 If you want to get the intensity periodically, it is recommended to use the
-callback :func:`UVLight` and set the period with 
-:func:`SetUVLightCallbackPeriod`.
+:cb:`UV Light` callback and set the period with
+:func:`Set UV Light Callback Period`.
 """,
 'de':
 """
@@ -54,8 +54,8 @@ bestimmen. Beispiel: Eine UV-Licht-Intensität von 500µW/cm² entspricht
 einem UV Index von 2.
 
 Wenn die Intensität periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`UVLight` zu nutzen und die Periode mit 
-:func:`SetUVLightCallbackPeriod` vorzugeben.
+den :cb:`UV Light` Callback zu nutzen und die Periode mit
+:func:`Set UV Light Callback Period` vorzugeben.
 """
 }]
 })
@@ -68,20 +68,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`UVLight` callback is triggered
+Sets the period in ms with which the :cb:`UV Light` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`UVLight` is only triggered if the intensity has changed since the
-last triggering.
+The :cb:`UV Light` callback is only triggered if the intensity has changed since
+the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`UVLight` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`UV Light` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`UVLight` wird nur ausgelöst wenn sich die Intensität seit der
+Der :cb:`UV Light` Callback wird nur ausgelöst wenn sich die Intensität seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -97,11 +97,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetUVLightCallbackPeriod`.
+Returns the period as set by :func:`Set UV Light Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetUVLightCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set UV Light Callback Period`
 gesetzt.
 """
 }]
@@ -117,7 +117,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`UVLightReached` callback. 
+Sets the thresholds for the :cb:`UV Light Reached` callback.
 
 The following options are possible:
 
@@ -135,7 +135,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`UVLightReached` Callback.
+Setzt den Schwellwert für den :cb:`UV Light Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -164,11 +164,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetUVLightCallbackThreshold`.
+Returns the threshold as set by :func:`Set UV Light Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetUVLightCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set UV Light Callback Threshold`
 gesetzt.
 """
 }]
@@ -184,11 +184,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`UVLightReached`,
+* :cb:`UV Light Reached`,
 
 are triggered, if the thresholds
 
-* :func:`SetUVLightCallbackThreshold`,
+* :func:`Set UV Light Callback Threshold`,
 
 keep being reached.
 
@@ -198,11 +198,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`UVLightReached`,
+* :cb:`UV Light Reached`,
  
 ausgelöst werden, wenn die Schwellwerte 
 
-* :func:`SetUVLightCallbackThreshold`,
+* :func:`Set UV Light Callback Threshold`,
  
 weiterhin erreicht bleiben.
 
@@ -219,11 +219,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -239,19 +239,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetUVLightCallbackPeriod`. The :word:`parameter` is the UV Light 
+:func:`Set UV Light Callback Period`. The :word:`parameter` is the UV Light
 intensity of the sensor.
 
-:func:`UVLight` is only triggered if the intensity has changed since the
-last triggering.
+The :cb:`UV Light` callback is only triggered if the intensity has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetUVLightCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die UV-Licht-Intensität des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set UV Light Callback Period`, ausgelöst. Der :word:`parameter` ist die
+UV-Licht-Intensität des Sensors.
 
-:func:`UVLight` wird nur ausgelöst wenn sich die Intensität seit der
-letzten Auslösung geändert hat.
+Der :cb:`UV Light` Callback wird nur ausgelöst wenn sich die Intensität seit
+der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -265,20 +266,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetUVLightCallbackThreshold` is reached.
+:func:`Set UV Light Callback Threshold` is reached.
 The :word:`parameter` is the UV Light intensity of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetUVLightCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set UV Light Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die UV-Licht-Intensität des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

@@ -53,7 +53,7 @@ com['packets'].append({
 """
 Returns the current value of the edge counter. You can configure
 edge type (rising, falling, both) that is counted with
-:func:`SetEdgeCountConfig`.
+:func:`Set Edge Count Config`.
 
 If you set the reset counter to *true*, the count is set back to 0
 directly after it is read.
@@ -62,7 +62,7 @@ directly after it is read.
 """
 Gibt den aktuellen Wert des Flankenzählers zurück. Die zu
 zählenden Flanken (steigend, fallend, beide) können mit
-:func:`SetEdgeCountConfig` konfiguriert werden.
+:func:`Set Edge Count Config` konfiguriert werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
@@ -140,12 +140,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the edge type and debounce time as set by :func:`SetEdgeCountConfig`.
+Returns the edge type and debounce time as set by :func:`Set Edge Count Config`.
 """,
 'de':
 """
 Gibt den Flankentyp sowie die Entprellzeit zurück, wie von
-:func:`SetEdgeCountConfig` gesetzt.
+:func:`Set Edge Count Config` gesetzt.
 """
 }]
 })
@@ -189,11 +189,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the edges as set by :func:`SetEdgeInterrupt`.
+Returns the edges as set by :func:`Set Edge Interrupt`.
 """,
 'de':
 """
-Gibt *edges* zurück, wie von :func:`SetEdgeInterrupt` gesetzt.
+Gibt *edges* zurück, wie von :func:`Set Edge Interrupt` gesetzt.
 """
 }]
 })
@@ -206,21 +206,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`EdgeCount` callback is triggered
+Sets the period in ms with which the :cb:`Edge Count` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`EdgeCount` is only triggered if the edge count has changed since the
-last triggering.
+The :cb:`Edge Count` callback is only triggered if the edge count has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`EdgeCount` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Edge Count` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`EdgeCount` wird nur ausgelöst wenn sich die Flankenzählung seit der
-letzten Auslösung geändert hat.
+Der :cb:`Edge Count` Callback wird nur ausgelöst wenn sich die Flankenzählung
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -235,11 +235,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetEdgeCountCallbackPeriod`.
+Returns the period as set by :func:`Set Edge Count Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetEdgeCountCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Edge Count Callback Period`
 gesetzt.
 """
 }]
@@ -255,15 +255,16 @@ com['packets'].append({
 'en':
 """
 This callback is triggered every n-th count, as configured with
-:func:`SetEdgeInterrupt`. The :word:`parameters` are the
-current count and the current value (see :func:`GetValue` and :func:`GetEdgeCount`).
+:func:`Set Edge Interrupt`. The :word:`parameters` are the
+current count and the current value (see :func:`Get Value` and
+:func:`Get Edge Count`).
 """,
 'de':
 """
 Dieser Callback bei jedem n-ten Zählerwert ausgelöst, wie von
-:func:`SetEdgeInterrupt` konfiguriert. Die :word:`parameter` 
+:func:`Set Edge Interrupt` konfiguriert. Die :word:`parameter`
 sind der aktuelle Zählerstand und der aktuelle Wert (siehe
-:func:`GetValue` und :func:`GetEdgeCount`).
+:func:`Get Value` und :func:`Get Edge Count`).
 """
 }]
 })
@@ -278,20 +279,21 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetEdgeCountCallbackPeriod`. The :word:`parameters` are the
-current count and the current value (see :func:`GetValue` and :func:`GetEdgeCount`).
+:func:`Set Edge Count Callback Period`. The :word:`parameters` are the
+current count and the current value (see :func:`Get Value` and
+:func:`Get Edge Count`).
 
-:func:`EdgeCount` is only triggered if the count or value changed since the
-last triggering.
+The :cb:`Edge Count` callback is only triggered if the count or value changed
+since the last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit 
-:func:`SetEdgeCountCallbackPeriod`, ausgelöst. Die :word:`parameter` 
+:func:`Set Edge Count Callback Period`, ausgelöst. Die :word:`parameter`
 sind der aktuelle Zählerstand und der aktuelle Wert (siehe
-:func:`GetValue` and :func:`GetEdgeCount`).
+:func:`Get Value` and :func:`Get Edge Count`).
 
-:func:`EdgeCount` wird nur ausgelöst wenn sich mindestens einer
+Der :cb:`Edge Count` Callback wird nur ausgelöst wenn sich mindestens einer
 der beiden Werte seit der letzten Auslösung geändert hat.
 """
 }]

@@ -34,13 +34,13 @@ com['packets'].append({
 """
 Sets the velocity of the motor. Whereas -32767 is full speed backward,
 0 is stop and 32767 is full speed forward. Depending on the
-acceleration (see :func:`SetAcceleration`), the motor is not immediately
+acceleration (see :func:`Set Acceleration`), the motor is not immediately
 brought to the velocity but smoothly accelerated.
 
 The velocity describes the duty cycle of the PWM with which the motor is
 controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
 You can not only control the duty cycle of the PWM but also the frequency,
-see :func:`SetPWMFrequency`.
+see :func:`Set PWM Frequency`.
 
 The default velocity is 0.
 """,
@@ -48,14 +48,14 @@ The default velocity is 0.
 """
 Setzt die Geschwindigkeit des Motors. Hierbei sind -32767 maximale
 Geschwindigkeit rückwärts, 0 ist Halt und 32767 maximale Geschwindigkeit
-vorwärts. In Abhängigkeit von der Beschleunigung (siehe :func:`SetAcceleration`)
+vorwärts. In Abhängigkeit von der Beschleunigung (siehe :func:`Set Acceleration`)
 wird der Motor nicht direkt auf die Geschwindigkeit gebracht sondern
 gleichmäßig beschleunigt.
 
 Die Geschwindigkeit beschreibt das Tastverhältnis der PWM für die
 Motoransteuerung. Z.B. entspricht ein Geschwindigkeitswert von 3277 einer PWM
 mit einem Tastverhältnis von 10%. Weiterhin kann neben dem Tastverhältnis auch
-die Frequenz der PWM verändert werden, siehe :func:`SetPWMFrequency`.
+die Frequenz der PWM verändert werden, siehe :func:`Set PWM Frequency`.
 
 Der Standardwert für die Geschwindigkeit ist 0.
 """
@@ -70,11 +70,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the velocity as set by :func:`SetVelocity`.
+Returns the velocity as set by :func:`Set Velocity`.
 """,
 'de':
 """
-Gibt die Geschwindigkeit zurück, wie gesetzt von :func:`SetVelocity`.
+Gibt die Geschwindigkeit zurück, wie gesetzt von :func:`Set Velocity`.
 """
 }]
 })
@@ -88,14 +88,14 @@ com['packets'].append({
 'en':
 """
 Returns the *current* velocity of the motor. This value is different
-from :func:`GetVelocity` whenever the motor is currently accelerating
-to a goal set by :func:`SetVelocity`.
+from :func:`Get Velocity` whenever the motor is currently accelerating
+to a goal set by :func:`Set Velocity`.
 """,
 'de':
 """
 Gibt die *aktuelle* Geschwindigkeit des Motors zurück. Dieser Wert
-unterscheidet sich von :func:`GetVelocity`, sobald der Motor auf einen
-neuen Zielwert, wie von :func:`SetVelocity` vorgegeben, beschleunigt.
+unterscheidet sich von :func:`Get Velocity`, sobald der Motor auf einen
+neuen Zielwert, wie von :func:`Set Velocity` vorgegeben, beschleunigt.
 """
 }]
 })
@@ -148,11 +148,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the acceleration as set by :func:`SetAcceleration`.
+Returns the acceleration as set by :func:`Set Acceleration`.
 """,
 'de':
 """
-Gibt die Beschleunigung zurück, wie gesetzt von :func:`SetAcceleration`.
+Gibt die Beschleunigung zurück, wie gesetzt von :func:`Set Acceleration`.
 """
 }]
 })
@@ -201,11 +201,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the PWM frequency (in Hz) as set by :func:`SetPWMFrequency`.
+Returns the PWM frequency (in Hz) as set by :func:`Set PWM Frequency`.
 """,
 'de':
 """
-Gibt die PWM Frequenz (in Hz) zurück, wie gesetzt von :func:`SetPWMFrequency`.
+Gibt die PWM Frequenz (in Hz) zurück, wie gesetzt von :func:`Set PWM Frequency`.
 """
 }]
 })
@@ -225,7 +225,7 @@ Executes an active full brake.
  where an immediate brake is necessary. Depending on the current velocity and
  the strength of the motor, a full brake can be quite violent.
 
-Call :func:`SetVelocity` with 0 if you just want to stop the motor.
+Call :func:`Set Velocity` with 0 if you just want to stop the motor.
 """,
 'de':
 """
@@ -236,7 +236,7 @@ Führt eine aktive Vollbremsung aus.
  in denen ein unverzüglicher Halt notwendig ist. Abhängig von der aktuellen
  Geschwindigkeit und der Kraft des Motors kann eine Vollbremsung brachial sein.
 
-Ein Aufruf von :func:`SetVelocity` mit 0 erlaubt einen normalen Stopp des Motors.
+Ein Aufruf von :func:`Set Velocity` mit 0 erlaubt einen normalen Stopp des Motors.
 """
 }]
 })
@@ -382,7 +382,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
+Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the DC Brick is 6V.
 You can use this function to detect the discharge of a battery that is used
 to drive the motor. If you have a fixed power supply, you likely do not need
@@ -392,7 +392,7 @@ The default value is 6V.
 """,
 'de':
 """
-Setzt die minimale Spannung in mV, bei welcher der :func:`UnderVoltage` Callback
+Setzt die minimale Spannung in mV, bei welcher der :cb:`Under Voltage` Callback
 ausgelöst wird. Der kleinste mögliche Wert mit dem der DC Brick noch funktioniert,
 ist 6V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
@@ -411,11 +411,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the minimum voltage as set by :func:`SetMinimumVoltage`
+Returns the minimum voltage as set by :func:`Set Minimum Voltage`
 """,
 'de':
 """
-Gibt die minimale Spannung zurück, wie von :func:`SetMinimumVoltage` gesetzt.
+Gibt die minimale Spannung zurück, wie von :func:`Set Minimum Voltage` gesetzt.
 """
 }]
 })
@@ -479,11 +479,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the drive mode, as set by :func:`SetDriveMode`.
+Returns the drive mode, as set by :func:`Set Drive Mode`.
 """,
 'de':
 """
-Gibt den Fahrmodus zurück, wie von :func:`SetDriveMode` gesetzt.
+Gibt den Fahrmodus zurück, wie von :func:`Set Drive Mode` gesetzt.
 """
 }]
 })
@@ -496,14 +496,14 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets a period in ms with which the :func:`CurrentVelocity` callback is triggered.
+Sets a period in ms with which the :cb:`Current Velocity` callback is triggered.
 A period of 0 turns the callback off.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`CurrentVelocity` Callback
+Setzt die Periode in ms mit welcher der :cb:`Current Velocity` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der Standardwert ist 0.
@@ -519,11 +519,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetCurrentVelocityPeriod`.
+Returns the period as set by :func:`Set Current Velocity Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetCurrentVelocityPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Current Velocity Period` gesetzt.
 """
 }]
 })
@@ -537,13 +537,13 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`SetMinimumVoltage`. The :word:`parameter` is the current voltage given
+:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage given
 in mV.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn die Eingangsspannung unter den, mittels
-:func:`SetMinimumVoltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
+:func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
 ist die aktuelle Spannung in mV.
 """
 }]
@@ -568,7 +568,7 @@ If this callback is triggered, the driver chip gets disabled at the same time.
 That means, :func:`Enable` has to be called to drive the motor again.
 
 .. note::
- This callback only works in Drive/Brake mode (see :func:`SetDriveMode`). In
+ This callback only works in Drive/Brake mode (see :func:`Set Drive Mode`). In
  Drive/Coast mode it is unfortunately impossible to reliably read the
  overcurrent/overtemperature signal from the driver chip.
 """,
@@ -586,9 +586,9 @@ Das bedeutet :func:`Enable` muss aufgerufen werden, um den Motor
 erneut zu fahren.
 
 .. note::
- Dieser Callback funktioniert nur im Fahren/Bremsen Modus (siehe :func:`SetDriveMode`).
- Im Fahren/Leerlauf Modus ist es leider nicht möglich das
- Überstrom/Übertemperatur-Signal zuverlässig aus dem Chip der Treiberstufe
+ Dieser Callback funktioniert nur im Fahren/Bremsen Modus (siehe
+ :func:`Set Drive Mode`). Im Fahren/Leerlauf Modus ist es leider nicht möglich
+ das Überstrom/Übertemperatur-Signal zuverlässig aus dem Chip der Treiberstufe
  auszulesen.
 """
 }]
@@ -604,12 +604,12 @@ com['packets'].append({
 """
 This callback is triggered whenever a set velocity is reached. For example:
 If a velocity of 0 is present, acceleration is set to 5000 and velocity
-to 10000, :func:`VelocityReached` will be triggered after about 2 seconds, when
-the set velocity is actually reached.
+to 10000, the :cb:`Velocity Reached` callback will be triggered after about
+2 seconds, when the set velocity is actually reached.
 
 .. note::
  Since we can't get any feedback from the DC motor, this only works if the
- acceleration (see :func:`SetAcceleration`) is set smaller or equal to the
+ acceleration (see :func:`Set Acceleration`) is set smaller or equal to the
  maximum acceleration of the motor. Otherwise the motor will lag behind the
  control value and the callback will be triggered too early.
 """,
@@ -618,15 +618,15 @@ the set velocity is actually reached.
 Dieser Callback wird ausgelöst immer wenn eine konfigurierte Geschwindigkeit
 erreicht wird. Beispiel: Wenn die aktuelle Geschwindigkeit 0 ist, die
 Beschleunigung auf 5000 und die Geschwindigkeit auf 10000 konfiguriert ist,
-wird :func:`VelocityReached` nach ungefähr 2 Sekunden ausgelöst, wenn die
-konfigurierte Geschwindigkeit letztendlich erreicht ist.
+wird der :cb:`Velocity Reached` Callback nach ungefähr 2 Sekunden ausgelöst,
+wenn die konfigurierte Geschwindigkeit letztendlich erreicht ist.
 
 .. note::
  Da es nicht möglich ist eine Rückmeldung vom Gleichstrommotor zu erhalten,
- funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`SetAcceleration`)
- kleiner oder gleich der maximalen Beschleunigung des Motors ist. Andernfalls
- wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
- zu früh ausgelöst.
+ funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe
+ :func:`Set Acceleration`) kleiner oder gleich der maximalen Beschleunigung
+ des Motors ist. Andernfalls wird der Motor hinter dem Vorgabewert
+ zurückbleiben und der Callback wird zu früh ausgelöst.
 """
 }]
 })
@@ -640,19 +640,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered with the period that is set by
-:func:`SetCurrentVelocityPeriod`. The :word:`parameter` is the *current* velocity
-used by the motor.
+:func:`Set Current Velocity Period`. The :word:`parameter` is the *current*
+velocity used by the motor.
 
-:func:`CurrentVelocity` is only triggered after the set period if there is
-a change in the velocity.
+The :cb:`Current Velocity` callback is only triggered after the set period
+if there is a change in the velocity.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentVelocityPeriod`,
-ausgelöst. Der :word:`parameter` ist die *aktuelle* vom Motor genutzte Geschwindigkeit.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Current Velocity Period`, ausgelöst. Der :word:`parameter` ist die
+*aktuelle* vom Motor genutzte Geschwindigkeit.
 
-:func:`CurrentVelocity` wird nur nach Ablauf der Periode ausgelöst, wenn sich die
-Geschwindigkeit geändert hat.
+Der :cb:`Current Velocity` Callback wird nur nach Ablauf der Periode
+ausgelöst, wenn sich die Geschwindigkeit geändert hat.
 """
 }]
 })

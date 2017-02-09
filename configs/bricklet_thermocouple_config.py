@@ -38,8 +38,8 @@ Returns the temperature of the thermocouple. The value is given in °C/100,
 e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
 
 If you want to get the temperature periodically, it is recommended 
-to use the callback :func:`Temperature` and set the period with 
-:func:`SetTemperatureCallbackPeriod`.
+to use the :cb:`Temperature` callback and set the period with
+:func:`Set Temperature Callback Period`.
 """,
 'de':
 """
@@ -48,8 +48,8 @@ angegeben, z.B. bedeutet ein Wert von 4223 eine gemessene Temperatur von
 42,23 °C.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Temperature` zu nutzen und die Periode mit 
-:func:`SetTemperatureCallbackPeriod` vorzugeben.
+den :cb:`Temperature` Callback zu nutzen und die Periode mit
+:func:`Set Temperature Callback Period` vorzugeben.
 """
 }]
 })
@@ -62,21 +62,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Temperature` callback is triggered
+Sets the period in ms with which the :cb:`Temperature` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Temperature` is only triggered if the temperature has changed since the
-last triggering.
+The :cb:`Temperature` callback is only triggered if the temperature has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Temperature` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Temperature` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
-letzten Auslösung geändert hat.
+Der :cb:`Temperature` Callback wird nur ausgelöst wenn sich die Temperatur seit
+der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -91,11 +91,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
+Returns the period as set by :func:`Set Temperature Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetTemperatureCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Temperature Callback Period`
 gesetzt.
 """
 }]
@@ -111,7 +111,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`TemperatureReached` callback. 
+Sets the thresholds for the :cb:`Temperature Reached` callback.
 
 The following options are possible:
 
@@ -129,7 +129,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`TemperatureReached` Callback.
+Setzt den Schwellwert für den :cb:`Temperature Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -158,11 +158,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
+Returns the threshold as set by :func:`Set Temperature Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetTemperatureCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Temperature Callback Threshold`
 gesetzt.
 """
 }]
@@ -178,11 +178,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`TemperatureReached`
+* :cb:`Temperature Reached`
 
 is triggered, if the threshold
 
-* :func:`SetTemperatureCallbackThreshold`
+* :func:`Set Temperature Callback Threshold`
 
 keeps being reached.
 
@@ -192,11 +192,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`TemperatureReached`
+* :cb:`Temperature Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetTemperatureCallbackThreshold`
+* :func:`Set Temperature Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -213,11 +213,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -232,19 +232,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetTemperatureCallbackPeriod`. The :word:`parameter` is the temperature
-of the thermocouple.
+:func:`Set Temperature Callback Period`. The :word:`parameter` is the
+temperature of the thermocouple.
 
-:func:`Temperature` is only triggered if the temperature has changed since the
-last triggering.
+The :cb:`Temperature` callback is only triggered if the temperature has
+changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetTemperatureCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Temperatur des Thermoelements.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Temperature Callback Period`, ausgelöst. Der :word:`parameter` ist
+die Temperatur des Thermoelements.
 
-:func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
-letzten Auslösung geändert hat.
+Der :cb:`Temperature` Callback wird nur ausgelöst wenn sich die Temperatur seit
+der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -258,20 +259,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetTemperatureCallbackThreshold` is reached.
+:func:`Set Temperature Callback Threshold` is reached.
 The :word:`parameter` is the temperature of the thermocouple.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetTemperatureCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Temperatur des Thermoelements.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -381,11 +382,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })

@@ -103,12 +103,12 @@ com['packets'].append({
 'en':
 """
 This callback is triggered if the playback of the morse code set by
-:func:`MorseCode` is finished.
+:func:`Morse Code` is finished.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn die Wiedergabe des Morsecodes, wie von
-:func:`MorseCode` gesetzt, beendet wurde.
+:func:`Morse Code` gesetzt, beendet wurde.
 """
 }]
 })

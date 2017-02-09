@@ -49,11 +49,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the voltage as set by :func:`SetOutputVoltage`.
+Returns the voltage as set by :func:`Set Output Voltage`.
 """,
 'de':
 """
-Gibt die Spannung zurück, wie von :func:`SetOutputVoltage`
+Gibt die Spannung zurück, wie von :func:`Set Output Voltage`
 gesetzt.
 """
 }]

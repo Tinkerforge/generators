@@ -74,11 +74,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`TiltState` callback.
+Enables the :cb:`Tilt State` callback.
 """,
 'de':
 """
-Aktiviert den :func:`TiltState` Callback.
+Aktiviert den :cb:`Tilt State` Callback.
 """
 }]
 })
@@ -91,11 +91,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`TiltState` callback.
+Disables the :cb:`Tilt State` callback.
 """,
 'de':
 """
-Deaktiviert den :func:`TiltState` Callback.
+Deaktiviert den :cb:`Tilt State` Callback.
 """
 }]
 })
@@ -108,11 +108,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :func:`TiltState` callback is enabled.
+Returns *true* if the :cb:`Tilt State` callback is enabled.
 """,
 'de':
 """
-Gibt *true* zurück wenn der :func:`TiltState` Callback aktiviert ist.
+Gibt *true* zurück wenn der :cb:`Tilt State` Callback aktiviert ist.
 """
 }]
 })
@@ -130,14 +130,14 @@ com['packets'].append({
 This callback provides the current tilt state. It is called every time the
 state changes.
 
-See :func:`GetTiltState` for a description of the states.
+See :func:`Get Tilt State` for a description of the states.
 """,
 'de':
 """
 Dieser Callback übergibt den aktuellen Tilt-Status. Der Callback wird
 aufgerufen wenn sich der Status ändert.
 
-Siehe :func:`GetTiltState` für eine Beschreibung der Zustände.
+Siehe :func:`Get Tilt State` für eine Beschreibung der Zustände.
 """
 }]
 })

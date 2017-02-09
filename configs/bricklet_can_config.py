@@ -51,10 +51,10 @@ Returns *true* if the frame was successfully added to the write buffer. Returns
 The write buffer can overflow if frames are written to it at a higher rate
 than the Bricklet can transmitted them over the CAN transceiver. This may
 happen if the CAN transceiver is configured as read-only or is using a low baud
-rate (see :func:`SetConfiguration`). It can also happen if the CAN bus is
+rate (see :func:`Set Configuration`). It can also happen if the CAN bus is
 congested and the frame cannot be transmitted because it constantly loses
 arbitration or because the CAN transceiver is currently disabled due to a high
-write error level (see :func:`GetErrorLog`).
+write error level (see :func:`Get Error Log`).
 """,
 'de':
 """
@@ -71,11 +71,11 @@ der Schreib-Buffer bereits voll ist.
 Der Schreib-Buffer kann überlaufen, wenn Frames schneller geschrieben werden
 als das Bricklet sie über deb CAN-Transceiver übertragen kann. Dies kann
 dadurch passieren, dass der CAN-Transceiver als nur-lesend oder mit einer
-niedrigen Baudrate konfiguriert ist (siehe :func:`SetConfiguration`). Es kann
+niedrigen Baudrate konfiguriert ist (siehe :func:`Set Configuration`). Es kann
 auch sein, dass der CAN-Bus stark belastet ist und der Frame nicht übertragen
 werden kann, da er immer wieder die Arbitrierung verliert. Ein anderer Grund
 kann sein, dass der CAN-Transceiver momentan deaktiviert ist, bedingt duch ein
-hohes Schreib-Fehlerlevel (siehe :func:`GetErrorLog`).
+hohes Schreib-Fehlerlevel (siehe :func:`Get Error Log`).
 """
 }]
 })
@@ -105,10 +105,10 @@ For remote frames the ``data`` return value always contains invalid data.
 
 A configurable read filter can be used to define which frames should be
 received by the CAN transceiver and put into the read buffer (see
-:func:`SetReadFilter`).
+:func:`Set Read Filter`).
 
 Instead of polling with this function, you can also use callbacks. See the
-:func:`EnableFrameReadCallback` function and the :func:`FrameRead` callback.
+:func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
 """,
 'de':
 """
@@ -123,10 +123,10 @@ Für Remote-Frames beinhalte der ``data`` Rückgabewerte immer gültigen Werte.
 
 Mittels eines einstellbaren Lesefilters kann festgelegt werden, welche Frames
 vom CAN-Transceiver überhaupt empfangen und im Lese-Buffer abgelegt werden
-sollen (siehe :func:`SetReadFilter`).
+sollen (siehe :func:`Set Read Filter`).
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich Callbacks zu nutzen.
-Siehe die :func:`EnableFrameReadCallback` Funktion und den :func:`FrameRead`
+Siehe die :func:`Enable Frame Read Callback` Funktion und den :cb:`Frame Read`
 Callback.
 """
 }]
@@ -140,13 +140,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`FrameRead` callback.
+Enables the :cb:`Frame Read` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :func:`FrameRead` Callback.
+Aktiviert den :cb:`Frame Read` Callback.
 
 Standardmäßig ist der Callback deaktiviert.
 """
@@ -161,13 +161,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`FrameRead` callback.
+Disables the :cb:`Frame Read` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Deaktiviert den :func:`FrameRead` Callback.
+Deaktiviert den :cb:`Frame Read` Callback.
 
 Standardmäßig ist der Callback deaktiviert.
 """
@@ -182,11 +182,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :func:`FrameRead` callback is enabled, *false* otherwise.
+Returns *true* if the :cb:`Frame Read` callback is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls der :func:`FrameRead` Callback aktiviert ist, *false*
+Gibt *true* zurück falls der :cb:`Frame Read` Callback aktiviert ist, *false*
 sonst.
 """
 }]
@@ -290,11 +290,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -448,11 +448,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the read filter as set by :func:`SetReadFilter`.
+Returns the read filter as set by :func:`Set Read Filter`.
 """,
 'de':
 """
-Gibt die Lesefilter zurück, wie von :func:`SetReadFilter` gesetzt.
+Gibt die Lesefilter zurück, wie von :func:`Set Read Filter` gesetzt.
 """
 }]
 })
@@ -481,27 +481,27 @@ and no frames can be transmitted or received anymore. The CAN transceiver will
 automatically be activated again after the CAN bus is idle for a while.
 
 The write and read error levels are not available in read-only transceiver mode
-(see :func:`SetConfiguration`) and are reset to 0 as a side effect of changing
+(see :func:`Set Configuration`) and are reset to 0 as a side effect of changing
 the configuration or the read filter.
 
 The write timeout, read register and buffer overflow counts represents the
 number of these errors:
 
 * A write timeout occurs if a frame could not be transmitted before the
-  configured write timeout expired (see :func:`SetConfiguration`).
+  configured write timeout expired (see :func:`Set Configuration`).
 * A read register overflow occurs if the read register of the CAN transceiver
   still contains the last received frame when the next frame arrives. In this
   case the newly arrived frame is lost. This happens if the CAN transceiver
   receives more frames than the Bricklet can handle. Using the read filter
-  (see :func:`SetReadFilter`) can help to reduce the amount of received frames.
+  (see :func:`Set Read Filter`) can help to reduce the amount of received frames.
   This count is not exact, but a lower bound, because the Bricklet might not
   able detect all overflows if they occur in rapid succession.
 * A read buffer overflow occurs if the read buffer of the Bricklet is already
   full when the next frame should be read from the read register of the CAN
   transceiver. In this case the frame in the read register is lost. This
   happens if the CAN transceiver receives more frames to be added to the read
-  buffer than are removed from the read buffer using the :func:`ReadFrame`
-  function. Using the :func:`FrameRead` callback ensures that the read buffer
+  buffer than are removed from the read buffer using the :func:`Read Frame`
+  function. Using the :cb:`Frame Read` callback ensures that the read buffer
   can not overflow.
 """,
 'de':
@@ -518,7 +518,7 @@ Wenn auf dem CAN-Bus für eine Weile Ruhe herrscht, dann wird der
 CAN-Transceiver automatisch wieder aktiviert.
 
 Die Schreib- und Lesefehler-Level Werte sind im Read-Only Transceiver-Modus
-nicht verfügbar (see :func:`SetConfiguration`). Außerdem werden sie als
+nicht verfügbar (see :func:`Set Configuration`). Außerdem werden sie als
 Seiteneffekt von Konfigurations- und Lesefilteränderungen auf 0 zurückgesetzt.
 
 Die Werte für Schreib-Timeout, Lese-Register- und Lese-Buffer-Überlauf zählen
@@ -526,12 +526,12 @@ die Anzahl dieser Fehler:
 
 * Ein Schreib-Timeout tritt dann auf, wenn ein Frame nicht übertragen werden
   konnte bevor der eingestellte Schreib-Timeout abgelaufen ist (siehe
-  :func:`SetConfiguration`).
+  :func:`Set Configuration`).
 * Ein Lese-Register-Überlauf tritt dann auf, wenn im Lese-Register des
   CAN-Transceiver noch der zuletzt empfangen Frame steht wenn der nächste Frame
   ankommt. In diesem Fall geht der neu ankommende Frame verloren. Dies
   passiert, wenn der CAN-Transceiver mehr Frames empfängt als das Bricklet
-  behandeln kann. Mit Hilfe des Lesefilters (siehe :func:`SetReadFilter`) kann
+  behandeln kann. Mit Hilfe des Lesefilters (siehe :func:`Set Read Filter`) kann
   die Anzahl der empfangen Frames verringert werden. Dieser Zähler ist nicht
   exakt, sondern stellt eine untere Grenze da. Es kann vorkommen, dass das
   Bricklet nicht alle Überläufe erkennt, wenn diese in schneller Abfolge
@@ -540,9 +540,9 @@ die Anzahl dieser Fehler:
   bereits voll ist und noch ein Frame vom Lese-Register des CAN-Transceiver
   gelesen werden soll. In diesem Fall geht der Frame im Lese-Register verloren.
   Dies passiert, wenn der CAN-Transceiver mehr Frames empfängt, die dem
-  Lese-Buffer hinzugefügt werden sollen, als Frames mit der :func:`ReadFrame`
+  Lese-Buffer hinzugefügt werden sollen, als Frames mit der :func:`Read Frame`
   Funktion aus dem Lese-Buffer entnommen werden. Die Verwendung des
-  :func:`FrameRead` Callbacks stellt sicher, dass der Lese-Buffer nicht
+  :cb:`Frame Read` Callbacks stellt sicher, dass der Lese-Buffer nicht
   überlaufen kann.
 """
 }]
@@ -568,9 +568,9 @@ transceiver.
 For remote frames the ``data`` return value always contains invalid values.
 
 A configurable read filter can be used to define which frames should be
-received by the CAN transceiver at all (see :func:`SetReadFilter`).
+received by the CAN transceiver at all (see :func:`Set Read Filter`).
 
-To enable this callback, use :func:`EnableFrameReadCallback`.
+To enable this callback, use :func:`Enable Frame Read Callback`.
 """,
 'de':
 """
@@ -581,9 +581,9 @@ Für Remote-Frames beinhalte der ``data`` Rückgabewerte immer ungültigen Werte
 
 Mittels eines einstellbaren Lesefilters kann festgelegt werden, welche Frames
 von der CAN-Transceiver überhaupt empfangen werden sollen (siehe
-:func:`SetReadFilter`).
+:func:`Set Read Filter`).
 
-Dieser Callback kann durch :func:`EnableFrameReadCallback` aktiviert werden.
+Dieser Callback kann durch :func:`Enable Frame Read Callback` aktiviert werden.
 """
 }]
 })

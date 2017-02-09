@@ -37,8 +37,8 @@ Sets the state of the relays, *true* means on and *false* means off.
 For example: (true, false) turns relay 1 on and relay 2 off.
 
 If you just want to set one of the relays and don't know the current state
-of the other relay, you can get the state with :func:`GetState` or you
-can use :func:`SetSelectedState`.
+of the other relay, you can get the state with :func:`Get State` or you
+can use :func:`Set Selected State`.
 
 Running monoflop timers will be overwritten if this function is called.
 
@@ -50,8 +50,8 @@ Setzt den Zustand der Relais, *true* bedeutet ein und *false* aus.
 Beispiel: (true, false) schaltet Relais 1 ein und Relais 2 aus.
 
 Wenn nur eines der Relais gesetzt werden soll und der aktuelle Zustand des anderen Relais
-nicht bekannt ist, dann kann der Zustand mit :func:`GetState` ausgelesen werden oder
-es kann :func:`SetSelectedState` genutzt werden.
+nicht bekannt ist, dann kann der Zustand mit :func:`Get State` ausgelesen werden oder
+es kann :func:`Set Selected State` genutzt werden.
 
 Laufende Monoflop Timer werden überschrieben wenn diese Funktion aufgerufen wird.
 
@@ -132,7 +132,7 @@ com['packets'].append({
 'en':
 """
 Returns (for the given relay) the current state and the time as set by 
-:func:`SetMonoflop` as well as the remaining time until the state flips.
+:func:`Set Monoflop` as well as the remaining time until the state flips.
 
 If the timer is not running currently, the remaining time will be returned
 as 0.
@@ -140,7 +140,7 @@ as 0.
 'de':
 """
 Gibt (für das angegebene Relais) den aktuellen Zustand und die Zeit, wie von 
-:func:`SetMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum Zustandswechsel, zurück.
+:func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 """

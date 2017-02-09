@@ -37,16 +37,16 @@ com['packets'].append({
 Returns the current heart rate measured.
 
 If you want to get the heart rate periodically, it is recommended 
-to use the callback :func:`HeartRate` and set the period with 
-:func:`SetHeartRateCallbackPeriod`.
+to use the :cb:`Heart Rate` callback and set the period with
+:func:`Set Heart Rate Callback Period`.
 """,
 'de':
 """
 Gibt die Herzschlagfrequenz des Sensors zurück.
 
 Wenn die Herzschlagfrequenz periodisch abgefragt werden soll,
-wird empfohlen den Callback :func:`HeartRate` zu nutzen und die Periode
-mit :func:`SetHeartRateCallbackPeriod` vorzugeben.
+wird empfohlen den :cb:`Heart Rate` Callback zu nutzen und die Periode
+mit :func:`Set Heart Rate Callback Period` vorzugeben.
 """
 }]
 })
@@ -59,21 +59,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`HeartRate` callback is triggered
+Sets the period in ms with which the :cb:`Heart Rate` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`HeartRate` is only triggered if the heart rate has changed since the
-last triggering.
+The :cb:`Heart Rate` callback is only triggered if the heart rate has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`HeartRate` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Heart Rate` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`HeartRate` wird nur ausgelöst wenn sich die Herzschlagfrequenz seit der
-letzten Auslösung geändert hat.
+Der :cb:`Heart Rate` Callback wird nur ausgelöst wenn sich die
+Herzschlagfrequenz seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -88,11 +88,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetHeartRateCallbackPeriod`.
+Returns the period as set by :func:`Set Heart Rate Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetHeartRateCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Heart Rate Callback Period`
 gesetzt.
 """
 }]
@@ -108,7 +108,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`HeartRateReached` callback. 
+Sets the thresholds for the :cb:`Heart Rate Reached` callback.
 
 The following options are possible:
 
@@ -126,7 +126,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`HeartRateReached` Callback.
+Setzt den Schwellwert für den :cb:`Heart Rate Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -155,11 +155,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetHeartRateCallbackThreshold`.
+Returns the threshold as set by :func:`Set Heart Rate Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetHeartRateCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Heart Rate Callback Threshold`
 gesetzt.
 """
 }]
@@ -175,11 +175,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`HeartRateReached`
+* :cb:`Heart Rate Reached`
 
 is triggered, if the threshold
 
-* :func:`SetHeartRateCallbackThreshold`
+* :func:`Set Heart Rate Callback Threshold`
 
 keeps being reached.
 
@@ -189,11 +189,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`HeartRateReached`
+* :cb:`Heart Rate Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetHeartRateCallbackThreshold`
+* :func:`Set Heart Rate Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -210,11 +210,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -229,20 +229,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetHeartRateCallbackPeriod`. The :word:`parameter` is the heart rate
+:func:`Set Heart Rate Callback Period`. The :word:`parameter` is the heart rate
 of the sensor.
 
-:func:`HeartRate` is only triggered if the heart rate has changed since the
-last triggering.
+The :cb:`Heart Rate` callback is only triggered if the heart rate has changed
+since the last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
-:func:`SetHeartRateCallbackPeriod`, ausgelöst. Der :word:`parameter` ist
+:func:`Set Heart Rate Callback Period`, ausgelöst. Der :word:`parameter` ist
 die Herzschlagfrequenz des Sensors.
 
-:func:`HeartRate` wird nur ausgelöst wenn sich die Herzschlagfrequenz
-seit der letzten Auslösung geändert hat.
+Der :cb:`Heart Rate` Callback wird nur ausgelöst wenn sich die
+Herzschlagfrequenz seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -256,20 +256,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetHeartRateCallbackThreshold` is reached.
+:func:`Set Heart Rate Callback Threshold` is reached.
 The :word:`parameter` is the heart rate of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetHeartRateCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Heart Rate Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Herzschlagfrequenz des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -309,11 +309,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`BeatStateChanged` callback.
+Enables the :cb:`Beat State Changed` callback.
 """,
 'de':
 """
-Aktiviert den :func:`BeatStateChanged` Callback.
+Aktiviert den :cb:`Beat State Changed` Callback.
 """
 }]
 })
@@ -326,11 +326,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`BeatStateChanged` callback.
+Disables the :cb:`Beat State Changed` callback.
 """,
 'de':
 """
-Deaktiviert den :func:`BeatStateChanged` Callback.
+Deaktiviert den :cb:`Beat State Changed` Callback.
 """
 }]
 })
@@ -343,11 +343,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :func:`BeatStateChanged` callback is enabled.
+Returns *true* if the :cb:`Beat State Changed` callback is enabled.
 """,
 'de':
 """
-Gibt *true* zurück wenn der :func:`BeatStateChanged` Callback aktiviert ist.
+Gibt *true* zurück wenn der :cb:`Beat State Changed` Callback aktiviert ist.
 """
 }]
 })

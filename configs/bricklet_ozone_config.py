@@ -38,9 +38,9 @@ Returns the measured ozone concentration. The value is in
 `ppb (parts per billion) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
 and between 0 to 250.
 
-If you want to get the ozone concentration periodically, it is recommended to use the
-callback :func:`OzoneConcentration` and set the period with
-:func:`SetOzoneConcentrationCallbackPeriod`.
+If you want to get the ozone concentration periodically, it is recommended to
+use the :cb:`Ozone Concentration` callback and set the period with
+:func:`Set Ozone Concentration Callback Period`.
 """,
 'de':
 """
@@ -48,9 +48,9 @@ Gibt die gemessene Ozon-Konzentration zurück. Der Wert ist in
 `ppb (Teile pro Milliarde) <https://de.wikipedia.org/wiki/Parts_per_billion>`__
 und im Bereich von 0 bis 250.
 
-Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`OzoneConcentration` zu nutzen und die Periode mit
-:func:`SetOzoneConcentrationCallbackPeriod` vorzugeben.
+Wenn die Ozon-Konzentration periodisch abgefragt werden soll, wird empfohlen
+den :cb:`Ozone Concentration` Callback zu nutzen und die Periode mit
+:func:`Set Ozone Concentration Callback Period` vorzugeben.
 """
 }]
 })
@@ -67,8 +67,8 @@ Returns the value as read by a 12-bit analog-to-digital converter.
 The value is between 0 and 4095.
 
 If you want the analog value periodically, it is recommended to use the
-callback :func:`AnalogValue` and set the period with
-:func:`SetAnalogValueCallbackPeriod`.
+:cb:`Analog Value` callback and set the period with
+:func:`Set Analog Value Callback Period`.
 """,
 'de':
 """
@@ -76,8 +76,8 @@ Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`AnalogValue` zu nutzen und die Periode mit
-:func:`SetAnalogValueCallbackPeriod` vorzugeben.
+den :cb:`Analog Value` Callback zu nutzen und die Periode mit
+:func:`Set Analog Value Callback Period` vorzugeben.
 """
 }]
 })
@@ -90,21 +90,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`OzoneConcentration` callback is triggered
-periodically. A value of 0 turns the callback off.
+Sets the period in ms with which the :cb:`Ozone Concentration` callback is
+triggered periodically. A value of 0 turns the callback off.
 
-:func:`OzoneConcentration` is only triggered if the ozone_concentration has changed since the
-last triggering.
+The :cb:`Ozone Concentration` callback is only triggered if the
+ozone concentration has changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`OzoneConcentration` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Ozone Concentration` Callback
+ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`OzoneConcentration` wird nur ausgelöst wenn sich die Spannung seit der
-letzten Auslösung geändert hat.
+Der :cb:`Ozone Concentration` Callback wird nur ausgelöst wenn sich die
+Ozon-Konzentration seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -119,11 +119,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetOzoneConcentrationCallbackPeriod`.
+Returns the period as set by :func:`Set Ozone Concentration Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetOzoneConcentrationCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Ozone Concentration Callback Period`
 gesetzt.
 """
 }]
@@ -137,21 +137,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`AnalogValue` callback is triggered
+Sets the period in ms with which the :cb:`Analog Value` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AnalogValue` is only triggered if the analog value has changed since the
-last triggering.
+The :cb:`Analog Value` callback is only triggered if the analog value has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -166,11 +166,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
+Returns the period as set by :func:`Set Analog Value Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAnalogValueCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Analog Value Callback Period`
 gesetzt.
 """
 }]
@@ -186,7 +186,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`OzoneConcentrationReached` callback.
+Sets the thresholds for the :cb:`Ozone Concentration Reached` callback.
 
 The following options are possible:
 
@@ -195,16 +195,16 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off"
- "'o'",    "Callback is triggered when the ozone_concentration is *outside* the min and max values"
- "'i'",    "Callback is triggered when the ozone_concentration is *inside* the min and max values"
- "'<'",    "Callback is triggered when the ozone_concentration is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the ozone_concentration is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the ozone concentration is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the ozone concentration is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the ozone concentration is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the ozone concentration is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`OzoneConcentrationReached` Callback.
+Setzt den Schwellwert für den :cb:`Ozone Concentration Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -213,10 +213,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Spannung *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn die Ozon-Konzentration *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Ozon-Konzentration *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Ozon-Konzentration kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Ozon-Konzentration größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -233,11 +233,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetOzoneConcentrationCallbackThreshold`.
+Returns the threshold as set by :func:`Set Ozone Concentration Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetOzoneConcentrationCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Ozone Concentration Callback Threshold`
 gesetzt.
 """
 }]
@@ -253,7 +253,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`AnalogValueReached` callback.
+Sets the thresholds for the :cb:`Analog Value Reached` callback.
 
 The following options are possible:
 
@@ -271,7 +271,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
+Setzt den Schwellwert für den :cb:`Analog Value Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -300,11 +300,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
+Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetAnalogValueCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Analog Value Callback Threshold`
 gesetzt.
 """
 }]
@@ -320,13 +320,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`OzoneConcentrationReached`,
-* :func:`AnalogValueReached`
+* :cb:`Ozone Concentration Reached`,
+* :cb:`Analog Value Reached`
 
 are triggered, if the thresholds
 
-* :func:`SetOzoneConcentrationCallbackThreshold`,
-* :func:`SetAnalogValueCallbackThreshold`
+* :func:`Set Ozone Concentration Callback Threshold`,
+* :func:`Set Analog Value Callback Threshold`
 
 keep being reached.
 
@@ -336,13 +336,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`OzoneConcentrationReached`,
-* :func:`AnalogValueReached`
+* :cb:`Ozone Concentration Reached`,
+* :cb:`Analog Value Reached`
 
 ausgelöst werden, wenn die Schwellwerte
 
-* :func:`SetOzoneConcentrationCallbackThreshold`,
-* :func:`SetAnalogValueCallbackThreshold`
+* :func:`Set Ozone Concentration Callback Threshold`,
+* :func:`Set Analog Value Callback Threshold`
 
 weiterhin erreicht bleiben.
 
@@ -359,11 +359,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -390,7 +390,7 @@ The default value is 50.
 'de':
 """
 Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
-für die Ozone-Konzentration.
+für die Ozon-Konzentration.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
@@ -410,12 +410,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length of the moving average as set by :func:`SetMovingAverage`.
+Returns the length of the moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
 Gibt die Länge des gleitenden Mittelwerts zurück, wie von
-:func:`SetMovingAverage` gesetzt.
+:func:`Set Moving Average` gesetzt.
 """
 }]
 })
@@ -429,19 +429,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetOzoneConcentrationCallbackPeriod`. The :word:`parameter` is the ozone concentration of the
-sensor.
+:func:`Set Ozone Concentration Callback Period`. The :word:`parameter` is th
+ozone concentration of the sensor.
 
-:func:`OzoneConcentration` is only triggered if the ozone concentration has changed since the
-last triggering.
+The :cb:`Ozone Concentration` callback is only triggered if the ozone
+concentration has changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetOzoneConcentrationCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Ozone Concentration Callback Period`,
 ausgelöst. Der :word:`parameter` ist die gemessene Ozon-Konzentration des Sensors.
 
-:func:`OzoneConcentration` wird nur ausgelöst wenn sich die Ozon-Konzentration seit der
-letzten Auslösung geändert hat.
+Der :cb:`Ozone Concentration` Callback wird nur ausgelöst wenn sich die
+Ozon-Konzentration seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -455,19 +455,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value of the
-sensor.
+:func:`Set Analog Value Callback Period`. The :word:`parameter` is the
+analog value of the sensor.
 
-:func:`AnalogValue` is only triggered if the analog value has changed since the
-last triggering.
+The :cb:`Analog Value` callback is only triggered if the analog value has
+changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Analog Value Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
 
-:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -481,20 +481,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetOzoneConcentrationCallbackThreshold` is reached.
+:func:`Set Ozone Concentration Callback Threshold` is reached.
 The :word:`parameter` is the ozone concentration.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
-:func:`SetOzoneConcentrationCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Ozone Concentration Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die gemessene Ozon-Konzentration.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -508,20 +508,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetAnalogValueCallbackThreshold` is reached.
+:func:`Set Analog Value Callback Threshold` is reached.
 The :word:`parameter` is the analog value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
-:func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

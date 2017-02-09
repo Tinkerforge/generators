@@ -38,8 +38,8 @@ Returns the current. The value is in mA
 and between -20000mA and 20000mA.
 
 If you want to get the current periodically, it is recommended to use the
-callback :func:`Current` and set the period with 
-:func:`SetCurrentCallbackPeriod`.
+:cb:`Current` callback and set the period with
+:func:`Set Current Callback Period`.
 """,
 'de':
 """
@@ -47,8 +47,8 @@ Gibt die gemessenen Stromstärke zurück. Der Wert ist in mA und im
 Bereich von -20000mA bis 20000mA.
 
 Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Current` zu nutzen und die Periode mit 
-:func:`SetCurrentCallbackPeriod` vorzugeben.
+den :cb:`Current` Callback zu nutzen und die Periode mit
+:func:`Set Current Callback Period` vorzugeben.
 """
 }]
 })
@@ -65,8 +65,8 @@ Returns the voltage. The value is in mV
 and between 0mV and 36000mV.
 
 If you want to get the voltage periodically, it is recommended to use the
-callback :func:`Voltage` and set the period with 
-:func:`SetVoltageCallbackPeriod`.
+:cb:`Voltage` callback and set the period with
+:func:`Set Voltage Callback Period`.
 """,
 'de':
 """
@@ -74,8 +74,8 @@ Gibt die gemessenen Spannung zurück. Der Wert ist in mV und im
 Bereich von 0mV bis 36000mV.
 
 Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Voltage` zu nutzen und die Periode mit 
-:func:`SetVoltageCallbackPeriod` vorzugeben.
+den :cb:`Voltage` Callback zu nutzen und die Periode mit
+:func:`Set Voltage Callback Period` vorzugeben.
 """
 }]
 })
@@ -92,8 +92,8 @@ Returns the power. The value is in mW
 and between 0mV and 720000mW.
 
 If you want to get the power periodically, it is recommended to use the
-callback :func:`Power` and set the period with 
-:func:`SetPowerCallbackPeriod`.
+:cb:`Power` callback and set the period with
+:func:`Set Power Callback Period`.
 """,
 'de':
 """
@@ -101,8 +101,8 @@ Gibt die gemessenen Leistung zurück. Der Wert ist in mW und im
 Bereich von 0mW bis 720000mW.
 
 Wenn die Leistung periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Power` zu nutzen und die Periode mit 
-:func:`SetPowerCallbackPeriod` vorzugeben.
+den :cb:`Power` Callback zu nutzen und die Periode mit
+:func:`Set Power Callback Period` vorzugeben.
 """
 }]
 })
@@ -220,11 +220,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration`
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration`
 gesetzt.
 """
 }]
@@ -270,11 +270,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the calibration as set by :func:`SetCalibration`.
+Returns the calibration as set by :func:`Set Calibration`.
 """,
 'de':
 """
-Gibt die Kalibrierung zurück, wie von :func:`SetCalibration`
+Gibt die Kalibrierung zurück, wie von :func:`Set Calibration`
 gesetzt.
 """
 }]
@@ -288,21 +288,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Current` callback is triggered
+Sets the period in ms with which the :cb:`Current` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Current` is only triggered if the current has changed since the
-last triggering.
+The :cb:`Current` callback is only triggered if the current has changed since
+the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Current` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Current` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Current` Callback wird nur ausgelöst wenn sich die Stromstärke seit
+der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -317,11 +317,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+Returns the period as set by :func:`Set Current Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetCurrentCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Current Callback Period`
 gesetzt
 """
 }]
@@ -335,20 +335,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Voltage` callback is triggered
+Sets the period in ms with which the :cb:`Voltage` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Voltage` is only triggered if the voltage has changed since the
-last triggering.
+The :cb:`Voltage` callback is only triggered if the voltage has changed since
+the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Voltage` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Voltage` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+Der :cb:`Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -364,11 +364,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetVoltageCallbackPeriod`.
+Returns the period as set by :func:`Set Voltage Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetVoltageCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Voltage Callback Period`
 gesetzt
 """
 }]
@@ -382,20 +382,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Power` callback is triggered
+Sets the period in ms with which the :cb:`Power` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Power` is only triggered if the power has changed since the
+The :cb:`Power` callback is only triggered if the power has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Power` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Power` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Power` wird nur ausgelöst wenn sich die Leistung seit der
+Der :cb:`Power` Callback wird nur ausgelöst wenn sich die Leistung seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -411,11 +411,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`GetPowerCallbackPeriod`.
+Returns the period as set by :func:`Get Power Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`GetPowerCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Get Power Callback Period`
 gesetzt
 """
 }]
@@ -432,7 +432,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`CurrentReached` callback. 
+Sets the thresholds for the :cb:`Current Reached` callback.
 
 The following options are possible:
 
@@ -450,7 +450,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`CurrentReached` Callback.
+Setzt den Schwellwert für den :cb:`Current Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -479,11 +479,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetCurrentCallbackThreshold`.
+Returns the threshold as set by :func:`Set Current Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetCurrentCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Current Callback Threshold`
 gesetzt.
 """
 }]
@@ -499,7 +499,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`VoltageReached` callback. 
+Sets the thresholds for the :cb:`Voltage Reached` callback.
 
 The following options are possible:
 
@@ -517,7 +517,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`VoltageReached` Callback.
+Setzt den Schwellwert für den :cb:`Voltage Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -546,11 +546,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
+Returns the threshold as set by :func:`Set Voltage Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetVoltageCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Voltage Callback Threshold`
 gesetzt.
 """
 }]
@@ -566,7 +566,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`PowerReached` callback. 
+Sets the thresholds for the :cb:`Power Reached` callback.
 
 The following options are possible:
 
@@ -584,7 +584,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`PowerReached` Callback.
+Setzt den Schwellwert für den :cb:`Power Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -613,11 +613,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetPowerCallbackThreshold`.
+Returns the threshold as set by :func:`Set Power Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetPowerCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Power Callback Threshold`
 gesetzt.
 """
 }]
@@ -634,15 +634,15 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`CurrentReached`,
-* :func:`VoltageReached`,
-* :func:`PowerReached`
+* :cb:`Current Reached`,
+* :cb:`Voltage Reached`,
+* :cb:`Power Reached`
 
 are triggered, if the thresholds
 
-* :func:`SetCurrentCallbackThreshold`,
-* :func:`SetVoltageCallbackThreshold`,
-* :func:`SetPowerCallbackThreshold`
+* :func:`Set Current Callback Threshold`,
+* :func:`Set Voltage Callback Threshold`,
+* :func:`Set Power Callback Threshold`
 
 keep being reached.
 
@@ -652,15 +652,15 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`CurrentReached`,
-* :func:`VoltageReached`,
-* :func:`PowerReached`
+* :cb:`Current Reached`,
+* :cb:`Voltage Reached`,
+* :cb:`Power Reached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
-* :func:`SetCurrentCallbackThreshold`,
-* :func:`SetVoltageCallbackThreshold`,
-* :func:`SetPowerCallbackThreshold`
+* :func:`Set Current Callback Threshold`,
+* :func:`Set Voltage Callback Threshold`,
+* :func:`Set Power Callback Threshold`
  
 weiterhin erreicht bleiben.
 
@@ -677,11 +677,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -696,19 +696,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetCurrentCallbackPeriod`. The :word:`parameter` is the current of the
+:func:`Set Current Callback Period`. The :word:`parameter` is the current of the
 sensor.
 
-:func:`Current` is only triggered if the current has changed since the
-last triggering.
+The :cb:`Current` callback is only triggered if the current has changed since
+the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Current Callback Period`, ausgelöst. Der :word:`parameter` ist
+die Stromstärke des Sensors.
 
-:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Current` Callback wird nur ausgelöst wenn sich die Stromstärke seit
+der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -722,18 +723,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
-sensor.
+:func:`Set Voltage Callback Period`. The :word:`parameter` is the voltage of
+the sensor.
 
-:func:`Voltage` is only triggered if the voltage has changed since the
-last triggering.
+The :cb:`Voltage` callback is only triggered if the voltage has changed since
+the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Spannung des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Voltage Callback Period`, ausgelöst. Der :word:`parameter` ist
+die Spannung des Sensors.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+Der :cb:`Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -748,18 +750,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetPowerCallbackPeriod`. The :word:`parameter` is the power of the
+:func:`Set Power Callback Period`. The :word:`parameter` is the power of the
 sensor.
 
-:func:`Power` is only triggered if the power has changed since the
+The :cb:`Power` callback is only triggered if the power has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetPowerCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Leistung des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Power Callback Period`, ausgelöst. Der :word:`parameter` ist die
+Leistung des Sensors.
 
-:func:`Power` wird nur ausgelöst wenn sich die Leistung seit der
+Der :cb:`Power` Callback wird nur ausgelöst wenn sich die Leistung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -775,20 +778,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetCurrentCallbackThreshold` is reached.
+:func:`Set Current Callback Threshold` is reached.
 The :word:`parameter` is the current of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetCurrentCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Current Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Stromstärke des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -802,20 +805,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetVoltageCallbackThreshold` is reached.
+:func:`Set Voltage Callback Threshold` is reached.
 The :word:`parameter` is the voltage of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetVoltageCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Voltage Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -829,20 +832,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetPowerCallbackThreshold` is reached.
+:func:`Set Power Callback Threshold` is reached.
 The :word:`parameter` is the power of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetPowerCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Power Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

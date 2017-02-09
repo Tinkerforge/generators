@@ -41,11 +41,11 @@ illuminance of 4500lux is measured.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
   An illuminance of 0lux indicates that the sensor is saturated and the
-  configuration should be modified, see :func:`SetConfiguration`.
+  configuration should be modified, see :func:`Set Configuration`.
 
 If you want to get the illuminance periodically, it is recommended to use the
-callback :func:`Illuminance` and set the period with 
-:func:`SetIlluminanceCallbackPeriod`.
+:cb:`Illuminance` callback and set the period with
+:func:`Set Illuminance Callback Period`.
 """,
 'de':
 """
@@ -57,11 +57,11 @@ ab. Die Beleuchtungsstärke ist in Lux/100 angegeben, d.h. bei einem Wert von
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
   Eine Beleuchtungsstärke von 0Lux bedeutet, dass der Sensor gesättigt
   (saturated) ist und die Konfiguration angepasst werden sollte, siehe
-  :func:`SetConfiguration`.
+  :func:`Set Configuration`.
 
 Wenn die Beleuchtungsstärke periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Illuminance` zu nutzen und die Periode mit 
-:func:`SetIlluminanceCallbackPeriod` vorzugeben.
+den :cb:`Illuminance` Callback zu nutzen und die Periode mit
+:func:`Set Illuminance Callback Period` vorzugeben.
 """
 }]
 })
@@ -74,21 +74,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Illuminance` callback is triggered
+Sets the period in ms with which the :cb:`Illuminance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Illuminance` is only triggered if the illuminance has changed since the
-last triggering.
+The :cb:`Illuminance` callback is only triggered if the illuminance has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Illuminance` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Illuminance` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Illuminance` Callback wird nur ausgelöst wenn sich die
+Beleuchtungsstärke seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -103,11 +103,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetIlluminanceCallbackPeriod`.
+Returns the period as set by :func:`Set Illuminance Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetIlluminanceCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Illuminance Callback Period`
 gesetzt.
 """
 }]
@@ -123,7 +123,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`IlluminanceReached` callback. 
+Sets the thresholds for the :cb:`Illuminance Reached` callback.
 
 The following options are possible:
 
@@ -141,7 +141,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`IlluminanceReached` Callback.
+Setzt den Schwellwert für den :cb:`Illuminance Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -170,11 +170,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetIlluminanceCallbackThreshold`.
+Returns the threshold as set by :func:`Set Illuminance Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetIlluminanceCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Illuminance Callback Threshold`
 gesetzt.
 """
 }]
@@ -190,11 +190,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`IlluminanceReached`,
+* :cb:`Illuminance Reached`,
 
 are triggered, if the thresholds
 
-* :func:`SetIlluminanceCallbackThreshold`,
+* :func:`Set Illuminance Callback Threshold`,
 
 keep being reached.
 
@@ -204,11 +204,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`IlluminanceReached`,
+* :cb:`Illuminance Reached`,
  
 ausgelöst werden, wenn die Schwellwerte 
 
-* :func:`SetIlluminanceCallbackThreshold`,
+* :func:`Set Illuminance Callback Threshold`,
  
 weiterhin erreicht bleiben.
 
@@ -225,11 +225,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -269,13 +269,13 @@ integration time will result in less noise on the data.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
   If the actual measure illuminance is out-of-range then the current illuminance
-  range maximum +0.01lux is reported by :func:`GetIlluminance` and the
-  :func:`Illuminance` callback. For example, 800001 for the 0-8000lux range.
+  range maximum +0.01lux is reported by :func:`Get Illuminance` and the
+  :cb:`Illuminance` callback. For example, 800001 for the 0-8000lux range.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
   With a long integration time the sensor might be saturated before the measured
   value reaches the maximum of the selected illuminance range. In this case 0lux
-  is reported by :func:`GetIlluminance` and the :func:`Illuminance` callback.
+  is reported by :func:`Get Illuminance` and the :cb:`Illuminance` callback.
 
 If the measurement is out-of-range or the sensor is saturated then you should
 configure the next higher illuminance range. If the highest range is already
@@ -298,8 +298,8 @@ längere Integrationszeit verringert das Rauschen auf den Daten.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
   Wenn der eigentliche Messwert außerhalb des eingestellten
-  Helligkeitswertebereichs liegt, dann geben :func:`GetIlluminance` und der
-  :func:`Illuminance` Callback das Maximum des eingestellten
+  Helligkeitswertebereichs liegt, dann geben :func:`Get Illuminance` und der
+  :cb:`Illuminance` Callback das Maximum des eingestellten
   Helligkeitswertebereichs +0,01Lux zurück. Also z.B. 800001 für den 0-8000Lux
   Bereich.
 
@@ -307,7 +307,7 @@ längere Integrationszeit verringert das Rauschen auf den Daten.
   Bei einer langen Integrationszeit kann es sein, dass der Sensor gesättigt
   (saturated) ist bevor der Messwert das Maximum des ausgewählten
   Helligkeitswertebereichs erreicht hat. In diesem Fall geben
-  :func:`GetIlluminance` und der :func:`Illuminance` Callback 0Lux zurück.
+  :func:`Get Illuminance` und der :cb:`Illuminance` Callback 0Lux zurück.
 
 Wenn der Messwert außerhalb des eingestellten Helligkeitswertebereichs liegt
 oder der Sensor gesättigt ist, dann sollte der nächst höhere
@@ -342,11 +342,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration`
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration`
 gesetzt.
 """
 }]
@@ -361,18 +361,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetIlluminanceCallbackPeriod`. The :word:`parameter` is the illuminance of the
+:func:`Set Illuminance Callback Period`. The :word:`parameter` is the illuminance of the
 ambient light sensor.
 
-:func:`Illuminance` is only triggered if the illuminance has changed since the
+The :cb:`Illuminance` callback is only triggered if the illuminance has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetIlluminanceCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Illuminance Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Beleuchtungsstärke des Umgebungslichtsensors.
 
-:func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
+Der :cb:`Illuminance` Callback wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -387,20 +387,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetIlluminanceCallbackThreshold` is reached.
+:func:`Set Illuminance Callback Threshold` is reached.
 The :word:`parameter` is the illuminance of the ambient light sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetIlluminanceCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Illuminance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Beleuchtungsstärke des Umgebungslichtsensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

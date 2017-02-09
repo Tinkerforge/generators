@@ -64,23 +64,23 @@ Current the following tag types are supported:
 * NFC Forum Type 1
 * NFC Forum Type 2
 
-After you call :func:`RequestTagID` the NFC/RFID Bricklet will try to read 
+After you call :func:`Request Tag ID` the NFC/RFID Bricklet will try to read
 the tag ID from the tag. After this process is done the state will change.
-You can either register the :func:`StateChanged` callback or you can poll
-:func:`GetState` to find out about the state change.
+You can either register the :cb:`State Changed` callback or you can poll
+:func:`Get State` to find out about the state change.
 
 If the state changes to *RequestTagIDError* it means that either there was 
 no tag present or that the tag is of an incompatible type. If the state 
 changes to *RequestTagIDReady* it means that a compatible tag was found 
 and that the tag ID could be read out. You can now get the tag ID by
-calling :func:`GetTagID`.
+calling :func:`Get Tag ID`.
 
 If two tags are in the proximity of the NFC/RFID Bricklet, this
 function will cycle through the tags. To select a specific tag you have
-to call :func:`RequestTagID` until the correct tag id is found.
+to call :func:`Request Tag ID` until the correct tag id is found.
 
 In case of any *Error* state the selection is lost and you have to
-start again by calling :func:`RequestTagID`.
+start again by calling :func:`Request Tag ID`.
 """,
 'de':
 """
@@ -96,24 +96,24 @@ Aktuell werden die folgenden Tag Typen unterstützt:
 * NFC Forum Type 1
 * NFC Forum Type 2
 
-Beim Aufruf von :func:`RequestTagID` probiert das NFC/RFID Bricklet die tag ID
+Beim Aufruf von :func:`Request Tag ID` probiert das NFC/RFID Bricklet die Tag ID
 eines Tags auszulesen. Nachdem dieser Prozess beendet ist ändert sich
-der Zustand des Bricklets. Es ist möglich den Callback :func:`StateChanged` zu
-registrieren oder den Zustand über :func:`GetState` zu pollen.
+der Zustand des Bricklets. Es ist möglich den :cb:`State Changed` Callback zu
+registrieren oder den Zustand über :func:`Get State` zu pollen.
 
 Wenn der Zustand auf *RequestTagIDError* wechselt ist ein Fehler aufgetreten.
 Dies bedeutet, dass entweder kein Tag oder kein Tag vom passenden Typ gefunden
 werden konnte. Wenn der Zustand auf *RequestTagIDReady* wechselt ist ein
 kompatibles Tag gefunden worden und die Tag ID wurde gespeichert. Die
-Tag ID kann nun über :func:`GetTagID` ausgelesen werden.
+Tag ID kann nun über :func:`Get Tag ID` ausgelesen werden.
 
 Wenn sich zwei Tags gleichzeitig in der Nähe des NFC/RFID Bricklets befinden
 werden diese nacheinander ausgelesen. Um ein spezifisches Tag zu selektieren
-muss :func:`RequestTagID` so lange aufgerufen werden bis das korrekte Tag
+muss :func:`Request Tag ID` so lange aufgerufen werden bis das korrekte Tag
 gefunden wurde.
 
 Falls sich das NFC/RFID Bricklet in einem der *Error* Zustände befindet
-ist die Selektion aufgehoben und :func:`RequestTagID` muss erneut
+ist die Selektion aufgehoben und :func:`Request Tag ID` muss erneut
 aufgerufen werden.
 """
 }]
@@ -134,14 +134,14 @@ com['packets'].append({
 Returns the tag type, tag ID and the length of the tag ID 
 (4 or 7 bytes are possible length). This function can only be called if the
 NFC/RFID is currently in one of the *Ready* states. The returned ID
-is the ID that was saved through the last call of :func:`RequestTagID`.
+is the ID that was saved through the last call of :func:`Request Tag ID`.
 
 To get the tag ID of a tag the approach is as follows:
 
-1. Call :func:`RequestTagID`
-2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or
-   :func:`StateChanged`)
-3. Call :func:`GetTagID`
+1. Call :func:`Request Tag ID`
+2. Wait for state to change to *RequestTagIDReady* (see :func:`Get State` or
+   :cb:`State Changed` callback)
+3. Call :func:`Get Tag ID`
 """,
 'de':
 """
@@ -149,14 +149,14 @@ Gibt den Tag Typ, die Tag ID und die Länge der Tag ID (4 oder 7 Byte
 möglich) zurück. Diese Funktion kann  nur aufgerufen werden wenn
 sich das Bricklet gerade in einem der *Ready*-Zustände befindet. Die
 zurückgegebene ID ist die letzte ID die durch einen Aufruf von 
-:func:`RequestTagID` gefunden wurde.
+:func:`Request Tag ID` gefunden wurde.
 
 Der Ansatz um die Tag ID eines Tags zu bekommen sieht wie folgt aus:
 
-1. Rufe :func:`RequestTagID` auf
+1. Rufe :func:`Request Tag ID` auf
 2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe
-   :func:`GetState` oder :func:`StateChanged`)
-3. Rufe :func:`GetTagID` auf
+   :func:`Get State` oder :cb:`State Changed` Callback)
+3. Rufe :func:`Get Tag ID` auf
 """
 }]
 })
@@ -192,10 +192,10 @@ initialization will only take about 20ms. After that it changes to *Idle*.
 The functions of this Bricklet can be called in the *Idle* state and all of
 the *Ready* and *Error* states.
 
-Example: If you call :func:`RequestPage`, the state will change to 
+Example: If you call :func:`Request Page`, the state will change to
 *RequestPage* until the reading of the page is finished. Then it will change
 to either *RequestPageReady* if it worked or to *RequestPageError* if it
-didn't. If the request worked you can get the page by calling :func:`GetPage`.
+didn't. If the request worked you can get the page by calling :func:`Get Page`.
 
 The same approach is used analogously for the other API functions.
 """,
@@ -211,11 +211,11 @@ Die Funktionen dieses Bricklets können aufgerufen werden wenn der Zustand
 entweder *Idle* ist oder einer der *Ready* oder *Error*-Zustände
 erreicht wurde.
 
-Beispiel: Wenn :func:`RequestPage` aufgerufen wird, änder sich der
+Beispiel: Wenn :func:`Request Page` aufgerufen wird, änder sich der
 Zustand zu *RequestPage* solange der Leseprozess noch nicht abgeschlossen
 ist. Danach ändert sich der Zustand zu *RequestPageReady* wenn das lesen
 funktioniert hat oder zu *RequestPageError* wenn nicht. Wenn die Anfrage
-erfolgreich war kann die Page mit :func:`GetPage` abgerufen werden.
+erfolgreich war kann die Page mit :func:`Get Page` abgerufen werden.
 
 Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
 """
@@ -242,15 +242,15 @@ and the default key ``[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]``.
 
 The approach to read or write a Mifare Classic page is as follows:
 
-1. Call :func:`RequestTagID`
-2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
-   or :func:`StateChanged`)
-3. If looking for a specific tag then call :func:`GetTagID` and check if the
+1. Call :func:`Request Tag ID`
+2. Wait for state to change to *RequestTagIDReady* (see :func:`Get State`
+   or :cb:`State Changed` callback)
+3. If looking for a specific tag then call :func:`Get Tag ID` and check if the
    expected tag was found, if it was not found got back to step 1
-4. Call :func:`AuthenticateMifareClassicPage` with page and key for the page
+4. Call :func:`Authenticate Mifare Classic Page` with page and key for the page
 5. Wait for state to change to *AuthenticatingMifareClassicPageReady* (see
-   :func:`GetState` or :func:`StateChanged`)
-6. Call :func:`RequestPage` or :func:`WritePage` to read/write page
+   :func:`Get State` or :cb:`State Changed`callback)
+6. Call :func:`Request Page` or :func:`Write Page` to read/write page
 """,
 'de':
 """
@@ -265,17 +265,17 @@ beschrieben wurde kann über Schlüssel A mit dem Standardschlüssel
 Der Ansatz um eine Mifare Classic Page zu lesen oder zu schreiben sieht wie
 folgt aus:
 
-1. Rufe :func:`RequestTagID` auf
-2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState`
-   oder :func:`StateChanged`)
+1. Rufe :func:`Request Tag ID` auf
+2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`Get State`
+   oder :cb:`State Changed` Callback)
 3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
-   :func:`GetTagID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
+   :func:`Get Tag ID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
    wenn er nicht gefunden wurde mit Schritt 1 fortfahren
-4. Rufe :func:`AuthenticateMifareClassicPage` mit Page und Schlüssel für die
+4. Rufe :func:`Authenticate Mifare Classic Page` mit Page und Schlüssel für die
    Page auf
 5. Warte auf einen Zustandswechsel auf *AuthenticatingMifareClassicPageReady*
-   (siehe :func:`GetState` oder :func:`StateChanged`)
-6. Rufe :func:`RequestPage` oder :func:`WritePage` zum Lesen/Schreiben einer
+   (siehe :func:`Get State` oder :cb:`State Changed` Callback)
+6. Rufe :func:`Request Page` oder :func:`Write Page` zum Lesen/Schreiben einer
    Page auf
 """
 }]
@@ -299,17 +299,17 @@ depends on the tag type. The page sizes are as follows:
 
 The general approach for writing to a tag is as follows:
 
-1. Call :func:`RequestTagID`
-2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or
-   :func:`StateChanged`)
-3. If looking for a specific tag then call :func:`GetTagID` and check if the
+1. Call :func:`Request Tag ID`
+2. Wait for state to change to *RequestTagIDReady* (see :func:`Get State` or
+   :cb:`State Changed` callback)
+3. If looking for a specific tag then call :func:`Get Tag ID` and check if the
    expected tag was found, if it was not found got back to step 1
-4. Call :func:`WritePage` with page number and data
-5. Wait for state to change to *WritePageReady* (see :func:`GetState` or
-   :func:`StateChanged`)
+4. Call :func:`Write Page` with page number and data
+5. Wait for state to change to *WritePageReady* (see :func:`Get State` or
+   :cb:`State Changed`callback)
 
 If you use a Mifare Classic tag you have to authenticate a page before you
-can write to it. See :func:`AuthenticateMifareClassicPage`.
+can write to it. See :func:`Authenticate Mifare Classic Page`.
 """,
 'de':
 """
@@ -323,19 +323,19 @@ verhalten sich wie folgt:
 
 Der generelle Ansatz zum Schreiben eines Tags sieht wie folgt aus:
 
-1. Rufe :func:`RequestTagID` auf
+1. Rufe :func:`Request Tag ID` auf
 2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe
-   :func:`GetState` oder :func:`StateChanged`)
+   :func:`Get State` oder :cb:`State Changed` callback)
 3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
-   :func:`GetTagID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
+   :func:`Get Tag ID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
    wenn er nicht gefunden wurde mit Schritt 1 fortfahren
-4. Rufe :func:`WritePage` mit der Page sowie den zu schreibenden Daten auf
+4. Rufe :func:`Write Page` mit der Page sowie den zu schreibenden Daten auf
 5. Warte auf einen Zustandswechsel auf *WritePageReady* (siehe
-   :func:`GetState` oder :func:`StateChanged`)
+   :func:`Get State` oder :cb:`State Changed` Callback)
 
 Wenn ein Mifare Classic Tag verwendet wird muss die Page authentifiziert
 werden bevor sie geschrieben werden kann. Siehe
-:func:`AuthenticateMifareClassicPage`.
+:func:`Authenticate Mifare Classic Page`.
 """
 }]
 })
@@ -349,7 +349,7 @@ com['packets'].append({
 'en':
 """
 Reads 16 bytes starting from the given page and stores them into a buffer. 
-The buffer can then be read out with :func:`GetPage`.
+The buffer can then be read out with :func:`Get Page`.
 How many pages are read depends on the tag type. The page sizes are 
 as follows:
 
@@ -359,23 +359,23 @@ as follows:
 
 The general approach for reading a tag is as follows:
 
-1. Call :func:`RequestTagID`
-2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
-   or :func:`StateChanged`)
-3. If looking for a specific tag then call :func:`GetTagID` and check if the
+1. Call :func:`Request Tag ID`
+2. Wait for state to change to *RequestTagIDReady* (see :func:`Get State`
+   or :cb:`State Changed` callback)
+3. If looking for a specific tag then call :func:`Get Tag ID` and check if the
    expected tag was found, if it was not found got back to step 1
-4. Call :func:`RequestPage` with page number
-5. Wait for state to change to *RequestPageReady* (see :func:`GetState`
-   or :func:`StateChanged`)
-6. Call :func:`GetPage` to retrieve the page from the buffer
+4. Call :func:`Request Page` with page number
+5. Wait for state to change to *RequestPageReady* (see :func:`Get State`
+   or :cb:`State Changed` callback)
+6. Call :func:`Get Page` to retrieve the page from the buffer
 
 If you use a Mifare Classic tag you have to authenticate a page before you
-can read it. See :func:`AuthenticateMifareClassicPage`.
+can read it. See :func:`Authenticate Mifare Classic Page`.
 """,
 'de':
 """
 Liest 16 Bytes startend von der übergebenen Page und speichert sie in
-einem Buffer. Dieser Buffer kann mit :func:`GetPage` ausgelesen werden. 
+einem Buffer. Dieser Buffer kann mit :func:`Get Page` ausgelesen werden.
 Wie viele Pages dadurch gelesen werden hängt vom Typ des Tags ab. 
 Die Pagegrößen verhalten sich wie folgt:
 
@@ -385,19 +385,19 @@ Die Pagegrößen verhalten sich wie folgt:
 
 Der generelle Ansatz zum Lesen eines Tags sieht wie folgt aus:
 
-1. Rufe :func:`RequestTagID` auf
+1. Rufe :func:`Request Tag ID` auf
 2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe
-   :func:`GetState` oder :func:`StateChanged`)
+   :func:`Get State` oder :cb:`State Changed` Callback)
 3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
-   :func:`GetTagID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
+   :func:`Get Tag ID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
    wenn er nicht gefunden wurde mit Schritt 1 fortfahren
-4. Rufe :func:`RequestPage` mit der zu lesenden Page auf
+4. Rufe :func:`Request Page` mit der zu lesenden Page auf
 5. Warte auf einen Zustandswechsel auf *RequestPageReady* (siehe
-   :func:`GetState` oder :func:`StateChanged`)
-6. Rufe :func:`GetPage` auf um die gespeicherte Page abzufragen
+   :func:`Get State` oder :cb:`State Changed` Callback)
+6. Rufe :func:`Get Page` auf um die gespeicherte Page abzufragen
 
 Wenn ein Mifare Classic Tag verwendet wird muss die Page authentifiziert
-werden bevor sie gelesen werden kann. Siehe :func:`AuthenticateMifareClassicPage`.
+werden bevor sie gelesen werden kann. Siehe :func:`Authenticate Mifare Classic Page`.
 """
 }]
 })
@@ -411,13 +411,13 @@ com['packets'].append({
 'en':
 """
 Returns 16 bytes of data from an internal buffer. To fill the buffer
-with specific pages you have to call :func:`RequestPage` beforehand.
+with specific pages you have to call :func:`Request Page` beforehand.
 """,
 'de':
 """
 Gibt 16 Bytes Daten aus einem internen Buffer zurück. Der Buffer
 kann zuvor mit spezifischen Pages über einen Aufruf von  
-:func:`RequestPage` gefüllt werden.
+:func:`Request Page` gefüllt werden.
 """
 }]
 })
@@ -446,12 +446,12 @@ com['packets'].append({
 'en':
 """
 This callback is called if the state of the NFC/RFID Bricklet changes.
-See :func:`GetState` for more information about the possible states.
+See :func:`Get State` for more information about the possible states.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Zustand des NFC/RFID Bricklets
-sich verändert. Siehe :func:`GetState` für mehr Informationen
+sich verändert. Siehe :func:`Get State` für mehr Informationen
 über die möglichen Zustände des Bricklets.
 """
 }]

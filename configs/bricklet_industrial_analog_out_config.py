@@ -115,11 +115,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the voltage as set by :func:`SetVoltage`.
+Returns the voltage as set by :func:`Set Voltage`.
 """,
 'de':
 """
-Gibt die Spannung zurück, wie von :func:`SetVoltage` gesetzt.
+Gibt die Spannung zurück, wie von :func:`Set Voltage` gesetzt.
 """
 }]
 })
@@ -155,11 +155,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current as set by :func:`SetCurrent`.
+Returns the current as set by :func:`Set Current`.
 """,
 'de':
 """
-Gibt die Spannung zurück, wie von :func:`SetCurrent` gesetzt.
+Gibt die Spannung zurück, wie von :func:`Set Current` gesetzt.
 """
 }]
 })
@@ -225,11 +225,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })

@@ -49,8 +49,8 @@ Sets the state of the LEDs. Possible states are:
 In auto toggle mode the LED is toggled automatically at each press of a button.
 
 If you just want to set one of the LEDs and don't know the current state
-of the other LED, you can get the state with :func:`GetLEDState` or you
-can use :func:`SetSelectedLEDState`.
+of the other LED, you can get the state with :func:`Get LED State` or you
+can use :func:`Set Selected LED State`.
 
 The default value is (1, 1).
 """,
@@ -67,8 +67,8 @@ Im Auto-Toggle Modus wechselt die LED automatisch zwischen aus und an bei jedem
 Tasterdruck.
 
 Wenn nur eine der LEDs gesetzt werden soll und der aktuelle Zustand der anderen LED
-nicht bekannt ist, dann kann der Zustand mit :func:`GetLEDState` ausgelesen werden oder
-es kann :func:`SetSelectedLEDState` genutzt werden.
+nicht bekannt ist, dann kann der Zustand mit :func:`Get LED State` ausgelesen werden oder
+es kann :func:`Set Selected LED State` genutzt werden.
 
 Der Standardwert ist (1, 1).
 """
@@ -90,11 +90,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current state of the LEDs, as set by :func:`SetLEDState`.
+Returns the current state of the LEDs, as set by :func:`Set LED State`.
 """,
 'de':
 """
-Gibt den aktuellen Zustand der LEDs zurück, wie von :func:`SetLEDState` gesetzt.
+Gibt den aktuellen Zustand der LEDs zurück, wie von :func:`Set LED State` gesetzt.
 """
 }]
 })

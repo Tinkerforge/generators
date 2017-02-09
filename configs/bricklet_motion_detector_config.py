@@ -131,11 +131,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetStatusLEDConfig`.
+Returns the configuration as set by :func:`Set Status LED Config`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetStatusLEDConfig` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Status LED Config` gesetzt.
 """
 }]
 })

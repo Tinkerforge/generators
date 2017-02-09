@@ -43,7 +43,7 @@ latitude and longitude. Possible values for ``ns`` and ``ew`` are 'N', 'S', 'E'
 and 'W' (north, south, east and west).
 
 This data is only valid if there is currently a fix as indicated by
-:func:`GetStatus`.
+:func:`Get Status`.
 """,
 'de':
 """
@@ -53,7 +53,7 @@ Die Parameter ``ns`` und ``ew`` sind Himmelsrichtungen für
 Breiten- und Längengrad. Mögliche Werte für ``ns`` und ``ew`` sind 'N', 'S', 'E'
 und 'W' (Nord, Süd, Ost, West).
 
-Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`).
+Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status`).
 """
 }]
 })
@@ -97,7 +97,7 @@ Returns the current altitude and corresponding geoidal separation.
 Both values are given in cm.
 
 This data is only valid if there is currently a fix as indicated by
-:func:`GetStatus`.
+:func:`Get Status`.
 """,
 'de':
 """
@@ -106,7 +106,7 @@ zurück.
 
 Beide Werte werden in cm angegeben.
 
-Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`).
+Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status`).
 """
 }]
 })
@@ -128,7 +128,7 @@ Please note that this only returns useful values if an actual movement
 is present.
 
 This data is only valid if there is currently a fix as indicated by
-:func:`GetStatus`.
+:func:`Get Status`.
 """,
 'de':
 """
@@ -140,7 +140,7 @@ einer Bewegung nach Osten.
 Dabei ist zu beachten: Diese Funktion liefert nur nützlich Werte wenn
 auch tatsächlich eine Bewegung stattfindet.
 
-Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`).
+Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status`).
 """
 }]
 })
@@ -349,11 +349,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetFixLEDConfig`
+Returns the configuration as set by :func:`Set Fix LED Config`
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetFixLEDConfig` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Fix LED Config` gesetzt.
 """
 }]
 })
@@ -366,20 +366,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Coordinates` callback is triggered
+Sets the period in ms with which the :cb:`Coordinates` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Coordinates` is only triggered if the coordinates changed since the
-last triggering.
+The :cb:`Coordinates` callback is only triggered if the coordinates changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Coordinates` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Coordinates` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Coordinates` wird nur ausgelöst wenn sich die Koordinaten seit der
+Der :cb:`Coordinates` Callback wird nur ausgelöst wenn sich die Koordinaten seit der
 letzten Auslösung geändert haben.
 
 Der Standardwert ist 0.
@@ -395,11 +395,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetCoordinatesCallbackPeriod`.
+Returns the period as set by :func:`Set Coordinates Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetCoordinatesCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Coordinates Callback Period`
 gesetzt.
 """
 }]
@@ -413,20 +413,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Status` callback is triggered
+Sets the period in ms with which the :cb:`Status` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Status` is only triggered if the status changed since the
+The :cb:`Status` callback is only triggered if the status changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Status` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Status` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Status` wird nur ausgelöst wenn sich der Status seit der
+Der :cb:`Status` Callback wird nur ausgelöst wenn sich der Status seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -442,11 +442,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetStatusCallbackPeriod`.
+Returns the period as set by :func:`Set Status Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetStatusCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Status Callback Period`
 gesetzt.
 """
 }]
@@ -460,20 +460,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Altitude` callback is triggered
+Sets the period in ms with which the :cb:`Altitude` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Altitude` is only triggered if the altitude changed since the
+The :cb:`Altitude` callback is only triggered if the altitude changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Altitude` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Altitude` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Altitude` wird nur ausgelöst wenn sich die Höhe seit der
+Der :cb:`Altitude` Callback wird nur ausgelöst wenn sich die Höhe seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -489,11 +489,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAltitudeCallbackPeriod`.
+Returns the period as set by :func:`Set Altitude Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAltitudeCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Altitude Callback Period`
 gesetzt.
 """
 }]
@@ -507,20 +507,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Motion` callback is triggered
+Sets the period in ms with which the :cb:`Motion` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Motion` is only triggered if the motion changed since the
+The :cb:`Motion` callback is only triggered if the motion changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Motion` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Motion` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Motion` wird nur ausgelöst wenn sich die Bewegung seit der
+Der :cb:`Motion` Callback wird nur ausgelöst wenn sich die Bewegung seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -536,11 +536,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetMotionCallbackPeriod`.
+Returns the period as set by :func:`Set Motion Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetMotionCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Motion Callback Period`
 gesetzt.
 """
 }]
@@ -554,21 +554,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`DateTime` callback is triggered
+Sets the period in ms with which the :cb:`Date Time` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`DateTime` is only triggered if the date or time changed since the
-last triggering.
+The :cb:`Date Time` callback is only triggered if the date or time changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`DateTime` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Date Time` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit seit der
-letzten Auslösung geändert haben.
+Der :cb:`Date Time` Callback wird nur ausgelöst wenn sich das Datum oder die
+Zeit seit der letzten Auslösung geändert haben.
 
 Der Standardwert ist 0.
 """
@@ -583,11 +583,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
+Returns the period as set by :func:`Set Date Time Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetDateTimeCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period`
 gesetzt.
 """
 }]
@@ -635,22 +635,22 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetCoordinatesCallbackPeriod`. The parameters are the same
-as for :func:`GetCoordinates`.
+:func:`Set Coordinates Callback Period`. The parameters are the same
+as for :func:`Get Coordinates`.
 
-:func:`Coordinates` is only triggered if the coordinates changed since the
-last triggering and if there is currently a fix as indicated by
-:func:`GetStatus`.
+The :cb:`Coordinates` callback is only triggered if the coordinates changed
+since the last triggering and if there is currently a fix as indicated by
+:func:`Get Status`.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit 
-:func:`SetCoordinatesCallbackPeriod`, ausgelöst. Die Parameter sind die 
-gleichen wie die von :func:`GetCoordinates`.
+:func:`Set Coordinates Callback Period`, ausgelöst. Die Parameter sind die
+gleichen wie die von :func:`Get Coordinates`.
 
-:func:`Coordinates` wird nur ausgelöst wenn sich die
+Der :cb:`Coordinates` Callback wird nur ausgelöst wenn sich die
 Koordinaten seit der letzten Auslösung geändert haben und ein Fix vorhanden
-ist (siehe :func:`GetStatus`).
+ist (siehe :func:`Get Status`).
 """
 }]
 })
@@ -665,19 +665,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetStatusCallbackPeriod`. The parameters are the same
-as for :func:`GetStatus`.
+:func:`Set Status Callback Period`. The parameters are the same
+as for :func:`Get Status`.
 
-:func:`Status` is only triggered if the status changed since the
+The :cb:`Status` callback is only triggered if the status changed since the
 last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit 
-:func:`SetStatusCallbackPeriod`, ausgelöst. Die Parameter sind die 
-gleichen wie die von :func:`GetStatus`.
+:func:`Set Status Callback Period`, ausgelöst. Die Parameter sind die
+gleichen wie die von :func:`Get Status`.
 
-:func:`Status` wird nur ausgelöst wenn sich der 
+Der :cb:`Status` Callback wird nur ausgelöst wenn sich der
 Status seit der letzten Auslösung geändert hat.
 """
 }]
@@ -693,22 +693,22 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAltitudeCallbackPeriod`. The parameters are the same
-as for :func:`GetAltitude`.
+:func:`Set Altitude Callback Period`. The parameters are the same
+as for :func:`Get Altitude`.
 
-:func:`Altitude` is only triggered if the altitude changed since the
+The :cb:`Altitude` callback is only triggered if the altitude changed since the
 last triggering and if there is currently a fix as indicated by
-:func:`GetStatus`.
+:func:`Get Status`.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit 
-:func:`SetAltitudeCallbackPeriod`, ausgelöst. Die Parameter sind die 
-gleichen wie die von :func:`GetAltitude`.
+:func:`Set Altitude Callback Period`, ausgelöst. Die Parameter sind die
+gleichen wie die von :func:`Get Altitude`.
 
-:func:`Altitude` wird nur ausgelöst wenn sich die 
+Der :cb:`Altitude` Callback wird nur ausgelöst wenn sich die
 Höhe seit der letzten Auslösung geändert hat und ein Fix vorhanden
-ist (siehe :func:`GetStatus`).
+ist (siehe :func:`Get Status`).
 """
 }]
 })
@@ -723,22 +723,22 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetMotionCallbackPeriod`. The parameters are the same
-as for :func:`GetMotion`.
+:func:`Set Motion Callback Period`. The parameters are the same
+as for :func:`Get Motion`.
 
-:func:`Motion` is only triggered if the motion changed since the
+The :cb:`Motion` callback is only triggered if the motion changed since the
 last triggering and if there is currently a fix as indicated by
-:func:`GetStatus`.
+:func:`Get Status`.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit 
-:func:`SetMotionCallbackPeriod`, ausgelöst. Die Parameter sind die 
-gleichen wie die von :func:`GetMotion`.
+:func:`Set Motion Callback Period`, ausgelöst. Die Parameter sind die
+gleichen wie die von :func:`Get Motion`.
 
-:func:`Motion` wird nur ausgelöst wenn sich die 
+Der :cb:`Motion` Callback wird nur ausgelöst wenn sich die
 Bewegung seit der letzten Auslösung geändert hat und ein Fix vorhanden
-ist (siehe :func:`GetStatus`).
+ist (siehe :func:`Get Status`).
 """
 }]
 })
@@ -753,20 +753,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetDateTimeCallbackPeriod`. The parameters are the same
-as for :func:`GetDateTime`.
+:func:`Set Date Time Callback Period`. The parameters are the same
+as for :func:`Get Date Time`.
 
-:func:`DateTime` is only triggered if the date or time changed since the
-last triggering.
+The :cb:`Date Time` callback is only triggered if the date or time changed
+since the last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit 
-:func:`SetDateTimeCallbackPeriod`, ausgelöst. Die Parameter sind die 
-gleichen wie die von :func:`GetDateTime`.
+:func:`Set Date Time Callback Period`, ausgelöst. Die Parameter sind die
+gleichen wie die von :func:`Get Date Time`.
 
-:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit 
-seit der letzten Auslösung geändert haben.
+Der :cb:`Date Time` Callback wird nur ausgelöst wenn sich das Datum oder die
+Zeit seit der letzten Auslösung geändert haben.
 """
 }]
 })
@@ -783,4 +783,3 @@ seit der letzten Auslösung geändert haben.
 #              ('callback_period', ('Coordinates', 'coordinates'), [], 1000)],
 #'incomplete': True # because of special print logic
 #})
-

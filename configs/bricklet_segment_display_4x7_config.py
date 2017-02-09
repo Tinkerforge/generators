@@ -79,12 +79,12 @@ com['packets'].append({
 'en':
 """
 Returns the segment, brightness and color data as set by 
-:func:`SetSegments`.
+:func:`Set Segments`.
 """,
 'de':
 """
 Gibt die Segment-, Helligkeit- und Doppelpunktdaten zurück, wie von
-:func:`SetSegments` gesetzt.
+:func:`Set Segments` gesetzt.
 """
 }]
 })
@@ -113,7 +113,7 @@ the minimum value is -999.
 
 Using a negative increment allows to count backwards.
 
-You can stop the counter at every time by calling :func:`SetSegments`.
+You can stop the counter at every time by calling :func:`Set Segments`.
 """,
 'de':
 """
@@ -130,7 +130,7 @@ ist -999.
 
 Wenn das increment negativ ist läuft der Zähler rückwärts.
 
-Der Zähler kann jederzeit durch einen Aufruf von :func:`SetSegments`
+Der Zähler kann jederzeit durch einen Aufruf von :func:`Set Segments`
 gestoppt werden.
 """
 }]
@@ -166,12 +166,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered when the counter (see :func:`StartCounter`) is
+This callback is triggered when the counter (see :func:`Start Counter`) is
 finished.
 """,
 'de':
 """
-Diese Callback wird ausgelöst wenn der Zähler (siehe :func:`StartCounter`)
+Diese Callback wird ausgelöst wenn der Zähler (siehe :func:`Start Counter`)
 fertig ist.
 """
 }]

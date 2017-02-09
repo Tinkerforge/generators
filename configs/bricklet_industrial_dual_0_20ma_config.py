@@ -62,8 +62,8 @@ or the sensor may be defect. If the returned current is over 20mA, there might
 be a short circuit or the sensor may be defect.
 
 If you want to get the current periodically, it is recommended to use the
-callback :func:`Current` and set the period with 
-:func:`SetCurrentCallbackPeriod`.
+:cb:`Current` callback and set the period with
+:func:`Set Current Callback Period`.
 """,
 'de':
 """
@@ -80,8 +80,8 @@ ist defekt. Somit ist erkennbar ob ein Sensor angeschlossen und funktionsfähig
 ist.
 
 Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Current` zu nutzen und die Periode mit 
-:func:`SetCurrentCallbackPeriod` vorzugeben.
+den :cb:`Current` Callback zu nutzen und die Periode mit
+:func:`Set Current Callback Period` vorzugeben.
 """
 }]
 })
@@ -95,21 +95,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Current` callback is triggered
+Sets the period in ms with which the :cb:`Current` callback is triggered
 periodically for the given sensor. A value of 0 turns the callback off.
 
-:func:`Current` is only triggered if the current has changed since the
+The :cb:`Current` callback is only triggered if the current has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Current` Callback für den
+Setzt die Periode in ms mit welcher der :cb:`Current` Callback für den
 übergebenen Sensor ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
+Der :cb:`Current` Callback wird nur ausgelöst wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0. 
@@ -126,11 +126,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+Returns the period as set by :func:`Set Current Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetCurrentCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Current Callback Period`
 gesetzt.
 """
 }]
@@ -147,7 +147,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`CurrentReached` callback for the given
+Sets the thresholds for the :cb:`Current Reached` callback for the given
 sensor.
 
 The following options are possible:
@@ -166,7 +166,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert des :func:`CurrentReached` Callbacks für den übergebenen
+Setzt den Schwellwert des :cb:`Current Reached` Callbacks für den übergebenen
 Sensor.
 
 Die folgenden Optionen sind möglich:
@@ -197,11 +197,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetCurrentCallbackThreshold`.
+Returns the threshold as set by :func:`Set Current Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetCurrentCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Current Callback Threshold`
 gesetzt.
 """
 }]
@@ -217,11 +217,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`CurrentReached`
+* :cb:`Current Reached`
 
 is triggered, if the threshold
 
-* :func:`SetCurrentCallbackThreshold`
+* :func:`Set Current Callback Threshold`
 
 keeps being reached.
 
@@ -231,11 +231,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher der Schwellwert Callback
 
-* :func:`CurrentReached`
+* :cb:`Current Reached`
  
 ausgelöst werden, wenn der Schwellwert
 
-* :func:`SetCurrentCallbackThreshold`
+* :func:`Set Current Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -252,11 +252,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -317,11 +317,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the sample rate as set by :func:`SetSampleRate`.
+Returns the sample rate as set by :func:`Set Sample Rate`.
 """,
 'de':
 """
-Gibt die Abtastrate zurück, wie von :func:`SetSampleRate`
+Gibt die Abtastrate zurück, wie von :func:`Set Sample Rate`
 gesetzt.
 """
 }]
@@ -337,18 +337,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetCurrentCallbackPeriod`. The :word:`parameter` is the current of the
+:func:`Set Current Callback Period`. The :word:`parameter` is the current of the
 sensor.
 
-:func:`Current` is only triggered if the current has changed since the
+The :cb:`Current` callback is only triggered if the current has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Current Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
 
-:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
+Der :cb:`Current` Callback wird nur ausgelöst wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -364,20 +364,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetCurrentCallbackThreshold` is reached.
+:func:`Set Current Callback Threshold` is reached.
 The :word:`parameter` is the current of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetCurrentCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Current Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Stromstärke des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

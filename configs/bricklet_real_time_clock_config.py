@@ -219,11 +219,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the offset as set by :func:`SetOffset`.
+Returns the offset as set by :func:`Set Offset`.
 """,
 'de':
 """
-Gibt den Versatz zurück, wie von :func:`SetOffset` gesetzt.
+Gibt den Versatz zurück, wie von :func:`Set Offset` gesetzt.
 """
 }]
 })
@@ -236,21 +236,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`DateTime` callback is triggered
+Sets the period in ms with which the :cb:`Date Time` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`DateTime` is only triggered if the date or time changed since the
-last triggering.
+The :cb:`Date Time` Callback is only triggered if the date or time changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`DateTime` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Date Time` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit seit der
-letzten Auslösung geändert haben.
+Der :cb:`Date Time` Callback wird nur ausgelöst wenn sich das Datum oder die
+Zeit seit der letzten Auslösung geändert haben.
 
 Der Standardwert ist 0.
 """
@@ -265,11 +265,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
+Returns the period as set by :func:`Set Date Time Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetDateTimeCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period`
 gesetzt.
 """
 }]
@@ -289,7 +289,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Configures a repeatable alarm. The :func:`Alarm` callback is triggered if the
+Configures a repeatable alarm. The :cb:`Alarm` callback is triggered if the
 current date and time matches the configured alarm.
 
 Setting a parameter to -1 means that it should be disabled and doesn't take part
@@ -316,7 +316,7 @@ alarm that triggers every day at 7:30 AM and is then repeated every 5 minutes.
 """,
 'de':
 """
-Konfiguriert einen wiederholbaren Alarm. Der :func:`Alarm` Callback wird
+Konfiguriert einen wiederholbaren Alarm. Der :cb:`Alarm` Callback wird
 ausgelöst, wenn das aktuelle Datum und die aktuelle Uhrzeit mit dem
 konfigurierten Alarm übereinstimmen.
 
@@ -363,11 +363,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the alarm configuration as set by :func:`SetAlarm`.
+Returns the alarm configuration as set by :func:`Set Alarm`.
 """,
 'de':
 """
-Gibt die Alarmkonfiguration zurück, wie von :func:`SetAlarm` gesetzt.
+Gibt die Alarmkonfiguration zurück, wie von :func:`Set Alarm` gesetzt.
 """
 }]
 })
@@ -395,20 +395,21 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetDateTimeCallbackPeriod`. The :word:`parameters` are the same
-as for :func:`GetDateTime` and :func:`GetTimestamp` combined.
+:func:`Set Date Time Callback Period`. The :word:`parameters` are the same
+as for :func:`Get Date Time` and :func:`Get Timestamp` combined.
 
-:func:`DateTime` is only triggered if the date or time changed since the
-last triggering.
+The :cb:`Date Time` callback is only triggered if the date or time changed
+since the last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
-:func:`SetDateTimeCallbackPeriod`, ausgelöst. Die :word:`parameters` sind die
-gleichen wie die von :func:`GetDateTime` und :func:`GetTimestamp` kombiniert.
+:func:`Set Date Time Callback Period`, ausgelöst. Die :word:`parameters` sind
+die gleichen wie die von :func:`Get Date Time` und :func:`Get Timestamp`
+kombiniert.
 
-:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit
-seit der letzten Auslösung geändert haben.
+Der :cb:`Date Time` Callback wird nur ausgelöst wenn sich das Datum oder die
+Zeit seit der letzten Auslösung geändert haben.
 """
 }]
 })
@@ -436,15 +437,15 @@ com['packets'].append({
 'en':
 """
 This callback is triggered every time the current date and time matches the
-configured alarm (see :func:`SetAlarm`). The :word:`parameters` are the same
-as for :func:`GetDateTime` and :func:`GetTimestamp` combined.
+configured alarm (see :func:`Set Alarm`). The :word:`parameters` are the same
+as for :func:`Get Date Time` and :func:`Get Timestamp` combined.
 """,
 'de':
 """
 Dieser Callback wird jedes mal ausgelöst, wenn das aktuelle Datum und die
 aktuelle Uhrzeit mit dem eingestellten Alarm übereinstimmen (siehe
-:func:`SetAlarm`). Die :word:`parameters` sind die gleichen wie die von
-:func:`GetDateTime` und :func:`GetTimestamp` kombiniert.
+:func:`Set Alarm`). Die :word:`parameters` sind die gleichen wie die von
+:func:`Get Date Time` und :func:`Get Timestamp` kombiniert.
 """
 }]
 })

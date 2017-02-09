@@ -118,7 +118,7 @@ com['packets'].append({
 'en':
 """
 Returns the current state and the time as set by 
-:func:`SetMonoflop` as well as the remaining time until the state flips.
+:func:`Set Monoflop` as well as the remaining time until the state flips.
 
 If the timer is not running currently, the remaining time will be returned
 as 0.
@@ -126,7 +126,7 @@ as 0.
 'de':
 """
 Gibt den aktuellen Zustand und die Zeit, wie von 
-:func:`SetMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum 
+:func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.

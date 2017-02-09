@@ -119,22 +119,22 @@ com['packets'].append({
 Sets the position in °/100 for the specified servo. 
 
 The default range of the position is -9000 to 9000, but it can be specified
-according to your servo with :func:`SetDegree`.
+according to your servo with :func:`Set Degree`.
 
 If you want to control a linear servo or RC brushless motor controller or
 similar with the Servo Brick, you can also define lengths or speeds with
-:func:`SetDegree`.
+:func:`Set Degree`.
 """,
 'de':
 """
 Setzt die Position in °/100 für den angegebenen Servo.
 
 Der Standardbereich für die Position ist -9000 bis 9000, aber dies kann,
-entsprechend dem verwendetem Servo, mit :func:`SetDegree` definiert werden.
+entsprechend dem verwendetem Servo, mit :func:`Set Degree` definiert werden.
 
 Wenn ein Linearservo oder RC Brushless Motor Controller oder ähnlich mit dem
 Servo Brick gesteuert werden soll, können Längen oder Geschwindigkeiten mit
-:func:`SetDegree` definiert werden.
+:func:`Set Degree` definiert werden.
 """
 }] 
 })
@@ -148,11 +148,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the position of the specified servo as set by :func:`SetPosition`.
+Returns the position of the specified servo as set by :func:`Set Position`.
 """,
 'de':
 """
-Gibt die Position des angegebenen Servos zurück, wie von :func:`SetPosition`
+Gibt die Position des angegebenen Servos zurück, wie von :func:`Set Position`
 gesetzt.
 """
 }] 
@@ -168,13 +168,14 @@ com['packets'].append({
 'en':
 """
 Returns the *current* position of the specified servo. This may not be the
-value of :func:`SetPosition` if the servo is currently approaching a
+value of :func:`Set Position` if the servo is currently approaching a
 position goal.
 """,
 'de':
 """
 Gibt die *aktuelle* Position des angegebenen Servos zurück. Dies kann vom Wert
-von :func:`SetPosition` abweichen, wenn der Servo gerade sein Positionsziel anfährt.
+von :func:`Set Position` abweichen, wenn der Servo gerade sein Positionsziel
+anfährt.
 """
 }] 
 })
@@ -189,7 +190,7 @@ com['packets'].append({
 'en':
 """
 Sets the maximum velocity of the specified servo in °/100s. The velocity
-is accelerated according to the value set by :func:`SetAcceleration`.
+is accelerated according to the value set by :func:`Set Acceleration`.
 
 The minimum velocity is 0 (no movement) and the maximum velocity is 65535.
 With a value of 65535 the position will be set immediately (no velocity).
@@ -199,8 +200,8 @@ The default value is 65535.
 'de':
 """
 Setzt die maximale Geschwindigkeit des angegebenen Servos in °/100s. 
-Die Geschwindigkeit wird entsprechend mit dem Wert, wie von :func:`SetAcceleration`
-gesetzt, beschleunigt.
+Die Geschwindigkeit wird entsprechend mit dem Wert, wie von
+:func:`Set Acceleration` gesetzt, beschleunigt.
 
 Die minimale Geschwindigkeit ist 0 (keine Bewegung) und die maximale ist 65535.
 Mit einem Wert von 65535 wird die Position sofort gesetzt (keine Geschwindigkeit).
@@ -219,12 +220,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the velocity of the specified servo as set by :func:`SetVelocity`.
+Returns the velocity of the specified servo as set by :func:`Set Velocity`.
 """,
 'de':
 """
-Gibt die Geschwindigkeit des angegebenen Servos zurück, wie von :func:`SetVelocity`
-gesetzt.
+Gibt die Geschwindigkeit des angegebenen Servos zurück, wie von
+:func:`Set Velocity` gesetzt.
 """
 }] 
 })
@@ -239,13 +240,14 @@ com['packets'].append({
 'en':
 """
 Returns the *current* velocity of the specified servo. This may not be the
-value of :func:`SetVelocity` if the servo is currently approaching a
+value of :func:`Set Velocity` if the servo is currently approaching a
 velocity goal.
 """,
 'de':
 """
-Gibt die *aktuelle* Geschwindigkeit des angegebenen Servos zurück. Dies kann vom Wert
-von :func:`SetVelocity` abweichen, wenn der Servo gerade sein Geschwindigkeitsziel anfährt.
+Gibt die *aktuelle* Geschwindigkeit des angegebenen Servos zurück. Dies kann
+vom Wert von :func:`Set Velocity` abweichen, wenn der Servo gerade sein
+Geschwindigkeitsziel anfährt.
 """
 }] 
 })
@@ -288,12 +290,12 @@ com['packets'].append({
 'en':
 """
 Returns the acceleration for the specified servo as set by 
-:func:`SetAcceleration`.
+:func:`Set Acceleration`.
 """,
 'de':
 """
 Gibt die Beschleunigung des angegebenen Servos zurück, wie von 
-:func:`SetAcceleration` gesetzt.
+:func:`Set Acceleration` gesetzt.
 """
 }] 
 })
@@ -340,11 +342,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the output voltage as specified by :func:`SetOutputVoltage`.
+Returns the output voltage as specified by :func:`Set Output Voltage`.
 """,
 'de':
 """
-Gibt die Ausgangsspannung zurück, wie von :func:`SetOutputVoltage` gesetzt.
+Gibt die Ausgangsspannung zurück, wie von :func:`Set Output Voltage` gesetzt.
 """
 }] 
 })
@@ -412,12 +414,12 @@ com['packets'].append({
 'en':
 """
 Returns the minimum and maximum pulse width for the specified servo as set by
-:func:`SetPulseWidth`.
+:func:`Set Pulse Width`.
 """,
 'de':
 """
 Gibt die minimale und maximale Pulsweite des angegebenen Servos zurück, wie von
-:func:`SetPulseWidth` gesetzt.
+:func:`Set Pulse Width` gesetzt.
 """
 }] 
 })
@@ -437,7 +439,7 @@ given as °/100).
 
 This only specifies the abstract values between which the minimum and maximum
 pulse width is scaled. For example: If you specify a pulse width of 1000µs
-to 2000µs and a degree range of -90° to 90°, a call of :func:`SetPosition`
+to 2000µs and a degree range of -90° to 90°, a call of :func:`Set Position`
 with 0 will result in a pulse width of 1500µs 
 (-90° = 1000µs, 90° = 2000µs, etc.).
 
@@ -449,14 +451,14 @@ Possible usage:
   position. In this case you can set the minimum to 0 and the maximum to 22000.
 * You have a linear servo with a drive length of 20cm, In this case you could
   set the minimum to 0 and the maximum to 20000. Now you can set the Position
-  with :func:`SetPosition` with a resolution of cm/100. Also the velocity will
+  with :func:`Set Position` with a resolution of cm/100. Also the velocity will
   have a resolution of cm/100s and the acceleration will have a resolution of
   cm/100s².
 * You don't care about units and just want the highest possible resolution. In
   this case you should set the minimum to -32767 and the maximum to 32767.
 * You have a brushless motor with a maximum speed of 10000 rpm and want to
   control it with a RC brushless motor controller. In this case you can set the
-  minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
+  minimum to 0 and the maximum to 10000. :func:`Set Position` now controls the rpm.
 
 Both values have a possible range from -32767 to 32767 
 (signed 16-bit integer). The minimum must be smaller than the maximum.
@@ -471,7 +473,7 @@ in °/100).
 Dies definiert die abstrakten Werte zwischen welchen die minimale und maximale
 Pulsweite skaliert wird. Beispiel: Wenn eine Pulsweite von 1000µs bis 2000µs und
 ein Winkelbereich von -90° bis 90° spezifiziert ist, wird ein Aufruf von 
-:func:`SetPosition` mit 0 in einer Pulsweite von 1500µs resultieren
+:func:`Set Position` mit 0 in einer Pulsweite von 1500µs resultieren
 (-90° = 1000µs, 90° = 2000µs, etc.).
 
 Anwendungsfälle:
@@ -484,7 +486,7 @@ Anwendungsfälle:
   und das Maximum auf 22000 gesetzt werden.
 * Ein Linearservo mit einer Antriebslänge von 20cm. In diesem Fall kann das
   Minimum auf 0 und das Maximum auf 20000 gesetzt werden. Jetzt kann die
-  Position mittels :func:`SetPosition` mit einer Auflösung von cm/100 gesetzt
+  Position mittels :func:`Set Position` mit einer Auflösung von cm/100 gesetzt
   werden. Auch die Geschwindigkeit hat eine Auflösung von cm/100s und die
   Beschleunigung von cm/100s².
 * Die Einheit ist irrelevant und eine möglichst hohe Auflösung ist gewünscht.
@@ -492,7 +494,7 @@ Anwendungsfälle:
   werden.
 * Ein Brushless Motor, mit einer maximalen Drehzahl von 1000 U/min, soll mit
   einem RC Brushless Motor Controller gesteuert werden. In diesem Fall kann das
-  Minimum auf 0 und das Maximum auf 10000 gesetzt werden. :func:`SetPosition`
+  Minimum auf 0 und das Maximum auf 10000 gesetzt werden. :func:`Set Position`
   steuert jetzt die Drehzahl in U/min.
 
 Beide Werte haben einen Wertebereich von -32767 bis 32767 (signed 16-bit integer).
@@ -514,12 +516,12 @@ com['packets'].append({
 'en':
 """
 Returns the minimum and maximum degree for the specified servo as set by
-:func:`SetDegree`.
+:func:`Set Degree`.
 """,
 'de':
 """
 Gibt den minimalen und maximalen Winkel für den angegebenen Servo zurück,
-wie von :func:`SetDegree` gesetzt.
+wie von :func:`Set Degree` gesetzt.
 """
 }] 
 })
@@ -579,11 +581,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the period for the specified servo as set by :func:`SetPeriod`.
+Returns the period for the specified servo as set by :func:`Set Period`.
 """,
 'de':
 """
-Gibt die Periode für den angegebenen Servo zurück, wie von :func:`SetPeriod`
+Gibt die Periode für den angegebenen Servo zurück, wie von :func:`Set Period`
 gesetzt.
 """
 }] 
@@ -692,7 +694,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
+Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the Servo Brick is 5V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do 
@@ -702,7 +704,7 @@ The default value is 5V (5000mV).
 """,
 'de':
 """
-Setzt die minimale Spannung in mV, bei welcher der :func:`UnderVoltage` Callback
+Setzt die minimale Spannung in mV, bei welcher der :cb:`Under Voltage` Callback
 ausgelöst wird. Der kleinste mögliche Wert mit dem der Servo Brick noch funktioniert,
 ist 5V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
@@ -721,11 +723,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the minimum voltage as set by :func:`SetMinimumVoltage`
+Returns the minimum voltage as set by :func:`Set Minimum Voltage`
 """,
 'de':
 """
-Gibt die minimale Spannung zurück, wie von :func:`SetMinimumVoltage` gesetzt.
+Gibt die minimale Spannung zurück, wie von :func:`Set Minimum Voltage` gesetzt.
 """
 }]
 })
@@ -739,13 +741,13 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`SetMinimumVoltage`. The :word:`parameter` is the current voltage given
+:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage given
 in mV.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn die Eingangsspannung unter den, mittels
-:func:`SetMinimumVoltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
+:func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
 ist die aktuelle Spannung in mV.
 """
 }]
@@ -760,28 +762,28 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered when a position set by :func:`SetPosition`
+This callback is triggered when a position set by :func:`Set Position`
 is reached. The :word:`parameters` are the servo and the position that is reached.
 
-You can enable this callback with :func:`EnablePositionReachedCallback`.
+You can enable this callback with :func:`Enable Position Reached Callback`.
 
 .. note::
  Since we can't get any feedback from the servo, this only works if the
- velocity (see :func:`SetVelocity`) is set smaller or equal to the
+ velocity (see :func:`Set Velocity`) is set smaller or equal to the
  maximum velocity of the servo. Otherwise the servo will lag behind the
  control value and the callback will be triggered too early.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
-:func:`SetPosition` gesetzt, erreicht wird. Die :word:`parameters` sind der
+:func:`Set Position` gesetzt, erreicht wird. Die :word:`parameters` sind der
 Servo und die Position die erreicht wurde.
 
-Dieser Callback kann mit :func:`EnablePositionReachedCallback` aktiviert werden.
+Dieser Callback kann mit :func:`Enable Position Reached Callback` aktiviert werden.
 
 .. note::
  Da es nicht möglich ist eine Rückmeldung vom Servo zu erhalten,
- funktioniert dies nur wenn die konfigurierte Geschwindigkeit (siehe :func:`SetVelocity`)
+ funktioniert dies nur wenn die konfigurierte Geschwindigkeit (siehe :func:`Set Velocity`)
  kleiner oder gleich der maximalen Geschwindigkeit des Motors ist. Andernfalls
  wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
  zu früh ausgelöst.
@@ -798,28 +800,28 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered when a velocity set by :func:`SetVelocity`
+This callback is triggered when a velocity set by :func:`Set Velocity`
 is reached. The :word:`parameters` are the servo and the velocity that is reached.
 
-You can enable this callback with :func:`EnableVelocityReachedCallback`.
+You can enable this callback with :func:`Enable Velocity Reached Callback`.
 
 .. note::
  Since we can't get any feedback from the servo, this only works if the
- acceleration (see :func:`SetAcceleration`) is set smaller or equal to the
+ acceleration (see :func:`Set Acceleration`) is set smaller or equal to the
  maximum acceleration of the servo. Otherwise the servo will lag behind the
  control value and the callback will be triggered too early.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst immer wenn eine konfigurierte Geschwindigkeit, wie von
-:func:`SetVelocity` gesetzt, erreicht wird. Die :word:`parameters` sind der
+:func:`Set Velocity` gesetzt, erreicht wird. Die :word:`parameters` sind der
 Servo und die Geschwindigkeit die erreicht wurde.
 
-Dieser Callback kann mit :func:`EnableVelocityReachedCallback` aktiviert werden.
+Dieser Callback kann mit :func:`Enable Velocity Reached Callback` aktiviert werden.
 
 .. note::
  Da es nicht möglich ist eine Rückmeldung vom Servo zu erhalten,
- funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`SetAcceleration`)
+ funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`Set Acceleration`)
  kleiner oder gleich der maximalen Beschleunigung des Motors ist. Andernfalls
  wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
  zu früh ausgelöst.
@@ -835,13 +837,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`PositionReached` callback.
+Enables the :cb:`Position Reached` callback.
 
 Default is disabled.
 """,
 'de':
 """
-Aktiviert den :func:`PositionReached` Callback.
+Aktiviert den :cb:`PositionReached` Callback.
 
 Voreinstellung ist deaktiviert.
 """
@@ -856,13 +858,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`PositionReached` callback.
+Disables the :cb:`Position Reached` callback.
 
 Default is disabled.
 """,
 'de':
 """
-Deaktiviert den :func:`PositionReached` Callback.
+Deaktiviert den :cb:`Position Reached` Callback.
 
 Voreinstellung ist deaktiviert.
 """
@@ -877,11 +879,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if :func:`PositionReached` callback is enabled, *false* otherwise.
+Returns *true* if :cb:`Position Reached` callback is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück wenn der :func:`PositionReached` Callback aktiviert ist, *false* sonst.
+Gibt *true* zurück wenn der :cb:`Position Reached` Callback aktiviert ist, *false* sonst.
 """
 }]
 })
@@ -894,13 +896,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`VelocityReached` callback.
+Enables the :cb:`Velocity Reached` callback.
 
 Default is disabled.
 """,
 'de':
 """
-Aktiviert den :func:`VelocityReached` Callback.
+Aktiviert den :cb:`Velocity Reached` Callback.
 
 Voreinstellung ist deaktiviert.
 """
@@ -915,13 +917,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`VelocityReached` callback.
+Disables the :cb:`Velocity Reached` callback.
 
 Default is disabled.
 """,
 'de':
 """
-Deaktiviert den :func:`VelocityReached` Callback.
+Deaktiviert den :cb:`Velocity Reached` Callback.
 
 Voreinstellung ist deaktiviert.
 """
@@ -936,11 +938,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if :func:`VelocityReached` callback is enabled, *false* otherwise.
+Returns *true* if :cb:`Velocity Reached` callback is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück wenn der :func:`VelocityReached` Callback aktiviert ist, *false* sonst.
+Gibt *true* zurück wenn der :cb:`Velocity Reached` Callback aktiviert ist, *false* sonst.
 """
 }]
 })

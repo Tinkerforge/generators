@@ -143,7 +143,7 @@ com['packets'].append({
 Configures if the cursor (shown as "_") should be visible and if it
 should be blinking (shown as a blinking block). The cursor position
 is one character behind the the last text written with 
-:func:`WriteLine`.
+:func:`Write Line`.
 
 The default is (*false*, *false*).
 """,
@@ -151,7 +151,7 @@ The default is (*false*, *false*).
 """
 Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist und ob er 
 blinkt (angezeigt als blinkender Block). Die Cursor Position ist ein 
-Zeichen hinter dem zuletzt mit :func:`WriteLine` geschriebenen Text.
+Zeichen hinter dem zuletzt mit :func:`Write Line` geschriebenen Text.
 
 Der Standardwert ist (*false*, *false*).
 """
@@ -167,11 +167,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfig`.
+Returns the configuration as set by :func:`Set Config`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfig` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Config` gesetzt.
 """
 }]
 })
@@ -189,7 +189,7 @@ Returns *true* if the button (0 to 2 or 0 to 3 since hardware version 1.2)
 is pressed.
 
 If you want to react on button presses and releases it is recommended to use
-the :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
+the :cb:`Button Pressed` and :cb:`Button Released` callbacks.
 """,
 'de':
 """
@@ -197,7 +197,7 @@ Gibt *true* zurück wenn die Taste (0 bis 2 oder 0 bis 3 seit Hardware
 Version 1.2) gedrückt ist.
 
 Wenn auf Tastendrücken und -loslassen reagiert werden soll, wird empfohlen die
-:func:`ButtonPressed` und :func:`ButtonReleased` Callbacks zu nutzen.
+:cb:`Button Pressed` und :cb:`Button Released` Callbacks zu nutzen.
 """
 }]
 })
@@ -263,7 +263,7 @@ a custom character "H", you should transfer the following:
 * ``character[6] = 0b00010001`` (decimal value 17)
 * ``character[7] = 0b00000000`` (decimal value 0)
 
-The characters can later be written with :func:`WriteLine` by using the
+The characters can later be written with :func:`Write Line` by using the
 characters with the byte representation 8 ("\\x08") to 15 ("\\x0F").
 
 You can play around with the custom characters in Brick Viewer version
@@ -289,7 +289,7 @@ sollte das folgende Array gesendet werden:
 * ``character[6] = 0b00010001`` (Dezimalwert 17)
 * ``character[7] = 0b00000000`` (Dezimalwert 0)
 
-Die Buchstaben können später mit :func:`WriteLine` mit den chars mit
+Die Buchstaben können später mit :func:`Write Line` mit den chars mit
 den Byterepräsentationen 8 ("\\x08") bis 15 ("\\x0F") geschrieben werden.
 
 Es ist möglich die benutzerdefinierten Buchstaben im Brick Viewer ab
@@ -311,12 +311,12 @@ com['packets'].append({
 'en':
 """
 Returns the custom character for a given index, as set with
-:func:`SetCustomCharacter`.
+:func:`Set Custom Character`.
 """,
 'de':
 """
 Gibt den benutzerdefinierten Buchstaben für den gegebenen
-Index zurück, wie von :func:`GetCustomCharacter` gesetzt.
+Index zurück, wie von :func:`Get Custom Character` gesetzt.
 """
 }]
 })
@@ -334,7 +334,7 @@ Sets the default text for lines 0-3. The max number of characters
 per line is 20.
 
 The default text is shown on the LCD, if the default text counter
-expires, see :func:`SetDefaultTextCounter`.
+expires, see :func:`Set Default Text Counter`.
 """,
 'de':
 """
@@ -342,7 +342,7 @@ Setzt den Standard-Text für die Zeilen 0-3. Die maximale Anzahl an
 Buchstaben pro Zeile ist 20.
 
 Der Standard-Text wird auf dem LCD angezeigt, wenn der Standard-Text-Zähler
-ausläuft, siehe :func:`SetDefaultTextCounter`.
+ausläuft, siehe :func:`Set Default Text Counter`.
 """
 }]
 })
@@ -357,12 +357,12 @@ com['packets'].append({
 'en':
 """
 Returns the default text for a given line (0-3) as set by
-:func:`SetDefaultText`.
+:func:`Set Default Text`.
 """,
 'de':
 """
 Gibt den Standard-Text für die Zeilen 0-3 zurück, wie von
-:func:`SetDefaultText` gesetzt.
+:func:`Set Default Text` gesetzt.
 """
 }]
 })
@@ -377,12 +377,12 @@ com['packets'].append({
 """
 Sets the default text counter in ms. This counter is decremented each
 ms by the LCD firmware. If the counter reaches 0, the default text
-(see :func:`SetDefaultText`) is shown on the LCD.
+(see :func:`Set Default Text`) is shown on the LCD.
 
 This functionality can be used to show a default text if the controlling
 program crashes or the connection is interrupted.
 
-A possible approach is to call :func:`SetDefaultTextCounter` every
+A possible approach is to call :func:`Set Default Text Counter` every
 minute with the parameter 1000*60*2 (2 minutes). In this case the
 default text will be shown no later than 2 minutes after the
 controlling program crashes.
@@ -395,13 +395,13 @@ The default is -1.
 """
 Setzt den Standard-Text-Zähler in ms. Der Zähler wird von der LCD
 Firmware einmal pro ms dekrementiert. Wenn der Zähler 0 erreicht
-wird der Standard-Text auf dem LCD angezeigt (siehe :func:`SetDefaultText`).
+wird der Standard-Text auf dem LCD angezeigt (siehe :func:`Set Default Text`).
 
 Diese Funktionalität kann genutzt werden um auf dem LCD einen Text
 anzuzeigen falls das kontrollierende Programm abstürzt oder die Verbindung
 unterbrochen wird.
 
-Ein möglicher Ansatz dafür ist :func:`SetDefaultTextCounter` einmal
+Ein möglicher Ansatz dafür ist :func:`Set Default Text Counter` einmal
 pro Minute mit dem Parameter 1000*60*2 (zwei Minuten) aufzurufen.
 In diesem Fall wird dann der Standard-Text nach spätestens zwei Minuten
 angezeigt wenn das kontrollierende Programm abstürzt.

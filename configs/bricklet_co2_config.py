@@ -38,9 +38,9 @@ Returns the measured CO2 concentration. The value is in
 `ppm (parts per million) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
 and between 0 to 10000.
 
-If you want to get the CO2 concentration periodically, it is recommended to use the
-callback :func:`CO2Concentration` and set the period with
-:func:`SetCO2ConcentrationCallbackPeriod`.
+If you want to get the CO2 concentration periodically, it is recommended to use
+the :cb:`CO2 Concentration` callback and set the period with
+:func:`Set CO2 Concentration Callback Period`.
 """,
 'de':
 """
@@ -49,8 +49,8 @@ Gibt die gemessene CO2-Konzentration zurück. Der Wert ist in
 und im Bereich von 0 bis 10000.
 
 Wenn die CO2-Konzentration periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`CO2Concentration` zu nutzen und die Periode mit
-:func:`SetCO2ConcentrationCallbackPeriod` vorzugeben.
+den :cb:`CO2 Concentration` Callback zu nutzen und die Periode mit
+:func:`Set CO2 Concentration Callback Period` vorzugeben.
 """
 }]
 })
@@ -63,21 +63,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`CO2Concentration` callback is triggered
-periodically. A value of 0 turns the callback off.
+Sets the period in ms with which the :cb:`CO2 Concentration` callback is
+triggered periodically. A value of 0 turns the callback off.
 
-:func:`CO2Concentration` is only triggered if the CO2 concentration has changed since the
-last triggering.
+The :cb:`CO2 Concentration` callback is only triggered if the CO2 concentration
+has changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`CO2Concentration` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`CO2 Concentration` Callback
+ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`CO2Concentration` wird nur ausgelöst wenn sich die CO2-Konzentration seit der
-letzten Auslösung geändert hat.
+Der :cb:`CO2 Concentration` Callback wird nur ausgelöst wenn sich die
+CO2-Konzentration seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -92,11 +92,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetCO2ConcentrationCallbackPeriod`.
+Returns the period as set by :func:`Set CO2 Concentration Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetCO2ConcentrationCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set CO2 Concentration Callback Period`
 gesetzt.
 """
 }]
@@ -112,7 +112,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`CO2ConcentrationReached` callback.
+Sets the thresholds for the :cb:`CO2 Concentration Reached` callback.
 
 The following options are possible:
 
@@ -130,7 +130,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`CO2ConcentrationReached` Callback.
+Setzt den Schwellwert für den :cb:`CO2 Concentration Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -159,12 +159,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetCO2ConcentrationCallbackThreshold`.
+Returns the threshold as set by :func:`Set CO2 Concentration Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetCO2ConcentrationCallbackThreshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von
+:func:`Set CO2 Concentration Callback Threshold` gesetzt.
 """
 }]
 })
@@ -179,11 +179,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`CO2ConcentrationReached`,
+* :cb:`CO2 Concentration Reached`,
 
 are triggered, if the thresholds
 
-* :func:`SetCO2ConcentrationCallbackThreshold`,
+* :func:`Set CO2 Concentration Callback Threshold`,
 
 keep being reached.
 
@@ -193,11 +193,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`CO2ConcentrationReached`,
+* :cb:`CO2 Concentration Reached`,
 
 ausgelöst werden, wenn die Schwellwerte
 
-* :func:`SetCO2ConcentrationCallbackThreshold`,
+* :func:`Set CO2 Concentration Callback Threshold`,
 
 weiterhin erreicht bleiben.
 
@@ -214,11 +214,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -233,19 +233,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetCO2ConcentrationCallbackPeriod`. The :word:`parameter` is the CO2 concentration of the
-sensor.
+:func:`Set CO2 Concentration Callback Period`. The :word:`parameter` is the CO2
+concentration of the sensor.
 
-:func:`CO2Concentration` is only triggered if the CO2 concentration has changed since the
-last triggering.
+The :cb:`CO2 Concentration` callback is only triggered if the CO2 concentration
+has changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCO2ConcentrationCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die gemessene CO2-Konzentration des Sensors.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set CO2 Concentration Callback Period`, ausgelöst. Der :word:`parameter`
+ist die gemessene CO2-Konzentration des Sensors.
 
-:func:`CO2Concentration` wird nur ausgelöst wenn sich die CO2-Konzentration seit der
-letzten Auslösung geändert hat.
+Der :cb:`CO2 Concentration` Callback wird nur ausgelöst wenn sich die
+CO2-Konzentration seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -259,20 +260,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetCO2ConcentrationCallbackThreshold` is reached.
+:func:`Set CO2 Concentration Callback Threshold` is reached.
 The :word:`parameter` is the CO2 concentration.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
-:func:`SetCO2ConcentrationCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set CO2 Concentration Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die gemessene CO2-Konzentration.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

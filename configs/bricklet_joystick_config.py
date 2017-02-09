@@ -40,8 +40,8 @@ Returns the position of the Joystick. The value ranges between -100 and
 returned values are averaged and calibrated (see :func:`Calibrate`).
 
 If you want to get the position periodically, it is recommended to use the
-callback :func:`Position` and set the period with 
-:func:`SetPositionCallbackPeriod`.
+:cb:`Position` callback and set the period with
+:func:`Set Position Callback Period`.
 """,
 'de':
 """
@@ -50,8 +50,8 @@ Gibt die Position des Joystick zurück. Der Wertebereich ist von -100 bis
 Die zurückgegebenen Werte sind gemittelt und kalibriert (siehe :func:`Calibrate`).
 
 Wenn die Position periodisch abgefragt werden sollen, wird empfohlen
-den Callback :func:`Position` zu nutzen und die Periode mit 
-:func:`SetPositionCallbackPeriod` vorzugeben.
+den :cb:`Position` Callback zu nutzen und die Periode mit
+:func:`Set Position Callback Period` vorzugeben.
 """
 }]
 })
@@ -66,14 +66,14 @@ com['packets'].append({
 """
 Returns *true* if the button is pressed and *false* otherwise.
 
-It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
+It is recommended to use the :cb:`Pressed` and :cb:`Released` callbacks
 to handle the button.
 """,
 'de':
 """
 Gibt *true* zurück wenn die Taste gedrückt ist und sonst *false*.
 
-Es wird empfohlen die :func:`Pressed` und :func:`Released` Callbacks
+Es wird empfohlen die :cb:`Pressed` und :cb:`Released` Callbacks
 zu nutzen, um die Taste programmatisch zu behandeln.
 """
 }]
@@ -92,14 +92,14 @@ Returns the values as read by a 12-bit analog-to-digital converter.
 The values are between 0 and 4095 for both axis.
 
 .. note::
- The values returned by :func:`GetPosition` are averaged over several samples
- to yield less noise, while :func:`GetAnalogValue` gives back raw
- unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
+ The values returned by :func:`Get Position` are averaged over several samples
+ to yield less noise, while :func:`Get Analog Value` gives back raw
+ unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
  if you need the full resolution of the analog-to-digital converter.
 
 If you want the analog values periodically, it is recommended to use the 
-callback :func:`AnalogValue` and set the period with 
-:func:`SetAnalogValueCallbackPeriod`.
+:cb:`Analog Value` callback and set the period with
+:func:`Set Analog Value Callback Period`.
 """,
 'de':
 """
@@ -107,14 +107,14 @@ Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 .. note::
- Der von :func:`GetPosition` zurückgegebene Wert ist über mehrere
- Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
- unverarbeitete Analogwerte zurück gibt. Der einzige Grund :func:`GetAnalogValue`
+ Der von :func:`Get Position` zurückgegebene Wert ist über mehrere
+ Messwerte gemittelt um das Rauschen zu vermindern, während :func:`Get Analog Value`
+ unverarbeitete Analogwerte zurück gibt. Der einzige Grund :func:`Get Analog Value`
  zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
  
 Wenn die Analogwerte periodisch abgefragt werden sollen, wird empfohlen
-den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
-:func:`SetAnalogValueCallbackPeriod` vorzugeben.
+den :cb:`Analog Value` Callback zu nutzen und die Periode mit
+:func:`Set Analog Value Callback Period` vorzugeben.
 """
 }]
 })
@@ -154,20 +154,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Position` callback is triggered
+Sets the period in ms with which the :cb:`Position` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Position` is only triggered if the position has changed since the
+The :cb:`Position` callback is only triggered if the position has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Position` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Position` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Position` wird nur ausgelöst wenn sich die Position seit der
+The :cb:`Position` Callback wird nur ausgelöst wenn sich die Position seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -183,11 +183,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetPositionCallbackPeriod`.
+Returns the period as set by :func:`Set Position Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetPositionCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Position Callback Period`
 gesetzt.
 """
 }]
@@ -201,21 +201,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`AnalogValue` callback is triggered
+Sets the period in ms with which the :cb:`Analog Value` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AnalogValue` is only triggered if the analog values have changed since the
-last triggering.
+The :cb:`Analog Value` callback is only triggered if the analog values have
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`AnalogValue` wird nur ausgelöst wenn sich die Analogwerte seit der
-letzten Auslösung geändert hat.
+Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich die Analogwerte
+seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -230,11 +230,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
+Returns the period as set by :func:`Set Analog Value Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAnalogValueCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Analog Value Callback Period`
 gesetzt.
 """
 }]
@@ -252,7 +252,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`PositionReached` callback. 
+Sets the thresholds for the :cb:`Position Reached` callback.
 
 The following options are possible:
 
@@ -270,7 +270,7 @@ The default value is ('x', 0, 0, 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`PositionReached` Callback.
+Setzt den Schwellwert für den :cb:`Position Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -301,11 +301,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetPositionCallbackThreshold`.
+Returns the threshold as set by :func:`Set Position Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetPositionCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Position Callback Threshold`
 gesetzt.
 """
 }]
@@ -323,7 +323,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`AnalogValueReached` callback. 
+Sets the thresholds for the :cb:`Analog Value Reached` callback.
 
 The following options are possible:
 
@@ -341,7 +341,7 @@ The default value is ('x', 0, 0, 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
+Setzt den Schwellwert für den :cb:`Analog Value Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -372,11 +372,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
+Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetAnalogValueCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Analog Value Callback Threshold`
 gesetzt.
 """
 }]
@@ -392,13 +392,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
-* :func:`PositionReached`,
-* :func:`AnalogValueReached`
+* :cb:`Position Reached`,
+* :cb:`Analog Value Reached`
 
 are triggered, if the thresholds
 
-* :func:`SetPositionCallbackThreshold`,
-* :func:`SetAnalogValueCallbackThreshold`
+* :func:`Set Position Callback Threshold`,
+* :func:`Set Analog Value Callback Threshold`
 
 keep being reached.
 
@@ -408,13 +408,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
-* :func:`PositionReached`,
-* :func:`AnalogValueReached`
+* :cb:`Position Reached`,
+* :cb:`Analog Value Reached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
-* :func:`SetPositionCallbackThreshold`,
-* :func:`SetAnalogValueCallbackThreshold`
+* :func:`Set Position Callback Threshold`,
+* :func:`Set Analog Value Callback Threshold`
  
 weiterhin erreicht bleiben.
 
@@ -431,11 +431,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -451,18 +451,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetPositionCallbackPeriod`. The :word:`parameter` is the position of the
+:func:`Set Position Callback Period`. The :word:`parameter` is the position of the
 Joystick.
 
-:func:`Position` is only triggered if the position has changed since the
+The :cb:`Position` callback is only triggered if the position has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetPositionCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Position Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Position des Joysticks.
 
-:func:`Position` wird nur ausgelöst, wenn sich die Position seit der
+Der :cb:`Position` Callback wird nur ausgelöst, wenn sich die Position seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -478,19 +478,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAnalogValueCallbackPeriod`. The :word:`parameters` are the analog values
-of the Joystick.
+:func:`Set Analog Value Callback Period`. The :word:`parameters` are the
+analog values of the Joystick.
 
-:func:`AnalogValue` is only triggered if the values have changed since the
-last triggering.
+The :cb:`Analog Value` callback is only triggered if the values have changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Analog Value Callback Period`,
 ausgelöst. Der :word:`parameter` sind die Analogwerte des Joysticks.
 
-:func:`AnalogValue` wird nur ausgelöst wenn sich die Analogwerte seit der
-letzten Auslösung geändert hat.
+Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich die Analogwerte
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -505,20 +505,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetPositionCallbackThreshold` is reached.
+:func:`Set Position Callback Threshold` is reached.
 The :word:`parameters` are the position of the Joystick.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetPositionCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Position Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Position des Joysticks.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -533,20 +533,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetAnalogValueCallbackThreshold` is reached.
+:func:`Set Analog Value Callback Threshold` is reached.
 The :word:`parameters` are the analog values of the Joystick.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` sind die Analogwerte des Joystick.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })

@@ -40,7 +40,7 @@ Sets the RGB values for the LEDs with the given *length* starting
 from *index*.
 
 To make the colors show correctly you need to configure the chip type
-(:func:`SetChipType`) and a 3-channel channel mapping (:func:`SetChannelMapping`)
+(:func:`Set Chip Type`) and a 3-channel channel mapping (:func:`Set Channel Mapping`)
 according to the connected LEDs.
 
 The maximum length is 16, the index goes from 0 to 319 and the rgb values
@@ -59,16 +59,16 @@ the LED with index 5 will be red, 6 will be green and 7 will be blue.
 .. note:: Depending on the LED circuitry colors can be permuted.
 
 The colors will be transfered to actual LEDs when the next
-frame duration ends, see :func:`SetFrameDuration`.
+frame duration ends, see :func:`Set Frame Duration`.
 
 Generic approach:
 
 * Set the frame duration to a value that represents
   the number of frames per second you want to achieve.
 * Set all of the LED colors for one frame.
-* Wait for the :func:`FrameRendered` callback.
+* Wait for the :cb:`Frame Rendered` callback.
 * Set all of the LED colors for next frame.
-* Wait for the :func:`FrameRendered` callback.
+* Wait for the :cb:`Frame Rendered` callback.
 * and so on.
 
 This approach ensures that you can change the LED colors with
@@ -76,7 +76,7 @@ a fixed frame rate.
 
 The actual number of controllable LEDs depends on the number of free
 Bricklet ports. See :ref:`here <led_strip_bricklet_ram_constraints>` for more
-information. A call of :func:`SetRGBValues` with index + length above the
+information. A call of :func:`Set RGB Values` with index + length above the
 bounds is ignored completely.
 """,
 'de':
@@ -85,8 +85,8 @@ Setzt die RGB Werte für die LEDs mit der angegebenen *length*,
 beginnend vom angegebenen *index*.
 
 Damit die Farben richtig angezeigt werden muss den LEDs entsprechend der
-richtig Chip Type (:func:`SetChipType`) und das richtige 3-Kanal Channel Mapping
-(:func:`SetChannelMapping`) eingestellt werden.
+richtig Chip Type (:func:`Set Chip Type`) und das richtige 3-Kanal Channel Mapping
+(:func:`Set Channel Mapping`) eingestellt werden.
 
 Die maximale Länge ist 16. Der Index geht von 0 bis 319 und die
 rgb Werte haben jeweils 8 Bit.
@@ -106,16 +106,16 @@ wird Blau.
    sein.
 
 Die Farben werden auf die tatsächlichen LEDs transferiert wenn die
-nächste *frame duration* abgelaufen ist, siehe :func:`SetFrameDuration`.
+nächste *frame duration* abgelaufen ist, siehe :func:`Set Frame Duration`.
 
 Genereller Ansatz:
 
 * Setze *frame duration* auf einen Wert welcher der Anzahl der
   Bilder pro Sekunde entspricht die erreicht werden sollen.
 * Setze alle LEDs für einen Frame.
-* Warte auf :func:`FrameRendered` Callback.
+* Warte auf :cb:`Frame Rendered` Callback.
 * Setze alle LEDs für den nächsten Frame.
-* Warte auf :func:`FrameRendered` Callback.
+* Warte auf :cb:`Frame Rendered` Callback.
 * Und so weiter.
 
 Dieser Ansatz garantiert das die LED Farben mit einer
@@ -123,7 +123,7 @@ festen Framerate angezeigt werden.
 
 Die effektive Anzahl steuerbarer LEDs ist abhängig von der Anzahl
 der freien Bricklet Ports (siehe :ref:`hier <led_strip_bricklet_ram_constraints>`).
-Ein Aufruf von :func:`SetRGBValues` mit index + length größer als die
+Ein Aufruf von :func:`Set RGB Values` mit index + length größer als die
 Begrenzung werden komplett ingnoriert.
 """
 },
@@ -154,14 +154,14 @@ com['packets'].append({
 Returns RGB value with the given *length* starting from the
 given *index*.
 
-The values are the last values that were set by :func:`SetRGBValues`.
+The values are the last values that were set by :func:`Set RGB Values`.
 """,
 'de':
 """
 Gibt RGB Werte mit der übergebenen *length* zurück, beginnend vom
 übergebenen *index*.
 
-Die Werte sind die letzten von :func:`SetRGBValues` gesetzten Werte.
+Die Werte sind die letzten von :func:`Set RGB Values` gesetzten Werte.
 """
 }]
 })
@@ -179,7 +179,7 @@ Sets the frame duration in ms.
 Example: If you want to achieve 20 frames per second, you should
 set the frame duration to 50ms (50ms * 20 = 1 second).
 
-For an explanation of the general approach see :func:`SetRGBValues`.
+For an explanation of the general approach see :func:`Set RGB Values`.
 
 Default value: 100ms (10 frames per second).
 """,
@@ -190,7 +190,7 @@ Setzt die *frame duration* (Länge des Frames) in ms.
 Beispiel: Wenn 20 Frames pro Sekunde erreicht werden sollen, muss
 die Länge des Frames auf 50ms gesetzt werden (50ms * 20 = 1 Sekunde).
 
-Für eine Erklärung des generellen Ansatzes siehe :func:`SetRGBValues`.
+Für eine Erklärung des generellen Ansatzes siehe :func:`Set RGB Values`.
 
 Standardwert: 100ms (10 Frames pro Sekunde).
 """
@@ -205,12 +205,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the frame duration in ms as set by :func:`SetFrameDuration`.
+Returns the frame duration in ms as set by :func:`Set Frame Duration`.
 """,
 'de':
 """
 Gibt die *frame duration* (Länge des Frames) in ms zurück, wie von
-:func:`SetFrameDuration` gesetzt.
+:func:`Set Frame Duration` gesetzt.
 """
 }]
 })
@@ -247,7 +247,7 @@ This callback is triggered directly after a new frame is rendered. The
 You should send the data for the next frame directly after this callback
 was triggered.
 
-For an explanation of the general approach see :func:`SetRGBValues`.
+For an explanation of the general approach see :func:`Set RGB Values`.
 """,
 'de':
 """
@@ -257,7 +257,7 @@ Der :word:`parameter` ist die Anzahl der LEDs in diesem Frame.
 Die Daten für das nächste Frame sollten direkt nach dem auslösen dieses
 Callbacks übertragen werden.
 
-Für eine Erklärung des generellen Ansatzes siehe :func:`SetRGBValues`.
+Für eine Erklärung des generellen Ansatzes siehe :func:`Set RGB Values`.
 """
 }]
 })
@@ -275,7 +275,7 @@ Sets the frequency of the clock in Hz. The range is 10000Hz (10kHz) up to
 
 The Bricklet will choose the nearest achievable frequency, which may
 be off by a few Hz. You can get the exact frequency that is used by
-calling :func:`GetClockFrequency`.
+calling :func:`Get Clock Frequency`.
 
 If you have problems with flickering LEDs, they may be bits flipping. You
 can fix this by either making the connection between the LEDs and the
@@ -296,7 +296,7 @@ beläuft von sich 10000Hz (10kHz) bis 2000000Hz (2MHz).
 
 Das Bricklet wählt die nächst mögliche erreichbare Frequenz. Diese
 kann ein paar Hz neben des gesetzten Wertes liegen. Die exakte Frequenz
-wie sie genutzt wird kann mit :func:`GetClockFrequency` erfragt werden.
+wie sie genutzt wird kann mit :func:`Get Clock Frequency` erfragt werden.
 
 Wenn Probleme mit flackernden LEDs auftreten kann es daran liegen das
 Bits auf der Leitung flippen. Dies kann behoben werden in dem man die
@@ -321,12 +321,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the currently used clock frequency as set by :func:`SetClockFrequency`.
+Returns the currently used clock frequency as set by :func:`Set Clock Frequency`.
 """,
 'de':
 """
 Gibt die aktuell genutzte Clock-Frequenz zurück, wie von
-:func:`SetClockFrequency` gesetzt.
+:func:`Set Clock Frequency` gesetzt.
 """
 }]
 })
@@ -383,12 +383,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the currently used chip type as set by :func:`SetChipType`.
+Returns the currently used chip type as set by :func:`Set Chip Type`.
 """,
 'de':
 """
 Gibt den aktuell genutzten Typ des Chips zurück, wie von
-:func:`SetChipType` gesetzt.
+:func:`Set Chip Type` gesetzt.
 """
 }]
 })
@@ -411,7 +411,7 @@ Sets the RGBW values for the LEDs with the given *length* starting
 from *index*.
 
 To make the colors show correctly you need to configure the chip type
-(:func:`SetChipType`) and a 4-channel channel mapping (:func:`SetChannelMapping`)
+(:func:`Set Chip Type`) and a 4-channel channel mapping (:func:`Set Channel Mapping`)
 according to the connected LEDs.
 
 The maximum length is 12, the index goes from 0 to 239 and the rgbw values
@@ -431,16 +431,16 @@ the LED with index 5 will be red, 6 will be green, 7 will be blue and 8 will be 
 .. note:: Depending on the LED circuitry colors can be permuted.
 
 The colors will be transfered to actual LEDs when the next
-frame duration ends, see :func:`SetFrameDuration`.
+frame duration ends, see :func:`Set Frame Duration`.
 
 Generic approach:
 
 * Set the frame duration to a value that represents
   the number of frames per second you want to achieve.
 * Set all of the LED colors for one frame.
-* Wait for the :func:`FrameRendered` callback.
+* Wait for the :cb:`Frame Rendered` callback.
 * Set all of the LED colors for next frame.
-* Wait for the :func:`FrameRendered` callback.
+* Wait for the :cb:`Frame Rendered` callback.
 * and so on.
 
 This approach ensures that you can change the LED colors with
@@ -448,7 +448,7 @@ a fixed frame rate.
 
 The actual number of controllable LEDs depends on the number of free
 Bricklet ports. See :ref:`here <led_strip_bricklet_ram_constraints>` for more
-information. A call of :func:`SetRGBWValues` with index + length above the
+information. A call of :func:`Set RGBW Values` with index + length above the
 bounds is ignored completely.
 
 The LPD8806 LED driver chips have 7-bit channels for RGB. Internally the LED
@@ -467,8 +467,8 @@ Setzt die RGBW Werte für die LEDs mit der angegebenen *length*,
 beginnend vom angegebenen *index*.
 
 Damit die Farben richtig angezeigt werden muss den LEDs entsptechend der
-richtig Chip Type (:func:`SetChipType`) und das richtige 4-Kanal Channel Mapping
-(:func:`SetChannelMapping`) eingestellt werden.
+richtig Chip Type (:func:`Set Chip Type`) und das richtige 4-Kanal Channel Mapping
+(:func:`Set Channel Mapping`) eingestellt werden.
 
 Die maximale Länge ist 12. Der Index geht von 0 bis 239 und die
 rgbw Werte haben jeweils 8 Bit.
@@ -489,16 +489,16 @@ wird Blau und 8 wird Weiß.
    sein.
 
 Die Farben werden auf die tatsächlichen LEDs transferiert wenn die
-nächste *frame duration* abgelaufen ist, siehe :func:`SetFrameDuration`.
+nächste *frame duration* abgelaufen ist, siehe :func:`Set Frame Duration`.
 
 Genereller Ansatz:
 
 * Setze *frame duration* auf einen Wert welcher der Anzahl der
   Bilder pro Sekunde entspricht die erreicht werden sollen.
 * Setze alle LEDs für einen Frame.
-* Warte auf :func:`FrameRendered` Callback.
+* Warte auf :cb:`Frame Rendered` Callback.
 * Setze alle LEDs für den nächsten Frame.
-* Warte auf :func:`FrameRendered` Callback.
+* Warte auf :cb:`Frame Rendered` Callback.
 * Und so weiter.
 
 Dieser Ansatz garantiert das die LED Farben mit einer
@@ -506,7 +506,7 @@ festen Framerate angezeigt werden.
 
 Die effektive Anzahl steuerbarer LEDs ist abhängig von der Anzahl
 der freien Bricklet Ports (siehe :ref:`hier <led_strip_bricklet_ram_constraints>`).
-Ein Aufruf von :func:`SetRGBWValues` mit index + length größer als die
+Ein Aufruf von :func:`Set RGBW Values` mit index + length größer als die
 Begrenzung werden komplett ignoriert.
 
 Die LPD8806 LED-Treiber-Chips haben 7-Bit Kanäle für RGB. Intern teilt das
@@ -550,14 +550,14 @@ com['packets'].append({
 Returns RGBW values with the given *length* starting from the
 given *index*.
 
-The values are the last values that were set by :func:`SetRGBWValues`.
+The values are the last values that were set by :func:`Set RGBW Values`.
 """,
 'de':
 """
 Gibt RGBW Werte mit der übergebenen *length* zurück, beginnend vom
 übergebenen *index*.
 
-Die Werte sind die letzten von :func:`SetRGBWValues` gesetzten Werte.
+Die Werte sind die letzten von :func:`Set RGBW Values` gesetzten Werte.
 """
 }]
 })
@@ -601,7 +601,7 @@ com['packets'].append({
 """
 Sets the channel mapping for the connected LEDs.
 
-:func:`SetRGBValues` and :func:`SetRGBWValues` take the data in RGB(W) order.
+:func:`Set RGB Values` and :func:`Set RGBW Values` take the data in RGB(W) order.
 But the connected LED driver chips might have their 3 or 4 channels in a
 different order. For example, the WS2801 chips typically use BGR order, the
 WS2812 chips typically use GRB order and the APA102 chips typically use WBGR
@@ -613,10 +613,10 @@ making them 4-channel chips. Internally the brightness channel is the first
 channel, therefore one of the Wxyz channel mappings should be used. Then
 the W channel controls the brightness.
 
-If a 3-channel mapping is selected then :func:`SetRGBValues` has to be used.
-Calling :func:`SetRGBWValues` with a 3-channel mapping will produce incorrect
+If a 3-channel mapping is selected then :func:`Set RGB Values` has to be used.
+Calling :func:`Set RGBW Values` with a 3-channel mapping will produce incorrect
 results. Vice-versa if a 4-channel mapping is selected then
-:func:`SetRGBWValues` has to be used. Calling :func:`SetRGBValues` with a
+:func:`Set RGBW Values` has to be used. Calling :func:`Set RGB Values` with a
 4-channel mapping will produce incorrect results.
 
 The default value is BGR (36).
@@ -625,7 +625,7 @@ The default value is BGR (36).
 """
 Setzt das Channel Mapping für die angeschlossenene LEDs.
 
-:func:`SetRGBValues` und :func:`SetRGBWValues` nehmen die Daten in RGB(W)
+:func:`Set RGB Values` und :func:`Set RGBW Values` nehmen die Daten in RGB(W)
 Reihenfolge entgegen. Aber die angeschlossenen LED-Treiber-Chips erwarten die
 Daten für ihre 3 oder 4 Kanäle in einer anderen Reihenfolge. Zum Beispiel
 verwenden WS2801 Chips typischerweise BGR Reihenfolge, WS2812 Chips
@@ -638,11 +638,11 @@ APA102 insgesamt ein 4-Kanal Chip. Intern ist der Helligkeitskanal der erste
 Kanal. Daher sollte eines der Wxyz Channel Mappings verwendet werden. Dann kann
 über den W Kanal die Helligkeit eingestellt werden.
 
-Wenn ein 3-Kanal Mapping ausgewählt wurde, dann muss auch :func:`SetRGBValues`
-für das setzen der Farben verwendet werden. :func:`SetRGBWValues` zusammen
+Wenn ein 3-Kanal Mapping ausgewählt wurde, dann muss auch :func:`Set RGB Values`
+für das setzen der Farben verwendet werden. :func:`Set RGBW Values` zusammen
 mit einem 3-Kanal Mapping führt zu falscher Darstellung der Farben. Im Gegenzug
-muss bei einem 4-Kanal Mapping :func:`SetRGBWValues` für das setzen der Farben
-verwendet werden. :func:`SetRGBValues` zusammen mit einem 4-Kanal Mapping führt
+muss bei einem 4-Kanal Mapping :func:`Set RGBW Values` für das setzen der Farben
+verwendet werden. :func:`Set RGB Values` zusammen mit einem 4-Kanal Mapping führt
 zu falscher Darstellung der Farben.
 
 Der Standardwert ist BGR (36).
@@ -687,12 +687,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the currently used channel mapping as set by :func:`SetChannelMapping`.
+Returns the currently used channel mapping as set by :func:`Set Channel Mapping`.
 """,
 'de':
 """
 Gibt die aktuell genutzten Channel Mapping zurück, wie von
-:func:`SetChannelMapping` gesetzt.
+:func:`Set Channel Mapping` gesetzt.
 """
 }]
 })
@@ -705,13 +705,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`FrameRendered` callback.
+Enables the :cb:`Frame Rendered` callback.
 
 By default the callback is enabled.
 """,
 'de':
 """
-Aktiviert den :func:`FrameRendered` Callback.
+Aktiviert den :cb:`Frame Rendered` Callback.
 
 Standardmäßig ist der Callback aktiviert.
 """
@@ -726,13 +726,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`FrameRendered` callback.
+Disables the :cb:`Frame Rendered` callback.
 
 By default the callback is enabled.
 """,
 'de':
 """
-Deaktiviert den :func:`FrameRendered` Callback.
+Deaktiviert den :cb:`Frame Rendered` Callback.
 
 Standardmäßig ist der Callback aktiviert.
 """
@@ -747,11 +747,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :func:`FrameRendered` callback is enabled, *false* otherwise.
+Returns *true* if the :cb:`Frame Rendered` callback is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls der :func:`FrameRendered` Callback aktiviert ist, *false*
+Gibt *true* zurück falls der :cb:`Frame Rendered` Callback aktiviert ist, *false*
 sonst.
 """
 }]

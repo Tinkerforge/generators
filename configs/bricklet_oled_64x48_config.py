@@ -32,11 +32,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Appends 64 byte of data to the window as set by :func:`NewWindow`.
+Appends 64 byte of data to the window as set by :func:`New Window`.
 
 Each row has a height of 8 pixels which corresponds to one byte of data.
 
-Example: if you call :func:`NewWindow` with column from 0 to 63 and row
+Example: if you call :func:`New Window` with column from 0 to 63 and row
 from 0 to 5 (the whole display) each call of :func:`Write` (red arrow) will
 write one row.
 
@@ -54,11 +54,11 @@ fill the whole display you need to call :func:`Write` 6 times.
 """,
 'de':
 """
-Fügt 64 Byte Daten zu dem mit :func:`NewWindow` gesetztem Fenster hinzu.
+Fügt 64 Byte Daten zu dem mit :func:`New Window` gesetztem Fenster hinzu.
 
 Jede Zeile hat eine Höhe von 8 Pixeln welche einem Byte Daten entsprechen.
 
-Beispiel: Wenn :func:`NewWindow` mit Spalte (Column) von 0 bis 63 und
+Beispiel: Wenn :func:`New Window` mit Spalte (Column) von 0 bis 63 und
 Zeile (Row) von 0 bis 5 (das ganze Display) aufgerufen wird, schreibt
 jedes :func:`Write` (roter Pfeil) eine Zeile.
 
@@ -113,11 +113,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Clears the current content of the window as set by :func:`NewWindow`.
+Clears the current content of the window as set by :func:`New Window`.
 """,
 'de':
 """
-Löscht den aktuellen Inhalt des mit :func:`NewWindow` gesetztem Fensters.
+Löscht den aktuellen Inhalt des mit :func:`New Window` gesetztem Fensters.
 """
 }]
 })
@@ -159,11 +159,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetDisplayConfiguration`.
+Returns the configuration as set by :func:`Set Display Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetDisplayConfiguration`
+Gibt die Konfiguration zurück, wie von :func:`Set Display Configuration`
 gesetzt.
 """
 }]

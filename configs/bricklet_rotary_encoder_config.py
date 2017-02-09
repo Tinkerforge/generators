@@ -66,20 +66,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Count` callback is triggered
+Sets the period in ms with which the :cb:`Count` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Count` is only triggered if the count has changed since the
+The :cb:`Count` callback is only triggered if the count has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Count` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Count` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Count` wird nur ausgelöst wenn sich der Zählerwert seit der
+Der :cb:`Count` Callback wird nur ausgelöst wenn sich der Zählerwert seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -95,11 +95,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetCountCallbackPeriod`.
+Returns the period as set by :func:`Set Count Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetCountCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Count Callback Period`
 gesetzt.
 """
 }]
@@ -115,7 +115,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`CountReached` callback. 
+Sets the thresholds for the :cb:`Count Reached` callback.
 
 The following options are possible:
 
@@ -133,7 +133,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`CountReached` Callback.
+Setzt den Schwellwert für den :cb:`Count Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -162,11 +162,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetCountCallbackThreshold`.
+Returns the threshold as set by :func:`Set Count Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetCountCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Count Callback Threshold`
 gesetzt.
 """
 }]
@@ -182,11 +182,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`CountReached`
+* :cb:`Count Reached`
 
 is triggered, if the thresholds
 
-* :func:`SetCountCallbackThreshold`
+* :func:`Set Count Callback Threshold`
 
 keeps being reached.
 
@@ -196,11 +196,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher der Schwellwert-Callback
 
-* :func:`CountReached`
+* :cb:`Count Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetCountCallbackThreshold`
+* :func:`Set Count Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -217,11 +217,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -236,18 +236,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetCountCallbackPeriod`. The :word:`parameter` is the count of
+:func:`Set Count Callback Period`. The :word:`parameter` is the count of
 the encoder.
 
-:func:`Count` is only triggered if the count has changed since the
+The :cb:`Count` callback is only triggered if the count has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCountCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist der Zählerwert des Encoders.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Count Callback Period`, ausgelöst. Der :word:`parameter` ist der
+Zählerwert des Encoders.
 
-:func:`Count` wird nur ausgelöst wenn sich der Zähler seit der
+Der :cb:`Count` Callback wird nur ausgelöst wenn sich der Zähler seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -262,20 +263,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetCountCallbackThreshold` is reached.
+:func:`Set Count Callback Threshold` is reached.
 The :word:`parameter` is the count of the encoder.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetCountCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Count Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Zählerwert des Encoders.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -290,14 +291,14 @@ com['packets'].append({
 """
 Returns *true* if the button is pressed and *false* otherwise.
 
-It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
+It is recommended to use the :cb:`Pressed` and :cb:`Released` callbacks
 to handle the button.
 """,
 'de':
 """
 Gibt *true* zurück wenn der Taster gedrückt ist und sonst *false*.
 
-Es wird empfohlen die :func:`Pressed` und :func:`Released` Callbacks
+Es wird empfohlen die :cb:`Pressed` und :cb:`Released` Callbacks
 zu nutzen, um den Taster programmatisch zu behandeln.
 """
 }]

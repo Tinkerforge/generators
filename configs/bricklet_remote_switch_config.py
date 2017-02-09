@@ -35,11 +35,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-This function is deprecated, use :func:`SwitchSocketA` instead.
+This function is deprecated, use :func:`Switch Socket A` instead.
 """,
 'de':
 """
-Diese Funktion ist veraltet und wurde durch :func:`SwitchSocketA` ersetzt.
+Diese Funktion ist veraltet und wurde durch :func:`Switch Socket A` ersetzt.
 """
 }]
 })
@@ -55,20 +55,20 @@ com['packets'].append({
 """
 Returns the current switching state. If the current state is busy, the
 Bricklet is currently sending a code to switch a socket. It will not
-accept any calls of :func:`SwitchSocket` until the state changes to ready.
+accept any calls of :func:`Switch Socket` until the state changes to ready.
 
 How long the switching takes is dependent on the number of repeats, see
-:func:`SetRepeats`.
+:func:`Set Repeats`.
 """,
 'de':
 """
 Gibt den aktuellen Zustand des Schaltens zurück. Wenn der aktuell Zustand
 busy (beschäftigt) ist, sendet das Bricklet gerade einen Code um eine Steckdose
-zu schalten. Weitere Aufrufe von :func:`SwitchSocket` werden ignoriert bis
+zu schalten. Weitere Aufrufe von :func:`Switch Socket` werden ignoriert bis
 der Zustand auf ready (fertig) wechselt.
 
 Die Länge des Schaltvorgangs ist abhängig von der Anzahl der Wiederholungen,
-siehe :func:`SetRepeats`.
+siehe :func:`Set Repeats`.
 """
 }]
 })
@@ -82,12 +82,12 @@ com['packets'].append({
 'en':
 """
 This callback is called whenever the switching state changes
-from busy to ready, see :func:`GetSwitchingState`.
+from busy to ready, see :func:`Get Switching State`.
 """,
 'de':
 """
 Dieser Callback wird aufgerufen wenn der Schaltzustand
-von busy auf ready wechselt, siehe :func:`GetSwitchingState`.
+von busy auf ready wechselt, siehe :func:`Get Switching State`.
 """
 }]
 })
@@ -100,7 +100,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the number of times the code is send when of the :func:`SwitchSocket`
+Sets the number of times the code is send when of the :func:`Switch Socket`
 functions is called. The repeats basically correspond to the amount of time
 that a button of the remote is pressed.
 
@@ -112,7 +112,7 @@ The default value is 5.
 'de':
 """
 Setzt die Anzahl der Wiederholungen die verwendet werden um einen Code zu
-senden wenn eine der :func:`SwitchSocket` Funktionen aufgerufen wird. Die
+senden wenn eine der :func:`Switch Socket` Funktionen aufgerufen wird. Die
 Wiederholungen korrespondieren zu der Zeit die eine Taste auf der Fernbedienung
 gedrückt wird.
 
@@ -132,11 +132,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the number of repeats as set by :func:`SetRepeats`. 
+Returns the number of repeats as set by :func:`Set Repeats`.
 """,
 'de':
 """
-Gibt die Anzahl der Wiederholungen zurück, wie von :func:`SetRepeats` gesetzt.
+Gibt die Anzahl der Wiederholungen zurück, wie von :func:`Set Repeats` gesetzt.
 """
 }]
 })

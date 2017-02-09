@@ -39,8 +39,8 @@ has a range of -246 to 849 °C and is given in °C/100,
 e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
 
 If you want to get the temperature periodically, it is recommended 
-to use the callback :func:`Temperature` and set the period with 
-:func:`SetTemperatureCallbackPeriod`.
+to use the :cb:`Temperature` callback and set the period with
+:func:`Set Temperature Callback Period`.
 """,
 'de':
 """
@@ -49,8 +49,8 @@ Gibt die Temperatur des verbundenen Sensors zurück. Der Wertebereich ist von
 ein Wert von 4223 eine gemessene Temperatur von 42,23 °C.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Temperature` zu nutzen und die Periode mit 
-:func:`SetTemperatureCallbackPeriod` vorzugeben.
+den :cb:`Temperature` Callback zu nutzen und die Periode mit
+:func:`Set Temperature Callback Period` vorzugeben.
 """
 }]
 })
@@ -71,8 +71,8 @@ The value can be converted with the following formulas:
 * Pt1000: resistance = (value * 3900) / 32768
 
 If you want to get the resistance periodically, it is recommended 
-to use the callback :func:`Resistance` and set the period with 
-:func:`SetResistanceCallbackPeriod`.
+to use the :cb:`Resistance` callback and set the period with
+:func:`Set Resistance Callback Period`.
 """,
 'de':
 """
@@ -84,8 +84,8 @@ Der Wert kann mit den folgenden Formeln in einen Widerstand konvertiert werden:
 * Pt1000: Widerstand = (Wert * 3900) / 32768
 
 Wenn der Widerstand periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Resistance` zu nutzen und die Periode mit 
-:func:`SetResistanceCallbackPeriod` vorzugeben.
+den :cb:`Resistance` Callback zu nutzen und die Periode mit
+:func:`Set Resistance Callback Period` vorzugeben.
 """
 }]
 })
@@ -98,21 +98,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Temperature` callback is triggered
+Sets the period in ms with which the :cb:`Temperature` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Temperature` is only triggered if the temperature has changed since the
-last triggering.
+The :cb:`Temperature` callback is only triggered if the temperature has
+changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Temperature` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Temperature` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
-letzten Auslösung geändert hat.
+Der :cb:`Temperature` Callback wird nur ausgelöst wenn sich die Temperatur seit
+der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -127,11 +127,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
+Returns the period as set by :func:`Set Temperature Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetTemperatureCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Temperature Callback Period`
 gesetzt.
 """
 }]
@@ -145,21 +145,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Resistance` callback is triggered
+Sets the period in ms with which the :cb:`Resistance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Resistance` is only triggered if the resistance has changed since the
-last triggering.
+The :cb:`Resistance` callback is only triggered if the resistance has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Resistance` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Resistance` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Resistance` wird nur ausgelöst wenn sich der Widerstand seit der
-letzten Auslösung geändert hat.
+Der :cb:`Resistance` Callback wird nur ausgelöst wenn sich der Widerstand seit
+der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -174,11 +174,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetResistanceCallbackPeriod`.
+Returns the period as set by :func:`Set Resistance Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetResistanceCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Resistance Callback Period`
 gesetzt.
 """
 }]
@@ -194,7 +194,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`TemperatureReached` callback. 
+Sets the thresholds for the :cb:`Temperature Reached` callback.
 
 The following options are possible:
 
@@ -212,7 +212,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`TemperatureReached` Callback.
+Setzt den Schwellwert für den :cb:`Temperature Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -241,11 +241,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
+Returns the threshold as set by :func:`Set Temperature Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetTemperatureCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Temperature Callback Threshold`
 gesetzt.
 """
 }]
@@ -261,7 +261,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`ResistanceReached` callback. 
+Sets the thresholds for the :cb:`Resistance Reached` callback.
 
 The following options are possible:
 
@@ -279,7 +279,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`ResistanceReached` Callback.
+Setzt den Schwellwert für den :cb:`Resistance Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -308,11 +308,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetResistanceCallbackThreshold`.
+Returns the threshold as set by :func:`Set Resistance Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetResistanceCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Resistance Callback Threshold`
 gesetzt.
 """
 }]
@@ -329,13 +329,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`TemperatureReached`,
-* :func:`ResistanceReached`
+* :cb:`Temperature Reached`,
+* :cb:`Resistance Reached`
 
 is triggered, if the threshold
 
-* :func:`SetTemperatureCallbackThreshold`,
-* :func:`SetResistanceCallbackThreshold`
+* :func:`Set Temperature Callback Threshold`,
+* :func:`Set Resistance Callback Threshold`
 
 keeps being reached.
 
@@ -345,13 +345,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`TemperatureReached`,
-* :func:`ResistanceReached`
+* :cb:`Temperature Reached`,
+* :cb:`Resistance Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetTemperatureCallbackThreshold`,
-* :func:`SetResistanceCallbackThreshold`
+* :func:`Set Temperature Callback Threshold`,
+* :func:`Set Resistance Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -368,11 +368,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -387,19 +387,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetTemperatureCallbackPeriod`. The :word:`parameter` is the temperature
-of the connected sensor.
+:func:`Set Temperature Callback Period`. The :word:`parameter` is the
+temperature of the connected sensor.
 
-:func:`Temperature` is only triggered if the temperature has changed since the
-last triggering.
+The :cb:`Temperature` callback is only triggered if the temperature has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetTemperatureCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Temperature Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Temperatur des verbundenen Sensors.
 
-:func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
-letzten Auslösung geändert hat.
+Der :cb:`Temperature` Callback wird nur ausgelöst wenn sich die Temperatur
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -413,20 +413,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetTemperatureCallbackThreshold` is reached.
+:func:`Set Temperature Callback Threshold` is reached.
 The :word:`parameter` is the temperature of the connected sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetTemperatureCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Temperatur des verbundenen Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -440,19 +440,19 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetResistanceCallbackPeriod`. The :word:`parameter` is the resistance
+:func:`Set Resistance Callback Period`. The :word:`parameter` is the resistance
 of the connected sensor.
 
-:func:`Resistance` is only triggered if the resistance has changed since the
-last triggering.
+The :cb:`Resistance` callback is only triggered if the resistance has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetResistanceCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Resistance Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Widerstand des verbundenen Sensors.
 
-:func:`Resistance` wird nur ausgelöst wenn sich der Widerstand seit der
-letzten Auslösung geändert hat.
+Der :cb:`Resistance` Callback wird nur ausgelöst wenn sich der Widerstand seit
+der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -466,20 +466,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetResistanceCallbackThreshold` is reached.
+:func:`Set Resistance Callback Threshold` is reached.
 The :word:`parameter` is the resistance of the connected sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetResistanceCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Resistance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Widerstand des verbundenen Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -522,12 +522,12 @@ com['packets'].append({
 'en':
 """
 Returns the noise rejection filter option as set by 
-:func:`SetNoiseRejectionFilter`
+:func:`Set Noise Rejection Filter`
 """,
 'de':
 """
 Gibt die Einstellung des Entstörfilters zurück, wie von
-:func:`SetNoiseRejectionFilter` gesetzt.
+:func:`Set Noise Rejection Filter` gesetzt.
 """
 }]
 })
@@ -594,11 +594,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the wire mode as set by :func:`SetWireMode`
+Returns the wire mode as set by :func:`Set Wire Mode`
 """,
 'de':
 """
-Gibt die Leiter-Konfiguration zurück, wie von :func:`SetWireMode` gesetzt.
+Gibt die Leiter-Konfiguration zurück, wie von :func:`Set Wire Mode` gesetzt.
 """
 }]
 })

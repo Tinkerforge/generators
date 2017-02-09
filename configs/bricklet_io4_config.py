@@ -40,7 +40,7 @@ pins 2-3 low.
 
 .. note::
  This function does nothing for pins that are configured as input.
- Pull-up resistors can be switched on with :func:`SetConfiguration`.
+ Pull-up resistors can be switched on with :func:`Set Configuration`.
 """,
 'de':
 """
@@ -53,7 +53,7 @@ Pins 2-3 auf logisch 0.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
- Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschaltet werden.
+ Pull-Up Widerstände können mit :func:`Set Configuration` zugeschaltet werden.
 """
 }]
 })
@@ -176,7 +176,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the debounce period of the :func:`Interrupt` callback in ms.
+Sets the debounce period of the :cb:`Interrupt` callback in ms.
 
 For example: If you set this value to 100, you will get the interrupt
 maximal every 100ms. This is necessary if something that bounces is
@@ -186,7 +186,7 @@ The default value is 100.
 """,
 'de':
 """
-Setzt die Entprellperiode der :func:`Interrupt` Callback in ms.
+Setzt die Entprellperiode der :cb:`Interrupt` Callback in ms.
 
 Beispiel: Wenn dieser Wert auf 100 gesetzt wird, erhält man den Interrupt
 maximal alle 100ms. Dies ist notwendig falls etwas prellendes an
@@ -205,11 +205,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -230,7 +230,7 @@ i.e. changes from high to low and low to high.
 For example: An interrupt bitmask of 10 or 0b1010 will enable the interrupt for
 pins 1 and 3.
 
-The interrupt is delivered with the callback :func:`Interrupt`.
+The interrupt is delivered with the :cb:`Interrupt` callback.
 """,
 'de':
 """
@@ -241,7 +241,7 @@ z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 Beispiel: Eine Interrupt Bitmaske von 10 bzw. 0b1010 aktiviert den Interrupt für
 die Pins 1 und 3.
 
-Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
+Der Interrupt wird mit dem :cb:`Interrupt` Callback zugestellt.
 """
 }]
 })
@@ -254,11 +254,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the interrupt bitmask as set by :func:`SetInterrupt`.
+Returns the interrupt bitmask as set by :func:`Set Interrupt`.
 """,
 'de':
 """
-Gibt die Interrupt Bitmaske zurück, wie von :func:`SetInterrupt` gesetzt.
+Gibt die Interrupt Bitmaske zurück, wie von :func:`Set Interrupt` gesetzt.
 """
 }]
 })
@@ -273,7 +273,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered whenever a change of the voltage level is detected
-on pins where the interrupt was activated with :func:`SetInterrupt`.
+on pins where the interrupt was activated with :func:`Set Interrupt`.
 
 The values are a bitmask that specifies which interrupts occurred
 and the current value bitmask.
@@ -288,7 +288,7 @@ For example:
 'de':
 """
 Dieser Callback wird ausgelöst sobald eine Änderung des Spannungspegels
-detektiert wird, an Pins für welche der Interrupt mit :func:`SetInterrupt`
+detektiert wird, an Pins für welche der Interrupt mit :func:`Set Interrupt`
 aktiviert wurde.
 
 Die Rückgabewerte sind eine Bitmaske der aufgetretenen Interrupts und der
@@ -373,7 +373,7 @@ com['packets'].append({
 'en':
 """
 Returns (for the given pin) the current value and the time as set by
-:func:`SetMonoflop` as well as the remaining time until the value flips.
+:func:`Set Monoflop` as well as the remaining time until the value flips.
 
 If the timer is not running currently, the remaining time will be returned
 as 0.
@@ -381,7 +381,7 @@ as 0.
 'de':
 """
 Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
-:func:`SetMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
+:func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
@@ -429,7 +429,7 @@ pin 1 low and pin 2 high, pin 0 and 3 will remain untouched.
 
 .. note::
  This function does nothing for pins that are configured as input.
- Pull-up resistors can be switched on with :func:`SetConfiguration`.
+ Pull-up resistors can be switched on with :func:`Set Configuration`.
 """,
 'de':
 """
@@ -443,7 +443,7 @@ logisch 0 und den Pin 2 auf logisch 1. Die Pins 0 und 3 bleiben unangetastet.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
- Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschaltet werden.
+ Pull-Up Widerstände können mit :func:`Set Configuration` zugeschaltet werden.
 """
 }]
 })
@@ -459,7 +459,7 @@ com['packets'].append({
 'en':
 """
 Returns the current value of the edge counter for the selected pin. You can
-configure the edges that are counted with :func:`SetEdgeCountConfig`.
+configure the edges that are counted with :func:`Set Edge Count Config`.
 
 If you set the reset counter to *true*, the count is set back to 0
 directly after it is read.
@@ -467,7 +467,7 @@ directly after it is read.
 'de':
 """
 Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Pin zurück. Die
-zu zählenden Flanken können mit :func:`SetEdgeCountConfig` konfiguriert werden.
+zu zählenden Flanken können mit :func:`Set Edge Count Config` konfiguriert werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
@@ -542,12 +542,12 @@ com['packets'].append({
 'en':
 """
 Returns the edge type and debounce time for the selected pin as set by
-:func:`SetEdgeCountConfig`.
+:func:`Set Edge Count Config`.
 """,
 'de':
 """
 Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Pin zurück,
-wie von :func:`SetEdgeCountConfig` gesetzt.
+wie von :func:`Set Edge Count Config` gesetzt.
 """
 }]
 })

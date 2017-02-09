@@ -51,8 +51,8 @@ wavelengths:
    :target: ../../_images/Bricklets/bricklet_color_wavelength_chart_600.jpg
 
 If you want to get the color periodically, it is recommended 
-to use the callback :func:`Color` and set the period with 
-:func:`SetColorCallbackPeriod`.
+to use the :cb:`Color` callback and set the period with
+:func:`Set Color Callback Period`.
 """,
 'de':
 """
@@ -70,8 +70,8 @@ in unterschiedlichen Wellenlängen:
    :target: ../../_images/Bricklets/bricklet_color_wavelength_chart_600.jpg
 
 Wenn die Farbe periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Color` zu nutzen und die Periode mit 
-:func:`SetColorCallbackPeriod` vorzugeben.
+den :cb:`Color`Callback  zu nutzen und die Periode mit
+:func:`Set Color Callback Period` vorzugeben.
 """
 }]
 })
@@ -84,20 +84,20 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Color` callback is triggered
+Sets the period in ms with which the :cb:`Color` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Color` is only triggered if the color has changed since the
+The :cb:`Color` callback is only triggered if the color has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Color` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`Color` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Color` wird nur ausgelöst wenn sich die Color seit der
+Der :cb:`Color` Callback wird nur ausgelöst wenn sich die Color seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -113,11 +113,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetColorCallbackPeriod`.
+Returns the period as set by :func:`Set Color Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetColorCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Color Callback Period`
 gesetzt.
 """
 }]
@@ -139,7 +139,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`ColorReached` callback. 
+Sets the thresholds for the :cb:`Color Reached` callback.
 
 The following options are possible:
 
@@ -157,7 +157,7 @@ The default value is ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`ColorReached` Callback.
+Setzt den Schwellwert für den :cb:`Color Reached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -192,11 +192,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetColorCallbackThreshold`.
+Returns the threshold as set by :func:`Set Color Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetColorCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`Set Color Callback Threshold`
 gesetzt.
 """
 }]
@@ -212,11 +212,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
-* :func:`ColorReached`
+* :cb:`Color Reached`
 
 is triggered, if the threshold
 
-* :func:`SetColorCallbackThreshold`
+* :func:`Set Color Callback Threshold`
 
 keeps being reached.
 
@@ -226,11 +226,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
-* :func:`ColorReached`
+* :cb:`Color Reached`
  
 ausgelöst wird, wenn der Schwellwert 
 
-* :func:`SetColorCallbackThreshold`
+* :func:`Set Color Callback Threshold`
  
 weiterhin erreicht bleibt.
 
@@ -247,11 +247,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the debounce period as set by :func:`SetDebouncePeriod`.
+Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
 gesetzt.
 """
 }]
@@ -269,18 +269,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetColorCallbackPeriod`. The :word:`parameter` is the color
+:func:`Set Color Callback Period`. The :word:`parameter` is the color
 of the sensor as RGBC.
 
-:func:`Color` is only triggered if the color has changed since the
+The :cb:`Color` callback is only triggered if the color has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetColorCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Color Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Farbe des Sensors als RGBC.
 
-:func:`Color` wird nur ausgelöst wenn sich die Farbe seit der
+Der :cb:`Color` Callback wird nur ausgelöst wenn sich die Farbe seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -298,21 +298,21 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetColorCallbackThreshold` is reached.
+:func:`Set Color Callback Threshold` is reached.
 The :word:`parameter` is the color
 of the sensor as RGBC.
 
 If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetColorCallbackThreshold` gesetzt, erreicht wird.
+:func:`Set Color Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Farbe des Sensors als RGBC.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 """
 }]
 })
@@ -469,11 +469,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfig`.
+Returns the configuration as set by :func:`Set Config`.
 """,
 'de':
 """
-Gibt die Einstellungen zurück, wie von :func:`SetConfig`
+Gibt die Einstellungen zurück, wie von :func:`Set Config`
 gesetzt.
 """
 }]
@@ -488,20 +488,20 @@ com['packets'].append({
 'en':
 """
 Returns the illuminance affected by the gain and integration time as
-set by :func:`SetConfig`. To get the illuminance in Lux apply this formula::
+set by :func:`Set Config`. To get the illuminance in Lux apply this formula::
 
  lux = illuminance * 700 / gain / integration_time
 
 To get a correct illuminance measurement make sure that the color
 values themself are not saturated. The color value (R, G or B)
 is saturated if it is equal to the maximum value of 65535.
-In that case you have to reduce the gain, see :func:`SetConfig`.
+In that case you have to reduce the gain, see :func:`Set Config`.
 """,
 'de':
 """
 Gibt die Beleuchtungsstärke beeinflusst durch die Verstärkung und die
 Integrationszeit zurück. Verstärkung und Integrationszeit können mit
-:func:`SetConfig` eingestellt werden. Um die Beleuchtungsstärke in Lux zu
+:func:`Set Config` eingestellt werden. Um die Beleuchtungsstärke in Lux zu
 ermitteln muss folgende Formel angewendet werden::
 
  lux = illuminance * 700 / gain / integration_time
@@ -509,7 +509,7 @@ ermitteln muss folgende Formel angewendet werden::
 Für eine korrekte Messung der Beleuchtungsstärke muss sichergestellt
 sein, dass die Farbwerte (R, G oder B) nicht saturiert sind. Ein
 Farbwert ist saturiert wenn der Wert 65535 beträgt. In diesem Fall
-kann die Verstärkung per :func:`SetConfig` reduziert werden.
+kann die Verstärkung per :func:`Set Config` reduziert werden.
 """
 }]
 })
@@ -527,7 +527,7 @@ Returns the color temperature in Kelvin.
 To get a correct color temperature measurement make sure that the color
 values themself are not saturated. The color value (R, G or B)
 is saturated if it is equal to the maximum value of 65535.
-In that case you have to reduce the gain, see :func:`SetConfig`.
+In that case you have to reduce the gain, see :func:`Set Config`.
 """,
 'de':
 """
@@ -536,7 +536,7 @@ Gibt die Farbtemperatur in Kelvin zurück.
 Für eine korrekte Messung der Farbtemperatur muss sichergestellt
 sein das die Farbwerte (R, G oder B) nicht saturiert sind. Ein
 Farbwert ist saturiert wenn der Wert 65535 beträgt. In diesem Fall
-kann die Verstärkung per :func:`SetConfig` reduziert werden.
+kann die Verstärkung per :func:`Set Config` reduziert werden.
 """
 }]
 })
@@ -549,21 +549,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Illuminance` callback is triggered
+Sets the period in ms with which the :cb:`Illuminance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Illuminance` is only triggered if the illuminance has changed since the
-last triggering.
+The :cb:`Illuminance` callback is only triggered if the illuminance has changed
+since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Illuminance` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Illuminance` Callback ausgelöst
+wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Illuminance` Callback wird nur ausgelöst wenn sich die
+Beleuchtungsstärke seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -578,11 +578,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetIlluminanceCallbackPeriod`.
+Returns the period as set by :func:`Set Illuminance Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetIlluminanceCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Illuminance Callback Period`
 gesetzt.
 """
 }]
@@ -596,21 +596,21 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`ColorTemperature` callback is triggered
-periodically. A value of 0 turns the callback off.
+Sets the period in ms with which the :cb:`Color Temperature` callback is
+triggered periodically. A value of 0 turns the callback off.
 
-:func:`ColorTemperature` is only triggered if the color temperature has changed since the
-last triggering.
+The :cb:`Color Temperature` callback is only triggered if the color temperature
+has changed since the last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`ColorTemperature` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode in ms mit welcher der :cb:`Color Temperature` Callback
+ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
-:func:`ColorTemperature` wird nur ausgelöst wenn sich die Farbtemperatur seit der
-letzten Auslösung geändert hat.
+Der :cb:`Color Temperature` Callback wird nur ausgelöst wenn sich die
+Farbtemperatur seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -625,11 +625,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetColorTemperatureCallbackPeriod`.
+Returns the period as set by :func:`Set Color Temperature Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetColorTemperatureCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`Set Color Temperature Callback Period`
 gesetzt.
 """
 }]
@@ -644,20 +644,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetIlluminanceCallbackPeriod`. The :word:`parameter` is the illuminance.
-See :func:`GetIlluminance` for how to interpret this value.
+:func:`Set Illuminance Callback Period`. The :word:`parameter` is the illuminance.
+See :func:`Get Illuminance` for how to interpret this value.
 
-:func:`Illuminance` is only triggered if the illuminance has changed since the
-last triggering.
+The :cb:`Illuminance` callback is only triggered if the illuminance has changed
+since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetIlluminanceCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Illuminance Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Beleuchtungsstärke des Sensors.
-Siehe :func:`GetIlluminance` für eine Erklärung wie dieser zu interpretieren ist.
+Siehe :func:`Get Illuminance` für eine Erklärung wie dieser zu interpretieren ist.
 
-:func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Illuminance` Callback wird nur ausgelöst wenn sich die
+Beleuchtungsstärke seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -671,19 +671,20 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetColorTemperatureCallbackPeriod`. The :word:`parameter` is the 
+:func:`Set Color Temperature Callback Period`. The :word:`parameter` is the
 color temperature in Kelvin.
 
-:func:`ColorTemperature` is only triggered if the color temperature has 
-changed since the last triggering.
+The :cb:`Color Temperature` callback is only triggered if the color temperature
+has changed since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetColorTemperatureCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Farbtemperatur des Sensors in Kelvin.
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Color Temperature Callback Period`, ausgelöst. Der :word:`parameter`
+ist die Farbtemperatur des Sensors in Kelvin.
 
-:func:`ColorTemperature` wird nur ausgelöst wenn sich die Farbtemperatur seit der
-letzten Auslösung geändert hat.
+Der :cb:`Color Temperature` Callback wird nur ausgelöst wenn sich die
+Farbtemperatur seit der letzten Auslösung geändert hat.
 """
 }]
 })
