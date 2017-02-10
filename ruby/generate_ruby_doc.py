@@ -45,7 +45,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
                 return ':rb:func:`#{1} <{0}#{1}>`'.format(packet.get_device().get_ruby_class_name(),
                                                           packet.get_underscore_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='rb')
+        return self.specialize_doc_rst_links(text, specializer, prefix='rb')
 
     def get_ruby_examples(self):
         def title_from_filename(filename):

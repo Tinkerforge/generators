@@ -43,7 +43,7 @@ class JavaBindingsDevice(java_common.JavaDevice):
                                                        packet.get_headless_camel_case_name(),
                                                        packet.get_java_parameter_list(just_types=True))
 
-        return self.specialize_doc_function_links(text, specializer)
+        return self.specialize_doc_rst_links(text, specializer)
 
     def get_java_import(self):
         if self.get_generator().is_octave():

@@ -45,7 +45,7 @@ class CDocDevice(common.Device):
                 return ':c:func:`{0}_{1}`'.format(packet.get_device().get_underscore_name(),
                                                   packet.get_underscore_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='c')
+        return self.specialize_doc_rst_links(text, specializer, prefix='c')
 
     def get_c_examples(self):
         def title_from_filename(filename):

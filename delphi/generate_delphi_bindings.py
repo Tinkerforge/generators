@@ -39,7 +39,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
                                                       packet.get_device().get_delphi_class_name(),
                                                       packet.get_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer)
+        return self.specialize_doc_rst_links(text, specializer)
 
     def get_delphi_unit_header(self):
         include = """{0}

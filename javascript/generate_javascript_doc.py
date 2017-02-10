@@ -45,7 +45,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
                 return ':javascript:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_javascript_class_name(),
                                                        packet.get_headless_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='javascript')
+        return self.specialize_doc_rst_links(text, specializer, prefix='javascript')
 
     def get_javascript_examples(self):
         def title_from_filename(filename):

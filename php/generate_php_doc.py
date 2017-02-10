@@ -46,7 +46,7 @@ class PHPDocDevice(php_common.PHPDevice):
                 return ':php:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_php_class_name(),
                                                              packet.get_headless_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='php')
+        return self.specialize_doc_rst_links(text, specializer, prefix='php')
 
     def get_php_examples(self):
         def title_from_filename(filename):

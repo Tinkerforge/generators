@@ -46,7 +46,7 @@ class PerlDocDevice(perl_common.PerlDevice):
                 return ':perl:func:`{1}() <{0}->{1}>`'.format(packet.get_device().get_perl_class_name(),
                                                               packet.get_underscore_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='perl')
+        return self.specialize_doc_rst_links(text, specializer, prefix='perl')
 
     def get_perl_examples(self):
         def title_from_filename(filename):

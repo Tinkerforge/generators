@@ -45,7 +45,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
                 return ':matlab:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_matlab_class_name(),
                                                                 packet.get_headless_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='matlab')
+        return self.specialize_doc_rst_links(text, specializer, prefix='matlab')
 
     def get_matlab_examples(self):
         def title_from_filename(filename):

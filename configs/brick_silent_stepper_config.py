@@ -1326,7 +1326,7 @@ periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`AllData` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :cb:`All Data` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 """
 }]

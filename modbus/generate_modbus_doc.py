@@ -45,7 +45,7 @@ class ModbusDocDevice(common.Device):
                 return ':modbus:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_modbus_name(),
                                                              packet.get_underscore_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='modbus')
+        return self.specialize_doc_rst_links(text, specializer, prefix='modbus')
 
     def get_modbus_methods(self, typ):
         methods = ''

@@ -41,7 +41,7 @@ class PHPBindingsDevice(php_common.PHPDevice):
                 return '{0}::{1}()'.format(packet.get_device().get_php_class_name(),
                                            packet.get_headless_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer)
+        return self.specialize_doc_rst_links(text, specializer)
 
     def get_php_import(self):
         include = """{0}

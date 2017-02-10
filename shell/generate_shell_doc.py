@@ -45,7 +45,7 @@ class ShellDocDevice(shell_common.ShellDevice):
                 return ':sh:func:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
                                                          packet.get_dash_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='sh')
+        return self.specialize_doc_rst_links(text, specializer, prefix='sh')
 
     def get_shell_examples(self):
         def title_from_filename(filename):

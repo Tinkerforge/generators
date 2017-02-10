@@ -45,7 +45,7 @@ class TCPIPDocDevice(common.Device):
                 return ':tcpip:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_tcpip_name(),
                                                           packet.get_underscore_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='tcpip')
+        return self.specialize_doc_rst_links(text, specializer, prefix='tcpip')
 
     def get_tcpip_methods(self, typ):
         methods = ''

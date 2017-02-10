@@ -41,7 +41,7 @@ class CBindingsDevice(common.Device):
                 return '{{@link {0}_{1}}}'.format(packet.get_device().get_underscore_name(),
                                                   packet.get_underscore_name())
 
-        return self.specialize_doc_function_links(text, specializer)
+        return self.specialize_doc_rst_links(text, specializer)
 
     def get_c_include_c(self):
         include = """{0}

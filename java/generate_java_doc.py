@@ -45,7 +45,7 @@ class JavaDocDevice(java_common.JavaDevice):
                 return ':java:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_java_class_name(),
                                                               packet.get_headless_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='java')
+        return self.specialize_doc_rst_links(text, specializer, prefix='java')
 
     def get_java_examples(self):
         def title_from_filename(filename):

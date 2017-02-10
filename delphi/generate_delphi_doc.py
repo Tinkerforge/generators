@@ -45,7 +45,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
                 return ':delphi:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_delphi_class_name(),
                                                              packet.get_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='delphi')
+        return self.specialize_doc_rst_links(text, specializer, prefix='delphi')
 
     def get_delphi_examples(self):
         def title_from_filename(filename):

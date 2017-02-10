@@ -45,7 +45,7 @@ class PythonDocDevice(python_common.PythonDevice):
                 return ':py:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_python_class_name(),
                                                            packet.get_underscore_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='py')
+        return self.specialize_doc_rst_links(text, specializer, prefix='py')
 
     def get_python_examples(self):
         def title_from_filename(filename):

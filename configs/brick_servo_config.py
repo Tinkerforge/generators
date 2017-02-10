@@ -843,7 +843,7 @@ Default is disabled.
 """,
 'de':
 """
-Aktiviert den :cb:`PositionReached` Callback.
+Aktiviert den :cb:`Position Reached` Callback.
 
 Voreinstellung ist deaktiviert.
 """

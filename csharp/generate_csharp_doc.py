@@ -45,7 +45,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
                 return ':csharp:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_csharp_class_name(),
                                                                 packet.get_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='csharp')
+        return self.specialize_doc_rst_links(text, specializer, prefix='csharp')
 
     def get_csharp_examples(self):
         def title_from_filename(filename):

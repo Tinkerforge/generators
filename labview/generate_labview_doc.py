@@ -47,7 +47,7 @@ class LabVIEWDocDevice(common.Device):
                 return ':labview:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_labview_class_name(),
                                                                 packet.get_camel_case_name())
 
-        return self.specialize_doc_function_links(text, specializer, prefix='labview')
+        return self.specialize_doc_rst_links(text, specializer, prefix='labview')
 
     def get_labview_examples(self):
         def title_from_filename(filename):

@@ -1528,30 +1528,25 @@ class Device(NameMixin):
 
         return self.get_underscore_name() + '_' + self.get_underscore_category()
 
-    def specialize_doc_links(self, keyword, type_, text, specializer, prefix=None):
-        for packet in self.get_packets(type_):
-            generic_name = ':{0}:`{1}`'.format(keyword, packet.get_name())
-            special_name = specializer(packet)
+    def specialize_doc_rst_links(self, text, specializer, prefix=None):
+        for keyword, type_ in [('func', 'function'), ('cb', 'callback')]:
+            for packet in self.get_packets(type_):
+                generic_name = ':{0}:`{1}`'.format(keyword, packet.get_name())
+                special_name = specializer(packet)
 
-            text = text.replace(generic_name, special_name)
+                text = text.replace(generic_name, special_name)
 
-        if prefix != None:
-            p = '(?<!:' + prefix + ')(:' + keyword + ':`[^`]*`)'
-        else:
-            p = '(:' + keyword + ':`[^`]*`)'
+            if prefix != None:
+                p = '(?<!:' + prefix + ')(:' + keyword + ':`[^`]*`)'
+            else:
+                p = '(:' + keyword + ':`[^`]*`)'
 
-        m = re.search(p, text)
+            m = re.search(p, text)
 
-        if m != None:
-            raise GeneratorError('Unknown :{0}: found: {1}'.format(keyword, m.group(1)))
+            if m != None:
+                raise GeneratorError('Unknown :{0}: found: {1}'.format(keyword, m.group(1)))
 
         return text
-
-    def specialize_doc_function_links(self, text, specializer, prefix=None):
-        return self.specialize_doc_links('func', 'function', text, specializer, prefix)
-
-    def specialize_doc_callback_links(self, text, specializer, prefix=None):
-        return self.specialize_doc_links('cb', 'callback', text, specializer, prefix)
 
     def get_examples(self):
         return self.examples
