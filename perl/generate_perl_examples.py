@@ -326,20 +326,18 @@ class PerlExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
 
     def get_perl_source(self):
         templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-${device_initial_name}->set_{function_underscore_name}{suffix}_period({arguments}{period_msec});
+${device_initial_name}->set_{function_underscore_name}_period({arguments}{period_msec});
 """
         templateB = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
 # Note: The {function_comment_name} callback is only called every {period_sec_long}
 #       if the {function_comment_name} has changed since the last call!
-${device_initial_name}->set_{function_underscore_name}{suffix}_period({arguments}{period_msec});
+${device_initial_name}->set_{function_underscore_name}_callback_period({arguments}{period_msec});
 """
 
         if self.get_device().get_underscore_name().startswith('imu'):
-            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior
-            suffix = '' # FIXME: special hack for IMU Brick name mismatch
+            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
-            suffix = '_callback'
 
         arguments = []
 
@@ -351,7 +349,6 @@ ${device_initial_name}->set_{function_underscore_name}{suffix}_period({arguments
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               suffix=suffix,
                                arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,

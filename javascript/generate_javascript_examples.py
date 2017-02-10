@@ -495,20 +495,18 @@ class JavaScriptExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFuncti
 
     def get_javascript_source(self):
         templateA = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}{suffix}Period({arguments}{period_msec});
+{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}Period({arguments}{period_msec});
 """
         templateB = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
 {global_line_prefix}        // Note: The {function_comment_name} callback is only called every {period_sec_long}
 {global_line_prefix}        //       if the {function_comment_name} has changed since the last call!
-{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}{suffix}Period({arguments}{period_msec});
+{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackPeriod({arguments}{period_msec});
 """
 
         if self.get_device().get_underscore_name().startswith('imu'):
-            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior
-            suffix = '' # FIXME: special hack for IMU Brick name mismatch
+            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
-            suffix = 'Callback'
 
         arguments = []
 
@@ -521,7 +519,6 @@ class JavaScriptExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFuncti
                                device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               suffix=suffix,
                                arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,

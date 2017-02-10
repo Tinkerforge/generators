@@ -227,20 +227,18 @@ class ShellExampleCallbackFunction(common.ExampleCallbackFunction):
 class ShellExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_shell_source(self):
         templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}{suffix}-period {arguments}{period_msec}
+tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-period {arguments}{period_msec}
 """
         templateB = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
 # Note: The {function_comment_name} callback is only called every {period_sec_long}
 #       if the {function_comment_name} has changed since the last call!
-tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}{suffix}-period {arguments}{period_msec}
+tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-callback-period {arguments}{period_msec}
 """
 
         if self.get_device().get_underscore_name().startswith('imu'):
-            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior
-            suffix = '' # FIXME: special hack for IMU Brick name mismatch
+            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
-            suffix = '-callback'
 
         arguments = []
 
@@ -253,7 +251,6 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
                                device_dash_category=self.get_device().get_dash_category(),
                                function_dash_name=self.get_dash_name(),
                                function_comment_name=self.get_comment_name(),
-                               suffix=suffix,
                                arguments=common.wrap_non_empty('', ' '.join(arguments), ' '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
