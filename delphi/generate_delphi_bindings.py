@@ -35,9 +35,14 @@ import common
 class DelphiBindingsDevice(delphi_common.DelphiDevice):
     def specialize_delphi_doc_function_links(self, text):
         def specializer(packet):
-            return '<see cref="{0}.{1}.{2}"/>'.format(packet.get_device().get_delphi_class_name()[1:],
-                                                      packet.get_device().get_delphi_class_name(),
-                                                      packet.get_camel_case_name())
+            if packet.get_type() == 'callback':
+                return '<see cref="{0}.{1}.On{2}"/>'.format(packet.get_device().get_delphi_class_name()[1:],
+                                                            packet.get_device().get_delphi_class_name(),
+                                                            packet.get_camel_case_name())
+            else:
+                return '<see cref="{0}.{1}.{2}"/>'.format(packet.get_device().get_delphi_class_name()[1:],
+                                                          packet.get_device().get_delphi_class_name(),
+                                                          packet.get_camel_case_name())
 
         return self.specialize_doc_rst_links(text, specializer)
 
