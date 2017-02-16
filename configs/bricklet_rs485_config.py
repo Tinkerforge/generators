@@ -43,7 +43,7 @@ The length of the string has to be given as an additional parameter.
 
 The return value is the number of bytes that could be written.
 
-See :func:`Set Configuration` for configuration possibilities
+See :func:`Set RS485 Configuration` for configuration possibilities
 regarding baudrate, parity and so on.
 """,
 'de':
@@ -55,7 +55,7 @@ Die Länge des Strings muss als ein zusätzlicher Parameter angegeben werden.
 
 Der Rückgabewert ist die Anzahl der Zeichen die geschrieben werden konnten.
 
-Siehe :func:`Set Configuration` für Konfigurationsmöglichkeiten
+Siehe :func:`Set RS485 Configuration` für Konfigurationsmöglichkeiten
 bezüglich Baudrate, Parität usw.
 """
 }]
@@ -153,10 +153,8 @@ Gibt *true* zurück falls :cb:`Read Callback` Callback aktiviert ist,
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Configuration',
-'elements': [('Mode', 'uint8', 1, 'in'),
-             ('Modbus Slave Address', 'uint8', 1, 'in'),
-             ('Baudrate', 'uint32', 1, 'in'),
+'name': 'Set RS485 Configuration',
+'elements': [('Baudrate', 'uint32', 1, 'in'),
              ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
                                                       ('Odd', 1),
                                                       ('Even', 2)])),
@@ -174,8 +172,6 @@ com['packets'].append({
 """
 Sets the configuration for the RS485 communication. Available options:
 
-* Mode specifies the operating mode, can be RS485, Modbus RTU Master or Modbus RTU Slave
-* Modbus slave address specifies the address to be used when in Modbus slave mode.
 * Baudrate between 100 and 2000000 baud.
 * Parity of none, odd or even.
 * Stopbits can be 1 or 2.
@@ -189,8 +185,6 @@ The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex
 Setzt die Konfiguration für die RS485-Kommunikation.
 Verfügbare Optionen sind:
 
-* Mode gibt die Betriebsmodus an, kann RS485, Modbus RTU Master oder Modbus RTU Slave sein.
-* Modbus Slave Adresse für Modbus Slave Modus.
 * Baudrate zwischen 100 und YYY 2000000 Baud.
 * Parität von None, Odd und Even Parity.
 * Stop Bits von 1 oder 2.
@@ -204,10 +198,8 @@ Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, half du
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Configuration',
-'elements': [('Mode', 'uint8', 1, 'out'),
-             ('Modbus Slave Address', 'uint8', 1, 'out'),
-             ('Baudrate', 'uint32', 1, 'out'),
+'name': 'Get RS485 Configuration',
+'elements': [('Baudrate', 'uint32', 1, 'out'),
              ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
                                                        ('Odd', 1),
                                                        ('Even', 2)])),
@@ -223,11 +215,106 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the configuration as set by :func:`Set Configuration`.
+Returns the configuration as set by :func:`Set RS485 Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set RS485 Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Modbus Configuration',
+'elements': [('Slave Address', 'uint8', 1, 'in'),
+             ('Master Request Timeout', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the configuration for the RS485 Modbus communication. Available options:
+
+* Slave Address to be used in Modbus slave mode.
+* Master Request Timeout specifies how long the master should wait for a response from a slave in milliseconds.
+
+""",
+'de': #TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Modbus Configuration',
+'elements': [('Slave Address', 'uint8', 1, 'out'),
+             ('Master Request Timeout', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the configuration as set by :func:`Set Modbus Configuration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`Set Modbus Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Mode',
+'elements': [('Mode', 'uint8', 1, 'in',('Mode', [('RS485', 0),
+                                                  ('Modbus Slave RTU', 1),
+                                                  ('Modbus Master RTU', 2)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the mode of the Bricklet on which it operates.
+""",
+'de': #TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Mode',
+'elements': [('Mode', 'uint8', 1, 'out',('Mode', [('RS485', 0),
+                                                  ('Modbus Slave RTU', 1),
+                                                  ('Modbus Master RTU', 2)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the configuration as set by :func:`Set Mode`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`Set Mode` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Apply Configuration',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+This function must be called after any configuration changes.
+""",
+'de': #TODO: German documentation.
+"""
+-
 """
 }]
 })
@@ -501,21 +588,82 @@ Gibt die aktuelle Anzahl an Overrun und Parity Fehlern zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Answer Modbus Read Coils Request Low Level',
+'name': 'Get Modbus Common Error Count',
+'elements': [('Timeout Error Count', 'uint32', 1, 'out'),
+             ('Checksum Error Count', 'uint32', 1, 'out'),
+             ('Frame Too Big Error Count', 'uint32', 1, 'out'),
+             ('Illegal Function Error Count', 'uint32', 1, 'out'),
+             ('Illegal Data Address Error Count', 'uint32', 1, 'out'),
+             ('Illegal Data Value Error Count', 'uint32', 1, 'out'),
+             ('Slave Device Failure Error Count', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Modbus Answer Read Coils Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'uint8', 59, 'in')],
-'high_level': {'stream_in': {}}, # FIXME: add bitmask feature
+'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
-'en':
+'en': # TODO: English documentation.
 """
-TODO: English documentation.
+-
 """,
-'de':
+'de': # TODO: German documentation.
 """
-TODO: German documentation.
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Modbus Report Exception',
+'elements': [('Request ID', 'uint8', 1, 'in'),
+             ('Exception Code', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Modbus Read Coils',
+'elements': [('Slave Address', 'uint8', 1, 'in'),
+             ('Starting Address', 'uint16', 1, 'in'),
+             ('Count', 'uint16', 1, 'in'),
+             ('Request ID', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
 """
 }]
 })
@@ -574,13 +722,13 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en':
+'en': # TODO: English documentation.
 """
-TODO: English documentation.
+-
 """,
-'de':
+'de': # TODO: German documentation.
 """
-TODO: German documentation.
+-
 """
 }]
 })
@@ -589,20 +737,20 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Read Coils Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Error Code', 'uint8', 1, 'out'), # FIXME: add constants
+             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint8', 58, 'out')],
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
-'en':
+'doc': ['llc', {
+'en': # TODO: English documentation.
 """
-TODO: English documentation.
+-
 """,
-'de':
+'de': # TODO: German documentation.
 """
-TODO: German documentation.
+-
 """
 }]
 })
