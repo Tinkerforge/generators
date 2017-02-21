@@ -611,6 +611,24 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': 'Modbus Report Exception',
+'elements': [('Request ID', 'uint8', 1, 'in'),
+             ('Exception Code', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Modbus Answer Read Coils Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
@@ -632,9 +650,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Report Exception',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Exception Code', 'uint8', 1, 'in')],
+'name': 'Modbus Read Coils',
+'elements': [('Slave Address', 'uint8', 1, 'in'),
+             ('Starting Address', 'uint16', 1, 'in'),
+             ('Count', 'uint16', 1, 'in'),
+             ('Request ID', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en': # TODO: English documentation.
@@ -650,7 +670,28 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Read Coils',
+'name': 'Modbus Answer Read Holding Registers Request Low Level',
+'elements': [('Request ID', 'uint8', 1, 'in'),
+             ('Stream Total Length', 'uint16', 1, 'in'),
+             ('Stream Chunk Offset', 'uint16', 1, 'in'),
+             ('Stream Chunk Data', 'uint16', 29, 'in')],
+'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Modbus Read Holding Registers',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
              ('Count', 'uint16', 1, 'in'),
@@ -741,6 +782,47 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint8', 58, 'out')],
+'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
+'since_firmware': [1, 0, 0],
+'doc': ['llc', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Modbus Read Holding Registers Request',
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Starting Address', 'uint16', 1, 'out'),
+             ('Count', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Modbus Read Holding Registers Response Low Level',
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
+             ('Stream Total Length', 'uint16', 1, 'out'),
+             ('Stream Chunk Offset', 'uint16', 1, 'out'),
+             ('Stream Chunk Data', 'uint16', 29, 'out')],
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
