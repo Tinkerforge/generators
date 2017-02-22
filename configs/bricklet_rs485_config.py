@@ -710,6 +710,45 @@ com['packets'].append({
 })
 
 com['packets'].append({
+'type': 'function',
+'name': 'Modbus Answer Write Single Coil Request',
+'elements': [('Request ID', 'uint8', 1, 'in'),
+             ('Coil Address', 'uint16', 1, 'in'),
+             ('Coil Value', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Modbus Write Single Coil',
+'elements': [('Slave Address', 'uint8', 1, 'in'),
+             ('Coil Address', 'uint16', 1, 'in'),
+             ('Coil Value', 'uint16', 1, 'in'),
+             ('Request ID', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': 'Read Callback',
 'elements': [('Message', 'char', 60, 'out'),
@@ -826,6 +865,45 @@ com['packets'].append({
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Modbus Write Single Coil Request',
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Coil Address', 'uint16', 1, 'out'),
+             ('Coil Value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Modbus Write Single Coil Response',
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
+             ('Coil Address', 'uint16', 1, 'out'),
+             ('Coil Value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
 'en': # TODO: English documentation.
 """
 -
