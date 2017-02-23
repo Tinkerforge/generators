@@ -239,6 +239,7 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameter_list}):
         stream_total_length = len(data)
         stream_chunk_offset = 0
+        result = None
 
         while stream_chunk_offset < stream_total_length:
             stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
@@ -246,9 +247,12 @@ class {0}(Device):
             if len(stream_chunk_data) < {chunk_cardinality}:
                 stream_chunk_data.extend([0]*({chunk_cardinality} - len(stream_chunk_data)))
 
-            self.{underscore_name}_low_level({parameter_list})
+            # FIXME: validate that the result of all the low-level calls is identical
+            result = self.{underscore_name}_low_level({parameter_list})
 
             stream_chunk_offset += {chunk_cardinality}
+
+        return result
 """
 
         for packet in self.get_packets('function'):

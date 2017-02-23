@@ -1057,9 +1057,6 @@ class HighLevelStreamIn(HighLevelStream):
            packet.all_elements[-1].get_direction() != 'in':
             raise GeneratorError("Invalid element direction for high-level feature 'stream_in'")
 
-        if len(packet.out_elements) != 0:
-            raise GeneratorError("High-level feature 'stream_in' cannot be combined with 'out' elements")
-
 class HighLevelStreamOut(HighLevelStream):
     def __init__(self, raw_data, packet):
         HighLevelStream.__init__(self, raw_data, packet)
