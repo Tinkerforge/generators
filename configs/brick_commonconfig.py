@@ -7,6 +7,50 @@
 # Common Brick communication config
 
 common_packets = []
+
+common_packets.append({
+'type': 'function',
+'function_id': 233,
+'name': 'Get Send Timeout Count',
+'elements': [('Communication Method', 'uint8', 1, 'in', ('Communication Method', [('None', 0),
+                                                                                  ('USB', 1),
+                                                                                  ('SPI Stack', 2),
+                                                                                  ('Chibi', 3),
+                                                                                  ('RS485', 4),
+                                                                                  ('WIFI', 5),
+                                                                                  ('Ethernet', 6),
+                                                                                  ('WIFI V2', 7)])),
+             ('Timeout Count', 'uint32', 1, 'out')],
+'since_firmware': {'*': [2, 0, 0],
+                   'DC': [2, 3, 3],
+                   'IMU': [2, 3, 3],
+                   'IMU V2': [2, 0, 7],
+                   'Master': [2, 4, 3],
+                   'RED': None,
+                   'Servo': [2, 3, 2],
+                   'Stepper': [2, 3, 4]},
+'doc': ['af', {
+'en':
+"""
+Returns the timeout count for the different communication methods.
+
+The methods 0-2 are available for all Bricks, 3-7 only for Master Bricks.
+
+This function is mostly used for debugging during development, in normal operation
+the counters should nearly always stay at 0.
+""",
+'de':
+"""
+Gibt den Timeout-Zähler für die verschiedenen Kommunikationsmöglichkeiten zurück
+
+Die Kommunikationsmöglichkeiten 0-2 stehen auf allen Bricks zur verfügung, 3-7 nur auf Master Bricks.
+
+Diese Funktion ist hauptsächlich zum debuggen während der Entwicklung gedacht.
+Im normalen Betrieb sollten alle Zähler fast immer auf 0 stehen bleiben.
+"""
+}]
+})
+
 '''
 common_packets.append({
 'type': 'function',
