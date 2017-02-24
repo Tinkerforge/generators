@@ -788,6 +788,49 @@ com['packets'].append({
 })
 
 com['packets'].append({
+'type': 'function',
+'name': 'Modbus Answer Write Multiple Coils Request',
+'elements': [('Request ID', 'uint8', 1, 'in'),
+             ('Starting Address', 'uint16', 1, 'in'),
+             ('Count', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Modbus Write Multiple Coils Low Level',
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Slave Address', 'uint8', 1, 'in'),
+             ('Starting Address', 'uint16', 1, 'in'),
+             ('Count', 'uint16', 1, 'in'),
+             ('Stream Total Length', 'uint16', 1, 'in'),
+             ('Stream Chunk Offset', 'uint16', 1, 'in'),
+             ('Stream Chunk Data', 'uint8', 54, 'in')],
+'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': 'Read Callback',
 'elements': [('Message', 'char', 60, 'out'),
@@ -980,6 +1023,49 @@ com['packets'].append({
              ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
              ('Register Address', 'uint16', 1, 'out'),
              ('Register Value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Modbus Write Multiple Coils Request Low Level',
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Starting Address', 'uint16', 1, 'out'),
+             ('Count', 'uint16', 1, 'out'),
+             ('Stream Total Length', 'uint16', 1, 'out'),
+             ('Stream Chunk Offset', 'uint16', 1, 'out'),
+             ('Stream Chunk Data', 'uint8', 55, 'out')],
+'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
+'since_firmware': [1, 0, 0],
+'doc': ['llc', {
+'en': # TODO: English documentation.
+"""
+-
+""",
+'de': # TODO: German documentation.
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Modbus Write Multiple Coils Response',
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
+             ('Starting Address', 'uint16', 1, 'out'),
+             ('Count', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en': # TODO: English documentation.
