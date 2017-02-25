@@ -549,7 +549,7 @@ class IPConnection:
             tmp.connect((self.host, self.port))
             tmp.settimeout(None)
         except:
-            def cleanup():
+            def cleanup1():
                 # end callback thread
                 if not is_auto_reconnect:
                     self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
@@ -559,7 +559,7 @@ class IPConnection:
 
                     self.callback = None
 
-            cleanup()
+            cleanup1()
             raise
 
         self.socket = tmp
@@ -575,7 +575,7 @@ class IPConnection:
             self.disconnect_probe_thread.daemon = True
             self.disconnect_probe_thread.start()
         except:
-            def cleanup():
+            def cleanup2():
                 self.disconnect_probe_thread = None
 
                 # close socket
@@ -591,7 +591,7 @@ class IPConnection:
 
                     self.callback = None
 
-            cleanup()
+            cleanup2()
             raise
 
         # create receive thread
@@ -605,7 +605,7 @@ class IPConnection:
             self.receive_thread.daemon = True
             self.receive_thread.start()
         except:
-            def cleanup():
+            def cleanup3():
                 # close socket
                 self.disconnect_unlocked()
 
@@ -618,7 +618,7 @@ class IPConnection:
 
                     self.callback = None
 
-            cleanup()
+            cleanup3()
             raise
 
         self.auto_reconnect_allowed = False
