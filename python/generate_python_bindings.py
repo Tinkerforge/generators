@@ -301,7 +301,7 @@ class {0}(Device):
         source += self.get_python_register_callback_method()
         source += self.get_python_old_name()
 
-        return source
+        return common.strip_trailing_whitespace(source)
 
 class PythonBindingsPacket(python_common.PythonPacket):
     def get_python_formatted_doc(self):

@@ -109,6 +109,14 @@ lang = 'en'
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
+def strip_trailing_whitespace(text):
+    lines = []
+
+    for line in text.split('\n'):
+        lines.append(line.rstrip())
+
+    return '\n'.join(lines)
+
 def get_changelog_version(bindings_root_directory):
     r = re.compile('^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
     last = None
