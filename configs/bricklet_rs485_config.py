@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# GPS Bricklet communication config
+# RS485 Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -235,10 +235,10 @@ com['packets'].append({
 """
 Sets the configuration for the RS485 Modbus communication. Available options:
 
-* Slave address to be used in Modbus slave mode.
-* Master request timeout specifies how long the master should wait for a response from a slave in milliseconds.
+* Slave Address, address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 0 to 247.
+* Master Request Timeout, specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
 
-The default is: Slave address = 1 and Master request timeout = 1000 milliseconds or 1 second.
+The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds or 1 second.
 """,
 'de': #TODO: German documentation.
 """
@@ -269,13 +269,13 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
 'elements': [('Mode', 'uint8', 1, 'in',('Mode', [('RS485', 0),
-                                                  ('Modbus Slave RTU', 1),
-                                                  ('Modbus Master RTU', 2)]))],
+                                                 ('Modbus Slave RTU', 1),
+                                              ('Modbus Master RTU', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the mode of the Bricklet on which it operates. Available options:
+Sets the mode of the Bricklet in which it operates. Available options:
 
 * RS485, switches the operating mode of the bricklet to RS485 mode.
 * Modbus Slave RTU, switches the operating mode of the bricklet to Modbus Slave RTU mode.
@@ -588,9 +588,18 @@ com['packets'].append({
              ('Slave Device Failure Error Count', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+Returns the current number of errors occurred in Modbus mode.
+
+* Timeout Error Count, the number of timeouts occurred.
+* Checksum Error Count, the number of failures due to Modbus frame CRC16 checksum mismatch.
+* Frame Too Big Error Count, the number of times frames were rejected because they exceeded maximum Modbus frame size which is 256 bytes.
+* Illegal Function Error Count, the number of errors when an unimplemented or illegal function is requested. This corresponds to Modbus exception code 1.
+* Illegal Data Address Error Count, the number of errors due to invalid data address. This corresponds to Modbus exception code 2.
+* Illegal Data Value Error Count, the number of errors due to invalid data value. This corresponds to Modbus exception code 3.
+* Slave Device Failure Error Count, the number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.
+
 """,
 'de': # TODO: German documentation.
 """
@@ -606,9 +615,13 @@ com['packets'].append({
              ('Exception Code', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to report a modbus exception for
+a Modbus master request.
+
+* Request ID, the request ID of the request received by the slave.
+* Exception Code, the Modbus exception code to report to the Modbus master.
 """,
 'de': # TODO: German documentation.
 """
@@ -627,9 +640,16 @@ com['packets'].append({
 'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to answer a master request to
+read coils.
+
+* Request ID: Request ID of the corresponding request that is being answered.
+* Data: Data that is to be sent to the Modbus master for the corresponding request.
+
+This function must be called from the :cb:`Modbus Read Coils Request` callback
+with the Request ID as provided by the argument of the callback.
 """,
 'de': # TODO: German documentation.
 """
@@ -647,9 +667,22 @@ com['packets'].append({
              ('Request ID', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus master mode this function can be used to read coils from a slave.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Starting address of the read.
+* Count: Number of coils to read.
+
+Upon success the function will return a non-zero request ID which will represent
+the current request initiated by the Modbus master. In case of failure the returned
+request ID will be 0.
+
+When successful this function will also invoke the :cb:`Modbus Read Coils Response`
+callback. In this callback the Request ID provided by the callback argument must be
+matched with the Request ID returned from this function to verify that the callback
+is indeed for a particular request.
 """,
 'de': # TODO: German documentation.
 """
@@ -668,9 +701,16 @@ com['packets'].append({
 'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to answer a master request to
+read holding registers.
+
+* Request ID: Request ID of the corresponding request that is being answered.
+* Data: Data that is to be sent to the Modbus master for the corresponding request.
+
+This function must be called from the :cb:`Modbus Read Holding Registers Request`
+callback with the Request ID as provided by the argument of the callback.
 """,
 'de': # TODO: German documentation.
 """
@@ -688,9 +728,22 @@ com['packets'].append({
              ('Request ID', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus master mode this function can be used to read holding registers from a slave.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Starting address of the read.
+* Count: Number of holding registers to read.
+
+Upon success the function will return a non-zero request ID which will represent
+the current request initiated by the Modbus master. In case of failure the returned
+request ID will be 0.
+
+When successful this function will also invoke the :cb:`Modbus Read Holding Registers Response`
+callback. In this callback the Request ID provided by the callback argument must be matched
+with the Request ID returned from this function to verify that the callback is indeed for a
+particular request.
 """,
 'de': # TODO: German documentation.
 """
@@ -707,9 +760,18 @@ com['packets'].append({
              ('Coil Value', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to answer a master request to
+write a single coil.
+
+* Request ID: Request ID of the corresponding request that is being answered.
+* Coil Address: Address of the coil to write.
+* Coil Value: Value to be written.
+
+This function must be called from the :cb:`Modbus Write Single Coil Request`
+callback with the Request ID, Coil Address and Coil Value as provided by the
+arguments of the callback.
 """,
 'de': # TODO: German documentation.
 """
@@ -727,9 +789,22 @@ com['packets'].append({
              ('Request ID', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus master mode this function can be used to write a single coil of a slave.
+
+* Slave Address: Address of the target Modbus slave.
+* Coil Address: Address of the coil.
+* Coil Value: Value to be written.
+
+Upon success the function will return a non-zero request ID which will represent
+the current request initiated by the Modbus master. In case of failure the returned
+request ID will be 0.
+
+When successful this function will also invoke the :cb:`Modbus Write Single Coil Response`
+callback. In this callback the Request ID provided by the callback argument must be matched
+with the Request ID returned from this function to verify that the callback is indeed for a
+particular request.
 """,
 'de': # TODO: German documentation.
 """
@@ -746,9 +821,18 @@ com['packets'].append({
              ('Register Value', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to answer a master request to
+write a single register.
+
+* Request ID: Request ID of the corresponding request that is being answered.
+* Register Address: Address of the register to write.
+* Register Value: Value to be written.
+
+This function must be called from the :cb:`Modbus Write Single Register Request`
+callback with the Request ID, Register Address and Register Value as provided by
+the arguments of the callback.
 """,
 'de': # TODO: German documentation.
 """
@@ -766,9 +850,23 @@ com['packets'].append({
              ('Request ID', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus master mode this function can be used to write a single register of a
+slave.
+
+* Slave Address: Address of the target Modbus slave.
+* Register Address: Address of the register.
+* Register Value: Value to be written.
+
+Upon success the function will return a non-zero request ID which will represent
+the current request initiated by the Modbus master. In case of failure the returned
+request ID will be 0.
+
+When successful this function will also invoke the :cb:`Modbus Write Single Register Response`
+callback. In this callback the Request ID provided by the callback argument must be matched
+with the Request ID returned from this function to verify that the callback is indeed for a
+particular request.
 """,
 'de': # TODO: German documentation.
 """
@@ -785,9 +883,18 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to answer a master request to
+write multiple coils.
+
+* Request ID: Request ID of the corresponding request that is being answered.
+* Starting Address: Starting address of the write.
+* Count: Number of coils to write.
+
+This function must be called from the :cb:`Modbus Write Multiple Coils Request`
+callback with the Request ID, Starting Address and Count as provided by the
+arguments of the callback.
 """,
 'de': # TODO: German documentation.
 """
@@ -809,9 +916,22 @@ com['packets'].append({
 'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus master mode this function can be used to write multiple coils of a slave.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Starting address of the write.
+* Count: Number of coils to write.
+
+Upon success the function will return a non-zero request ID which will represent
+the current request initiated by the Modbus master. In case of failure the returned
+request ID will be 0.
+
+When successful this function will also invoke the :cb:`Modbus Write Multiple Coils Response`
+callback. In this callback the Request ID provided by the callback argument must be matched
+with the Request ID returned from this function to verify that the callback is indeed for a
+particular request.
 """,
 'de': # TODO: German documentation.
 """
@@ -828,9 +948,18 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to answer a master request to
+write multiple registers.
+
+* Request ID: Request ID of the corresponding request that is being answered.
+* Starting Address: Starting address of the write.
+* Count: Number of registers to write.
+
+This function must be called from the :cb:`Modbus Write Multiple Registers Request`
+callback with the Request ID, Starting Address and Count as provided by the
+arguments of the callback.
 """,
 'de': # TODO: German documentation.
 """
@@ -852,9 +981,22 @@ com['packets'].append({
 'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus master mode this function can be used to write multiple registers of a slave.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Starting Address of the write.
+* Count: Number of registers to write.
+
+Upon success the function will return a non-zero request ID which will represent
+the current request initiated by the Modbus master. In case of failure the returned
+request ID will be 0.
+
+When successful this function will also invoke the :cb:`Modbus Write Multiple Registers Response`
+callback. In this callback the Request ID provided by the callback argument must be matched
+with the Request ID returned from this function to verify that the callback is indeed for a
+particular request.
 """,
 'de': # TODO: German documentation.
 """
@@ -873,9 +1015,16 @@ com['packets'].append({
 'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to answer a master request to
+read discrete inputs.
+
+* Request ID: Request ID of the corresponding request that is being answered.
+* Data: Data that is to be sent to the Modbus master for the corresponding request.
+
+This function must be called from the :cb:`Modbus Read Discrete Inputs Request`
+callback with the Request ID as provided by the argument of the callback.
 """,
 'de': # TODO: German documentation.
 """
@@ -893,9 +1042,22 @@ com['packets'].append({
              ('Request ID', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus master mode this function can be used to read discrete inputs from a slave.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Starting address of the read.
+* Count: Number of discrete inputs to read.
+
+Upon success the function will return a non-zero request ID which will represent
+the current request initiated by the Modbus master. In case of failure the returned
+request ID will be 0.
+
+When successful this function will also invoke the :cb:`Modbus Read Discrete Inputs Response`
+callback. In this callback the Request ID provided by the callback argument must be matched
+with the Request ID returned from this function to verify that the callback is indeed for a
+particular request.
 """,
 'de': # TODO: German documentation.
 """
@@ -914,9 +1076,16 @@ com['packets'].append({
 'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus slave mode this function can be used to answer a master request to
+read input registers.
+
+* Request ID: Request ID of the corresponding request that is being answered.
+* Data: Data that is to be sent to the Modbus master for the corresponding request.
+
+This function must be called from the :cb:`Modbus Read Input Registers Request` callback
+with the Request ID as provided by the argument of the callback.
 """,
 'de': # TODO: German documentation.
 """
@@ -934,9 +1103,22 @@ com['packets'].append({
              ('Request ID', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
-'en': # TODO: English documentation.
+'en':
 """
--
+In Modbus master mode this function can be used to read input registers from a slave.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Starting address of the read.
+* Count: Number of input registers to read.
+
+Upon success the function will return a non-zero request ID which will represent
+the current request initiated by the Modbus master. In case of failure the returned
+request ID will be 0.
+
+When successful this function will also invoke the :cb:`Modbus Read Input Registers Response`
+callback. In this callback the Request ID provided by the callback argument must be matched
+with the Request ID returned from this function to verify that the callback is indeed for a
+particular request.
 """,
 'de': # TODO: German documentation.
 """
@@ -999,9 +1181,12 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus slave mode when the slave receives a
+valid request from a Modbus master to read coils. The :word:`parameters` are
+request ID of the request, the starting address and the number of coils to
+be read as received by the request.
 """,
 'de': # TODO: German documentation.
 """
@@ -1021,9 +1206,17 @@ com['packets'].append({
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus master mode when the master receives a
+valid response of a request to read coils. The :word:`parameters` are request ID
+of the request, exception code of the response and the data as received by the
+response. Any non-zero exception code indicates a problem. If the exception code
+is greater than zero then the number represents a Modbus exception code. If it is
+less than zero then it represents other errors. For example, -1 indicates that
+the request timedout or that the master did not receive any valid response of the
+request within the master request timeout period as set by
+:func:`Set Modbus Configuration`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1040,9 +1233,12 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus slave mode when the slave receives a
+valid request from a Modbus master to read holding registers. The :word:`parameters`
+are request ID of the request, the starting address and the number of holding
+registers to be read as received by the request.
 """,
 'de': # TODO: German documentation.
 """
@@ -1062,9 +1258,17 @@ com['packets'].append({
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus master mode when the master receives a
+valid response of a request to read holding registers. The :word:`parameters` are
+request ID of the request, exception code of the response and the data as received
+by the response. Any non-zero exception code indicates a problem. If the exception
+code is greater than zero then the number represents a Modbus exception code. If
+it is less than zero then it represents other errors. For example, -1 indicates that
+the request timedout or that the master did not receive any valid response of the
+request within the master request timeout period as set by
+:func:`Set Modbus Configuration`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1081,9 +1285,12 @@ com['packets'].append({
              ('Coil Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus slave mode when the slave receives a
+valid request from a Modbus master to write a single coil. The :word:`parameters`
+are request ID of the request, the coil address and the value of coil to be
+written as received by the request.
 """,
 'de': # TODO: German documentation.
 """
@@ -1101,9 +1308,17 @@ com['packets'].append({
              ('Coil Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus master mode when the master receives a
+valid response of a request to write a single coil. The :word:`parameters` are
+request ID of the request, exception code of the response, coil address and coil
+value as received by the response. Any non-zero exception code indicates a problem.
+If the exception code is greater than zero then the number represents a Modbus
+exception code. If it is less than zero then it represents other errors. For
+example, -1 indicates that the request timedout or that the master did not receive
+any valid response of the request within the master request timeout period as set
+by :func:`Set Modbus Configuration`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1120,9 +1335,12 @@ com['packets'].append({
              ('Register Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus slave mode when the slave receives a
+valid request from a Modbus master to write a single register. The :word:`parameters`
+are request ID of the request, the register address and the register value to
+be written as received by the request.
 """,
 'de': # TODO: German documentation.
 """
@@ -1140,9 +1358,17 @@ com['packets'].append({
              ('Register Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus master mode when the master receives a
+valid response of a request to write a single register. The :word:`parameters` are
+request ID of the request, exception code of the response, register address and
+the register value as received by the response. Any non-zero exception code
+indicates a problem. If the exception code is greater than zero then the number
+represents a Modbus exception code. If it is less than zero then it represents
+other errors. For example, -1 indicates that the request timedout or that the
+master did not receive any valid response of the request within the master request
+timeout period as set by :func:`Set Modbus Configuration`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1163,9 +1389,12 @@ com['packets'].append({
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus slave mode when the slave receives a
+valid request from a Modbus master to write multiple coils. The :word:`parameters`
+are request ID of the request, the starting address, the number of coils to
+be written and the data to be written as received by the request.
 """,
 'de': # TODO: German documentation.
 """
@@ -1183,9 +1412,17 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus master mode when the master receives a
+valid response of a request to read holding registers. The :word:`parameters` are
+request ID of the request, exception code of the response, starting address and
+number of coils to write as received by the response. Any non-zero exception code
+indicates a problem. If the exception code is greater than zero then the number
+represents a Modbus exception code. If it is less than zero then it represents
+other errors. For example, -1 indicates that the request timedout or that the
+master did not receive any valid response of the request within the master request
+timeout period as set by :func:`Set Modbus Configuration`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1206,9 +1443,12 @@ com['packets'].append({
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus slave mode when the slave receives a
+valid request from a Modbus master to write multiple registers. The :word:`parameters`
+are request ID of the request, the starting address, the number of registers to
+be written and the data to be written as received by the request.
 """,
 'de': # TODO: German documentation.
 """
@@ -1226,9 +1466,17 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus master mode when the master receives a
+valid response of a request to write multiple registers. The :word:`parameters`
+are request ID of the request, exception code of the response, starting address
+and the number of registers to be written as received by the response. Any non-zero
+exception code indicates a problem. If the exception code is greater than zero then
+the number represents a Modbus exception code. If it is less than zero then it
+represents other errors. For example, -1 indicates that the request timedout or
+that the master did not receive any valid response of the request within the master
+request timeout period as set by :func:`Set Modbus Configuration`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1245,9 +1493,12 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus slave mode when the slave receives a
+valid request from a Modbus master to read discrete inputs. The :word:`parameters`
+are request ID of the request, the starting address and the number of discrete
+inputs to be read as received by the request.
 """,
 'de': # TODO: German documentation.
 """
@@ -1267,9 +1518,17 @@ com['packets'].append({
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus master mode when the master receives a
+valid response of a request to read discrete inputs. The :word:`parameters` are
+request ID of the request, exception code of the response and the data as received
+by the response. Any non-zero exception code indicates a problem. If the exception
+code is greater than zero then the number represents a Modbus exception code. If
+it is less than zero then it represents other errors. For example, -1 indicates that
+the request timedout or that the master did not receive any valid response of the
+request within the master request timeout period as set by
+:func:`Set Modbus Configuration`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1286,9 +1545,12 @@ com['packets'].append({
              ('Count', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus slave mode when the slave receives a
+valid request from a Modbus master to read input registers. The :word:`parameters`
+are request ID of the request, the starting address and the number of input
+registers to be read as received by the request.
 """,
 'de': # TODO: German documentation.
 """
@@ -1308,9 +1570,17 @@ com['packets'].append({
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
-'en': # TODO: English documentation.
+'en':
 """
--
+This callback is called only in Modbus master mode when the master receives a
+valid response of a request to read input registers. The :word:`parameters` are
+request ID of the request, exception code of the response and the data as received
+by the response. Any non-zero exception code indicates a problem. If the exception
+code is greater than zero then the number represents a Modbus exception code. If
+it is less than zero then it represents other errors. For example, -1 indicates that
+the request timedout or that the master did not receive any valid response of the
+request within the master request timeout period as set by
+:func:`Set Modbus Configuration`.
 """,
 'de': # TODO: German documentation.
 """
