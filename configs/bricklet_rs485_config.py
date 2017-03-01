@@ -235,9 +235,10 @@ com['packets'].append({
 """
 Sets the configuration for the RS485 Modbus communication. Available options:
 
-* Slave Address to be used in Modbus slave mode.
-* Master Request Timeout specifies how long the master should wait for a response from a slave in milliseconds.
+* Slave address to be used in Modbus slave mode.
+* Master request timeout specifies how long the master should wait for a response from a slave in milliseconds.
 
+The default is: Slave address = 1 and Master request timeout = 1000 milliseconds or 1 second.
 """,
 'de': #TODO: German documentation.
 """
@@ -274,7 +275,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the mode of the Bricklet on which it operates.
+Sets the mode of the Bricklet on which it operates. Available options:
+
+* RS485, switches the operating mode of the bricklet to RS485 mode.
+* Modbus Slave RTU, switches the operating mode of the bricklet to Modbus Slave RTU mode.
+* Modbus Master RTU, switches the operating mode of the bricklet to Modbus Master RTU mode.
+
+The default is: RS485 mode.
 """,
 'de': #TODO: German documentation.
 """
@@ -298,23 +305,6 @@ Returns the configuration as set by :func:`Set Mode`.
 'de':
 """
 Gibt die Konfiguration zurück, wie von :func:`Set Mode` gesetzt.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Apply Configuration',
-'elements': [],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-This function must be called after any configuration changes.
-""",
-'de': #TODO: German documentation.
-"""
--
 """
 }]
 })
