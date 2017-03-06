@@ -235,8 +235,8 @@ com['packets'].append({
 """
 Sets the configuration for the RS485 Modbus communication. Available options:
 
-* Slave Address, address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 0 to 247.
-* Master Request Timeout, specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
+* Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 0 to 247.
+* Master Request Timeout: Specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
 
 The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds or 1 second.
 """,
@@ -277,9 +277,9 @@ com['packets'].append({
 """
 Sets the mode of the Bricklet in which it operates. Available options:
 
-* RS485, switches the operating mode of the bricklet to RS485 mode.
-* Modbus Slave RTU, switches the operating mode of the bricklet to Modbus Slave RTU mode.
-* Modbus Master RTU, switches the operating mode of the bricklet to Modbus Master RTU mode.
+* RS485: Switches the operating mode of the bricklet to RS485 mode.
+* Modbus Slave RTU: Switches the operating mode of the bricklet to Modbus Slave RTU mode.
+* Modbus Master RTU. Switches the operating mode of the bricklet to Modbus Master RTU mode.
 
 The default is: RS485 mode.
 """,
@@ -592,13 +592,13 @@ com['packets'].append({
 """
 Returns the current number of errors occurred in Modbus mode.
 
-* Timeout Error Count, the number of timeouts occurred.
-* Checksum Error Count, the number of failures due to Modbus frame CRC16 checksum mismatch.
-* Frame Too Big Error Count, the number of times frames were rejected because they exceeded maximum Modbus frame size which is 256 bytes.
-* Illegal Function Error Count, the number of errors when an unimplemented or illegal function is requested. This corresponds to Modbus exception code 1.
-* Illegal Data Address Error Count, the number of errors due to invalid data address. This corresponds to Modbus exception code 2.
-* Illegal Data Value Error Count, the number of errors due to invalid data value. This corresponds to Modbus exception code 3.
-* Slave Device Failure Error Count, the number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.
+* Timeout Error Count: Number of timeouts occurred.
+* Checksum Error Count: Number of failures due to Modbus frame CRC16 checksum mismatch.
+* Frame Too Big Error Count: Number of times frames were rejected because they exceeded maximum Modbus frame size which is 256 bytes.
+* Illegal Function Error Count: Number of errors when an unimplemented or illegal function is requested. This corresponds to Modbus exception code 1.
+* Illegal Data Address Error Count: Number of errors due to invalid data address. This corresponds to Modbus exception code 2.
+* Illegal Data Value Error Count: Number of errors due to invalid data value. This corresponds to Modbus exception code 3.
+* Slave Device Failure Error Count: Number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.
 
 """,
 'de': # TODO: German documentation.
@@ -620,8 +620,8 @@ com['packets'].append({
 In Modbus slave mode this function can be used to report a modbus exception for
 a Modbus master request.
 
-* Request ID, the request ID of the request received by the slave.
-* Exception Code, the Modbus exception code to report to the Modbus master.
+* Request ID: Request ID of the request received by the slave.
+* Exception Code: Modbus exception code to report to the Modbus master.
 """,
 'de': # TODO: German documentation.
 """
