@@ -1536,10 +1536,16 @@ class Device(NameMixin):
     def specialize_doc_rst_links(self, text, specializer, prefix=None):
         for keyword, type_ in [('func', 'function'), ('cb', 'callback')]:
             for packet in self.get_packets(type_):
-                generic_name = ':{0}:`{1}`'.format(keyword, packet.get_name())
-                special_name = specializer(packet)
+                names = [packet.get_name()]
 
-                text = text.replace(generic_name, special_name)
+                if packet.has_high_level():
+                    names.append(packet.get_name().replace(' Low Level', ''))
+
+                for name in names:
+                    generic_name = ':{0}:`{1}`'.format(keyword, name)
+                    special_name = specializer(packet)
+
+                    text = text.replace(generic_name, special_name)
 
             if prefix != None:
                 p = '(?<!:' + prefix + ')(:' + keyword + ':`[^`]*`)'
