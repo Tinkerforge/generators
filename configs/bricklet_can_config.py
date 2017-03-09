@@ -42,8 +42,13 @@ com['packets'].append({
 Writes a data or remote frame to the write buffer to be transmitted over the
 CAN transceiver.
 
-The Bricklet supports the standard 11-bit (CAN 2.0A) and the extended 29-bit
-(CAN 2.0B) identifiers. For remote frames the ``data`` parameter is ignored.
+The Bricklet supports the standard 11-bit (CAN 2.0A) and the additional extended
+18-bit (CAN 2.0B) identifiers. For standard frames the Bricklet uses bit 0 to 10
+from the ``identifier`` parameter as standard 11-bit identifier. For extended
+frames the Bricklet additionally uses bit 11 to 28 from the ``identifier``
+parameter as extended 18-bit identifier.
+
+For remote frames the ``data`` parameter is ignored.
 
 Returns *true* if the frame was successfully added to the write buffer. Returns
 *false* if the frame could not be added because write buffer is already full.
@@ -61,8 +66,13 @@ write error level (see :func:`Get Error Log`).
 Schreibt einen Data- oder Remote-Frame in den Schreib-Buffer, damit dieser über
 den CAN-Transceiver übertragen wird.
 
-Das Bricklet unterstützt die Standard 11-Bit (CAN 2.0A) und die Extended 29-Bit
-(CAN 2.0B) Identifier. Für Remote-Frames wird das ``data`` Parameter ignoriert.
+Das Bricklet unterstützt die Standard 11-Bit (CAN 2.0A) und die zusätzlichen
+Extended 18-Bit (CAN 2.0B) Identifier. Für Standard-Frames verwendet das
+Bricklet Bit 0 bis 10 des ``identifier`` Parameters als Standard 11-Bit
+Identifier. Für Extended-Frames verwendet das Bricklet zusätzlich Bit 11 bis 28
+des ``identifier`` Parameters als Extended 18-Bit Identifier.
+
+Für Remote-Frames wird das ``data`` Parameter ignoriert.
 
 Gibt *true* zurück, wenn der Frame dem Schreib-Buffer erfolgreich hinzugefügt
 wurde. Gibt *false* zurück wenn Frame nicht hinzugefügt werden konnte, weil
@@ -101,6 +111,9 @@ If a frame was successfully read, then the ``success`` return value is set to
 empty and no frame could be read, then the ``success`` return value is set to
 *false* and the other return values contain invalid data.
 
+The ``identifier`` return value follows the identifier format described for
+:func:`Write Frame`.
+
 For remote frames the ``data`` return value always contains invalid data.
 
 A configurable read filter can be used to define which frames should be
@@ -118,6 +131,9 @@ zurückzugeben. Falls ein Frame erfolgreich gelesen wurde, dann wird der
 beinhalte den gelesenen Frame. Falls der Lese-Buffer leer ist und kein Frame
 gelesen werden konnte, dann wird der ``success`` Rückgabewert auf *false*
 gesetzt und die anderen Rückgabewerte beinhalte ungültige Werte.
+
+Der ``identifier`` Rückgabewerte folgt dem für :func:`Write Frame` beschriebenen
+Format.
 
 Für Remote-Frames beinhalte der ``data`` Rückgabewerte immer gültigen Werte.
 
@@ -338,8 +354,10 @@ The mask and filters are used as bit masks. Their usage depends on the mode:
   to match the 11-bit identifier of standard frames. Bit 11 to 18 (8 bits) and
   bit 19 to 26 (8 bits) of mask and filters are used to match the first and
   second data byte (if present) of standard frames.
-* Match-Extended: Bit 0 to 28 (29 bits) of mask and filters are used to match
-  the 29-bit identifier of extended frames.
+* Match-Extended: Bit 0 to 10 (11 bits) of mask and filters are used
+  to match the standard 11-bit identifier part of extended frames. Bit 11 to 28
+  (18 bits) of mask and filters are used to match the extended 18-bit identifier
+  part of extended frames.
 
 The mask and filters are applied in this way: The mask is used to select the
 identifier and data bits that should be compared to the corresponding filter
@@ -399,8 +417,11 @@ Modus ab:
   bis 18 (8 Bits) und Bit 19 bis 26 (8 Bits) der Maske und Filter werden zum
   Abgleich mit dem ersten und zweiten Daten-Byte (sofern vorhanden) von
   Standard-Frames verwendet.
-* Match-Extended: Bit 0 bis 28 (29 Bits) der Maske und Filter werden zum
-  Abgleich mit dem 29-Bit Identifier von Extended-Frames verwendet.
+* Match-Extended: Bit 0 bis 10 (11 Bits) der Maske und Filter werden zum
+  Abgleich mit dem Standard 11-Bit Identifier-Teil von Extended-Frames
+  verwendet. Bit 11 bis 28 (18 Bits) der Maske und Filter werden zum
+  Abgleich mit dem Extended 18-Bit Identifier-Teil von Extended-Frames
+  verwendet.
 
 Maske und Filter werden auf diese Weise angewendet: Mit der Maske werden die
 Identifier- und Daten-Bits ausgewählt, die mit den entsprechenden Filter-Bits
@@ -565,6 +586,9 @@ com['packets'].append({
 This callback is triggered if a data or remote frame was received by the CAN
 transceiver.
 
+The ``identifier`` return value follows the identifier format described for
+:func:`Write Frame`.
+
 For remote frames the ``data`` return value always contains invalid values.
 
 A configurable read filter can be used to define which frames should be
@@ -576,6 +600,9 @@ To enable this callback, use :func:`Enable Frame Read Callback`.
 """
 Dieser Callback wird ausgelöst, sobald ein Data- oder Remote-Frame vom
 CAN-Transceiver empfangen wurde.
+
+Der ``identifier`` Rückgabewerte folgt dem für :func:`Write Frame` beschriebenen
+Format.
 
 Für Remote-Frames beinhalte der ``data`` Rückgabewerte immer ungültigen Werte.
 
