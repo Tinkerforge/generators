@@ -276,9 +276,9 @@ com['packets'].append({
 """
 Returns the current
 
-* elevation (0°-90°),
-* azimuth (0°-359°) and
-* SNR (0dB-99dB)
+* elevation (0° - 90°),
+* azimuth (0° - 359°) and
+* SNR (0dB - 99dB)
 
 for a given satellite and satellite system.
 
@@ -291,9 +291,9 @@ Galileo is not yet supported.
 """
 Gibt die aktuellen Werte von
 
-* Elevation (0°-90°),
-* Azimutwinkel (0°-359°) und
-* SNR (0dB-99dB)
+* Elevation (0° - 90°),
+* Azimutwinkel (0° - 359°) und
+* SNR (0dB - 99dB)
 
 für einen gegebenen Satelliten und ein gegebenes Satellitensystem zurück.
 
