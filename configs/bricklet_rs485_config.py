@@ -270,7 +270,7 @@ com['packets'].append({
 'name': 'Set Mode',
 'elements': [('Mode', 'uint8', 1, 'in',('Mode', [('RS485', 0),
                                                  ('Modbus Slave RTU', 1),
-                                              ('Modbus Master RTU', 2)]))],
+                                                 ('Modbus Master RTU', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -314,8 +314,8 @@ com['packets'].append({
 'name': 'Set Communication LED Config',
 'elements': [('Config', 'uint8', 1, 'in', ('Communication LED Config', [('Off', 0),
                                                                         ('On', 1),
-                                                                        ('Show Communication', 2),
-                                                                        ('Show Heartbeat', 3)]))],
+                                                                        ('Show Heartbeat', 2),
+                                                                        ('Show Communication', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -345,8 +345,8 @@ com['packets'].append({
 'name': 'Get Communication LED Config',
 'elements': [('Config', 'uint8', 1, 'out', ('Communication LED Config', [('Off', 0),
                                                                          ('On', 1),
-                                                                         ('Show Communication', 2),
-                                                                         ('Show Heartbeat', 3)]))],
+                                                                         ('Show Heartbeat', 2),
+                                                                         ('Show Communication', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -365,8 +365,8 @@ com['packets'].append({
 'name': 'Set Error LED Config',
 'elements': [('Config', 'uint8', 1, 'in', ('Error LED Config', [('Off', 0),
                                                                 ('On', 1),
-                                                                ('Show Error', 2),
-                                                                ('Show Heartbeat', 3)]))],
+                                                                ('Show Heartbeat', 2),
+                                                                ('Show Error', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -402,8 +402,8 @@ com['packets'].append({
 'name': 'Get Error LED Config',
 'elements': [('Config', 'uint8', 1, 'out', ('Error LED Config', [('Off', 0),
                                                                  ('On', 1),
-                                                                 ('Show Error', 2),
-                                                                 ('Show Heartbeat', 3)]))],
+                                                                 ('Show Heartbeat', 2),
+                                                                 ('Show Error', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

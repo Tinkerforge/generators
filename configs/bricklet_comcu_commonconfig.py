@@ -189,8 +189,8 @@ common_packets.append({
 'name': 'Set Status LED Config',
 'elements': [('Config', 'uint8', 1, 'in', ('Status LED Config', [('Off', 0),
                                                                  ('On', 1),
-                                                                 ('Show Status', 2),
-                                                                 ('Show Heartbeat', 3)]))],
+                                                                 ('Show Heartbeat', 2),
+                                                                 ('Show Status', 3)]))],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -222,8 +222,8 @@ common_packets.append({
 'name': 'Get Status LED Config',
 'elements': [('Config', 'uint8', 1, 'out', ('Status LED Config', [('Off', 0),
                                                                   ('On', 1),
-                                                                  ('Show Status', 2),
-                                                                  ('Show Heartbeat', 3)]))],
+                                                                  ('Show Heartbeat', 2),
+                                                                  ('Show Status', 3)]))],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':

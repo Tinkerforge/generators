@@ -310,28 +310,30 @@ com['packets'].append({
 'name': 'Set Fix LED Config',
 'elements': [('Config', 'uint8', 1, 'in', ('Fix LED Config', [('Off', 0),
                                                               ('On', 1),
-                                                              ('Show Fix', 2),
-                                                              ('Show Heartbeat', 3)]))],
+                                                              ('Show Heartbeat', 2),
+                                                              ('Show Fix', 3),
+                                                              ('Show PPS', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets the fix LED configuration. By default the LED shows if
-the Bricklet got a GPS fix yet. The LED blinks as long as there is no fix.
-If a fix is established, the led stops blinking and turns on.
+the Bricklet got a GPS fix yet. If a fix is established the LED turns on.
+If there is no fix then the LED is turned off.
 
-You can also turn the LED permanently on/off or show a heartbeat.
+You can also turn the LED permanently on/off, show a heartbeat or let it blink
+in sync with the PPS (pulse per second) output of the GPS module.
 
 If the Bricklet is in bootloader mode, the LED is off.
 """,
 'de':
 """
 Setzt die Konfiguration der Fix-LED. Standardmäßig zeigt
-die LED an ob ein GPS-Fix bestelt. Sie blinkt solange noch
-kein Fix hergestellt wurde. Wenn ein Fix da ist, stoppt das blinken
-und die LED geht an.
+die LED an ob ein GPS-Fix besteht. Wenn ein Fix da ist, geht die LED an. Wenn
+kein Fix da ist, geht die LED aus.
 
-Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+Die LED kann auch permanaent an/aus gestellt werden, einen Herzschlag anzeigen
+oder im Rythmus des PPS (Puls pro Sekunde) Ausgangs des GPS Moduls blinken.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 """
@@ -343,8 +345,9 @@ com['packets'].append({
 'name': 'Get Fix LED Config',
 'elements': [('Config', 'uint8', 1, 'out', ('Fix LED Config', [('Off', 0),
                                                                ('On', 1),
-                                                               ('Show Fix', 2),
-                                                               ('Show Heartbeat', 3)]))],
+                                                               ('Show Heartbeat', 2),
+                                                               ('Show Fix', 3),
+                                                               ('Show PPS', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
