@@ -838,7 +838,7 @@ class IPConnection:
                             llcb[2] = None
                 else:
                     if chunk_offset != len(llcb[2]):
-                        result = (1,) + extra + (llcb[2] + [0]*(total_length - len(llcb[2])),) # FIXME: add stream result constant, need to handle padding for non-int types
+                        result = (1,) + extra + (llcb[2] + (0,)*(total_length - len(llcb[2])),) # FIXME: add stream result constant, need to handle padding for non-int types
                         llcb[2] = None
                     else:
                         llcb[2] += chunk_data
