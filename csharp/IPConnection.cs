@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -18,6 +18,9 @@ using System.Text;
 #if WINDOWS_UWP || WINDOWS_UAP
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.ApplicationModel.AppService;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 #else
@@ -88,10 +91,9 @@ namespace Tinkerforge
 
 		string host;
 		int port;
-		Socket socket = null; // protected by socketLock
+		ISocketWrapper socket = null; // protected by socketLock
 		internal object socketLock = new object();
-		NetworkStream socketStream = null; // protected by socketLock
-		internal object socketStreamSendLock = new object(); // used to synchronize send access to socketStream
+		internal object socketWriteLock = new object(); // used to synchronize write access to socket
 		long socketID = 0; // protected by socketLock
 		Thread receiveThread = null;
 		bool receiveFlag = true;
@@ -191,50 +193,19 @@ namespace Tinkerforge
 				callback.thread.Start();
 			}
 
-			Socket tmp = null;
-
-			try
-			{
-				tmp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-				tmp.NoDelay = true;
-
-#if WINDOWS_PHONE || WINDOWS_UWP || WINDOWS_UAP
-				SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-				args.RemoteEndPoint = new DnsEndPoint(host, port);
-
-				AutoResetEvent connectedEvent = new AutoResetEvent(false);
-				args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
-				bool connectPending = tmp.ConnectAsync(args);
-
-				if (connectPending)
-				{
-					connectedEvent.WaitOne();
-				}
-
-				if (!connectPending || args.SocketError != SocketError.Success)
-				{
-					throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
-				}
-#else
-				tmp.Connect(host, port);
-#endif
-			}
-			catch (Exception)
-			{
-				if (tmp != null)
-				{
 #if WINDOWS_UWP || WINDOWS_UAP
-					tmp.Dispose();
-#else
-					tmp.Close();
-#endif
-				}
-
-				throw;
+			if (host == "localhost" || host == "127.0.0.1")
+			{
+				socket = new AppServiceWrapper();
 			}
+			else
+			{
+				socket = new SocketWrapper(host, port);
+			}
+#else
+			socket = new SocketWrapper(host, port);
+#endif
 
-			socket = tmp;
-			socketStream = new NetworkStream(socket);
 			++socketID;
 
 			// create disconnect probe thread
@@ -334,18 +305,7 @@ namespace Tinkerforge
 
 			receiveFlag = false;
 
-			socketStream.Close();
-#if WINDOWS_UWP || WINDOWS_UAP
-			socketStream.Dispose();
-#endif
-			socket.Shutdown(SocketShutdown.Both);
-#if WINDOWS_UWP || WINDOWS_UAP
-			socket.Dispose();
-#else
 			socket.Close();
-#endif
-
-			socketStream = null;
 			socket = null;
 
 			if (receiveThread != null)
@@ -565,13 +525,11 @@ namespace Tinkerforge
 
 				try
 				{
-					length = socketStream.Read(pendingData, pendingLength,
-					                           pendingData.Length - pendingLength);
+					length = socket.Read(pendingData, pendingLength, pendingData.Length - pendingLength);
 				}
 				catch (IOException e)
 				{
-					if (e.InnerException != null &&
-					    e.InnerException is SocketException)
+					if (e.InnerException != null && e.InnerException is SocketException)
 					{
 						if (receiveFlag)
 						{
@@ -657,15 +615,7 @@ namespace Tinkerforge
 								disconnectProbeThread = null;
 
 								// destroy socket
-								socketStream.Close();
-#if WINDOWS_UWP || WINDOWS_UAP
-								socketStream.Dispose();
-								socket.Dispose();
-#else
 								socket.Close();
-#endif
-
-								socketStream = null;
 								socket = null;
 							}
 						}
@@ -827,15 +777,14 @@ namespace Tinkerforge
 				{
 					try
 					{
-						lock (socketStreamSendLock)
+						lock (socketWriteLock)
 						{
-							socketStream.Write(request, 0, request.Length);
+							socket.Write(request, 0, request.Length);
 						}
 					}
 					catch (IOException e)
 					{
-						if (e.InnerException != null &&
-						    e.InnerException is SocketException)
+						if (e.InnerException != null && e.InnerException is SocketException)
 						{
 							HandleDisconnectByPeer(DISCONNECT_REASON_ERROR, socketID, false);
 							break;
@@ -943,22 +892,21 @@ namespace Tinkerforge
 		{
 			lock (socketLock)
 			{
-				if (GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED)
+				if (GetConnectionState() != CONNECTION_STATE_CONNECTED)
 				{
 					throw new NotConnectedException();
 				}
 
 				try
 				{
-					lock (socketStreamSendLock)
+					lock (socketWriteLock)
 					{
-						socketStream.Write(request, 0, request.Length);
+						socket.Write(request, 0, request.Length);
 					}
 				}
 				catch (IOException e)
 				{
-					if (e.InnerException != null &&
-					    e.InnerException is SocketException)
+					if (e.InnerException != null && e.InnerException is SocketException)
 					{
 						HandleDisconnectByPeer(DISCONNECT_REASON_ERROR, socketID, true);
 						throw new NotConnectedException();
@@ -1855,18 +1803,210 @@ namespace Tinkerforge
 		}
 	}
 
+	internal interface ISocketWrapper
+	{
+		void Close();
+
+		int Read(byte[] buffer, int offset, int count);
+
+		void Write(byte[] buffer, int offset, int count);
+	}
+
+	internal class SocketWrapper : ISocketWrapper
+	{
+		private Socket socket = null;
+		private NetworkStream stream = null;
+
+		public SocketWrapper(String host, int port)
+		{
+			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			socket.NoDelay = true;
+
+#if WINDOWS_PHONE || WINDOWS_UWP || WINDOWS_UAP
+			SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+			args.RemoteEndPoint = new DnsEndPoint(host, port);
+
+			AutoResetEvent connectedEvent = new AutoResetEvent(false);
+			args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
+			bool connectPending = socket.ConnectAsync(args);
+
+			if (connectPending)
+			{
+				connectedEvent.WaitOne();
+			}
+
+			if (!connectPending || args.SocketError != SocketError.Success)
+			{
+				throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
+			}
+#else
+			socket.Connect(host, port);
+#endif
+
+			stream = new NetworkStream(socket);
+		}
+
+		public void Close()
+		{
+			stream.Close();
+#if WINDOWS_UWP || WINDOWS_UAP
+			stream.Dispose();
+#endif
+
+			socket.Shutdown(SocketShutdown.Both);
+
+#if WINDOWS_UWP || WINDOWS_UAP
+			socket.Dispose();
+#else
+			socket.Close();
+#endif
+		}
+
+		public int Read(byte[] buffer, int offset, int count)
+		{
+			return stream.Read(buffer, offset, count);
+		}
+
+		public void Write(byte[] buffer, int offset, int count)
+		{
+			stream.Write(buffer, offset, count);
+		}
+	}
+
+#if WINDOWS_UWP || WINDOWS_UAP
+	internal class AppServiceWrapper : ISocketWrapper
+	{
+		private AppServiceConnection conn = null;
+
+		private object readLock = new object();
+		private BlockingQueue<byte[]> receiveQueue = new BlockingQueue<byte[]>();
+		private byte[] immediateReadBuffer;
+		private int immediateReadOffset;
+
+		private object writeLock = new object();
+
+		public AppServiceWrapper()
+		{
+			conn = new AppServiceConnection();
+			conn.RequestReceived += RequestReceived;
+			conn.ServiceClosed += ServiceClosed;
+			conn.AppServiceName = "com.tinkerforge.brickd";
+			conn.PackageFamilyName = "brickd_3cmbwa9ky1nvw";
+
+			Task<AppServiceConnectionStatus> task = conn.OpenAsync().AsTask();
+
+			task.Wait();
+
+			AppServiceConnectionStatus status = task.Result;
+
+			if (status != AppServiceConnectionStatus.Success)
+			{
+				throw new IOException(string.Format("Could not connect: {0}", status));
+			}
+
+			// FIXME: wait for initial handshake message
+		}
+
+		public void Close()
+		{
+			// make Read() report an socket error
+			byte[] buffer = new byte[0];
+			receiveQueue.Enqueue(buffer);
+
+			conn.Dispose();
+		}
+
+		public int Read(byte[] buffer, int offset, int count)
+		{
+			int readLength;
+
+			lock (readLock)
+			{
+				if (immediateReadBuffer == null)
+				{
+					receiveQueue.TryDequeue(out immediateReadBuffer);
+
+					if (immediateReadBuffer.Length == 0)
+					{
+						throw new IOException("Read failure", new SocketException(10004 /* WSAEINTR */));
+					}
+				}
+
+				readLength = Math.Min(count, immediateReadBuffer.Length - immediateReadOffset);
+				Array.Copy(immediateReadBuffer, immediateReadOffset, buffer, offset, readLength);
+				immediateReadOffset += readLength;
+
+				if (immediateReadOffset == immediateReadBuffer.Length)
+				{
+					immediateReadBuffer = null;
+					immediateReadOffset = 0;
+				}
+			}
+
+			return readLength;
+		}
+
+		public void Write(byte[] buffer, int offset, int count)
+		{
+			ValueSet request = new ValueSet();
+			byte[] data = new byte[count];
+
+			Array.Copy(buffer, offset, data, 0, count);
+			request.Add("data", data);
+
+			lock (writeLock)
+			{
+				Task<AppServiceResponse> task = conn.SendMessageAsync(request).AsTask();
+
+				task.Wait(); // FIXME: look at response status?
+			}
+		}
+
+		private void RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+		{
+			AppServiceDeferral deferral = args.GetDeferral();
+
+			try
+			{
+				byte[] data = (byte[])args.Request.Message["data"];
+				byte[] buffer = new byte[data.Length];
+				Array.Copy(data, buffer, data.Length);
+
+				receiveQueue.Enqueue(buffer);
+
+				Task<AppServiceResponseStatus> task = args.Request.SendResponseAsync(new ValueSet()).AsTask();
+
+				task.Wait(); // FIXME: look at response status?
+			}
+			finally
+			{
+				deferral.Complete();
+			}
+		}
+
+		private void ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+		{
+			// FIXME: look at args.Status?
+
+			// make Read() report an socket error
+			byte[] buffer = new byte[0];
+			receiveQueue.Enqueue(buffer);
+		}
+	}
+#endif
+
 #if WINDOWS_PHONE || WINDOWS_UWP || WINDOWS_UAP
 	internal class NetworkStream : Stream
 	{
 		private Socket socket;
 
-		private BlockingQueue<byte[]> ReceiveQueue = new BlockingQueue<byte[]>();
-		private byte[] ImmediateReadBuffer;
-		private int ImmediateReadOffset;
-
 		private object readLock = new object();
+		private BlockingQueue<byte[]> receiveQueue = new BlockingQueue<byte[]>();
+		private byte[] immediateReadBuffer;
+		private int immediateReadOffset;
+
 		private object writeLock = new object();
-		private AutoResetEvent WriteCompleteEvent = new AutoResetEvent(false);
+		private AutoResetEvent writeCompleteEvent = new AutoResetEvent(false);
 
 		public override bool CanRead
 		{
@@ -1888,13 +2028,16 @@ namespace Tinkerforge
 			// stream is always flushed
 		}
 
-		public NetworkStream(Socket sock)
+		public NetworkStream(Socket socket)
 		{
-			socket = sock;
+			this.socket = socket;
+
 			SocketAsyncEventArgs args = new SocketAsyncEventArgs();
 			byte[] buffer = new byte[8192];
+
 			args.SetBuffer(buffer, 0, buffer.Length);
 			args.Completed += OnIOCompletion;
+
 			if (!socket.ReceiveAsync(args))
 			{
 				throw new IOException(string.Format("Could not initialize NetworkStream: {0}", args.SocketError));
@@ -1907,7 +2050,8 @@ namespace Tinkerforge
 			{
 				// make Read() report an socket error
 				byte[] buffer = new byte[0];
-				ReceiveQueue.Enqueue(buffer);
+				receiveQueue.Enqueue(buffer);
+
 				return;
 			}
 			else if (e.SocketError != SocketError.Success)
@@ -1920,20 +2064,24 @@ namespace Tinkerforge
 				case SocketAsyncOperation.Receive:
 					if (e.BytesTransferred == 0)
 					{
-						// TODO: error handling
-						break;
+						break; // TODO: error handling
 					}
+
 					byte[] receiveBuffer = new byte[e.BytesTransferred];
 					Array.Copy(e.Buffer, receiveBuffer, e.BytesTransferred);
-					ReceiveQueue.Enqueue(receiveBuffer);
+					receiveQueue.Enqueue(receiveBuffer);
+
 					if (!socket.ReceiveAsync(e))
 					{
 						// TODO: error handling
 					}
+
 					break;
+
 				case SocketAsyncOperation.Send:
-					WriteCompleteEvent.Set();
+					writeCompleteEvent.Set();
 					break;
+
 				default:
 					break; // TODO: error handling
 			}
@@ -1949,34 +2097,36 @@ namespace Tinkerforge
 #endif
 			// make Read() report an socket error
 			byte[] buffer = new byte[0];
-			ReceiveQueue.Enqueue(buffer);
+			receiveQueue.Enqueue(buffer);
 		}
 
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			int readLength;
+
 			lock (readLock)
 			{
-				if (ImmediateReadBuffer == null)
+				if (immediateReadBuffer == null)
 				{
-					ReceiveQueue.TryDequeue(out ImmediateReadBuffer);
+					receiveQueue.TryDequeue(out immediateReadBuffer);
 
-					if (ImmediateReadBuffer.Length == 0)
+					if (immediateReadBuffer.Length == 0)
 					{
 						throw new IOException("Read failure", new SocketException(10004 /* WSAEINTR */));
 					}
 				}
 
-				readLength = Math.Min(count, ImmediateReadBuffer.Length - ImmediateReadOffset);
-				Array.Copy(ImmediateReadBuffer, ImmediateReadOffset, buffer, offset, readLength);
+				readLength = Math.Min(count, immediateReadBuffer.Length - immediateReadOffset);
+				Array.Copy(immediateReadBuffer, immediateReadOffset, buffer, offset, readLength);
+				immediateReadOffset += readLength;
 
-				ImmediateReadOffset += readLength;
-				if (ImmediateReadOffset == ImmediateReadBuffer.Length)
+				if (immediateReadOffset == immediateReadBuffer.Length)
 				{
-					ImmediateReadBuffer = null;
-					ImmediateReadOffset = 0;
+					immediateReadBuffer = null;
+					immediateReadOffset = 0;
 				}
 			}
+
 			return readLength;
 		}
 
@@ -1985,13 +2135,16 @@ namespace Tinkerforge
 			lock (writeLock)
 			{
 				SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+
 				args.SetBuffer(buffer, offset, count);
 				args.Completed += OnIOCompletion;
+
 				if (!socket.SendAsync(args))
 				{
 					throw new IOException(string.Format("Could not write on NetworkStream: {0}", args.SocketError));
 				}
-				WriteCompleteEvent.WaitOne();
+
+				writeCompleteEvent.WaitOne();
 			}
 		}
 
