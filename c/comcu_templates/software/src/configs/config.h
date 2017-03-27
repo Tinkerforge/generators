@@ -19,8 +19,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CONFIG_GPS_H
-#define CONFIG_GPS_H
+#ifndef CONFIG_GENERAL_H
+#define CONFIG_GENERAL_H
 
 #include "xmc_device.h"
 
