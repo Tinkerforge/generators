@@ -27,14 +27,13 @@
 #include "bricklib2/bootloader/bootloader.h"
 #include "bricklib2/hal/system_timer/system_timer.h"
 #include "bricklib2/hal/uartbb/uartbb.h"
-#include "bricklib2/utility/communication_callback.h"
 #include "communication.h"
 
 int main(void) {
 	uartbb_init();
 	uartbb_puts("Start <<<DEVICE_NAME_READABLE>>> Bricklet\n\r");
 
-	communication_callback_init();
+	communication_init();
 
 	while(true) {
 		bootloader_tick();
