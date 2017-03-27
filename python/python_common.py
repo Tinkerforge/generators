@@ -60,7 +60,7 @@ class PythonPacket(common.Packet):
         for element in elements:
             params.append(element.get_underscore_name())
 
-        if stream != None:
+        if self.get_high_level('stream_in') != None:
             params.append('data') # FIXME: how to get a proper name here?
 
         return ', '.join(params)

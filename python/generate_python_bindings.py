@@ -239,30 +239,90 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameter_list}):
         stream_total_length = len(data)
         stream_chunk_offset = 0
-        result = None
+        stream_result = None
 
-        while stream_chunk_offset < stream_total_length:
-            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
 
-            if len(stream_chunk_data) < {chunk_cardinality}:
-                stream_chunk_data.extend([0]*({chunk_cardinality} - len(stream_chunk_data)))
+                if len(stream_chunk_data) < {chunk_cardinality}:
+                    stream_chunk_data.extend([0]*({chunk_cardinality} - len(stream_chunk_data)))
 
-            # FIXME: validate that the result of all the low-level calls is identical
-            result = self.{underscore_name}_low_level({parameter_list})
+                # FIXME: validate that the result of all the low-level calls is identical
+                stream_result = self.{underscore_name}_low_level({parameter_list})
 
-            stream_chunk_offset += {chunk_cardinality}
+                stream_chunk_offset += {chunk_cardinality}
 
-        return result
+        return stream_result
+"""
+        stream_out_template = """
+    def {underscore_name}(self{high_level_parameter_list}):
+        stream_extra = (,)
+        stream_total_length = {fixed_total_length}
+        stream_chunk_offset = 0
+        stream_result = None
+        stream_data = (,)
+        stream_out_of_sync = False
+
+        STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
+
+        with self.stream_lock:
+            if stream_total_length == None: # no fixed-stream-length
+                stream_result = self.{underscore_name}_low_level({parameter_list})
+                stream_extra = stream_result[:-{stream_parameter_count}] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_total_length = stream_result.stream_total_length
+                stream_chunk_offset = stream_result.stream_chunk_offset
+                stream_data = stream_result.stream_chunk_data
+
+            if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
+                raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
+            elif stream_chunk_offset != 0: # stream out-of-sync
+                # discard remaining stream to bring it back in-sync
+                while stream_chunk_offset + {chunk_cardinality} < stream_total_length:
+                    # FIXME: validate that total length is identical for all low-level getters of a stream
+                    stream_chunk_offset = self.{underscore_name}_low_level({parameter_list}).stream_chunk_offset
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+            # FIXME: validate chunk offset < total length
+
+            while len(stream_data) < stream_total_length:
+                stream_result = self.{underscore_name}_low_level({parameter_list})
+                stream_extra = stream_result[:-{stream_parameter_count}] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_chunk_offset = stream_result.stream_chunk_offset
+
+                # FIXME: validate that total length is identical for all low-level getters of a stream
+
+                if stream_chunk_offset != len(stream_data): # stream out-of-sync
+                    # discard remaining stream to bring it back in-sync
+                    while stream_chunk_offset + {chunk_cardinality} < stream_total_length:
+                        # FIXME: validate that total length is identical for all low-level getters of a stream
+                        stream_chunk_offset = self.{underscore_name}_low_level({parameter_list}).stream_chunk_offset
+
+                    raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+        if len(stream_extra) > 0:
+            return stream_extra + (stream_data[:stream_total_length],)
+        else:
+            return stream_data[:stream_total_length]
 """
 
         for packet in self.get_packets('function'):
             stream_in = packet.get_high_level('stream_in')
+            stream_out = packet.get_high_level('stream_out')
 
             if stream_in != None:
                 methods += stream_in_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                                      parameter_list=packet.get_python_parameter_list(),
                                                      high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
                                                      chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
+            elif stream_out != None:
+                methods += stream_out_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                                      parameter_list=packet.get_python_parameter_list(),
+                                                      high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
+                                                      fixed_total_length=stream_out.get_fixed_total_length(),
+                                                      stream_parameter_count=2 if stream_out.get_fixed_total_length() != None else 3,
+                                                      chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
 
         return methods
 
