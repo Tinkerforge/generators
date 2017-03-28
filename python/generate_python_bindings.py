@@ -257,11 +257,11 @@ class {0}(Device):
 """
         stream_out_template = """
     def {underscore_name}(self{high_level_parameter_list}):
-        stream_extra = (,)
+        stream_extra = ()
         stream_total_length = {fixed_total_length}
         stream_chunk_offset = 0
         stream_result = None
-        stream_data = (,)
+        stream_data = ()
         stream_out_of_sync = False
 
         STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
