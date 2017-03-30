@@ -27,7 +27,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Image Low Level',
+'name': 'Get High Contrast Image Low Level',
 'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint8', 62, 'out')],
 'high_level': {'stream_out': {'fixed_total_length': 60*80}},
@@ -44,7 +44,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Raw Image Low Level',
+'name': 'Get Temperature Image Low Level',
 'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 31, 'out')],
 'high_level': {'stream_out': {'fixed_total_length': 60*80}},
@@ -62,14 +62,11 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Statistics',
-'elements': [('Video Scene Statistics', 'uint16', 4, 'out'), # mean, max, min, pixel count
-             ('Spotmeter Statistics', 'uint16', 4, 'out'), # mean, max, min, pixel count
-             ('Temperatures', 'uint16', 8, 'out'), # focal plain array, focal plain array at last ffc, housing, housing at last ffc, background, atmospheric, window, window reflected, 
+'elements': [('Spotmeter Statistics', 'uint16', 4, 'out'), # mean, max, min, pixel count
+             ('Temperatures', 'uint16', 4, 'out'), # focal plain array, focal plain array at last ffc, housing, housing at last ffc 
+             ('Resolution', 'uint8', 1, 'out', ('Resolution', [('0 To 6553 Kelvin', 0),
+                                                              ('0 To 655 Kelvin', 1)])),
              ('Status', 'uint16', 1, 'out') # Lots of status bits
-
-#             ('Window Reflection', 'uint16', 1, 'out'), # ?
-#             ('Window Transmission', 'uint16', 1, 'out'), # ?
-#             ('Atmospheric Transmission', 'uint16', 1, 'out'), # ?
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -147,7 +144,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Automatic Gain Control Config',
+'name': 'Set High Contrast Config',
 'elements': [('Region Of Interest', 'uint8', 4, 'in'),
              ('Dampening Factor', 'uint16', 1, 'in'),
              ('Clip Limit', 'uint16', 2, 'in'),
@@ -165,7 +162,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Automatic Gain Control Config',
+'name': 'Get High Contrast Config',
 'elements': [('Region Of Interest', 'uint8', 4, 'out'),
              ('Dampening Factor', 'uint16', 1, 'out'),
              ('Clip Limit', 'uint16', 2, 'out'),
@@ -184,10 +181,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Callback Config',
-'elements': [('Callback Config', 'uint8', 1, 'in', ('Callback Config', [('Callback Off', 0),
-                                                                        ('Callback Image', 1),
-                                                                        ('Callback Raw Image', 2)]))],
+'name': 'Set Image Transfer Config',
+'elements': [('Config', 'uint8', 1, 'in', ('Data Transfer', [('Manual High Contrast Image', 0),
+                                                             ('Manual Temperature Image', 1),
+                                                             ('Callback High Contrast Image', 2),
+                                                             ('Callback Temperature Image', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -201,10 +199,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Callback Config',
-'elements': [('Callback Config', 'uint8', 1, 'out', ('Callback Config', [('Callback Off', 0),
-                                                                         ('Callback Image', 1),
-                                                                         ('Callback Raw Image', 2)]))],
+'name': 'Get Image Transfer Config',
+'elements': [('Config', 'uint8', 1, 'out', ('Data Transfer', [('Manual High Contrast Image', 0),
+                                                              ('Manual Temperature Image', 1),
+                                                              ('Callback High Contrast Image', 2),
+                                                              ('Callback Temperature Image', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -218,7 +217,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Image Low Level',
+'name': 'High Contrast Image Low Level',
 'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint8', 62, 'out')],
 'high_level': {'stream_out': {'fixed_total_length': 60*80}},
@@ -235,7 +234,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Raw Image Low Level',
+'name': 'Temperature Image Low Level',
 'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 31, 'out')],
 'high_level': {'stream_out': {'fixed_total_length': 60*80}},
