@@ -235,6 +235,7 @@ class {0}(Device):
 
     def get_python_high_level_methods(self):
         methods = ''
+        # FIXME: move the bulk of this logic to a helper function in ip_connection.py
         stream_in_template = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_total_length = len(data)
@@ -255,6 +256,7 @@ class {0}(Device):
 
         return stream_result
 """
+        # FIXME: move the bulk of this logic to a helper function in ip_connection.py
         stream_out_template = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_extra = ()
@@ -300,6 +302,8 @@ class {0}(Device):
                         stream_chunk_offset = self.{underscore_name}_low_level({parameter_list}).stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+                stream_data += stream_result.stream_chunk_data
 
         if len(stream_extra) > 0:
             return stream_extra + (stream_data[:stream_total_length],)
