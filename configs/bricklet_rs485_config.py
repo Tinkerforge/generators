@@ -6,6 +6,16 @@
 
 # RS485 Bricklet communication config
 
+# FIXME: add missing exception codes
+EXCEPTION_CODE_CONSTANTS =  ('Exception Code', [('Timeout', -1),
+                                                ('Success', 0),
+                                                ('Illegal Function', 1),
+                                                ('Illegal Data Address', 2),
+                                                ('Illegal Data Value', 3),
+                                                ('Slave Device Failure', 4)])
+
+# FIXME: document modbus level function codes
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -24,7 +34,6 @@ com = {
     'packets': [],
     'examples': []
 }
-
 
 com['packets'].append({
 'type': 'function',
@@ -610,14 +619,14 @@ Returns the current number of errors occurred in Modbus mode.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Report Exception',
+'name': 'Modbus Slave Report Exception',
 'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Exception Code', 'uint8', 1, 'in')],
+             ('Exception Code', 'int8', 1, 'in', EXCEPTION_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-In Modbus slave mode this function can be used to report a modbus exception for
+In Modbus slave mode this function can be used to report a Modbus exception for
 a Modbus master request.
 
 * Request ID: Request ID of the request received by the slave.
@@ -632,12 +641,12 @@ a Modbus master request.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Answer Read Coils Request Low Level',
+'name': 'Modbus Slave Answer Read Coils Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'uint8', 59, 'in')],
-'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
+             ('Stream Chunk Data', 'bool', 472, 'in')],
+'high_level': {'stream_in': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -648,7 +657,7 @@ read coils.
 * Request ID: Request ID of the corresponding request that is being answered.
 * Data: Data that is to be sent to the Modbus master for the corresponding request.
 
-This function must be called from the :cb:`Modbus Read Coils Request` callback
+This function must be called from the :cb:`Modbus Slave Read Coils Request` callback
 with the Request ID as provided by the argument of the callback.
 """,
 'de': # TODO: German documentation.
@@ -660,7 +669,7 @@ with the Request ID as provided by the argument of the callback.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Read Coils',
+'name': 'Modbus Master Read Coils',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
              ('Count', 'uint16', 1, 'in'),
@@ -679,7 +688,7 @@ Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
 request ID will be 0.
 
-When successful this function will also invoke the :cb:`Modbus Read Coils Response`
+When successful this function will also invoke the :cb:`Modbus Master Read Coils Response`
 callback. In this callback the Request ID provided by the callback argument must be
 matched with the Request ID returned from this function to verify that the callback
 is indeed for a particular request.
@@ -693,12 +702,12 @@ is indeed for a particular request.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Answer Read Holding Registers Request Low Level',
+'name': 'Modbus Slave Answer Read Holding Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'uint16', 29, 'in')],
-'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
+'high_level': {'stream_in': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -709,7 +718,7 @@ read holding registers.
 * Request ID: Request ID of the corresponding request that is being answered.
 * Data: Data that is to be sent to the Modbus master for the corresponding request.
 
-This function must be called from the :cb:`Modbus Read Holding Registers Request`
+This function must be called from the :cb:`Modbus Slave Read Holding Registers Request`
 callback with the Request ID as provided by the argument of the callback.
 """,
 'de': # TODO: German documentation.
@@ -721,7 +730,7 @@ callback with the Request ID as provided by the argument of the callback.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Read Holding Registers',
+'name': 'Modbus Master Read Holding Registers',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
              ('Count', 'uint16', 1, 'in'),
@@ -740,7 +749,7 @@ Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
 request ID will be 0.
 
-When successful this function will also invoke the :cb:`Modbus Read Holding Registers Response`
+When successful this function will also invoke the :cb:`Modbus Master Read Holding Registers Response`
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
@@ -754,10 +763,8 @@ particular request.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Answer Write Single Coil Request',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Coil Address', 'uint16', 1, 'in'),
-             ('Coil Value', 'uint16', 1, 'in')],
+'name': 'Modbus Slave Answer Write Single Coil Request',
+'elements': [('Request ID', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -766,10 +773,8 @@ In Modbus slave mode this function can be used to answer a master request to
 write a single coil.
 
 * Request ID: Request ID of the corresponding request that is being answered.
-* Coil Address: Address of the coil to write.
-* Coil Value: Value to be written.
 
-This function must be called from the :cb:`Modbus Write Single Coil Request`
+This function must be called from the :cb:`Modbus Slave Write Single Coil Request`
 callback with the Request ID, Coil Address and Coil Value as provided by the
 arguments of the callback.
 """,
@@ -782,10 +787,10 @@ arguments of the callback.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Write Single Coil',
+'name': 'Modbus Master Write Single Coil',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Coil Address', 'uint16', 1, 'in'),
-             ('Coil Value', 'uint16', 1, 'in'),
+             ('Coil Value', 'bool', 1, 'in'),
              ('Request ID', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -801,7 +806,7 @@ Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
 request ID will be 0.
 
-When successful this function will also invoke the :cb:`Modbus Write Single Coil Response`
+When successful this function will also invoke the :cb:`Modbus Master Write Single Coil Response`
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
@@ -815,10 +820,8 @@ particular request.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Answer Write Single Register Request',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Register Address', 'uint16', 1, 'in'),
-             ('Register Value', 'uint16', 1, 'in')],
+'name': 'Modbus Slave Answer Write Single Register Request',
+'elements': [('Request ID', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -827,10 +830,8 @@ In Modbus slave mode this function can be used to answer a master request to
 write a single register.
 
 * Request ID: Request ID of the corresponding request that is being answered.
-* Register Address: Address of the register to write.
-* Register Value: Value to be written.
 
-This function must be called from the :cb:`Modbus Write Single Register Request`
+This function must be called from the :cb:`Modbus Slave Write Single Register Request`
 callback with the Request ID, Register Address and Register Value as provided by
 the arguments of the callback.
 """,
@@ -843,7 +844,7 @@ the arguments of the callback.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Write Single Register',
+'name': 'Modbus Master Write Single Register',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Register Address', 'uint16', 1, 'in'),
              ('Register Value', 'uint16', 1, 'in'),
@@ -863,7 +864,7 @@ Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
 request ID will be 0.
 
-When successful this function will also invoke the :cb:`Modbus Write Single Register Response`
+When successful this function will also invoke the :cb:`Modbus Master Write Single Register Response`
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
@@ -877,10 +878,8 @@ particular request.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Answer Write Multiple Coils Request',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Starting Address', 'uint16', 1, 'in'),
-             ('Count', 'uint16', 1, 'in')],
+'name': 'Modbus Slave Answer Write Multiple Coils Request',
+'elements': [('Request ID', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -889,10 +888,8 @@ In Modbus slave mode this function can be used to answer a master request to
 write multiple coils.
 
 * Request ID: Request ID of the corresponding request that is being answered.
-* Starting Address: Starting address of the write.
-* Count: Number of coils to write.
 
-This function must be called from the :cb:`Modbus Write Multiple Coils Request`
+This function must be called from the :cb:`Modbus Slave Write Multiple Coils Request`
 callback with the Request ID, Starting Address and Count as provided by the
 arguments of the callback.
 """,
@@ -905,15 +902,15 @@ arguments of the callback.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Write Multiple Coils Low Level',
+'name': 'Modbus Master Write Multiple Coils Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
              ('Count', 'uint16', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'uint8', 54, 'in')],
-'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
+             ('Stream Chunk Data', 'bool', 432, 'in')],
+'high_level': {'stream_in': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -928,7 +925,7 @@ Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
 request ID will be 0.
 
-When successful this function will also invoke the :cb:`Modbus Write Multiple Coils Response`
+When successful this function will also invoke the :cb:`Modbus Master Write Multiple Coils Response`
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
@@ -942,10 +939,8 @@ particular request.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Answer Write Multiple Registers Request',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Starting Address', 'uint16', 1, 'in'),
-             ('Count', 'uint16', 1, 'in')],
+'name': 'Modbus Slave Answer Write Multiple Registers Request',
+'elements': [('Request ID', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -954,10 +949,8 @@ In Modbus slave mode this function can be used to answer a master request to
 write multiple registers.
 
 * Request ID: Request ID of the corresponding request that is being answered.
-* Starting Address: Starting address of the write.
-* Count: Number of registers to write.
 
-This function must be called from the :cb:`Modbus Write Multiple Registers Request`
+This function must be called from the :cb:`Modbus Slave Write Multiple Registers Request`
 callback with the Request ID, Starting Address and Count as provided by the
 arguments of the callback.
 """,
@@ -970,7 +963,7 @@ arguments of the callback.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Write Multiple Registers Low Level',
+'name': 'Modbus Master Write Multiple Registers Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
@@ -978,7 +971,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'uint16', 27, 'in')],
-'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
+'high_level': {'stream_in': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -993,7 +986,7 @@ Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
 request ID will be 0.
 
-When successful this function will also invoke the :cb:`Modbus Write Multiple Registers Response`
+When successful this function will also invoke the :cb:`Modbus Master Write Multiple Registers Response`
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
@@ -1007,12 +1000,12 @@ particular request.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Answer Read Discrete Inputs Request Low Level',
+'name': 'Modbus Slave Answer Read Discrete Inputs Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'uint8', 59, 'in')],
-'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
+             ('Stream Chunk Data', 'bool', 472, 'in')],
+'high_level': {'stream_in': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1023,7 +1016,7 @@ read discrete inputs.
 * Request ID: Request ID of the corresponding request that is being answered.
 * Data: Data that is to be sent to the Modbus master for the corresponding request.
 
-This function must be called from the :cb:`Modbus Read Discrete Inputs Request`
+This function must be called from the :cb:`Modbus Slave Read Discrete Inputs Request`
 callback with the Request ID as provided by the argument of the callback.
 """,
 'de': # TODO: German documentation.
@@ -1035,7 +1028,7 @@ callback with the Request ID as provided by the argument of the callback.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Read Discrete Inputs',
+'name': 'Modbus Master Read Discrete Inputs',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
              ('Count', 'uint16', 1, 'in'),
@@ -1054,7 +1047,7 @@ Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
 request ID will be 0.
 
-When successful this function will also invoke the :cb:`Modbus Read Discrete Inputs Response`
+When successful this function will also invoke the :cb:`Modbus Master Read Discrete Inputs Response`
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
@@ -1068,12 +1061,12 @@ particular request.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Answer Read Input Registers Request Low Level',
+'name': 'Modbus Slave Answer Read Input Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'uint16', 29, 'in')],
-'high_level': {'stream_in': {}}, # FIXME: add bitmask feature.
+'high_level': {'stream_in': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1084,7 +1077,7 @@ read input registers.
 * Request ID: Request ID of the corresponding request that is being answered.
 * Data: Data that is to be sent to the Modbus master for the corresponding request.
 
-This function must be called from the :cb:`Modbus Read Input Registers Request` callback
+This function must be called from the :cb:`Modbus Slave Read Input Registers Request` callback
 with the Request ID as provided by the argument of the callback.
 """,
 'de': # TODO: German documentation.
@@ -1096,7 +1089,7 @@ with the Request ID as provided by the argument of the callback.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Modbus Read Input Registers',
+'name': 'Modbus Master Read Input Registers',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
              ('Count', 'uint16', 1, 'in'),
@@ -1115,7 +1108,7 @@ Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
 request ID will be 0.
 
-When successful this function will also invoke the :cb:`Modbus Read Input Registers Response`
+When successful this function will also invoke the :cb:`Modbus Master Read Input Registers Response`
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
@@ -1175,7 +1168,7 @@ Er gibt die Anzahl der aufgetreten Overrun and Parity Fehler zurück.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Read Coils Request',
+'name': 'Modbus Slave Read Coils Request',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
              ('Count', 'uint16', 1, 'out')],
@@ -1187,6 +1180,8 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read coils. The :word:`parameters` are
 request ID of the request, the starting address and the number of coils to
 be read as received by the request.
+
+FIXME: how to answer this request?
 """,
 'de': # TODO: German documentation.
 """
@@ -1197,13 +1192,13 @@ be read as received by the request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Read Coils Response Low Level',
+'name': 'Modbus Master Read Coils Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
+             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint8', 58, 'out')],
-'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
+             ('Stream Chunk Data', 'bool', 464, 'out')],
+'high_level': {'stream_out': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1214,7 +1209,7 @@ of the request, exception code of the response and the data as received by the
 response. Any non-zero exception code indicates a problem. If the exception code
 is greater than zero then the number represents a Modbus exception code. If it is
 less than zero then it represents other errors. For example, -1 indicates that
-the request timedout or that the master did not receive any valid response of the
+the request timed out or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
 """,
@@ -1227,7 +1222,7 @@ request within the master request timeout period as set by
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Read Holding Registers Request',
+'name': 'Modbus Slave Read Holding Registers Request',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
              ('Count', 'uint16', 1, 'out')],
@@ -1239,6 +1234,8 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read holding registers. The :word:`parameters`
 are request ID of the request, the starting address and the number of holding
 registers to be read as received by the request.
+
+FIXME: how to answer this request?
 """,
 'de': # TODO: German documentation.
 """
@@ -1249,13 +1246,13 @@ registers to be read as received by the request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Read Holding Registers Response Low Level',
+'name': 'Modbus Master Read Holding Registers Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
+             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 29, 'out')],
-'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
+'high_level': {'stream_out': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1266,7 +1263,7 @@ request ID of the request, exception code of the response and the data as receiv
 by the response. Any non-zero exception code indicates a problem. If the exception
 code is greater than zero then the number represents a Modbus exception code. If
 it is less than zero then it represents other errors. For example, -1 indicates that
-the request timedout or that the master did not receive any valid response of the
+the request timed out or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
 """,
@@ -1279,10 +1276,10 @@ request within the master request timeout period as set by
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Write Single Coil Request',
+'name': 'Modbus Slave Write Single Coil Request',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Coil Address', 'uint16', 1, 'out'),
-             ('Coil Value', 'uint16', 1, 'out')],
+             ('Coil Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1291,6 +1288,8 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write a single coil. The :word:`parameters`
 are request ID of the request, the coil address and the value of coil to be
 written as received by the request.
+
+FIXME: how to answer this request?
 """,
 'de': # TODO: German documentation.
 """
@@ -1301,22 +1300,20 @@ written as received by the request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Write Single Coil Response',
+'name': 'Modbus Master Write Single Coil Response',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
-             ('Coil Address', 'uint16', 1, 'out'),
-             ('Coil Value', 'uint16', 1, 'out')],
+             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
 valid response of a request to write a single coil. The :word:`parameters` are
-request ID of the request, exception code of the response, coil address and coil
-value as received by the response. Any non-zero exception code indicates a problem.
+request ID of the request and exception code of the response. Any non-zero
+exception code indicates a problem.
 If the exception code is greater than zero then the number represents a Modbus
 exception code. If it is less than zero then it represents other errors. For
-example, -1 indicates that the request timedout or that the master did not receive
+example, -1 indicates that the request timed out or that the master did not receive
 any valid response of the request within the master request timeout period as set
 by :func:`Set Modbus Configuration`.
 """,
@@ -1329,7 +1326,7 @@ by :func:`Set Modbus Configuration`.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Write Single Register Request',
+'name': 'Modbus Slave Write Single Register Request',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Register Address', 'uint16', 1, 'out'),
              ('Register Value', 'uint16', 1, 'out')],
@@ -1341,6 +1338,8 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write a single register. The :word:`parameters`
 are request ID of the request, the register address and the register value to
 be written as received by the request.
+
+FIXME: how to answer this request?
 """,
 'de': # TODO: German documentation.
 """
@@ -1351,22 +1350,19 @@ be written as received by the request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Write Single Register Response',
+'name': 'Modbus Master Write Single Register Response',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
-             ('Register Address', 'uint16', 1, 'out'),
-             ('Register Value', 'uint16', 1, 'out')],
+             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
 valid response of a request to write a single register. The :word:`parameters` are
-request ID of the request, exception code of the response, register address and
-the register value as received by the response. Any non-zero exception code
+request ID of the request and exception code of the response. Any non-zero exception code
 indicates a problem. If the exception code is greater than zero then the number
 represents a Modbus exception code. If it is less than zero then it represents
-other errors. For example, -1 indicates that the request timedout or that the
+other errors. For example, -1 indicates that the request timed out or that the
 master did not receive any valid response of the request within the master request
 timeout period as set by :func:`Set Modbus Configuration`.
 """,
@@ -1379,14 +1375,14 @@ timeout period as set by :func:`Set Modbus Configuration`.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Write Multiple Coils Request Low Level',
+'name': 'Modbus Slave Write Multiple Coils Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
              ('Count', 'uint16', 1, 'out'),
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint8', 55, 'out')],
-'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
+             ('Stream Chunk Data', 'bool', 440, 'out')],
+'high_level': {'stream_out': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1395,6 +1391,8 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write multiple coils. The :word:`parameters`
 are request ID of the request, the starting address, the number of coils to
 be written and the data to be written as received by the request.
+
+FIXME: how to answer this request?
 """,
 'de': # TODO: German documentation.
 """
@@ -1405,19 +1403,16 @@ be written and the data to be written as received by the request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Write Multiple Coils Response',
+'name': 'Modbus Master Write Multiple Coils Response',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
-             ('Starting Address', 'uint16', 1, 'out'),
-             ('Count', 'uint16', 1, 'out')],
+             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
 valid response of a request to read holding registers. The :word:`parameters` are
-request ID of the request, exception code of the response, starting address and
-number of coils to write as received by the response. Any non-zero exception code
+request ID of the request and exception code of the response. Any non-zero exception code
 indicates a problem. If the exception code is greater than zero then the number
 represents a Modbus exception code. If it is less than zero then it represents
 other errors. For example, -1 indicates that the request timedout or that the
@@ -1433,14 +1428,14 @@ timeout period as set by :func:`Set Modbus Configuration`.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Write Multiple Registers Request Low Level',
+'name': 'Modbus Slave Write Multiple Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
              ('Count', 'uint16', 1, 'out'),
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 27, 'out')],
-'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
+'high_level': {'stream_out': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1449,6 +1444,8 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write multiple registers. The :word:`parameters`
 are request ID of the request, the starting address, the number of registers to
 be written and the data to be written as received by the request.
+
+FIXME: how to answer this request?
 """,
 'de': # TODO: German documentation.
 """
@@ -1459,19 +1456,16 @@ be written and the data to be written as received by the request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Write Multiple Registers Response',
+'name': 'Modbus Master Write Multiple Registers Response',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
-             ('Starting Address', 'uint16', 1, 'out'),
-             ('Count', 'uint16', 1, 'out')],
+             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
 valid response of a request to write multiple registers. The :word:`parameters`
-are request ID of the request, exception code of the response, starting address
-and the number of registers to be written as received by the response. Any non-zero
+are request ID of the request and exception code of the response. Any non-zero
 exception code indicates a problem. If the exception code is greater than zero then
 the number represents a Modbus exception code. If it is less than zero then it
 represents other errors. For example, -1 indicates that the request timedout or
@@ -1487,7 +1481,7 @@ request timeout period as set by :func:`Set Modbus Configuration`.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Read Discrete Inputs Request',
+'name': 'Modbus Slave Read Discrete Inputs Request',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
              ('Count', 'uint16', 1, 'out')],
@@ -1499,6 +1493,8 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read discrete inputs. The :word:`parameters`
 are request ID of the request, the starting address and the number of discrete
 inputs to be read as received by the request.
+
+FIXME: how to answer this request?
 """,
 'de': # TODO: German documentation.
 """
@@ -1509,13 +1505,13 @@ inputs to be read as received by the request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Read Discrete Inputs Response Low Level',
+'name': 'Modbus Master Read Discrete Inputs Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
+             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint8', 58, 'out')],
-'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
+             ('Stream Chunk Data', 'bool', 464, 'out')],
+'high_level': {'stream_out': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1539,7 +1535,7 @@ request within the master request timeout period as set by
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Read Input Registers Request',
+'name': 'Modbus Slave Read Input Registers Request',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
              ('Count', 'uint16', 1, 'out')],
@@ -1551,6 +1547,8 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read input registers. The :word:`parameters`
 are request ID of the request, the starting address and the number of input
 registers to be read as received by the request.
+
+FIXME: how to answer this request?
 """,
 'de': # TODO: German documentation.
 """
@@ -1561,13 +1559,13 @@ registers to be read as received by the request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Read Input Registers Response Low Level',
+'name': 'Modbus Master Read Input Registers Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out'), # FIXME: add constants
+             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 29, 'out')],
-'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
+'high_level': {'stream_out': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
