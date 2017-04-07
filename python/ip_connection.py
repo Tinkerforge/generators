@@ -8,17 +8,15 @@
 
 from threading import Thread, Lock, Semaphore
 
-# current_thread for python 2.6, currentThread for python 2.5
 try:
-    from threading import current_thread
+    from threading import current_thread # Python 2.6
 except ImportError:
-    from threading import currentThread as current_thread
+    from threading import currentThread as current_thread # Python 2.5
 
-# Queue for python 2, queue for python 3
 try:
-    from Queue import Queue, Empty
+    from queue import Queue, Empty # Python 3
 except ImportError:
-    from queue import Queue, Empty
+    from Queue import Queue, Empty # Python 2
 
 import struct
 import socket
@@ -30,15 +28,14 @@ import hmac
 import hashlib
 import errno
 
-# use normal tuples instead of namedtuples in python version below 2.6
-if sys.hexversion < 0x02060000:
+try:
+    from collections import namedtuple
+except ImportError:
     def namedtuple(typename, field_names, verbose=False, rename=False):
         def ntuple(*args):
             return args
 
         return ntuple
-else:
-    from collections import namedtuple
 
 def get_uid_from_data(data):
     return struct.unpack('<I', data[0:4])[0]
