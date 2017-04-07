@@ -247,7 +247,7 @@ class {0}(Device):
                 stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
 
                 if len(stream_chunk_data) < {chunk_cardinality}:
-                    stream_chunk_data.extend([0]*({chunk_cardinality} - len(stream_chunk_data)))
+                    stream_chunk_data.extend([{chunk_padding}]*({chunk_cardinality} - len(stream_chunk_data)))
 
                 # FIXME: validate that the result of all the low-level calls is identical
                 stream_result = self.{underscore_name}_low_level({parameter_list})
@@ -319,7 +319,8 @@ class {0}(Device):
                 methods += stream_in_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                                      parameter_list=packet.get_python_parameter_list(),
                                                      high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
-                                                     chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
+                                                     chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
+                                                     chunk_padding=stream_in.get_chunk_data_element().get_python_default_value())
             elif stream_out != None:
                 methods += stream_out_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                                       parameter_list=packet.get_python_parameter_list(),

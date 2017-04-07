@@ -91,9 +91,24 @@ class PythonElement(common.Element):
         'int64':  'q',
         'uint64': 'Q',
         'float':  'f',
-        'bool':   '?',
+        'bool':   '!',
         'char':   'c',
         'string': 's'
+    }
+
+    python_default_values = {
+        'int8':   0,
+        'uint8':  0,
+        'int16':  0,
+        'uint16': 0,
+        'int32':  0,
+        'uint32': 0,
+        'int64':  0,
+        'uint64': 0,
+        'float':  0.0,
+        'bool':   False,
+        'char':   ' ',
+        'string': ' '
     }
 
     def get_python_type(self):
@@ -112,3 +127,6 @@ class PythonElement(common.Element):
             f = str(c) + f
 
         return f
+
+    def get_python_default_value(self):
+        return PythonElement.python_default_values[self.get_type()]

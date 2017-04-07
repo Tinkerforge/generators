@@ -842,19 +842,19 @@ class IPConnection:
                         llcb[2] = chunk_data
 
                         if len(llcb[2]) >= total_length: # stream complete
-                            result = (STREAM_STATUS_COMPLETE,) + extra + (llcb[2][:total_length],)
+                            result = extra + (STREAM_STATUS_COMPLETE,) + (llcb[2][:total_length],)
                             llcb[2] = None
                     else: # ignore tail of current stream, wait for next stream start
                         pass
                 else: # stream in-progress
                     if chunk_offset != len(llcb[2]): # stream out-of-sync, abort it and return partial result
-                        result = (STREAM_STATUS_OUT_OF_SYNC,) + extra + (llcb[2] + (0,)*(total_length - len(llcb[2])),) # FIXME: need to handle padding for non-int types
+                        result = extra + (STREAM_STATUS_OUT_OF_SYNC,) + (llcb[2] + (0,)*(total_length - len(llcb[2])),) # FIXME: need to handle padding for non-int types
                         llcb[2] = None
                     else: # stream in-sync
                         llcb[2] += chunk_data
 
                         if len(llcb[2]) >= total_length: # stream complete
-                            result = (STREAM_STATUS_COMPLETE,) + extra + (llcb[2][:total_length],)
+                            result = extra + (STREAM_STATUS_COMPLETE,) + (llcb[2][:total_length],)
                             llcb[2] = None
 
                 if result != None and llcb[0] in device.registered_callbacks:
@@ -907,14 +907,35 @@ class IPConnection:
 
     def deserialize_data(self, data, form):
         ret = []
+
         for f in form.split(' '):
+            o = f
+
+            if '!' in f:
+                if len(f) > 1:
+                    f = '{0}B'.format(int(math.ceil(int(f.replace('!', '')) / 8.0)))
+                else:
+                    f = 'B'
+
             f = '<' + f
             length = struct.calcsize(f)
-
             x = struct.unpack(f, data[:length])
+
+            if '!' in o:
+                y = []
+
+                if len(o) > 1:
+                    for i in range(int(o.replace('!', ''))):
+                        y.append(x[i // 8] & (i % 8) != 0)
+                else:
+                    y.append(x[0] != 0)
+
+                x = y
+
             if len(x) > 1:
                 if 'c' in f:
                     x = tuple([self.handle_deserialized_char(c) for c in x])
+
                 ret.append(x)
             elif 'c' in f:
                 ret.append(self.handle_deserialized_char(x[0]))
@@ -981,7 +1002,19 @@ class IPConnection:
             self.disconnect_probe_flag = False
 
     def send_request(self, device, function_id, data, form, form_ret):
-        length = 8 + struct.calcsize('<' + form)
+        patched_from = []
+
+        for f in form.split(' '):
+            if '!' in f:
+                if len(f) > 1:
+                    patched_from.append('{0}B'.format(int(math.ceil(int(f.replace('!', '')) / 8.0))))
+                else:
+                    patched_from.append('?')
+            else:
+                patched_from.append(f)
+
+        patched_from = '<' + ' '.join(patched_from)
+        length = 8 + struct.calcsize(patched_from)
         request, response_expected, sequence_number = \
             self.create_packet_header(device, length, function_id)
 
@@ -991,9 +1024,12 @@ class IPConnection:
                     f = f.replace('s', 'B').replace('c', 'B')
                     l = map(ord, d)
                     p = f.replace('B', '')
+
                     if len(p) == 0:
                         p = '1'
+
                     l += [0] * (int(p) - len(l))
+
                     return struct.pack('<' + f, *l)
                 else:
                     return struct.pack('<' + f, d)
@@ -1004,7 +1040,27 @@ class IPConnection:
                     return struct.pack('<' + f, d)
 
         for f, d in zip(form.split(' '), data):
-            if len(f) > 1 and not 's' in f and not 'c' in f:
+            if '!' in f:
+                if len(f) > 1:
+                    if int(f.replace('!', '')) != len(d):
+                        raise ValueError('Incorrect bool list length')
+
+                    p = [0]*int(math.ceil(len(d) / 8.0))
+                    a = 0
+
+                    for i, b in enumerate(d):
+                        if b:
+                            a |= 1 << (i % 8)
+
+                        if i > 0 and i % 8 == 0:
+                            p[i // 8] = a
+                            a = 0
+
+                    p[i // 8] = a
+                    request += struct.pack('<{0}B'.format(len(p)), *p)
+                else:
+                    request += struct.pack('<?', d)
+            elif len(f) > 1 and not 's' in f and not 'c' in f:
                 request += struct.pack('<' + f, *d)
             elif 's' in f:
                 request += pack_string(f, d)
@@ -1012,6 +1068,7 @@ class IPConnection:
                 if len(f) > 1:
                     if int(f.replace('c', '')) != len(d):
                         raise ValueError('Incorrect char list length')
+
                     for k in d:
                         request += pack_string('c', k)
                 else:
