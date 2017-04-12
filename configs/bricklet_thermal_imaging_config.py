@@ -72,6 +72,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Status:
+* bit 0: FFC desired
+* bit 1-2: FFC never commanded, FFC imminent, FFC in progress, FFC complete
+* bit 3: AGC State
+* bit 4: Shutter lockout
+* bit 5: Overtemp shut down imminent
 """,
 'de':
 """
