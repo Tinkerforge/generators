@@ -30,6 +30,7 @@ import datetime
 import subprocess
 import sys
 import copy
+import math
 import multiprocessing.dummy
 from collections import namedtuple
 from pprint import pprint
@@ -1016,7 +1017,10 @@ class Element(NameMixin):
         return item_sizes[self.get_type()]
 
     def get_size(self):
-        return self.get_item_size() * self.get_cardinality()
+        if self.get_type() == 'bool':
+            return int(math.ceil(self.get_cardinality() / 8.0))
+        else:
+            return self.get_item_size() * self.get_cardinality()
 
 class HighLevelStream(object):
     def __init__(self, raw_data, packet):

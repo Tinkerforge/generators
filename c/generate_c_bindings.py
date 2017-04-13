@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import math
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -193,54 +194,68 @@ extern "C" {{
 #endif
 """
 
-        struct_temp = """
+        struct_template = """
 typedef struct {{
 \tPacketHeader header;
-{0}}} ATTRIBUTE_PACKED {1}{2}_;
+{0}}} ATTRIBUTE_PACKED {1}_{2};
 """
 
         for packet in self.get_packets():
             if packet.get_type() == 'callback':
-                cb = "Callback"
                 struct_body = ''
                 for element in packet.get_elements():
-                    c_type = element.get_c_type(False)
+                    c_type = element.get_c_type(False, is_in_struct=True)
                     if element.get_cardinality() > 1:
+                        if element.get_type() == 'bool':
+                            length = int(math.ceil(element.get_cardinality() / 8.0))
+                        else:
+                            length = element.get_cardinality()
+
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                                   element.get_underscore_name(),
-                                                                  element.get_cardinality());
+                                                                  length);
                     else:
                         struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
-                structs += struct_temp.format(struct_body, packet.get_camel_case_name(), cb)
+                structs += struct_template.format(struct_body, packet.get_camel_case_name(), 'Callback')
                 continue
 
             struct_body = ''
             for element in packet.get_elements('in'):
-                c_type = element.get_c_type(False)
+                c_type = element.get_c_type(False, is_in_struct=True)
                 if element.get_cardinality() > 1:
+                    if element.get_type() == 'bool':
+                        length = int(math.ceil(element.get_cardinality() / 8.0))
+                    else:
+                        length = element.get_cardinality()
+
                     struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                               element.get_underscore_name(),
-                                                              element.get_cardinality());
+                                                              length);
                 else:
                     struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
-            structs += struct_temp.format(struct_body, packet.get_camel_case_name(), '')
+            structs += struct_template.format(struct_body, packet.get_camel_case_name(), 'Request')
 
             if len(packet.get_elements('out')) == 0:
                 continue
 
             struct_body = ''
             for element in packet.get_elements('out'):
-                c_type = element.get_c_type(False)
+                c_type = element.get_c_type(False, is_in_struct=True)
                 if element.get_cardinality() > 1:
+                    if element.get_type() == 'bool':
+                        length = int(math.ceil(element.get_cardinality() / 8.0))
+                    else:
+                        length = element.get_cardinality()
+
                     struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                               element.get_underscore_name(),
-                                                              element.get_cardinality());
+                                                              length);
                 else:
                     struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
-            structs += struct_temp.format(struct_body, packet.get_camel_case_name(), 'Response')
+            structs += struct_template.format(struct_body, packet.get_camel_case_name(), 'Response')
 
         structs += """
 #if defined _MSC_VER || defined __BORLANDC__
@@ -333,7 +348,7 @@ int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
         function = """
 int {0}_{1}({2} *{0}{3}) {{
 \tDevicePrivate *device_p = {0}->p;
-\t{5}_ request;{6}
+\t{5}_Request request;{6}
 \tint ret;{9}
 
 \tret = packet_header_create(&request.header, sizeof(request), {4}, device_p->ipcon_p, device_p);
@@ -369,7 +384,7 @@ int {0}_{1}({2} *{0}{3}) {{
             f = packet.get_camel_case_name()
             h, needs_i = packet.get_c_struct_list()
             if len(packet.get_elements('out')) > 0:
-                g = '\n\t' + f + 'Response_ response;'
+                g = '\n\t' + f + '_Response response;'
                 rl, needs_i2 = packet.get_c_return_list()
                 i = function_ret.format(f, device_name, rl)
                 r = '(Packet *)&response'
@@ -398,14 +413,15 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
     def get_c_callback_wrapper_functions(self):
         function = """
 static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
-\t{3}CallbackFunction callback_function;
-\tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{8}
+\t{3}_CallbackFunction callback_function;
+\tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
+
 \t*(void **)(&callback_function) = device_p->registered_callbacks[{7}];
 
 \tif (callback_function == NULL) {{
 \t\treturn;
 \t}}
-{6}
+{6}{11}
 \tcallback_function({5}{4}user_data);
 }}
 """
@@ -418,32 +434,54 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
             d = packet.get_camel_case_name()
             e = ''
             f_list = []
+
             for element in packet.get_elements():
-                f_list.append("callback->{0}".format(element.get_underscore_name()))
+                if element.get_type() == 'bool':
+                    f_list.append('unpacked_{0}'.format(element.get_underscore_name()))
+                else:
+                    f_list.append('callback->{0}'.format(element.get_underscore_name()))
+
             f = ', '.join(f_list)
+
             if len(f_list) > 0:
                 e = ', '
+
             endian_list = []
             i = ''
+            variables = ''
+            unpacks = ''
+
             for element in packet.get_elements():
-                if element.get_item_size() > 1:
+                if element.get_type() == 'bool':
+                    if element.get_cardinality() > 1:
+                        i = '\n\tint i;'
+                        variables += '\n\tbool unpacked_{0}[{1}];'.format(element.get_underscore_name(), element.get_cardinality())
+                        unpacks += '\tfor (i = 0; i < {1}; i++) unpacked_{0}[i] = (callback->{0}[i / 8] & (1 << (i % 8))) != 0;\n' \
+                                    .format(element.get_underscore_name(), element.get_cardinality())
+                    else:
+                        variables += '\n\tbool unpacked_{0};'.format(element.get_underscore_name())
+                        unpacks += '\tunpacked_{0} = callback->{0} != 0;\n'.format(element.get_underscore_name())
+                elif element.get_item_size() > 1:
                     if element.get_cardinality() > 1:
                         i = '\n\tint i;'
                         endian_list.append('\tfor (i = 0; i < {2}; i++) callback->{0}[i] = leconvert_{1}_from(callback->{0}[i]);' \
                                            .format(element.get_underscore_name(), element.get_type(), element.get_cardinality()))
                     else:
                         endian_list.append('\tcallback->{0} = leconvert_{1}_from(callback->{0});'.format(element.get_underscore_name(), element.get_type()))
+
             endian = '\n'.join(endian_list)
+
             if len(endian) > 0:
                 endian = '\n' + endian + '\n'
+
             fid = '{0}_CALLBACK_{1}'.format(self.get_upper_case_name(),
                                             packet.get_upper_case_name())
             if len(f_list) > 0:
-                cb = '\n\t{0}Callback_ *callback = ({0}Callback_ *)packet;'.format(d)
+                cb = '\n\t{0}_Callback *callback = ({0}_Callback *)packet;'.format(d)
             else:
                 cb = '\n\t(void)packet;'
 
-            functions.append(function.format(a, b, c, d, e, f, endian, fid, cb, i))
+            functions.append(function.format(a, b, c, d, e, f, endian, fid, cb, i, variables, unpacks))
 
         return ''.join(functions)
 
@@ -486,7 +524,7 @@ typedef Device {3};
 
     def get_c_typedefs(self):
         typedef = """
-typedef void (*{0}CallbackFunction)({1});
+typedef void (*{0}_CallbackFunction)({1});
 """
 
         typedefs = '\n'
@@ -752,6 +790,14 @@ class CBindingsPacket(c_common.CPacket):
                 # nothing to complain anymore
                 temp = '\n\tmemcpy({0}.{1}, {1}, {2});\n'
                 struct_list += temp.format(sf, element.get_underscore_name(), element.get_cardinality())
+            elif element.get_type() == 'bool':
+                if element.get_cardinality() > 1:
+                    needs_i = True
+                    struct_list += '\n\tmemset({0}.{1}, 0, {3}); for (i = 0; i < {2}; i++) {0}.{1}[i / 8] = ({1}[i] ? 1 : 0) << (i % 8);' \
+                                   .format(sf, element.get_underscore_name(), element.get_cardinality(),
+                                           int(math.ceil(element.get_cardinality() / 8.0)))
+                else:
+                    struct_list += '\n\t{0}.{1} = {1} ? 1 : 0;'.format(sf, element.get_underscore_name())
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
                     needs_i = True
@@ -790,6 +836,13 @@ class CBindingsPacket(c_common.CPacket):
                 # nothing to complain anymore
                 temp = '\tmemcpy(ret_{0}, {1}.{0}, {2});\n'
                 return_list += temp.format(element.get_underscore_name(), sf, element.get_cardinality())
+            elif element.get_type() == 'bool':
+                if element.get_cardinality() > 1:
+                    needs_i = True
+                    return_list += '\tfor (i = 0; i < {2}; i++) ret_{0}[i] = ({1}.{0}[i / 8] & (1 << (i % 8))) != 0;\n' \
+                                   .format(element.get_underscore_name(), sf, element.get_cardinality())
+                else:
+                    return_list += '\t*ret_{0} = {1}.{0} != 0;\n'.format(element.get_underscore_name(), sf)
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
                     needs_i = True

@@ -52,13 +52,15 @@ class CPacket(common.Packet):
         return param
 
 class CElement(common.Element):
-    def get_c_type(self, is_in_signature):
+    def get_c_type(self, is_in_signature, is_in_struct=False):
         if self.get_type() == 'string':
             if self.get_direction() == 'in' and is_in_signature:
                 return 'const char'
             else:
                 return 'char'
-        if self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
+        elif self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
             return '{0}_t'.format(self.get_type())
-
-        return self.get_type()
+        elif self.get_type() == 'bool' and is_in_struct:
+            return 'uint8_t'
+        else:
+            return self.get_type()
