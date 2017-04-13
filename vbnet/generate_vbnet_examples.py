@@ -387,7 +387,7 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
 
     def get_vbnet_source(self):
         template = r"""        ' Register {function_comment_name} callback to subroutine {function_camel_case_name}CB
-        AddHandler {device_initial_name}.{function_camel_case_name}, AddressOf {function_camel_case_name}CB
+        AddHandler {device_initial_name}.{function_camel_case_name}Callback, AddressOf {function_camel_case_name}CB
 """
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),

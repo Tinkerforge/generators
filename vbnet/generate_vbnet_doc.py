@@ -41,8 +41,8 @@ class VBNETDocDevice(common.Device):
     def specialize_vbnet_doc_function_links(self, text):
         def specializer(packet):
             if packet.get_type() == 'callback':
-                return ':vbnet:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_vbnet_class_name(),
-                                                            packet.get_camel_case_name())
+                return ':vbnet:func:`{1}Callback <{0}.{1}Callback>`'.format(packet.get_device().get_vbnet_class_name(),
+                                                                            packet.get_camel_case_name())
             else:
                 return ':vbnet:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_vbnet_class_name(),
                                                               packet.get_camel_case_name())
@@ -81,18 +81,11 @@ class VBNETDocDevice(common.Device):
         return methods
 
     def get_vbnet_callbacks(self):
-        cb = {
-        'en': """
-.. vbnet:function:: Event {0}.{1}(ByVal sender As {0}{2})
-
-{3}
-""",
-        'de': """
-.. vbnet:function:: Event {0}.{1}(ByVal sender As {0}{2})
+        cb = """
+.. vbnet:function:: Event {0}.{1}Callback(ByVal sender As {0}{2})
 
 {3}
 """
-        }
 
         cbs = ''
         for packet in self.get_packets('callback'):
@@ -101,10 +94,10 @@ class VBNETDocDevice(common.Device):
             if len(params) > 0:
                 params = ', ' + params
 
-            cbs += common.select_lang(cb).format(self.get_vbnet_class_name(),
-                                                 packet.get_camel_case_name(),
-                                                 params,
-                                                 desc)
+            cbs += cb.format(self.get_vbnet_class_name(),
+                             packet.get_camel_case_name(),
+                             params,
+                             desc)
 
         return cbs
 

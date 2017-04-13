@@ -99,6 +99,34 @@ extern "C" {{
                                           self.get_camel_case_name(),
                                           self.get_camel_case_category())
 
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            defines += """
+/**
+ * \ingroup BrickletRS232
+ *
+ * Signature: \code void callback(char ret_message[60], uint8_t length, void *user_data) \endcode
+ *
+ * This callback is called if new data is available. The message has
+ * a maximum size of 60 characters. The actual length of the message
+ * is given in addition.
+ *
+ * To enable this callback, use {@link rs232_enable_read_callback}.
+ */
+#define RS232_CALLBACK_READ_CALLBACK RS232_CALLBACK_READ // for backward compatibility
+
+/**
+ * \ingroup BrickletRS232
+ *
+ * Signature: \code void callback(uint8_t error, void *user_data) \endcode
+ *
+ * This callback is called if an error occurs.
+ * Possible errors are overrun, parity or framing error.
+ *
+ * .. versionadded:: 2.0.1$nbsp;(Plugin)
+ */
+#define RS232_CALLBACK_ERROR_CALLBACK RS232_CALLBACK_ERROR // for backward compatibility
+"""
+
         return defines
 
     def get_c_constants(self):

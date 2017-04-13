@@ -86,6 +86,27 @@ class {0} extends Device
         for packet in self.get_packets('callback'):
             doc = packet.get_php_formatted_doc([])
             cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
+
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            cbs += """
+    /**
+     * This callback is called if new data is available. The message has
+     * a maximum size of 60 characters. The actual length of the message
+     * is given in addition.
+     *
+     * To enable this callback, use BrickletRS232::enableReadCallback().
+     */
+    const CALLBACK_READ_CALLBACK = self::CALLBACK_READ; // for backward compatibility
+
+    /**
+     * This callback is called if an error occurs.
+     * Possible errors are overrun, parity or framing error.
+     *
+     * .. versionadded:: 2.0.1$nbsp;(Plugin)
+     */
+    const CALLBACK_ERROR_CALLBACK = self::CALLBACK_ERROR; // for backward compatibility
+"""
+
         return cbs + '\n'
 
     def get_php_function_id_definitions(self):

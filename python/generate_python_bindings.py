@@ -100,6 +100,10 @@ class {0}(Device):
         for packet in self.get_packets('callback'):
             cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id())
 
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            cbs += '    CALLBACK_READ_CALLBACK = 8 # for backward compatibility\n'
+            cbs += '    CALLBACK_ERROR_CALLBACK = 9 # for backward compatibility\n'
+
         cbs += '\n'
 
         for packet in self.get_packets('callback'):

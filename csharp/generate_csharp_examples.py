@@ -369,7 +369,7 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
 
     def get_csharp_source(self):
         template = r"""		// Register {function_comment_name} callback to function {function_camel_case_name}CB
-		{device_initial_name}.{function_camel_case_name} += {function_camel_case_name}CB;
+		{device_initial_name}.{function_camel_case_name}Callback += {function_camel_case_name}CB;
 """
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),

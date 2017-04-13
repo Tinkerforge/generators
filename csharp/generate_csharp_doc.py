@@ -39,8 +39,8 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
     def specialize_csharp_doc_function_links(self, text):
         def specializer(packet):
             if packet.get_type() == 'callback':
-                return ':csharp:func:`{1} <{0}::{1}>`'.format(packet.get_device().get_csharp_class_name(),
-                                                              packet.get_camel_case_name())
+                return ':csharp:func:`{1}Callback <{0}::{1}Callback>`'.format(packet.get_device().get_csharp_class_name(),
+                                                                              packet.get_camel_case_name())
             else:
                 return ':csharp:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_csharp_class_name(),
                                                                 packet.get_camel_case_name())
@@ -69,31 +69,23 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
         return methods
 
     def get_csharp_callbacks(self):
-        cb = {
-        'en': """
-.. csharp:function:: public event {0}::{1}({0} sender{2})
-
-{3}
-""",
-        'de': """
-.. csharp:function:: public event {0}::{1}({0} sender{2})
+        cb = """
+.. csharp:function:: public event {0}::{1}Callback({0} sender{2})
 
 {3}
 """
-        }
 
         cbs = ''
-        cls = self.get_csharp_class_name()
         for packet in self.get_packets('callback'):
             desc = packet.get_csharp_formatted_doc(2)
             params = packet.get_csharp_parameter_list()
             if len(params) > 0:
                 params = ', ' + params
 
-            cbs += common.select_lang(cb).format(cls,
-                                                 packet.get_camel_case_name(),
-                                                 params,
-                                                 desc)
+            cbs += cb.format(self.get_csharp_class_name(),
+                             packet.get_camel_case_name(),
+                             params,
+                             desc)
 
         return cbs
 

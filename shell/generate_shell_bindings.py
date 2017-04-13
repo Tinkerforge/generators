@@ -267,6 +267,13 @@ def dispatch_{0}_{1}(ctx, argv):
 
             functions.append(function)
 
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            entries.append("'read-callback': read")
+            callback_patterns.append('read-callback')
+
+            entries.append("'error-callback': error")
+            callback_patterns.append('error-callback')
+
         return '\n'.join(functions) + '\n\tcallbacks = {\n\t' + ',\n\t'.join(entries) + '\n\t}'
 
     def get_shell_dispatch_footer(self):

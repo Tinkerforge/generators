@@ -41,8 +41,8 @@ class LabVIEWDocDevice(common.Device):
     def specialize_labview_doc_function_links(self, text):
         def specializer(packet):
             if packet.get_type() == 'callback':
-                return ':labview:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_labview_class_name(),
-                                                              packet.get_camel_case_name())
+                return ':labview:func:`{1}Callback <{0}.{1}Callback>`'.format(packet.get_device().get_labview_class_name(),
+                                                                              packet.get_camel_case_name())
             else:
                 return ':labview:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_labview_class_name(),
                                                                 packet.get_camel_case_name())
@@ -101,7 +101,7 @@ class LabVIEWDocDevice(common.Device):
 
     def get_labview_callbacks(self):
         callback = """
-.. labview:function:: event {0}.{1}(sender{2})
+.. labview:function:: event {0}.{1}Callback(sender{2})
 
  :input sender: .NET Refnum ({0}){3}{4}
 """

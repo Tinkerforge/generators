@@ -32,11 +32,92 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import csharp_common
 
+# this is a list of all the Bricks and Bricklets support by C# bindings version
+# 2.1.12 released on 2017-01-25. this list is fixed and must never be changed.
+# the RS232 Bricklet is excluded, because it already used the new callback naming
+# format by accident. all other devices in this list also need to support the
+# old callback naming format for backward compatibility with existing programs
+LEGACY_CALLBACK_DEVICES = {
+'BrickDC',
+'BrickIMU',
+'BrickIMUV2',
+'BrickMaster',
+'BrickRED',
+'BrickServo',
+'BrickStepper',
+'BrickletAccelerometer',
+'BrickletAmbientLight',
+'BrickletAmbientLightV2',
+'BrickletAnalogIn',
+'BrickletAnalogInV2',
+'BrickletAnalogOut',
+'BrickletAnalogOutV2',
+'BrickletBarometer',
+'BrickletCAN',
+'BrickletCO2',
+'BrickletColor',
+'BrickletCurrent12',
+'BrickletCurrent25',
+'BrickletDistanceIR',
+'BrickletDistanceUS',
+'BrickletDualButton',
+'BrickletDualRelay',
+'BrickletDustDetector',
+'BrickletGPS',
+'BrickletHallEffect',
+'BrickletHumidity',
+'BrickletIndustrialAnalogOut',
+'BrickletIndustrialDigitalIn4',
+'BrickletIndustrialDigitalOut4',
+'BrickletIndustrialDual020mA',
+'BrickletIndustrialDualAnalogIn',
+'BrickletIndustrialQuadRelay',
+'BrickletIO16',
+'BrickletIO4',
+'BrickletJoystick',
+'BrickletLaserRangeFinder',
+'BrickletLCD16x2',
+'BrickletLCD20x4',
+'BrickletLEDStrip',
+'BrickletLine',
+'BrickletLinearPoti',
+'BrickletLoadCell',
+'BrickletMoisture',
+'BrickletMotionDetector',
+'BrickletMultiTouch',
+'BrickletNFCRFID',
+'BrickletOLED128x64',
+'BrickletOLED64x48',
+'BrickletPiezoBuzzer',
+'BrickletPiezoSpeaker',
+'BrickletPTC',
+'BrickletRealTimeClock',
+'BrickletRemoteSwitch',
+'BrickletRGBLED',
+'BrickletRotaryEncoder',
+'BrickletRotaryPoti',
+#'BrickletRS232',
+'BrickletSegmentDisplay4x7',
+'BrickletSolidStateRelay',
+'BrickletSoundIntensity',
+'BrickletTemperature',
+'BrickletTemperatureIR',
+'BrickletThermocouple',
+'BrickletTilt',
+'BrickletUVLight',
+'BrickletVoltage',
+'BrickletVoltageCurrent'
+}
+
 class CSharpBindingsDevice(csharp_common.CSharpDevice):
     def specialize_csharp_doc_function_links(self, text):
         def specializer(packet):
-            return '<see cref="Tinkerforge.{0}.{1}"/>'.format(packet.get_device().get_csharp_class_name(),
-                                                              packet.get_camel_case_name())
+            if packet.get_type() == 'callback':
+                return '<see cref="Tinkerforge.{0}.{1}Callback"/>'.format(packet.get_device().get_csharp_class_name(),
+                                                                          packet.get_camel_case_name())
+            else:
+                return '<see cref="Tinkerforge.{0}.{1}"/>'.format(packet.get_device().get_csharp_class_name(),
+                                                                  packet.get_camel_case_name())
 
         return self.specialize_doc_rst_links(text, specializer)
 
@@ -79,18 +160,33 @@ namespace Tinkerforge
 \t\t/// <summary>
 \t\t///  {2}
 \t\t/// </summary>
-\t\tpublic event {0}EventHandler {0};
+\t\tpublic event {0}EventHandler {0}Callback;
 \t\t/// <summary>
 \t\t/// </summary>
 \t\tpublic delegate void {0}EventHandler({3} sender{1});
 """
+        cb_legacy = """
+\t\t/// <summary>
+\t\t/// </summary>
+\t\tpublic event {0}EventHandler {0} // for backward compatibility
+\t\t{{
+\t\t\tadd {{ {0}Callback += value; }}
+\t\t\tremove {{ {0}Callback -= value; }}
+\t\t}}
+"""
+
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
             parameter = packet.get_csharp_parameter_list()
             doc = packet.get_csharp_formatted_doc()
+
             if parameter != '':
                 parameter = ', ' + parameter
+
             cbs += cb.format(name, parameter, doc, self.get_csharp_class_name())
+
+            if self.get_csharp_class_name() in LEGACY_CALLBACK_DEVICES:
+                cbs += cb_legacy.format(name)
 
         return cbs
 
@@ -133,7 +229,7 @@ namespace Tinkerforge
 
     def get_csharp_constructor(self):
         cbs = []
-        cb = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1});'
+        cb = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1}Callback);'
         con = """
 \t\t/// <summary>
 \t\t///  Creates an object with the unique device ID <c>uid</c> and adds  it to
@@ -182,9 +278,9 @@ namespace Tinkerforge
         cb = """
 \t\t/// <summary>
 \t\t/// </summary>
-\t\tprotected void On{0}(byte[] response)
+\t\tprotected void On{0}Callback(byte[] response)
 \t\t{{
-{1}\t\t\tvar handler = {0};
+{1}\t\t\tvar handler = {0}Callback;
 \t\t\tif(handler != null)
 \t\t\t{{
 \t\t\t\thandler(this{3});
@@ -305,6 +401,13 @@ namespace Tinkerforge
         return methods
 
     def get_csharp_source(self):
+        function_names = self.get_packet_names('function')
+        callback_names = self.get_packet_names('callback')
+
+        for callback_name in callback_names:
+            if callback_name + ' Callback' in function_names:
+                raise common.GeneratorError("Generated callback name '{0}[ Callback]' collides with function name '{0} Callback'".format(callback_name))
+
         source  = self.get_csharp_import()
         source += self.get_csharp_class()
         source += self.get_csharp_function_id_definitions()

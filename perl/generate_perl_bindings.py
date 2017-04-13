@@ -104,6 +104,29 @@ use constant CALLBACK_{0} => {1};"""
         for packet in self.get_packets('callback'):
             callbacks.append(callback.format(packet.get_upper_case_name(), packet.get_function_id()))
 
+
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            callbacks.append("""
+=item CALLBACK_READ_CALLBACK
+
+This constant is used with the register_callback() subroutine to specify
+the CALLBACK_READ_CALLBACK callback.
+
+=cut
+
+use constant CALLBACK_READ_CALLBACK => &CALLBACK_READ; # for backward compatibility
+""")
+            callbacks.append("""
+=item CALLBACK_ERROR_CALLBACK
+
+This constant is used with the register_callback() subroutine to specify
+the CALLBACK_ERROR_CALLBACK callback.
+
+=cut
+
+use constant CALLBACK_ERROR_CALLBACK => &CALLBACK_ERROR; # for backward compatibility
+""")
+
         function_ids = []
         function_id = """
 =item FUNCTION_{0}

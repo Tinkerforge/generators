@@ -109,10 +109,28 @@ namespace Tinkerforge
 		public delegate void EnumerateEventHandler(IPConnection sender, string uid, string connectedUid,
 		                                           char position, short[] hardwareVersion, short[] firmwareVersion,
 		                                           int deviceIdentifier, short enumerationType);
-		public event ConnectedEventHandler Connected;
+
+		public event ConnectedEventHandler ConnectedCallback;
 		public delegate void ConnectedEventHandler(IPConnection sender, short connectReason);
-		public event DisconnectedEventHandler Disconnected;
+
+		/// <summary>
+		/// </summary>
+		public event ConnectedEventHandler Connected // for backward compatibility
+		{
+			add { ConnectedCallback += value; }
+			remove { ConnectedCallback -= value; }
+		}
+
+		public event DisconnectedEventHandler DisconnectedCallback;
 		public delegate void DisconnectedEventHandler(IPConnection sender, short disconnectReason);
+
+		/// <summary>
+		/// </summary>
+		public event DisconnectedEventHandler Disconnected // for backward compatibility
+		{
+			add { DisconnectedCallback += value; }
+			remove { DisconnectedCallback -= value; }
+		}
 
 		class CallbackQueueObject
 		{
@@ -590,7 +608,7 @@ namespace Tinkerforge
 			switch (cqo.functionID)
 			{
 				case IPConnection.CALLBACK_CONNECTED:
-					var handler = Connected;
+					var handler = ConnectedCallback;
 					if (handler != null)
 					{
 						handler(this, cqo.parameter);
@@ -623,7 +641,7 @@ namespace Tinkerforge
 
 					Thread.Sleep(100);
 
-					var disconHandler = Disconnected;
+					var disconHandler = DisconnectedCallback;
 					if (disconHandler != null)
 					{
 						disconHandler(this, cqo.parameter);

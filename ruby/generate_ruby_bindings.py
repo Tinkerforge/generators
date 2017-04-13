@@ -71,6 +71,12 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         for packet in self.get_packets('callback'):
             doc = packet.get_ruby_formatted_doc()
             cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
+
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            cbs += '\n'
+            cbs += '    CALLBACK_READ_CALLBACK = 8 # :nodoc: for backward compatibility\n'
+            cbs += '    CALLBACK_ERROR_CALLBACK = 9 # :nodoc: for backward compatibility\n'
+
         return cbs
 
     def get_ruby_function_id_definitions(self):

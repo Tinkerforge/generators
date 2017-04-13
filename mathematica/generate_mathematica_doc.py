@@ -41,8 +41,8 @@ class MathematicaDocDevice(common.Device):
     def specialize_mathematica_doc_function_links(self, text):
         def specializer(packet):
             if packet.get_type() == 'callback':
-                return ':mathematica:func:`{1} <{0}@{1}>`'.format(packet.get_device().get_mathematica_class_name(),
-                                                                  packet.get_camel_case_name())
+                return ':mathematica:func:`{1}Callback <{0}@{1}Callback>`'.format(packet.get_device().get_mathematica_class_name(),
+                                                                                  packet.get_camel_case_name())
             else:
                 return ':mathematica:func:`{1}[] <{0}@{1}>`'.format(packet.get_device().get_mathematica_class_name(),
                                                                     packet.get_camel_case_name())
@@ -85,7 +85,7 @@ class MathematicaDocDevice(common.Device):
 
     def get_mathematica_callbacks(self):
         callback = """
-.. mathematica:function:: event {0}@{1}[sender{2}]
+.. mathematica:function:: event {0}@{1}Callback[sender{2}]
 
  :param sender: NETObject[{0}]{3}{4}
 """

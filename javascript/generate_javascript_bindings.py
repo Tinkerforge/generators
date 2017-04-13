@@ -52,6 +52,11 @@ var Device = require('./Device');
         for packet in self.get_packets('callback'):
             callback_constants += callback_constant_statement.format(packet.get_upper_case_name(),
                                                                      packet.get_function_id())
+
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            callback_constants += 'BrickletRS232.CALLBACK_READ_CALLBACK = 8; // for backward compatibility\n'
+            callback_constants += 'BrickletRS232.CALLBACK_ERROR_CALLBACK = 9; // for backward compatibility\n'
+
         function_constants = ''
         function_constant_statement = self.get_javascript_class_name()+'.FUNCTION_{0} = {1};\n'
         for packet in self.get_packets('function'):

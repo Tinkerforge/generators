@@ -1316,20 +1316,29 @@ class Device(NameMixin):
             if packet.get_function_id() >= 0:
                 self.all_packets_without_doc_only.append(packet)
 
-        packet_names = set()
+        function_names = set()
+        callback_names = set()
 
         for packet in self.all_packets:
-            if packet.get_name() in packet_names:
-                raise GeneratorError('Packet name is not unique: ' + packet.get_name())
-            else:
-                packet_names.add(packet.get_name())
-
             if packet.get_type() == 'function':
+                if packet.get_name() in function_names:
+                    raise GeneratorError('Function name is not unique: ' + packet.get_name())
+                else:
+                    function_names.add(packet.get_name())
+
                 self.all_function_packets.append(packet)
 
                 if packet.get_function_id() >= 0:
                     self.all_function_packets_without_doc_only.append(packet)
             elif packet.get_type() == 'callback':
+                if 'Callback' in packet.get_name():
+                    raise GeneratorError("Callback name cannot contain 'Callback': " + packet.get_name())
+
+                if packet.get_name() in callback_names:
+                    raise GeneratorError('Callback name is not unique: ' + packet.get_name())
+                else:
+                    callback_names.add(packet.get_name())
+
                 self.callback_packets.append(packet)
             else:
                 raise GeneratorError('Invalid packet type ' + packet.get_type())

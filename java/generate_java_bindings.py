@@ -68,6 +68,9 @@ import java.util.Arrays;
 import java.util.List;
 """
 
+        if self.get_long_display_name() == 'RS232 Bricklet' and not self.get_generator().is_octave():
+            include += 'import java.util.ArrayList;\n'
+
         return include.format(self.get_generator().get_header_comment('asterisk'))
 
     def get_java_class(self):
@@ -215,6 +218,38 @@ public class {0} extends Device {{
 
             doc = packet.get_java_formatted_doc()
             cbs += cb.format(name, name_lower, parameter, doc)
+
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            if self.get_generator().is_matlab() or self.get_generator().is_octave():
+                read_parameter = 'ReadCallbackData data'
+                error_parameter = 'ErrorCallbackData data'
+            else:
+                read_parameter = 'char[] message, short length'
+                error_parameter = 'short error'
+
+            cbs += """
+\t/**
+\t * This listener is called if new data is available. The message has
+\t * a maximum size of 60 characters. The actual length of the message
+\t * is given in addition.
+\t *
+\t * To enable this listener, use {{@link BrickletRS232#enableReadCallback()}}.
+\t */
+\tpublic interface ReadCallbackListener extends DeviceListener {{ // for backward compatibility
+\t\tpublic void readCallback({0});
+\t}}
+
+\t/**
+\t * This listener is called if an error occurs.
+\t * Possible errors are overrun, parity or framing error.
+\t *
+\t * .. versionadded:: 2.0.1$nbsp;(Plugin)
+\t */
+\tpublic interface ErrorCallbackListener extends DeviceListener {{ // for backward compatibility
+\t\tpublic void errorCallback({1});
+\t}}
+""".format(read_parameter, error_parameter)
+
         return cbs
 
     def get_java_response_expected(self):
@@ -339,49 +374,159 @@ public class {0} extends Device {{
 \t/**
 \t * Adds a {0} listener.
 \t */
-\tpublic void add{0}Listener({0}Listener listener) {{
+\tpublic void add{0}{2}({1} listener) {{
 \t\tlistener{0}.add(listener);
 \t}}
 
 \t/**
 \t * Removes a {0} listener.
 \t */
-\tpublic void remove{0}Listener({0}Listener listener) {{
+\tpublic void remove{0}{2}({1} listener) {{
 \t\tlistener{0}.remove(listener);
 \t}}
 """
 
-        l = []
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
-            listeners += listener.format(name)
-        return listeners + '}\n'
 
-    def get_octave_add_listener(self):
-        if self.get_callback_count() == 0:
-            return '}\n'
+            if self.get_generator().is_octave():
+                listener_type = 'OctaveReference'
+                suffix = 'Callback'
+            else:
+                listener_type = name + 'Listener'
+                suffix = 'Listener'
 
-        listeners = ''
-        listener = """
-\t/**
-\t * Adds a {0} listener.
-\t */
-\tpublic void add{0}Callback(OctaveReference listener) {{
-\t\tlistener{0}.add(listener);
-\t}}
+            listeners += listener.format(name, listener_type, suffix)
 
-\t/**
-\t * Removes a {0} listener.
-\t */
-\tpublic void remove{0}Callback(OctaveReference listener) {{
-\t\tlistener{0}.remove(listener);
-\t}}
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            if self.get_generator().is_octave():
+                listeners += """
+	/**
+	 * Adds a ReadCallback listener.
+	 */
+	public void addReadCallbackCallback(OctaveReference listener) { // for backward compatibility
+		listenerRead.add(listener);
+	}
+
+	/**
+	 * Removes a ReadCallback listener.
+	 */
+	public void removeReadCallbackCallback(OctaveReference listener) { // for backward compatibility
+		listenerRead.remove(listener);
+	}
+
+	/**
+	 * Adds a ErrorCallback listener.
+	 */
+	public void addErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
+		listenerError.add(listener);
+	}
+
+	/**
+	 * Removes a ErrorCallback listener.
+	 */
+	public void removeErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
+		listenerError.remove(listener);
+	}
 """
+            else:
+                if self.get_generator().is_matlab():
+                    read_parameters = 'ReadCallbackData data'
+                    read_forward = 'listener.readCallback(data);'
+                    error_parameters = 'ErrorCallbackData data'
+                    error_forward = 'listener.errorCallback(data);'
+                else:
+                    read_parameters = 'char[] message, short length'
+                    read_forward = 'listener.readCallback(message, length);'
+                    error_parameters = 'short error'
+                    error_forward = 'listener.errorCallback(error);'
 
-        l = []
-        for packet in self.get_packets('callback'):
-            name = packet.get_camel_case_name()
-            listeners += listener.format(name)
+                listeners += """
+	private class ReadListenerForwarder implements ReadListener {{
+		public ReadCallbackListener listener;
+
+		public ReadListenerForwarder(ReadCallbackListener listener) {{
+			this.listener = listener;
+		}}
+
+		public void read({0}) {{
+			{1}
+		}}
+	}}
+
+	private List<ReadListenerForwarder> readListenerForwarders = new ArrayList<ReadListenerForwarder>();
+
+	/**
+	 * Adds a ReadCallback listener.
+	 */
+	public void addReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
+		synchronized (readListenerForwarders) {{
+			ReadListenerForwarder forwarder = new ReadListenerForwarder(listener);
+
+			readListenerForwarders.add(forwarder);
+			listenerRead.add(forwarder);
+		}}
+	}}
+
+	/**
+	 * Removes a ReadCallback listener.
+	 */
+	public void removeReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
+		synchronized (readListenerForwarders) {{
+			for (ReadListenerForwarder forwarder: readListenerForwarders) {{
+				if (forwarder.listener.equals(listener)) {{
+					readListenerForwarders.remove(forwarder);
+					listenerRead.remove(forwarder);
+
+					break;
+				}}
+			}}
+		}}
+	}}
+
+	private class ErrorListenerForwarder implements ErrorListener {{
+		public ErrorCallbackListener listener;
+
+		public ErrorListenerForwarder(ErrorCallbackListener listener) {{
+			this.listener = listener;
+		}}
+
+		public void error({2}) {{
+			{3}
+		}}
+	}}
+
+	private List<ErrorListenerForwarder> errorListenerForwarders = new ArrayList<ErrorListenerForwarder>();
+
+	/**
+	 * Adds a ErrorCallback listener.
+	 */
+	public void addErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
+		synchronized (errorListenerForwarders) {{
+			ErrorListenerForwarder forwarder = new ErrorListenerForwarder(listener);
+
+			errorListenerForwarders.add(forwarder);
+			listenerError.add(forwarder);
+		}}
+	}}
+
+	/**
+	 * Removes a ErrorCallback listener.
+	 */
+	public void removeErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
+		synchronized (errorListenerForwarders) {{
+			for (ErrorListenerForwarder forwarder: errorListenerForwarders) {{
+				if (forwarder.listener.equals(listener)) {{
+					errorListenerForwarders.remove(forwarder);
+					listenerError.remove(forwarder);
+
+					break;
+				}}
+			}}
+		}}
+	}}
+""".format(read_parameters, read_forward, error_parameters, error_forward)
+
         return listeners + '}\n'
 
     def get_java_function_id_definitions(self):
@@ -591,11 +736,7 @@ public class {0} extends Device {{
             source += self.get_java_callback_listener_definitions()
 
         source += self.get_java_methods()
-
-        if self.get_generator().is_octave():
-            source += self.get_octave_add_listener()
-        else:
-            source += self.get_java_add_listener()
+        source += self.get_java_add_listener()
 
         return source
 

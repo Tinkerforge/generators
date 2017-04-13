@@ -84,7 +84,7 @@ of message is 60. If the length is given as 0, there was no
 new data available.
 
 Instead of polling with this function, you can also use
-callbacks. See :func:`Enable Read Callback` and :cb:`Read Callback` callback.
+callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
 """,
 'de':
 """
@@ -94,7 +94,7 @@ neuen Daten verfügbar.
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich
 Callbacks zu nutzen. Siehe :func:`Enable Read Callback` und
-:cb:`Read Callback` Callback.
+:cb:`Read` Callback.
 """
 }]
 })
@@ -107,13 +107,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :cb:`Read Callback` callback.
+Enables the :cb:`Read` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :cb:`Read Callback` Callback.
+Aktiviert den :cb:`Read` Callback.
 
 Im Startzustand ist der Callback deaktiviert.
 """
@@ -128,13 +128,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :cb:`Read Callback` callback.
+Disables the :cb:`Read` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Deaktiviert den :cb:`Read Callback` Callback.
+Deaktiviert den :cb:`Read` Callback.
 
 Im Startzustand ist der Callback deaktiviert.
 """
@@ -149,12 +149,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :cb:`Read Callback` callback is enabled,
+Returns *true* if the :cb:`Read` callback is enabled,
 *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls :cb:`Read Callback` Callback aktiviert ist,
+Gibt *true* zurück falls :cb:`Read` Callback aktiviert ist,
 *false* sonst.
 """
 }]
@@ -444,7 +444,7 @@ The current buffer content is lost if this function is called.
 The send buffer holds data that is given by :func:`Write` and
 can not be written yet. The receive buffer holds data that is
 received through RS485 but could not yet be send to the
-user, either by :func:`Read` or through :cb:`Read Callback` callback.
+user, either by :func:`Read` or through :cb:`Read` callback.
 
 The default configuration is 5120 byte (5kb) per buffer.
 """,
@@ -459,7 +459,7 @@ Der aktuelle Bufferinhalt geht bei einem Aufruf dieser Funktion verloren.
 Der Sendenbuffer hält die Daten welche über :func:`Write` übergeben und noch
 nicht geschrieben werden konnten. Der Empfangsbuffer hält Daten welche
 über RS485 empfangen wurden aber noch nicht über :func:`Read` oder
-:cb:`Read Callback` Callback an ein Nutzerprogramm übertragen werden konnten.
+:cb:`Read` Callback an ein Nutzerprogramm übertragen werden konnten.
 
 Die Standardkonfiguration ist 5120 Byte (5kb) pro Buffer.
 """
@@ -1122,7 +1122,7 @@ particular request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Read Callback',
+'name': 'Read',
 'elements': [('Message', 'char', 60, 'out'),
              ('Length', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],

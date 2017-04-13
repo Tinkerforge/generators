@@ -73,7 +73,7 @@ of message is 60. If the length is given as 0, there was no
 new data available.
 
 Instead of polling with this function, you can also use
-callbacks. See :func:`Enable Read Callback` and :cb:`Read Callback` callback.
+callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
 """,
 'de':
 """
@@ -83,7 +83,7 @@ neuen Daten verfügbar.
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich
 Callbacks zu nutzen. Siehe :func:`Enable Read Callback` und
-:cb:`Read Callback` Callback.
+:cb:`Read` Callback.
 """
 }]
 })
@@ -96,13 +96,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :cb:`Read Callback` callback.
+Enables the :cb:`Read` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :cb:`Read Callback` Callback.
+Aktiviert den :cb:`Read` Callback.
 
 Im Startzustand ist der Callback deaktiviert
 """
@@ -117,13 +117,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :cb:`Read Callback` callback.
+Disables the :cb:`Read` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Deaktiviert den :cb:`Read Callback` Callback.
+Deaktiviert den :cb:`Read` Callback.
 
 Im Startzustand ist der Callback deaktiviert
 """
@@ -138,12 +138,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :cb:`Read Callback` callback is enabled,
+Returns *true* if the :cb:`Read` callback is enabled,
 *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls :cb:`Read Callback` Callback aktiviert ist,
+Gibt *true* zurück falls :cb:`Read` Callback aktiviert ist,
 *false* sonst.
 """
 }]
@@ -257,7 +257,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Read Callback',
+'name': 'Read',
 'elements': [('Message', 'char', 60, 'out'),
              ('Length', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -283,7 +283,7 @@ Dieser Callback kann durch :func:`Enable Read Callback` aktiviert werden.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Error Callback',
+'name': 'Error',
 'elements': [('Error', 'uint8', 1, 'out', ('Error', [('Overrun', 1),
                                                      ('Parity', 2),
                                                      ('Framing', 4)]))],

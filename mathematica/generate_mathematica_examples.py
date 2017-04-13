@@ -314,11 +314,11 @@ class MathematicaExampleCallbackFunction(common.ExampleCallbackFunction):
 {prints}{extra_message}
  ]
 
-AddEventHandler[{device_initial_name}@{function_camel_case_name},{function_camel_case_name}CB]
+AddEventHandler[{device_initial_name}@{function_camel_case_name}Callback,{function_camel_case_name}CB]
 """
         template2B = r"""{function_camel_case_name}CB[sender_{parameters}]:=
 {prints}{extra_message}
-AddEventHandler[{device_initial_name}@{function_camel_case_name},{function_camel_case_name}CB]
+AddEventHandler[{device_initial_name}@{function_camel_case_name}Callback,{function_camel_case_name}CB]
 """
         override_comment = self.get_formatted_override_comment('(*{0}*)', None, '*)\n(*')
 

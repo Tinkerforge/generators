@@ -210,6 +210,26 @@ uses
                                      packet.get_headless_camel_case_name(),
                                      doc))
 
+        if self.get_long_display_name() == 'RS232 Bricklet':
+            props.append("""
+    /// <summary>
+    ///  This callback is called if new data is available. The message has
+    ///  a maximum size of 60 characters. The actual length of the message
+    ///  is given in addition.
+    ///
+    ///  To enable this callback, use <see cref="BrickletRS232.TBrickletRS232.EnableReadCallback"/>.
+    /// </summary>
+    property OnReadCallback: TBrickletRS232NotifyRead read readCallback write readCallback; { for backward compatibility }
+
+    /// <summary>
+    ///  This callback is called if an error occurs.
+    ///  Possible errors are overrun, parity or framing error.
+    ///
+    ///  .. versionadded:: 2.0.1$nbsp;(Plugin)
+    /// </summary>
+    property OnErrorCallback: TBrickletRS232NotifyError read errorCallback write errorCallback; { for backward compatibility }
+""")
+
         return  cls + \
                 '  private\n' + \
                 callbacks + \
