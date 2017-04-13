@@ -261,6 +261,37 @@ class {0}(Device):
         return stream_result
 """
         # FIXME: move the bulk of this logic to a helper function in ip_connection.py
+        stream_in_short_write_template = """
+    def {underscore_name}(self{high_level_parameter_list}):
+        stream_extra = ()
+        stream_total_written = 0
+        stream_total_length = len(data)
+        stream_chunk_offset = 0
+
+        with self.stream_lock:
+            while stream_chunk_offset < stream_total_length:
+                stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
+
+                if len(stream_chunk_data) < {chunk_cardinality}:
+                    stream_chunk_data.extend([{chunk_padding}]*({chunk_cardinality} - len(stream_chunk_data)))
+
+                stream_result = self.{underscore_name}_low_level({parameter_list})
+                stream_extra = stream_result[:-1] # FIXME: validate that the extra of all the low-level calls is identical
+                stream_chunk_written = stream_result[-1]
+                stream_total_written += stream_chunk_written
+
+                # either last chunk or short write
+                if stream_chunk_written < {chunk_cardinality}:
+                    break
+
+                stream_chunk_offset += {chunk_cardinality}
+
+        if len(stream_extra) > 0:
+            return stream_extra + (stream_total_written,) # FIXME: need to return this as a namedtuple
+        else:
+            return stream_total_written
+"""
+        # FIXME: move the bulk of this logic to a helper function in ip_connection.py
         stream_out_template = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_extra = ()
@@ -310,7 +341,7 @@ class {0}(Device):
                 stream_data += stream_result.stream_chunk_data
 
         if len(stream_extra) > 0:
-            return stream_extra + (stream_data[:stream_total_length],)
+            return stream_extra + (stream_data[:stream_total_length],) # FIXME: need to return this as a namedtuple
         else:
             return stream_data[:stream_total_length]
 """
@@ -320,11 +351,16 @@ class {0}(Device):
             stream_out = packet.get_high_level('stream_out')
 
             if stream_in != None:
-                methods += stream_in_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
-                                                     parameter_list=packet.get_python_parameter_list(),
-                                                     high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
-                                                     chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
-                                                     chunk_padding=stream_in.get_chunk_data_element().get_python_default_value())
+                if stream_in.get_short_write():
+                    template = stream_in_short_write_template
+                else:
+                    template = stream_in_template
+
+                methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                           parameter_list=packet.get_python_parameter_list(),
+                                           high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
+                                           chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
+                                           chunk_padding=repr(stream_in.get_chunk_data_element().get_python_default_value()))
             elif stream_out != None:
                 methods += stream_out_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                                       parameter_list=packet.get_python_parameter_list(),

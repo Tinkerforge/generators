@@ -37,32 +37,30 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': 'Write',
-'elements': [('Message', 'char', 60, 'in'),
-             ('Length', 'uint8', 1, 'in'),
-             ('Written', 'uint8', 1, 'out')],
+'name': 'Write Low Level',
+'elements': [('Stream Total Length', 'uint16', 1, 'in'),
+             ('Stream Chunk Offset', 'uint16', 1, 'in'),
+             ('Stream Chunk Data', 'char', 59, 'in'),
+             ('Stream Chunk Written', 'uint8', 1, 'out')],
+'high_level': {'stream_in': {'short_write': True}},
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['llf', {
 'en':
 """
-Writes a string of up to 60 characters to the RS485 interface. The string
-can be binary data, ASCII or similar is not necessary.
+Writes characters to the RS485 interface. The characters can be binary data,
+ASCII or similar is not necessary.
 
-The length of the string has to be given as an additional parameter.
-
-The return value is the number of bytes that could be written.
+The return value is the number of characters that were written.
 
 See :func:`Set RS485 Configuration` for configuration possibilities
 regarding baudrate, parity and so on.
 """,
 'de':
 """
-Schreibt einen String aus bis zu 60 Zeichen auf die RS485-Schnittstelle. Der
-String kann aus Binärdaten bestehen, ASCII o.ä. ist nicht notwendig.
+Schreibt Zeichen auf die RS485-Schnittstelle. Die Zeichen können Binärdaten
+sein, ASCII o.ä. ist nicht notwendig.
 
-Die Länge des Strings muss als ein zusätzlicher Parameter angegeben werden.
-
-Der Rückgabewert ist die Anzahl der Zeichen die geschrieben werden konnten.
+Der Rückgabewert ist die Anzahl der Zeichen die geschrieben wurden.
 
 Siehe :func:`Set RS485 Configuration` für Konfigurationsmöglichkeiten
 bezüglich Baudrate, Parität usw.
@@ -72,25 +70,24 @@ bezüglich Baudrate, Parität usw.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Read',
-'elements': [('Message', 'char', 60, 'out'),
-             ('Length', 'uint8', 1, 'out')],
+'name': 'Read Low Level',
+'elements': [('Length', 'uint16', 1, 'in'),
+             ('Stream Total Length', 'uint16', 1, 'out'),
+             ('Stream Chunk Offset', 'uint16', 1, 'out'),
+             ('Stream Chunk Data', 'char', 60, 'out')],
+'high_level': {'stream_out': {}},
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['llf', {
 'en':
 """
-Returns the currently buffered message. The maximum length
-of message is 60. If the length is given as 0, there was no
-new data available.
+Returns up to *length* characters from receive buffer.
 
 Instead of polling with this function, you can also use
 callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
 """,
 'de':
 """
-Gibt die aktuell gespeicherte Nachricht zurück. Die maximale Länge
-beträgt 60. Wenn die Länge als 0 gegeben wird, waren keine
-neuen Daten verfügbar.
+Gibt bis zu *length* Zeichen aus dem Empfangsbuffer zurück.
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich
 Callbacks zu nutzen. Siehe :func:`Enable Read Callback` und
@@ -903,13 +900,13 @@ arguments of the callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Write Multiple Coils Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Slave Address', 'uint8', 1, 'in'),
+'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
              ('Count', 'uint16', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'bool', 432, 'in')],
+             ('Stream Chunk Data', 'bool', 432, 'in'),
+             ('Request ID', 'uint8', 1, 'out')],
 'high_level': {'stream_in': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
@@ -964,13 +961,13 @@ arguments of the callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Write Multiple Registers Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Slave Address', 'uint8', 1, 'in'),
+'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint16', 1, 'in'),
              ('Count', 'uint16', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'uint16', 27, 'in')],
+             ('Stream Chunk Data', 'uint16', 27, 'in'),
+             ('Request ID', 'uint8', 1, 'out')],
 'high_level': {'stream_in': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
@@ -1122,24 +1119,22 @@ particular request.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Read',
-'elements': [('Message', 'char', 60, 'out'),
-             ('Length', 'uint8', 1, 'out')],
+'name': 'Read Low Level',
+'elements': [('Stream Total Length', 'uint16', 1, 'out'),
+             ('Stream Chunk Offset', 'uint16', 1, 'out'),
+             ('Stream Chunk Data', 'char', 60, 'out')],
+'high_level': {'stream_out': {}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
-This callback is called if new data is available. The message has
-a maximum size of 60 characters. The actual length of the message
-is given in addition.
+This callback is called if new data is available.
 
 To enable this callback, use :func:`Enable Read Callback`.
 """,
 'de':
 """
 Dieser Callback wird aufgerufen wenn neue Daten zur Verfügung stehen.
-Die Nachricht hat eine Maximalgröße von 60 Zeichen. Die Länge
-der Nachricht wird zusätzlich übergeben.
 
 Dieser Callback kann durch :func:`Enable Read Callback` aktiviert werden.
 """

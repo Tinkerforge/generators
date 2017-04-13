@@ -1026,18 +1026,6 @@ class HighLevelStream(object):
     def get_packet(self): # parent
         return self.packet
 
-    def get_total_length_element(self):
-        if 'fixed_total_length' in self.raw_data:
-            return None
-        else:
-            return self.packet.all_elements[-3]
-
-    def get_chunk_offset_element(self):
-        return self.packet.all_elements[-2]
-
-    def get_chunk_data_element(self):
-        return self.packet.all_elements[-1]
-
     def get_fixed_total_length(self):
         return self.raw_data.get('fixed_total_length', None)
 
@@ -1046,48 +1034,63 @@ class HighLevelStreamIn(HighLevelStream):
         HighLevelStream.__init__(self, raw_data, packet)
 
         if 'fixed_total_length' not in raw_data and \
-           packet.all_elements[-3].get_name() != 'Stream Total Length':
+           packet.in_elements[-3].get_name() != 'Stream Total Length':
             raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
 
-        if packet.all_elements[-2].get_name() != 'Stream Chunk Offset' or \
-           packet.all_elements[-1].get_name() != 'Stream Chunk Data':
+        if packet.in_elements[-2].get_name() != 'Stream Chunk Offset' or \
+           packet.in_elements[-1].get_name() != 'Stream Chunk Data':
             raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
 
         if 'fixed_total_length' not in raw_data and \
-           packet.all_elements[-3].get_type() != packet.all_elements[-2].get_type():
+           packet.in_elements[-3].get_type() != packet.in_elements[-2].get_type():
             raise GeneratorError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
 
-        if 'fixed_total_length' not in raw_data and \
-           packet.all_elements[-3].get_direction() != 'in':
-            raise GeneratorError("Invalid element direction for high-level feature 'stream_in'")
+        if raw_data.get('short_write', False) and \
+           packet.out_elements[-1].get_name() != 'Stream Chunk Written':
+            raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
 
-        if packet.all_elements[-2].get_direction() != 'in' or \
-           packet.all_elements[-1].get_direction() != 'in':
-            raise GeneratorError("Invalid element direction for high-level feature 'stream_in'")
+    def get_total_length_element(self):
+        if 'fixed_total_length' in self.raw_data:
+            return None
+        else:
+            return self.packet.in_elements[-3]
+
+    def get_chunk_offset_element(self):
+        return self.packet.in_elements[-2]
+
+    def get_chunk_data_element(self):
+        return self.packet.in_elements[-1]
+
+    def get_short_write(self):
+        return self.raw_data.get('short_write', False)
 
 class HighLevelStreamOut(HighLevelStream):
     def __init__(self, raw_data, packet):
         HighLevelStream.__init__(self, raw_data, packet)
 
         if 'fixed_total_length' not in raw_data and \
-           packet.all_elements[-3].get_name() != 'Stream Total Length':
+           packet.out_elements[-3].get_name() != 'Stream Total Length':
             raise GeneratorError("Invalid element names for high-level feature 'stream_out'")
 
-        if packet.all_elements[-2].get_name() != 'Stream Chunk Offset' or \
-           packet.all_elements[-1].get_name() != 'Stream Chunk Data':
+        if packet.out_elements[-2].get_name() != 'Stream Chunk Offset' or \
+           packet.out_elements[-1].get_name() != 'Stream Chunk Data':
             raise GeneratorError("Invalid element names for high-level feature 'stream_out'")
 
         if 'fixed_total_length' not in raw_data and \
-           packet.all_elements[-3].get_type() != packet.all_elements[-2].get_type():
+           packet.out_elements[-3].get_type() != packet.all_elements[-2].get_type():
             raise GeneratorError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
 
-        if 'fixed_total_length' not in raw_data and \
-           packet.all_elements[-3].get_direction() != 'out':
-            raise GeneratorError("Invalid element direction for high-level feature 'stream_out'")
+    def get_total_length_element(self):
+        if 'fixed_total_length' in self.raw_data:
+            return None
+        else:
+            return self.packet.out_elements[-3]
 
-        if packet.all_elements[-2].get_direction() != 'out' or \
-           packet.all_elements[-1].get_direction() != 'out':
-            raise GeneratorError("Invalid element direction for high-level feature 'stream_out'")
+    def get_chunk_offset_element(self):
+        return self.packet.out_elements[-2]
+
+    def get_chunk_data_element(self):
+        return self.packet.out_elements[-1]
 
 class Packet(NameMixin):
     valid_types = set(['int8',

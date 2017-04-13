@@ -49,10 +49,10 @@ class PythonPacket(common.Packet):
     def get_python_high_level_parameter_list(self):
         params = []
         elements = self.get_elements('in')
-        stream = self.get_high_level('stream_*')
+        stream_in = self.get_high_level('stream_in')
 
-        if stream != None:
-            if stream.get_fixed_total_length() == None:
+        if stream_in != None:
+            if stream_in.get_fixed_total_length() == None:
                 elements = elements[:-3]
             else:
                 elements = elements[:-2]
@@ -60,7 +60,7 @@ class PythonPacket(common.Packet):
         for element in elements:
             params.append(element.get_underscore_name())
 
-        if self.get_high_level('stream_in') != None:
+        if stream_in != None:
             params.append('data') # FIXME: how to get a proper name here?
 
         return ', '.join(params)
@@ -107,8 +107,8 @@ class PythonElement(common.Element):
         'uint64': 0,
         'float':  0.0,
         'bool':   False,
-        'char':   ' ',
-        'string': ' '
+        'char':   '\0',
+        'string': '\0'
     }
 
     def get_python_type(self):
