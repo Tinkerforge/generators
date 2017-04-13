@@ -83,7 +83,6 @@ class COMCUBindingsDevice(common.Device):
         for packet in self.get_packets():
             if packet.get_function_id() < 200:
                 if packet.get_type() == 'callback':
-                    cb = "Callback"
                     struct_body = ''
                     for element in packet.get_elements():
                         c_type = element.get_c_type(False)
@@ -94,7 +93,7 @@ class COMCUBindingsDevice(common.Device):
                         else:
                             struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
-                    structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), cb))
+                    structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), '_Callback'))
                     continue
 
                 struct_body = ''
@@ -122,7 +121,7 @@ class COMCUBindingsDevice(common.Device):
                     else:
                         struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
-                structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), 'Response'))
+                structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), '_Response'))
 
         return structs
 
@@ -136,7 +135,7 @@ class COMCUBindingsDevice(common.Device):
                 if len(packet.get_elements('out')) == 0:
                     prototypes.append(prototype.format(packet.get_underscore_name(), packet.get_camel_case_name()))
                 else:
-                    prototypes.append(prototype_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + 'Response'))
+                    prototypes.append(prototype_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + '_Response'))
 
         return prototypes
 
@@ -204,7 +203,7 @@ class COMCUBindingsDevice(common.Device):
                 if len(packet.get_elements('out')) == 0:
                     functions.append(function.format(packet.get_underscore_name(), packet.get_camel_case_name()))
                 else:
-                    functions.append(function_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + 'Response'))
+                    functions.append(function_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + '_Response'))
 
         return functions
 
@@ -212,17 +211,17 @@ class COMCUBindingsDevice(common.Device):
         callback = """
 bool handle_{0}_callback(void) {{
 \tstatic bool is_buffered = false;
-\tstatic {1}Callback cb;
+\tstatic {1}_Callback cb;
 
 \tif(!is_buffered) {{
-\t\ttfp_make_default_header(&cb.header, bootloader_get_uid(), sizeof({1}Callback), FID_CALLBACK_{2});
+\t\ttfp_make_default_header(&cb.header, bootloader_get_uid(), sizeof({1}_Callback), FID_CALLBACK_{2});
 \t\t// TODO: Implement {1} callback handling
 
 \t\treturn false;
 \t}}
 
 \tif(bootloader_spitfp_is_send_possible(&bootloader_status.st)) {{
-\t\tbootloader_spitfp_send_ack_and_message(&bootloader_status, (uint8_t*)&cb, sizeof({1}Callback));
+\t\tbootloader_spitfp_send_ack_and_message(&bootloader_status, (uint8_t*)&cb, sizeof({1}_Callback));
 \t\tis_buffered = false;
 \t\treturn true;
 \t}} else {{
