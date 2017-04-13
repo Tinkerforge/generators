@@ -313,9 +313,9 @@ static void sha1_final(SHA1 *sha1, uint8_t digest[SHA1_DIGEST_LENGTH]) {
  *
  *****************************************************************************/
 
-static size_t string_length(const char *s, size_t max_length) {
+static int string_length(const char *s, int max_length) {
 	const char *p = s;
-	size_t n = 0;
+	int n = 0;
 
 	while (*p != '\0' && n < max_length) {
 		++p;
@@ -376,7 +376,7 @@ static int read_uint32_non_blocking(const char *filename, uint32_t *value) {
 		return -1;
 	}
 
-	rc = read(fd, value, sizeof(uint32_t));
+	rc = (int)read(fd, value, sizeof(uint32_t));
 
 	close(fd);
 
@@ -425,7 +425,7 @@ fallback:
 		seconds = (uint32_t)time(NULL);
 		microseconds = 0;
 	} else {
-		seconds = tv.tv_sec;
+		seconds = (uint32_t)tv.tv_sec;
 		microseconds = tv.tv_usec;
 	}
 
@@ -669,7 +669,7 @@ static void socket_shutdown(Socket *socket) {
 }
 
 static int socket_receive(Socket *socket, void *buffer, int length) {
-	return recv(socket->handle, buffer, length, 0);
+	return (int)recv(socket->handle, buffer, length, 0);
 }
 
 static int socket_send(Socket *socket, const void *buffer, int length) {
@@ -677,7 +677,7 @@ static int socket_send(Socket *socket, const void *buffer, int length) {
 
 	mutex_lock(&socket->send_mutex);
 
-	rc = send(socket->handle, buffer, length, 0);
+	rc = (int)send(socket->handle, buffer, length, 0);
 
 	mutex_unlock(&socket->send_mutex);
 

@@ -1343,7 +1343,6 @@ class Device(NameMixin):
             else:
                 raise GeneratorError('Invalid packet type ' + packet.get_type())
 
-
         self.constant_groups = []
 
         for packet in self.all_packets:
