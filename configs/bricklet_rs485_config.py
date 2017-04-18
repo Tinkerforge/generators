@@ -244,11 +244,16 @@ Sets the configuration for the RS485 Modbus communication. Available options:
 * Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 0 to 247.
 * Master Request Timeout: Specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
 
-The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds or 1 second.
+The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds (1 second).
 """,
-'de': #TODO: German documentation.
+'de':
 """
--
+Setzt die Konfiguration für die RS485 Modbus Kommunikation. Verfügbare Optionen:
+
+* Slave Address: Addresse die vom Modbus-Slave im Modbus-Slave Modus genutzt wird. Der gültige Adressbereich ist 0 bis 247.
+* Master Request Timeout: Spezifiziert wie lange der Modbus-Master auf eine Antwort von einem Modbus-Slave wartet. Die Angabe ist in Millisekunden.
+
+Die Standardwerte sind Slave Address = 1 und Master Request Timeout = 1000 Millisekunden (1 Sekunde).
 """
 }]
 })
@@ -281,17 +286,23 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the mode of the Bricklet in which it operates. Available options:
+Sets the mode of the Bricklet in which it operates. Available options are
 
-* RS485: Switches the operating mode of the bricklet to RS485 mode.
-* Modbus Slave RTU: Switches the operating mode of the bricklet to Modbus Slave RTU mode.
-* Modbus Master RTU. Switches the operating mode of the bricklet to Modbus Master RTU mode.
+* RS485,
+* Modbus Slave RTU and
+* Modbus Master RTU.
 
 The default is: RS485 mode.
 """,
-'de': #TODO: German documentation.
+'de':
 """
--
+Setzt den Modus des Bricklets. Verfügbare Optionen sind
+
+* RS485,
+* Modbus Slave RTU und
+* Modbus Master RTU.
+
+Der Standardmodus ist RS485.
 """
 }]
 })
@@ -607,9 +618,18 @@ Returns the current number of errors occurred in Modbus mode.
 * Slave Device Failure Error Count: Number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.
 
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Gibt die aktuelle Fehleranzahl für verschiedene Fehlerarten Modbus-Modus zurück.
+
+* Timeout Error Count: Anzahl Timeouts.
+* Checksum Error Count: Anzahl von Modbus CRC16 Checksummen-Fehlern.
+* Frame Too Big Error Count: Anzahl von verworfenen Frames auf Grund einer zu großen Frame Größe (maximal 256 Byte).
+* Illegal Function Error Count: Anzahl der Anfragen von nicht-implementierten oder illegalen Funktionen. Entsprocht Modbus Exception Code 1.
+* Illegal Data Address Error Count: Anzahl der Anfragen mit ungütiger Adresse. Entspricht Modbus Exception Code 2.
+* Illegal Data Value Error Count: Anzahl der Anfragen mit ungültigem Datenwert. Entspricht Modbus Exception Code 3.
+* Slave Device Failure Error Count: Anzahl der nicht-behebaren Fehler eines Slaves. Entspricht Modbus Exception Code 4.
+
 """
 }]
 })
@@ -629,9 +649,13 @@ a Modbus master request.
 * Request ID: Request ID of the request received by the slave.
 * Exception Code: Modbus exception code to report to the Modbus master.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden um eine Modbus Exception
+auf eine Modbus-Master Anfrage zurückzugeben.
+
+* Request ID: Request ID einer Anfrage eines Slaves.
+* Exception Code: Modbus Exception Code für den Modbus Master.
 """
 }]
 })
@@ -657,9 +681,16 @@ read coils.
 This function must be called from the :cb:`Modbus Slave Read Coils Request` callback
 with the Request ID as provided by the argument of the callback.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Read Coils-Anfrage
+eines Modbus-Masters zu beantworten.
+
+* Request ID: Request ID der zu beantwortenden Anfrage.
+* Data: Daten die zum Modbus-Master gesendet werden sollen.
+
+Diese Funktion muss vom :cb:`Modbus Slave Read Coils Request` Callback mit der
+Request ID des Callbacks aufgerufen werden.
 """
 }]
 })
@@ -690,9 +721,22 @@ callback. In this callback the Request ID provided by the callback argument must
 matched with the Request ID returned from this function to verify that the callback
 is indeed for a particular request.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Master Modus kann diese Funktion genutzt werden um Coils vom Slave zu lesen.
+
+* Slave Addresss: Adresse des Modbus-Slave
+* Starting Address: Startadresse der Leseoperation
+* Count: Anzahl der zu lesenden Coils.
+
+Nach erfolgreichen ausführen der Leseoperation gibt diese funktion eine Request ID
+zurück die nicht Null ist. Im Falle eines Fehlers wird eine Null als Request ID
+zurückgegeben.
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Coils Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion 
+zurückgegeben Request ID überein.
 """
 }]
 })
@@ -718,9 +762,16 @@ read holding registers.
 This function must be called from the :cb:`Modbus Slave Read Holding Registers Request`
 callback with the Request ID as provided by the argument of the callback.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Holding Registers``-Anfrage
+eines Modbus-Masters zu beantworten.
+
+* Request ID: Request ID der zu beantwortenden Anfrage.
+* Data: Daten die zum Modbus-Master gesendet werden sollen.
+
+Diese Funktion muss vom :cb:`Modbus Slave Read Holding Registers Request` Callback mit der
+Request ID des Callbacks aufgerufen werden.
 """
 }]
 })
