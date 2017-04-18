@@ -276,8 +276,14 @@ class {0}(Device):
                     stream_chunk_data.extend([{chunk_padding}]*({chunk_cardinality} - len(stream_chunk_data)))
 
                 stream_result = self.{underscore_name}_low_level({parameter_list})
-                stream_extra = stream_result[:-1] # FIXME: validate that the extra of all the low-level calls is identical
-                stream_chunk_written = stream_result[-1]
+
+                if isinstance(stream_result, tuple):
+                    stream_extra = stream_result[:-1] # FIXME: validate that the extra of all the low-level calls is identical
+                    stream_chunk_written = stream_result[-1]
+                else:
+                    stream_extra = ()
+                    stream_chunk_written = stream_result
+
                 stream_total_written += stream_chunk_written
 
                 # either last chunk or short write
