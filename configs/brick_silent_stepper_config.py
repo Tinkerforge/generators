@@ -708,7 +708,6 @@ Sets the basic configuration parameters for the different modes (Stealth, Coolst
 * High Velocity Shopper Mode: If High Velocity Shopper Mode is enabled, the stepper control
   is optimized to run the stepper motors at high velocities.
 
-
 If you want to use all three thresholds make sure that
 Stealth Threshold < Coolstep Threshold < Classic Threshold.
 
@@ -936,7 +935,7 @@ Die Standardwerte sind:
 * Chopper Mode: 0
 * Comperator Blank Time: 1
 * Fast Decay Without Comperator: false
-*
+
 """
 }]
 })
