@@ -357,7 +357,7 @@ If interpolation is turned on, the Silent Stepper Brick will always interpolate
 your step inputs as 1/256-step. If you use full-step mode with interpolation, each
 step will generate 256 1/256 steps.
 
-For maximum torque use full-step without interpoltation. For maximum resolution use
+For maximum torque use full-step without interpolation. For maximum resolution use
 1/256-step. Turn interpolation on to make the Stepper driving less noisy.
 
 If you often change the speed with high acceleration you should turn the
@@ -504,7 +504,7 @@ com['packets'].append({
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
-given via the black power input connector on the Stepper Brick.
+given via the black power input connector on the Slient Stepper Brick.
 
 If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack
@@ -519,7 +519,8 @@ voltage present, the motor will be driven by this voltage.
 'de':
 """
 Gibt die externe Eingangsspannung (in mV) zurück. Die externe Eingangsspannung
-wird über die schwarze Stromversorgungsbuchse, in den Stepper Brick, eingespeist.
+wird über die schwarze Stromversorgungsbuchse, in den Slient Stepper Brick,
+eingespeist.
 
 Sobald eine externe Eingangsspannung und die Spannungsversorgung des Stapels anliegt,
 wird der Motor über die externe Spannung versorgt. Sollte nur die Spannungsversorgung
@@ -653,15 +654,6 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 }]
 })
 
-
-
-
-
-
-
-
-
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Basic Configuration',
@@ -677,7 +669,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the basic configuration parameters for the different modes (stealth, coolstep, classic).
+Sets the basic configuration parameters for the different modes (Stealth, Coolstep, Classic).
 
 * Standstill Current: This value can be used to lower the current during stand still. This might
   be reasonable to reduce the heating of the motor and the Brick. When the motor is in standstill 
@@ -703,11 +695,11 @@ Sets the basic configuration parameters for the different modes (stealth, coolst
 * Power Down Time: Sets the delay time after a stand still.
   The value range is 0 to 5222ms.
 
-* Stealth Threshold: Sets the upper threshold for stealth mode in steps/s. The value range is
-  0-65536 steps/s. If the velocity of the motor goes above this value, stealth mode is turned
-  off. Otherwise it is turned on. In stealth mode the torque declines with high speed.
+* Stealth Threshold: Sets the upper threshold for Stealth mode in steps/s. The value range is
+  0-65536 steps/s. If the velocity of the motor goes above this value, Stealth mode is turned
+  off. Otherwise it is turned on. In Stealth mode the torque declines with high speed.
 
-* Coolstep Threshold: Sets the lower threshold for coolstep mode in steps/s. The value range is
+* Coolstep Threshold: Sets the lower threshold for Coolstep mode in steps/s. The value range is
   0-65536 steps/s. The Coolstep Threshold needs to be above the Stealth Threshold.
 
 * Classic Threshold: Sets the lower threshold for classic mode. The value range is
@@ -826,11 +818,11 @@ com['packets'].append({
              ('Fast Decay Duration', 'uint8', 1, 'in'), # hstrt and fd3 if chm=1 0-15
              ('Hysteresis Start Value', 'uint8', 1, 'in'), # hstrt if chm=0 0-7
              ('Hysteresis End Value', 'int8', 1, 'in'), # hend if chm=0 -3-12
-             ('Sinewave Offset', 'int8', 1, 'in'), # hend if chm=1 -3-12
+             ('Sine Wave Offset', 'int8', 1, 'in'), # hend if chm=1 -3-12
              ('Chopper Mode', 'uint8', 1, 'in', ('Chopper Mode', [('Spread Cycle', 0),
                                                                   ('Fast Decay', 1)])), # chm
-             ('Comperator Blank Time', 'uint8', 1, 'in'), # tbl 0-3
-             ('Fast Decay Without Comperator', 'bool', 1, 'in')], # disfdcc
+             ('Comparator Blank Time', 'uint8', 1, 'in'), # tbl 0-3
+             ('Fast Decay Without Comparator', 'bool', 1, 'in')], # disfdcc
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -843,7 +835,7 @@ controls the motor current flow. More information can be found in the TMC2130 da
 47 (7 spreadCycle and Classic Chopper).
 
 * Slow Decay Duration: Controls duration of off time setting of slow decay phase. The value
-  range is 0-15. 0 = driver disabled, all bridges off. Use 1 only with Comperator Blank time >= 2.
+  range is 0-15. 0 = driver disabled, all bridges off. Use 1 only with Comparator Blank time >= 2.
 
 * Enable Random Slow Decay: Set to false to fix chopper off time as set by Slow Decay Duration.
   If you set it to true, Decay Duration is randomly modulated.
@@ -857,13 +849,13 @@ controls the motor current flow. More information can be found in the TMC2130 da
 * Hysteresis End Value: Sets the hysteresis end value. The value range is -3 to 12. This parameter is
   only used if the Chopper Mode is set to Spread Cycle.
 
-* Sinewave Offset: Sets the sinewave offset. The value range is -3 to 12. This parameters is
+* Sine Wave Offset: Sets the sine wave offset. The value range is -3 to 12. This parameters is
   only used if the Chopper Mode is set to Fast Decay. 1/512 of the value becomes added to the absolute
-  value of the sinewave.
+  value of the sine wave.
 
 * Chopper Mode: 0 = Spread Cycle, 1 = Fast Decay.
 
-* Comperator Blank Time: Sets the blank time of the comperator. Available values are
+* Comparator Blank Time: Sets the blank time of the comparator. Available values are
 
   * 0 = 16 clocks,
   * 1 = 24 clocks,
@@ -872,7 +864,7 @@ controls the motor current flow. More information can be found in the TMC2130 da
 
   A value of 1 or 2 is recommended for most applications.
 
-* Fast Decay Without Comperator: If set to true the current comparator usage for termination of the
+* Fast Decay Without Comparator: If set to true the current comparator usage for termination of the
   fast decay cycle is disabled.
 
 
@@ -883,10 +875,10 @@ The default values are:
 * Fast Decay Duration: 0
 * Hysteresis Start Value: 0
 * Hysteresis End Value: 0
-* Sinewave Offset: 0
+* Sine Wave Offset: 0
 * Chopper Mode: 0
-* Comperator Blank Time: 1
-* Fast Decay Without Comperator: false
+* Comparator Blank Time: 1
+* Fast Decay Without Comparator: false
 
 """,
 'de':
@@ -959,11 +951,11 @@ com['packets'].append({
              ('Fast Decay Duration', 'uint8', 1, 'out'), # hstrt and fd3 if chm=1 0-15
              ('Hysteresis Start Value', 'uint8', 1, 'out'), # hstrt if chm=0 0-7
              ('Hysteresis End Value', 'int8', 1, 'out'), # hend if chm=0 -3-12
-             ('Sinewave Offset', 'int8', 1, 'out'), # hend if chm=1 -3-12
+             ('Sine Wave Offset', 'int8', 1, 'out'), # hend if chm=1 -3-12
              ('Chopper Mode', 'uint8', 1, 'out', ('Chopper Mode', [('Spread Cycle', 0),
                                                                    ('Fast Decay', 1)])), # chm
-             ('Comperator Blank Time', 'uint8', 1, 'out'), # tbl 0-3
-             ('Fast Decay Without Comperator', 'bool', 1, 'out')], # disfdcc
+             ('Comparator Blank Time', 'uint8', 1, 'out'), # tbl 0-3
+             ('Fast Decay Without Comparator', 'bool', 1, 'out')], # disfdcc
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -996,7 +988,7 @@ com['packets'].append({
 Note: If you don't know what any of this means you can very likely keep all of
 the values as default!
 
-Sets the configuration relevant for stealth mode.
+Sets the configuration relevant for Stealth mode.
 
 * Enable Stealth: If set to true the stealth mode is enabled, if set to false the
   stealth mode is disabled, even if the speed is below the threshold set in :func:`Set Basic Configuration`.
@@ -1008,7 +1000,7 @@ Sets the configuration relevant for stealth mode.
   this value defines the maximum PWM gradient. With autoscale a value above 64 is recommended,
   otherwise the regulation might not be able to measure the current. The value range is 0-255.
 
-* Enable Autoscale: If set to true, automatic current control is used. Othwerwise the user defined
+* Enable Autoscale: If set to true, automatic current control is used. Otherwise the user defined
   amplitude and gradient are used.
 
 * Force Symmetric: If true, A symmetric PWM cycle is enforced. Otherwise the PWM value may change within each
@@ -1120,30 +1112,30 @@ com['packets'].append({
 Note: If you don't know what any of this means you can very likely keep all of
 the values as default!
 
-Sets the configuration relevant for coolstep.
+Sets the configuration relevant for Coolstep.
 
 * Minimum Stallguard Value: If the Stallguard result falls below this value*32, the motor current
-  is increased to reduce motor load angle. The value range is 0-15. A value of 0 turns coolstep off.
+  is increased to reduce motor load angle. The value range is 0-15. A value of 0 turns Coolstep off.
 
 * Maximum Stallguard Value: If the Stallguard result goes above
-  (Min Stallguard Value + Max Stallguard Value + 1)*32, the motor current is decreased to save
+  (Min Stallguard Value + Max Stallguard Value + 1) * 32, the motor current is decreased to save
   energy.
 
-* Current Up Step Width: Sets the up step increment per stallguard value. The value range is 0-3,
+* Current Up Step Width: Sets the up step increment per Stallguard value. The value range is 0-3,
   corresponding to the increments 1, 2, 4 and 8.
 
-* Current Down Step Width: Sets the down step decrement per stallguard value. The value range is 0-3,
+* Current Down Step Width: Sets the down step decrement per Stallguard value. The value range is 0-3,
   corresponding to the decrements 1, 2, 8 and 16.
 
-* Minimum Current: Sets the minimum current for coolstep current control. You can choose between
+* Minimum Current: Sets the minimum current for Coolstep current control. You can choose between
   half and quarter of the run current.
 
 * Stallguard Threshold Value: Sets the level for stall output (see :func:`Get Driver Status`). The value
   range is -64 to +63. A lower value gives a higher sensitivity. You have to find a suitable value for your
   motor by trial and error, 0 works for most motors.
 
-* Stallguard Mode: Set to 0 for standard resolution or 1 for filtered mode. In filtered mode the stallguard
-  signal will be updated every four fullsteps.
+* Stallguard Mode: Set to 0 for standard resolution or 1 for filtered mode. In filtered mode the Stallguard
+  signal will be updated every four full-steps.
 
 The default values are:
 
@@ -1251,7 +1243,7 @@ Sets miscellaneous configuration parameters.
 
 * Synchronize Phase Frequency: With this parameter you can synchronize the chopper for both phases
   of a two phase motor to avoid the occurrence of a beat. The value range is 0-15. If set to 0,
-  the synchronization is turned off. Otherwise the synchronization is done through the formular
+  the synchronization is turned off. Otherwise the synchronization is done through the formula
   f_sync = f_clk/(value*64). In Classic Mode the synchronization is automatically switched off.
   f_clk is 12.8MHz.
 
@@ -1394,7 +1386,8 @@ com['packets'].append({
 'en':
 """
 Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
-is triggered. The minimum possible value that works with the Stepper Brick is 8V.
+is triggered. The minimum possible value that works with the Slient Stepper
+Brick is 8V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do
 not need this functionality.
@@ -1404,7 +1397,8 @@ The default value is 8V.
 'de':
 """
 Setzt die minimale Spannung in mV, bei welcher der :cb:`Under Voltage` Callback
-ausgelöst wird. Der kleinste mögliche Wert mit dem der Stepper Brick noch funktioniert,
+ausgelöst wird. Der kleinste mögliche Wert mit dem der Slient Stepper Brick noch
+funktioniert,
 ist 8V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
 höchstwahrscheinlich nicht benötigt.
@@ -1492,8 +1486,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the time base of the velocity and the acceleration of the stepper brick
-(in seconds).
+Sets the time base of the velocity and the acceleration of the Silent Stepper
+Brick (in seconds).
 
 For example, if you want to make one step every 1.5 seconds, you can set
 the time base to 15 and the velocity to 10. Now the velocity is
@@ -1503,8 +1497,8 @@ The default value is 1.
 """,
 'de':
 """
-Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Stepper Brick
-(in Sekunden).
+Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Silent Stepper
+Brick (in Sekunden).
 
 Beispiel: Wenn aller 1,5 Sekunden ein Schritt gefahren werden soll, kann
 die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die
@@ -1647,12 +1641,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered whenever the Stepper Brick enters a new state.
+This callback is triggered whenever the Slient Stepper Brick enters a new state.
 It returns the new state as well as the previous state.
 """,
 'de':
 """
-Dieser Callback wird immer dann ausgelöst wenn der Stepper Brick einen
+Dieser Callback wird immer dann ausgelöst wenn der Slient Stepper Brick einen
 neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand
 zurückgegeben.
 """
