@@ -14,8 +14,6 @@ EXCEPTION_CODE_CONSTANTS =  ('Exception Code', [('Timeout', -1),
                                                 ('Illegal Data Value', 3),
                                                 ('Slave Device Failure', 4)])
 
-# FIXME: document modbus level function codes
-
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -706,7 +704,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-In Modbus master mode this function can be used to read coils from a slave.
+In Modbus master mode this function can be used to read coils from a slave. This
+function creates a Modbus function code 1 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Starting Address: Starting address of the read.
@@ -735,7 +734,7 @@ zurückgegeben.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Coils Response` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
-eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion 
+eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
 zurückgegeben Request ID überein.
 """
 }]
@@ -788,6 +787,7 @@ com['packets'].append({
 'en':
 """
 In Modbus master mode this function can be used to read holding registers from a slave.
+This function creates a Modbus function code 3 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Starting Address: Starting address of the read.
@@ -845,6 +845,7 @@ com['packets'].append({
 'en':
 """
 In Modbus master mode this function can be used to write a single coil of a slave.
+This function creates a Modbus function code 5 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Coil Address: Address of the coil.
@@ -902,7 +903,7 @@ com['packets'].append({
 'en':
 """
 In Modbus master mode this function can be used to write a single register of a
-slave.
+slave. This function creates a Modbus function code 6 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Register Address: Address of the register.
@@ -964,6 +965,7 @@ com['packets'].append({
 'en':
 """
 In Modbus master mode this function can be used to write multiple coils of a slave.
+This function creates a Modbus function code 15 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Starting Address: Starting address of the write.
@@ -1025,6 +1027,7 @@ com['packets'].append({
 'en':
 """
 In Modbus master mode this function can be used to write multiple registers of a slave.
+This function creates a Modbus function code 16 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Starting Address: Starting Address of the write.
@@ -1086,6 +1089,7 @@ com['packets'].append({
 'en':
 """
 In Modbus master mode this function can be used to read discrete inputs from a slave.
+This function creates a Modbus function code 2 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Starting Address: Starting address of the read.
@@ -1147,6 +1151,7 @@ com['packets'].append({
 'en':
 """
 In Modbus master mode this function can be used to read input registers from a slave.
+This function creates a Modbus function code 4 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Starting Address: Starting address of the read.
@@ -1227,7 +1232,7 @@ valid request from a Modbus master to read coils. The :word:`parameters` are
 request ID of the request, the starting address and the number of coils to
 be read as received by the request.
 
-FIXME: how to answer this request?
+To send a response of this request use :func:`Modbus Slave Answer Read Coils Request`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1281,7 +1286,7 @@ valid request from a Modbus master to read holding registers. The :word:`paramet
 are request ID of the request, the starting address and the number of holding
 registers to be read as received by the request.
 
-FIXME: how to answer this request?
+To send a response of this request use :func:`Modbus Slave Answer Read Holding Registers Request`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1335,7 +1340,7 @@ valid request from a Modbus master to write a single coil. The :word:`parameters
 are request ID of the request, the coil address and the value of coil to be
 written as received by the request.
 
-FIXME: how to answer this request?
+To send a response of this request use :func:`Modbus Slave Answer Write Single Coil Request`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1385,7 +1390,8 @@ valid request from a Modbus master to write a single register. The :word:`parame
 are request ID of the request, the register address and the register value to
 be written as received by the request.
 
-FIXME: how to answer this request?
+To send a response of this request use :func:`Modbus Slave Answer Write Single Register Request`.
+
 """,
 'de': # TODO: German documentation.
 """
@@ -1438,7 +1444,7 @@ valid request from a Modbus master to write multiple coils. The :word:`parameter
 are request ID of the request, the starting address, the number of coils to
 be written and the data to be written as received by the request.
 
-FIXME: how to answer this request?
+To send a response of this request use :func:`Modbus Slave Answer Write Multiple Coils Request`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1491,7 +1497,7 @@ valid request from a Modbus master to write multiple registers. The :word:`param
 are request ID of the request, the starting address, the number of registers to
 be written and the data to be written as received by the request.
 
-FIXME: how to answer this request?
+To send a response of this request use :func:`Modbus Slave Answer Write Multiple Registers Request`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1540,7 +1546,7 @@ valid request from a Modbus master to read discrete inputs. The :word:`parameter
 are request ID of the request, the starting address and the number of discrete
 inputs to be read as received by the request.
 
-FIXME: how to answer this request?
+To send a response of this request use :func:`Modbus Slave Answer Read Discrete Inputs Request`.
 """,
 'de': # TODO: German documentation.
 """
@@ -1594,7 +1600,7 @@ valid request from a Modbus master to read input registers. The :word:`parameter
 are request ID of the request, the starting address and the number of input
 registers to be read as received by the request.
 
-FIXME: how to answer this request?
+To send a response of this request use :func:`Modbus Slave Answer Read Input Registers Request`.
 """,
 'de': # TODO: German documentation.
 """
