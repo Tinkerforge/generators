@@ -765,7 +765,7 @@ Setzt die Basiskonfiguration-Parameter für verschiedene Modi (Stealth, Coolstep
   0-65536 Schritte/s. Im Classic Modus wird der Schrittmotor geräuschvoll aber das Drehmoment wird 
   maximiert.
 
-* High Velocity Shopper Mode: Wenn der High Velocity Shopper Mode aktiviert wird, optimiert der 
+* High Velocity Shopper Mode: Wenn der High Velocity Shopper Modus aktiviert wird, optimiert der
   Schrittmotortreiber die Ansteuerung des Motors für hohe Geschwindigkeiten.
 
 Wenn alle drei Grenzwerte (Thresholds) genutzt werden sollen muss sichergestellt werden,
@@ -867,7 +867,6 @@ controls the motor current flow. More information can be found in the TMC2130 da
 * Fast Decay Without Comparator: If set to true the current comparator usage for termination of the
   fast decay cycle is disabled.
 
-
 The default values are:
 
 * Slow Decay Duration: 4
@@ -898,15 +897,15 @@ den Motorstrom regelt. Weitere Informationen dazu können im TMC2130 Datenblatt 
   auf die gesetzte Slow Decay Duration zu setzen. Wenn dieser Wert auf True gesetzt wird, wird die
   Decay Dauer zufällig variiert.
 
-* Fast Decay Duration: Setzt die Fast Decay Dauer. Werte sind von 0-15 möglich. Dieser Perameter
-  wird nur benutzt, wenn der Spread Cycle als Chopper Mode genutzt wird.
+* Fast Decay Duration: Setzt die Fast Decay Dauer. Werte sind von 0-15 möglich. Dieser Parameter
+  wird nur benutzt, wenn der Spread Cycle als Chopper Modus genutzt wird.
 
-* Hysteresis Start Value: Setzt der Startwert der Hysterese. Der Wertebereich ist 0-7. Dieser Perameter
-  wird nur benutzt, wenn der Spread Cycle als Chopper Mode genutzt wird.
+* Hysteresis Start Value: Setzt der Startwert der Hysterese. Der Wertebereich ist 0-7. Dieser Parameter
+  wird nur benutzt, wenn der Spread Cycle als Chopper Modus genutzt wird.
 
 * Hysteresis End Value: Setzt den Endwert der Hysterese. Der Wertebereich ist -3 bis 12. 
-* Sets the hysteresis end value. The value range is -3 to 12. Dieser Perameter
-  wird nur benutzt, wenn der Spread Cycle als Chopper Mode genutzt wird.
+* Sets the hysteresis end value. The value range is -3 to 12. Dieser Parameter
+  wird nur benutzt, wenn der Spread Cycle als Chopper Modus genutzt wird.
 
 * Sinewave Offset: Setzt den Sinuswellen Offset. Der Wertebereich ist -3 bis 12. Der Wert wird nur benutzt,
   wenn als Chopper Modus Fast Decay benutzt wird. 1/512 dieses Werts wird zum Absolutwert der Sinuswelle
@@ -914,7 +913,7 @@ den Motorstrom regelt. Weitere Informationen dazu können im TMC2130 Datenblatt 
 
 * Chopper Mode: 0 = Spread Cycle, 1 = Fast Decay.
 
-* Comperator Blank Time: Setzt die Totzeit von Komperator. Mögliche Werte sind
+* Comperator Blank Time: Setzt die Totzeit von Komparator. Mögliche Werte sind
 
   * 0 = 16 Takte,
   * 1 = 24 Takte,
@@ -923,9 +922,8 @@ den Motorstrom regelt. Weitere Informationen dazu können im TMC2130 Datenblatt 
 
   Ein Wert von 1 oder 2 wird für die meisten Anwendungen empfohlen.
 
-* Fast Decay Without Comperator: Wenn dieser Wert auf True gesetzt wird, dann wird der Strom-Komperator nicht
+* Fast Decay Without Comperator: Wenn dieser Wert auf True gesetzt wird, dann wird der Strom-Komparator nicht
   im Fast Decay Modus genutzt.
-
 
 Die Standardwerte sind:
 
@@ -1030,19 +1028,19 @@ Setzt die Konfigurationsparameter für den Stealth Modus.
   der Modus deaktiviert auch wenn die Geschwindigkeit des Motors unter dem Grenzwert, der mittels
   :func:`Set Basic Configuration` gesetzt wurde, liegt.
 
-* Amplitude: Wenn autoscale aktiviert wurde, wird die PWM Amplitude mit diesem Wert skaliert.
+* Amplitude: Wenn Autoscale aktiviert wurde, wird die PWM Amplitude mit diesem Wert skaliert.
   Wenn autoscale deaktiviert ist, definiert dieser Wert die maximale PWM Amplitudenänderungen pro Halbwelle. 
   Der Wertebereich ist 0-255.
 
-* Gradient: Wenn autoscale deaktiviert wurde, wird der PWM Steigung (Gradient) bei diesem Wert skaliert. Wird
-  autoscale aktiviert, definiert dieser Wert die maximale PWM Steigung. Mit autoscale wird ein Wert
+* Gradient: Wenn Autoscale deaktiviert wurde, wird der PWM Steigung (Gradient) bei diesem Wert skaliert. Wird
+  Autoscale aktiviert, definiert dieser Wert die maximale PWM Steigung. Mit Autoscale wird ein Wert
   über 64 empfohlen, ansonsten kann es sein, dass die Regelung den Strom nicht korrekt messen kann.
   Der Wertebereich ist 0-255.
 
 * Enable Autoscale: Die automatische Stromregelung ist aktiviert, wenn dieser Wert auf True gesetzt wird.
   Ansonsten werden die vom Nutzer definierten Amplituden und Steigungen genutzt.
 
-* Force Symmetric: Wenn auf True gesetzt wird, dann wird ein smmetrisches PWM erzwungen. Ansonsten kann
+* Force Symmetric: Wenn auf True gesetzt wird, dann wird ein symmetrisches PWM erzwungen. Ansonsten kann
   sich der PWM Wert innerhalb eines PWM Taktes ändern.
 
 * Freewheel Mode: Der Freewheel Modus definiert das Verhalten im Stillstand, wenn der Standstill Current
@@ -1056,7 +1054,6 @@ Die Standardwerte sind:
 * Enable Autoscale: true
 * Force Symmetric: false
 * Freewheel Mode: 0 (Normal)
-
 
 """
 }]
@@ -1362,7 +1359,7 @@ Gibt den aktuellen Treiberstatus zurück.
 
 * Motor Stalled: Ist True, wenn erkannt wurde, dass der Motor blockiert.
 
-* Actual Motor Current: Gibt die aktuelle Motorstromskalierung im Coolstep mode aus.
+* Actual Motor Current: Gibt die aktuelle Motorstromskalierung im Coolstep Modus aus.
 
 * Stallguard Result: Der Stallguard Wert gibt einen Hinweis auf die Last des Motors. Ein niedriger Wert bedeutet eine
   höhere Last. Über Ausprobieren kann man mit diesem Wert herausfinden, welcher Wert zu einem geeigneten Drehmoment bei 
