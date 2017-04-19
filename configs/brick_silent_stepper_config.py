@@ -367,7 +367,20 @@ The default is 1/256-step with interpolation on.
 """,
 'de':
 """
-TODO
+Setzt die Schrittauflösung von Vollschritt bis zu 1/256 Schritt.
+
+Wenn Interpolation aktiviert ist, führt der Silent Stepper Brick immer 1/256 
+interpolierte Schritte aus. Wenn zum Beispiel Vollschritt mit Interpolation
+genutzt wird, führt jeder Schritt zu 256 1/256 Schritten beim Motor.
+
+Für einen maximalen Drehmoment sollte Vollschritt mit Interpolation genutzt
+werden. Für maximale Auflösung sollte 1/256 Schritt genutzt werden. 
+Interpolation führt auch dazu, dass der Motor weniger Geräusche erzeugt.
+
+Für den Fall, dass oft die Geschwindigkeit mit sehr hohen Beschleunigungen
+geändert wird, sollte Interpolation ausgeschaltet werden.
+
+Der Standardwert ist 1/256 Schritte mit aktivierter Interpolation.
 """
 }]
 })
@@ -666,14 +679,21 @@ com['packets'].append({
 """
 Sets the basic configuration parameters for the different modes (stealth, coolstep, classic).
 
-* Standstill Current: This value can be used to lower the current during stand still. It takes
-  effect after the Power Down Time and the transition time can be controlled with the Standstill Delay
-  Time. The unit is in mA and the maximum allowed value is the current motor current
+* Standstill Current: This value can be used to lower the current during stand still. This might
+  be reasonable to reduce the heating of the motor and the Brick. When the motor is in standstill 
+  the configured motor phase current will be driven until the configured 
+  Power Down Time is elapsed. After that the phase current will be reduced to the standstill 
+  current. The elapsed time for this reduction can be configured with the Standstill Delay Time.
+  The unit is in mA and the maximum allowed value is the configured maximum motor current
   (see :func:`Set Motor Current`).
 
-* Motor Run Current: The value is applied as a factor to the max current when the motor is
-  running. Use a value of at least 16 for good microstep performance. The unit is in mA and the
-  maximum allowed value is the current motor current (see :func:`Set Motor Current`).
+* Motor Run Current: The value sets the motor current when the motor is running. 
+  Use a value of at least one half of the global maximum motor current for a good 
+  microstep performance. The unit is in mA and the maximum allowed value is the current 
+  motor current. The API maps the entered value to 1/32 ... 32/32 of the maximum
+  motor current. This value should be used to change the motor current during motor movement,
+  whereas the global maximum motor current should not be changed while the motor is moving
+  (see :func:`Set Motor Current`).
 
 * Standstill Delay Time: Controls the duration for motor power down after a motion
   as soon as standstill is detected and the Power Down Time is expired. A high Standstill Delay
@@ -714,7 +734,62 @@ The default values are:
 """,
 'de':
 """
-TODO
+Setzt die Basiskonfiguration-Parameter für verschiedene Modi (Stealth, Coolstep, Classic).
+
+* Standstill Current: Mit diesem Wert kann der Phasenstrom im Stillstand 
+  reduziert werden. Dies ist zum Beispiel sinnvoll um das Aufheizen des Motors 
+  zu verringern. Wenn der Motor steht wird dieser mit dem eingestellte 
+  Phasenstrom betrieben bis die eingestellte Power Down Time um ist. Danach 
+  wird der Phasenstrom schrittweise bis zum Standstill Current reduziert. Die 
+  dafür benötigte Zeit wird mittels Power Down Time eingestellt. Die Einheit ist
+  mA und der eingestellte Phasenstrom ist das Maximum für diesen Wert
+  (see :func:`Set Motor Current`).
+
+* Motor Run Current: Dieser Wert setzt den Phasenstrom, wenn der Motor sich dreht.
+  Ein Wert von mindestens der Hälfte des maximalen Phasenstrom sollte für gute 
+  Ergebnisse im Mikroschrittbetrieb gesetzt werden. Die Einheit ist mA und der maximal 
+  zulässige Wert ist der maximale Phasenstrom. Der eingegebene Wert wird von der API intern
+  in einen Faktor im Bereich von 1/32 ... 32/32 umgerechnet, mit dem der Phasenstrom 
+  begrenzt wird. Der maximale Phasenstrom sollte im laufenden Betrieb nicht geändert werden. 
+  Für eine Änderung im laufenden Betrieb ist dieser Wert da (see :func:`Set Motor Current`).
+
+* Standstill Delay Time: 
+  Steuert die Zeit für das Verringern des Motorstroms bis zum 
+  Standstill Current. Eine hohe Standstill Delay Time führt zu einem ruhigen und 
+  ruckelfreien Übergang. Der Wertebereich ist 0 bis 307ms.
+
+* Power Down Time: Setzt die Wartezeit nach dem Stehenbleiben.
+  Der Wertebereich ist 0 bis 5222ms.
+
+* Stealth Threshold: Setzt den oberen Grenzwert für den Stealth Modus in Schritte/s.
+  Der Wertebereich ist 0-65536 Schritte/s. Wenn die Geschwindigkeit des Motors über diesen Wert liegt wird
+  der Stealth Modus abgeschaltet. Ansonsten angeschaltet. Im Stealth Modus nimmt das Drehmoment mit 
+  steigender Geschwindigkeit ab.
+
+* Coolstep Threshold: Setzt den unteren Grenzwert für den Coolstep Modus Schritte/s. Der Wertebereich
+  ist 0-65536 Schritte/s. Der Coolstep Grenzwert muss über dem Stealth Grenzwert liegen.
+
+* Classic Threshold:  Sets den unteren Grenzwert für den Classic Modus. Der Wertebereich ist
+  0-65536 Schritte/s. Im Classic Modus wird der Schrittmotor geräuschvoll aber das Drehmoment wird 
+  maximiert.
+
+* High Velocity Shopper Mode: Wenn der High Velocity Shopper Mode aktiviert wird, optimiert der 
+  Schrittmotortreiber die Ansteuerung des Motors für hohe Geschwindigkeiten.
+
+Wenn alle drei Grenzwerte (Thresholds) genutzt werden sollen muss sichergestellt werden,
+dass Stealth Threshold < Coolstep Threshold < Classic Threshold.
+
+Die Standardwerte sind:
+
+* Standstill Current: 200
+* Motor Run Current: 800
+* Standstill Delay Time: 0
+* Power Down Time: 1000
+* Stealth Threshold: 500
+* Coolstep Threshold: 500
+* Classic Threshold: 1000
+* High Velocity Shopper Mode: false
+
 """
 }]
 })
@@ -763,12 +838,14 @@ com['packets'].append({
 Note: If you don't know what any of this means you can very likely keep all of
 the values as default!
 
-Sets the Spreadcycle configuration parameters. (TODO: Explain spread cycle)
+Sets the Spreadcycle configuration parameters. Spreadcycle is a chopper algorithm which actively
+controls the motor current flow. More information can be found in the TMC2130 datasheet on page
+47 (7 spreadCycle and Classic Chopper).
 
 * Slow Decay Duration: Controls duration of off time setting of slow decay phase. The value
   range is 0-15. 0 = driver disabled, all bridges off. Use 1 only with Comperator Blank time >= 2.
 
-* Enable Random Slow Decay: Set to false to fix chipper off time as set by Slow Decay Duration.
+* Enable Random Slow Decay: Set to false to fix chopper off time as set by Slow Decay Duration.
   If you set it to true, Decay Duration is randomly modulated.
 
 * Fast Decay Duration: Sets the fast decay duration. The value range is 0-15. This parameters is
@@ -814,7 +891,62 @@ The default values are:
 """,
 'de':
 """
-TODO
+Note: Typischerweise können diese Werte bei ihren Standardwerten gelassen werden. Sie sollten nur
+geändert werden, wenn man weiß was man tut.
+
+Setzt die Spreadcycle Konfigurationsparameter. Spreadcycle ist ein  Chopper-Algorithmus der aktiv
+den Motorstrom regelt. Weitere Informationen dazu können im TMC2130 Datenblatt auf Seite
+47 (7 spreadCycle and Classic Chopper) gefunden werden.
+
+* Slow Decay Duration: Steuert die Aus-Zeit (off time) in der Slow Decay Phase. Werte sind im Bereich
+  von 0-15 möglich. 0 = Treiber deaktiviert, alle Brücken aus. Nur wenn die Comparator Blank Time >=2 
+  ist sollte ein Wert von 1 gesetzt werden.
+
+* Enable Random Slow Decay: Muss auf False gesetzt werden um die Aus-Zeit (off time) des Choppers
+  auf die gesetzte Slow Decay Duration zu setzen. Wenn dieser Wert auf True gesetzt wird, wird die
+  Decay Dauer zufällig variiert.
+
+* Fast Decay Duration: Setzt die Fast Decay Dauer. Werte sind von 0-15 möglich. Dieser Perameter
+  wird nur benutzt, wenn der Spread Cycle als Chopper Mode genutzt wird.
+
+* Hysteresis Start Value: Setzt der Startwert der Hysterese. Der Wertebereich ist 0-7. Dieser Perameter
+  wird nur benutzt, wenn der Spread Cycle als Chopper Mode genutzt wird.
+
+* Hysteresis End Value: Setzt den Endwert der Hysterese. Der Wertebereich ist -3 bis 12. 
+* Sets the hysteresis end value. The value range is -3 to 12. Dieser Perameter
+  wird nur benutzt, wenn der Spread Cycle als Chopper Mode genutzt wird.
+
+* Sinewave Offset: Setzt den Sinuswellen Offset. Der Wertebereich ist -3 bis 12. Der Wert wird nur benutzt,
+  wenn als Chopper Modus Fast Decay benutzt wird. 1/512 dieses Werts wird zum Absolutwert der Sinuswelle
+  hinzuaddiert.
+
+* Chopper Mode: 0 = Spread Cycle, 1 = Fast Decay.
+
+* Comperator Blank Time: Setzt die Totzeit von Komperator. Mögliche Werte sind
+
+  * 0 = 16 Takte,
+  * 1 = 24 Takte,
+  * 2 = 36 Takte und
+  * 3 = 54 Takte.
+
+  Ein Wert von 1 oder 2 wird für die meisten Anwendungen empfohlen.
+
+* Fast Decay Without Comperator: Wenn dieser Wert auf True gesetzt wird, dann wird der Strom-Komperator nicht
+  im Fast Decay Modus genutzt.
+
+
+Die Standardwerte sind:
+
+* Slow Decay Duration: 4
+* Enable Random Slow Decay: 0
+* Fast Decay Duration: 0
+* Hysteresis Start Value: 0
+* Hysteresis End Value: 0
+* Sinewave Offset: 0
+* Chopper Mode: 0
+* Comperator Blank Time: 1
+* Fast Decay Without Comperator: false
+*
 """
 }]
 })
@@ -879,7 +1011,7 @@ Sets the configuration relevant for stealth mode.
 * Enable Autoscale: If set to true, automatic current control is used. Othwerwise the user defined
   amplitude and gradient are used.
 
-* Force Symmetric: If true, A symmetric PWM cycle is enforced. Otherwise the PWM valuee may change within each
+* Force Symmetric: If true, A symmetric PWM cycle is enforced. Otherwise the PWM value may change within each
   PWM cycle.
 
 * Freewheel Mode: The freewheel mode defines the behavior in stand still if the Standstill Current
@@ -897,7 +1029,43 @@ The default values are:
 """,
 'de':
 """
-TODO
+Note: Typischerweise können diese Werte bei ihren Standardwerten gelassen werden. Sie sollten nur
+geändert werden, wenn man weiß was man tut.
+
+Setzt die Konfigurationsparameter für den Stealth Modus.
+
+* Enable Stealth: Stealth Modus wird aktiviert, wenn dieser Wert auf True gesetzt wird. Ansonsten ist
+  der Modus deaktiviert auch wenn die Geschwindigkeit des Motors unter dem Grenzwert, der mittels
+  :func:`Set Basic Configuration` gesetzt wurde, liegt.
+
+* Amplitude: Wenn autoscale aktiviert wurde, wird die PWM Amplitude mit diesem Wert skaliert.
+  Wenn autoscale deaktiviert ist, definiert dieser Wert die maximale PWM Amplitudenänderungen pro Halbwelle. 
+  Der Wertebereich ist 0-255.
+
+* Gradient: Wenn autoscale deaktiviert wurde, wird der PWM Steigung (Gradient) bei diesem Wert skaliert. Wird
+  autoscale aktiviert, definiert dieser Wert die maximale PWM Steigung. Mit autoscale wird ein Wert
+  über 64 empfohlen, ansonsten kann es sein, dass die Regelung den Strom nicht korrekt messen kann.
+  Der Wertebereich ist 0-255.
+
+* Enable Autoscale: Die automatische Stromregelung ist aktiviert, wenn dieser Wert auf True gesetzt wird.
+  Ansonsten werden die vom Nutzer definierten Amplituden und Steigungen genutzt.
+
+* Force Symmetric: Wenn auf True gesetzt wird, dann wird ein smmetrisches PWM erzwungen. Ansonsten kann
+  sich der PWM Wert innerhalb eines PWM Taktes ändern.
+
+* Freewheel Mode: Der Freewheel Modus definiert das Verhalten im Stillstand, wenn der Standstill Current
+  (siehe :func:`Set Basic Configuration`) auf 0 gesetzt wurde.
+
+Die Standardwerte sind:
+
+* Enable Stealth: true
+* Amplitude: 128
+* Gradient: 4
+* Enable Autoscale: true
+* Force Symmetric: false
+* Freewheel Mode: 0 (Normal)
+
+
 """
 }]
 })
@@ -990,7 +1158,45 @@ The default values are:
 """,
 'de':
 """
-TODO
+Note: Typischerweise können diese Werte bei ihren Standardwerten gelassen werden. Sie sollten nur
+geändert werden, wenn man weiß was man tut.
+
+Setzt die Konfigurationsparameter für Coolstep.
+
+* Minimum Stallguard Value: Wenn der Stallguard-Wert unter diesem Wert*32 fällt wird der Motorstrom
+  erhöht um den Motorbelastungswinkel (motor load angle) zu reduzieren. Der Wertebereich ist 0-15.
+  Ein Wert von 0 deaktiviert Coolstep.
+
+* Maximum Stallguard Value: Wenn der Stallguard-Wert über (Min Stallguard Value + Max Stallguard Value + 1)*32
+  geht wird der Motorstrom verringert um Energie zu sparen.
+
+* Current Up Step Width: Setzt das Inkrement pro Stallguard-Wert. Der Wertebereich ist 0-3,
+  was mit den Inkrementen 1, 2, 4 und 8 korrespondiert.
+
+* Current Down Step Width: Setzt das Decrement pro Stallguard-Wert. Der Wertebereich ist 0-3,
+  was mit den Dekrementen 1, 2, 8 und 16 korrespondiert.
+
+* Minimum Current: Setzt den minimalen Strom für die Coolstep Stromregelung. Es kann zwischen der Hälfte und einem 
+  Viertel des Motorstroms gewählt werden.
+
+* Stallguard Threshold Value: Setzt den Grenzwert für die Stall-Ausgabe (Motor blockiert)
+  (siehe :func:`Get Driver Status`). Der Wertebereich ist -64 bis +63. Ein niedriger Wert führt zu einer höheren
+  Empfindlichkeit. Der korrekte Wert muss typischerweise ausprobiert werden. 0 sollte für die meisten Motoren
+  funktionieren.
+
+* Stallguard Mode: Setze 0 für eine Standardauflösung und 1 für Filtered Mode. Im Filtered Modus wird das Stallguard
+  Signal nur alle vier Vollschritte aktualisiert.
+
+Die Standardwerte sind:
+
+* Minimum Stallguard Value: 2
+* Maximum Stallguard Value: 10
+* Current Up Step Width: 0
+* Current Down Step Width: 0
+* Minimum Current: 0
+* Stallguard Threshold Value: 0
+* Stallguard Mode: 0
+
 """
 }]
 })
@@ -1047,6 +1253,7 @@ Sets miscellaneous configuration parameters.
   of a two phase motor to avoid the occurrence of a beat. The value range is 0-15. If set to 0,
   the synchronization is turned off. Otherwise the synchronization is done through the formular
   f_sync = f_clk/(value*64). In Classic Mode the synchronization is automatically switched off.
+  f_clk is 12.8MHz.
 
 The default values are:
 
@@ -1056,7 +1263,25 @@ The default values are:
 """,
 'de':
 """
-TODO
+Note: Typischerweise können diese Werte bei ihren Standardwerten gelassen werden. Sie sollten nur
+geändert werden, wenn man weiß was man tut.
+
+Setzt verschiedene Parametereinstellungen.
+
+* Disable Short To Ground Protection: Setze diesen Wert auf False um den Kurzschluss nach Masse 
+  Schutz zu aktivieren. Ansonsten ist dieser deaktiviert.
+
+* Synchronize Phase Frequency: Mit diesem Parameter kann der Chopper für beide Phasen eines
+  zweiphasen Motors synchronisiert werden. Der Wertebereich ist 0-15. Wenn der Wert auf 0 gesetzt
+  wird ist die Synchronisation abgeschaltet. Ansonsten wird die Synchronisation mit folgender
+  Formel durchgeführt: f_sync = f_clk/(value*64). Im Classic Modus ist die Synchronisation 
+  automatisch abgeschaltet. f_clk ist 12.8MHz.
+
+Die Standardwerte sind:
+
+* Disable Short To Ground Protection: 0
+* Synchronize Phase Frequency: 0
+
 """
 }]
 })
@@ -1104,13 +1329,13 @@ com['packets'].append({
 """
 Returns the current driver status.
 
-* Open Load: Indicates if an open load is present on phase A, B or both. False detection can occur in fast motion
-  as well as during stand still.
+* Open Load: Indicates if an open load is present on phase A, B or both. This could mean that there is a problem
+  with the wiring of the motor. False detection can occur in fast motion as well as during stand still.
 
 * Short To Ground: Indicates if a short to ground is present on phase A, B or both. If this is detected the driver
   automatically becomes disabled and stays disabled until it is enabled again manually.
 
-* Over Temperature: The over temperature indicator switches to "Warming" if the driver IC warms up. The warning flag
+* Over Temperature: The over temperature indicator switches to "Warning" if the driver IC warms up. The warning flag
   is expected during long duration stepper uses. If the temperature limit is reached the indicator switches
   to "Limit". In this case the driver becomes disabled until it cools down again.
 
@@ -1130,6 +1355,32 @@ Returns the current driver status.
 """,
 'de':
 """
+Gibt den aktuellen Treiberstatus zurück.
+
+* Open Load: Gibt an, dass keine Last an den Phasen A oder B, oder bei beiden vorhanden ist (open load). 
+  In dem Fall kann es ein Problem mit der Verkabelung des Motors geben. Es kann aber auch Fehlmeldungen geben,
+  wenn der Motor sich schnell bewegt oder sich im Stillstand befindet.
+
+* Short To Ground: Gibt an, dass es einen Kurzschlus zwischen einer Phase (A,B) oder beiden Phasen nach Masse gibt.
+  Wenn dies erkannt wird, wird der Treiber automatisch deaktiviert und muss wieder manuell aktiviert werden.
+
+* Over Temperature: Wenn der Treiber sich aufwärmt gibt dieser Status "Warning" aus. Dies ist erwartet, wenn
+  der Motor längere Zeit benutzt wird. Wenn das Temperaturlimit erreicht wird ändert sich der Status zu "Limit".
+  In diesem Fall wird der Treiber automatisch deaktiviert bis er sich wieder abgekühlt hat.
+
+* Motor Stalled: Ist True, wenn erkannt wurde, dass der Motor blockiert.
+
+* Actual Motor Current: Gibt die aktuelle Motorstromskalierung im Coolstep mode aus.
+
+* Stallguard Result: Der Stallguard Wert gibt einen Hinweis auf die Last des Motors. Ein niedriger Wert bedeutet eine
+  höhere Last. Über Ausprobieren kann man mit diesem Wert herausfinden, welcher Wert zu einem geeigneten Drehmoment bei 
+  der aktuellen Geschwindigkeit führt. Danach kann über diesen Wert herausgefunden werden, wenn eine Blockierung des 
+  Motors wahrscheinlich wird und es kann dementsprechend darauf reagiert werden (z.B. indem die Geschwindigkeit reduziert 
+  wird). Im Stillstand kann dieser Wert nicht benutzt werden. Er zeigt dann die Chopper On-Time für Motorspule A.
+
+* Stealth Voltage Amplitude: Zeigt das aktuelle PWM Scaling. Im Stealth Modus kann dieser Wert benutzt werden um die
+  Motorlast abzuschätzen und eine Blockierung erkannt werden, wenn autoscale aktiviert wurde (see :func:`Set Stealth Configuration`).
+
 """
 }]
 })
