@@ -836,7 +836,7 @@ def break_string(string, marker, continuation='', max_length=90):
     result = string.replace('<BP>', ' ')
 
     if len(result) > max_length:
-        prefix = result.split(marker)[0].split('\n')[-1]
+        prefix = result.split(marker)[0].split('\n')[-1].lstrip('\r')
         tabs = 0
 
         for c in prefix:
