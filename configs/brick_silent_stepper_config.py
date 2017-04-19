@@ -1656,7 +1656,7 @@ zurückgegeben.
 com['examples'].append({
 'name': 'Configuration',
 'functions': [('setter', 'Set Motor Current', [('uint16', 800)], None, '800mA'),
-#              ('setter', 'Set Step Mode', [('uint8', 8)], None, '1/8 step mode'),
+              ('setter', 'Set Step Configuration', [('uint8:constant', 5), ('bool', True)], None, '1/8 steps (interpolated)'),
               ('setter', 'Set Max Velocity', [('uint16', 2000)], None, 'Velocity 2000 steps/s'),
               ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], 'Slow acceleration (500 steps/s^2),\nFast deacceleration (5000 steps/s^2)', None),
               ('empty',),
@@ -1670,6 +1670,7 @@ com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Position Reached', 'position reached'), [(('Position', 'Position'), 'int32', None, None, None, None)], 'Use position reached callback to program random movement', None),
               ('empty',),
+              ('setter', 'Set Step Configuration', [('uint8:constant', 5), ('bool', True)], None, '1/8 steps (interpolated)'),
               ('setter', 'Enable', [], None, 'Enable motor power'),
               ('setter', 'Set Steps', [('int32', 1)], None, 'Drive one step forward to get things going')],
 'cleanups': [('setter', 'Disable', [], None, None)],
