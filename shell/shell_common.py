@@ -129,36 +129,38 @@ class ShellElement(common.Element):
 
     def get_shell_help(self):
         symbols_doc = ''
+        constant_group = self.get_constant_group()
 
-        if self.get_constant_group() is not None:
+        if constant_group != None:
             symbols = []
 
-            for constant in self.get_constant_group().get_constants():
-                symbols.append('{0}: {1}'.format(constant.get_dash_name(), constant.get_value()))
+            for constant in constant_group.get_constants():
+                symbols.append('{0}-{1}: {2}'.format(constant_group.get_dash_name(), constant.get_dash_name(), constant.get_value()))
 
             symbols_doc = ' (' + ', '.join(symbols) + ')'
 
         t = ShellElement.shell_types[self.get_type()]
 
         if self.get_cardinality() == 1 or t == 'string':
-            help = "'{0}{1}'".format(t, symbols_doc)
+            help_ = "'{0}{1}'".format(t, symbols_doc)
         else:
-            help = "get_array_type_name(ctx, '{0}', {1})".format(t, self.get_cardinality())
+            help_ = "get_array_type_name(ctx, '{0}', {1})".format(t, self.get_cardinality())
 
             if len(symbols_doc) > 0:
-                help += "+ '{0}'".format(symbols_doc)
+                help_ += "+ '{0}'".format(symbols_doc)
 
-        return help
+        return help_
 
     def get_shell_type_converter(self):
         type_converter = ShellElement.shell_type_converters[self.get_type()]
         default_item = ShellElement.shell_default_items[self.get_type()]
+        constant_group = self.get_constant_group()
 
-        if self.get_constant_group() != None:
+        if constant_group != None:
             symbols = {}
 
-            for constant in self.get_constant_group().get_constants():
-                symbols[constant.get_dash_name()] = constant.get_value()
+            for constant in constant_group.get_constants():
+                symbols['{0}-{1}'.format(constant_group.get_dash_name(), constant.get_dash_name())] = constant.get_value()
 
             if self.get_cardinality() > 1 and type_converter != 'string':
                 return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_item, self.get_cardinality())

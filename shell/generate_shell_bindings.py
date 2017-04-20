@@ -150,11 +150,13 @@ def call_{0}_{1}(ctx, argv):
                 for element in packet.get_elements('out'):
                     output_names.append("'{0}'".format(element.get_dash_name()))
 
-                    if element.get_constant_group() != None:
+                    constant_group = element.get_constant_group()
+
+                    if constant_group != None:
                         symbols = {}
 
-                        for constant in element.get_constant_group().get_constants():
-                            symbols[constant.get_value()] = constant.get_dash_name()
+                        for constant in constant_group.get_constants():
+                            symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_dash_name(), constant.get_dash_name())
 
                         output_symbols.append(str(symbols))
                     else:
@@ -239,11 +241,13 @@ def dispatch_{0}_{1}(ctx, argv):
             for element in packet.get_elements('out'):
                 output_names.append("'{0}'".format(element.get_dash_name()))
 
-                if element.get_constant_group() != None:
+                constant_group = element.get_constant_group()
+
+                if constant_group != None:
                     symbols = {}
 
-                    for constant in element.get_constant_group().get_constants():
-                        symbols[constant.get_value()] = constant.get_dash_name()
+                    for constant in constant_group.get_constants():
+                        symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_dash_name(), constant.get_dash_name())
 
                     output_symbols.append(str(symbols))
                 else:

@@ -95,7 +95,7 @@ class ShellExampleArgument(common.ExampleArgument):
         constant = self.get_value_constant()
 
         if constant != None:
-            return constant.get_dash_name()
+            return '{0}-{1}'.format(constant.get_constant_group().get_dash_name(), constant.get_dash_name())
 
         type = self.get_type()
         value = self.get_value()

@@ -397,7 +397,7 @@ class ShellDocPacket(shell_common.ShellPacket):
         text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant_group, constant, value):
-            c = '* ``{0}`` = {1}, '.format(constant.get_dash_name(), value)
+            c = '* ``{0}-{1}`` = {2}, '.format(constant_group.get_dash_name(), constant.get_dash_name(), value)
 
             for_ = {
             'en': 'for',
@@ -446,7 +446,7 @@ class ShellDocPacket(shell_common.ShellPacket):
             t = element.get_shell_type(True)
             desc += param.format(element.get_dash_name(), t)
 
-            if element.get_constant_group() is not None:
+            if element.get_constant_group() != None:
                 desc += ' ({0})'.format(common.select_lang(has_symbols))
 
             desc += '\n'
@@ -472,7 +472,7 @@ class ShellDocPacket(shell_common.ShellPacket):
             t = element.get_shell_type(True)
             ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)
 
-            if element.get_constant_group() is not None or \
+            if element.get_constant_group() != None or \
                self.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
                 ret += ' ({0})'.format(common.select_lang(has_symbols))
 
