@@ -968,7 +968,6 @@ This function creates a Modbus function code 15 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Starting Address: Starting address of the write.
-* Count: Number of coils to write.
 
 Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
@@ -1029,7 +1028,6 @@ This function creates a Modbus function code 16 request.
 
 * Slave Address: Address of the target Modbus slave.
 * Starting Address: Starting Address of the write.
-* Count: Number of registers to write.
 
 Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
