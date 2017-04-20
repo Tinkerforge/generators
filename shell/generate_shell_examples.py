@@ -283,7 +283,7 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
         if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
             mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
-        option_dash_names = {'o' : 'outside', '<': 'smaller', '>': 'greater'}
+        option_dash_names = {'o' : 'threshold-option-outside', '<': 'threshold-option-smaller', '>': 'threshold-option-greater'}
 
         return template.format(device_dash_name=self.get_device().get_dash_name(),
                                device_dash_category=self.get_device().get_dash_category(),
