@@ -18,8 +18,8 @@ com = {
         'en': 'Silently drives one bipolar stepper motor with up to 46V and 1.6A per phase',
         'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu 46V und 1.6A pro Phase'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }
