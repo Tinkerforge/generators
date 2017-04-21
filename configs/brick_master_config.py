@@ -1489,8 +1489,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Stack Voltage` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-
-The :cb:`Stack Voltage`Callback wird nur ausgelöst wenn sich die Spannung seit
+Der :cb:`Stack Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit
 der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.

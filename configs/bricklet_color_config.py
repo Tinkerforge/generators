@@ -70,7 +70,7 @@ in unterschiedlichen Wellenlängen:
    :target: ../../_images/Bricklets/bricklet_color_wavelength_chart_600.jpg
 
 Wenn die Farbe periodisch abgefragt werden soll, wird empfohlen
-den :cb:`Color`Callback  zu nutzen und die Periode mit
+den :cb:`Color` Callback zu nutzen und die Periode mit
 :func:`Set Color Callback Period` vorzugeben.
 """
 }]

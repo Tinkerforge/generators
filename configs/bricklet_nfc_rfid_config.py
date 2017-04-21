@@ -249,7 +249,7 @@ The approach to read or write a Mifare Classic page is as follows:
    expected tag was found, if it was not found got back to step 1
 4. Call :func:`Authenticate Mifare Classic Page` with page and key for the page
 5. Wait for state to change to *AuthenticatingMifareClassicPageReady* (see
-   :func:`Get State` or :cb:`State Changed`callback)
+   :func:`Get State` or :cb:`State Changed` callback)
 6. Call :func:`Request Page` or :func:`Write Page` to read/write page
 """,
 'de':
@@ -306,7 +306,7 @@ The general approach for writing to a tag is as follows:
    expected tag was found, if it was not found got back to step 1
 4. Call :func:`Write Page` with page number and data
 5. Wait for state to change to *WritePageReady* (see :func:`Get State` or
-   :cb:`State Changed`callback)
+   :cb:`State Changed` callback)
 
 If you use a Mifare Classic tag you have to authenticate a page before you
 can write to it. See :func:`Authenticate Mifare Classic Page`.
