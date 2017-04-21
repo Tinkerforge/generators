@@ -225,3 +225,12 @@
 - Add support for WIFI Extension 2.0 Mesh mode to Master Brick API
 - Add get/setStatusLEDConfig methods to Motion Detector Bricklet API
 - Add sensor and fusion mode configuration methods to IMU Brick 2.0 API
+
+2017-04-21: 2.1.12 (<unknown>)
+- Add support for Silent Stepper Brick
+- Add get/setConfiguration methods to Laser Range Finder Bricklet API to support
+  Bricklets with LIDAR-Lite sensor hardware version 3
+- Add getSendTimeoutCount method to all Brick APIs
+- Don't leak callback thread if connect fails
+- Break API to make connect method return a TinkerforgeException instead of
+  three different exception types

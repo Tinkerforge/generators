@@ -239,3 +239,9 @@
 - Add sensor and fusion mode configuration functions to IMU Brick 2.0 API
 - Avoid MSVC cast warning
 - Use MSVC stdbool.h if available
+
+2017-04-21: 2.1.14 (<unknown>)
+- Add support for Silent Stepper Brick
+- Add get/set_configuration functions to Laser Range Finder Bricklet API to
+  support Bricklets with LIDAR-Lite sensor hardware version 3
+- Add get_send_timeout_count function to all Brick APIs
