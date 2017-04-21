@@ -81,9 +81,11 @@ com['packets'].append({
 Returns up to *length* characters from receive buffer.
 
 Instead of polling with this function, you can also use
-callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
+callbacks. But note that this function will return available
+data only when the read callback is disabled.
+See :func:`Enable Read Callback` and :cb:`Read` callback.
 """,
-'de':
+'de': # TODO: Update German documentation.
 """
 Gibt bis zu *length* Zeichen aus dem Empfangsbuffer zurück.
 
