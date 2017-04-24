@@ -115,7 +115,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf':
+            elif packet.get_doc_type() in ['ccf', 'llf']:
                 prefix = 'FUNCTION'
                 flag = 'RESPONSE_EXPECTED_TRUE'
             else:

@@ -261,7 +261,7 @@ namespace Tinkerforge
             setto = 'ResponseExpectedFlag.FALSE;'
             if len(packet.get_elements('out')) > 0:
                 setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
-            elif packet.get_doc_type() == 'ccf':
+            elif packet.get_doc_type() in ['ccf', 'llf']:
                 setto = 'ResponseExpectedFlag.TRUE;'
 
             res += re.format(name_upper, setto)

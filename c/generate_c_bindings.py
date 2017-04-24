@@ -294,7 +294,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION'
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf':
+            elif packet.get_doc_type() in ['ccf', 'llf']:
                 prefix = 'FUNCTION'
                 flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
             else:

@@ -264,7 +264,7 @@ begin
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION_'
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf':
+            elif packet.get_doc_type() in ['ccf', 'llf']:
                 prefix = 'FUNCTION_'
                 flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
             else:

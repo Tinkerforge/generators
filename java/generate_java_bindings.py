@@ -262,7 +262,7 @@ public class {0} extends Device {{
             setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
             if len(packet.get_elements('out')) > 0:
                 setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
-            elif packet.get_doc_type() == 'ccf':
+            elif packet.get_doc_type() in ['ccf', 'llf']:
                 setto = 'RESPONSE_EXPECTED_FLAG_TRUE;'
 
             res += re.format(name_upper, setto)
