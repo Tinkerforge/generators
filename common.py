@@ -1022,6 +1022,13 @@ class Element(NameMixin):
         else:
             return self.get_item_size() * self.get_cardinality()
 
+class HighLevelStreamDataElement(NameMixin):
+    def __init__(self, raw_data):
+        self.raw_data = raw_data
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0]
+
 class HighLevelStream(object):
     def __init__(self, raw_data, packet):
         self.raw_data = raw_data
@@ -1032,6 +1039,9 @@ class HighLevelStream(object):
 
     def get_fixed_total_length(self):
         return self.raw_data.get('fixed_total_length', None)
+
+    def get_high_level_data_element(self):
+        return HighLevelStreamDataElement([self.raw_data.get('data_name', 'Data')])
 
 class HighLevelStreamIn(HighLevelStream):
     def __init__(self, raw_data, packet):

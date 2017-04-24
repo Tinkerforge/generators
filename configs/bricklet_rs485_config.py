@@ -40,7 +40,7 @@ com['packets'].append({
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'char', 59, 'in'),
              ('Stream Chunk Written', 'uint8', 1, 'out')],
-'high_level': {'stream_in': {'short_write': True}},
+'high_level': {'stream_in': {'short_write': True, 'data_name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -73,7 +73,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'char', 60, 'out')],
-'high_level': {'stream_out': {}},
+'high_level': {'stream_out': {'data_name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -667,7 +667,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'bool', 472, 'in')],
-'high_level': {'stream_in': {}},
+'high_level': {'stream_in': {'data_name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -749,7 +749,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'uint16', 29, 'in')],
-'high_level': {'stream_in': {}},
+'high_level': {'stream_in': {'data_name': 'Holding Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -960,7 +960,7 @@ com['packets'].append({
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'bool', 432, 'in'),
              ('Request ID', 'uint8', 1, 'out')],
-'high_level': {'stream_in': {}},
+'high_level': {'stream_in': {'data_name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1020,7 +1020,7 @@ com['packets'].append({
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'uint16', 27, 'in'),
              ('Request ID', 'uint8', 1, 'out')],
-'high_level': {'stream_in': {}},
+'high_level': {'stream_in': {'data_name': 'Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1054,7 +1054,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'bool', 472, 'in')],
-'high_level': {'stream_in': {}},
+'high_level': {'stream_in': {'data_name': 'Discrete Inputs'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1116,7 +1116,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'uint16', 29, 'in')],
-'high_level': {'stream_in': {}},
+'high_level': {'stream_in': {'data_name': 'Input Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1177,7 +1177,7 @@ com['packets'].append({
 'elements': [('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'char', 60, 'out')],
-'high_level': {'stream_out': {}},
+'high_level': {'stream_out': {'data_name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1247,7 +1247,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'bool', 464, 'out')],
-'high_level': {'stream_out': {}},
+'high_level': {'stream_out': {'data_name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1301,7 +1301,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 29, 'out')],
-'high_level': {'stream_out': {}},
+'high_level': {'stream_out': {'data_name': 'Holding Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1432,7 +1432,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'bool', 440, 'out')],
-'high_level': {'stream_out': {}},
+'high_level': {'stream_out': {'data_name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1485,7 +1485,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 27, 'out')],
-'high_level': {'stream_out': {}},
+'high_level': {'stream_out': {'data_name': 'Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1561,7 +1561,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'bool', 464, 'out')],
-'high_level': {'stream_out': {}},
+'high_level': {'stream_out': {'data_name': 'Discrete Inputs'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1615,7 +1615,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 29, 'out')],
-'high_level': {'stream_out': {}},
+'high_level': {'stream_out': {'data_name': 'Input Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':

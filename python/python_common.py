@@ -61,7 +61,7 @@ class PythonPacket(common.Packet):
             params.append(element.get_underscore_name())
 
         if stream_in != None:
-            params.append('data') # FIXME: how to get a proper name here?
+            params.append(stream_in.get_high_level_data_element().get_underscore_name())
 
         return ', '.join(params)
 

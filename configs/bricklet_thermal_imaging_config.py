@@ -30,7 +30,7 @@ com['packets'].append({
 'name': 'Get High Contrast Image Low Level',
 'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint8', 62, 'out')],
-'high_level': {'stream_out': {'fixed_total_length': 60*80}},
+'high_level': {'stream_out': {'fixed_total_length': 60*80, 'data_name': 'Image'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -47,7 +47,7 @@ com['packets'].append({
 'name': 'Get Temperature Image Low Level',
 'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 31, 'out')],
-'high_level': {'stream_out': {'fixed_total_length': 60*80}},
+'high_level': {'stream_out': {'fixed_total_length': 60*80, 'data_name': 'Image'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -226,7 +226,7 @@ com['packets'].append({
 'name': 'High Contrast Image Low Level',
 'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint8', 62, 'out')],
-'high_level': {'stream_out': {'fixed_total_length': 60*80}},
+'high_level': {'stream_out': {'fixed_total_length': 60*80, 'data_name': 'Image'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -243,7 +243,7 @@ com['packets'].append({
 'name': 'Temperature Image Low Level',
 'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 31, 'out')],
-'high_level': {'stream_out': {'fixed_total_length': 60*80}},
+'high_level': {'stream_out': {'fixed_total_length': 60*80, 'data_name': 'Image'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
