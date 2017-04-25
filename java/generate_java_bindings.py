@@ -24,6 +24,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import math
 import sys
 import os
 from xml.sax.saxutils import escape
@@ -637,6 +638,23 @@ public class {0} extends Device {{
 \t\t\t\tbb.put((byte)0);
 \t\t\t}}"""
 
+        bool_array_loop1 = """\t\tfor(int i = 0; i < {0}; i++) {{
+\t\t\tif ({1}[i]) {{
+\t\t\t\t{2}[i / 8] |= 1 << (i % 8);
+\t\t\t}}
+\t\t}}
+"""
+
+        bool_array_loop2 = """\t\tfor(int i = 0; i < {0}; i++) {{
+\t\t\tbb.put({1}[i]);
+\t\t}}"""
+
+        bool_array_main = """\n\t\tbyte[] {0} = new byte[{1}];
+\t\tArray.fill({0}, 0);
+
+{2}
+{3}"""
+
         cls = self.get_camel_case_name()
         for packet in self.get_packets('function'):
             options = 0
@@ -648,22 +666,33 @@ public class {0} extends Device {{
             doc = packet.get_java_formatted_doc()
             bbputs = ''
             bbput = '\t\tbb.put{0}({1}{2});'
+            bbput_bool_array = ''
+
             for element in packet.get_elements('in'):
                 name = element.get_headless_camel_case_name()
                 if element.get_type() == 'bool':
                     if element.get_cardinality() <= 1:
                         name = '({0} ? 1 : 0)'.format(name)
                     else:
-                        name = '({0}[i] ? 1 : 0)'.format(name)
+                        bbput_bool_array += bool_array_main.format(name + 'Bits',
+                                                                   str(int(element.get_cardinality()) / 8),
+                                                                   bool_array_loop1.format(element.get_cardinality(),
+                                                                                           name,
+                                                                                           name + 'Bits'),
+                                                                   bool_array_loop2.format(str(int(element.get_cardinality()) / 8),
+                                                                                           name + 'Bits'))
 
                 cast = ''
                 storage_type = element.get_java_byte_buffer_storage_type()
                 if storage_type != element.get_java_type():
                     cast = '({0})'.format(storage_type)
 
-                bbput_format = bbput.format(element.get_java_byte_buffer_method_suffix(),
-                                            cast,
-                                            name)
+                if element.get_cardinality() > 1 and element.get_type() == 'bool':
+                    pass
+                else:
+                    bbput_format = bbput.format(element.get_java_byte_buffer_method_suffix(),
+                                                cast,
+                                                name)
 
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'string':
@@ -679,7 +708,10 @@ public class {0} extends Device {{
                 elif self.get_generator().is_octave() and element.get_type() == 'char':
                     bbput_format = bbput_format.replace(');', '.charAt(0));')
 
-                bbputs += bbput_format + '\n'
+                if element.get_cardinality() > 1 and element.get_type() == 'bool':
+                    bbputs += bbput_bool_array + '\n'
+                else:
+                    bbputs += bbput_format + '\n'
 
             throw = 'throws TimeoutException, NotConnectedException'
             if len(packet.get_elements('out')) == 0:
@@ -802,6 +834,11 @@ class JavaBindingsPacket(java_common.JavaPacket):
     def get_java_bbgets(self, with_obj=False):
         bbgets = ''
         bbget_other = '\t\t{0}{1}{2} = {3}(bb.get{4}(){5}){6};'
+        bool_array_unpack = """\t\t\t{0}{1}[i] = ({2}[i / 8] & (1 << (i % 8))) != 0;"""
+        bbget_bool_array = """\t\tbyte[] {0} = new byte[{1}];
+\t\tbb.get({0});
+{2}
+"""
         bbget_string = '\t\t{0}{1}{2} = {3}(bb{4}{5}){6};'
         new_arr ='{0}[] {1} = new {0}[{2}];'
         loop = """\t\t{2}for(int i = 0; i < {0}; i++) {{
@@ -809,6 +846,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
 \t\t}}
 """
         for element in self.get_elements('out'):
+            bbget_format_bool_array = False
             typ = ''
             if not with_obj:
                 typ = element.get_java_type()
@@ -831,8 +869,10 @@ class JavaBindingsPacket(java_common.JavaPacket):
                 cast = 'IPConnection.unsignedShort'
             elif element.get_type() == 'uint32':
                 cast = 'IPConnection.unsignedInt'
-            elif element.get_type() == 'bool':
+            elif element.get_type() == 'bool' and element.get_cardinality() <= 1:
                 suffix = ' != 0'
+            elif element.get_type() == 'bool' and element.get_cardinality() > 1:
+                suffix = ''
             elif element.get_type() == 'char':
                 if self.get_generator().is_octave():
                     cast = 'new String(new char[]{(char)'
@@ -849,21 +889,34 @@ class JavaBindingsPacket(java_common.JavaPacket):
 
             if element.get_type() == 'string':
                 bbget = bbget_string
+            elif element.get_type() == 'bool' and element.get_cardinality() > 1:
+                bbget = bbget_bool_array
+                bbget_format_bool_array = True
             else:
                 bbget = bbget_other
 
-            bbget_format = bbget.format(format_typ,
-                                        obj,
-                                        bbret,
-                                        cast,
-                                        element.get_java_byte_buffer_method_suffix(),
-                                        cast_extra,
-                                        suffix)
+            if not bbget_format_bool_array:
+                bbget_format = bbget.format(format_typ,
+                                            obj,
+                                            bbret,
+                                            cast,
+                                            element.get_java_byte_buffer_method_suffix(),
+                                            cast_extra,
+                                            suffix)
 
             if element.get_cardinality() > 1 and element.get_type() != 'string':
                 if with_obj:
                     bbget_format = bbget_format.replace(' =', '[i] =')
-                    bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, '')
+                    if element.get_type() == 'bool':
+                        bbget_format = bbget.format(bbret + 'Bits',
+                                                    str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                    loop.format(element.get_cardinality(),
+                                                                bool_array_unpack.format(obj,
+                                                                                         bbret,
+                                                                                         bbret + 'Bits'),
+                                                                ''))
+                    else:
+                        bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, '')
                 else:
                     arr = new_arr.format(typ.replace(' ', ''), bbret, element.get_cardinality())
                     bbget_format = bbget_format.replace(' =', '[i] =')
