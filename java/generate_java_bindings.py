@@ -651,7 +651,10 @@ public class {0} extends Device {{
             for element in packet.get_elements('in'):
                 name = element.get_headless_camel_case_name()
                 if element.get_type() == 'bool':
-                    name = '({0} ? 1 : 0)'.format(name)
+                    if element.get_cardinality() <= 1:
+                        name = '({0} ? 1 : 0)'.format(name)
+                    else:
+                        name = '({0}[i] ? 1 : 0)'.format(name)
 
                 cast = ''
                 storage_type = element.get_java_byte_buffer_storage_type()
@@ -668,6 +671,8 @@ public class {0} extends Device {{
                         bbput_format = string_loop.format(bbput_format)
                     elif self.get_generator().is_octave() and element.get_type() == 'char':
                         bbput_format = bbput_format.replace(');', '[i].charAt(0));')
+                    elif element.get_type() == 'bool':
+                        pass
                     else:
                         bbput_format = bbput_format.replace(');', '[i]);')
                     bbput_format = loop.format(element.get_cardinality(), '\t' + bbput_format)
