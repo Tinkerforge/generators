@@ -101,8 +101,8 @@ class JavaZipGenerator(common.ZipGenerator):
         with common.ChangedDirectory(self.tmp_dir):
             common.execute('/usr/bin/javac ' +
                            '-Xlint ' +
-                           '-source 1.5 ' +
-                           '-target 1.5 ' +
+                           '-source 1.6 ' +
+                           '-target 1.6 ' +
                            os.path.join(self.tmp_source_com_tinkerforge_dir, '*.java'),
                            shell=True)
 
