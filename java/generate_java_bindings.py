@@ -650,7 +650,7 @@ public class {0} extends Device {{
 \t\t}}"""
 
         bool_array_main = """\n\t\tbyte[] {0} = new byte[{1}];
-\t\tArray.fill({0}, 0);
+\t\tArrays.fill({0}, (byte)0);
 
 {2}
 {3}"""
@@ -906,7 +906,6 @@ class JavaBindingsPacket(java_common.JavaPacket):
 
             if element.get_cardinality() > 1 and element.get_type() != 'string':
                 if with_obj:
-                    bbget_format = bbget_format.replace(' =', '[i] =')
                     if element.get_type() == 'bool':
                         bbget_format = bbget.format(bbret + 'Bits',
                                                     str(int(math.ceil(element.get_cardinality() / 8.0))),
@@ -916,11 +915,22 @@ class JavaBindingsPacket(java_common.JavaPacket):
                                                                                          bbret + 'Bits'),
                                                                 ''))
                     else:
+                        bbget_format = bbget_format.replace(' =', '[i] =')
                         bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, '')
                 else:
-                    arr = new_arr.format(typ.replace(' ', ''), bbret, element.get_cardinality())
-                    bbget_format = bbget_format.replace(' =', '[i] =')
-                    bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, arr + '\n\t\t')
+                    if element.get_type() == 'bool':
+                        arr = new_arr.format(typ.replace(' ', ''), bbret, element.get_cardinality())
+                        bbget_format = bbget.format(bbret + 'Bits',
+                                                    str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                    loop.format(element.get_cardinality(),
+                                                                bool_array_unpack.format(obj,
+                                                                                         bbret,
+                                                                                         bbret + 'Bits'),
+                                                                arr + '\n\t\t'))
+                    else:
+                        arr = new_arr.format(typ.replace(' ', ''), bbret, element.get_cardinality())
+                        bbget_format = bbget_format.replace(' =', '[i] =')
+                        bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, arr + '\n\t\t')
 
             bbgets += bbget_format + '\n'
 
