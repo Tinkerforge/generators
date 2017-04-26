@@ -38,30 +38,11 @@ class PythonDevice(common.Device):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
 class PythonPacket(common.Packet):
-    def get_python_parameter_list(self):
+    def get_python_parameter_list(self, high_level=False):
         params = []
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements('in', high_level=high_level):
             params.append(element.get_underscore_name())
-
-        return ', '.join(params)
-
-    def get_python_high_level_parameter_list(self):
-        params = []
-        elements = self.get_elements('in')
-        stream_in = self.get_high_level('stream_in')
-
-        if stream_in != None:
-            if stream_in.get_fixed_total_length() == None:
-                elements = elements[:-3]
-            else:
-                elements = elements[:-2]
-
-        for element in elements:
-            params.append(element.get_underscore_name())
-
-        if stream_in != None:
-            params.append(stream_in.get_high_level_data_element().get_underscore_name())
 
         return ', '.join(params)
 

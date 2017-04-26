@@ -34,6 +34,7 @@ import math
 import multiprocessing.dummy
 from collections import namedtuple
 from pprint import pprint
+from copy import deepcopy
 
 gen_text_rst = """..
  #############################################################
@@ -1022,13 +1023,6 @@ class Element(NameMixin):
         else:
             return self.get_item_size() * self.get_cardinality()
 
-class HighLevelStreamDataElement(NameMixin):
-    def __init__(self, raw_data):
-        self.raw_data = raw_data
-
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0]
-
 class HighLevelStream(object):
     def __init__(self, raw_data, packet):
         self.raw_data = raw_data
@@ -1040,40 +1034,66 @@ class HighLevelStream(object):
     def get_fixed_total_length(self):
         return self.raw_data.get('fixed_total_length', None)
 
-    def get_high_level_data_element(self):
-        return HighLevelStreamDataElement([self.raw_data.get('data_name', 'Data')])
+    # FIXME: avoid all this NameMixin duplication here
+    def _get_data_name(self):
+        return self.raw_data.get('data_name', 'Data')
+
+    def get_data_name(self, skip=0, remove=None):
+        words = skip_words(self._get_data_name().split(' '), skip)
+
+        if remove in words:
+            words.remove(remove)
+
+        return ' '.join(words)
+
+    def get_data_camel_case_name(self, skip=0):
+        return ''.join(skip_words(self._get_data_name().split(' '), skip))
+
+    def get_data_headless_camel_case_name(self, skip=0):
+        words = skip_words(self._get_data_name().split(' '), skip)
+
+        return ''.join([words[0].lower()] + words[1:])
+
+    def get_data_underscore_name(self, skip=0):
+        return '_'.join(skip_words(self._get_data_name().split(' '), skip)).lower()
+
+    def get_data_upper_case_name(self, skip=0):
+        return '_'.join(skip_words(self._get_data_name().split(' '), skip)).upper()
+
+    def get_data_dash_name(self, skip=0):
+        return '-'.join(skip_words(self._get_data_name().split(' '), skip)).lower()
 
 class HighLevelStreamIn(HighLevelStream):
     def __init__(self, raw_data, packet):
         HighLevelStream.__init__(self, raw_data, packet)
 
         if 'fixed_total_length' not in raw_data and \
-           packet.in_elements[-3].get_name() != 'Stream Total Length':
+           packet.elements_in[-3].get_name() != 'Stream Total Length':
             raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
 
-        if packet.in_elements[-2].get_name() != 'Stream Chunk Offset' or \
-           packet.in_elements[-1].get_name() != 'Stream Chunk Data':
+        if packet.elements_in[-2].get_name() != 'Stream Chunk Offset' or \
+           packet.elements_in[-1].get_name() != 'Stream Chunk Data':
             raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
 
         if 'fixed_total_length' not in raw_data and \
-           packet.in_elements[-3].get_type() != packet.in_elements[-2].get_type():
+           packet.elements_in[-3].get_type() != packet.elements_in[-2].get_type():
             raise GeneratorError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
 
         if raw_data.get('short_write', False) and \
-           packet.out_elements[-1].get_name() != 'Stream Chunk Written':
+           packet.elements_out[-1].get_name() != 'Stream Chunk Written':
             raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
 
     def get_total_length_element(self):
         if 'fixed_total_length' in self.raw_data:
             return None
         else:
-            return self.packet.in_elements[-3]
+            return self.packet.elements_in[-3]
 
     def get_chunk_offset_element(self):
-        return self.packet.in_elements[-2]
+        return self.packet.elements_in[-2]
 
     def get_chunk_data_element(self):
-        return self.packet.in_elements[-1]
+        return self.packet.elements_in[-1]
 
     def get_short_write(self):
         return self.raw_data.get('short_write', False)
@@ -1083,28 +1103,28 @@ class HighLevelStreamOut(HighLevelStream):
         HighLevelStream.__init__(self, raw_data, packet)
 
         if 'fixed_total_length' not in raw_data and \
-           packet.out_elements[-3].get_name() != 'Stream Total Length':
+           packet.elements_out[-3].get_name() != 'Stream Total Length':
             raise GeneratorError("Invalid element names for high-level feature 'stream_out'")
 
-        if packet.out_elements[-2].get_name() != 'Stream Chunk Offset' or \
-           packet.out_elements[-1].get_name() != 'Stream Chunk Data':
+        if packet.elements_out[-2].get_name() != 'Stream Chunk Offset' or \
+           packet.elements_out[-1].get_name() != 'Stream Chunk Data':
             raise GeneratorError("Invalid element names for high-level feature 'stream_out'")
 
         if 'fixed_total_length' not in raw_data and \
-           packet.out_elements[-3].get_type() != packet.all_elements[-2].get_type():
+           packet.elements_out[-3].get_type() != packet.elements_out[-2].get_type():
             raise GeneratorError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
 
     def get_total_length_element(self):
         if 'fixed_total_length' in self.raw_data:
             return None
         else:
-            return self.packet.out_elements[-3]
+            return self.packet.elements_out[-3]
 
     def get_chunk_offset_element(self):
-        return self.packet.out_elements[-2]
+        return self.packet.elements_out[-2]
 
     def get_chunk_data_element(self):
-        return self.packet.out_elements[-1]
+        return self.packet.elements_out[-1]
 
 class Packet(NameMixin):
     valid_types = set(['int8',
@@ -1123,10 +1143,11 @@ class Packet(NameMixin):
     def __init__(self, raw_data, device):
         self.raw_data = raw_data
         self.device = device
-        self.all_elements = []
-        self.in_elements = []
-        self.out_elements = []
+        self.elements_in = []
+        self.elements_out = []
         self.high_level = {}
+        self.high_level_elements_in = []
+        self.high_level_elements_out = []
 
         check_name(raw_data['name'])
 
@@ -1136,8 +1157,6 @@ class Packet(NameMixin):
         for raw_element in self.raw_data['elements']:
             element = device.get_generator().get_element_class()(raw_element, self)
 
-            self.all_elements.append(element)
-
             if element.get_type() not in Packet.valid_types:
                 raise GeneratorError('Invalid element type ' + element.get_type())
 
@@ -1145,9 +1164,9 @@ class Packet(NameMixin):
                 raise GeneratorError('Invalid element size ' + element.get_cardinality())
 
             if element.get_direction() == 'in':
-                self.in_elements.append(element)
+                self.elements_in.append(element)
             elif element.get_direction() == 'out':
-                self.out_elements.append(element)
+                self.elements_out.append(element)
             else:
                 raise GeneratorError('Invalid element direction ' + element.get_direction())
 
@@ -1157,13 +1176,22 @@ class Packet(NameMixin):
         if raw_stream_in != None and raw_stream_out != None:
             raise GeneratorError("Cannot combine high-level features 'stream_in' and 'stream_out'")
         elif raw_stream_in != None:
-            self.high_level['stream_in'] = HighLevelStreamIn(raw_stream_in, self)
+            stream_in = HighLevelStreamIn(raw_stream_in, self)
+            raw_element = (stream_in.get_data_name(),) + deepcopy(self.elements_in[-1].raw_data[1:])
+
+            self.high_level['stream_in'] = stream_in
+            self.high_level_elements_in.append(device.get_generator().get_element_class()(raw_element, self))
+
         elif raw_stream_out != None:
-            self.high_level['stream_out'] = HighLevelStreamOut(raw_stream_out, self)
+            stream_out = HighLevelStreamOut(raw_stream_out, self)
+            raw_element = (stream_out.get_data_name(),) + deepcopy(self.elements_out[-1].raw_data[1:])
+
+            self.high_level['stream_out'] = stream_out
+            self.high_level_elements_out.append(device.get_generator().get_element_class()(raw_element, self))
 
         self.constant_groups = []
 
-        for element in self.all_elements:
+        for element in self.elements_in + self.elements_out:
             constant_group = element.get_constant_group()
 
             if constant_group is None:
@@ -1213,13 +1241,36 @@ class Packet(NameMixin):
     def _get_name(self): # for NameMixin
         return self.raw_data['name']
 
-    def get_elements(self, direction=None):
+    def get_elements(self, direction=None, high_level=False):
+        elements_in = self.elements_in
+        elements_out = self.elements_out
+
+        if high_level:
+            stream_in = self.get_high_level('stream_in')
+            stream_out = self.get_high_level('stream_out')
+
+            if stream_in != None:
+                if stream_in.get_fixed_total_length() == None:
+                    elements_in = elements_in[:-3]
+                else:
+                    elements_in = elements_in[:-2]
+
+                elements_in += self.high_level_elements_in
+
+            if stream_out != None:
+                if stream_out.get_fixed_total_length() == None:
+                    elements_out = elements_out[:-3]
+                else:
+                    elements_out = elements_out[:-2]
+
+                elements_out += self.high_level_elements_out
+
         if direction is None:
-            return self.all_elements
+            return elements_in + elements_out
         elif direction == 'in':
-            return self.in_elements
+            return elements_in
         elif direction == 'out':
-            return self.out_elements
+            return elements_out
         else:
             raise GeneratorError('Invalid element direction ' + direction)
 
@@ -1273,13 +1324,13 @@ class Packet(NameMixin):
 
     def get_request_size(self):
         size = 8 # header
-        for element in self.in_elements:
+        for element in self.elements_in:
             size += element.get_size()
         return size
 
     def get_response_size(self):
         size = 8 # header
-        for element in self.out_elements:
+        for element in self.elements_out:
             size += element.get_size()
         return size
 

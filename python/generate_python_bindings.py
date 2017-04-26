@@ -242,13 +242,13 @@ class {0}(Device):
         # FIXME: move the bulk of this logic to a helper function in ip_connection.py
         stream_in_template = """
     def {underscore_name}(self{high_level_parameter_list}):
-        stream_total_length = len({high_level_data_name})
+        stream_total_length = len({data_underscore_name})
         stream_chunk_offset = 0
         stream_result = None
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = {high_level_data_name}[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
+                stream_chunk_data = {data_underscore_name}[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
 
                 if len(stream_chunk_data) < {chunk_cardinality}:
                     stream_chunk_data.extend([{chunk_padding}]*({chunk_cardinality} - len(stream_chunk_data)))
@@ -265,12 +265,12 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameter_list}):
         stream_extra = ()
         stream_total_written = 0
-        stream_total_length = len({high_level_data_name})
+        stream_total_length = len({data_underscore_name})
         stream_chunk_offset = 0
 
         with self.stream_lock:
             while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = {high_level_data_name}[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
+                stream_chunk_data = {data_underscore_name}[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
 
                 if len(stream_chunk_data) < {chunk_cardinality}:
                     stream_chunk_data.extend([{chunk_padding}]*({chunk_cardinality} - len(stream_chunk_data)))
@@ -365,14 +365,14 @@ class {0}(Device):
 
                 methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                            parameter_list=packet.get_python_parameter_list(),
-                                           high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
-                                           high_level_data_name=stream_in.get_high_level_data_element().get_underscore_name(),
+                                           high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameter_list(high_level=True), ''),
+                                           data_underscore_name=stream_in.get_data_underscore_name(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                            chunk_padding=repr(stream_in.get_chunk_data_element().get_python_default_value()))
             elif stream_out != None:
                 methods += stream_out_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                                       parameter_list=packet.get_python_parameter_list(),
-                                                      high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
+                                                      high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameter_list(high_level=True), ''),
                                                       fixed_total_length=stream_out.get_fixed_total_length(),
                                                       stream_parameter_count=2 if stream_out.get_fixed_total_length() != None else 3,
                                                       chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
