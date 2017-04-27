@@ -24,6 +24,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import math
 import sys
 import os
 from xml.sax.saxutils import escape
@@ -300,6 +301,13 @@ namespace Tinkerforge
 
             convs = ''
             conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, response{4});\n'
+            conv_bool_array ="""\t\t\tbool[] {0} = new bool[{1}];
+\t\t\tbyte[] {2} = new byte[{3}];
+\t\t\t{2} = LEConverter.ByteArrayFrom({4}, response, {3});
+\t\t\tfor(int i = 0; i < {1}; i++) {{
+\t\t\t\t{0}[i] = ({2}[i / 8] & (1 << (i % 8))) != 0;
+\t\t\t}}
+"""
 
             pos = 8
             for element in packet.get_elements('out'):
@@ -307,13 +315,23 @@ namespace Tinkerforge
                 cname = element.get_headless_camel_case_name()
                 from_method = element.get_csharp_le_converter_from_method()
                 length = ''
-                if element.get_cardinality() > 1:
+                if element.get_cardinality() > 1 and element.get_type() != 'bool':
                     length = ', ' + str(element.get_cardinality())
-                convs += conv.format(csharp_type,
-                                     cname,
-                                     from_method,
-                                     pos,
-                                     length)
+                else:
+                    pass
+
+                if element.get_cardinality() > 1 and element.get_type() == 'bool':
+                    convs += conv_bool_array.format(cname,
+                                                    element.get_cardinality(),
+                                                    cname + 'Bits',
+                                                    str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                    pos)
+                else:
+                    convs += conv.format(csharp_type,
+                                         cname,
+                                         from_method,
+                                         pos,
+                                         length)
 
                 pos += element.get_size()
 
@@ -355,14 +373,44 @@ namespace Tinkerforge
 
             write_convs = ''
             write_conv = '\t\t\tLEConverter.To(({2}){0}, {1}, request);\n'
-            write_conv_length = '\t\t\tLEConverter.To(({3}){0}, {1}, {2}, request);\n'
+            write_conv_length = """\t\t\t{0}[] {1} = new {0}[{2}];
+\t\t\tfor (int i = 0; i < {2}; ++i) {{
+\t\t\t\t{1}[i] = ({0}){3}[i];
+\t\t\t}}
+\t\t\tLEConverter.To({1}, {4}, {2}, request);\n"""
+            write_conv_bool_array = """\t\t\tbyte[] {0} = new byte[{1}];
+\t\t\tfor(int i = 0; i < {2}; i++) {{
+\t\t\t\tif ({3}[i]) {{
+\t\t\t\t\t{0}[i / 8] |= (byte)(1 << (i % 8));
+\t\t\t\t}}
+\t\t\t}}
+\t\t\tLEConverter.To((byte[]){0}, {4}, {1}, request);
+"""
 
             pos = 8
             for element in packet.get_elements('in'):
                 wname = element.get_headless_camel_case_name()
                 csharp_type = element.get_csharp_le_converter_type()
                 if element.get_cardinality() > 1:
-                    write_convs += write_conv_length.format(wname, pos, element.get_cardinality(), csharp_type)
+                    if element.get_type() == 'bool':
+                        write_convs += write_conv_bool_array.format(wname + 'Bits',
+                                                                    str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                                    element.get_cardinality(),
+                                                                    wname,
+                                                                    pos)
+                    else:
+                        if element.get_csharp_le_converter_type() != element.get_csharp_type():
+                            cs_le_type = element.get_csharp_le_converter_type().replace('[', '')
+                            cs_le_type = cs_le_type.replace(']', '')
+                            '''write_convs += write_conv_length.format(wname,
+                                                                    pos,
+                                                                    element.get_cardinality(),
+                                                                    csharp_type)'''
+                            write_convs += write_conv_length.format(cs_le_type,
+                                                                    '_' + wname,
+                                                                    element.get_cardinality(),
+                                                                    wname,
+                                                                    pos)
                 else:
                     write_convs += write_conv.format(wname, pos, csharp_type)
                 pos += element.get_size()
@@ -370,6 +418,12 @@ namespace Tinkerforge
             method_tail = ''
             read_convs = ''
             read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, response{3});'
+            read_conv_bool_array = """\n\t\t\tbyte[] {0} = new byte[{1}];
+\t\t\t{4} = new bool[{3}];
+\t\t\t{0} = LEConverter.ByteArrayFrom({2}, response, {1});
+\t\t\tfor(int i = 0; i < {3}; i++) {{
+\t\t\t\t{4}[i] = ({0}[i / 8] & (1 << (i % 8))) != 0;
+\t\t\t}}"""
 
             pos = 8
             for element in packet.get_elements('out'):
@@ -377,12 +431,22 @@ namespace Tinkerforge
                 from_method = element.get_csharp_le_converter_from_method()
                 length = ''
                 if element.get_cardinality() > 1:
-                    length = ', ' + str(element.get_cardinality())
+                    if element.get_type() == 'bool':
+                        pass
+                    else:
+                        length = ', ' + str(element.get_cardinality())
 
                 if ret_count == 1:
                     read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_method, pos, length)
                 else:
-                    read_convs += read_conv.format(aname, from_method, pos, length)
+                    if element.get_cardinality() > 1 and element.get_type() == 'bool':
+                        read_convs += read_conv_bool_array.format(aname + 'Bits',
+                                                                  str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                                  pos,
+                                                                  element.get_cardinality(),
+                                                                  aname)
+                    else:
+                        read_convs += read_conv.format(aname, from_method, pos, length)
                 pos += element.get_size()
 
             if ret_count > 0:
