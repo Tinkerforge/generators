@@ -61,8 +61,16 @@ module Tinkerforge
         r = []
 
         if f0 == '?'
-          unpacked[0].each { |b| r << b ? 1 : 0 }
-          data += r.pack "C#{f1}"
+          _f1 = (Integer(f1) / 8.0).ceil
+          r = Array.new(_f1, 0)
+
+          unpacked[0].each_with_index do |b, i|
+            if b
+              r[i / 8] |= 1 << (i % 8)
+            end
+          end
+
+          data += r.pack "C#{_f1}"
         elsif f0 == 'k'
           unpacked[0].each { |c| r << c.ord }
           data += r.pack "c#{f1}"
@@ -111,7 +119,10 @@ module Tinkerforge
           r = data.unpack "C#{f1}a*"
           data = r[-1]
           r.delete_at(-1)
-          r.each { |b| u << b != 0 }
+
+          for i in 0..Integer(f1) - 1
+            u << ((r[i / 8] & (1 << (i % 8))) != 0)
+          end
         elsif f0 == 'k'
           r = data.unpack "c#{f1}a*"
           data = r[-1]
