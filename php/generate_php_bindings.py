@@ -24,6 +24,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import math
 import sys
 import os
 
@@ -226,8 +227,15 @@ class {0} extends Device
 
                 if element.get_type() == 'bool':
                     if cardinality > 1:
+                        pack.append('        ${0} = array_fill(0, {1}, 0);'.format(underscore_name + '_bits', str(int(math.ceil(cardinality/8.0)))))
                         pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(cardinality))
-                        pack.append('            $payload .= pack(\'{0}\', intval((bool)${1}[$i]));\n        }}'.format(pack_format, underscore_name))
+                        pack.append('            if((bool)${1}[$i]) {{'.format(pack_format, underscore_name))
+                        pack.append('              ${0}[$i / 8] |= 1 << ($i % 8);'.format(underscore_name + '_bits'))
+                        pack.append('            }')
+                        pack.append('        }')
+                        pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(str(int(math.ceil(cardinality/8.0)))))
+                        pack.append('          $payload .= pack(\'C\', intval(${0}[$i]));'.format(underscore_name + '_bits'))
+                        pack.append('        }')
                     else:
                         pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(pack_format, underscore_name))
                 elif element.get_type() == 'string':

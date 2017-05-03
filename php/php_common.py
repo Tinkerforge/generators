@@ -24,6 +24,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import math
 import sys
 import os
 
@@ -117,7 +118,10 @@ class PHPElement(common.Element):
             else:
                 return 'C8{0}'.format(underscore_name)
         else:
-            return'{0}{1}{2}'.format(PHPElement.php_pack_format[self.get_type()], cardinality, underscore_name)
+            if cardinality > 1 and self.get_type() == 'bool':
+                return'{0}{1}{2}'.format(PHPElement.php_pack_format[self.get_type()], str(int(math.ceil(cardinality/8.0))), underscore_name)
+            else:
+                return'{0}{1}{2}'.format(PHPElement.php_pack_format[self.get_type()], cardinality, underscore_name)
 
     def get_php_unpack_fix(self):
         if self.get_cardinality() > 1:
