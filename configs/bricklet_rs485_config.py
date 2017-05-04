@@ -85,13 +85,14 @@ callbacks. But note that this function will return available
 data only when the read callback is disabled.
 See :func:`Enable Read Callback` and :cb:`Read` callback.
 """,
-'de': # TODO: Update German documentation.
+'de': 
 """
 Gibt bis zu *length* Zeichen aus dem Empfangsbuffer zurück.
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich
-Callbacks zu nutzen. Siehe :func:`Enable Read Callback` und
-:cb:`Read` Callback.
+Callbacks zu nutzen. Diese Funktion gibt nur Daten zurück wenn
+der Read-Callback nich aktiv ist.
+Siehe :func:`Enable Read Callback` und :cb:`Read` Callback.
 """
 }]
 })
@@ -804,9 +805,19 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': # TODO: German documentation.
+'de': 
 """
--
+Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Holding Register-Anfrage
+an einen Modbus-Slave zu senden (Modbus Funktionscode 3).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Starting Address: Startadresse der Leseeoperation.
+* Count: Anzahl der zu schreibenden Register.
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Holding Registers Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
 """
 }]
 })
@@ -825,12 +836,17 @@ write a single coil.
 * Request ID: Request ID of the corresponding request that is being answered.
 
 This function must be called from the :cb:`Modbus Slave Write Single Coil Request`
-callback with the Request ID, Coil Address and Coil Value as provided by the
-arguments of the callback.
+callback with the Request ID as provided by the arguments of the callback.
 """,
-'de': # TODO: German documentation.
+'de': 
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Read Single Coil-Anfrage
+eines Modbus-Masters zu beantworten.
+
+* Request ID: Request ID der zu beantwortenden Anfrage.
+
+Diese Funktion muss vom :cb:`Modbus Slave Write Single Coil Request` Callback mit der
+Request ID des Callbacks aufgerufen werden.
 """
 }]
 })
@@ -862,9 +878,21 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Master Modus kann diese Funktion genutzt werden un eine einzelne Coil eines
+Modbus-Slave zu schreiben (Modbus Funktionscode 5).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Coil Address: Adresse der Coil
+* Coil Value: Zu schreibender Wert
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Holding Registers Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
+
+Im Fehlerfall ist die Request ID 0.
 """
 }]
 })
@@ -886,9 +914,15 @@ This function must be called from the :cb:`Modbus Slave Write Single Register Re
 callback with the Request ID, Register Address and Register Value as provided by
 the arguments of the callback.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Write Single Register-Anfrage
+eines Modbus-Masters zu beantworten.
+
+* Request ID: Request ID der zu beantwortenden Anfrage.
+
+Diese Funktion muss vom :cb:`Modbus Slave Write Single Register Request` Callback mit der
+Request ID des Callbacks aufgerufen werden.
 """
 }]
 })
@@ -920,9 +954,21 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Master Modus kann diese Funktion genutzt werden un ein einzelnes Register eines
+Modbus-Slave zu schreiben (Modbus Funktionscode 6).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Register Address: Adresse des Registers
+* Register Value: Zu schreibender Wert
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Single Register Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
+
+Im Fehlerfall ist die Request ID 0.
 """
 }]
 })
@@ -941,12 +987,17 @@ write multiple coils.
 * Request ID: Request ID of the corresponding request that is being answered.
 
 This function must be called from the :cb:`Modbus Slave Write Multiple Coils Request`
-callback with the Request ID, Starting Address and Count as provided by the
-arguments of the callback.
+callback with the Request ID of the callback.
 """,
-'de': # TODO: German documentation.
+'de': 
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Write Multiple Coils-Anfrage
+eines Modbus-Masters zu beantworten.
+
+* Request ID: Request ID der zu beantwortenden Anfrage.
+
+Diese Funktion muss vom :cb:`Modbus Slave Write Multiple Coils Request` Callback mit der
+Request ID des Callbacks aufgerufen werden.
 """
 }]
 })
@@ -980,9 +1031,20 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': # TODO: German documentation.
+'de': 
 """
--
+Im Modbus-Master Modus kann diese Funktion genutzt werden un eine mehrere Coils eines
+Modbus-Slave zu schreiben (Modbus Funktionscode 15).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Starting Address: Startadresse der Schreibeoperation
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Multiple Coils Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
+
+Im Fehlerfall ist die Request ID 0.
 """
 }]
 })
@@ -1001,12 +1063,17 @@ write multiple registers.
 * Request ID: Request ID of the corresponding request that is being answered.
 
 This function must be called from the :cb:`Modbus Slave Write Multiple Registers Request`
-callback with the Request ID, Starting Address and Count as provided by the
-arguments of the callback.
+callback with the Request ID of the callback.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Write Multiple Register-Anfrage
+eines Modbus-Masters zu beantworten.
+
+* Request ID: Request ID der zu beantwortenden Anfrage.
+
+Diese Funktion muss vom :cb:`Modbus Slave Write Multiple Registers Request` Callback mit der
+Request ID des Callbacks aufgerufen werden.
 """
 }]
 })
@@ -1040,9 +1107,21 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Master Modus kann diese Funktion genutzt werden un eine mehrere Register eines
+Modbus-Slave zu schreiben (Modbus Funktionscode 16).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Starting Address: Startadresse der Schreibeoperation
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Multiple Registers Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
+
+Im Fehlerfall ist die Request ID 0.
+
 """
 }]
 })
@@ -1068,9 +1147,16 @@ read discrete inputs.
 This function must be called from the :cb:`Modbus Slave Read Discrete Inputs Request`
 callback with the Request ID as provided by the argument of the callback.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Discrete Inputs``-Anfrage
+eines Modbus-Masters zu beantworten.
+
+* Request ID: Request ID der zu beantwortenden Anfrage.
+* Data: Daten die zum Modbus-Master gesendet werden sollen.
+
+Diese Funktion muss vom :cb:`Modbus Slave Read Discrete Inputs Request` Callback mit der
+Request ID des Callbacks aufgerufen werden.
 """
 }]
 })
@@ -1102,9 +1188,19 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Discrete Inputs-Anfrage
+an einen Modbus-Slave zu senden (Modbus Funktionscode 2).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Starting Address: Startadresse der Leseeoperation.
+* Count: Anzahl der zu lesenden Register.
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Discrete Inputs Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
 """
 }]
 })
@@ -1130,9 +1226,16 @@ read input registers.
 This function must be called from the :cb:`Modbus Slave Read Input Registers Request` callback
 with the Request ID as provided by the argument of the callback.
 """,
-'de': # TODO: German documentation.
+'de': 
 """
--
+Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Input``-Anfrage
+eines Modbus-Masters zu beantworten.
+
+* Request ID: Request ID der zu beantwortenden Anfrage.
+* Data: Daten die zum Modbus-Master gesendet werden sollen.
+
+Diese Funktion muss vom :cb:`Modbus Slave Read Input Registers Request` Callback mit der
+Request ID des Callbacks aufgerufen werden.
 """
 }]
 })
@@ -1164,9 +1267,19 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Input-Anfrage
+an einen Modbus-Slave zu senden (Modbus Funktionscode 4).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Starting Address: Startadresse der Leseeoperation.
+* Count: Anzahl der zu lesenden Register.
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Input Registers Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
 """
 }]
 })
@@ -1232,9 +1345,15 @@ be read as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Coils Request`.
 """,
-'de': # TODO: German documentation.
+'de': 
 """
--
+Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
+gültige Anfrage eines Masters zum lesen von Coils erhält. Die :word:`Parameter`
+sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
+Coils.
+
+Eine Antwort auf diese Anfrage kann mit der Funktion
+:func:`Modbus Slave Answer Read Coils Request` gesendet werden.
 """
 }]
 })
@@ -1253,18 +1372,32 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to read coils. The :word:`parameters` are request ID
+valid response of a request to read coils.
+
+The :word:`parameters` are request ID
 of the request, exception code of the response and the data as received by the
-response. Any non-zero exception code indicates a problem. If the exception code
+response. 
+
+Any non-zero exception code indicates a problem. If the exception code
 is greater than zero then the number represents a Modbus exception code. If it is
 less than zero then it represents other errors. For example, -1 indicates that
 the request timed out or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
+gültige Antwort auf eine Read Coils-Anfrage zurück bekommt.
+
+Die :word:`Parameter` sind die Request ID der Anfrage, der Exception Code der
+Antwort und die empfangenen Daten.
+
+Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+:func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
 })
@@ -1286,9 +1419,15 @@ registers to be read as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Holding Registers Request`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
+gültige Anfrage eines Masters zum lesen von Holding Registern erhält. Die :word:`Parameter`
+sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
+Register.
+
+Eine Antwort auf diese Anfrage kann mit der Funktion
+:func:`Modbus Slave Answer Read Holding Registers Request` gesendet werden.
 """
 }]
 })
@@ -1307,18 +1446,32 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to read holding registers. The :word:`parameters` are
+valid response of a request to read holding registers. 
+
+The :word:`parameters` are
 request ID of the request, exception code of the response and the data as received
-by the response. Any non-zero exception code indicates a problem. If the exception
+by the response. 
+
+Any non-zero exception code indicates a problem. If the exception
 code is greater than zero then the number represents a Modbus exception code. If
 it is less than zero then it represents other errors. For example, -1 indicates that
 the request timed out or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
+gültige Antwort auf eine Read Holding Registers-Anfrage zurück bekommt.
+
+Die The :word:`Parameter` sind die Request ID der Anfrage, der Exception Code der
+Antwort und die empfangenen Daten.
+
+Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+:func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
 })
@@ -1340,9 +1493,15 @@ written as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Single Coil Request`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
+gültige Anfrage eines Masters zum schreiben einer einzelnen Coil erhält. Die :word:`Parameter`
+sind die Request ID der Anfrage, die Adresse der Coil und der Wert der zu schreibenen
+Coil.
+
+Eine Antwort auf diese Anfrage kann mit der Funktion
+:func:`Modbus Slave Answer Write Single Coil Request` gesendet werden.
 """
 }]
 })
@@ -1357,18 +1516,31 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to write a single coil. The :word:`parameters` are
-request ID of the request and exception code of the response. Any non-zero
-exception code indicates a problem.
+valid response of a request to write a single coil. 
+
+The :word:`parameters` are
+request ID of the request and exception code of the response. 
+
+Any non-zero exception code indicates a problem.
 If the exception code is greater than zero then the number represents a Modbus
 exception code. If it is less than zero then it represents other errors. For
 example, -1 indicates that the request timed out or that the master did not receive
 any valid response of the request within the master request timeout period as set
 by :func:`Set Modbus Configuration`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
+gültige Antwort auf eine Write Single Coil-Anfrage zurück bekommt.
+
+Die The :word:`Parameter` sind die Request ID der Anfrage und der Exception Code der
+Antwort.
+
+Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+:func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
 })
@@ -1389,11 +1561,16 @@ are request ID of the request, the register address and the register value to
 be written as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Single Register Request`.
-
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
+gültige Anfrage eines Masters zum schreiben einer einzelnen Registers erhält. Die :word:`Parameter`
+sind die Request ID der Anfrage, die Adresse des Registers und der Wert des zuschreibenen
+Registers.
+
+Eine Antwort auf diese Anfrage kann mit der Funktion
+:func:`Modbus Slave Answer Write Single Register Request` gesendet werden.
 """
 }]
 })
@@ -1408,17 +1585,31 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to write a single register. The :word:`parameters` are
-request ID of the request and exception code of the response. Any non-zero exception code
+valid response of a request to write a single register. 
+
+The :word:`parameters` are
+request ID of the request and exception code of the response. 
+
+Any non-zero exception code
 indicates a problem. If the exception code is greater than zero then the number
 represents a Modbus exception code. If it is less than zero then it represents
 other errors. For example, -1 indicates that the request timed out or that the
 master did not receive any valid response of the request within the master request
 timeout period as set by :func:`Set Modbus Configuration`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
+gültige Antwort auf eine Write Single Register-Anfrage zurück bekommt.
+
+Die The :word:`Parameter` sind die Request ID der Anfrage und der Exception Code der
+Antwort.
+
+Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+:func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
 })
@@ -1444,9 +1635,15 @@ be written and the data to be written as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Multiple Coils Request`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
+gültige Anfrage eines Masters zum schreiben einer mehrerer Coils erhält. Die :word:`Parameter`
+sind die Request ID der Anfrage, die Startadresse der Coils, die Anzahl der zu schreibenen
+Coils und die zu schreibenen Daten.
+
+Eine Antwort auf diese Anfrage kann mit der Funktion
+:func:`Modbus Slave Answer Write Multiple Coils Request` gesendet werden.
 """
 }]
 })
@@ -1461,17 +1658,31 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to read holding registers. The :word:`parameters` are
-request ID of the request and exception code of the response. Any non-zero exception code
+valid response of a request to read coils. 
+
+The :word:`parameters` are
+request ID of the request and exception code of the response. 
+
+Any non-zero exception code
 indicates a problem. If the exception code is greater than zero then the number
 represents a Modbus exception code. If it is less than zero then it represents
 other errors. For example, -1 indicates that the request timedout or that the
 master did not receive any valid response of the request within the master request
 timeout period as set by :func:`Set Modbus Configuration`.
 """,
-'de': # TODO: German documentation.
+'de': 
 """
--
+Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
+gültige Antwort auf eine Write Multiple Coils-Anfrage zurück bekommt.
+
+Die The :word:`Parameter` sind die Request ID der Anfrage und der Exception Code der
+Antwort.
+
+Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+:func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
 })
@@ -1497,9 +1708,15 @@ be written and the data to be written as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Multiple Registers Request`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
+gültige Anfrage eines Masters zum schreiben einer mehrerer Register erhält. Die :word:`Parameter`
+sind die Request ID der Anfrage, die Startadresse der Register, die Anzahl der zu schreibenen
+Register und die zu schreibenen Daten.
+
+Eine Antwort auf diese Anfrage kann mit der Funktion
+:func:`Modbus Slave Answer Write Multiple Registers Request` gesendet werden.
 """
 }]
 })
@@ -1514,17 +1731,31 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to write multiple registers. The :word:`parameters`
-are request ID of the request and exception code of the response. Any non-zero
+valid response of a request to write multiple registers. 
+
+The :word:`parameters`
+are request ID of the request and exception code of the response. 
+
+Any non-zero
 exception code indicates a problem. If the exception code is greater than zero then
 the number represents a Modbus exception code. If it is less than zero then it
 represents other errors. For example, -1 indicates that the request timedout or
 that the master did not receive any valid response of the request within the master
 request timeout period as set by :func:`Set Modbus Configuration`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
+gültige Antwort auf eine Write Multiple Register-Anfrage zurück bekommt.
+
+Die The :word:`Parameter` sind die Request ID der Anfrage und der Exception Code der
+Antwort.
+
+Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+:func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
 })
@@ -1546,9 +1777,15 @@ inputs to be read as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Discrete Inputs Request`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
+gültige Anfrage eines Masters zum lesen von Discrete Inputs erhält. Die :word:`Parameter`
+sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
+Discrete Inputs.
+
+Eine Antwort auf diese Anfrage kann mit der Funktion
+:func:`Modbus Slave Answer Read Discrete Inputs Request` gesendet werden.
 """
 }]
 })
@@ -1567,18 +1804,32 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to read discrete inputs. The :word:`parameters` are
+valid response of a request to read discrete inputs.
+
+The :word:`parameters` are
 request ID of the request, exception code of the response and the data as received
-by the response. Any non-zero exception code indicates a problem. If the exception
+by the response. 
+
+Any non-zero exception code indicates a problem. If the exception
 code is greater than zero then the number represents a Modbus exception code. If
 it is less than zero then it represents other errors. For example, -1 indicates that
 the request timedout or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
+gültige Antwort auf eine Read Discrete Inputs-Anfrage zurück bekommt.
+
+Die The :word:`Parameter` sind die Request ID der Anfrage, der Exception Code der
+Antwort und die empfangenen Daten.
+
+Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+:func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
 })
@@ -1600,9 +1851,15 @@ registers to be read as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Input Registers Request`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
+gültige Anfrage eines Masters zum lesen von Input Registern erhält. Die :word:`Parameter`
+sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
+Register.
+
+Eine Antwort auf diese Anfrage kann mit der Funktion
+:func:`Modbus Slave Answer Read Input Registers Request` gesendet werden.
 """
 }]
 })
@@ -1621,18 +1878,32 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to read input registers. The :word:`parameters` are
+valid response of a request to read input registers. 
+
+The :word:`parameters` are
 request ID of the request, exception code of the response and the data as received
-by the response. Any non-zero exception code indicates a problem. If the exception
+by the response. 
+
+Any non-zero exception code indicates a problem. If the exception
 code is greater than zero then the number represents a Modbus exception code. If
 it is less than zero then it represents other errors. For example, -1 indicates that
 the request timedout or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
 """,
-'de': # TODO: German documentation.
+'de':
 """
--
+Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
+gültige Antwort auf eine Read Input Registers-Anfrage zurück bekommt.
+
+Die The :word:`Parameter` sind die Request ID der Anfrage, der Exception Code der
+Antwort und die empfangenen Daten.
+
+Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+:func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
 })
