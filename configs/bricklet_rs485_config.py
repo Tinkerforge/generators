@@ -23,8 +23,8 @@ com = {
     'display_name': 'RS485',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Communicates with RS485 devices with full- or half-duplex',
-        'de': 'Kommuniziert mit RS485 Geräten mit voll- oder halb-duplex'
+        'en': 'Communicates with RS485/Modbus devices with full- or half-duplex',
+        'de': 'Kommuniziert mit RS485/Modbus Geräten mit voll- oder halb-duplex'
     },
     'has_comcu': True,
     'released': False,
