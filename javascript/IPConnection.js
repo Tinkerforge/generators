@@ -541,6 +541,30 @@ function IPConnection() {
             }
             if(formatArray[i].split('').length > 1) {
                 var singleFormatArray = formatArray[i].split('');
+                // Boolean type with cardinality greater than 1
+                if(singleFormatArray[0] === '?') {
+                  var buffer_value = 0;
+                  var count = parseInt(singleFormatArray.slice(1, singleFormatArray.length).join(''));
+                  var count_bits = Math.ceil(count / 8);
+
+                  var tmpPackedBuffer = new Buffer(count_bits);
+                  tmpPackedBuffer.fill(0x00);
+
+                  for(var _i = 0; _i < count; _i++) {
+                    if(data[i][_i] === 0 || data[i][_i] === false || data[i][_i] === undefined ||
+                       data[i][_i] === null || data[i][_i] === NaN || data[i][_i] === -0) {
+                        continue;
+                    }
+                    else {
+                      buffer_value = tmpPackedBuffer.readUInt8(Math.floor(_i / 8));
+                      buffer_value |= 1 << (_i % 8);
+                      tmpPackedBuffer.writeUInt8(buffer_value, Math.floor(_i / 8));
+                    }
+                  }
+
+                  packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
+                  continue;
+                }
                 for(var j=0; j<parseInt(formatArray[i].match(/\d/g).join('')); j++) {
                     if(singleFormatArray[0] === 's') {
                         if(!isNaN(data[i].charCodeAt(j))) {
@@ -718,19 +742,41 @@ function IPConnection() {
             }
             if (formatArray[i].split('').length > 1) {
                 var singleFormatArray = formatArray[i].split('');
+                // Boolean type with cardinality greater than 1
+                if (singleFormatArray[0] === '?') {
+                  var count = parseInt(formatArray[i].match(/\d/g).join(''));
+                  var payloadBoolArray = new Array(count);
+                  var extractedBoolArray = new Array(count);
+
+                  payloadBoolArray.fill(0x00);
+                  extractedBoolArray.fill(false);
+
+                  for(var i = 0; i < Math.ceil(count / 8); i++) {
+                    payloadBoolArray[i] = unpackPayload.readUInt8(payloadReadOffset);
+                    payloadReadOffset++;
+                  }
+
+                  for(var i = 0; i < count; i++) {
+                    extractedBoolArray[i] = ((payloadBoolArray[Math.floor(i / 8)] & (1 << (i % 8))) != 0);
+                  }
+
+                  returnArguments.push(extractedBoolArray);
+
+                  continue;
+                }
                 if (singleFormatArray[0] === 's') {
                     constructedString = '';
-					skip = false;
+                    skip = false;
                     for(var j=0; j<parseInt(formatArray[i].match(/\d/g).join('')); j++) {
-						c = String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset));
-						if(c === '\0' || skip) {
-							skip = true;
-						} else {
-	                        constructedString += c;
-						}
-						payloadReadOffset++;
+                        c = String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset));
+                        if(c === '\0' || skip) {
+                          skip = true;
+                        } else {
+                            constructedString += c;
+                        }
+                        payloadReadOffset++;
                     }
-					skip = false;
+                    skip = false;
                     returnArguments.push(constructedString);
                     constructedString = '';
                     continue;
