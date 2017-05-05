@@ -6,13 +6,17 @@
 
 # RS485 Bricklet communication config
 
-# FIXME: add missing exception codes
 EXCEPTION_CODE_CONSTANTS =  ('Exception Code', [('Timeout', -1),
                                                 ('Success', 0),
                                                 ('Illegal Function', 1),
                                                 ('Illegal Data Address', 2),
                                                 ('Illegal Data Value', 3),
-                                                ('Slave Device Failure', 4)])
+                                                ('Slave Device Failure', 4),
+                                                ('Acknowledge', 5),
+                                                ('Slave Device Busy', 6),
+                                                ('Memory Parity Error', 8),
+                                                ('Gateway Path Unavailable', 10),
+                                                ('Gateway Target Device Failed To Respond', 11)])
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -85,7 +89,7 @@ callbacks. But note that this function will return available
 data only when the read callback is disabled.
 See :func:`Enable Read Callback` and :cb:`Read` callback.
 """,
-'de': 
+'de':
 """
 Gibt bis zu *length* Zeichen aus dem Empfangsbuffer zurück.
 
@@ -805,7 +809,7 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': 
+'de':
 """
 Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Holding Register-Anfrage
 an einen Modbus-Slave zu senden (Modbus Funktionscode 3).
@@ -838,7 +842,7 @@ write a single coil.
 This function must be called from the :cb:`Modbus Slave Write Single Coil Request`
 callback with the Request ID as provided by the arguments of the callback.
 """,
-'de': 
+'de':
 """
 Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Read Single Coil-Anfrage
 eines Modbus-Masters zu beantworten.
@@ -989,7 +993,7 @@ write multiple coils.
 This function must be called from the :cb:`Modbus Slave Write Multiple Coils Request`
 callback with the Request ID of the callback.
 """,
-'de': 
+'de':
 """
 Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Write Multiple Coils-Anfrage
 eines Modbus-Masters zu beantworten.
@@ -1031,7 +1035,7 @@ callback. In this callback the Request ID provided by the callback argument must
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
 """,
-'de': 
+'de':
 """
 Im Modbus-Master Modus kann diese Funktion genutzt werden un eine mehrere Coils eines
 Modbus-Slave zu schreiben (Modbus Funktionscode 15).
@@ -1226,7 +1230,7 @@ read input registers.
 This function must be called from the :cb:`Modbus Slave Read Input Registers Request` callback
 with the Request ID as provided by the argument of the callback.
 """,
-'de': 
+'de':
 """
 Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Input``-Anfrage
 eines Modbus-Masters zu beantworten.
@@ -1345,7 +1349,7 @@ be read as received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Coils Request`.
 """,
-'de': 
+'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum lesen von Coils erhält. Die :word:`Parameter`
@@ -1376,7 +1380,7 @@ valid response of a request to read coils.
 
 The :word:`parameters` are request ID
 of the request, exception code of the response and the data as received by the
-response. 
+response.
 
 Any non-zero exception code indicates a problem. If the exception code
 is greater than zero then the number represents a Modbus exception code. If it is
@@ -1396,7 +1400,7 @@ Antwort und die empfangenen Daten.
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
 entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
-Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
@@ -1446,11 +1450,11 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to read holding registers. 
+valid response of a request to read holding registers.
 
 The :word:`parameters` are
 request ID of the request, exception code of the response and the data as received
-by the response. 
+by the response.
 
 Any non-zero exception code indicates a problem. If the exception
 code is greater than zero then the number represents a Modbus exception code. If
@@ -1470,7 +1474,7 @@ Antwort und die empfangenen Daten.
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
 entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
-Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
@@ -1516,10 +1520,10 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to write a single coil. 
+valid response of a request to write a single coil.
 
 The :word:`parameters` are
-request ID of the request and exception code of the response. 
+request ID of the request and exception code of the response.
 
 Any non-zero exception code indicates a problem.
 If the exception code is greater than zero then the number represents a Modbus
@@ -1539,7 +1543,7 @@ Antwort.
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
 entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
-Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
@@ -1585,10 +1589,10 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to write a single register. 
+valid response of a request to write a single register.
 
 The :word:`parameters` are
-request ID of the request and exception code of the response. 
+request ID of the request and exception code of the response.
 
 Any non-zero exception code
 indicates a problem. If the exception code is greater than zero then the number
@@ -1608,7 +1612,7 @@ Antwort.
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
 entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
-Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
@@ -1658,10 +1662,10 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to read coils. 
+valid response of a request to read coils.
 
 The :word:`parameters` are
-request ID of the request and exception code of the response. 
+request ID of the request and exception code of the response.
 
 Any non-zero exception code
 indicates a problem. If the exception code is greater than zero then the number
@@ -1670,7 +1674,7 @@ other errors. For example, -1 indicates that the request timedout or that the
 master did not receive any valid response of the request within the master request
 timeout period as set by :func:`Set Modbus Configuration`.
 """,
-'de': 
+'de':
 """
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Write Multiple Coils-Anfrage zurück bekommt.
@@ -1681,7 +1685,7 @@ Antwort.
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
 entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
-Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
@@ -1731,10 +1735,10 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to write multiple registers. 
+valid response of a request to write multiple registers.
 
 The :word:`parameters`
-are request ID of the request and exception code of the response. 
+are request ID of the request and exception code of the response.
 
 Any non-zero
 exception code indicates a problem. If the exception code is greater than zero then
@@ -1754,7 +1758,7 @@ Antwort.
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
 entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
-Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
@@ -1808,7 +1812,7 @@ valid response of a request to read discrete inputs.
 
 The :word:`parameters` are
 request ID of the request, exception code of the response and the data as received
-by the response. 
+by the response.
 
 Any non-zero exception code indicates a problem. If the exception
 code is greater than zero then the number represents a Modbus exception code. If
@@ -1828,7 +1832,7 @@ Antwort und die empfangenen Daten.
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
 entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
-Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
@@ -1878,11 +1882,11 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
-valid response of a request to read input registers. 
+valid response of a request to read input registers.
 
 The :word:`parameters` are
 request ID of the request, exception code of the response and the data as received
-by the response. 
+by the response.
 
 Any non-zero exception code indicates a problem. If the exception
 code is greater than zero then the number represents a Modbus exception code. If
@@ -1902,7 +1906,7 @@ Antwort und die empfangenen Daten.
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
 entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
-Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per 
+Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
 """
 }]
