@@ -301,29 +301,30 @@ class {0}(Device):
         stream_out_template = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_extra = ()
-        stream_total_length = {fixed_total_length}
+        stream_total_length = {stream_fixed_total_length}
         stream_chunk_offset = 0
         stream_result = None
         stream_data = ()
-        stream_out_of_sync = False
 
         STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
 
         with self.stream_lock:
-            if stream_total_length == None: # no fixed-stream-length
-                stream_result = self.{underscore_name}_low_level({parameter_list})
-                stream_extra = stream_result[:-{stream_parameter_count}] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-                stream_total_length = stream_result.stream_total_length
-                stream_chunk_offset = stream_result.stream_chunk_offset
-                stream_data = stream_result.stream_chunk_data
+            stream_result = self.{underscore_name}_low_level({parameter_list})
+            stream_extra = stream_result[:-{stream_parameter_count}] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+            stream_chunk_offset = stream_result.stream_chunk_offset
+            stream_data = stream_result.stream_chunk_data
 
-            if stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA:
-                # FIXME: return and empty list or None instead of this exception
-                raise Error(Error.STREAM_NO_DATA, 'Stream has no data')
-            elif stream_chunk_offset != 0: # stream out-of-sync
+            if stream_total_length == None: # dynamic stream-total-length
+                stream_total_length = stream_result.stream_total_length
+            elif stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA: # fixed stream-total-length and no-data
+                stream_total_length = 0
+                stream_chunk_offset = 0
+
+            if stream_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync
                 while stream_chunk_offset + {chunk_cardinality} < stream_total_length:
                     # FIXME: validate that total length is identical for all low-level getters of a stream
+                    # FIXME: validate that stream_chunk_offset grows
                     stream_chunk_offset = self.{underscore_name}_low_level({parameter_list}).stream_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
@@ -341,6 +342,7 @@ class {0}(Device):
                     # discard remaining stream to bring it back in-sync
                     while stream_chunk_offset + {chunk_cardinality} < stream_total_length:
                         # FIXME: validate that total length is identical for all low-level getters of a stream
+                        # FIXME: validate that stream_chunk_offset grows
                         stream_chunk_offset = self.{underscore_name}_low_level({parameter_list}).stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
@@ -373,7 +375,7 @@ class {0}(Device):
                 methods += stream_out_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                                       parameter_list=packet.get_python_parameter_list(),
                                                       high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameter_list(high_level=True), ''),
-                                                      fixed_total_length=stream_out.get_fixed_total_length(),
+                                                      stream_fixed_total_length=stream_out.get_fixed_total_length(),
                                                       stream_parameter_count=2 if stream_out.get_fixed_total_length() != None else 3,
                                                       chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
 
