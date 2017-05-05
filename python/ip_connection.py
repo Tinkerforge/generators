@@ -926,7 +926,7 @@ class IPConnection:
                 else:
                     y.append(x[0] != 0)
 
-                x = y
+                x = tuple(y)
 
             if len(x) > 1:
                 if 'c' in f:
