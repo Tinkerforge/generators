@@ -3,7 +3,7 @@
 
 """
 Python Documentation Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_doc.py: Generator for Python documentation
@@ -62,7 +62,7 @@ class PythonDocDevice(python_common.PythonDevice):
             if packet.get_doc_type() != type_:
                 continue
             name = packet.get_underscore_name()
-            params = packet.get_python_parameter_list()
+            params = packet.get_python_parameters()
             pd = packet.get_python_parameter_desc('in')
             r = packet.get_python_return_desc()
             d = packet.get_python_formatted_doc()

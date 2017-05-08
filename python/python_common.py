@@ -3,7 +3,7 @@
 
 """
 Python Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 python_common.py: Common Library for generation of Python bindings and documentation
@@ -38,13 +38,13 @@ class PythonDevice(common.Device):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
 class PythonPacket(common.Packet):
-    def get_python_parameter_list(self, high_level=False):
-        params = []
+    def get_python_parameters(self, high_level=False):
+        parameters = []
 
         for element in self.get_elements('in', high_level=high_level):
-            params.append(element.get_underscore_name())
+            parameters.append(element.get_underscore_name())
 
-        return ', '.join(params)
+        return ', '.join(parameters)
 
 class PythonElement(common.Element):
     python_types = {

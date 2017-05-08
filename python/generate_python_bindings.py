@@ -3,7 +3,7 @@
 
 """
 Python Bindings Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_bindings.py: Generator for Python bindings
@@ -215,7 +215,7 @@ class {0}(Device):
             nb = packet.get_camel_case_name()
             ns = packet.get_underscore_name()
             nh = ns.upper()
-            par = packet.get_python_parameter_list()
+            par = packet.get_python_parameters()
             doc = packet.get_python_formatted_doc()
             cp = ''
             ct = ''
@@ -286,9 +286,8 @@ class {0}(Device):
 
                 stream_total_written += stream_chunk_written
 
-                # either last chunk or short write
                 if stream_chunk_written < {chunk_cardinality}:
-                    break
+                    break # either last chunk or short write
 
                 stream_chunk_offset += {chunk_cardinality}
 
@@ -301,7 +300,7 @@ class {0}(Device):
         stream_out_template = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_extra = ()
-        stream_total_length = {stream_fixed_total_length}
+        stream_total_length = {fixed_total_length}
         stream_chunk_offset = 0
         stream_result = None
         stream_data = ()
@@ -360,22 +359,22 @@ class {0}(Device):
             stream_out = packet.get_high_level('stream_out')
 
             if stream_in != None:
-                if stream_in.get_short_write():
+                if stream_in.has_short_write():
                     template = stream_in_short_write_template
                 else:
                     template = stream_in_template
 
                 methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
-                                           parameter_list=packet.get_python_parameter_list(),
-                                           high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameter_list(high_level=True), ''),
+                                           parameter_list=packet.get_python_parameters(),
+                                           high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
                                            data_underscore_name=stream_in.get_data_underscore_name(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                            chunk_padding=repr(stream_in.get_chunk_data_element().get_python_default_value()))
             elif stream_out != None:
                 methods += stream_out_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
-                                                      parameter_list=packet.get_python_parameter_list(),
-                                                      high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameter_list(high_level=True), ''),
-                                                      stream_fixed_total_length=stream_out.get_fixed_total_length(),
+                                                      parameter_list=packet.get_python_parameters(),
+                                                      high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
+                                                      fixed_total_length=stream_out.get_fixed_total_length(),
                                                       stream_parameter_count=2 if stream_out.get_fixed_total_length() != None else 3,
                                                       chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
 
