@@ -986,14 +986,17 @@ com['packets'].append({
 """
 Returns the encryption as set by :func:`Set Wifi Encryption`.
 
-Note: Since Master Brick Firmware version 2.4.4 the key is not returned anymore.
+.. note::
+ Since Master Brick Firmware version 2.4.4 the key is not returned anymore.
 """,
 'de':
 """
 Gibt die Verschlüsselungseinstellungen zurück, wie von
 :func:`Set Wifi Encryption` gesetzt.
 
-Hinweis: Seit Master Brick Firmware Version 2.4.4 wird der Schlüssel nicht mehr zurückgegeben.
+.. note::
+ Seit Master Brick Firmware Version 2.4.4 wird der Schlüssel nicht mehr
+ zurückgegeben.
 """
 }]
 })
@@ -1371,15 +1374,17 @@ com['packets'].append({
 """
 Returns the encryption key as set by :func:`Set Long Wifi Key`.
 
-Note: Since Master Brick firmware version 2.4.4 the key is not returned anymore.
+.. note::
+ Since Master Brick firmware version 2.4.4 the key is not returned anymore.
 """,
 'de':
 """
 Gibt den Verschlüsselungsschlüssel zurück, wie von
 :func:`Set Long Wifi Key` gesetzt.
 
-Hinweis: Seit Master Brick Firmware Version 2.4.4 wird der Schlüssel nicht mehr
-zurückgegeben.
+.. note::
+ Seit Master Brick Firmware Version 2.4.4 wird der Schlüssel nicht mehr
+ zurückgegeben.
 """
 }]
 })
@@ -2927,16 +2932,18 @@ com['packets'].append({
 """
 Returns the client password as set by :func:`Set Wifi2 Client Password`.
 
-Note: Since WIFI Extension 2.0 firmware version 2.1.3 the password is not
-returned anymore.
+.. note::
+ Since WIFI Extension 2.0 firmware version 2.1.3 the password is not
+ returned anymore.
 """,
 'de':
 """
 Gibt das Client-Passwort zurück, wie von :func:`Set Wifi2 Client Password`
 gesetzt.
 
-Hinweis: Seit WIFI Extension 2.0 Firmware Version 2.1.3 wird das Passwort
-nicht mehr zurückgegeben
+.. note::
+ Seit WIFI Extension 2.0 Firmware Version 2.1.3 wird das Passwort
+ nicht mehr zurückgegeben.
 """
 }]
 })
@@ -3105,15 +3112,18 @@ com['packets'].append({
 """
 Returns the access point password as set by :func:`Set Wifi2 AP Password`.
 
-Note: Since WIFI Extension 2.0 firmware version 2.1.3 the password is not
-returned anymore.
+.. note::
+ Since WIFI Extension 2.0 firmware version 2.1.3 the password is not
+ returned anymore.
 """,
 'de':
 """
-Gibt das Access-Point-Passwort zurück, wie von :func:`Set Wifi2 AP Password` gesetzt.
+Gibt das Access-Point-Passwort zurück, wie von :func:`Set Wifi2 AP Password`
+gesetzt.
 
-Hinweis: Seit WIFI Extension 2.0 Firmware Version 2.1.3 wird das Passwort
-nicht mehr zurückgegeben
+.. note::
+ Seit WIFI Extension 2.0 Firmware Version 2.1.3 wird das Passwort
+ nicht mehr zurückgegeben.
 """
 }]
 })
