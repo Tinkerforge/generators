@@ -403,6 +403,9 @@ int {0}_{1}({2} *{0}{3}) {{
         return function_version.format(device_name, c) + ''.join(functions)
 
     def get_c_register_callback_function(self):
+        if self.get_callback_count() == 0:
+            return '\n'
+
         function = """
 void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data) {{
 \tdevice_register_callback({0}->p, id, callback, user_data);
@@ -709,7 +712,10 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
         symbols.append('{0}_get_response_expected'.format(underscore_name))
         symbols.append('{0}_set_response_expected'.format(underscore_name))
         symbols.append('{0}_set_response_expected_all'.format(underscore_name))
-        symbols.append('{0}_register_callback'.format(underscore_name))
+
+        if self.get_callback_count() > 0:
+            symbols.append('{0}_register_callback'.format(underscore_name))
+
         symbols.append('{0}_get_api_version'.format(underscore_name))
 
         for packet in self.get_packets('function'):
