@@ -373,7 +373,8 @@ namespace Tinkerforge
 
             write_convs = ''
             write_conv = '\t\t\tLEConverter.To(({2}){0}, {1}, request);\n'
-            write_conv_length = """\t\t\t{0}[] {1} = new {0}[{2}];
+            write_conv_length = '\t\t\tLEConverter.To(({3}){0}, {1}, {2}, request);\n'
+            _write_conv_length = """\t\t\t{0}[] {1} = new {0}[{2}];
 \t\t\tfor (int i = 0; i < {2}; ++i) {{
 \t\t\t\t{1}[i] = ({0}){3}[i];
 \t\t\t}}
@@ -402,15 +403,16 @@ namespace Tinkerforge
                         if element.get_csharp_le_converter_type() != element.get_csharp_type():
                             cs_le_type = element.get_csharp_le_converter_type().replace('[', '')
                             cs_le_type = cs_le_type.replace(']', '')
-                            '''write_convs += write_conv_length.format(wname,
+                            write_convs += _write_conv_length.format(cs_le_type,
+                                                                     '_' + wname,
+                                                                     element.get_cardinality(),
+                                                                     wname,
+                                                                     pos)
+                        else:
+                            write_convs += write_conv_length.format(wname,
                                                                     pos,
                                                                     element.get_cardinality(),
-                                                                    csharp_type)'''
-                            write_convs += write_conv_length.format(cs_le_type,
-                                                                    '_' + wname,
-                                                                    element.get_cardinality(),
-                                                                    wname,
-                                                                    pos)
+                                                                    csharp_type)
                 else:
                     write_convs += write_conv.format(wname, pos, csharp_type)
                 pos += element.get_size()
