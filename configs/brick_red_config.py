@@ -940,8 +940,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set File Events',
 'elements': [('File Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('Events', 'uint16', 1, 'in', FILE_EVENT_CONSTANTS)],
+             ('Events', 'uint16', 1, 'in', FILE_EVENT_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

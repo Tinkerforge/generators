@@ -1158,12 +1158,15 @@ class Packet(NameMixin):
             element = device.get_generator().get_element_class()(raw_element, self)
 
             if element.get_type() not in Packet.valid_types:
-                raise GeneratorError('Invalid element type ' + element.get_type())
+                raise GeneratorError('Invalid element type: ' + element.get_type())
 
             if element.get_cardinality() < 1:
-                raise GeneratorError('Invalid element size ' + element.get_cardinality())
+                raise GeneratorError('Invalid element cardinality: ' + element.get_cardinality())
 
             if element.get_direction() == 'in':
+                if len(self.elements_out) > 0:
+                    raise GeneratorError("'in' element cannot come after 'out' element: " + element.get_name())
+
                 self.elements_in.append(element)
             elif element.get_direction() == 'out':
                 self.elements_out.append(element)
