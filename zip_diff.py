@@ -17,19 +17,19 @@ bindings = args[0].rstrip('/')
 version = common.get_changelog_version(bindings)
 tmp = tempfile.mkdtemp()
 
-if os.system('curl http://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/tinkerforge_{0}_bindings_latest.zip'.format(bindings, tmp)) != 0:
+if os.system('bash -c "curl http://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/tinkerforge_{0}_bindings_latest.zip"'.format(bindings, tmp)) != 0:
     print 'download latest.zip failed'
     sys.exit(1)
 
-if os.system('pushd {1} && unzip -d latest tinkerforge_{0}_bindings_latest.zip && popd'.format(bindings, tmp)) != 0:
+if os.system('bash -c "pushd {1} && unzip -d latest tinkerforge_{0}_bindings_latest.zip && popd"'.format(bindings, tmp)) != 0:
     print 'unzip latest.zip failed'
     sys.exit(1)
 
-if os.system('cp {0}/tinkerforge_{0}_bindings_{2}_{3}_{4}.zip {1} && pushd {1} && unzip -d {2}_{3}_{4} tinkerforge_{0}_bindings_{2}_{3}_{4}.zip && popd'.format(bindings, tmp, *version)) != 0:
+if os.system('bash -c "cp {0}/tinkerforge_{0}_bindings_{2}_{3}_{4}.zip {1} && pushd {1} && unzip -d {2}_{3}_{4} tinkerforge_{0}_bindings_{2}_{3}_{4}.zip && popd"'.format(bindings, tmp, *version)) != 0:
     print 'copy/unzip current.zip failed'
     sys.exit(1)
 
-if os.system('pushd {1} && diff -ur latest/ {2}_{3}_{4}/ > diff1.diff; popd'.format(bindings, tmp, *version)) != 0:
+if os.system('bash -c "pushd {1} && diff -ur latest/ {2}_{3}_{4}/ > diff1.diff; popd"'.format(bindings, tmp, *version)) != 0:
     print 'diff latest vs current failed'
     sys.exit(1)
 
@@ -139,6 +139,6 @@ for diff in diffs:
 with open(os.path.join(tmp, 'diff2.diff'), 'wb') as f:
     f.writelines(filtered_diffs)
 
-if os.system('pushd {0} && geany diff2.diff && popd'.format(tmp)) != 0:
+if os.system('bash -c "pushd {0} && geany diff2.diff && popd"'.format(tmp)) != 0:
     print 'geany diff.diff failed'
     sys.exit(1)
