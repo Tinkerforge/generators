@@ -61,7 +61,7 @@ c_like_header2 = re.compile('^@@ -1,7 \+1,7 @@\n' + \
 '  \* If you have a bugfix for this file and want to commit it, \*\n' + \
 '  \* please fix the bug in the generator\. You can find a link  \*\n$')
 
-delphi_header = re.compile('^@@ -1,7 \+1,7 @@\n' + \
+delphi_header1 = re.compile('^@@ -1,7 \+1,7 @@\n' + \
 ' {\n' + \
 '-  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
 '\+  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
@@ -72,7 +72,23 @@ delphi_header = re.compile('^@@ -1,7 \+1,7 @@\n' + \
 '   If you have a bugfix for this file and want to commit it,\n' + \
 '   please fix the bug in the generator\. You can find a link\n$')
 
-perl_header = re.compile('^@@ -1,7 \+1,7 @@\n' + \
+delphi_header2 = re.compile('^@@ -1,5 \+1,5 @@\n' + \
+' {\n' + \
+'-  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
+'\+  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
+' \n' + \
+'   Delphi/Lazarus Bindings Version 2\.[0-9]+\.[0-9]+\n' + \
+' \n$')
+
+perl_header1 = re.compile('^@@ -1,5 \+1,5 @@\n' + \
+' #############################################################\n' + \
+'-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
+'\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
+' #                                                           #\n' + \
+' # .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+' #                                                           #\n$')
+
+perl_header2 = re.compile('^@@ -1,7 \+1,7 @@\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
 '\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
@@ -83,7 +99,17 @@ perl_header = re.compile('^@@ -1,7 \+1,7 @@\n' + \
 ' # If you have a bugfix for this file and want to commit it, #\n' + \
 ' # please fix the bug in the generator. You can find a link  #\n$')
 
-php_header = re.compile('^@@ -1,9 \+1,9 @@\n' + \
+php_header1 = re.compile('^@@ -1,7 \+1,7 @@\n' + \
+' <\?php\n' + \
+' \n' + \
+' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\\n' + \
+'- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'  \*                                                           \*\n' + \
+'  \* .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'  \*                                                           \*\n$')
+
+php_header2 = re.compile('^@@ -1,9 \+1,9 @@\n' + \
 ' <\?php\n' + \
 ' \n' + \
 ' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\\n' + \
@@ -96,7 +122,16 @@ php_header = re.compile('^@@ -1,9 \+1,9 @@\n' + \
 '  \* If you have a bugfix for this file and want to commit it, \*\n' + \
 '  \* please fix the bug in the generator\. You can find a link  \*\n$')
 
-python_header = re.compile('^@@ -1,8 \+1,8 @@\n' + \
+python_header1 = re.compile('^@@ -1,6 \+1,6 @@\n' + \
+' # -\*- coding: utf-8 -\*-\n' + \
+' #############################################################\n' + \
+'-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
+'\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
+' #                                                           #\n' + \
+' # .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+' #                                                           #\n$')
+
+python_header2 = re.compile('^@@ -1,8 \+1,8 @@\n' + \
 ' # -\*- coding: utf-8 -\*-\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
@@ -108,7 +143,16 @@ python_header = re.compile('^@@ -1,8 \+1,8 @@\n' + \
 ' # If you have a bugfix for this file and want to commit it, #\n' + \
 ' # please fix the bug in the generator. You can find a link  #\n$')
 
-ruby_header = re.compile('^@@ -1,8 \+1,8 @@\n' + \
+ruby_header1 = re.compile('^@@ -1,6 \+1,6 @@\n' + \
+' # -\*- ruby encoding: utf-8 -\*-\n' + \
+' #############################################################\n' + \
+'-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
+'\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
+' #                                                           #\n' + \
+' # .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+' #                                                           #\n$')
+
+ruby_header2 = re.compile('^@@ -1,8 \+1,8 @@\n' + \
 ' # -\*- ruby encoding: utf-8 -\*-\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}.      #\n' + \
@@ -127,11 +171,16 @@ for diff in diffs:
 
     if not c_like_header1.match(hunk) and \
        not c_like_header2.match(hunk) and \
-       not delphi_header.match(hunk) and \
-       not perl_header.match(hunk) and \
-       not php_header.match(hunk) and \
-       not python_header.match(hunk) and \
-       not ruby_header.match(hunk):
+       not delphi_header1.match(hunk) and \
+       not delphi_header2.match(hunk) and \
+       not perl_header1.match(hunk) and \
+       not perl_header2.match(hunk) and \
+       not php_header1.match(hunk) and \
+       not php_header2.match(hunk) and \
+       not python_header1.match(hunk) and \
+       not python_header2.match(hunk) and \
+       not ruby_header1.match(hunk) and \
+       not ruby_header2.match(hunk):
         filtered_diffs.append(''.join(diff))
     else:
         filtered_diffs.append('DROPPED HEADER DIFF: ' + diff[0])
