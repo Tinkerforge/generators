@@ -34,13 +34,16 @@ if os.system('bash -c "pushd {1} && diff -ur latest/ {2}_{3}_{4}/ > diff1.diff; 
     sys.exit(1)
 
 with open(os.path.join(tmp, 'diff1.diff'), 'rb') as f:
-    diffs = [[]]
+    diffs = [[[]]] # list of diffs as lists of lines
 
     for line in f.readlines():
-        if line.startswith('diff '):
-            diffs.append([])
+        if line.startswith('diff ') or line[0] not in ['@', '-', '+', ' ']:
+            diffs.append([[]])
 
-        diffs[-1].append(line)
+        if line.startswith('@@ '):
+            diffs[-1].append([])
+
+        diffs[-1][-1].append(line)
 
 c_like_header1 = re.compile('^@@ -1,5 \+1,5 @@\n' + \
 ' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\\n' + \
@@ -164,29 +167,44 @@ ruby_header2 = re.compile('^@@ -1,8 \+1,8 @@\n' + \
 ' # If you have a bugfix for this file and want to commit it, #\n' + \
 ' # please fix the bug in the generator. You can find a link  #\n$')
 
-filtered_diffs = []
+filtered = []
 
 for diff in diffs:
-    hunk = ''.join(diff[3:])
+    filtered_lines = []
 
-    if not c_like_header1.match(hunk) and \
-       not c_like_header2.match(hunk) and \
-       not delphi_header1.match(hunk) and \
-       not delphi_header2.match(hunk) and \
-       not perl_header1.match(hunk) and \
-       not perl_header2.match(hunk) and \
-       not php_header1.match(hunk) and \
-       not php_header2.match(hunk) and \
-       not python_header1.match(hunk) and \
-       not python_header2.match(hunk) and \
-       not ruby_header1.match(hunk) and \
-       not ruby_header2.match(hunk):
-        filtered_diffs.append(''.join(diff))
+    for lines in diff:
+        if len(lines) == 0:
+            continue
+
+        hunk = ''.join(lines)
+
+        if not c_like_header1.match(hunk) and \
+           not c_like_header2.match(hunk) and \
+           not delphi_header1.match(hunk) and \
+           not delphi_header2.match(hunk) and \
+           not perl_header1.match(hunk) and \
+           not perl_header2.match(hunk) and \
+           not php_header1.match(hunk) and \
+           not php_header2.match(hunk) and \
+           not python_header1.match(hunk) and \
+           not python_header2.match(hunk) and \
+           not ruby_header1.match(hunk) and \
+           not ruby_header2.match(hunk):
+            filtered_lines += lines
+        else:
+            filtered_lines += [lines[0].rstrip() + ' // dropped header hunk\n']
+
+    if len(filtered_lines) == 0:
+        continue
+
+    if filtered_lines[0].startswith('diff -ur ') and \
+       filtered_lines[-1].endswith('// dropped header hunk\n'):
+        filtered += [filtered_lines[0].rstrip() + ' // dropped header diff\n']
     else:
-        filtered_diffs.append('DROPPED HEADER DIFF: ' + diff[0])
+        filtered += filtered_lines
 
 with open(os.path.join(tmp, 'diff2.diff'), 'wb') as f:
-    f.writelines(filtered_diffs)
+    f.writelines(filtered)
 
 if os.system('bash -c "pushd {0} && geany diff2.diff && popd"'.format(tmp)) != 0:
     print 'geany diff.diff failed'
