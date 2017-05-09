@@ -1129,7 +1129,7 @@ class IPConnection:
 
         if sequence_number == 0:
             if function_id in device.registered_callbacks or \
-               function_id in device.low_level_callbacks: # FIXME: better lookup
+               function_id in device.low_level_callbacks:
                 self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 
