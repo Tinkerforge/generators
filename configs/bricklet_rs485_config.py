@@ -681,7 +681,7 @@ In Modbus slave mode this function can be used to answer a master request to
 read coils.
 
 * Request ID: Request ID of the corresponding request that is being answered.
-* Data: Data that is to be sent to the Modbus master for the corresponding request.
+* Coils: Data that is to be sent to the Modbus master for the corresponding request.
 
 This function must be called from the :cb:`Modbus Slave Read Coils Request` callback
 with the Request ID as provided by the argument of the callback.
@@ -692,7 +692,7 @@ Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Read Coils-Anfr
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
-* Data: Daten die zum Modbus-Master gesendet werden sollen.
+* Coils: Daten die zum Modbus-Master gesendet werden sollen.
 
 Diese Funktion muss vom :cb:`Modbus Slave Read Coils Request` Callback mit der
 Request ID des Callbacks aufgerufen werden.
@@ -763,7 +763,7 @@ In Modbus slave mode this function can be used to answer a master request to
 read holding registers.
 
 * Request ID: Request ID of the corresponding request that is being answered.
-* Data: Data that is to be sent to the Modbus master for the corresponding request.
+* Holding Registers: Data that is to be sent to the Modbus master for the corresponding request.
 
 This function must be called from the :cb:`Modbus Slave Read Holding Registers Request`
 callback with the Request ID as provided by the argument of the callback.
@@ -774,7 +774,7 @@ Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Holding 
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
-* Data: Daten die zum Modbus-Master gesendet werden sollen.
+* Holding Registers: Daten die zum Modbus-Master gesendet werden sollen.
 
 Diese Funktion muss vom :cb:`Modbus Slave Read Holding Registers Request` Callback mit der
 Request ID des Callbacks aufgerufen werden.
@@ -1146,7 +1146,7 @@ In Modbus slave mode this function can be used to answer a master request to
 read discrete inputs.
 
 * Request ID: Request ID of the corresponding request that is being answered.
-* Data: Data that is to be sent to the Modbus master for the corresponding request.
+* Discrete Inputs: Data that is to be sent to the Modbus master for the corresponding request.
 
 This function must be called from the :cb:`Modbus Slave Read Discrete Inputs Request`
 callback with the Request ID as provided by the argument of the callback.
@@ -1157,7 +1157,7 @@ Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Discrete
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
-* Data: Daten die zum Modbus-Master gesendet werden sollen.
+* Discrete Inputs: Daten die zum Modbus-Master gesendet werden sollen.
 
 Diese Funktion muss vom :cb:`Modbus Slave Read Discrete Inputs Request` Callback mit der
 Request ID des Callbacks aufgerufen werden.
@@ -1225,7 +1225,7 @@ In Modbus slave mode this function can be used to answer a master request to
 read input registers.
 
 * Request ID: Request ID of the corresponding request that is being answered.
-* Data: Data that is to be sent to the Modbus master for the corresponding request.
+* Input Registers: Data that is to be sent to the Modbus master for the corresponding request.
 
 This function must be called from the :cb:`Modbus Slave Read Input Registers Request` callback
 with the Request ID as provided by the argument of the callback.
@@ -1236,7 +1236,7 @@ Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Input``-
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
-* Data: Daten die zum Modbus-Master gesendet werden sollen.
+* Input Registers: Daten die zum Modbus-Master gesendet werden sollen.
 
 Diese Funktion muss vom :cb:`Modbus Slave Read Input Registers Request` Callback mit der
 Request ID des Callbacks aufgerufen werden.
