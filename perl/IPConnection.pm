@@ -27,6 +27,7 @@ use threads::shared;
 use Thread::Queue;
 use Thread::Semaphore;
 use IO::Socket::INET;
+use POSIX qw(floor ceil);
 use Socket qw(IPPROTO_TCP TCP_NODELAY MSG_NOSIGNAL);
 use POSIX qw(dup getpid);
 use Fcntl;
@@ -1448,22 +1449,71 @@ sub _dispatch_response
 {
 	my ($self, $payload, $form_unpack, $uid, $fid) = @_;
 
+	my $iter = 0;
+	my $form_unpack_patched = '';
+
 	my @form_unpack_arr = split(' ', $form_unpack);
+	my @form_unpack_arr_patched = @form_unpack_arr;
+
+	foreach(@form_unpack_arr_patched) {
+		my @form_single_arr = split('', $_);
+
+		if($form_single_arr[0] eq '?' && scalar(@form_single_arr) == 1) {
+			$form_unpack_arr[$iter] = 'C';
+			$form_unpack_arr_patched[$iter] = 'C';
+		}
+		elsif($form_single_arr[0] eq '?' && scalar(@form_single_arr) > 1) {
+			my $count = $_;
+			$count =~ s/[^\d]//g;
+			$form_unpack_arr_patched[$iter] = 'C' . ceil($count / 8);
+		}
+
+		$iter++;
+	}
+
+	$form_unpack_patched = join(' ', @form_unpack_arr_patched);
 
 	if(scalar(@form_unpack_arr) > 1)
 	{
+		# More than one element in unpack format
 		my @copy_info_arr;
 		my $copy_info_arr_len;
 		my $copy_from_index = 0;
 		my $arguments_arr_index = 0;
 		my $anon_arr_index = 0;
 		my @return_arr;
-		my @arguments_arr = unpack('('.$form_unpack.')<', $payload);
+		my @arguments_arr = unpack('('.$form_unpack_patched.')<', $payload);
+
+		$iter = 0;
 
 		foreach(@form_unpack_arr)
 		{
 			my $count = $_;
 			my @form_single_arr = split('', $_);
+
+			if($form_single_arr[0] eq '?') {
+				if(scalar(@form_single_arr) > 1)
+				{
+					$count =~ s/[^\d]//g;
+					$return_arr[$iter] = [];
+					my @dummy_bool_array_bits = ();
+
+					for(my $i = 0; $i < ceil($count / 8); $i++) {
+						$dummy_bool_array_bits[$i] = $arguments_arr[$copy_from_index + $i];
+					}
+
+					for(my $i = 0; $i < $count; $i++) {
+						push(@{$return_arr[$iter]}, (($dummy_bool_array_bits[floor($i / 8)] & (1 << ($i % 8))) != 0));
+					}
+
+					$iter++;
+					$copy_from_index += ceil($count / 8);
+
+					push(@copy_info_arr, [-1, ceil($count / 8)]);
+
+					next;
+				}
+			}
 
 			if($form_single_arr[0] eq 'c' ||
 			   $form_single_arr[0] eq 'C' ||
@@ -1481,6 +1531,8 @@ sub _dispatch_response
 					push(@copy_info_arr, [$copy_from_index, $count]);
 					$copy_from_index += $count;
 
+					$iter++;
+
 					next;
 				}
 				else
@@ -1492,6 +1544,8 @@ sub _dispatch_response
 			{
 				$copy_from_index++;
 			}
+
+			$iter++;
 		}
 
 		$copy_info_arr_len = scalar(@copy_info_arr);
@@ -1502,7 +1556,12 @@ sub _dispatch_response
 			{
 				if(scalar(@copy_info_arr) > 0)
 				{
-					if($copy_info_arr[0][0] == $arguments_arr_index)
+					if($copy_info_arr[0][0] == -1) {
+						$anon_arr_index++;
+						$arguments_arr_index += $copy_info_arr[0][1];
+						shift(@copy_info_arr);
+					}
+					elsif($copy_info_arr[0][0] == $arguments_arr_index)
 					{
 						my $anon_arr_iterator = $copy_info_arr[0][0];
 
@@ -1572,7 +1631,7 @@ sub _dispatch_response
 		}
 		elsif($copy_info_arr_len == 0)
 		{
-			my @return_arr = unpack($form_unpack, $payload);
+			my @return_arr = unpack($form_unpack_patched, $payload);
 			my $i = 0;
 
 			foreach(@form_unpack_arr)
@@ -1614,9 +1673,35 @@ sub _dispatch_response
 
 		if(scalar(@form_unpack_arr_0_arr) > 1)
 		{
-			my @unpack_tmp_arr = unpack($form_unpack, $payload);
+			# Cardinality greater than 1
+			my @unpack_tmp_arr = unpack($form_unpack_patched, $payload);
 
-			if($form_unpack_arr_0_arr[0] eq 'a')
+			if($form_unpack_arr_0_arr[0] eq '?') {
+				my ($count) = $form_unpack_arr[0] =~ s/[^\d]//g;
+				my @return_arr = (0) x $count;
+				my $n = ceil($count / 8);
+
+				my @payload_ = unpack('(C'.$n.')<', $payload);
+
+				for(my $i = 0; $i < $count; $i++) {
+					$return_arr[$i] = (($payload_[floor($i / 8)] & (1 << ($i % 8))) != 0);
+				}
+
+				if(defined($fid))
+				{
+					if(defined($uid))
+					{
+						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
+					}
+					else
+					{
+						eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
+					}
+				}
+
+				return \@return_arr;
+			}
+			elsif($form_unpack_arr_0_arr[0] eq 'a')
 			{
 				my @return_arr = split('', $unpack_tmp_arr[0]);
 
@@ -1673,7 +1758,7 @@ sub _dispatch_response
 		}
 		elsif(scalar(@form_unpack_arr_0_arr) == 1)
 		{
-			my $unpack_tmp = unpack($form_unpack, $payload);
+			my $unpack_tmp = unpack($form_unpack_patched, $payload);
 
 			if(defined($fid))
 			{

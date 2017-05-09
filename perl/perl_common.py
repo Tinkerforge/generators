@@ -60,7 +60,7 @@ class PerlElement(common.Element):
         'int64':  'q',
         'uint64': 'Q',
         'float':  'f',
-        'bool':   'C',
+        'bool':   '?',
         'char':   'a',
         'string': 'Z'
     }

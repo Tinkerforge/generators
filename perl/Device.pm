@@ -19,6 +19,7 @@ Tinkerforge::Device - Base class for all Bricks and Bricklets (for internal use 
 package Tinkerforge::Device;
 
 # using modules
+use POSIX qw(floor ceil);
 use strict;
 use warnings;
 use Carp;
@@ -120,6 +121,7 @@ sub _send_request
 			{
 				if(split('', $form_data_arr[$i]) > 1)
 				{
+					# Cardinality greater than 1
 					my @form_data_arr_tmp = split('', $form_data_arr[$i]);
 					# Getting the numeric value from data form
 					my ($form_pack_numeric) = $form_data_arr[$i] =~ /(\d+)/;
@@ -135,16 +137,37 @@ sub _send_request
 						next;
 					}
 
-					my $j = 0;
+					if($form_data_arr_tmp[0] eq '?') {
+						my $n = ceil($form_pack_numeric / 8);
+						my @bool_array_bits = (0) x $n;
 
-					for(; $j < $form_pack_numeric; $j ++)
-					{
-						$packed_data .= pack("$form_data_arr_tmp[0]", @{@{$data}[$i]}[$j]);
+						for(my $j = 0; $j < $form_pack_numeric; $j++) {
+							if (${@{$data}[$i]}[$j]) {
+								$bool_array_bits[floor($j / 8)] |= 1 << ($j % 8);
+							}
+						}
+
+						for(my $j = 0; $j < $n; $j++) {
+							$packed_data .= pack("C", $bool_array_bits[$j]);
+						}
+					}
+					else {
+						my $j = 0;
+
+						for(; $j < $form_pack_numeric; $j ++)
+						{
+							$packed_data .= pack("$form_data_arr_tmp[0]", @{@{$data}[$i]}[$j]);
+						}
 					}
 				}
 				if(split('', $form_data_arr[$i]) == 1)
 				{
-					$packed_data .= pack("$form_data_arr[$i]", @{$data}[$i]);
+					if($form_data_arr[$i] eq '?') {
+						$packed_data .= pack("C", @{$data}[$i]);
+					}
+					else {
+						$packed_data .= pack("$form_data_arr[$i]", @{$data}[$i]);
+					}
 				}
 			}
 		}
