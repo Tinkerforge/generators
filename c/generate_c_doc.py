@@ -62,7 +62,7 @@ class CDocDevice(common.Device):
             if packet.get_doc_type() != typ:
                 continue
             name = '{0}_{1}'.format(self.get_underscore_name(), packet.get_underscore_name())
-            plist = packet.get_c_parameter_list()
+            plist = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
             params = '{0} *{1}{2}'.format(self.get_camel_case_name(), self.get_underscore_name(), plist)
             desc = packet.get_c_formatted_doc()
             func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
@@ -86,12 +86,15 @@ class CDocDevice(common.Device):
 
         cbs = ''
         func_start = '.. c:var:: '
+
         for packet in self.get_packets('callback'):
-            plist = packet.get_c_parameter_list()[2:].replace('*ret_', '').replace('ret_', '')
-            if not plist:
+            plist = packet.get_c_parameters()
+
+            if len(plist) == 0:
                 plist = 'void *user_data'
             else:
                 plist += ', void *user_data'
+
             params = common.select_lang(param_format).format(plist)
             desc = packet.get_c_formatted_doc()
             name = '{0}_{1}'.format(self.get_upper_case_name(),

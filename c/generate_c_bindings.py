@@ -64,25 +64,26 @@ extern "C" {{
                               self.get_underscore_name())
 
     def get_c_function_id_defines(self):
-        define_temp =  """
+        defines = ''
+        template =  """
 /**
  * \ingroup {4}{3}
  */
 #define {0}_FUNCTION_{1} {2}
 """
 
-        defines = ''
         for packet in self.get_packets('function'):
-            defines += define_temp.format(self.get_upper_case_name(),
-                                          packet.get_upper_case_name(),
-                                          packet.get_function_id(),
-                                          self.get_camel_case_name(),
-                                          self.get_camel_case_category())
+            defines += template.format(self.get_upper_case_name(),
+                                       packet.get_upper_case_name(),
+                                       packet.get_function_id(),
+                                       self.get_camel_case_name(),
+                                       self.get_camel_case_category())
 
         return defines
 
     def get_c_callback_defines(self):
-        define_temp = """
+        defines = ''
+        template = """
 /**
  * \ingroup {5}{4}
  *
@@ -91,14 +92,31 @@ extern "C" {{
 #define {0}_CALLBACK_{1} {2}
 """
 
-        defines = ''
         for packet in self.get_packets('callback'):
-            defines += define_temp.format(self.get_upper_case_name(),
-                                          packet.get_upper_case_name(),
-                                          packet.get_function_id(),
-                                          packet.get_c_formatted_doc(),
-                                          self.get_camel_case_name(),
-                                          self.get_camel_case_category())
+            defines += template.format(self.get_upper_case_name(),
+                                       packet.get_upper_case_name(),
+                                       packet.get_function_id(),
+                                       packet.get_c_formatted_doc(),
+                                       self.get_camel_case_name(),
+                                       self.get_camel_case_category())
+
+        template = """
+/**
+ * \ingroup {5}{4}
+ *
+ * {3}
+ */
+#define {0}_CALLBACK_{1} (-{2})
+"""
+
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                defines += template.format(self.get_upper_case_name(),
+                                           packet.get_upper_case_name(skip=-2),
+                                           packet.get_function_id(),
+                                           packet.get_c_formatted_doc(high_level=True),
+                                           self.get_camel_case_name(),
+                                           self.get_camel_case_category())
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             defines += """
@@ -204,7 +222,7 @@ typedef struct {{
             if packet.get_type() == 'callback':
                 struct_body = ''
                 for element in packet.get_elements():
-                    c_type = element.get_c_type(False, is_in_struct=True)
+                    c_type = element.get_c_type(False, struct=True)
                     if element.get_cardinality() > 1:
                         if element.get_type() == 'bool':
                             length = int(math.ceil(element.get_cardinality() / 8.0))
@@ -222,7 +240,7 @@ typedef struct {{
 
             struct_body = ''
             for element in packet.get_elements('in'):
-                c_type = element.get_c_type(False, is_in_struct=True)
+                c_type = element.get_c_type(False, struct=True)
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'bool':
                         length = int(math.ceil(element.get_cardinality() / 8.0))
@@ -242,7 +260,7 @@ typedef struct {{
 
             struct_body = ''
             for element in packet.get_elements('out'):
-                c_type = element.get_c_type(False, is_in_struct=True)
+                c_type = element.get_c_type(False, struct=True)
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'bool':
                         length = int(math.ceil(element.get_cardinality() / 8.0))
@@ -279,11 +297,20 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 
         cb_temp = """
 \tdevice_p->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
+        llcb_temp = """
+\tdevice_p->low_level_callbacks[{2}_CALLBACK_{1}].exists = true;"""
 
         cbs = ''
-        dev_name = self.get_underscore_name()
+
         for packet in self.get_packets('callback'):
-            cbs += cb_temp.format(dev_name, packet.get_upper_case_name(), packet.get_underscore_name(), dev_name.upper())
+            cbs += cb_temp.format(self.get_underscore_name(), packet.get_upper_case_name(), packet.get_underscore_name(), self.get_upper_case_name())
+
+        if len(cbs) > 0:
+            cbs += '\n'
+
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                cbs += llcb_temp.format(self.get_underscore_name(), packet.get_upper_case_name(), self.get_upper_case_name())
 
         response_expected = ''
 
@@ -302,12 +329,12 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
                 flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
             response_expected += '\tdevice_p->response_expected[{1}_{2}_{3}] = {4};\n' \
-                .format(dev_name, self.get_upper_case_name(), prefix, packet.get_upper_case_name(), flag)
+                .format(self.get_underscore_name(), self.get_upper_case_name(), prefix, packet.get_upper_case_name(), flag)
 
         if len(response_expected) > 0:
             response_expected = '\n' + response_expected
 
-        return function.format(dev_name,
+        return function.format(self.get_underscore_name(),
                                self.get_camel_case_name(),
                                response_expected + cbs,
                                *self.get_api_version())
@@ -378,7 +405,7 @@ int {0}_{1}({2} *{0}{3}) {{
         functions = []
         for packet in self.get_packets('function'):
             packet_name = packet.get_underscore_name()
-            params = packet.get_c_parameter_list()
+            params = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
             fid = '{0}_FUNCTION_{1}'.format(self.get_upper_case_name(),
                                             packet.get_upper_case_name())
             f = packet.get_camel_case_name()
@@ -402,19 +429,307 @@ int {0}_{1}({2} *{0}{3}) {{
 
         return function_version.format(device_name, c) + ''.join(functions)
 
+    def get_c_high_level_functions(self):
+        functions = ''
+        stream_in_template = """
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
+\tDevicePrivate *device_p = {device_underscore_name}->p;
+\tint ret = 0;
+\tuint16_t stream_total_length = {data_underscore_name}_length; // FIXME: uint16_t is not always the correct type
+\tuint16_t stream_chunk_offset = 0; // FIXME: uint16_t is not always the correct type
+\t{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
+\tuint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+
+\tmutex_lock(&device_p->stream_mutex);
+
+\twhile (stream_chunk_offset < stream_total_length) {{
+\t\tstream_chunk_length = stream_total_length - stream_chunk_offset;
+
+\t\tif (stream_chunk_length > {chunk_cardinality}) {{
+\t\t\tstream_chunk_length = {chunk_cardinality};
+\t\t}}
+
+\t\t// FIXME: only do memcpy/memset for last short chunk
+\t\tmemcpy(stream_chunk_data, &{data_underscore_name}[stream_chunk_offset], sizeof({chunk_c_type}) * stream_chunk_length);
+
+\t\tif (stream_chunk_length < {chunk_cardinality}) {{
+\t\t\tmemset(&stream_chunk_data[stream_chunk_length], 0, sizeof({chunk_c_type}) * ({chunk_cardinality} - stream_chunk_length));
+\t\t}}
+
+\t\t// FIXME: validate that the extra out values for all low-level calls are identical
+\t\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+\t\tif (ret < 0) {{
+\t\t\tbreak;
+\t\t}}
+
+\t\tstream_chunk_offset += {chunk_cardinality};
+\t}}
+
+\tmutex_unlock(&device_p->stream_mutex);
+
+\treturn ret;
+}}
+"""
+        stream_in_short_write_template = """
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
+\tDevicePrivate *device_p = {device_underscore_name}->p;
+\tint ret = 0;
+\tuint16_t stream_total_written = 0; // FIXME: uint16_t is not always the correct type
+\tuint16_t stream_total_length = {data_underscore_name}_length; // FIXME: uint16_t is not always the correct type
+\tuint16_t stream_chunk_offset = 0; // FIXME: uint16_t is not always the correct type
+\tuint8_t stream_chunk_written;
+\t{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
+\tuint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+
+\tmutex_lock(&device_p->stream_mutex);
+
+\twhile (stream_chunk_offset < stream_total_length) {{
+\t\tstream_chunk_length = stream_total_length - stream_chunk_offset;
+
+\t\tif (stream_chunk_length > {chunk_cardinality}) {{
+\t\t\tstream_chunk_length = {chunk_cardinality};
+\t\t}}
+
+\t\t// FIXME: only do memcpy/memset for last short chunk
+\t\tmemcpy(stream_chunk_data, &{data_underscore_name}[stream_chunk_offset], sizeof({chunk_c_type}) * stream_chunk_length);
+
+\t\tif (stream_chunk_length < {chunk_cardinality}) {{
+\t\t\tmemset(&stream_chunk_data[stream_chunk_length], 0, sizeof({chunk_c_type}) * ({chunk_cardinality} - stream_chunk_length));
+\t\t}}
+
+\t\t// FIXME: validate that the extra out values for all low-level calls are identical
+\t\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+\t\tif (ret < 0) {{
+\t\t\tstream_total_written = 0;
+\t\t\tbreak;
+\t\t}}
+
+\t\tstream_total_written += stream_chunk_written;
+
+\t\tif (stream_chunk_written < {chunk_cardinality}) {{
+\t\t\tbreak; // either last chunk or short write
+\t\t}}
+
+\t\tstream_chunk_offset += {chunk_cardinality};
+\t}}
+
+\tmutex_unlock(&device_p->stream_mutex);
+
+\t*ret_written = stream_total_written;
+
+\treturn ret;
+}}
+"""
+        stream_out_template = """
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
+\tDevicePrivate *device_p = {device_underscore_name}->p;
+\tint ret = 0;
+\tuint16_t stream_total_length = {fixed_total_length}; // FIXME: uint16_t is not always the correct type
+\tuint16_t stream_chunk_offset; // FIXME: uint16_t is not always the correct type
+\t{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
+\tuint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+
+\t*ret_{data_underscore_name}_length = 0;
+
+\tmutex_lock(&device_p->stream_mutex);
+
+\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+\tif (ret < 0) {{
+\t\tgoto cleanup;
+\t}}
+
+\tif (stream_chunk_offset != 0) {{ // stream out-of-sync
+\t\tgoto discard;
+\t}}
+
+\tstream_chunk_length = stream_total_length - stream_chunk_offset;
+
+\tif (stream_chunk_length > {chunk_cardinality}) {{
+\t\tstream_chunk_length = {chunk_cardinality};
+\t}}
+
+\tmemcpy(ret_{data_underscore_name}, stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
+\t*ret_{data_underscore_name}_length = stream_chunk_length;
+
+\twhile (*ret_{data_underscore_name}_length < stream_total_length) {{
+\t\t// FIXME: validate chunk offset < total length
+\t\t// FIXME: validate that total length is identical for all low-level getters of a stream
+\t\t// FIXME: validate that the extra out values for all low-level calls are identical
+\t\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+\t\tif (ret < 0) {{
+\t\t\tgoto cleanup;
+\t\t}}
+
+\t\tif (stream_chunk_offset != *ret_{data_underscore_name}_length) {{ // stream out-of-sync
+\t\t\tgoto discard;
+\t\t}}
+
+\t\tstream_chunk_length = stream_total_length - stream_chunk_offset;
+
+\t\tif (stream_chunk_length > {chunk_cardinality}) {{
+\t\t\tstream_chunk_length = {chunk_cardinality};
+\t\t}}
+
+\t\tmemcpy(&ret_{data_underscore_name}[*ret_{data_underscore_name}_length], stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
+\t\t*ret_{data_underscore_name}_length += stream_chunk_length;
+\t}}
+
+\tgoto cleanup;
+
+discard:
+\t*ret_{data_underscore_name}_length = 0; // return empty array
+
+\t// discard remaining stream to bring it back in-sync
+\twhile (stream_chunk_offset + {chunk_cardinality} < stream_total_length) {{
+\t\t// FIXME: validate that total length is identical for all low-level getters of a stream
+\t\t// FIXME: validate that stream_chunk_offset grows
+\t\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+\t\tif (ret < 0) {{
+\t\t\tgoto cleanup;
+\t\t}}
+\t}}
+
+\tret = E_STREAM_OUT_OF_SYNC;
+
+cleanup:
+\tmutex_unlock(&device_p->stream_mutex);
+
+\treturn ret;
+}}
+"""
+
+        for packet in self.get_packets('function'):
+            stream_in = packet.get_high_level('stream_in')
+            stream_out = packet.get_high_level('stream_out')
+
+            if stream_in != None:
+                if stream_in.has_short_write():
+                    template = stream_in_short_write_template
+                else:
+                    template = stream_in_template
+
+                functions += template.format(device_camel_case_name=packet.get_device().get_camel_case_name(),
+                                             device_underscore_name=packet.get_device().get_underscore_name(),
+                                             underscore_name=packet.get_underscore_name(skip=-2),
+                                             parameters=common.wrap_non_empty(', ', packet.get_c_parameters(signature=False), ''),
+                                             high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
+                                             data_underscore_name=stream_in.get_data_underscore_name(),
+                                             chunk_c_type=stream_in.get_chunk_data_element().get_c_type(False),
+                                             chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
+            elif stream_out != None:
+                functions += stream_out_template.format(device_camel_case_name=packet.get_device().get_camel_case_name(),
+                                                        device_underscore_name=packet.get_device().get_underscore_name(),
+                                                        underscore_name=packet.get_underscore_name(skip=-2),
+                                                        parameters=common.wrap_non_empty(', ', packet.get_c_parameters(signature=False), ''),
+                                                        high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
+                                                        data_underscore_name=stream_out.get_data_underscore_name(),
+                                                        fixed_total_length=stream_out.get_fixed_total_length(default='0'),
+                                                        chunk_c_type=stream_out.get_chunk_data_element().get_c_type(False),
+                                                        chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
+
+        return functions
+
     def get_c_register_callback_function(self):
         if self.get_callback_count() == 0:
             return '\n'
 
         function = """
-void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data) {{
+void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data) {{
 \tdevice_register_callback({0}->p, id, callback, user_data);
 }}
 """
         return function.format(self.get_underscore_name(), self.get_camel_case_name())
 
+    def get_c_high_level_callback_wrapper_functions(self):
+        functions = ''
+        template = """
+static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePrivate *device_p{parameters}) {{
+\t{camel_case_name}_CallbackFunction callback_function;
+\tvoid *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
+\tLowLevelCallback *low_level_callback = &device_p->low_level_callbacks[-{device_upper_case_name}_CALLBACK_{upper_case_name}];
+\tuint16_t stream_chunk_length = {stream_total_length} - stream_chunk_offset; // FIXME: uint16_t is not always the correct type
+
+\t*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
+
+\tif (stream_chunk_length > {chunk_cardinality}) {{
+\t\tstream_chunk_length = {chunk_cardinality};
+\t}}
+
+\t// FIXME: validate that extra parameters are identical for all low-level callbacks of a stream
+\t// FIXME: validate that total length is identical for all low-level callbacks of a stream
+\t// FIXME: validate chunk offset < total length
+
+\tif (low_level_callback->data == NULL) {{ // no stream in-progress
+\t\tif (stream_chunk_offset == 0) {{ // stream starts
+\t\t\tlow_level_callback->data = malloc(sizeof({chunk_c_type}) * {stream_total_length});
+\t\t\tlow_level_callback->data_length = stream_chunk_length;
+
+\t\t\tmemcpy(low_level_callback->data, stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
+
+\t\t\tif (low_level_callback->data_length >= {stream_total_length}) {{ // stream complete
+\t\t\t\tif (callback_function != NULL) {{
+\t\t\t\t\tcallback_function({high_level_parameters}user_data);
+\t\t\t\t}}
+
+\t\t\t\tfree(low_level_callback->data);
+\t\t\t\tlow_level_callback->data = NULL;
+\t\t\t\tlow_level_callback->data_length = 0;
+\t\t\t}}
+\t\t}} else {{ // ignore tail of current stream, wait for next stream start
+\t\t}}
+\t}} else {{ // stream in-progress
+\t\tif (stream_chunk_offset != low_level_callback->data_length) {{ // stream out-of-sync
+\t\t\tfree(low_level_callback->data);
+\t\t\tlow_level_callback->data = NULL;
+\t\t\tlow_level_callback->data_length = 0;
+
+\t\t\tif (callback_function != NULL) {{
+\t\t\t\tcallback_function({high_level_parameters}user_data);
+\t\t\t}}
+\t\t}} else {{ // stream in-sync
+\t\t\tmemcpy(&(({chunk_c_type} *)low_level_callback->data)[low_level_callback->data_length], stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
+\t\t\tlow_level_callback->data_length += stream_chunk_length;
+
+\t\t\tif (low_level_callback->data_length >= {stream_total_length}) {{ // stream complete
+\t\t\t\tif (callback_function != NULL) {{
+\t\t\t\t\tcallback_function({high_level_parameters}user_data);
+\t\t\t\t}}
+
+\t\t\t\tfree(low_level_callback->data);
+\t\t\t\tlow_level_callback->data = NULL;
+\t\t\t\tlow_level_callback->data_length = 0;
+\t\t\t}}
+\t\t}}
+\t}}
+}}
+"""
+
+        for packet in self.get_packets('callback'):
+            stream_out = packet.get_high_level('stream_out')
+
+            if stream_out != None:
+                functions += template.format(device_underscore_name=packet.get_device().get_underscore_name(),
+                                             device_upper_case_name=packet.get_device().get_upper_case_name(),
+                                             underscore_name=packet.get_underscore_name(skip=-2),
+                                             upper_case_name=packet.get_upper_case_name(skip=-2),
+                                             camel_case_name=packet.get_camel_case_name(skip=-2),
+                                             parameters=common.wrap_non_empty(', ', packet.get_c_parameters(), ''),
+                                             high_level_parameters=common.wrap_non_empty('', packet.get_c_parameters(signature=False, high_level=True, callback_wrapper=True), ', '),
+                                             data_underscore_name=stream_out.get_data_underscore_name(),
+                                             stream_total_length=stream_out.get_fixed_total_length(default='stream_total_length'),
+                                             chunk_c_type=stream_out.get_chunk_data_element().get_c_type(False),
+                                             chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
+
+        return functions
+
     def get_c_callback_wrapper_functions(self):
-        function = """
+        functions = []
+        template = """
 static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 \t{3}_CallbackFunction callback_function;
 \tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
@@ -428,8 +743,21 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 \tcallback_function({5}{4}user_data);
 }}
 """
+        template_low_level = """
+static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
+\t{3}_CallbackFunction callback_function;
+\tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
 
-        functions = []
+\t*(void **)(&callback_function) = device_p->registered_callbacks[{7}];
+{6}{11}
+\t{0}_callback_wrapper_{12}(device_p, {5});
+
+\tif (callback_function != NULL) {{
+\t\tcallback_function({5}{4}user_data);
+\t}}
+}}
+"""
+
         for packet in self.get_packets('callback'):
             a = self.get_underscore_name()
             b = packet.get_underscore_name()
@@ -484,7 +812,12 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
             else:
                 cb = '\n\t(void)packet;'
 
-            functions.append(function.format(a, b, c, d, e, f, endian, fid, cb, i, variables, unpacks))
+            if packet.get_high_level('stream_out') != None:
+                temp = template_low_level
+            else:
+                temp = template
+
+            functions.append(temp.format(a, b, c, d, e, f, endian, fid, cb, i, variables, unpacks, packet.get_underscore_name(skip=-2)))
 
         return ''.join(functions)
 
@@ -539,6 +872,33 @@ typedef void (*{0}_CallbackFunction)({1});
             for element in packet.get_elements():
                 if element.get_cardinality() > 1:
                     c_type_list.append('{0}[{1}]'.format(element.get_c_type(True), element.get_cardinality()))
+                else:
+                    c_type_list.append(element.get_c_type(True))
+
+            typedefs += typedef.format(name, ', '.join(c_type_list + ['void *']))
+
+        return typedefs
+
+    def get_c_high_level_typedefs(self):
+        typedef = """
+typedef void (*{0}_CallbackFunction)({1});
+"""
+
+        typedefs = ''
+
+        for packet in self.get_packets('callback'):
+            if not packet.has_high_level():
+                continue
+
+            name = packet.get_camel_case_name(skip=-2)
+            c_type_list = []
+
+            for element in packet.get_elements(high_level=True):
+                if element.get_cardinality() > 1:
+                    c_type_list.append('{0}[{1}]'.format(element.get_c_type(True), element.get_cardinality()))
+                elif element.get_cardinality() < 1:
+                    c_type_list.append('{0} *'.format(element.get_c_type(True)))
+                    c_type_list.append('uint16_t') # FIXME: uint16_t is not always the correct type
                 else:
                     c_type_list.append(element.get_c_type(True))
 
@@ -651,12 +1011,34 @@ int {0}_{1}({2} *{0}{3});
         funcs = ''
         for packet in self.get_packets('function'):
             b = packet.get_underscore_name()
-            d = packet.get_c_parameter_list()
+            d = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
             doc = packet.get_c_formatted_doc()
 
             funcs += func.format(a, b, c, d, doc, self.get_camel_case_category())
 
         return func_version.format(a, c, self.get_camel_case_category()) + funcs
+
+    def get_c_high_level_function_declaration(self):
+        functions = ''
+        template = """
+/**
+ * \ingroup {category}{device_camel_case_name}
+ *
+ * {doc}
+ */
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters});
+"""
+
+        for packet in self.get_packets('function'):
+            if packet.get_high_level('stream_*') != None:
+                functions += template.format(category=packet.get_device().get_category(),
+                                             device_camel_case_name=packet.get_device().get_camel_case_name(),
+                                             doc=packet.get_c_formatted_doc(),
+                                             device_underscore_name=packet.get_device().get_underscore_name(),
+                                             underscore_name=packet.get_underscore_name(skip=-2),
+                                             high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''))
+
+        return functions
 
     def get_c_register_callback_declaration(self):
         if self.get_callback_count() == 0:
@@ -669,20 +1051,23 @@ int {0}_{1}({2} *{0}{3});
  * Registers a callback with ID \c id to the function \c callback. The
  * \c user_data will be given as a parameter of the callback.
  */
-void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data);
+void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data);
 """
         return func.format(self.get_underscore_name(), self.get_camel_case_name(), self.get_camel_case_category())
 
     def get_c_source(self):
         source  = self.get_c_include_c()
         source += self.get_c_typedefs()
+        source += self.get_c_high_level_typedefs()
         source += self.get_c_structs()
+        source += self.get_c_high_level_callback_wrapper_functions()
         source += self.get_c_callback_wrapper_functions()
         source += self.get_c_create_function()
         source += self.get_c_destroy_function()
         source += self.get_c_response_expected_functions()
         source += self.get_c_register_callback_function()
         source += self.get_c_functions()
+        source += self.get_c_high_level_functions()
         source += self.get_c_end_c()
 
         return source
@@ -699,6 +1084,7 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
         header += self.get_c_response_expected_declarations()
         header += self.get_c_register_callback_declaration()
         header += self.get_c_function_declaration()
+        header += self.get_c_high_level_function_declaration()
         header += self.get_c_end_h()
 
         return header
@@ -724,7 +1110,7 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
         return '\n'.join(symbols) + '\n'
 
 class CBindingsPacket(c_common.CPacket):
-    def get_c_formatted_doc(self):
+    def get_c_formatted_doc(self, high_level=False):
         text = common.select_lang(self.get_doc_text())
 
         # handle tables
@@ -758,10 +1144,12 @@ class CBindingsPacket(c_common.CPacket):
         text = self.get_device().specialize_c_doc_function_links(text)
 
         if self.get_type() == 'callback':
-            plist = self.get_c_parameter_list()[2:].replace('*ret_', '')
-            if len(plist) > 0:
-                plist += ', '
-            text = 'Signature: \code void callback({0}void *user_data) \endcode\n'.format(plist) + text
+            parameters = self.get_c_parameters(signature=True, high_level=high_level)
+
+            if len(parameters) > 0:
+                parameters += ', '
+
+            text = 'Signature: \code void callback({0}void *user_data) \endcode\n'.format(parameters) + text
 
         text = text.replace('.. note::', '\\note')
         text = text.replace('.. warning::', '\\warning')

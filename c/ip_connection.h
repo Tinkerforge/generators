@@ -51,7 +51,8 @@ enum {
 	E_NOT_CONNECTED = -8,
 	E_INVALID_PARAMETER = -9, // error response from device
 	E_NOT_SUPPORTED = -10, // error response from device
-	E_UNKNOWN_ERROR_CODE = -11 // error response from device
+	E_UNKNOWN_ERROR_CODE = -11, // error response from device
+	E_STREAM_OUT_OF_SYNC = -12
 };
 
 #ifdef IPCON_EXPOSE_MILLISLEEP
@@ -178,6 +179,16 @@ typedef struct _DevicePrivate DevicePrivate;
 #ifdef IPCON_EXPOSE_INTERNALS
 
 typedef struct _CallbackContext CallbackContext;
+typedef struct _LowLevelCallback LowLevelCallback;
+
+/**
+ * \internal
+ */
+struct _LowLevelCallback {
+	bool exists;
+	void *data;
+	uint16_t data_length; // FIXME: uint16_t is not always the correct type
+};
 
 #endif
 
@@ -232,9 +243,12 @@ struct _DevicePrivate {
 	Event response_event;
 	int response_expected[DEVICE_NUM_FUNCTION_IDS];
 
-	void *registered_callbacks[DEVICE_NUM_FUNCTION_IDS];
-	void *registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS];
+	Mutex stream_mutex;
+
+	void *registered_callbacks[DEVICE_NUM_FUNCTION_IDS * 2];
+	void *registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS * 2];
 	CallbackWrapperFunction callback_wrappers[DEVICE_NUM_FUNCTION_IDS];
+	LowLevelCallback low_level_callbacks[DEVICE_NUM_FUNCTION_IDS];
 };
 
 /**
@@ -280,7 +294,7 @@ int device_set_response_expected_all(DevicePrivate *device_p, bool response_expe
 /**
  * \internal
  */
-void device_register_callback(DevicePrivate *device_p, uint8_t id, void *callback,
+void device_register_callback(DevicePrivate *device_p, int16_t id, void *callback,
                               void *user_data);
 
 /**
@@ -555,7 +569,7 @@ void ipcon_unwait(IPConnection *ipcon);
  *
  * Registers a callback for a given ID.
  */
-void ipcon_register_callback(IPConnection *ipcon, uint8_t id,
+void ipcon_register_callback(IPConnection *ipcon, int16_t id,
                              void *callback, void *user_data);
 
 #ifdef IPCON_EXPOSE_INTERNALS

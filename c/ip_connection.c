@@ -1160,7 +1160,15 @@ static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request);
 
 // NOTE: assumes device_p->ref_count == 0
 static void device_destroy(DevicePrivate *device_p) {
+	int i;
+
 	table_remove(&device_p->ipcon_p->devices, device_p->uid);
+
+	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; i++) {
+		free(device_p->low_level_callbacks[i].data);
+	}
+
+	mutex_destroy(&device_p->stream_mutex);
 
 	event_destroy(&device_p->response_event);
 
@@ -1227,11 +1235,20 @@ void device_create(Device *device, const char *uid_str,
 	device_p->response_expected[IPCON_FUNCTION_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
 	device_p->response_expected[IPCON_CALLBACK_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
 
+	// stream
+	mutex_create(&device_p->stream_mutex);
+
 	// callbacks
-	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; i++) {
+	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS * 2; i++) {
 		device_p->registered_callbacks[i] = NULL;
 		device_p->registered_callback_user_data[i] = NULL;
+	}
+
+	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; i++) {
 		device_p->callback_wrappers[i] = NULL;
+		device_p->low_level_callbacks[i].exists = false;
+		device_p->low_level_callbacks[i].data = NULL;
+		device_p->low_level_callbacks[i].data_length = 0;
 	}
 
 	// add to IPConnection
@@ -1301,10 +1318,14 @@ int device_set_response_expected_all(DevicePrivate *device_p, bool response_expe
 	return E_OK;
 }
 
-void device_register_callback(DevicePrivate *device_p, uint8_t id, void *callback,
+void device_register_callback(DevicePrivate *device_p, int16_t id, void *callback,
                               void *user_data) {
-	device_p->registered_callbacks[id] = callback;
-	device_p->registered_callback_user_data[id] = user_data;
+	if (id == 0 || abs(id) >= DEVICE_NUM_FUNCTION_IDS) {
+		return;
+	}
+
+	device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + id] = callback;
+	device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + id] = user_data;
 }
 
 int device_get_api_version(DevicePrivate *device_p, uint8_t ret_api_version[3]) {
@@ -1746,7 +1767,8 @@ static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response
 	}
 
 	if (sequence_number == 0) {
-		if (device_p->registered_callbacks[response->header.function_id] != NULL) {
+		if (device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + response->header.function_id] != NULL ||
+		    device_p->low_level_callbacks[response->header.function_id].exists) {
 			callback = (Packet *)malloc(response->header.length);
 
 			memcpy(callback, response, response->header.length);
@@ -2293,9 +2315,13 @@ void ipcon_unwait(IPConnection *ipcon) {
 	semaphore_release(&ipcon->p->wait);
 }
 
-void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
+void ipcon_register_callback(IPConnection *ipcon, int16_t id, void *callback,
                              void *user_data) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
+
+	if (id < 1 || id >= IPCON_NUM_CALLBACK_IDS) {
+		return;
+	}
 
 	ipcon_p->registered_callbacks[id] = callback;
 	ipcon_p->registered_callback_user_data[id] = user_data;
