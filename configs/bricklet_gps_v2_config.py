@@ -101,8 +101,7 @@ This data is only valid if there is currently a fix as indicated by
 """,
 'de':
 """
-Gibt die aktuelle Höhe und die dazu gehörige "Geoidal Separation"
-zurück.
+Gibt die aktuelle Höhe und die dazu gehörige Geoidal Separation zurück.
 
 Beide Werte werden in cm angegeben.
 
@@ -245,7 +244,7 @@ a valid satellite number and can be ignored in the list.
 Gibt die
 
 * Liste der Satelliten,
-* den Fix-Wert,
+* Fix-Wert,
 * PDOP-Wert,
 * HDOP-Wert and
 * VDOP-Wert zurück.
