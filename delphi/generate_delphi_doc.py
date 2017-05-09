@@ -3,7 +3,7 @@
 
 """
 Delphi/Lazarus Documentation Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_delphi_doc.py: Generator for Delphi/Lazarus documentation
@@ -37,13 +37,13 @@ import delphi_common
 
 class DelphiBindingsDevice(delphi_common.DelphiDevice):
     def specialize_delphi_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':delphi:func:`On{1} <{0}.On{1}>`'.format(packet.get_device().get_delphi_class_name(),
-                                                                 packet.get_camel_case_name())
+                                                                 packet.get_camel_case_name(skip=-2 if high_level else 0))
             else:
                 return ':delphi:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_delphi_class_name(),
-                                                             packet.get_camel_case_name())
+                                                             packet.get_camel_case_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='delphi')
 

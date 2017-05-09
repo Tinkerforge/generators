@@ -1622,7 +1622,7 @@ class Device(NameMixin):
 
                 for name in names:
                     generic_name = ':{0}:`{1}`'.format(keyword, name)
-                    special_name = specializer(packet)
+                    special_name = specializer(packet, packet.has_high_level() and not name.endswith(' Low Level'))
 
                     text = text.replace(generic_name, special_name)
 

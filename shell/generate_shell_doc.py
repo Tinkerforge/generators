@@ -3,7 +3,7 @@
 
 """
 Shell Documentation Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_shell_doc.py: Generator for Shell documentation
@@ -37,13 +37,13 @@ import shell_common
 
 class ShellDocDevice(shell_common.ShellDevice):
     def specialize_shell_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':sh:cb:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
-                                                       packet.get_dash_name())
+                                                       packet.get_dash_name(skip=-2 if high_level else 0))
             else:
                 return ':sh:func:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
-                                                         packet.get_dash_name())
+                                                         packet.get_dash_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='sh')
 

@@ -37,13 +37,13 @@ import python_common
 
 class PythonDocDevice(python_common.PythonDevice):
     def specialize_python_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':py:attr:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(packet.get_device().get_python_class_name(),
-                                                                           packet.get_upper_case_name())
+                                                                           packet.get_upper_case_name(skip=-2 if high_level else 0))
             else:
                 return ':py:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_python_class_name(),
-                                                           packet.get_underscore_name())
+                                                           packet.get_underscore_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='py')
 

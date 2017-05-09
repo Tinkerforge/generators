@@ -3,7 +3,7 @@
 
 """
 C# Documentation Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_doc.py: Generator for C# documentation
@@ -37,13 +37,13 @@ import csharp_common
 
 class CSharpDocDevice(csharp_common.CSharpDevice):
     def specialize_csharp_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':csharp:func:`{1}Callback <{0}::{1}Callback>`'.format(packet.get_device().get_csharp_class_name(),
-                                                                              packet.get_camel_case_name())
+                                                                              packet.get_camel_case_name(skip=-2 if high_level else 0))
             else:
                 return ':csharp:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_csharp_class_name(),
-                                                                packet.get_camel_case_name())
+                                                                packet.get_camel_case_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='csharp')
 

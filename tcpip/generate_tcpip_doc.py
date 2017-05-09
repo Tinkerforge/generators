@@ -3,7 +3,7 @@
 
 """
 TCP/IP Documentation Generator
-Copyright (C) 2012-2014, 2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2016-2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_tcpip_doc.py: Generator for TCP/IP documentation
@@ -37,7 +37,7 @@ class TCPIPDocDevice(common.Device):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
     def specialize_tcpip_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':tcpip:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(packet.get_device().get_tcpip_name(),
                                                                               packet.get_upper_case_name())

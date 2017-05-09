@@ -3,7 +3,7 @@
 
 """
 C# Bindings Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings
@@ -112,13 +112,13 @@ LEGACY_CALLBACK_DEVICES = {
 
 class CSharpBindingsDevice(csharp_common.CSharpDevice):
     def specialize_csharp_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return '<see cref="Tinkerforge.{0}.{1}Callback"/>'.format(packet.get_device().get_csharp_class_name(),
-                                                                          packet.get_camel_case_name())
+                                                                          packet.get_camel_case_name(skip=-2 if high_level else 0))
             else:
                 return '<see cref="Tinkerforge.{0}.{1}"/>'.format(packet.get_device().get_csharp_class_name(),
-                                                                  packet.get_camel_case_name())
+                                                                  packet.get_camel_case_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer)
 

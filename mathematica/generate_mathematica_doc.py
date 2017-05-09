@@ -3,7 +3,7 @@
 
 """
 Mathematica Documentation Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_mathematica_doc.py: Generator for Mathematica documentation
@@ -39,13 +39,13 @@ class MathematicaDocDevice(common.Device):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
     def specialize_mathematica_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':mathematica:func:`{1}Callback <{0}@{1}Callback>`'.format(packet.get_device().get_mathematica_class_name(),
-                                                                                  packet.get_camel_case_name())
+                                                                                  packet.get_camel_case_name(skip=-2 if high_level else 0))
             else:
                 return ':mathematica:func:`{1}[] <{0}@{1}>`'.format(packet.get_device().get_mathematica_class_name(),
-                                                                    packet.get_camel_case_name())
+                                                                    packet.get_camel_case_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='mathematica')
 

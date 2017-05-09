@@ -34,13 +34,13 @@ import c_common
 
 class CBindingsDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return '{{@link {0}_CALLBACK_{1}}}'.format(packet.get_device().get_upper_case_name(),
-                                                           packet.get_upper_case_name())
+                                                           packet.get_upper_case_name(skip=-2 if high_level else 0))
             else:
                 return '{{@link {0}_{1}}}'.format(packet.get_device().get_underscore_name(),
-                                                  packet.get_underscore_name())
+                                                  packet.get_underscore_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer)
 

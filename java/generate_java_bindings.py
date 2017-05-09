@@ -3,7 +3,7 @@
 
 """
 Java Bindings Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_bindings.py: Generator for Java bindings
@@ -35,13 +35,13 @@ import java_common
 
 class JavaBindingsDevice(java_common.JavaDevice):
     def specialize_java_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return '{{@link {0}.{1}Listener}}'.format(packet.get_device().get_java_class_name(),
-                                                          packet.get_camel_case_name())
+                                                          packet.get_camel_case_name(skip=-2 if high_level else 0))
             else:
                 return '{{@link {0}#{1}({2})}}'.format(packet.get_device().get_java_class_name(),
-                                                       packet.get_headless_camel_case_name(),
+                                                       packet.get_headless_camel_case_name(skip=-2 if high_level else 0),
                                                        packet.get_java_parameter_list(just_types=True))
 
         return self.specialize_doc_rst_links(text, specializer)

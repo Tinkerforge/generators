@@ -3,7 +3,7 @@
 
 """
 PHP Documentation Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_doc.py: Generator for PHP documentation
@@ -38,13 +38,13 @@ import php_common
 
 class PHPDocDevice(php_common.PHPDevice):
     def specialize_php_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(packet.get_device().get_php_class_name(),
-                                                                              packet.get_upper_case_name())
+                                                                              packet.get_upper_case_name(skip=-2 if high_level else 0))
             else:
                 return ':php:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_php_class_name(),
-                                                             packet.get_headless_camel_case_name())
+                                                             packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='php')
 

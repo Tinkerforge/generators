@@ -3,7 +3,7 @@
 
 """
 Ruby Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_ruby_doc.py: Generator for Ruby documentation
@@ -37,13 +37,13 @@ import ruby_common
 
 class RubyDocDevice(ruby_common.RubyDevice):
     def specialize_ruby_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':rb:attr:`::CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(packet.get_device().get_ruby_class_name(),
-                                                                              packet.get_upper_case_name())
+                                                                              packet.get_upper_case_name(skip=-2 if high_level else 0))
             else:
                 return ':rb:func:`#{1} <{0}#{1}>`'.format(packet.get_device().get_ruby_class_name(),
-                                                          packet.get_underscore_name())
+                                                          packet.get_underscore_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='rb')
 

@@ -4,7 +4,7 @@
 """
 JavaScript Documentation Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_doc.py: Generator for JavaScript documentation
 
@@ -37,13 +37,13 @@ import javascript_common
 
 class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
     def specialize_javascript_doc_function_links(self, text):
-        def specializer(packet):
+        def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':javascript:attr:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(packet.get_device().get_javascript_class_name(),
-                                                                                   packet.get_upper_case_name())
+                                                                                   packet.get_upper_case_name(skip=-2 if high_level else 0))
             else:
                 return ':javascript:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_javascript_class_name(),
-                                                       packet.get_headless_camel_case_name())
+                                                       packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='javascript')
 
