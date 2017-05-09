@@ -173,7 +173,7 @@ class {0}(Device):
 
     def get_python_low_level_callbacks(self):
         cbs = ''
-        cb_stream = "        self.low_level_callbacks[{0}.CALLBACK_{1}] = [{0}.CALLBACK_{2}, {{'stream': {{'fixed_total_length': {3}}}}}, None]\n"
+        cb_stream = "        self.low_level_callbacks[{0}.CALLBACK_{1}] = [{{'fixed_total_length': {2}}}, None]\n"
 
         for packet in self.get_packets('callback'):
             stream = packet.get_high_level('stream_*')
@@ -181,7 +181,6 @@ class {0}(Device):
             if stream != None:
                 cbs += cb_stream.format(self.get_python_class_name(),
                                         packet.get_upper_case_name(),
-                                        packet.get_upper_case_name(skip=-2),
                                         stream.get_fixed_total_length())
 
         return cbs
@@ -324,7 +323,9 @@ class {0}(Device):
                 while stream_chunk_offset + {chunk_cardinality} < stream_total_length:
                     # FIXME: validate that total length is identical for all low-level getters of a stream
                     # FIXME: validate that stream_chunk_offset grows
-                    stream_chunk_offset = self.{underscore_name}_low_level({parameter_list}).stream_chunk_offset
+                    stream_result = self.{underscore_name}_low_level({parameter_list})
+                    stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
+                    stream_chunk_offset = stream_result.stream_chunk_offset
 
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 
@@ -333,6 +334,7 @@ class {0}(Device):
             while len(stream_data) < stream_total_length:
                 stream_result = self.{underscore_name}_low_level({parameter_list})
                 stream_extra = stream_result[:-{stream_parameter_count}] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
+                stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
                 stream_chunk_offset = stream_result.stream_chunk_offset
 
                 # FIXME: validate that total length is identical for all low-level getters of a stream
@@ -342,7 +344,9 @@ class {0}(Device):
                     while stream_chunk_offset + {chunk_cardinality} < stream_total_length:
                         # FIXME: validate that total length is identical for all low-level getters of a stream
                         # FIXME: validate that stream_chunk_offset grows
-                        stream_chunk_offset = self.{underscore_name}_low_level({parameter_list}).stream_chunk_offset
+                        stream_result = self.{underscore_name}_low_level({parameter_list})
+                        stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
+                        stream_chunk_offset = stream_result.stream_chunk_offset
 
                     raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
 

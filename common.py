@@ -961,9 +961,10 @@ class ConstantGroup(NameMixin):
         self.elements += elements
 
 class Element(NameMixin):
-    def __init__(self, raw_data, packet):
+    def __init__(self, raw_data, packet, high_level=False):
         self.raw_data = raw_data
         self.packet = packet
+        self.high_level = high_level
         self.constant_group = None
 
         check_name(raw_data[0])
@@ -995,6 +996,9 @@ class Element(NameMixin):
 
     def get_direction(self):
         return self.raw_data[3]
+
+    def is_high_level(self):
+        return self.high_level
 
     def get_constant_group(self):
         return self.constant_group
@@ -1031,8 +1035,8 @@ class HighLevelStream(object):
     def get_packet(self): # parent
         return self.packet
 
-    def get_fixed_total_length(self):
-        return self.raw_data.get('fixed_total_length', None)
+    def get_fixed_total_length(self, default=None):
+        return self.raw_data.get('fixed_total_length', default)
 
     # FIXME: avoid all this NameMixin duplication here
     def _get_data_name(self):
@@ -1095,7 +1099,7 @@ class HighLevelStreamIn(HighLevelStream):
     def get_chunk_data_element(self):
         return self.packet.elements_in[-1]
 
-    def get_short_write(self):
+    def has_short_write(self):
         return self.raw_data.get('short_write', False)
 
 class HighLevelStreamOut(HighLevelStream):
@@ -1180,17 +1184,21 @@ class Packet(NameMixin):
             raise GeneratorError("Cannot combine high-level features 'stream_in' and 'stream_out'")
         elif raw_stream_in != None:
             stream_in = HighLevelStreamIn(raw_stream_in, self)
-            raw_element = (stream_in.get_data_name(),) + deepcopy(self.elements_in[-1].raw_data[1:])
+            raw_element = list(self.elements_in[-1].raw_data)
+            raw_element[0] = stream_in.get_data_name()
+            raw_element[2] = -1
 
             self.high_level['stream_in'] = stream_in
-            self.high_level_elements_in.append(device.get_generator().get_element_class()(raw_element, self))
+            self.high_level_elements_in.append(device.get_generator().get_element_class()(tuple(raw_element), self, high_level=True))
 
         elif raw_stream_out != None:
             stream_out = HighLevelStreamOut(raw_stream_out, self)
-            raw_element = (stream_out.get_data_name(),) + deepcopy(self.elements_out[-1].raw_data[1:])
+            raw_element = list(self.elements_out[-1].raw_data)
+            raw_element[0] = stream_out.get_data_name()
+            raw_element[2] = -1
 
             self.high_level['stream_out'] = stream_out
-            self.high_level_elements_out.append(device.get_generator().get_element_class()(raw_element, self))
+            self.high_level_elements_out.append(device.get_generator().get_element_class()(tuple(raw_element), self, high_level=True))
 
         self.constant_groups = []
 
