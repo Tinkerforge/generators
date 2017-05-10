@@ -213,7 +213,7 @@ com['packets'].append({
 'elements': [('Satellite System', 'uint8', 1, 'in', ('Satellite System', [('GPS', 0),
                                                                           ('GLONASS', 1),
                                                                           ('Galileo', 2)])),
-             ('Satellites', 'int8', 12, 'out'),
+             ('Satellite Numbers', 'int8', 12, 'out'), # FIXME: why is this signed?
              ('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
                                                  ('2D Fix', 2),
                                                  ('3D Fix', 3)])),
