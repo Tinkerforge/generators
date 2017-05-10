@@ -47,24 +47,24 @@ class JavaExample(common.Example):
 import com.tinkerforge.{device_camel_case_category}{device_camel_case_name};{imports}{incomplete}
 
 public class Example{example_camel_case_name} {{
-	private static final String HOST = "localhost";
-	private static final int PORT = 4223;
+\tprivate static final String HOST = "localhost";
+\tprivate static final int PORT = 4223;
 
-	// Change {dummy_uid} to the UID of your {device_long_display_name}
-	private static final String UID = "{dummy_uid}";
+\t// Change {dummy_uid} to the UID of your {device_long_display_name}
+\tprivate static final String UID = "{dummy_uid}";
 
-	// Note: To make the example code cleaner we do not handle exceptions. Exceptions
-	//       you might normally want to catch are described in the documentation
-	public static void main(String args[]) throws Exception {{
-		IPConnection ipcon = new IPConnection(); // Create IP connection
-		{device_camel_case_category}{device_camel_case_name} {device_initial_name} ={constructor_break}new {device_camel_case_category}{device_camel_case_name}(UID, ipcon); // Create device object
+\t// Note: To make the example code cleaner we do not handle exceptions. Exceptions
+\t//       you might normally want to catch are described in the documentation
+\tpublic static void main(String args[]) throws Exception {{
+\t\tIPConnection ipcon = new IPConnection(); // Create IP connection
+\t\t{device_camel_case_category}{device_camel_case_name} {device_initial_name} ={constructor_break}new {device_camel_case_category}{device_camel_case_name}(UID, ipcon); // Create device object
 
-		ipcon.connect(HOST, PORT); // Connect to brickd
-		// Don't use device before ipcon is connected
+\t\tipcon.connect(HOST, PORT); // Connect to brickd
+\t\t// Don't use device before ipcon is connected
 {sources}
-		System.out.println("Press key to exit"); System.in.read();{cleanups}
-		ipcon.disconnect();
-	}}
+\t\tSystem.out.println("Press key to exit"); System.in.read();{cleanups}
+\t\tipcon.disconnect();
+\t}}
 }}
 """
 
@@ -236,8 +236,8 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction):
             return []
 
     def get_java_source(self):
-        template = r"""		// Get current {function_comment_name}{comments}
-		{variable} = {device_initial_name}.{function_headless_camel_case_name}({arguments}); // Can throw com.tinkerforge.TimeoutException
+        template = r"""\t\t// Get current {function_comment_name}{comments}
+\t\t{variable} = {device_initial_name}.{function_headless_camel_case_name}({arguments}); // Can throw com.tinkerforge.TimeoutException
 {printlns}
 """
         comments = []
@@ -301,15 +301,15 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
         return []
 
     def get_java_source(self):
-        template1A = r"""		// Add {function_comment_name} listener{comments}
+        template1A = r"""\t\t// Add {function_comment_name} listener{comments}
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""		{device_initial_name}.add{function_camel_case_name}Listener(new {device_camel_case_category}{device_camel_case_name}.{function_camel_case_name}Listener() {{
-			public void {function_headless_camel_case_name}({parameters}) {{
+        template2 = r"""\t\t{device_initial_name}.add{function_camel_case_name}Listener(new {device_camel_case_category}{device_camel_case_name}.{function_camel_case_name}Listener() {{
+\t\t\tpublic void {function_headless_camel_case_name}({parameters}) {{
 {printlns}{extra_message}
-			}}
-		}});
+\t\t\t}}
+\t\t}});
 """
         override_comment = self.get_formatted_override_comment('\t\t// {0}', None, '\n\t\t// ')
 
@@ -360,13 +360,13 @@ class JavaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         return []
 
     def get_java_source(self):
-        templateA = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-		{device_initial_name}.set{function_camel_case_name}Period({arguments}{period_msec});
+        templateA = r"""\t\t// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+\t\t{device_initial_name}.set{function_camel_case_name}Period({arguments}{period_msec});
 """
-        templateB = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-		// Note: The {function_comment_name} callback is only called every {period_sec_long}
-		//       if the {function_comment_name} has changed since the last call!
-		{device_initial_name}.set{function_camel_case_name}CallbackPeriod({arguments}{period_msec});
+        templateB = r"""\t\t// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+\t\t// Note: The {function_comment_name} callback is only called every {period_sec_long}
+\t\t//       if the {function_comment_name} has changed since the last call!
+\t\t{device_initial_name}.set{function_camel_case_name}CallbackPeriod({arguments}{period_msec});
 """
 
         if self.get_device().get_underscore_name().startswith('imu'):
@@ -417,8 +417,8 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         return []
 
     def get_java_source(self):
-        template = r"""		// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
-		{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
+        template = r"""\t\t// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+\t\t{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
 """
         arguments = []
 
@@ -458,8 +458,8 @@ class JavaExampleSpecialFunction(common.ExampleSpecialFunction):
         if type == 'empty':
             return ''
         elif type == 'debounce_period':
-            template = r"""		// Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-		{device_initial_name}.setDebouncePeriod({period_msec});
+            template = r"""\t\t// Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
+\t\t{device_initial_name}.setDebouncePeriod({period_msec});
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 

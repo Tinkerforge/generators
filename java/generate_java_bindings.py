@@ -402,33 +402,33 @@ public class {0} extends Device {{
         if self.get_long_display_name() == 'RS232 Bricklet':
             if self.get_generator().is_octave():
                 listeners += """
-	/**
-	 * Adds a ReadCallback listener.
-	 */
-	public void addReadCallbackCallback(OctaveReference listener) { // for backward compatibility
-		listenerRead.add(listener);
-	}
+\t/**
+\t * Adds a ReadCallback listener.
+\t */
+\tpublic void addReadCallbackCallback(OctaveReference listener) { // for backward compatibility
+\t\tlistenerRead.add(listener);
+\t}
 
-	/**
-	 * Removes a ReadCallback listener.
-	 */
-	public void removeReadCallbackCallback(OctaveReference listener) { // for backward compatibility
-		listenerRead.remove(listener);
-	}
+\t/**
+\t * Removes a ReadCallback listener.
+\t */
+\tpublic void removeReadCallbackCallback(OctaveReference listener) { // for backward compatibility
+\t\tlistenerRead.remove(listener);
+\t}
 
-	/**
-	 * Adds a ErrorCallback listener.
-	 */
-	public void addErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
-		listenerError.add(listener);
-	}
+\t/**
+\t * Adds a ErrorCallback listener.
+\t */
+\tpublic void addErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
+\t\tlistenerError.add(listener);
+\t}
 
-	/**
-	 * Removes a ErrorCallback listener.
-	 */
-	public void removeErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
-		listenerError.remove(listener);
-	}
+\t/**
+\t * Removes a ErrorCallback listener.
+\t */
+\tpublic void removeErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
+\t\tlistenerError.remove(listener);
+\t}
 """
             else:
                 if self.get_generator().is_matlab():
@@ -443,89 +443,89 @@ public class {0} extends Device {{
                     error_forward = 'listener.errorCallback(error);'
 
                 listeners += """
-	private class ReadListenerForwarder implements ReadListener {{
-		public ReadCallbackListener listener;
+\tprivate class ReadListenerForwarder implements ReadListener {{
+\t\tpublic ReadCallbackListener listener;
 
-		public ReadListenerForwarder(ReadCallbackListener listener) {{
-			this.listener = listener;
-		}}
+\t\tpublic ReadListenerForwarder(ReadCallbackListener listener) {{
+\t\t\tthis.listener = listener;
+\t\t}}
 
-		public void read({0}) {{
-			{1}
-		}}
-	}}
+\t\tpublic void read({0}) {{
+\t\t\t{1}
+\t\t}}
+\t}}
 
-	private List<ReadListenerForwarder> readListenerForwarders = new ArrayList<ReadListenerForwarder>();
+\tprivate List<ReadListenerForwarder> readListenerForwarders = new ArrayList<ReadListenerForwarder>();
 
-	/**
-	 * Adds a ReadCallback listener.
-	 */
-	public void addReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
-		synchronized (readListenerForwarders) {{
-			ReadListenerForwarder forwarder = new ReadListenerForwarder(listener);
+\t/**
+\t * Adds a ReadCallback listener.
+\t */
+\tpublic void addReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
+\t\tsynchronized (readListenerForwarders) {{
+\t\t\tReadListenerForwarder forwarder = new ReadListenerForwarder(listener);
 
-			readListenerForwarders.add(forwarder);
-			listenerRead.add(forwarder);
-		}}
-	}}
+\t\t\treadListenerForwarders.add(forwarder);
+\t\t\tlistenerRead.add(forwarder);
+\t\t}}
+\t}}
 
-	/**
-	 * Removes a ReadCallback listener.
-	 */
-	public void removeReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
-		synchronized (readListenerForwarders) {{
-			for (ReadListenerForwarder forwarder: readListenerForwarders) {{
-				if (forwarder.listener.equals(listener)) {{
-					readListenerForwarders.remove(forwarder);
-					listenerRead.remove(forwarder);
+\t/**
+\t * Removes a ReadCallback listener.
+\t */
+\tpublic void removeReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
+\t\tsynchronized (readListenerForwarders) {{
+\t\t\tfor (ReadListenerForwarder forwarder: readListenerForwarders) {{
+\t\t\t\tif (forwarder.listener.equals(listener)) {{
+\t\t\t\t\treadListenerForwarders.remove(forwarder);
+\t\t\t\t\tlistenerRead.remove(forwarder);
 
-					break;
-				}}
-			}}
-		}}
-	}}
+\t\t\t\t\tbreak;
+\t\t\t\t}}
+\t\t\t}}
+\t\t}}
+\t}}
 
-	private class ErrorListenerForwarder implements ErrorListener {{
-		public ErrorCallbackListener listener;
+\tprivate class ErrorListenerForwarder implements ErrorListener {{
+\t\tpublic ErrorCallbackListener listener;
 
-		public ErrorListenerForwarder(ErrorCallbackListener listener) {{
-			this.listener = listener;
-		}}
+\t\tpublic ErrorListenerForwarder(ErrorCallbackListener listener) {{
+\t\t\tthis.listener = listener;
+\t\t}}
 
-		public void error({2}) {{
-			{3}
-		}}
-	}}
+\t\tpublic void error({2}) {{
+\t\t\t{3}
+\t\t}}
+\t}}
 
-	private List<ErrorListenerForwarder> errorListenerForwarders = new ArrayList<ErrorListenerForwarder>();
+\tprivate List<ErrorListenerForwarder> errorListenerForwarders = new ArrayList<ErrorListenerForwarder>();
 
-	/**
-	 * Adds a ErrorCallback listener.
-	 */
-	public void addErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
-		synchronized (errorListenerForwarders) {{
-			ErrorListenerForwarder forwarder = new ErrorListenerForwarder(listener);
+\t/**
+\t * Adds a ErrorCallback listener.
+\t */
+\tpublic void addErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
+\t\tsynchronized (errorListenerForwarders) {{
+\t\t\tErrorListenerForwarder forwarder = new ErrorListenerForwarder(listener);
 
-			errorListenerForwarders.add(forwarder);
-			listenerError.add(forwarder);
-		}}
-	}}
+\t\t\terrorListenerForwarders.add(forwarder);
+\t\t\tlistenerError.add(forwarder);
+\t\t}}
+\t}}
 
-	/**
-	 * Removes a ErrorCallback listener.
-	 */
-	public void removeErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
-		synchronized (errorListenerForwarders) {{
-			for (ErrorListenerForwarder forwarder: errorListenerForwarders) {{
-				if (forwarder.listener.equals(listener)) {{
-					errorListenerForwarders.remove(forwarder);
-					listenerError.remove(forwarder);
+\t/**
+\t * Removes a ErrorCallback listener.
+\t */
+\tpublic void removeErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
+\t\tsynchronized (errorListenerForwarders) {{
+\t\t\tfor (ErrorListenerForwarder forwarder: errorListenerForwarders) {{
+\t\t\t\tif (forwarder.listener.equals(listener)) {{
+\t\t\t\t\terrorListenerForwarders.remove(forwarder);
+\t\t\t\t\tlistenerError.remove(forwarder);
 
-					break;
-				}}
-			}}
-		}}
-	}}
+\t\t\t\t\tbreak;
+\t\t\t\t}}
+\t\t\t}}
+\t\t}}
+\t}}
 """.format(read_parameters, read_forward, error_parameters, error_forward)
 
         return listeners + '}\n'
@@ -542,6 +542,7 @@ public class {0} extends Device {{
     def get_java_constants(self):
         template = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
         constants = []
+
         for constant_group in self.get_constant_groups():
             typ = java_common.get_java_type(constant_group.get_type())
 
@@ -978,23 +979,23 @@ class JavaBindingsGenerator(common.BindingsGenerator):
 package com.tinkerforge;
 
 public class DeviceFactory {{
-	public static Class<? extends Device> getDeviceClass(int deviceIdentifier) {{
-		switch (deviceIdentifier) {{
+\tpublic static Class<? extends Device> getDeviceClass(int deviceIdentifier) {{
+\t\tswitch (deviceIdentifier) {{
 {1}
-		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
-		}}
-	}}
+\t\tdefault: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
+\t\t}}
+\t}}
 
-	public static String getDeviceDisplayName(int deviceIdentifier) {{
-		switch (deviceIdentifier) {{
+\tpublic static String getDeviceDisplayName(int deviceIdentifier) {{
+\t\tswitch (deviceIdentifier) {{
 {2}
-		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
-		}}
-	}}
+\t\tdefault: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
+\t\t}}
+\t}}
 
-	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {{
-		return getDeviceClass(deviceIdentifier).getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
-	}}
+\tpublic static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {{
+\t\treturn getDeviceClass(deviceIdentifier).getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+\t}}
 }}
 """
         classes = []
