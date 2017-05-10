@@ -37,12 +37,12 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return '<see cref="{0}.{1}.On{2}"/>'.format(packet.get_device().get_delphi_class_name()[1:],
-                                                            packet.get_device().get_delphi_class_name(skip=-2 if high_level else 0),
-                                                            packet.get_camel_case_name())
+                                                            packet.get_device().get_delphi_class_name(),
+                                                            packet.get_camel_case_name(skip=-2 if high_level else 0))
             else:
                 return '<see cref="{0}.{1}.{2}"/>'.format(packet.get_device().get_delphi_class_name()[1:],
-                                                          packet.get_device().get_delphi_class_name(skip=-2 if high_level else 0),
-                                                          packet.get_camel_case_name())
+                                                          packet.get_device().get_delphi_class_name(),
+                                                          packet.get_camel_case_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer)
 
