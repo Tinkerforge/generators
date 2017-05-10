@@ -18,7 +18,7 @@ com = {
         'en': '60x80 pixel thermal imaging camera',
         'de': '60x80 Pixel Wärmebildkamera'
     },
-    'has_comcu': True,
+    'comcu': True,
     'released': False,
     'documented': False,
     'packets': [],

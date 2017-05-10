@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# GPS Bricklet communication config
+# XMC1400 Breakout Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -18,11 +18,9 @@ com = {
         'en': 'breakout board for development',
         'de': 'Breakout Board für Entwicklung'
     },
-    'has_comcu': True,
+    'comcu': True,
     'released': False,
     'documented': False,
     'packets': [],
     'examples': []
 }
-
-

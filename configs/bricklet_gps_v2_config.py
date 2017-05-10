@@ -18,7 +18,7 @@ com = {
         'en': 'Determine position, velocity and altitude using GPS',
         'de': 'Bestimmt Position, Geschwindigkeit und Höhe mittels GPS'
     },
-    'has_comcu': True,
+    'comcu': True,
     'released': False,
     'documented': False,
     'packets': [],

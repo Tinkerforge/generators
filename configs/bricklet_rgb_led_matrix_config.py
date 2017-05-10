@@ -18,13 +18,12 @@ com = {
         'en': 'RGB LED Matrix with 8x8 pixel',
         'de': 'RGB LED Matrix mit 8x8 Pixel'
     },
-    'has_comcu': True,
+    'comcu': True,
     'released': False,
     'documented': False,
     'packets': [],
     'examples': []
 }
-
 
 com['packets'].append({
 'type': 'function',
