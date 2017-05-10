@@ -966,9 +966,8 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         elif self.is_octave():
             suffix = '_octave'
 
-        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, filename), 'wb')
-        java.write(device.get_java_source())
-        java.close()
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, filename), 'wb') as f:
+            f.write(device.get_java_source())
 
         if device.is_released():
             self.device_factory_classes.append(device.get_java_class_name())

@@ -534,9 +534,8 @@ class PHPBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}.php'.format(device.get_php_class_name())
 
-        php = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
-        php.write(device.get_php_source())
-        php.close()
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb') as f:
+            f.write(device.get_php_source())
 
         if device.is_released():
             self.released_files.append(filename)

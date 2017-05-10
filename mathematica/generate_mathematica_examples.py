@@ -3,7 +3,7 @@
 
 """
 Mathematica Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_mathematica_examples.py: Generator for Mathematica examples
 
@@ -562,9 +562,8 @@ class MathematicaExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            txt = open(filepath, 'wb')
-            txt.write(example.get_mathematica_source())
-            txt.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_mathematica_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', MathematicaExamplesGenerator)

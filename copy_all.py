@@ -11,9 +11,13 @@ import tempfile
 
 def text_files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
+
     try:
-        lines1 = file(src_file, 'rb').readlines()
-        lines2 = file(dest_file, 'rb').readlines()
+        with open(src_file, 'rb') as f:
+            lines1 = f.readlines()
+
+        with file(dest_file, 'rb') as f:
+            lines2 = f.readlines()
     except:
         return True
 
@@ -33,39 +37,48 @@ def text_files_are_not_the_same(src_file, dest_path):
 def files_are_not_the_same(src_file, dest_path):
     if src_file.endswith('.vi') or src_file.endswith('.vi.png'):
         dest_file = os.path.join(dest_path, src_file.split('/')[-1])
+
         try:
-            f1 = file(src_file, 'rb').read()
-            f2 = file(dest_file, 'rb').read()
+            with open(src_file, 'rb') as f:
+                data1 = f.read()
+
+            with file(dest_file, 'rb') as f:
+                data2 = f.read()
         except:
             return True
 
-        return f1 != f2
+        return data1 != data2
     else:
         return text_files_are_not_the_same(src_file, dest_path)
 
 path = os.getcwd()
 start_path = path.replace('/generators', '')
 brickv_path_bindings = os.path.join(start_path, 'brickv/src/brickv/bindings')
-
 bindings = []
+
 for d in os.listdir(path):
     if os.path.isdir(d):
         if not d in ('configs', 'json', '.git', '__pycache__'):
             bindings.append(d)
+
 bindings = sorted(bindings)
 
 if socket.gethostname() != 'tinkerforge.com':
     print('')
     print('Copying ip_connection to brickv:')
+
     src_file = os.path.join(path, 'python', 'ip_connection.py')
+
     if files_are_not_the_same(src_file, brickv_path_bindings):
         shutil.copy(src_file, brickv_path_bindings)
         print(' * ip_connection.py')
 
     print('')
     print('Copying Python bindings to brickv:')
+
     path_binding = os.path.join(path, 'python')
     src_file_path = os.path.join(path_binding, 'bindings')
+
     for f in os.listdir(src_file_path):
         if f.endswith('.py'):
             src_file = os.path.join(src_file_path, f)
@@ -82,17 +95,20 @@ doc_path = 'doc/{0}/source/Software'
 labview_image_path = 'doc/en/source/Images/Screenshots/LabVIEW'
 
 print('')
+
 for lang in ['en', 'de']:
     print("Copying '{0}' documentation and examples:".format(lang))
 
     for t in doc_copy:
         dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
+
         if not os.path.exists(dest_dir):
             os.makedirs(dest_dir)
 
     for binding in bindings:
         path_binding = os.path.join(path, binding)
         src_file_path = os.path.join(path_binding, 'doc', lang)
+
         for f in os.listdir(src_file_path):
             if f.endswith('.swp'):
                 continue
@@ -114,12 +130,14 @@ for lang in ['en', 'de']:
                         print(' * {0}'.format(f))
 
 print('')
+
 if socket.gethostname() != 'tinkerforge.com':
     for lang in ['en', 'de']:
         print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
-        src_file = os.path.join(path, 'javascript', 'Tinkerforge.js')
 
+        src_file = os.path.join(path, 'javascript', 'Tinkerforge.js')
         dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
+
         if not os.path.exists(dest_dir):
             os.makedirs(dest_dir)
 
@@ -135,9 +153,10 @@ else:
 
     for lang in ['en', 'de']:
         print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
-        src_file = os.path.join(tmp_dir, 'browser', 'source', 'Tinkerforge.js')
 
+        src_file = os.path.join(tmp_dir, 'browser', 'source', 'Tinkerforge.js')
         dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
+
         if not os.path.exists(dest_dir):
             os.makedirs(dest_dir)
 

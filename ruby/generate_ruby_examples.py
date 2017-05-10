@@ -3,7 +3,7 @@
 
 """
 Ruby Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_ruby_examples.py: Generator for Ruby examples
 
@@ -513,9 +513,8 @@ class RubyExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            rb = open(filepath, 'wb')
-            rb.write(example.get_ruby_source())
-            rb.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_ruby_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', RubyExamplesGenerator)

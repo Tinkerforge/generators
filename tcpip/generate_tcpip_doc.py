@@ -304,9 +304,8 @@ class TCPIPDocGenerator(common.DocGenerator):
         return TCPIPDocElement
 
     def generate(self, device):
-        rst = open(device.get_doc_rst_path(), 'wb')
-        rst.write(device.get_tcpip_doc())
-        rst.close()
+        with open(device.get_doc_rst_path(), 'wb') as f:
+            f.write(device.get_tcpip_doc())
 
 def generate(bindings_root_directory, language):
     common.generate(bindings_root_directory, language, TCPIPDocGenerator)

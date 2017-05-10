@@ -5,7 +5,7 @@
 JavaScript Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_bindings.py: Generator for JavaScript bindings
 
@@ -265,9 +265,8 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
 
         filename = '{0}{1}.js'.format(device.get_camel_case_category(), device.get_camel_case_name())
 
-        js = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
-        js.write(device.get_javascript_source())
-        js.close()
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb') as f:
+            f.write(device.get_javascript_source())
 
         if device.is_released():
             self.released_files.append(filename)

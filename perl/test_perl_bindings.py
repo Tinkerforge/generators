@@ -3,7 +3,7 @@
 
 """
 Perl Bindings Tester
-Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_perl_bindings.py: Tests the Perl bindings
 
@@ -49,8 +49,11 @@ class PerlExamplesTester(common.ExamplesTester):
 
         src_check = src.replace('.pl', '_check.pl')
 
-        code = file(src, 'rb').read()
-        file(src_check, 'wb').write('use lib "/tmp/tester/perl/source/lib"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
+        with open(src, 'rb') as f:
+            code = f.read()
+
+        with open(src_check, 'wb') as f:
+            f.write('use lib "/tmp/tester/perl/source/lib"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
 
         args = ['perl',
                 '-cWT',

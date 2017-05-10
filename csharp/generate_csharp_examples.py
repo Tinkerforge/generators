@@ -3,7 +3,7 @@
 
 """
 C# Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_csharp_examples.py: Generator for C# examples
 
@@ -571,9 +571,8 @@ class CSharpExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            cs = open(filepath, 'wb')
-            cs.write(example.get_csharp_source())
-            cs.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_csharp_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', CSharpExamplesGenerator)

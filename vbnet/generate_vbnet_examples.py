@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_vbnet_examples.py: Generator for Visual Basic .NET examples
 
@@ -584,9 +584,8 @@ class VBNETExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            vb = open(filepath, 'wb')
-            vb.write(example.get_vbnet_source())
-            vb.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_vbnet_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', VBNETExamplesGenerator)

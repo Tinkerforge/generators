@@ -467,9 +467,8 @@ class PythonBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}_{1}.py'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
-        py.write(device.get_python_source())
-        py.close()
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb') as f:
+            f.write(device.get_python_source())
 
         if device.is_released():
             self.device_factory_classes.append((device.get_python_import_name(), device.get_python_class_name()))

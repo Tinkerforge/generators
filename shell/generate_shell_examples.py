@@ -3,7 +3,7 @@
 
 """
 Shell Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_shell_examples.py: Generator for Shell examples
 
@@ -421,9 +421,8 @@ class ShellExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            sh = open(filepath, 'wb')
-            sh.write(example.get_shell_source())
-            sh.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_shell_source())
 
             os.chmod(filepath, 0755)
 

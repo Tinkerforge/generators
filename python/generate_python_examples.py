@@ -3,7 +3,7 @@
 
 """
 Python Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_python_examples.py: Generator for Python examples
 
@@ -522,9 +522,8 @@ class PythonExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            py = open(filepath, 'wb')
-            py.write(example.get_python_source())
-            py.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_python_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PythonExamplesGenerator)

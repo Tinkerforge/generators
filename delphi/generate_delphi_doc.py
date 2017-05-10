@@ -359,9 +359,8 @@ class DelphiDocGenerator(common.DocGenerator):
         return delphi_common.DelphiElement
 
     def generate(self, device):
-        rst = open(device.get_doc_rst_path(), 'wb')
-        rst.write(device.get_delphi_doc())
-        rst.close()
+        with open(device.get_doc_rst_path(), 'wb') as f:
+            f.write(device.get_delphi_doc())
 
 def generate(bindings_root_directory, language):
     common.generate(bindings_root_directory, language, DelphiDocGenerator)

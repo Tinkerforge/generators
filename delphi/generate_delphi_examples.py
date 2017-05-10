@@ -3,7 +3,7 @@
 
 """
 Delphi/Lazarus Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_delphi_examples.py: Generator for Delphi/Lazarus examples
 
@@ -630,9 +630,8 @@ class DelphiExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            pas = open(filepath, 'wb')
-            pas.write(example.get_delphi_source())
-            pas.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_delphi_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', DelphiExamplesGenerator)

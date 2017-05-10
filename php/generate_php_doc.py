@@ -422,9 +422,8 @@ class PHPDocGenerator(common.DocGenerator):
         return php_common.PHPElement
 
     def generate(self, device):
-        rst = open(device.get_doc_rst_path(), 'wb')
-        rst.write(device.get_php_doc())
-        rst.close()
+        with open(device.get_doc_rst_path(), 'wb') as f:
+            f.write(device.get_php_doc())
 
 def generate(bindings_root_directory, language):
     common.generate(bindings_root_directory, language, PHPDocGenerator)

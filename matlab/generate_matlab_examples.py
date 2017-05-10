@@ -3,7 +3,7 @@
 
 """
 MATLAB/Octave Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_examples.py: Generator for MATLAB/Octave examples
 
@@ -692,9 +692,8 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            m = open(os.path.join(examples_directory, filename), 'wb')
-            m.write(example.get_matlab_source())
-            m.close()
+            with open(os.path.join(examples_directory, filename), 'wb') as f:
+                f.write(example.get_matlab_source())
 
         # octave
         for example in examples:
@@ -714,9 +713,8 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            m = open(filepath, 'wb')
-            m.write(example.get_octave_source())
-            m.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_octave_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', MATLABExamplesGenerator)

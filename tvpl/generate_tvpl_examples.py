@@ -3,7 +3,7 @@
 
 """
 Tinkerforge Visual Programming Language (TVPL) Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_tvpl_examples.py: Generator for TVPL examples
 
@@ -705,9 +705,8 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            tvpl = open(filepath, 'wb')
-            tvpl.write(example.get_tvpl_source().encode('utf-8'))
-            tvpl.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_tvpl_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', TVPLExamplesGenerator)

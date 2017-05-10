@@ -3,7 +3,7 @@
 
 """
 JavaScript Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_examples.py: Generator for JavaScript examples
 
@@ -690,9 +690,8 @@ class JavaScriptExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            js = open(filepath, 'wb')
-            js.write(example.get_nodejs_source())
-            js.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_nodejs_source())
 
         # html
         for example in examples:
@@ -712,9 +711,8 @@ class JavaScriptExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            html = open(filepath, 'wb')
-            html.write(example.get_html_source())
-            html.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_html_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaScriptExamplesGenerator)

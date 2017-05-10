@@ -563,9 +563,8 @@ class DelphiBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}{1}.pas'.format(device.get_camel_case_category(), device.get_camel_case_name())
 
-        pas = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
-        pas.write(device.get_delphi_source())
-        pas.close()
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb') as f:
+            f.write(device.get_delphi_source())
 
         if device.is_released():
             self.released_files.append(filename)

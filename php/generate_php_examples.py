@@ -3,7 +3,7 @@
 
 """
 PHP Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_php_examples.py: Generator for PHP examples
 
@@ -534,9 +534,8 @@ class PHPExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            php = open(filepath, 'wb')
-            php.write(example.get_php_source())
-            php.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_php_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PHPExamplesGenerator)

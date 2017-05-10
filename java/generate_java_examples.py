@@ -3,7 +3,7 @@
 
 """
 Java Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_java_examples.py: Generator for Java examples
 
@@ -553,9 +553,8 @@ class JavaExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            java = open(filepath, 'wb')
-            java.write(example.get_java_source())
-            java.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_java_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaExamplesGenerator)

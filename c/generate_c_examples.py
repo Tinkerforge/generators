@@ -3,7 +3,7 @@
 
 """
 C/C++ Examples Generator
-Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_c_examples.py: Generator for C/C++ examples
 
@@ -654,9 +654,8 @@ class CExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            c = open(filepath, 'wb')
-            c.write(example.get_c_source())
-            c.close()
+            with open(filepath, 'wb') as f:
+                f.write(example.get_c_source())
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', CExamplesGenerator)

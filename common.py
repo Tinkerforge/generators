@@ -580,29 +580,26 @@ def recreate_directory(directory):
     os.makedirs(directory)
 
 def specialize_template(template_filename, destination_filename, replacements):
-    template_file = open(template_filename, 'rb')
     lines = []
     replaced = set()
 
-    for line in template_file.readlines():
-        for key in replacements:
-            replaced_line = line.replace(key, replacements[key])
+    with open(template_filename, 'rb') as f:
+        for line in f.readlines():
+            for key in replacements:
+                replaced_line = line.replace(key, replacements[key])
 
-            if replaced_line != line:
-                replaced.add(key)
+                if replaced_line != line:
+                    replaced.add(key)
 
-            line = replaced_line
+                line = replaced_line
 
-        lines.append(line)
-
-    template_file.close()
+            lines.append(line)
 
     if replaced != set(replacements.keys()):
         raise GeneratorError('Not all replacements for {0} have been applied'.format(template_filename))
 
-    destination_file = open(destination_filename, 'wb')
-    destination_file.writelines(lines)
-    destination_file.close()
+    with open(destination_filename, 'wb') as f:
+        f.writelines(lines)
 
 def make_c_like_bitmask(value, shift='{0} << {1}', combine='({0}) | ({1})'):
     if value == 0:
