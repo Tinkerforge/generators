@@ -119,30 +119,30 @@ public class Example{example_camel_case_name} {{
 
 class JavaExampleArgument(common.ExampleArgument):
     def get_java_source(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'true'
             else:
                 return 'false'
-        elif type == 'char':
+        elif type_ == 'char':
             return "'{0}'".format(value)
-        elif type == 'string':
+        elif type_ == 'string':
             return '"{0}"'.format(value)
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             value = common.make_c_like_bitmask(value)
-            cast = java_common.get_java_type(type.split(':')[0])
+            cast = java_common.get_java_type(type_.split(':')[0], self.get_device().has_java_legacy_types())
 
             if cast in ['byte', 'short']:
                 return '({0})({1})'.format(cast, value)
             else:
                 return value
-        elif type.endswith(':constant'):
+        elif type_.endswith(':constant'):
             return self.get_value_constant().get_java_source()
         else:
-            cast = java_common.get_java_type(type)
+            cast = java_common.get_java_type(type_, self.get_device().has_java_legacy_types())
 
             if cast in ['byte', 'short']:
                 cast = '({0})'.format(cast)
@@ -153,9 +153,9 @@ class JavaExampleArgument(common.ExampleArgument):
 
 class JavaExampleParameter(common.ExampleParameter):
     def get_java_source(self):
-        template = '{type} {headless_camel_case_name}'
+        template = '{type_} {headless_camel_case_name}'
 
-        return template.format(type=java_common.get_java_type(self.get_type().split(':')[0]),
+        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], self.get_device().has_java_legacy_types()),
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
     def get_java_println(self):
@@ -182,13 +182,13 @@ class JavaExampleParameter(common.ExampleParameter):
 
 class JavaExampleResult(common.ExampleResult):
     def get_java_variable(self):
-        template = '{type} {headless_camel_case_name}'
+        template = '{type_} {headless_camel_case_name}'
         headless_camel_case_name = self.get_headless_camel_case_name()
 
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return template.format(type=java_common.get_java_type(self.get_type().split(':')[0]),
+        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], self.get_device().has_java_legacy_types()),
                                headless_camel_case_name=headless_camel_case_name)
 
     def get_java_println(self):
@@ -394,7 +394,7 @@ class JavaExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshold
         template = '{minimum},<BP>{maximum}'
         minimum = self.get_formatted_minimum()
         maximum = self.get_formatted_maximum()
-        cast = java_common.get_java_type(self.get_type())
+        cast = java_common.get_java_type(self.get_type(), self.get_device().has_java_legacy_types())
 
         if cast in ['byte', 'short']:
             cast = '({0})'.format(cast)

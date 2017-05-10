@@ -560,7 +560,7 @@ public class {0} extends Device {{
         constants = []
 
         for constant_group in self.get_constant_groups():
-            typ = java_common.get_java_type(constant_group.get_type())
+            typ = java_common.get_java_type(constant_group.get_type(), self.has_java_legacy_types())
 
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
