@@ -123,16 +123,16 @@ class CSharpBindingsDevice(csharp_common.CSharpDevice):
         return self.specialize_doc_rst_links(text, specializer)
 
     def get_csharp_import(self):
-        include = """{0}
+        template = """{0}
 using System;
 
 namespace Tinkerforge
 {{"""
 
-        return include.format(self.get_generator().get_header_comment('asterisk'))
+        return template.format(self.get_generator().get_header_comment('asterisk'))
 
     def get_csharp_class(self):
-        class_str = """
+        template = """
 \t/// <summary>
 \t///  {1}
 \t/// </summary>
@@ -150,14 +150,14 @@ namespace Tinkerforge
 \t\tpublic static string DEVICE_DISPLAY_NAME = "{3}";
 """
 
-        return class_str.format(self.get_csharp_class_name(),
-                                common.select_lang(self.get_description()),
-                                self.get_device_identifier(),
-                                self.get_long_display_name())
+        return template.format(self.get_csharp_class_name(),
+                               common.select_lang(self.get_description()),
+                               self.get_device_identifier(),
+                               self.get_long_display_name())
 
     def get_csharp_delegates(self):
-        cbs = '\n'
-        cb = """
+        delegates = '\n'
+        template = """
 \t\t/// <summary>
 \t\t///  {2}
 \t\t/// </summary>
@@ -166,7 +166,7 @@ namespace Tinkerforge
 \t\t/// </summary>
 \t\tpublic delegate void {0}EventHandler({3} sender{1});
 """
-        cb_legacy = """
+        template_legacy = """
 \t\t/// <summary>
 \t\t/// </summary>
 \t\tpublic event {0}EventHandler {0} // for backward compatibility
@@ -184,16 +184,16 @@ namespace Tinkerforge
             if parameter != '':
                 parameter = ', ' + parameter
 
-            cbs += cb.format(name, parameter, doc, self.get_csharp_class_name())
+            delegates += template.format(name, parameter, doc, self.get_csharp_class_name())
 
             if self.get_csharp_class_name() in LEGACY_CALLBACK_DEVICES:
-                cbs += cb_legacy.format(name)
+                delegates += template_legacy.format(name)
 
-        return cbs
+        return delegates
 
     def get_csharp_function_id_definitions(self):
         function_ids = ''
-        function_id = """
+        template = """
 \t\t/// <summary>
 \t\t///  Function ID to be used with
 \t\t///  <see cref="Tinkerforge.Device.GetResponseExpected"/>,
@@ -202,10 +202,11 @@ namespace Tinkerforge
 \t\t/// </summary>
 \t\tpublic const byte {2}_{0} = {1};
 """
+
         for packet in self.get_packets():
-            function_ids += function_id.format(packet.get_upper_case_name(),
-                                               packet.get_function_id(),
-                                               packet.get_type().upper())
+            function_ids += template.format(packet.get_upper_case_name(),
+                                            packet.get_function_id(),
+                                            packet.get_type().upper())
         return function_ids
 
     def get_csharp_constants(self):
@@ -215,6 +216,7 @@ namespace Tinkerforge
 \t\tpublic const {0} {1}_{2} = {3};
 """
         constants = []
+
         for constant_group in self.get_constant_groups():
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
@@ -229,9 +231,9 @@ namespace Tinkerforge
         return '\n' + ''.join(constants)
 
     def get_csharp_constructor(self):
-        cbs = []
-        cb = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1}Callback);'
-        con = """
+        callbacks = []
+        template = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1}Callback);'
+        constructor = """
 \t\t/// <summary>
 \t\t///  Creates an object with the unique device ID <c>uid</c> and adds  it to
 \t\t///  the IPConnection <c>ipcon</c>.
@@ -248,35 +250,36 @@ namespace Tinkerforge
         for packet in self.get_packets('callback'):
             name_upper = packet.get_upper_case_name()
             name_pascal = packet.get_camel_case_name()
-            cbs.append(cb.format(name_upper, name_pascal))
+            callbacks.append(template.format(name_upper, name_pascal))
 
-        return con.format(self.get_csharp_class_name(), '\n'.join(cbs),
-                          *self.get_api_version())
+        return constructor.format(self.get_csharp_class_name(), '\n'.join(callbacks),
+                                  *self.get_api_version())
 
     def get_csharp_response_expected(self):
-        res = '\n'
-        re = "\t\t\tresponseExpected[{0}] = {1}\n"
+        response_expected = '\n'
+        template = "\t\t\tresponseExpected[{0}] = {1}\n"
 
         for packet in self.get_packets('function'):
             name_upper = 'FUNCTION_' + packet.get_upper_case_name()
             setto = 'ResponseExpectedFlag.FALSE;'
+
             if len(packet.get_elements('out')) > 0:
                 setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
             elif packet.get_doc_type() in ['ccf', 'llf']:
                 setto = 'ResponseExpectedFlag.TRUE;'
 
-            res += re.format(name_upper, setto)
+            response_expected += template.format(name_upper, setto)
 
         for packet in self.get_packets('callback'):
             name_upper = 'CALLBACK_' + packet.get_upper_case_name()
             setto = 'ResponseExpectedFlag.ALWAYS_FALSE;'
-            res += re.format(name_upper, setto)
+            response_expected += template.format(name_upper, setto)
 
-        return res + '\t\t}\n'
+        return response_expected + '\t\t}\n'
 
     def get_csharp_callbacks(self):
-        cbs = ''
-        cb = """
+        callbacks = ''
+        template = """
 \t\t/// <summary>
 \t\t/// </summary>
 \t\tprotected void On{0}Callback(byte[] response)
@@ -293,8 +296,10 @@ namespace Tinkerforge
             name = packet.get_camel_case_name()
             name_upper = packet.get_upper_case_name()
             eles = []
+
             for element in packet.get_elements('out'):
                 eles.append(element.get_headless_camel_case_name())
+
             callParams = ", ".join(eles)
             signatureParams = packet.get_csharp_parameter_list()
             size = str(packet.get_request_size())
@@ -310,11 +315,13 @@ namespace Tinkerforge
 """
 
             pos = 8
+
             for element in packet.get_elements('out'):
                 csharp_type = element.get_csharp_type()
                 cname = element.get_headless_camel_case_name()
                 from_method = element.get_csharp_le_converter_from_method()
                 length = ''
+
                 if element.get_cardinality() > 1 and element.get_type() != 'bool':
                     length = ', ' + str(element.get_cardinality())
                 else:
@@ -341,13 +348,13 @@ namespace Tinkerforge
             if callParams != '':
                 callParams = ', ' + callParams
 
-            cbs += cb.format(name, convs, name_upper, callParams, pos, signatureParams)
+            callbacks += template.format(name, convs, name_upper, callParams, pos, signatureParams)
 
-        return cbs + "\t}\n}\n"
+        return callbacks + "\t}\n}\n"
 
     def get_csharp_methods(self):
         methods = ''
-        method = """
+        template = """
 \t\t/// <summary>
 \t\t///  {5}
 \t\t/// </summary>
@@ -359,10 +366,10 @@ namespace Tinkerforge
 \t\t}}
 """
 
-        method_noresponse = """\t\t\tSendRequest(request);
+        template_noresponse = """\t\t\tSendRequest(request);
 """
 
-        method_response = """\t\t\tbyte[] response = SendRequest(request);
+        template_response = """\t\t\tbyte[] response = SendRequest(request);
 {0}"""
 
         for packet in self.get_packets('function'):
@@ -389,9 +396,11 @@ namespace Tinkerforge
 """
 
             pos = 8
+
             for element in packet.get_elements('in'):
                 wname = element.get_headless_camel_case_name()
                 csharp_type = element.get_csharp_le_converter_type()
+
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'bool':
                         write_convs += write_conv_bool_array.format(wname + 'Bits',
@@ -415,6 +424,7 @@ namespace Tinkerforge
                                                                     csharp_type)
                 else:
                     write_convs += write_conv.format(wname, pos, csharp_type)
+
                 pos += element.get_size()
 
             method_tail = ''
@@ -428,10 +438,12 @@ namespace Tinkerforge
 \t\t\t}}"""
 
             pos = 8
+
             for element in packet.get_elements('out'):
                 aname = element.get_headless_camel_case_name()
                 from_method = element.get_csharp_le_converter_from_method()
                 length = ''
+
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'bool':
                         pass
@@ -449,20 +461,21 @@ namespace Tinkerforge
                                                                   aname)
                     else:
                         read_convs += read_conv.format(aname, from_method, pos, length)
+
                 pos += element.get_size()
 
             if ret_count > 0:
-                method_tail = method_response.format(read_convs)
+                method_tail = template_response.format(read_convs)
             else:
-                method_tail = method_noresponse
+                method_tail = template_noresponse
 
             signature = packet.get_csharp_method_signature()
-            methods += method.format(signature,
-                                     size,
-                                     name_upper,
-                                     write_convs,
-                                     method_tail,
-                                     doc)
+            methods += template.format(signature,
+                                       size,
+                                       name_upper,
+                                       write_convs,
+                                       method_tail,
+                                       doc)
 
         return methods
 

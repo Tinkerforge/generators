@@ -47,7 +47,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
         return self.specialize_doc_rst_links(text, specializer)
 
     def get_delphi_unit_header(self):
-        include = """{0}
+        template = """{0}
 unit {1}{2};
 
 {{$ifdef FPC}}{{$mode OBJFPC}}{{$H+}}{{$endif}}
@@ -59,36 +59,38 @@ uses
 
 """
 
-        return include.format(self.get_generator().get_header_comment('curly'),
-                              self.get_camel_case_category(),
-                              self.get_camel_case_name())
+        return template.format(self.get_generator().get_header_comment('curly'),
+                               self.get_camel_case_category(),
+                               self.get_camel_case_name())
 
     def get_delphi_device_identifier(self):
-        did = """const
+        template = """const
   {0}_{1}_DEVICE_IDENTIFIER = {2};
 """
 
-        return did.format(self.get_upper_case_category(),
-                          self.get_upper_case_name(),
-                          self.get_device_identifier())
+        return template.format(self.get_upper_case_category(),
+                               self.get_upper_case_name(),
+                               self.get_device_identifier())
 
     def get_delphi_device_display_name(self):
-        did = """  {0}_{1}_DEVICE_DISPLAY_NAME = '{2}';
+        template = """  {0}_{1}_DEVICE_DISPLAY_NAME = '{2}';
 
 """
 
-        return did.format(self.get_upper_case_category(),
-                          self.get_upper_case_name(),
-                          self.get_long_display_name())
+        return template.format(self.get_upper_case_category(),
+                               self.get_upper_case_name(),
+                               self.get_long_display_name())
 
     def get_delphi_function_id_definitions(self):
         function_ids = ''
-        function_id = '  {0}_{1}_FUNCTION_{2} = {3};\n'
+        template = '  {0}_{1}_FUNCTION_{2} = {3};\n'
+
         for packet in self.get_packets('function'):
-            function_ids += function_id.format(self.get_upper_case_category(),
-                                               self.get_upper_case_name(),
-                                               packet.get_upper_case_name(),
-                                               packet.get_function_id())
+            function_ids += template.format(self.get_upper_case_category(),
+                                            self.get_upper_case_name(),
+                                            packet.get_upper_case_name(),
+                                            packet.get_function_id())
+
         return function_ids + '\n'
 
     def get_delphi_constants(self):
@@ -97,14 +99,16 @@ uses
         return self.get_formatted_constants(constant_format, prefix=self.get_upper_case_category()+'_'+self.get_upper_case_name()) + '\n'
 
     def get_delphi_callback_id_definitions(self):
-        cbs = ''
-        cb = '  {0}_{1}_CALLBACK_{2} = {3};\n'
+        callback_ids = ''
+        template = '  {0}_{1}_CALLBACK_{2} = {3};\n'
+
         for packet in self.get_packets('callback'):
-            cbs += cb.format(self.get_upper_case_category(),
-                             self.get_upper_case_name(),
-                             packet.get_upper_case_name(),
-                             packet.get_function_id())
-        return cbs + '\n'
+            callback_ids += template.format(self.get_upper_case_category(),
+                                            self.get_upper_case_name(),
+                                            packet.get_upper_case_name(),
+                                            packet.get_function_id())
+
+        return callback_ids + '\n'
 
     def get_delphi_arrays(self):
         arrays = 'type\n'
@@ -130,7 +134,7 @@ uses
 
     def get_delphi_callback_prototypes(self):
         prototypes = ''
-        prototype = '  {0}Notify{1} = procedure(sender: {0}{2}) of object;\n'
+        template = '  {0}Notify{1} = procedure(sender: {0}{2}) of object;\n'
 
         for packet in self.get_packets('callback'):
             params = packet.get_delphi_parameter_list(False)
@@ -138,9 +142,9 @@ uses
             if len(params) > 0:
                 params = '; ' + params
 
-            prototypes += prototype.format(self.get_delphi_class_name(),
-                                           packet.get_camel_case_name(),
-                                           params)
+            prototypes += template.format(self.get_delphi_class_name(),
+                                          packet.get_camel_case_name(),
+                                          params)
 
         if len(prototypes) > 0:
             forward = '  {0} = class;\n'.format(self.get_delphi_class_name())
@@ -156,21 +160,23 @@ uses
 """.format(self.get_delphi_class_name(), common.select_lang(self.get_description()))
 
         callbacks = ''
-        callback = '    {0}Callback: {1}Notify{2};\n'
+        template = '    {0}Callback: {1}Notify{2};\n'
+
         for packet in self.get_packets('callback'):
-            callbacks += callback.format(packet.get_headless_camel_case_name(),
+            callbacks += template.format(packet.get_headless_camel_case_name(),
                                          self.get_delphi_class_name(),
                                          packet.get_camel_case_name())
 
         callback_wrappers = ''
-        callback_wrapper = '    procedure CallbackWrapper{0}(const packet: TByteArray); {1};\n'
+        template_wrapper = '    procedure CallbackWrapper{0}(const packet: TByteArray); {1};\n'
+
         for packet in self.get_packets('callback'):
             if packet.has_prototype_in_device():
                 modifier = 'override'
             else:
                 modifier = 'virtual'
 
-            callback_wrappers += callback_wrapper.format(packet.get_camel_case_name(), modifier)
+            callback_wrappers += template_wrapper.format(packet.get_camel_case_name(), modifier)
 
         methods = []
         function = """    /// <summary>
@@ -181,21 +187,25 @@ uses
     ///  {2}
     /// </summary>
     procedure {0}{1}; {3};"""
+
         for packet in self.get_packets('function'):
             ret_type = packet.get_delphi_return_type(False)
             name = packet.get_camel_case_name()
             doc = packet.get_delphi_formatted_doc()
             params = packet.get_delphi_parameter_list(False)
+
             if packet.has_prototype_in_device():
                 modifier = 'override'
             else:
                 modifier = 'virtual'
+
             if len(params) > 0:
                 params = '(' + params + ')'
             if len(ret_type) > 0:
                 method = function.format(name, params, ret_type, doc, modifier)
             else:
                 method = procedure.format(name, params, doc, modifier)
+
             methods.append(method)
 
         props = []
@@ -203,6 +213,7 @@ uses
     ///  {3}
     /// </summary>
     property On{0}: {1}Notify{0} read {2}Callback write {2}Callback;"""
+
         for packet in self.get_packets('callback'):
             doc = packet.get_delphi_formatted_doc()
             props.append(prop.format(packet.get_camel_case_name(),
@@ -272,11 +283,11 @@ begin
                 flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
             response_expected += '  responseExpected[{0}_{1}_{2}{3}] := {4};\n' \
-                .format(self.get_upper_case_category(),
-                        self.get_upper_case_name(),
-                        prefix,
-                        packet.get_upper_case_name(),
-                        flag)
+                                 .format(self.get_upper_case_category(),
+                                         self.get_upper_case_name(),
+                                         prefix,
+                                         packet.get_upper_case_name(),
+                                         flag)
 
         if len(response_expected) > 0:
             response_expected += '\n'
@@ -285,22 +296,23 @@ begin
                           *self.get_api_version()) + response_expected
 
     def get_delphi_callback_wrapper_definitions(self):
-        cbs = ''
-        cb = '  callbackWrappers[{0}_{1}_CALLBACK_{2}] := {{$ifdef FPC}}@{{$endif}}CallbackWrapper{3};\n'
-        cbs_end = 'end;\n\n'
+        callbacks = ''
+        template = '  callbackWrappers[{0}_{1}_CALLBACK_{2}] := {{$ifdef FPC}}@{{$endif}}CallbackWrapper{3};\n'
+
         for packet in self.get_packets('callback'):
-            cbs += cb.format(self.get_upper_case_category(),
-                             self.get_upper_case_name(),
-                             packet.get_upper_case_name(),
-                             packet.get_camel_case_name())
-        return cbs + cbs_end
+            callbacks += template.format(self.get_upper_case_category(),
+                                         self.get_upper_case_name(),
+                                         packet.get_upper_case_name(),
+                                         packet.get_camel_case_name())
+
+        return callbacks + 'end;\n\n'
 
     def get_delphi_methods(self):
         methods = ''
         function = 'function {0}.{1}{2}: {3};\n'
         procedure = 'procedure {0}.{1}{2};\n'
-
         cls = self.get_delphi_class_name()
+
         for packet in self.get_packets('function'):
             ret_type = packet.get_delphi_return_type(False)
             out_count = len(packet.get_elements('out'))
@@ -323,6 +335,7 @@ begin
                 method += 'var request: TByteArray;'
 
             has_array = False
+
             for element in packet.get_elements():
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
                     has_array = True
@@ -337,6 +350,7 @@ begin
 
             # Serialize request
             offset = 8
+
             for element in packet.get_elements('in'):
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
                     prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_headless_camel_case_name())
@@ -363,6 +377,7 @@ begin
 
             # Deserialize response
             offset = 8
+
             for element in packet.get_elements('out'):
                 if out_count > 1:
                     result = element.get_headless_camel_case_name()
@@ -404,6 +419,7 @@ begin
                 wrapper += 'var ' + packet.get_delphi_parameter_list(False, False) + ';'
 
             has_array = False
+
             for element in packet.get_elements():
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
                     has_array = True
@@ -422,6 +438,7 @@ begin
 
             offset = 8
             parameter_names = []
+
             for element in packet.get_elements('out'):
                 parameter_names.append(element.get_headless_camel_case_name())
 

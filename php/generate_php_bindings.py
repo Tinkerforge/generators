@@ -45,16 +45,16 @@ class PHPBindingsDevice(php_common.PHPDevice):
         return self.specialize_doc_rst_links(text, specializer)
 
     def get_php_import(self):
-        include = """{0}
+        template = """{0}
 namespace Tinkerforge;
 
 require_once(__DIR__ . '/IPConnection.php');
 """
 
-        return include.format(self.get_generator().get_header_comment('asterisk'))
+        return template.format(self.get_generator().get_header_comment('asterisk'))
 
     def get_php_class(self):
-        class_str = """
+        template = """
 /**
  * {1}
  */
@@ -62,34 +62,36 @@ class {0} extends Device
 {{
 """
 
-        return class_str.format(self.get_php_class_name(), common.select_lang(self.get_description()))
+        return template.format(self.get_php_class_name(), common.select_lang(self.get_description()))
 
     def get_php_callback_wrapper_definitions(self):
-        cbs = ''
-        cb = """
+        callbacks = ''
+        template = """
         $this->callbackWrappers[self::CALLBACK_{0}] = 'callbackWrapper{1}';"""
-        cbs_end = '\n    }\n'
+
         for packet in self.get_packets('callback'):
             typ = packet.get_upper_case_name()
             name = packet.get_camel_case_name()
 
-            cbs += cb.format(typ, name)
-        return cbs + cbs_end
+            callbacks += template.format(typ, name)
+
+        return callbacks + '\n    }\n'
 
     def get_php_callback_id_definitions(self):
-        cbs = ''
-        cb = """
+        callbacks = ''
+        template = """
     /**
      * {2}
      */
     const CALLBACK_{0} = {1};
 """
+
         for packet in self.get_packets('callback'):
             doc = packet.get_php_formatted_doc([])
-            cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
+            callbacks += template.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
 
         if self.get_long_display_name() == 'RS232 Bricklet':
-            cbs += """
+            callbacks += """
     /**
      * This callback is called if new data is available. The message has
      * a maximum size of 60 characters. The actual length of the message
@@ -108,20 +110,21 @@ class {0} extends Device
     const CALLBACK_ERROR_CALLBACK = self::CALLBACK_ERROR; // for backward compatibility
 """
 
-        return cbs + '\n'
+        return callbacks + '\n'
 
     def get_php_function_id_definitions(self):
         function_ids = ''
-        function_id = """
+        template = """
     /**
      * @internal
      */
     const FUNCTION_{0} = {1};
 """
-        for packet in self.get_packets('function'):
-            function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
-        return function_ids
 
+        for packet in self.get_packets('function'):
+            function_ids += template.format(packet.get_upper_case_name(), packet.get_function_id())
+
+        return function_ids
 
     def get_php_constants(self):
         constant_format = '    const {constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
@@ -129,17 +132,21 @@ class {0} extends Device
         return '\n' + self.get_formatted_constants(constant_format)
 
     def get_php_device_identifier(self):
-        return """
+        template = """
     const DEVICE_IDENTIFIER = {0};
-""".format(self.get_device_identifier())
+"""
+
+        return template.format(self.get_device_identifier())
 
     def get_php_device_display_name(self):
-        return """
+        template = """
     const DEVICE_DISPLAY_NAME = "{0}";
-""".format(self.get_long_display_name())
+"""
+
+        return template.format(self.get_long_display_name())
 
     def get_php_constructor(self):
-        con = """
+        template = """
     /**
      * Creates an object with the unique device ID $uid. This object can
      * then be added to the IP connection.
@@ -169,12 +176,12 @@ class {0} extends Device
                 flag = 'self::RESPONSE_EXPECTED_FALSE'
 
             response_expected += '        $this->responseExpected[self::{1}_{2}] = {3};\n' \
-                .format(self.get_upper_case_name(), prefix, packet.get_upper_case_name(), flag)
+                                 .format(self.get_upper_case_name(), prefix, packet.get_upper_case_name(), flag)
 
         if len(response_expected) > 0:
             response_expected = '\n' + response_expected
 
-        return con.format(*self.get_api_version()) + response_expected
+        return template.format(*self.get_api_version()) + response_expected
 
     def get_php_methods(self):
         methods = ''
@@ -326,6 +333,7 @@ class {0} extends Device
 
             prev = method
             method = method.replace('\n\n\n', '\n\n').replace('\n\n    }', '\n    }')
+
             while prev != method:
                 prev = method
                 method = method.replace('\n\n\n', '\n\n').replace('\n\n    }', '\n    }')

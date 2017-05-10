@@ -46,13 +46,13 @@ class ShellBindingsPacket(shell_common.ShellPacket):
 
 class ShellBindingsDevice(shell_common.ShellDevice):
     def get_shell_class(self):
-        klass = """
+        template = """
 class {0}(Device):"""
 
-        return klass.format(self.get_shell_class_name())
+        return template.format(self.get_shell_class_name())
 
     def get_shell_init_method(self):
-        init = """
+        template = """
 \tdef __init__(self, uid, ipcon):
 \t\tDevice.__init__(self, uid, ipcon)
 
@@ -71,16 +71,16 @@ class {0}(Device):"""
             response_expected.append('re[{0}] = {1}'.format(packet.get_function_id(), flag))
 
         if len(response_expected) > 0:
-            return init.format('\t\tre = self.response_expected\n\t\t' + '; '.join(response_expected))
+            return template.format('\t\tre = self.response_expected\n\t\t' + '; '.join(response_expected))
         else:
-            return init.format('')
+            return template.format('')
 
     def get_shell_callback_formats(self):
         callbacks = []
-        callback = "cf[{0}] = '{1}'"
+        template = "cf[{0}] = '{1}'"
 
         for packet in self.get_packets('callback'):
-            callbacks.append(callback.format(packet.get_function_id(),
+            callbacks.append(template.format(packet.get_function_id(),
                                              packet.get_shell_format_list('out')))
 
         if len(callbacks) > 0:
@@ -89,15 +89,15 @@ class {0}(Device):"""
             return '\n'
 
     def get_shell_call_header(self):
-        header = """
+        template = """
 def call_{0}_{1}(ctx, argv):
 \tprog_prefix = 'call {2} <uid>'
 
 """
 
-        return header.format(self.get_underscore_name(),
-                             self.get_underscore_category(),
-                             self.get_shell_device_name())
+        return template.format(self.get_underscore_name(),
+                               self.get_underscore_category(),
+                               self.get_shell_device_name())
 
     def get_shell_call_functions(self):
         setter = """\tdef {0}(ctx, argv):
@@ -117,7 +117,6 @@ def call_{0}_{1}(ctx, argv):
         get_identity = """\tdef get_identity(ctx, argv):
 \t\tcommon_get_identity(ctx, prog_prefix, {0}, argv)
 """
-
         functions = []
         entries = []
 
@@ -138,6 +137,7 @@ def call_{0}_{1}(ctx, argv):
                     request_data.append('args.{0}'.format(name))
 
                 comma = ''
+
                 if len(request_data) == 1:
                     comma = ','
 
@@ -204,26 +204,26 @@ def call_{0}_{1}(ctx, argv):
         return '\n'.join(functions) + '\n\tfunctions = {\n\t' + ',\n\t'.join(entries) + '\n\t}'
 
     def get_shell_call_footer(self):
-        footer = """
+        template = """
 
 \tcall_generic(ctx, '{0}', functions, argv)
 """
 
-        return footer.format(self.get_shell_device_name())
+        return template.format(self.get_shell_device_name())
 
     def get_shell_dispatch_header(self):
-        header = """
+        template = """
 def dispatch_{0}_{1}(ctx, argv):
 \tprog_prefix = 'dispatch {2} <uid>'
 
 """
 
-        return header.format(self.get_underscore_name(),
-                             self.get_underscore_category(),
-                             self.get_shell_device_name())
+        return template.format(self.get_underscore_name(),
+                               self.get_underscore_category(),
+                               self.get_shell_device_name())
 
     def get_shell_dispatch_functions(self):
-        func = """\tdef {0}(ctx, argv):
+        template = """\tdef {0}(ctx, argv):
 \t\tparser = ParserWithExecute(ctx, prog_prefix + ' {1}')
 
 \t\targs = parser.parse_args(argv)
@@ -256,13 +256,13 @@ def dispatch_{0}_{1}(ctx, argv):
             underscore_name = packet.get_underscore_name()
             dash_name = packet.get_dash_name()
 
-            function = func.format(underscore_name,
-                                   dash_name,
-                                   self.get_camel_case_name(),
-                                   self.get_camel_case_category(),
-                                   packet.get_function_id(),
-                                   ', '.join(output_names),
-                                   ', '.join(output_symbols))
+            function = template.format(underscore_name,
+                                       dash_name,
+                                       self.get_camel_case_name(),
+                                       self.get_camel_case_category(),
+                                       packet.get_function_id(),
+                                       ', '.join(output_names),
+                                       ', '.join(output_symbols))
 
             entries.append("'{0}': {1}".format(dash_name,
                                                underscore_name))
@@ -281,12 +281,12 @@ def dispatch_{0}_{1}(ctx, argv):
         return '\n'.join(functions) + '\n\tcallbacks = {\n\t' + ',\n\t'.join(entries) + '\n\t}'
 
     def get_shell_dispatch_footer(self):
-        footer = """
+        template = """
 
 \tdispatch_generic(ctx, '{0}', callbacks, argv)
 """
 
-        return footer.format(self.get_shell_device_name())
+        return template.format(self.get_shell_device_name())
 
     def get_shell_source(self):
         source  = self.get_shell_class()

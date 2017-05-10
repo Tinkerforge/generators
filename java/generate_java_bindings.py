@@ -48,7 +48,7 @@ class JavaBindingsDevice(java_common.JavaDevice):
 
     def get_java_import(self):
         if self.get_generator().is_octave():
-            include = """{0}
+            template = """{0}
 package com.tinkerforge;
 
 import java.nio.ByteBuffer;
@@ -59,7 +59,7 @@ import java.util.List;
 import org.octave.OctaveReference;
 """
         else:
-            include = """{0}
+            template = """{0}
 package com.tinkerforge;
 
 import java.nio.ByteBuffer;
@@ -70,12 +70,12 @@ import java.util.List;
 """
 
         if self.get_long_display_name() == 'RS232 Bricklet' and not self.get_generator().is_octave():
-            include += 'import java.util.ArrayList;\n'
+            template += 'import java.util.ArrayList;\n'
 
-        return include.format(self.get_generator().get_header_comment('asterisk'))
+        return template.format(self.get_generator().get_header_comment('asterisk'))
 
     def get_java_class(self):
-        class_str = """
+        template = """
 /**
  * {1}
  */
@@ -85,14 +85,14 @@ public class {0} extends Device {{
 
 """
 
-        return class_str.format(self.get_java_class_name(),
-                                common.select_lang(self.get_description()),
-                                self.get_device_identifier(),
-                                self.get_long_display_name())
+        return template.format(self.get_java_class_name(),
+                               common.select_lang(self.get_description()),
+                               self.get_device_identifier(),
+                               self.get_long_display_name())
 
     def get_matlab_callback_data_objects(self):
-        objs = ''
-        obj = """
+        objects = ''
+        template = """
 \tpublic class {0}CallbackData extends java.util.EventObject {{
 \t\tprivate static final long serialVersionUID = 1L;
 
@@ -110,6 +110,7 @@ public class {0} extends Device {{
 \t}}
 """
         param = '\t\tpublic {0}{1} {2}{3};'
+
         for packet in self.get_packets('callback'):
             if packet.has_prototype_in_device():
                 continue
@@ -118,6 +119,7 @@ public class {0} extends Device {{
             params = []
             tostr = []
             assignments = []
+
             for element in packet.get_elements():
                 typ = element.get_java_type()
 
@@ -140,20 +142,21 @@ public class {0} extends Device {{
                 assignments.append('\t\t\tthis.{0} = {0};'.format(ele_name));
 
             signature_params = packet.get_java_parameter_list()
+
             if len(signature_params) > 0:
                 signature_params = ', ' + signature_params
 
-            objs += obj.format(name,
-                               '\n'.join(params),
-                               ' ", " + '.join(tostr),
-                               signature_params,
-                               '\n'.join(assignments))
+            objects += template.format(name,
+                                       '\n'.join(params),
+                                       ' ", " + '.join(tostr),
+                                       signature_params,
+                                       '\n'.join(assignments))
 
-        return objs
+        return objects
 
     def get_java_return_objects(self):
-        objs = ''
-        obj = """
+        objects = ''
+        template = """
 \tpublic class {0} {{
 {1}
 
@@ -163,16 +166,18 @@ public class {0} extends Device {{
 \t}}
 """
         param = '\t\tpublic {0}{1} {2}{3};'
+
         for packet in self.get_packets('function'):
             if packet.has_prototype_in_device():
                 continue
+
             if len(packet.get_elements('out')) < 2:
                 continue
 
             name = packet.get_java_object_name()
-
             params = []
             tostr = []
+
             for element in packet.get_elements('out'):
                 typ = element.get_java_type()
 
@@ -180,6 +185,7 @@ public class {0} extends Device {{
                     typ = 'String'
 
                 ele_name = element.get_headless_camel_case_name()
+
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
                     arr = '[]'
                     new = ' = new {0}[{1}]'.format(typ, element.get_cardinality())
@@ -192,15 +198,15 @@ public class {0} extends Device {{
                 tostr.append(to)
                 params.append(param.format(typ, arr, ele_name, new))
 
-            objs += obj.format(name,
-                               '\n'.join(params),
-                               ' ", " + '.join(tostr))
+            objects += template.format(name,
+                                       '\n'.join(params),
+                                       ' ", " + '.join(tostr))
 
-        return objs
+        return objects
 
     def get_java_listener_definitions(self):
-        cbs = ''
-        cb = """
+        listeners = ''
+        template = """
 \t/**
 \t * {3}
 \t */
@@ -208,6 +214,7 @@ public class {0} extends Device {{
 \t\tpublic void {1}({2});
 \t}}
 """
+
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
             name_lower = packet.get_headless_camel_case_name()
@@ -218,7 +225,7 @@ public class {0} extends Device {{
                 parameter = packet.get_java_parameter_list()
 
             doc = packet.get_java_formatted_doc()
-            cbs += cb.format(name, name_lower, parameter, doc)
+            listeners += template.format(name, name_lower, parameter, doc)
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             if self.get_generator().is_matlab() or self.get_generator().is_octave():
@@ -228,7 +235,7 @@ public class {0} extends Device {{
                 read_parameter = 'char[] message, short length'
                 error_parameter = 'short error'
 
-            cbs += """
+            listeners += """
 \t/**
 \t * This listener is called if new data is available. The message has
 \t * a maximum size of 60 characters. The actual length of the message
@@ -251,32 +258,33 @@ public class {0} extends Device {{
 \t}}
 """.format(read_parameter, error_parameter)
 
-        return cbs
+        return listeners
 
     def get_java_response_expected(self):
-        res = ''
-        re = "\t\tresponseExpected[IPConnection.unsignedByte({0})] = {1}\n"
+        response_expected = ''
+        template = "\t\tresponseExpected[IPConnection.unsignedByte({0})] = {1}\n"
 
         for packet in self.get_packets('function'):
             name_upper = 'FUNCTION_' + packet.get_upper_case_name()
             setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
+
             if len(packet.get_elements('out')) > 0:
                 setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
             elif packet.get_doc_type() in ['ccf', 'llf']:
                 setto = 'RESPONSE_EXPECTED_FLAG_TRUE;'
 
-            res += re.format(name_upper, setto)
+            response_expected += template.format(name_upper, setto)
 
         for packet in self.get_packets('callback'):
             name_upper = 'CALLBACK_' + packet.get_upper_case_name()
             setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;'
-            res += re.format(name_upper, setto)
+            response_expected += template.format(name_upper, setto)
 
-        return res
+        return response_expected
 
     def get_java_callback_listener_definitions(self):
-        cbs = ''
-        cb = """
+        listeners = ''
+        template = """
 \t\tcallbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
 \t\t\tpublic void callback({5}byte[] data_) {{{1}
 \t\t\t\tfor({2}Listener listener: listener{2}) {{
@@ -285,23 +293,25 @@ public class {0} extends Device {{
 \t\t\t}}
 \t\t}};
 """
-
         data = """
 \t\t\t\tByteBuffer bb = ByteBuffer.wrap(data_, 8, data_.length - 8);
 \t\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}"""
-        cbs_end = '\t}\n'
+
         for packet in self.get_packets('callback'):
             typ = packet.get_upper_case_name()
             name = packet.get_camel_case_name()
             name_lower = packet.get_headless_camel_case_name()
             parameter = ''
             parameter_list = []
+
             for element in packet.get_elements():
                 parameter_list.append(element.get_headless_camel_case_name())
+
             parameter = ', '.join(parameter_list)
             cbdata = ''
+
             if len(packet.get_elements('out')) > 0:
                 bbgets, bbret = packet.get_java_bbgets()
                 bbgets = bbgets.replace('\t\t', '\t\t\t\t')
@@ -317,12 +327,13 @@ public class {0} extends Device {{
                 parameter = 'new {0}CallbackData(device{1})'.format(name, parameter)
                 device_param = 'Device device, '
 
-            cbs += cb.format(typ, cbdata, name, name_lower, parameter, device_param)
-        return cbs + cbs_end
+            listeners += template.format(typ, cbdata, name, name_lower, parameter, device_param)
+
+        return listeners + '\t}\n'
 
     def get_octave_callback_listener_definitions(self):
-        cbs = ''
-        cb = """
+        listeners = ''
+        template = """
 \t\tcallbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
 \t\t\tpublic void callback({5}byte[] data_) {{{1}
 \t\t\t\tfor(OctaveReference listener: listener{2}) {{
@@ -331,23 +342,25 @@ public class {0} extends Device {{
 \t\t\t}}
 \t\t}};
 """
-
         data = """
 \t\t\t\tByteBuffer bb = ByteBuffer.wrap(data_, 8, data_.length - 8);
 \t\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}"""
-        cbs_end = '\t}\n'
+
         for packet in self.get_packets('callback'):
             typ = packet.get_upper_case_name()
             name = packet.get_camel_case_name()
             name_lower = packet.get_headless_camel_case_name()
             parameter = ''
             parameter_list = []
+
             for element in packet.get_elements():
                 parameter_list.append(element.get_headless_camel_case_name())
+
             parameter = ', '.join(parameter_list)
             cbdata = ''
+
             if len(packet.get_elements('out')) > 0:
                 bbgets, bbret = packet.get_java_bbgets()
                 bbgets = bbgets.replace('\t\t', '\t\t\t\t')
@@ -360,18 +373,20 @@ public class {0} extends Device {{
             if self.get_generator().is_matlab() or self.get_generator().is_octave():
                 if len(parameter) > 0:
                     parameter = ', ' + parameter
+
                 parameter = 'new {0}CallbackData(device{1})'.format(name, parameter)
                 device_param = 'Device device, '
 
-            cbs += cb.format(typ, cbdata, name, name_lower, parameter, device_param)
-        return cbs + cbs_end
+            listeners += template.format(typ, cbdata, name, name_lower, parameter, device_param)
+
+        return listeners + '\t}\n'
 
     def get_java_add_listener(self):
         if self.get_callback_count() == 0:
             return '}\n'
 
         listeners = ''
-        listener = """
+        template = """
 \t/**
 \t * Adds a {0} listener.
 \t */
@@ -397,7 +412,7 @@ public class {0} extends Device {{
                 listener_type = name + 'Listener'
                 suffix = 'Listener'
 
-            listeners += listener.format(name, listener_type, suffix)
+            listeners += template.format(name, listener_type, suffix)
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             if self.get_generator().is_octave():
@@ -532,11 +547,12 @@ public class {0} extends Device {{
 
     def get_java_function_id_definitions(self):
         function_ids = ''
-        function_id = '\tpublic final static byte {2}_{0} = (byte){1};\n'
+        template = '\tpublic final static byte {2}_{0} = (byte){1};\n'
+
         for packet in self.get_packets():
-            function_ids += function_id.format(packet.get_upper_case_name(),
-                                               packet.get_function_id(),
-                                               packet.get_type().upper())
+            function_ids += template.format(packet.get_upper_case_name(),
+                                            packet.get_function_id(),
+                                            packet.get_type().upper())
         return function_ids
 
     def get_java_constants(self):
@@ -549,6 +565,7 @@ public class {0} extends Device {{
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
                     cast = ''
+
                     if self.get_generator().is_octave():
                         value = "new String(new char[]{{'{0}'}})".format(constant.get_value())
                         typ = 'String'
@@ -571,28 +588,31 @@ public class {0} extends Device {{
                                                  constant.get_upper_case_name(),
                                                  cast,
                                                  value))
+
         return '\n' + ''.join(constants)
 
     def get_java_listener_lists(self):
-        llists = '\n'
-        llist = '\tprivate List<{0}Listener> listener{0} = new CopyOnWriteArrayList<{0}Listener>();\n'
+        listeners = '\n'
+        template = '\tprivate List<{0}Listener> listener{0} = new CopyOnWriteArrayList<{0}Listener>();\n'
+
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
-            llists += llist.format(name)
+            listeners += template.format(name)
 
-        return llists
+        return listeners
 
     def get_octave_listener_lists(self):
-        llists = '\n'
-        llist = '\tprivate List<OctaveReference> listener{0} = new CopyOnWriteArrayList<OctaveReference>();\n'
+        listeners = '\n'
+        template = '\tprivate List<OctaveReference> listener{0} = new CopyOnWriteArrayList<OctaveReference>();\n'
+
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
-            llists += llist.format(name)
+            listeners += template.format(name)
 
-        return llists
+        return listeners
 
     def get_java_constructor(self):
-        con = """
+        template = """
 \t/**
 \t * Creates an object with the unique device ID \c uid. and adds it to
 \t * the IP Connection \c ipcon.
@@ -605,11 +625,11 @@ public class {0} extends Device {{
 \t\tapiVersion[2] = {3};
 """
 
-        return con.format(self.get_java_class_name(), *self.get_api_version())
+        return template.format(self.get_java_class_name(), *self.get_api_version())
 
     def get_java_methods(self):
         methods = ''
-        method = """
+        template = """
 \t/**
 \t * {8}
 \t */
@@ -619,7 +639,7 @@ public class {0} extends Device {{
 {7}
 \t}}
 """
-        method_response = """\t\tbyte[] response = sendRequest(bb.array());
+        template_response = """\t\tbyte[] response = sendRequest(bb.array());
 
 \t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
@@ -627,8 +647,7 @@ public class {0} extends Device {{
 {1}
 \t\treturn {2};"""
 
-        method_noresponse = """\t\tsendRequest(bb.array());"""
-
+        template_noresponse = """\t\tsendRequest(bb.array());"""
         loop = """\t\tfor(int i = 0; i < {0}; i++) {{
 {1}
 \t\t}}
@@ -655,8 +674,8 @@ public class {0} extends Device {{
 
 {2}
 {3}"""
-
         cls = self.get_camel_case_name()
+
         for packet in self.get_packets('function'):
             options = 0
             ret = packet.get_java_return_type()
@@ -671,6 +690,7 @@ public class {0} extends Device {{
 
             for element in packet.get_elements('in'):
                 name = element.get_headless_camel_case_name()
+
                 if element.get_type() == 'bool':
                     if element.get_cardinality() <= 1:
                         name = '({0} ? 1 : 0)'.format(name)
@@ -685,6 +705,7 @@ public class {0} extends Device {{
 
                 cast = ''
                 storage_type = element.get_java_byte_buffer_storage_type()
+
                 if storage_type != element.get_java_type():
                     cast = '({0})'.format(storage_type)
 
@@ -705,6 +726,7 @@ public class {0} extends Device {{
                         pass
                     else:
                         bbput_format = bbput_format.replace(');', '[i]);')
+
                     bbput_format = loop.format(element.get_cardinality(), '\t' + bbput_format)
                 elif self.get_generator().is_octave() and element.get_type() == 'char':
                     bbput_format = bbput_format.replace(');', '.charAt(0));')
@@ -715,6 +737,7 @@ public class {0} extends Device {{
                     bbputs += bbput_format + '\n'
 
             throw = 'throws TimeoutException, NotConnectedException'
+
             if len(packet.get_elements('out')) == 0:
                 bbgets = ''
                 bbret = ''
@@ -728,21 +751,21 @@ public class {0} extends Device {{
                 bbgets, bbret = packet.get_java_bbgets(False)
 
             if len(packet.get_elements('out')) == 0:
-                response = method_noresponse.format(name_upper)
+                response = template_noresponse.format(name_upper)
             else:
-                response = method_response.format(name_upper,
+                response = template_response.format(name_upper,
                                                   bbgets,
                                                   bbret)
 
-            methods += method.format(ret,
-                                     name_lower,
-                                     parameter,
-                                     throw,
-                                     size,
-                                     name_upper,
-                                     bbputs,
-                                     response,
-                                     doc)
+            methods += template.format(ret,
+                                       name_lower,
+                                       parameter,
+                                       throw,
+                                       size,
+                                       name_upper,
+                                       bbputs,
+                                       response,
+                                       doc)
 
         return methods
 
@@ -849,6 +872,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
         for element in self.get_elements('out'):
             bbget_format_bool_array = False
             typ = ''
+
             if not with_obj:
                 typ = element.get_java_type()
 
@@ -859,11 +883,14 @@ class JavaBindingsPacket(java_common.JavaPacket):
 
             bbret = element.get_headless_camel_case_name()
             obj = ''
+
             if with_obj:
                 obj = 'obj.'
+
             cast = ''
             cast_extra = ''
             suffix = ''
+
             if element.get_type() == 'uint8':
                 cast = 'IPConnection.unsignedByte'
             elif element.get_type() == 'uint16':
@@ -885,6 +912,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
                 cast_extra = ', {0}'.format(element.get_cardinality())
 
             format_typ = ''
+
             if not element.get_cardinality() > 1 or (element.get_type() == 'string' and not with_obj):
                 format_typ = typ
 

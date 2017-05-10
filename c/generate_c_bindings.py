@@ -45,7 +45,7 @@ class CBindingsDevice(common.Device):
         return self.specialize_doc_rst_links(text, specializer)
 
     def get_c_include_c(self):
-        include = """{0}
+        template = """{0}
 
 #define IPCON_EXPOSE_INTERNALS
 
@@ -59,9 +59,9 @@ extern "C" {{
 
 """
 
-        return include.format(self.get_generator().get_header_comment('asterisk'),
-                              self.get_underscore_category(),
-                              self.get_underscore_name())
+        return template.format(self.get_generator().get_header_comment('asterisk'),
+                               self.get_underscore_category(),
+                               self.get_underscore_name())
 
     def get_c_function_id_defines(self):
         defines = ''
@@ -155,12 +155,13 @@ extern "C" {{
  */
 #define {prefix}_{constant_group_upper_case_name}_{constant_upper_case_name} {constant_value}
 """
+
         return '\n' + self.get_formatted_constants(constant_format,
                                                    doxygen=self.get_camel_case_category()+self.get_camel_case_name(),
                                                    prefix=self.get_upper_case_name())
 
     def get_c_device_identifier_define(self):
-        define_temp = """
+        template = """
 /**
  * \ingroup {3}{2}
  *
@@ -172,15 +173,16 @@ extern "C" {{
  */
 #define {0}_DEVICE_IDENTIFIER {1}
 """
-        return define_temp.format(self.get_upper_case_name(),
-                                  self.get_device_identifier(),
-                                  self.get_camel_case_name(),
-                                  self.get_camel_case_category(),
-                                  self.get_underscore_name(),
-                                  self.get_long_display_name())
+
+        return template.format(self.get_upper_case_name(),
+                               self.get_device_identifier(),
+                               self.get_camel_case_name(),
+                               self.get_camel_case_category(),
+                               self.get_underscore_name(),
+                               self.get_long_display_name())
 
     def get_c_device_display_name_define(self):
-        define_temp = """
+        template = """
 /**
  * \ingroup {3}{2}
  *
@@ -188,10 +190,11 @@ extern "C" {{
  */
 #define {0}_DEVICE_DISPLAY_NAME "{1}"
 """
-        return define_temp.format(self.get_upper_case_name(),
-                                  self.get_long_display_name(),
-                                  self.get_camel_case_name(),
-                                  self.get_camel_case_category())
+
+        return template.format(self.get_upper_case_name(),
+                               self.get_long_display_name(),
+                               self.get_camel_case_name(),
+                               self.get_camel_case_category())
 
     def get_c_structs(self):
         structs = """
@@ -221,8 +224,10 @@ typedef struct {{
         for packet in self.get_packets():
             if packet.get_type() == 'callback':
                 struct_body = ''
+
                 for element in packet.get_elements():
                     c_type = element.get_c_type(False, struct=True)
+
                     if element.get_cardinality() > 1:
                         if element.get_type() == 'bool':
                             length = int(math.ceil(element.get_cardinality() / 8.0))
@@ -239,8 +244,10 @@ typedef struct {{
                 continue
 
             struct_body = ''
+
             for element in packet.get_elements('in'):
                 c_type = element.get_c_type(False, struct=True)
+
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'bool':
                         length = int(math.ceil(element.get_cardinality() / 8.0))
@@ -259,8 +266,10 @@ typedef struct {{
                 continue
 
             struct_body = ''
+
             for element in packet.get_elements('out'):
                 c_type = element.get_c_type(False, struct=True)
+
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'bool':
                         length = int(math.ceil(element.get_cardinality() / 8.0))
@@ -284,7 +293,7 @@ typedef struct {{
         return structs
 
     def get_c_create_function(self):
-        function = """
+        template = """
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 \tDevicePrivate *device_p;
 
@@ -294,23 +303,21 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 {2}
 }}
 """
-
         cb_temp = """
 \tdevice_p->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
         llcb_temp = """
 \tdevice_p->low_level_callbacks[{2}_CALLBACK_{1}].exists = true;"""
-
-        cbs = ''
+        callbacks = ''
 
         for packet in self.get_packets('callback'):
-            cbs += cb_temp.format(self.get_underscore_name(), packet.get_upper_case_name(), packet.get_underscore_name(), self.get_upper_case_name())
+            callbacks += cb_temp.format(self.get_underscore_name(), packet.get_upper_case_name(), packet.get_underscore_name(), self.get_upper_case_name())
 
-        if len(cbs) > 0:
-            cbs += '\n'
+        if len(callbacks) > 0:
+            callbacks += '\n'
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
-                cbs += llcb_temp.format(self.get_underscore_name(), packet.get_upper_case_name(), self.get_upper_case_name())
+                callbacks += llcb_temp.format(self.get_underscore_name(), packet.get_upper_case_name(), self.get_upper_case_name())
 
         response_expected = ''
 
@@ -329,27 +336,31 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
                 flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
             response_expected += '\tdevice_p->response_expected[{1}_{2}_{3}] = {4};\n' \
-                .format(self.get_underscore_name(), self.get_upper_case_name(), prefix, packet.get_upper_case_name(), flag)
+                                 .format(self.get_underscore_name(),
+                                         self.get_upper_case_name(),
+                                         prefix,
+                                         packet.get_upper_case_name(),
+                                         flag)
 
         if len(response_expected) > 0:
             response_expected = '\n' + response_expected
 
-        return function.format(self.get_underscore_name(),
+        return template.format(self.get_underscore_name(),
                                self.get_camel_case_name(),
-                               response_expected + cbs,
+                               response_expected + callbacks,
                                *self.get_api_version())
 
     def get_c_destroy_function(self):
-        function = """
+        template = """
 void {0}_destroy({1} *{0}) {{
 \tdevice_release({0}->p);
 }}
 """
-        return function.format(self.get_underscore_name(),
+        return template.format(self.get_underscore_name(),
                                self.get_camel_case_name())
 
     def get_c_response_expected_functions(self):
-        function = """
+        template = """
 int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected) {{
 \treturn device_get_response_expected({0}->p, function_id, ret_response_expected);
 }}
@@ -362,17 +373,16 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
 \treturn device_set_response_expected_all({0}->p, response_expected);
 }}
 """
-        return function.format(self.get_underscore_name(),
+        return template.format(self.get_underscore_name(),
                                self.get_camel_case_name())
 
     def get_c_functions(self):
-        function_version = """
+        template_version = """
 int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
 \treturn device_get_api_version({0}->p, ret_api_version);
 }}
 """
-
-        function = """
+        template = """
 int {0}_{1}({2} *{0}{3}) {{
 \tDevicePrivate *device_p = {0}->p;
 \t{5}_Request request;{6}
@@ -391,8 +401,7 @@ int {0}_{1}({2} *{0}{3}) {{
 \treturn ret;
 }}
 """
-
-        function_ret = """
+        template_ret = """
 \tif (ret < 0) {{
 \t\treturn ret;
 \t}}
@@ -401,8 +410,8 @@ int {0}_{1}({2} *{0}{3}) {{
 
         device_name = self.get_underscore_name()
         c = self.get_camel_case_name()
-
         functions = []
+
         for packet in self.get_packets('function'):
             packet_name = packet.get_underscore_name()
             params = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
@@ -410,28 +419,30 @@ int {0}_{1}({2} *{0}{3}) {{
                                             packet.get_upper_case_name())
             f = packet.get_camel_case_name()
             h, needs_i = packet.get_c_struct_list()
+
             if len(packet.get_elements('out')) > 0:
                 g = '\n\t' + f + '_Response response;'
                 rl, needs_i2 = packet.get_c_return_list()
-                i = function_ret.format(f, device_name, rl)
+                i = template_ret.format(f, device_name, rl)
                 r = '(Packet *)&response'
             else:
                 g = ''
                 i = ''
                 needs_i2 = False
                 r = 'NULL'
+
             if needs_i or needs_i2:
                 k = '\n\tint i;'
             else:
                 k = ''
 
-            functions.append(function.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r))
+            functions.append(template.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r))
 
-        return function_version.format(device_name, c) + ''.join(functions)
+        return template_version.format(device_name, c) + ''.join(functions)
 
     def get_c_high_level_functions(self):
         functions = ''
-        stream_in_template = """
+        template_stream_in = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
 \tDevicePrivate *device_p = {device_underscore_name}->p;
 \tint ret = 0;
@@ -471,7 +482,7 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
 \treturn ret;
 }}
 """
-        stream_in_short_write_template = """
+        template_stream_in_short_write = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
 \tDevicePrivate *device_p = {device_underscore_name}->p;
 \tint ret = 0;
@@ -522,7 +533,7 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
 \treturn ret;
 }}
 """
-        stream_out_template = """
+        template_stream_out = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
 \tDevicePrivate *device_p = {device_underscore_name}->p;
 \tint ret = 0;
@@ -609,9 +620,9 @@ cleanup:
 
             if stream_in != None:
                 if stream_in.has_short_write():
-                    template = stream_in_short_write_template
+                    template = template_stream_in_short_write
                 else:
-                    template = stream_in_template
+                    template = template_stream_in
 
                 functions += template.format(device_camel_case_name=packet.get_device().get_camel_case_name(),
                                              device_underscore_name=packet.get_device().get_underscore_name(),
@@ -622,7 +633,7 @@ cleanup:
                                              chunk_c_type=stream_in.get_chunk_data_element().get_c_type(False),
                                              chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
             elif stream_out != None:
-                functions += stream_out_template.format(device_camel_case_name=packet.get_device().get_camel_case_name(),
+                functions += template_stream_out.format(device_camel_case_name=packet.get_device().get_camel_case_name(),
                                                         device_underscore_name=packet.get_device().get_underscore_name(),
                                                         underscore_name=packet.get_underscore_name(skip=-2),
                                                         parameters=common.wrap_non_empty(', ', packet.get_c_parameters(signature=False), ''),
@@ -638,12 +649,12 @@ cleanup:
         if self.get_callback_count() == 0:
             return '\n'
 
-        function = """
+        template = """
 void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data) {{
 \tdevice_register_callback({0}->p, id, callback, user_data);
 }}
 """
-        return function.format(self.get_underscore_name(), self.get_camel_case_name())
+        return template.format(self.get_underscore_name(), self.get_camel_case_name())
 
     def get_c_high_level_callback_wrapper_functions(self):
         functions = ''
@@ -822,7 +833,7 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
         return ''.join(functions)
 
     def get_c_include_h(self):
-        include = """{0}
+        template = """{0}
 #ifndef {1}_{2}_H
 #define {1}_{2}_H
 
@@ -844,13 +855,13 @@ extern "C" {{
 typedef Device {3};
 """
 
-        return include.format(self.get_generator().get_header_comment('asterisk'),
-                              self.get_upper_case_category(),
-                              self.get_upper_case_name(),
-                              self.get_camel_case_name(),
-                              self.get_camel_case_category(),
-                              common.select_lang(self.get_description()),
-                              self.get_long_display_name())
+        return template.format(self.get_generator().get_header_comment('asterisk'),
+                               self.get_upper_case_category(),
+                               self.get_upper_case_name(),
+                               self.get_camel_case_name(),
+                               self.get_camel_case_category(),
+                               common.select_lang(self.get_description()),
+                               self.get_long_display_name())
 
     def get_c_end_h(self):
         return "\n#ifdef __cplusplus\n}\n#endif\n\n#endif\n"
@@ -859,11 +870,11 @@ typedef Device {3};
         return "\n#ifdef __cplusplus\n}\n#endif\n"
 
     def get_c_typedefs(self):
-        typedef = """
+        typedefs = '\n'
+        template = """
 typedef void (*{0}_CallbackFunction)({1});
 """
 
-        typedefs = '\n'
 
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
@@ -875,16 +886,15 @@ typedef void (*{0}_CallbackFunction)({1});
                 else:
                     c_type_list.append(element.get_c_type(True))
 
-            typedefs += typedef.format(name, ', '.join(c_type_list + ['void *']))
+            typedefs += template.format(name, ', '.join(c_type_list + ['void *']))
 
         return typedefs
 
     def get_c_high_level_typedefs(self):
-        typedef = """
+        typedefs = ''
+        template = """
 typedef void (*{0}_CallbackFunction)({1});
 """
-
-        typedefs = ''
 
         for packet in self.get_packets('callback'):
             if not packet.has_high_level():
@@ -902,12 +912,12 @@ typedef void (*{0}_CallbackFunction)({1});
                 else:
                     c_type_list.append(element.get_c_type(True))
 
-            typedefs += typedef.format(name, ', '.join(c_type_list + ['void *']))
+            typedefs += template.format(name, ', '.join(c_type_list + ['void *']))
 
         return typedefs
 
     def get_c_create_declaration(self):
-        create = """
+        template = """
 /**
  * \ingroup {2}{1}
  *
@@ -916,12 +926,12 @@ typedef void (*{0}_CallbackFunction)({1});
  */
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon);
 """
-        return create.format(self.get_underscore_name(),
-                             self.get_camel_case_name(),
-                             self.get_camel_case_category())
+        return template.format(self.get_underscore_name(),
+                               self.get_camel_case_name(),
+                               self.get_camel_case_category())
 
     def get_c_destroy_declaration(self):
-        destroy = """
+        template = """
 /**
  * \ingroup {2}{1}
  *
@@ -930,12 +940,12 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon);
  */
 void {0}_destroy({1} *{0});
 """
-        return destroy.format(self.get_underscore_name(),
-                              self.get_camel_case_name(),
-                              self.get_camel_case_category())
+        return template.format(self.get_underscore_name(),
+                               self.get_camel_case_name(),
+                               self.get_camel_case_category())
 
     def get_c_response_expected_declarations(self):
-        response_expected = """
+        template = """
 /**
  * \ingroup {2}{1}
  *
@@ -982,9 +992,9 @@ int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expec
  */
 int {0}_set_response_expected_all({1} *{0}, bool response_expected);
 """
-        return response_expected.format(self.get_underscore_name(),
-                                        self.get_camel_case_name(),
-                                        self.get_camel_case_category())
+        return template.format(self.get_underscore_name(),
+                               self.get_camel_case_name(),
+                               self.get_camel_case_category())
 
     def get_c_function_declaration(self):
         func_version = """
@@ -1007,16 +1017,16 @@ int {0}_{1}({2} *{0}{3});
 
         a = self.get_underscore_name()
         c = self.get_camel_case_name()
+        functions = ''
 
-        funcs = ''
         for packet in self.get_packets('function'):
             b = packet.get_underscore_name()
             d = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
             doc = packet.get_c_formatted_doc()
 
-            funcs += func.format(a, b, c, d, doc, self.get_camel_case_category())
+            functions += func.format(a, b, c, d, doc, self.get_camel_case_category())
 
-        return func_version.format(a, c, self.get_camel_case_category()) + funcs
+        return func_version.format(a, c, self.get_camel_case_category()) + functions
 
     def get_c_high_level_function_declaration(self):
         functions = ''
@@ -1044,7 +1054,7 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
         if self.get_callback_count() == 0:
             return '\n'
 
-        func = """
+        template = """
 /**
  * \ingroup {2}{1}
  *
@@ -1053,7 +1063,7 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
  */
 void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data);
 """
-        return func.format(self.get_underscore_name(), self.get_camel_case_name(), self.get_camel_case_category())
+        return template.format(self.get_underscore_name(), self.get_camel_case_name(), self.get_camel_case_category())
 
     def get_c_source(self):
         source  = self.get_c_include_c()

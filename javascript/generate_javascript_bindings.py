@@ -34,21 +34,22 @@ import javascript_common
 
 class JavaScriptBindingsDevice(javascript_common.JavaScriptDevice):
     def get_javascript_require(self):
-        require = """{0}
+        template = """{0}
 var Device = require('./Device');
 
 {1}.DEVICE_IDENTIFIER = {2};
 {1}.DEVICE_DISPLAY_NAME = '{3}';
 """
 
-        return require.format(self.get_generator().get_header_comment('asterisk'),
-                              self.get_javascript_class_name(),
-                              self.get_device_identifier(),
-                              self.get_long_display_name())
+        return template.format(self.get_generator().get_header_comment('asterisk'),
+                               self.get_javascript_class_name(),
+                               self.get_device_identifier(),
+                               self.get_long_display_name())
 
     def get_javascript_constants(self):
         callback_constants = ''
         callback_constant_statement = self.get_javascript_class_name()+'.CALLBACK_{0} = {1};\n'
+
         for packet in self.get_packets('callback'):
             callback_constants += callback_constant_statement.format(packet.get_upper_case_name(),
                                                                      packet.get_function_id())
@@ -58,17 +59,19 @@ var Device = require('./Device');
             callback_constants += 'BrickletRS232.CALLBACK_ERROR_CALLBACK = 9; // for backward compatibility\n'
 
         function_constants = ''
-        function_constant_statement = self.get_javascript_class_name()+'.FUNCTION_{0} = {1};\n'
+        function_constant_statement = self.get_javascript_class_name() + '.FUNCTION_{0} = {1};\n'
+
         for packet in self.get_packets('function'):
             function_constants += function_constant_statement.format(packet.get_upper_case_name(),
                                                                      packet.get_function_id())
-        constant_statement = self.get_javascript_class_name()+\
-        '.{constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
+        constant_statement = self.get_javascript_class_name() + \
+                             '.{constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
         constants = self.get_formatted_constants(constant_statement) + '\n'
+
         return callback_constants+function_constants+constants
 
     def get_javascript_class_opening(self):
-        return """function {0}(uid, ipcon) {{
+        template = """function {0}(uid, ipcon) {{
 \t//{1}
 
 \t/*
@@ -79,10 +82,12 @@ var Device = require('./Device');
 \t{2}.prototype = Object.create(Device);
 \tthis.responseExpected = {{}};
 \tthis.callbackFormats = {{}};
-\tthis.APIVersion = [{3}, {4}, {5}];\n""".format(self.get_javascript_class_name(),
-                                                 common.select_lang(self.get_description()),
-                                                 self.get_javascript_class_name(),
-                                                 *self.get_api_version())
+\tthis.APIVersion = [{3}, {4}, {5}];\n"""
+
+        return template.format(self.get_javascript_class_name(),
+                               common.select_lang(self.get_description()),
+                               self.get_javascript_class_name(),
+                               *self.get_api_version())
 
     def get_javascript_response_expecteds(self):
         response_expected = ''
@@ -102,29 +107,24 @@ var Device = require('./Device');
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
             response_expected += '\tthis.responseExpected[{0}.{1}{2}] = Device.{3};\n' \
-                .format(self.get_javascript_class_name(), prefix, packet.get_upper_case_name(), flag)
+                                 .format(self.get_javascript_class_name(), prefix, packet.get_upper_case_name(), flag)
 
         return response_expected
 
     def get_javascript_callback_formats(self):
-        callback_format = ''
-        callback_format_statement = "\tthis.callbackFormats[{0}.CALLBACK_{1}] = '{2}';\n"
+        callbacks = ''
+        template = "\tthis.callbackFormats[{0}.CALLBACK_{1}] = '{2}';\n"
 
-        for index, packet in enumerate(self.get_packets('callback')):
-            if(index == len(self.get_packets('callback')) - 1):
-                callback_format += "\tthis.callbackFormats[{0}.CALLBACK_{1}] = '{2}';\n\n"\
-                                                                .format(self.get_javascript_class_name(),
-                                                                        packet.get_upper_case_name(),
-                                                                        packet.get_javascript_format_list('out'))
-                continue;
-            callback_format += callback_format_statement.format(self.get_javascript_class_name(),
-                                                                packet.get_upper_case_name(),
-                                                                packet.get_javascript_format_list('out'))
+        for packet in self.get_packets('callback'):
+            callbacks += template.format(self.get_javascript_class_name(),
+                                         packet.get_upper_case_name(),
+                                         packet.get_javascript_format_list('out'))
 
-        return callback_format
+        return callbacks + '\n'
 
     def get_javascript_methods(self):
-        method_code = ''
+        methods = ''
+
         for packet in self.get_packets('function'):
             name = packet.get_headless_camel_case_name()
             upper_case_name = packet.get_upper_case_name()
@@ -147,27 +147,30 @@ var Device = require('./Device');
 \t\tthis.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback);
 \t}};
 """
-            if(len(param_list) == 0):
-                method_code += no_param_method_code.format(name, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
-            if(len(param_list) > 0):
-                method_code += param_method_code.format(name, param_list, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
+            if len(param_list) == 0:
+                methods += no_param_method_code.format(name, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
+            else:
+                methods += param_method_code.format(name, param_list, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
 
-        return method_code
+        return methods
 
     def get_javascript_class_closing(self):
-        return """}}
+        template = """}}
 
 module.exports = {0};
-""".format(self.get_javascript_class_name())
+"""
+
+        return template.format(self.get_javascript_class_name())
 
     def get_javascript_source(self):
-        source = self.get_javascript_require()
+        source  = self.get_javascript_require()
         source += self.get_javascript_constants()
         source += self.get_javascript_class_opening()
         source += self.get_javascript_response_expecteds()
         source += self.get_javascript_callback_formats()
         source += self.get_javascript_methods()
         source += self.get_javascript_class_closing()
+
         return source
 
 class JavaScriptBindingsPacket(javascript_common.JavaScriptPacket):

@@ -33,7 +33,7 @@ import python_common
 
 class PythonBindingsDevice(python_common.PythonDevice):
     def get_python_import(self):
-        include = """# -*- coding: utf-8 -*-
+        template = """# -*- coding: utf-8 -*-
 {0}{1}
 try:
     from collections import namedtuple
@@ -55,31 +55,35 @@ except ValueError:
         else:
             released = ''
 
-        return include.format(self.get_generator().get_header_comment('hash'),
-                              released)
+        return template.format(self.get_generator().get_header_comment('hash'),
+                               released)
 
     def get_python_namedtuples(self):
-        tup = """{0} = namedtuple('{1}', [{2}])
+        tuples = ''
+        template = """{0} = namedtuple('{1}', [{2}])
 """
 
-        tups = ''
         for packet in self.get_packets('function'):
             if len(packet.get_elements('out')) < 2:
                 continue
 
             name = packet.get_camel_case_name()
             name_tup = name
+
             if name_tup.startswith('Get'):
                 name_tup = name_tup[3:]
+
             params = []
+
             for element in packet.get_elements('out'):
                 params.append("'{0}'".format(element.get_underscore_name()))
 
-            tups += tup.format(name, name_tup, ", ".join(params))
-        return tups
+            tuples += template.format(name, name_tup, ", ".join(params))
+
+        return tuples
 
     def get_python_class(self):
-        return """
+        template = """
 class {0}(Device):
     \"\"\"
     {1}
@@ -88,35 +92,39 @@ class {0}(Device):
     DEVICE_IDENTIFIER = {2}
     DEVICE_DISPLAY_NAME = '{3}'
 
-""".format(self.get_python_class_name(),
-           common.select_lang(self.get_description()),
-           self.get_device_identifier(),
-           self.get_long_display_name())
+"""
+
+        return template.format(self.get_python_class_name(),
+                               common.select_lang(self.get_description()),
+                               self.get_device_identifier(),
+                               self.get_long_display_name())
 
     def get_python_callback_id_definitions(self):
-        cbs = ''
-        cb = '    CALLBACK_{0} = {1}\n'
+        callback_ids = ''
+        template = '    CALLBACK_{0} = {1}\n'
 
         for packet in self.get_packets('callback'):
-            cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id())
+            callback_ids += template.format(packet.get_upper_case_name(), packet.get_function_id())
 
         if self.get_long_display_name() == 'RS232 Bricklet':
-            cbs += '    CALLBACK_READ_CALLBACK = 8 # for backward compatibility\n'
-            cbs += '    CALLBACK_ERROR_CALLBACK = 9 # for backward compatibility\n'
+            callback_ids += '    CALLBACK_READ_CALLBACK = 8 # for backward compatibility\n'
+            callback_ids += '    CALLBACK_ERROR_CALLBACK = 9 # for backward compatibility\n'
 
-        cbs += '\n'
+        callback_ids += '\n'
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
-                cbs += cb.format(packet.get_upper_case_name(skip=-2), -packet.get_function_id())
+                callback_ids += template.format(packet.get_upper_case_name(skip=-2), -packet.get_function_id())
 
-        return cbs
+        return callback_ids
 
     def get_python_function_id_definitions(self):
         function_ids = '\n'
-        function_id = '    FUNCTION_{0} = {1}\n'
+        template = '    FUNCTION_{0} = {1}\n'
+
         for packet in self.get_packets('function'):
-            function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
+            function_ids += template.format(packet.get_upper_case_name(), packet.get_function_id())
+
         return function_ids
 
     def get_python_constants(self):
@@ -125,7 +133,7 @@ class {0}(Device):
         return '\n' + self.get_formatted_constants(constant_format)
 
     def get_python_init_method(self):
-        dev_init = """
+        template = """
     def __init__(self, uid, ipcon):
         \"\"\"
         Creates an object with the unique device ID *uid* and adds it to
@@ -153,37 +161,37 @@ class {0}(Device):
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
             response_expected += '        self.response_expected[{0}.{1}{2}] = {0}.{3}\n' \
-                .format(self.get_python_class_name(), prefix, packet.get_upper_case_name(), flag)
+                                 .format(self.get_python_class_name(), prefix, packet.get_upper_case_name(), flag)
 
         if len(response_expected) > 0:
             response_expected += '\n'
 
-        return dev_init.format(*self.get_api_version()) + response_expected
+        return template.format(*self.get_api_version()) + response_expected
 
     def get_python_callback_formats(self):
-        cbs = ''
-        cb = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
+        callback_formats = ''
+        template = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
 
         for packet in self.get_packets('callback'):
-            cbs += cb.format(self.get_python_class_name(),
-                             packet.get_upper_case_name(),
-                             packet.get_python_format_list('out'))
+            callback_formats += template.format(self.get_python_class_name(),
+                                                packet.get_upper_case_name(),
+                                                packet.get_python_format_list('out'))
 
-        return cbs + '\n'
+        return callback_formats + '\n'
 
     def get_python_low_level_callbacks(self):
-        cbs = ''
-        cb_stream = "        self.low_level_callbacks[{0}.CALLBACK_{1}] = [{{'fixed_total_length': {2}}}, None]\n"
+        low_level_callbacks = ''
+        template = "        self.low_level_callbacks[{0}.CALLBACK_{1}] = [{{'fixed_total_length': {2}}}, None]\n"
 
         for packet in self.get_packets('callback'):
             stream = packet.get_high_level('stream_*')
 
             if stream != None:
-                cbs += cb_stream.format(self.get_python_class_name(),
-                                        packet.get_upper_case_name(),
-                                        stream.get_fixed_total_length())
+                low_level_callbacks += template.format(self.get_python_class_name(),
+                                                       packet.get_upper_case_name(),
+                                                       stream.get_fixed_total_length())
 
-        return cbs
+        return low_level_callbacks
 
     def get_python_methods(self):
         m_tup = """
@@ -208,8 +216,8 @@ class {0}(Device):
         self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
         methods = ''
-
         cls = self.get_python_class_name()
+
         for packet in self.get_packets('function'):
             nb = packet.get_camel_case_name()
             ns = packet.get_underscore_name()
@@ -218,6 +226,7 @@ class {0}(Device):
             doc = packet.get_python_formatted_doc()
             cp = ''
             ct = ''
+
             if par != '':
                 cp = ', '
                 if not ',' in par:
@@ -227,6 +236,7 @@ class {0}(Device):
             out_f = packet.get_python_format_list('out')
 
             elements = len(packet.get_elements('out'))
+
             if elements > 1:
                 methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc)
             elif elements == 1:
@@ -239,7 +249,7 @@ class {0}(Device):
     def get_python_high_level_methods(self):
         methods = ''
         # FIXME: move the bulk of this logic to a helper function in ip_connection.py
-        stream_in_template = """
+        template_stream_in = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_total_length = len({data_underscore_name})
         stream_chunk_offset = 0
@@ -260,7 +270,7 @@ class {0}(Device):
         return stream_result
 """
         # FIXME: move the bulk of this logic to a helper function in ip_connection.py
-        stream_in_short_write_template = """
+        template_stream_in_short_write = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_extra = ()
         stream_total_written = 0
@@ -296,7 +306,7 @@ class {0}(Device):
             return stream_total_written
 """
         # FIXME: move the bulk of this logic to a helper function in ip_connection.py
-        stream_out_template = """
+        template_stream_out = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_extra = ()
         stream_total_length = {fixed_total_length}
@@ -364,9 +374,9 @@ class {0}(Device):
 
             if stream_in != None:
                 if stream_in.has_short_write():
-                    template = stream_in_short_write_template
+                    template = template_stream_in_short_write
                 else:
-                    template = stream_in_template
+                    template = template_stream_in
 
                 methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                            parameter_list=packet.get_python_parameters(),
@@ -375,7 +385,7 @@ class {0}(Device):
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                            chunk_padding=repr(stream_in.get_chunk_data_element().get_python_default_value()))
             elif stream_out != None:
-                methods += stream_out_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                methods += template_stream_out.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                                       parameter_list=packet.get_python_parameters(),
                                                       high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
                                                       fixed_total_length=stream_out.get_fixed_total_length(),
@@ -400,9 +410,11 @@ class {0}(Device):
 """
 
     def get_python_old_name(self):
-        return """
+        template = """
 {0} = {1} # for backward compatibility
-""".format(self.get_camel_case_name(), self.get_python_class_name())
+"""
+
+        return template.format(self.get_camel_case_name(), self.get_python_class_name())
 
     def get_python_source(self):
         source  = self.get_python_import()
@@ -475,6 +487,11 @@ class PythonBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(filename)
 
     def finish(self):
+        template_import = """try:
+    from .{0} import {1}
+except ValueError:
+    from {0} import {1}
+"""
         template = """# -*- coding: utf-8 -*-
 {0}
 {1}
@@ -492,16 +509,11 @@ def get_device_display_name(device_identifier):
 def create_device(device_identifier, uid, ipcon):
     return get_device_class(device_identifier)(uid, ipcon)
 """
-        import_template = """try:
-    from .{0} import {1}
-except ValueError:
-    from {0} import {1}
-"""
         imports = []
         classes = []
 
         for import_name, class_name in sorted(self.device_factory_classes):
-            imports.append(import_template.format(import_name, class_name))
+            imports.append(template_import.format(import_name, class_name))
             classes.append('{0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
 
         with open(os.path.join(self.get_bindings_root_directory(), 'bindings', 'device_factory.py'), 'wb') as f:

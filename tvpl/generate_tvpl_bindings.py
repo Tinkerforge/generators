@@ -47,10 +47,12 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             block_port = '_PORT'
             block_display_device_name = self.get_long_display_name()
             block_display_function_name = packet.get_name()
+
             if self.is_brick():
                 block_set_color = 'this.setColour(195);'
             else:
                 block_set_color = 'this.setColour(297);'
+
             block_help_url = 'this.setHelpUrl(\'' + '/'.join(['http://www.tinkerforge.com/en/doc/Software',
                                                               self.get_camel_case_category() +\
                                                               's',
@@ -72,10 +74,12 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             if is_getter:
                 block_set_previous_statement = 'this.setPreviousStatement(false);'
                 block_set_next_statement = 'this.setNextStatement(false);'
+
                 if len(elements_out) > 1:
                     block_set_output = 'this.setOutput(true, \'Array\');'
                 elif len(elements_out) == 1:
                     block_set_output = 'this.setOutput(true, \'' + elements_out[0].get_tvpl_type() + '\');'
+
                 if len(elements_in) < 1:
                     # Getters without in args
                     block_code_body = '''
@@ -90,11 +94,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     this.appendValueInput('{port}')
         .setCheck(\'Number\')
         .appendField(\':\')
-'''.format(function_name = block_display_function_name,
-           device_name = block_display_device_name,
-           uid = block_uid,
-           host = block_host,
-           port = block_port)
+'''.format(function_name=block_display_function_name,
+           device_name=block_display_device_name,
+           uid=block_uid,
+           host=block_host,
+           port=block_port)
 
                     block_code_footer = '''    this.setInputsInline(true);
     {setoutput}
@@ -104,11 +108,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     {helpurl}
   }}
 }};
-'''.format(setoutput = block_set_output,
-           previousstatement = block_set_previous_statement,
-           nextstatement = block_set_next_statement,
-           color = block_set_color,
-           helpurl = block_help_url)
+'''.format(setoutput=block_set_output,
+           previousstatement=block_set_previous_statement,
+           nextstatement=block_set_next_statement,
+           color=block_set_color,
+           helpurl=block_help_url)
                     return block_code_header + block_code_body + block_code_footer
 
             if not is_getter:
@@ -126,11 +130,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     this.appendValueInput('{port}')
         .setCheck(\'Number\')
         .appendField(\':\')
-'''.format(function_name = block_display_function_name,
-           device_name = block_display_device_name,
-           uid = block_uid,
-           host = block_host,
-           port = block_port)
+'''.format(function_name=block_display_function_name,
+           device_name=block_display_device_name,
+           uid=block_uid,
+           host=block_host,
+           port=block_port)
 
                     block_code_footer = '''    this.setInputsInline(true);
     {setoutput}
@@ -140,11 +144,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     {helpurl}
   }}
 }};
-'''.format(setoutput = block_set_output,
-           previousstatement = block_set_previous_statement,
-           nextstatement = block_set_next_statement,
-           color = block_set_color,
-           helpurl = block_help_url)
+'''.format(setoutput=block_set_output,
+           previousstatement=block_set_previous_statement,
+           nextstatement=block_set_next_statement,
+           color=block_set_color,
+           helpurl=block_help_url)
                     return block_code_header + block_code_body + block_code_footer
 
             # Getters/setters with in args
@@ -154,21 +158,23 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                 block_code_body = '''
     this.appendDummyInput()
         .appendField('{functionname} to')
-'''.format(functionname = block_display_function_name)
+'''.format(functionname=block_display_function_name)
             else:
                 block_code_body = '''
     this.appendDummyInput()
         .appendField('{functionname} with')
-'''.format(functionname = block_display_function_name)
+'''.format(functionname=block_display_function_name)
 
             for i, e in enumerate(elements_in):
                 if e.get_constant_group():
                     # Create combobox with allowed input values
                     constant_group = e.get_constant_group()
                     combo_constants_array = ''
+
                     for index, constant in enumerate(constant_group.get_constants()):
                         if index == 0:
                             combo_constants_array = '['
+
                         combo_constants_array = combo_constants_array +\
                                                 '[\'' +\
                                                 constant.get_name() +\
@@ -177,6 +183,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                                                 '\'' +\
                                                 str(constant.get_value()) +\
                                                 '\']'
+
                         if index == len(constant_group.get_constants()) - 1:
                             combo_constants_array = combo_constants_array + ']'
                         else:
@@ -185,26 +192,26 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     block_code_body = block_code_body + '''    this.appendDummyInput()
         .appendField('{ename}')
         .appendField(new Blockly.FieldDropdown({constantsarray}), '{fieldname}')
-'''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
-           constantsarray = combo_constants_array,
-           fieldname = e.get_upper_case_name())
+'''.format(ename=('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
+           constantsarray=combo_constants_array,
+           fieldname=e.get_upper_case_name())
 
                 elif e.get_tvpl_type() == 'Boolean':
                     # Create combobox with boolean values
                     block_code_body = block_code_body + '''    this.appendDummyInput()
         .appendField('{ename}')
         .appendField(new Blockly.FieldDropdown([['True', '1'], ['False', '0']]), '{fieldname}')
-'''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
-           fieldname = e.get_upper_case_name())
+'''.format(ename=('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
+           fieldname=e.get_upper_case_name())
 
                 elif e.get_tvpl_type() != 'Boolean':
                     # Create input field of specific types
                     block_code_body = block_code_body + '''    this.appendValueInput('{variablename}')
         .setCheck('{etvpltype}')
         .appendField('{ename}')
-'''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
-           variablename = e.get_upper_case_name(),
-           etvpltype = e.get_tvpl_type())
+'''.format(ename=('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
+           variablename=e.get_upper_case_name(),
+           etvpltype=e.get_tvpl_type())
 
             block_code_body += '''    this.appendValueInput('{uid}')
         .setCheck("String")
@@ -215,10 +222,10 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     this.appendValueInput('{port}')
         .setCheck("Number")
         .appendField(":")
-'''.format(devicename = block_display_device_name,
-           uid = block_uid,
-           host = block_host,
-           port = block_port)
+'''.format(devicename=block_display_device_name,
+           uid=block_uid,
+           host=block_host,
+           port=block_port)
 
             block_code_footer = '''    this.setInputsInline(true);
     {output}
@@ -258,9 +265,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
         for packet in self.get_packets('function'):
             # Exclude unrelated functions
+
             if packet.get_doc_type() != 'af' and \
                packet.get_doc_type() != 'bf':
                    continue
+
             if packet.is_virtual():
                 continue
 
@@ -309,6 +318,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         # having all the getters and setter as blocks in sub-elements
         filename_tvpl_toolbox_part = '_'.join([self.get_underscore_category(),
                                                self.get_underscore_name()]) + '.toolbox.part'
+
         with open(os.path.join(dir_bindings_root, 'bindings', filename_tvpl_toolbox_part), 'wb') as f:
             f.write(etree.tostring(e_device))
 

@@ -33,7 +33,7 @@ import perl_common
 
 class PerlBindingsDevice(perl_common.PerlDevice):
     def get_perl_package(self):
-        package = """{0}
+        template = """{0}
 =pod
 
 =encoding utf8
@@ -47,13 +47,13 @@ Tinkerforge::{1}{2} - {3}
 package Tinkerforge::{1}{2};
 """
 
-        return package.format(self.get_generator().get_header_comment('hash'),
-                              self.get_camel_case_category(),
-                              self.get_camel_case_name(),
-                              common.select_lang(self.get_description()))
+        return template.format(self.get_generator().get_header_comment('hash'),
+                               self.get_camel_case_category(),
+                               self.get_camel_case_name(),
+                               common.select_lang(self.get_description()))
 
     def get_perl_use(self):
-        return """
+        template = """
 use strict;
 use warnings;
 use Carp;
@@ -86,12 +86,14 @@ This constant represents the display name of a {1}.
 =cut
 
 use constant DEVICE_DISPLAY_NAME => '{1}';
-""".format(self.get_device_identifier(),
-           self.get_long_display_name())
+"""
+
+        return template.format(self.get_device_identifier(),
+                               self.get_long_display_name())
 
     def get_perl_constants(self):
         callbacks = []
-        callback = """
+        template = """
 =item CALLBACK_{0}
 
 This constant is used with the register_callback() subroutine to specify
@@ -102,8 +104,7 @@ the CALLBACK_{0} callback.
 use constant CALLBACK_{0} => {1};"""
 
         for packet in self.get_packets('callback'):
-            callbacks.append(callback.format(packet.get_upper_case_name(), packet.get_function_id()))
-
+            callbacks.append(template.format(packet.get_upper_case_name(), packet.get_function_id()))
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             callbacks.append("""
@@ -128,7 +129,7 @@ use constant CALLBACK_ERROR_CALLBACK => &CALLBACK_ERROR; # for backward compatib
 """)
 
         function_ids = []
-        function_id = """
+        template = """
 =item FUNCTION_{0}
 
 This constant is used with the get_response_expected(), set_response_expected()
@@ -137,11 +138,13 @@ and set_response_expected_all() subroutines.
 =cut
 
 use constant FUNCTION_{0} => {1};"""
-        for packet in self.get_packets('function'):
-            function_ids.append(function_id.format(packet.get_upper_case_name(), packet.get_function_id()))
 
-        str_constants = '\n'
-        str_constant = 'use constant {0}_{1} => {2};\n'
+        for packet in self.get_packets('function'):
+            function_ids.append(template.format(packet.get_upper_case_name(), packet.get_function_id()))
+
+        constants = '\n'
+        template = 'use constant {0}_{1} => {2};\n'
+
         for constant_group in self.get_constant_groups():
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
@@ -149,14 +152,14 @@ use constant FUNCTION_{0} => {1};"""
                 else:
                     value = str(constant.get_value())
 
-                str_constants += str_constant.format(constant_group.get_upper_case_name(),
-                                                     constant.get_upper_case_name(),
-                                                     value)
+                constants += template.format(constant_group.get_upper_case_name(),
+                                             constant.get_upper_case_name(),
+                                             value)
 
-        return '\n'.join(callbacks) + '\n' + '\n'.join(function_ids) + str_constants + "\n\n=back\n"
+        return '\n'.join(callbacks) + '\n' + '\n'.join(function_ids) + constants + "\n\n=back\n"
 
     def get_perl_new_subroutine(self):
-        dev_new = """
+        template = """
 =head1 FUNCTIONS
 
 =over
@@ -190,15 +193,17 @@ sub new
                 prefix = 'FUNCTION_'
                 flag = '_RESPONSE_EXPECTED_FALSE'
 
-            response_expecteds.append('\t$self->{{response_expected}}->{{&{0}{1}}} = Tinkerforge::Device->{2};'.format(prefix, packet.get_upper_case_name(), flag))
+            response_expecteds.append('\t$self->{{response_expected}}->{{&{0}{1}}} = Tinkerforge::Device->{2};'
+                                      .format(prefix, packet.get_upper_case_name(), flag))
 
         callbacks = []
 
         if len(self.get_packets('callback')) > 0:
             for packet in self.get_packets('callback'):
-                callbacks.append('\t$self->{{callback_formats}}->{{&CALLBACK_{0}}} = \'{1}\';'.format(packet.get_upper_case_name(), packet.get_perl_format_list('out')))
+                callbacks.append('\t$self->{{callback_formats}}->{{&CALLBACK_{0}}} = \'{1}\';'
+                                 .format(packet.get_upper_case_name(), packet.get_perl_format_list('out')))
 
-        return dev_new.format(*self.get_api_version()) + '\n' + '\n'.join(response_expecteds) + '\n\n' + '\n'.join(callbacks) + """
+        return template.format(*self.get_api_version()) + '\n' + '\n'.join(response_expecteds) + '\n\n' + '\n'.join(callbacks) + """
 
 \tbless($self, $class);
 
@@ -252,6 +257,7 @@ sub {0}
 """
         methods = ''
         cls = self.get_perl_class_name()
+
         for packet in self.get_packets('function'):
             subroutine_name = packet.get_underscore_name()
             function_id_constant = subroutine_name.upper()

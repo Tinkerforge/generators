@@ -43,48 +43,51 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         return self.specialize_doc_rst_links(text, specializer)
 
     def get_ruby_header(self):
-        include = """# -*- ruby encoding: utf-8 -*-
+        template = """# -*- ruby encoding: utf-8 -*-
 {0}
 """
 
-        return include.format(self.get_generator().get_header_comment('hash'),
-                              self.get_underscore_category(),
-                              self.get_underscore_name())
+        return template.format(self.get_generator().get_header_comment('hash'),
+                               self.get_underscore_category(),
+                               self.get_underscore_name())
 
     def get_ruby_class(self):
-        return """module Tinkerforge
+        template = """module Tinkerforge
   # {1}
   class {0} < Device
     DEVICE_IDENTIFIER = {2} # :nodoc:
     DEVICE_DISPLAY_NAME = '{3}' # :nodoc:
-""".format(self.get_ruby_class_name(),
-           common.select_lang(self.get_description()),
-           self.get_device_identifier(),
-           self.get_long_display_name())
+"""
+
+        return template.format(self.get_ruby_class_name(),
+                               common.select_lang(self.get_description()),
+                               self.get_device_identifier(),
+                               self.get_long_display_name())
 
     def get_ruby_callback_id_definitions(self):
-        cbs = ''
-        cb = """
+        callback_ids = ''
+        template = """
     # {2}
     CALLBACK_{0} = {1}
 """
+
         for packet in self.get_packets('callback'):
             doc = packet.get_ruby_formatted_doc()
-            cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
+            callback_ids += template.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
 
         if self.get_long_display_name() == 'RS232 Bricklet':
-            cbs += '\n'
-            cbs += '    CALLBACK_READ_CALLBACK = 8 # :nodoc: for backward compatibility\n'
-            cbs += '    CALLBACK_ERROR_CALLBACK = 9 # :nodoc: for backward compatibility\n'
+            callback_ids += '\n'
+            callback_ids += '    CALLBACK_READ_CALLBACK = 8 # :nodoc: for backward compatibility\n'
+            callback_ids += '    CALLBACK_ERROR_CALLBACK = 9 # :nodoc: for backward compatibility\n'
 
-        return cbs
+        return callback_ids
 
     def get_ruby_function_id_definitions(self):
         function_ids = '\n'
-        function_id = '    FUNCTION_{0} = {1} # :nodoc:\n'
+        template = '    FUNCTION_{0} = {1} # :nodoc:\n'
 
         for packet in self.get_packets('function'):
-            function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
+            function_ids += template.format(packet.get_upper_case_name(), packet.get_function_id())
 
         return function_ids
 
@@ -94,7 +97,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         return '\n' + self.get_formatted_constants(constant_format)
 
     def get_ruby_initialize_method(self):
-        dev_init = """
+        template = """
     # Creates an object with the unique device ID <tt>uid</tt> and adds it to
     # the IP Connection <tt>ipcon</tt>.
     def initialize(uid, ipcon)
@@ -103,7 +106,8 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
       @api_version = [{0}, {1}, {2}]
 
 """
-        return dev_init.format(*self.get_api_version())
+
+        return template.format(*self.get_api_version())
 
     def get_ruby_response_expected(self):
         response_expected = ''
@@ -123,17 +127,19 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
             response_expected += '      @response_expected[{0}_{1}] = {2}\n' \
-                .format(prefix, packet.get_upper_case_name(), flag)
+                                 .format(prefix, packet.get_upper_case_name(), flag)
 
         return response_expected + '\n'
 
     def get_ruby_callback_formats(self):
-        cbs = ''
-        cb = "      @callback_formats[CALLBACK_{0}] = '{1}'\n"
+        callback_formats = ''
+        template = "      @callback_formats[CALLBACK_{0}] = '{1}'\n"
+
         for packet in self.get_packets('callback'):
             form, _ = packet.get_ruby_format_list('out')
-            cbs += cb.format(packet.get_upper_case_name(), form)
-        return cbs + '    end\n'
+            callback_formats += template.format(packet.get_upper_case_name(), form)
+
+        return callback_formats + '    end\n'
 
     def get_ruby_methods(self):
         method0 = """
@@ -155,7 +161,6 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
             fid = packet.get_upper_case_name()
             parms = packet.get_ruby_parameter_list()
             doc = packet.get_ruby_formatted_doc()
-
             in_format, _ = packet.get_ruby_format_list('in')
             out_format, out_size = packet.get_ruby_format_list('out')
 
