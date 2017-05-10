@@ -1623,7 +1623,6 @@ com['packets'].append({
 'name': 'Modbus Slave Write Multiple Coils Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
-             ('Count', 'uint16', 1, 'out'),
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'bool', 440, 'out')],
@@ -1634,8 +1633,8 @@ com['packets'].append({
 """
 This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write multiple coils. The :word:`parameters`
-are request ID of the request, the starting address, the number of coils to
-be written and the data to be written as received by the request.
+are request ID of the request, the starting address and the data to be written as
+received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Multiple Coils Request`.
 """,
@@ -1643,8 +1642,7 @@ To send a response of this request use :func:`Modbus Slave Answer Write Multiple
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum schreiben einer mehrerer Coils erhält. Die :word:`Parameter`
-sind die Request ID der Anfrage, die Startadresse der Coils, die Anzahl der zu schreibenen
-Coils und die zu schreibenen Daten.
+sind die Request ID der Anfrage, die Startadresse der Coils und die zu schreibenen Daten.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Write Multiple Coils Request` gesendet werden.
@@ -1696,7 +1694,6 @@ com['packets'].append({
 'name': 'Modbus Slave Write Multiple Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
-             ('Count', 'uint16', 1, 'out'),
              ('Stream Total Length', 'uint16', 1, 'out'),
              ('Stream Chunk Offset', 'uint16', 1, 'out'),
              ('Stream Chunk Data', 'uint16', 27, 'out')],
@@ -1707,8 +1704,8 @@ com['packets'].append({
 """
 This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write multiple registers. The :word:`parameters`
-are request ID of the request, the starting address, the number of registers to
-be written and the data to be written as received by the request.
+are request ID of the request, the starting address and the data to be written as
+received by the request.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Multiple Registers Request`.
 """,
@@ -1716,8 +1713,7 @@ To send a response of this request use :func:`Modbus Slave Answer Write Multiple
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum schreiben einer mehrerer Register erhält. Die :word:`Parameter`
-sind die Request ID der Anfrage, die Startadresse der Register, die Anzahl der zu schreibenen
-Register und die zu schreibenen Daten.
+sind die Request ID der Anfrage, die Startadresse der Register und die zu schreibenen Daten.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Write Multiple Registers Request` gesendet werden.
