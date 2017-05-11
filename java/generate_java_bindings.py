@@ -80,8 +80,8 @@ import java.util.List;
  * {1}
  */
 public class {0} extends Device {{
-\tpublic final static int DEVICE_IDENTIFIER = {2};
-\tpublic final static String DEVICE_DISPLAY_NAME = "{3}";
+	public final static int DEVICE_IDENTIFIER = {2};
+	public final static String DEVICE_DISPLAY_NAME = "{3}";
 
 """
 
@@ -93,21 +93,21 @@ public class {0} extends Device {{
     def get_matlab_callback_data_objects(self):
         objects = ''
         template = """
-\tpublic class {0}CallbackData extends java.util.EventObject {{
-\t\tprivate static final long serialVersionUID = 1L;
+	public class {0}CallbackData extends java.util.EventObject {{
+		private static final long serialVersionUID = 1L;
 
 {1}
 
-\t\tpublic {0}CallbackData(Object device{3}) {{
-\t\t\tsuper(device);
+		public {0}CallbackData(Object device{3}) {{
+			super(device);
 
 {4}
-\t\t}}
+		}}
 
-\t\tpublic String toString() {{
-\t\t\treturn "[" + {2} "]";
-\t\t}}
-\t}}
+		public String toString() {{
+			return "[" + {2} "]";
+		}}
+	}}
 """
         param = '\t\tpublic {0}{1} {2}{3};'
 
@@ -157,13 +157,13 @@ public class {0} extends Device {{
     def get_java_return_objects(self):
         objects = ''
         template = """
-\tpublic class {0} {{
+	public class {0} {{
 {1}
 
-\t\tpublic String toString() {{
-\t\t\treturn "[" + {2} "]";
-\t\t}}
-\t}}
+		public String toString() {{
+			return "[" + {2} "]";
+		}}
+	}}
 """
         param = '\t\tpublic {0}{1} {2}{3};'
 
@@ -207,12 +207,12 @@ public class {0} extends Device {{
     def get_java_listener_definitions(self):
         listeners = ''
         template = """
-\t/**
-\t * {3}
-\t */
-\tpublic interface {0}Listener extends DeviceListener {{
-\t\tpublic void {1}({2});
-\t}}
+	/**
+	 * {3}
+	 */
+	public interface {0}Listener extends DeviceListener {{
+		public void {1}({2});
+	}}
 """
 
         for packet in self.get_packets('callback'):
@@ -236,26 +236,26 @@ public class {0} extends Device {{
                 error_parameter = 'short error'
 
             listeners += """
-\t/**
-\t * This listener is called if new data is available. The message has
-\t * a maximum size of 60 characters. The actual length of the message
-\t * is given in addition.
-\t *
-\t * To enable this listener, use {{@link BrickletRS232#enableReadCallback()}}.
-\t */
-\tpublic interface ReadCallbackListener extends DeviceListener {{ // for backward compatibility
-\t\tpublic void readCallback({0});
-\t}}
+	/**
+	 * This listener is called if new data is available. The message has
+	 * a maximum size of 60 characters. The actual length of the message
+	 * is given in addition.
+	 *
+	 * To enable this listener, use {{@link BrickletRS232#enableReadCallback()}}.
+	 */
+	public interface ReadCallbackListener extends DeviceListener {{ // for backward compatibility
+		public void readCallback({0});
+	}}
 
-\t/**
-\t * This listener is called if an error occurs.
-\t * Possible errors are overrun, parity or framing error.
-\t *
-\t * .. versionadded:: 2.0.1$nbsp;(Plugin)
-\t */
-\tpublic interface ErrorCallbackListener extends DeviceListener {{ // for backward compatibility
-\t\tpublic void errorCallback({1});
-\t}}
+	/**
+	 * This listener is called if an error occurs.
+	 * Possible errors are overrun, parity or framing error.
+	 *
+	 * .. versionadded:: 2.0.1$nbsp;(Plugin)
+	 */
+	public interface ErrorCallbackListener extends DeviceListener {{ // for backward compatibility
+		public void errorCallback({1});
+	}}
 """.format(read_parameter, error_parameter)
 
         return listeners
@@ -285,17 +285,17 @@ public class {0} extends Device {{
     def get_java_callback_listener_definitions(self):
         listeners = ''
         template = """
-\t\tcallbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
-\t\t\tpublic void callback({5}byte[] data_) {{{1}
-\t\t\t\tfor({2}Listener listener: listener{2}) {{
-\t\t\t\t\tlistener.{3}({4});
-\t\t\t\t}}
-\t\t\t}}
-\t\t}};
+		callbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
+			public void callback({5}byte[] data_) {{{1}
+				for({2}Listener listener: listener{2}) {{
+					listener.{3}({4});
+				}}
+			}}
+		}};
 """
         data = """
-\t\t\t\tByteBuffer bb = ByteBuffer.wrap(data_, 8, data_.length - 8);
-\t\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
+				ByteBuffer bb = ByteBuffer.wrap(data_, 8, data_.length - 8);
+				bb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}"""
 
@@ -334,17 +334,17 @@ public class {0} extends Device {{
     def get_octave_callback_listener_definitions(self):
         listeners = ''
         template = """
-\t\tcallbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
-\t\t\tpublic void callback({5}byte[] data_) {{{1}
-\t\t\t\tfor(OctaveReference listener: listener{2}) {{
-\t\t\t\t\tlistener.invoke(new Object[]{{{4}}});
-\t\t\t\t}}
-\t\t\t}}
-\t\t}};
+		callbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
+			public void callback({5}byte[] data_) {{{1}
+				for(OctaveReference listener: listener{2}) {{
+					listener.invoke(new Object[]{{{4}}});
+				}}
+			}}
+		}};
 """
         data = """
-\t\t\t\tByteBuffer bb = ByteBuffer.wrap(data_, 8, data_.length - 8);
-\t\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
+				ByteBuffer bb = ByteBuffer.wrap(data_, 8, data_.length - 8);
+				bb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}"""
 
@@ -387,19 +387,19 @@ public class {0} extends Device {{
 
         listeners = ''
         template = """
-\t/**
-\t * Adds a {0} listener.
-\t */
-\tpublic void add{0}{2}({1} listener) {{
-\t\tlistener{0}.add(listener);
-\t}}
+	/**
+	 * Adds a {0} listener.
+	 */
+	public void add{0}{2}({1} listener) {{
+		listener{0}.add(listener);
+	}}
 
-\t/**
-\t * Removes a {0} listener.
-\t */
-\tpublic void remove{0}{2}({1} listener) {{
-\t\tlistener{0}.remove(listener);
-\t}}
+	/**
+	 * Removes a {0} listener.
+	 */
+	public void remove{0}{2}({1} listener) {{
+		listener{0}.remove(listener);
+	}}
 """
 
         for packet in self.get_packets('callback'):
@@ -417,33 +417,33 @@ public class {0} extends Device {{
         if self.get_long_display_name() == 'RS232 Bricklet':
             if self.get_generator().is_octave():
                 listeners += """
-\t/**
-\t * Adds a ReadCallback listener.
-\t */
-\tpublic void addReadCallbackCallback(OctaveReference listener) { // for backward compatibility
-\t\tlistenerRead.add(listener);
-\t}
+	/**
+	 * Adds a ReadCallback listener.
+	 */
+	public void addReadCallbackCallback(OctaveReference listener) { // for backward compatibility
+		listenerRead.add(listener);
+	}
 
-\t/**
-\t * Removes a ReadCallback listener.
-\t */
-\tpublic void removeReadCallbackCallback(OctaveReference listener) { // for backward compatibility
-\t\tlistenerRead.remove(listener);
-\t}
+	/**
+	 * Removes a ReadCallback listener.
+	 */
+	public void removeReadCallbackCallback(OctaveReference listener) { // for backward compatibility
+		listenerRead.remove(listener);
+	}
 
-\t/**
-\t * Adds a ErrorCallback listener.
-\t */
-\tpublic void addErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
-\t\tlistenerError.add(listener);
-\t}
+	/**
+	 * Adds a ErrorCallback listener.
+	 */
+	public void addErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
+		listenerError.add(listener);
+	}
 
-\t/**
-\t * Removes a ErrorCallback listener.
-\t */
-\tpublic void removeErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
-\t\tlistenerError.remove(listener);
-\t}
+	/**
+	 * Removes a ErrorCallback listener.
+	 */
+	public void removeErrorCallbackCallback(OctaveReference listener) { // for backward compatibility
+		listenerError.remove(listener);
+	}
 """
             else:
                 if self.get_generator().is_matlab():
@@ -458,89 +458,89 @@ public class {0} extends Device {{
                     error_forward = 'listener.errorCallback(error);'
 
                 listeners += """
-\tprivate class ReadListenerForwarder implements ReadListener {{
-\t\tpublic ReadCallbackListener listener;
+	private class ReadListenerForwarder implements ReadListener {{
+		public ReadCallbackListener listener;
 
-\t\tpublic ReadListenerForwarder(ReadCallbackListener listener) {{
-\t\t\tthis.listener = listener;
-\t\t}}
+		public ReadListenerForwarder(ReadCallbackListener listener) {{
+			this.listener = listener;
+		}}
 
-\t\tpublic void read({0}) {{
-\t\t\t{1}
-\t\t}}
-\t}}
+		public void read({0}) {{
+			{1}
+		}}
+	}}
 
-\tprivate List<ReadListenerForwarder> readListenerForwarders = new ArrayList<ReadListenerForwarder>();
+	private List<ReadListenerForwarder> readListenerForwarders = new ArrayList<ReadListenerForwarder>();
 
-\t/**
-\t * Adds a ReadCallback listener.
-\t */
-\tpublic void addReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
-\t\tsynchronized (readListenerForwarders) {{
-\t\t\tReadListenerForwarder forwarder = new ReadListenerForwarder(listener);
+	/**
+	 * Adds a ReadCallback listener.
+	 */
+	public void addReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
+		synchronized (readListenerForwarders) {{
+			ReadListenerForwarder forwarder = new ReadListenerForwarder(listener);
 
-\t\t\treadListenerForwarders.add(forwarder);
-\t\t\tlistenerRead.add(forwarder);
-\t\t}}
-\t}}
+			readListenerForwarders.add(forwarder);
+			listenerRead.add(forwarder);
+		}}
+	}}
 
-\t/**
-\t * Removes a ReadCallback listener.
-\t */
-\tpublic void removeReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
-\t\tsynchronized (readListenerForwarders) {{
-\t\t\tfor (ReadListenerForwarder forwarder: readListenerForwarders) {{
-\t\t\t\tif (forwarder.listener.equals(listener)) {{
-\t\t\t\t\treadListenerForwarders.remove(forwarder);
-\t\t\t\t\tlistenerRead.remove(forwarder);
+	/**
+	 * Removes a ReadCallback listener.
+	 */
+	public void removeReadCallbackListener(ReadCallbackListener listener) {{ // for backward compatibility
+		synchronized (readListenerForwarders) {{
+			for (ReadListenerForwarder forwarder: readListenerForwarders) {{
+				if (forwarder.listener.equals(listener)) {{
+					readListenerForwarders.remove(forwarder);
+					listenerRead.remove(forwarder);
 
-\t\t\t\t\tbreak;
-\t\t\t\t}}
-\t\t\t}}
-\t\t}}
-\t}}
+					break;
+				}}
+			}}
+		}}
+	}}
 
-\tprivate class ErrorListenerForwarder implements ErrorListener {{
-\t\tpublic ErrorCallbackListener listener;
+	private class ErrorListenerForwarder implements ErrorListener {{
+		public ErrorCallbackListener listener;
 
-\t\tpublic ErrorListenerForwarder(ErrorCallbackListener listener) {{
-\t\t\tthis.listener = listener;
-\t\t}}
+		public ErrorListenerForwarder(ErrorCallbackListener listener) {{
+			this.listener = listener;
+		}}
 
-\t\tpublic void error({2}) {{
-\t\t\t{3}
-\t\t}}
-\t}}
+		public void error({2}) {{
+			{3}
+		}}
+	}}
 
-\tprivate List<ErrorListenerForwarder> errorListenerForwarders = new ArrayList<ErrorListenerForwarder>();
+	private List<ErrorListenerForwarder> errorListenerForwarders = new ArrayList<ErrorListenerForwarder>();
 
-\t/**
-\t * Adds a ErrorCallback listener.
-\t */
-\tpublic void addErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
-\t\tsynchronized (errorListenerForwarders) {{
-\t\t\tErrorListenerForwarder forwarder = new ErrorListenerForwarder(listener);
+	/**
+	 * Adds a ErrorCallback listener.
+	 */
+	public void addErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
+		synchronized (errorListenerForwarders) {{
+			ErrorListenerForwarder forwarder = new ErrorListenerForwarder(listener);
 
-\t\t\terrorListenerForwarders.add(forwarder);
-\t\t\tlistenerError.add(forwarder);
-\t\t}}
-\t}}
+			errorListenerForwarders.add(forwarder);
+			listenerError.add(forwarder);
+		}}
+	}}
 
-\t/**
-\t * Removes a ErrorCallback listener.
-\t */
-\tpublic void removeErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
-\t\tsynchronized (errorListenerForwarders) {{
-\t\t\tfor (ErrorListenerForwarder forwarder: errorListenerForwarders) {{
-\t\t\t\tif (forwarder.listener.equals(listener)) {{
-\t\t\t\t\terrorListenerForwarders.remove(forwarder);
-\t\t\t\t\tlistenerError.remove(forwarder);
+	/**
+	 * Removes a ErrorCallback listener.
+	 */
+	public void removeErrorCallbackListener(ErrorCallbackListener listener) {{ // for backward compatibility
+		synchronized (errorListenerForwarders) {{
+			for (ErrorListenerForwarder forwarder: errorListenerForwarders) {{
+				if (forwarder.listener.equals(listener)) {{
+					errorListenerForwarders.remove(forwarder);
+					listenerError.remove(forwarder);
 
-\t\t\t\t\tbreak;
-\t\t\t\t}}
-\t\t\t}}
-\t\t}}
-\t}}
+					break;
+				}}
+			}}
+		}}
+	}}
 """.format(read_parameters, read_forward, error_parameters, error_forward)
 
         return listeners + '}\n'
@@ -613,16 +613,16 @@ public class {0} extends Device {{
 
     def get_java_constructor(self):
         template = """
-\t/**
-\t * Creates an object with the unique device ID \c uid. and adds it to
-\t * the IP Connection \c ipcon.
-\t */
-\tpublic {0}(String uid, IPConnection ipcon) {{
-\t\tsuper(uid, ipcon);
+	/**
+	 * Creates an object with the unique device ID \c uid. and adds it to
+	 * the IP Connection \c ipcon.
+	 */
+	public {0}(String uid, IPConnection ipcon) {{
+		super(uid, ipcon);
 
-\t\tapiVersion[0] = {1};
-\t\tapiVersion[1] = {2};
-\t\tapiVersion[2] = {3};
+		apiVersion[0] = {1};
+		apiVersion[1] = {2};
+		apiVersion[2] = {3};
 """
 
         return template.format(self.get_java_class_name(), *self.get_api_version())
@@ -630,47 +630,46 @@ public class {0} extends Device {{
     def get_java_methods(self):
         methods = ''
         template = """
-\t/**
-\t * {8}
-\t */
-\tpublic {0} {1}({2}) {3} {{
-\t\tByteBuffer bb = ipcon.createRequestPacket((byte){4}, FUNCTION_{5}, this);
+	/**
+	 * {8}
+	 */
+	public {0} {1}({2}) {3} {{
+		ByteBuffer bb = ipcon.createRequestPacket((byte){4}, FUNCTION_{5}, this);
 {6}
 {7}
-\t}}
+	}}
 """
-        template_response = """\t\tbyte[] response = sendRequest(bb.array());
+        template_response = """		byte[] response = sendRequest(bb.array());
 
-\t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
-\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
+		bb = ByteBuffer.wrap(response, 8, response.length - 8);
+		bb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}
-\t\treturn {2};"""
-
-        template_noresponse = """\t\tsendRequest(bb.array());"""
-        loop = """\t\tfor(int i = 0; i < {0}; i++) {{
+		return {2};"""
+        template_noresponse = '\t\tsendRequest(bb.array());'
+        loop = """		for(int i = 0; i < {0}; i++) {{
 {1}
-\t\t}}
+		}}
 """
-        string_loop = """\t\ttry {{
-\t\t{0}
-\t\t\t}} catch(Exception e) {{
-\t\t\t\tbb.put((byte)0);
-\t\t\t}}"""
+        string_loop = """		try {{
+		{0}
+			}} catch(Exception e) {{
+				bb.put((byte)0);
+			}}"""
 
-        bool_array_loop1 = """\t\tfor(int i = 0; i < {0}; i++) {{
-\t\t\tif ({1}[i]) {{
-\t\t\t\t{2}[i / 8] |= 1 << (i % 8);
-\t\t\t}}
-\t\t}}
+        bool_array_loop1 = """		for(int i = 0; i < {0}; i++) {{
+			if ({1}[i]) {{
+				{2}[i / 8] |= 1 << (i % 8);
+			}}
+		}}
 """
 
-        bool_array_loop2 = """\t\tfor(int i = 0; i < {0}; i++) {{
-\t\t\tbb.put({1}[i]);
-\t\t}}"""
+        bool_array_loop2 = """		for(int i = 0; i < {0}; i++) {{
+			bb.put({1}[i]);
+		}}"""
 
-        bool_array_main = """\n\t\tbyte[] {0} = new byte[{1}];
-\t\tArrays.fill({0}, (byte)0);
+        bool_array_main = """\n		byte[] {0} = new byte[{1}];
+		Arrays.fill({0}, (byte)0);
 
 {2}
 {3}"""
@@ -858,16 +857,16 @@ class JavaBindingsPacket(java_common.JavaPacket):
     def get_java_bbgets(self, with_obj=False):
         bbgets = ''
         bbget_other = '\t\t{0}{1}{2} = {3}(bb.get{4}(){5}){6};'
-        bool_array_unpack = """\t\t\t{0}{1}[i] = ({2}[i / 8] & (1 << (i % 8))) != 0;"""
-        bbget_bool_array = """\t\tbyte[] {0} = new byte[{1}];
-\t\tbb.get({0});
+        bool_array_unpack = '\t\t\t{0}{1}[i] = ({2}[i / 8] & (1 << (i % 8))) != 0;'
+        bbget_bool_array = """		byte[] {0} = new byte[{1}];
+		bb.get({0});
 {2}
 """
         bbget_string = '\t\t{0}{1}{2} = {3}(bb{4}{5}){6};'
         new_arr ='{0}[] {1} = new {0}[{2}];'
-        loop = """\t\t{2}for(int i = 0; i < {0}; i++) {{
+        loop = """		{2}for(int i = 0; i < {0}; i++) {{
 {1}
-\t\t}}
+		}}
 """
         for element in self.get_elements('out'):
             bbget_format_bool_array = False
@@ -1007,23 +1006,23 @@ class JavaBindingsGenerator(common.BindingsGenerator):
 package com.tinkerforge;
 
 public class DeviceFactory {{
-\tpublic static Class<? extends Device> getDeviceClass(int deviceIdentifier) {{
-\t\tswitch (deviceIdentifier) {{
+	public static Class<? extends Device> getDeviceClass(int deviceIdentifier) {{
+		switch (deviceIdentifier) {{
 {1}
-\t\tdefault: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
-\t\t}}
-\t}}
+		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
+		}}
+	}}
 
-\tpublic static String getDeviceDisplayName(int deviceIdentifier) {{
-\t\tswitch (deviceIdentifier) {{
+	public static String getDeviceDisplayName(int deviceIdentifier) {{
+		switch (deviceIdentifier) {{
 {2}
-\t\tdefault: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
-\t\t}}
-\t}}
+		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
+		}}
+	}}
 
-\tpublic static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {{
-\t\treturn getDeviceClass(deviceIdentifier).getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
-\t}}
+	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {{
+		return getDeviceClass(deviceIdentifier).getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+	}}
 }}
 """
         classes = []

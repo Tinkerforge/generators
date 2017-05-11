@@ -133,21 +133,21 @@ namespace Tinkerforge
 
     def get_csharp_class(self):
         template = """
-\t/// <summary>
-\t///  {1}
-\t/// </summary>
-\tpublic class {0} : Device
-\t{{
-\t\t/// <summary>
-\t\t///  Used to identify this device type in
-\t\t///  <see cref="Tinkerforge.IPConnection.EnumerateCallback"/>.
-\t\t/// </summary>
-\t\tpublic static int DEVICE_IDENTIFIER = {2};
+	/// <summary>
+	///  {1}
+	/// </summary>
+	public class {0} : Device
+	{{
+		/// <summary>
+		///  Used to identify this device type in
+		///  <see cref="Tinkerforge.IPConnection.EnumerateCallback"/>.
+		/// </summary>
+		public static int DEVICE_IDENTIFIER = {2};
 
-\t\t/// <summary>
-\t\t///  The display name of this device.
-\t\t/// </summary>
-\t\tpublic static string DEVICE_DISPLAY_NAME = "{3}";
+		/// <summary>
+		///  The display name of this device.
+		/// </summary>
+		public static string DEVICE_DISPLAY_NAME = "{3}";
 """
 
         return template.format(self.get_csharp_class_name(),
@@ -158,22 +158,22 @@ namespace Tinkerforge
     def get_csharp_delegates(self):
         delegates = '\n'
         template = """
-\t\t/// <summary>
-\t\t///  {2}
-\t\t/// </summary>
-\t\tpublic event {0}EventHandler {0}Callback;
-\t\t/// <summary>
-\t\t/// </summary>
-\t\tpublic delegate void {0}EventHandler({3} sender{1});
+		/// <summary>
+		///  {2}
+		/// </summary>
+		public event {0}EventHandler {0}Callback;
+		/// <summary>
+		/// </summary>
+		public delegate void {0}EventHandler({3} sender{1});
 """
         template_legacy = """
-\t\t/// <summary>
-\t\t/// </summary>
-\t\tpublic event {0}EventHandler {0} // for backward compatibility
-\t\t{{
-\t\t\tadd {{ {0}Callback += value; }}
-\t\t\tremove {{ {0}Callback -= value; }}
-\t\t}}
+		/// <summary>
+		/// </summary>
+		public event {0}EventHandler {0} // for backward compatibility
+		{{
+			add {{ {0}Callback += value; }}
+			remove {{ {0}Callback -= value; }}
+		}}
 """
 
         for packet in self.get_packets('callback'):
@@ -194,13 +194,13 @@ namespace Tinkerforge
     def get_csharp_function_id_definitions(self):
         function_ids = ''
         template = """
-\t\t/// <summary>
-\t\t///  Function ID to be used with
-\t\t///  <see cref="Tinkerforge.Device.GetResponseExpected"/>,
-\t\t///  <see cref="Tinkerforge.Device.SetResponseExpected"/> and
-\t\t///  <see cref="Tinkerforge.Device.SetResponseExpectedAll"/>.
-\t\t/// </summary>
-\t\tpublic const byte {2}_{0} = {1};
+		/// <summary>
+		///  Function ID to be used with
+		///  <see cref="Tinkerforge.Device.GetResponseExpected"/>,
+		///  <see cref="Tinkerforge.Device.SetResponseExpected"/> and
+		///  <see cref="Tinkerforge.Device.SetResponseExpectedAll"/>.
+		/// </summary>
+		public const byte {2}_{0} = {1};
 """
 
         for packet in self.get_packets():
@@ -211,9 +211,9 @@ namespace Tinkerforge
 
     def get_csharp_constants(self):
         template = """
-\t\t/// <summary>
-\t\t/// </summary>
-\t\tpublic const {0} {1}_{2} = {3};
+		/// <summary>
+		/// </summary>
+		public const {0} {1}_{2} = {3};
 """
         constants = []
 
@@ -234,15 +234,15 @@ namespace Tinkerforge
         callbacks = []
         template = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1}Callback);'
         constructor = """
-\t\t/// <summary>
-\t\t///  Creates an object with the unique device ID <c>uid</c> and adds  it to
-\t\t///  the IPConnection <c>ipcon</c>.
-\t\t/// </summary>
-\t\tpublic {0}(string uid, IPConnection ipcon) : base(uid, ipcon)
-\t\t{{
-\t\t\tapiVersion[0] = {2};
-\t\t\tapiVersion[1] = {3};
-\t\t\tapiVersion[2] = {4};
+		/// <summary>
+		///  Creates an object with the unique device ID <c>uid</c> and adds  it to
+		///  the IPConnection <c>ipcon</c>.
+		/// </summary>
+		public {0}(string uid, IPConnection ipcon) : base(uid, ipcon)
+		{{
+			apiVersion[0] = {2};
+			apiVersion[1] = {3};
+			apiVersion[2] = {4};
 
 {1}
 """
@@ -280,16 +280,16 @@ namespace Tinkerforge
     def get_csharp_callbacks(self):
         callbacks = ''
         template = """
-\t\t/// <summary>
-\t\t/// </summary>
-\t\tprotected void On{0}Callback(byte[] response)
-\t\t{{
-{1}\t\t\tvar handler = {0}Callback;
-\t\t\tif(handler != null)
-\t\t\t{{
-\t\t\t\thandler(this{3});
-\t\t\t}}
-\t\t}}
+		/// <summary>
+		/// </summary>
+		protected void On{0}Callback(byte[] response)
+		{{
+{1}			var handler = {0}Callback;
+			if(handler != null)
+			{{
+				handler(this{3});
+			}}
+		}}
 """
 
         for packet in self.get_packets('callback'):
@@ -306,12 +306,12 @@ namespace Tinkerforge
 
             convs = ''
             conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, response{4});\n'
-            conv_bool_array ="""\t\t\tbool[] {0} = new bool[{1}];
-\t\t\tbyte[] {2} = new byte[{3}];
-\t\t\t{2} = LEConverter.ByteArrayFrom({4}, response, {3});
-\t\t\tfor(int i = 0; i < {1}; i++) {{
-\t\t\t\t{0}[i] = ({2}[i / 8] & (1 << (i % 8))) != 0;
-\t\t\t}}
+            conv_bool_array ="""			bool[] {0} = new bool[{1}];
+			byte[] {2} = new byte[{3}];
+			{2} = LEConverter.ByteArrayFrom({4}, response, {3});
+			for(int i = 0; i < {1}; i++) {{
+				{0}[i] = ({2}[i / 8] & (1 << (i % 8))) != 0;
+			}}
 """
 
             pos = 8
@@ -355,21 +355,21 @@ namespace Tinkerforge
     def get_csharp_methods(self):
         methods = ''
         template = """
-\t\t/// <summary>
-\t\t///  {5}
-\t\t/// </summary>
-\t\t{0}
-\t\t{{
-\t\t\tbyte[] request = CreateRequestPacket({1}, FUNCTION_{2});
+		/// <summary>
+		///  {5}
+		/// </summary>
+		{0}
+		{{
+			byte[] request = CreateRequestPacket({1}, FUNCTION_{2});
 {3}
 {4}
-\t\t}}
+		}}
 """
 
-        template_noresponse = """\t\t\tSendRequest(request);
+        template_noresponse = """			SendRequest(request);
 """
 
-        template_response = """\t\t\tbyte[] response = SendRequest(request);
+        template_response = """			byte[] response = SendRequest(request);
 {0}"""
 
         for packet in self.get_packets('function'):
@@ -381,18 +381,18 @@ namespace Tinkerforge
             write_convs = ''
             write_conv = '\t\t\tLEConverter.To(({2}){0}, {1}, request);\n'
             write_conv_length = '\t\t\tLEConverter.To(({3}){0}, {1}, {2}, request);\n'
-            _write_conv_length = """\t\t\t{0}[] {1} = new {0}[{2}];
-\t\t\tfor (int i = 0; i < {2}; ++i) {{
-\t\t\t\t{1}[i] = ({0}){3}[i];
-\t\t\t}}
-\t\t\tLEConverter.To({1}, {4}, {2}, request);\n"""
-            write_conv_bool_array = """\t\t\tbyte[] {0} = new byte[{1}];
-\t\t\tfor(int i = 0; i < {2}; i++) {{
-\t\t\t\tif ({3}[i]) {{
-\t\t\t\t\t{0}[i / 8] |= (byte)(1 << (i % 8));
-\t\t\t\t}}
-\t\t\t}}
-\t\t\tLEConverter.To((byte[]){0}, {4}, {1}, request);
+            _write_conv_length = """			{0}[] {1} = new {0}[{2}];
+			for (int i = 0; i < {2}; ++i) {{
+				{1}[i] = ({0}){3}[i];
+			}}
+			LEConverter.To({1}, {4}, {2}, request);\n"""
+            write_conv_bool_array = """			byte[] {0} = new byte[{1}];
+			for(int i = 0; i < {2}; i++) {{
+				if ({3}[i]) {{
+					{0}[i / 8] |= (byte)(1 << (i % 8));
+				}}
+			}}
+			LEConverter.To((byte[]){0}, {4}, {1}, request);
 """
 
             pos = 8
@@ -430,12 +430,12 @@ namespace Tinkerforge
             method_tail = ''
             read_convs = ''
             read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, response{3});'
-            read_conv_bool_array = """\n\t\t\tbyte[] {0} = new byte[{1}];
-\t\t\t{4} = new bool[{3}];
-\t\t\t{0} = LEConverter.ByteArrayFrom({2}, response, {1});
-\t\t\tfor(int i = 0; i < {3}; i++) {{
-\t\t\t\t{4}[i] = ({0}[i / 8] & (1 << (i % 8))) != 0;
-\t\t\t}}"""
+            read_conv_bool_array = """\n			byte[] {0} = new byte[{1}];
+			{4} = new bool[{3}];
+			{0} = LEConverter.ByteArrayFrom({2}, response, {1});
+			for(int i = 0; i < {3}; i++) {{
+				{4}[i] = ({0}[i / 8] & (1 << (i % 8))) != 0;
+			}}"""
 
             pos = 8
 

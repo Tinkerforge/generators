@@ -173,9 +173,9 @@ the IP Connection *ipcon*.
 
 sub new
 {{
-\tmy ($class, $uid, $ipcon) = @_;
+	my ($class, $uid, $ipcon) = @_;
 
-\tmy $self = Tinkerforge::Device->_new($uid, $ipcon, [{0}, {1}, {2}]);
+	my $self = Tinkerforge::Device->_new($uid, $ipcon, [{0}, {1}, {2}]);
 """
         response_expecteds = []
 
@@ -205,9 +205,9 @@ sub new
 
         return template.format(*self.get_api_version()) + '\n' + '\n'.join(response_expecteds) + '\n\n' + '\n'.join(callbacks) + """
 
-\tbless($self, $class);
+	bless($self, $class);
 
-\treturn $self;
+	return $self;
 }
 
 """
@@ -222,9 +222,9 @@ sub new
 
 sub {0}
 {{
-\tmy ($self{2}) = @_;
+	my ($self{2}) = @_;
 
-\treturn $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
+	return $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         single_return = """
@@ -236,9 +236,9 @@ sub {0}
 
 sub {0}
 {{
-\tmy ($self{2}) = @_;
+	my ($self{2}) = @_;
 
-\treturn $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
+	return $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         no_return = """
@@ -250,9 +250,9 @@ sub {0}
 
 sub {0}
 {{
-\tmy ($self{2}) = @_;
+	my ($self{2}) = @_;
 
-\t$self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
+	$self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         methods = ''

@@ -199,25 +199,25 @@ extern "C" {{
     def get_c_structs(self):
         structs = """
 #if defined _MSC_VER || defined __BORLANDC__
-\t#pragma pack(push)
-\t#pragma pack(1)
-\t#define ATTRIBUTE_PACKED
+	#pragma pack(push)
+	#pragma pack(1)
+	#define ATTRIBUTE_PACKED
 #elif defined __GNUC__
-\t#ifdef _WIN32
-\t\t// workaround struct packing bug in GCC 4.7 on Windows
-\t\t// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
-\t\t#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
-\t#else
-\t\t#define ATTRIBUTE_PACKED __attribute__((packed))
-\t#endif
+	#ifdef _WIN32
+		// workaround struct packing bug in GCC 4.7 on Windows
+		// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
+		#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
+	#else
+		#define ATTRIBUTE_PACKED __attribute__((packed))
+	#endif
 #else
-\t#error unknown compiler, do not know how to enable struct packing
+	#error unknown compiler, do not know how to enable struct packing
 #endif
 """
 
         struct_template = """
 typedef struct {{
-\tPacketHeader header;
+	PacketHeader header;
 {0}}} ATTRIBUTE_PACKED {1}_{2};
 """
 
@@ -286,7 +286,7 @@ typedef struct {{
 
         structs += """
 #if defined _MSC_VER || defined __BORLANDC__
-\t#pragma pack(pop)
+	#pragma pack(pop)
 #endif
 #undef ATTRIBUTE_PACKED
 """
@@ -295,18 +295,18 @@ typedef struct {{
     def get_c_create_function(self):
         template = """
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
-\tDevicePrivate *device_p;
+	DevicePrivate *device_p;
 
-\tdevice_create({0}, uid, ipcon->p, {3}, {4}, {5});
+	device_create({0}, uid, ipcon->p, {3}, {4}, {5});
 
-\tdevice_p = {0}->p;
+	device_p = {0}->p;
 {2}
 }}
 """
         cb_temp = """
-\tdevice_p->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
+	device_p->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
         llcb_temp = """
-\tdevice_p->low_level_callbacks[{2}_CALLBACK_{1}].exists = true;"""
+	device_p->low_level_callbacks[{2}_CALLBACK_{1}].exists = true;"""
         callbacks = ''
 
         for packet in self.get_packets('callback'):
@@ -353,7 +353,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
     def get_c_destroy_function(self):
         template = """
 void {0}_destroy({1} *{0}) {{
-\tdevice_release({0}->p);
+	device_release({0}->p);
 }}
 """
         return template.format(self.get_underscore_name(),
@@ -362,15 +362,15 @@ void {0}_destroy({1} *{0}) {{
     def get_c_response_expected_functions(self):
         template = """
 int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected) {{
-\treturn device_get_response_expected({0}->p, function_id, ret_response_expected);
+	return device_get_response_expected({0}->p, function_id, ret_response_expected);
 }}
 
 int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
-\treturn device_set_response_expected({0}->p, function_id, response_expected);
+	return device_set_response_expected({0}->p, function_id, response_expected);
 }}
 
 int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
-\treturn device_set_response_expected_all({0}->p, response_expected);
+	return device_set_response_expected_all({0}->p, response_expected);
 }}
 """
         return template.format(self.get_underscore_name(),
@@ -379,32 +379,32 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
     def get_c_functions(self):
         template_version = """
 int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
-\treturn device_get_api_version({0}->p, ret_api_version);
+	return device_get_api_version({0}->p, ret_api_version);
 }}
 """
         template = """
 int {0}_{1}({2} *{0}{3}) {{
-\tDevicePrivate *device_p = {0}->p;
-\t{5}_Request request;{6}
-\tint ret;{9}
+	DevicePrivate *device_p = {0}->p;
+	{5}_Request request;{6}
+	int ret;{9}
 
-\tret = packet_header_create(&request.header, sizeof(request), {4}, device_p->ipcon_p, device_p);
+	ret = packet_header_create(&request.header, sizeof(request), {4}, device_p->ipcon_p, device_p);
 
-\tif (ret < 0) {{
-\t\treturn ret;
-\t}}
+	if (ret < 0) {{
+		return ret;
+	}}
 {7}
 
-\tret = device_send_request(device_p, (Packet *)&request, {10});
+	ret = device_send_request(device_p, (Packet *)&request, {10});
 {8}
 
-\treturn ret;
+	return ret;
 }}
 """
         template_ret = """
-\tif (ret < 0) {{
-\t\treturn ret;
-\t}}
+	if (ret < 0) {{
+		return ret;
+	}}
 {2}
 """
 
@@ -444,173 +444,173 @@ int {0}_{1}({2} *{0}{3}) {{
         functions = ''
         template_stream_in = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
-\tDevicePrivate *device_p = {device_underscore_name}->p;
-\tint ret = 0;
-\tuint16_t stream_total_length = {data_underscore_name}_length; // FIXME: uint16_t is not always the correct type
-\tuint16_t stream_chunk_offset = 0; // FIXME: uint16_t is not always the correct type
-\t{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
-\tuint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+	DevicePrivate *device_p = {device_underscore_name}->p;
+	int ret = 0;
+	uint16_t stream_total_length = {data_underscore_name}_length; // FIXME: uint16_t is not always the correct type
+	uint16_t stream_chunk_offset = 0; // FIXME: uint16_t is not always the correct type
+	{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
+	uint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
 
-\tmutex_lock(&device_p->stream_mutex);
+	mutex_lock(&device_p->stream_mutex);
 
-\twhile (stream_chunk_offset < stream_total_length) {{
-\t\tstream_chunk_length = stream_total_length - stream_chunk_offset;
+	while (stream_chunk_offset < stream_total_length) {{
+		stream_chunk_length = stream_total_length - stream_chunk_offset;
 
-\t\tif (stream_chunk_length > {chunk_cardinality}) {{
-\t\t\tstream_chunk_length = {chunk_cardinality};
-\t\t}}
+		if (stream_chunk_length > {chunk_cardinality}) {{
+			stream_chunk_length = {chunk_cardinality};
+		}}
 
-\t\t// FIXME: only do memcpy/memset for last short chunk
-\t\tmemcpy(stream_chunk_data, &{data_underscore_name}[stream_chunk_offset], sizeof({chunk_c_type}) * stream_chunk_length);
+		// FIXME: only do memcpy/memset for last short chunk
+		memcpy(stream_chunk_data, &{data_underscore_name}[stream_chunk_offset], sizeof({chunk_c_type}) * stream_chunk_length);
 
-\t\tif (stream_chunk_length < {chunk_cardinality}) {{
-\t\t\tmemset(&stream_chunk_data[stream_chunk_length], 0, sizeof({chunk_c_type}) * ({chunk_cardinality} - stream_chunk_length));
-\t\t}}
+		if (stream_chunk_length < {chunk_cardinality}) {{
+			memset(&stream_chunk_data[stream_chunk_length], 0, sizeof({chunk_c_type}) * ({chunk_cardinality} - stream_chunk_length));
+		}}
 
-\t\t// FIXME: validate that the extra out values for all low-level calls are identical
-\t\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+		// FIXME: validate that the extra out values for all low-level calls are identical
+		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
-\t\tif (ret < 0) {{
-\t\t\tbreak;
-\t\t}}
+		if (ret < 0) {{
+			break;
+		}}
 
-\t\tstream_chunk_offset += {chunk_cardinality};
-\t}}
+		stream_chunk_offset += {chunk_cardinality};
+	}}
 
-\tmutex_unlock(&device_p->stream_mutex);
+	mutex_unlock(&device_p->stream_mutex);
 
-\treturn ret;
+	return ret;
 }}
 """
         template_stream_in_short_write = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
-\tDevicePrivate *device_p = {device_underscore_name}->p;
-\tint ret = 0;
-\tuint16_t stream_total_written = 0; // FIXME: uint16_t is not always the correct type
-\tuint16_t stream_total_length = {data_underscore_name}_length; // FIXME: uint16_t is not always the correct type
-\tuint16_t stream_chunk_offset = 0; // FIXME: uint16_t is not always the correct type
-\tuint8_t stream_chunk_written;
-\t{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
-\tuint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+	DevicePrivate *device_p = {device_underscore_name}->p;
+	int ret = 0;
+	uint16_t stream_total_written = 0; // FIXME: uint16_t is not always the correct type
+	uint16_t stream_total_length = {data_underscore_name}_length; // FIXME: uint16_t is not always the correct type
+	uint16_t stream_chunk_offset = 0; // FIXME: uint16_t is not always the correct type
+	uint8_t stream_chunk_written;
+	{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
+	uint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
 
-\tmutex_lock(&device_p->stream_mutex);
+	mutex_lock(&device_p->stream_mutex);
 
-\twhile (stream_chunk_offset < stream_total_length) {{
-\t\tstream_chunk_length = stream_total_length - stream_chunk_offset;
+	while (stream_chunk_offset < stream_total_length) {{
+		stream_chunk_length = stream_total_length - stream_chunk_offset;
 
-\t\tif (stream_chunk_length > {chunk_cardinality}) {{
-\t\t\tstream_chunk_length = {chunk_cardinality};
-\t\t}}
+		if (stream_chunk_length > {chunk_cardinality}) {{
+			stream_chunk_length = {chunk_cardinality};
+		}}
 
-\t\t// FIXME: only do memcpy/memset for last short chunk
-\t\tmemcpy(stream_chunk_data, &{data_underscore_name}[stream_chunk_offset], sizeof({chunk_c_type}) * stream_chunk_length);
+		// FIXME: only do memcpy/memset for last short chunk
+		memcpy(stream_chunk_data, &{data_underscore_name}[stream_chunk_offset], sizeof({chunk_c_type}) * stream_chunk_length);
 
-\t\tif (stream_chunk_length < {chunk_cardinality}) {{
-\t\t\tmemset(&stream_chunk_data[stream_chunk_length], 0, sizeof({chunk_c_type}) * ({chunk_cardinality} - stream_chunk_length));
-\t\t}}
+		if (stream_chunk_length < {chunk_cardinality}) {{
+			memset(&stream_chunk_data[stream_chunk_length], 0, sizeof({chunk_c_type}) * ({chunk_cardinality} - stream_chunk_length));
+		}}
 
-\t\t// FIXME: validate that the extra out values for all low-level calls are identical
-\t\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+		// FIXME: validate that the extra out values for all low-level calls are identical
+		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
-\t\tif (ret < 0) {{
-\t\t\tstream_total_written = 0;
-\t\t\tbreak;
-\t\t}}
+		if (ret < 0) {{
+			stream_total_written = 0;
+			break;
+		}}
 
-\t\tstream_total_written += stream_chunk_written;
+		stream_total_written += stream_chunk_written;
 
-\t\tif (stream_chunk_written < {chunk_cardinality}) {{
-\t\t\tbreak; // either last chunk or short write
-\t\t}}
+		if (stream_chunk_written < {chunk_cardinality}) {{
+			break; // either last chunk or short write
+		}}
 
-\t\tstream_chunk_offset += {chunk_cardinality};
-\t}}
+		stream_chunk_offset += {chunk_cardinality};
+	}}
 
-\tmutex_unlock(&device_p->stream_mutex);
+	mutex_unlock(&device_p->stream_mutex);
 
-\t*ret_written = stream_total_written;
+	*ret_written = stream_total_written;
 
-\treturn ret;
+	return ret;
 }}
 """
         template_stream_out = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
-\tDevicePrivate *device_p = {device_underscore_name}->p;
-\tint ret = 0;
-\tuint16_t stream_total_length = {fixed_total_length}; // FIXME: uint16_t is not always the correct type
-\tuint16_t stream_chunk_offset; // FIXME: uint16_t is not always the correct type
-\t{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
-\tuint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+	DevicePrivate *device_p = {device_underscore_name}->p;
+	int ret = 0;
+	uint16_t stream_total_length = {fixed_total_length}; // FIXME: uint16_t is not always the correct type
+	uint16_t stream_chunk_offset; // FIXME: uint16_t is not always the correct type
+	{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
+	uint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
 
-\t*ret_{data_underscore_name}_length = 0;
+	*ret_{data_underscore_name}_length = 0;
 
-\tmutex_lock(&device_p->stream_mutex);
+	mutex_lock(&device_p->stream_mutex);
 
-\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+	ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
-\tif (ret < 0) {{
-\t\tgoto cleanup;
-\t}}
+	if (ret < 0) {{
+		goto cleanup;
+	}}
 
-\tif (stream_chunk_offset != 0) {{ // stream out-of-sync
-\t\tgoto discard;
-\t}}
+	if (stream_chunk_offset != 0) {{ // stream out-of-sync
+		goto discard;
+	}}
 
-\tstream_chunk_length = stream_total_length - stream_chunk_offset;
+	stream_chunk_length = stream_total_length - stream_chunk_offset;
 
-\tif (stream_chunk_length > {chunk_cardinality}) {{
-\t\tstream_chunk_length = {chunk_cardinality};
-\t}}
+	if (stream_chunk_length > {chunk_cardinality}) {{
+		stream_chunk_length = {chunk_cardinality};
+	}}
 
-\tmemcpy(ret_{data_underscore_name}, stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
-\t*ret_{data_underscore_name}_length = stream_chunk_length;
+	memcpy(ret_{data_underscore_name}, stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
+	*ret_{data_underscore_name}_length = stream_chunk_length;
 
-\twhile (*ret_{data_underscore_name}_length < stream_total_length) {{
-\t\t// FIXME: validate chunk offset < total length
-\t\t// FIXME: validate that total length is identical for all low-level getters of a stream
-\t\t// FIXME: validate that the extra out values for all low-level calls are identical
-\t\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+	while (*ret_{data_underscore_name}_length < stream_total_length) {{
+		// FIXME: validate chunk offset < total length
+		// FIXME: validate that total length is identical for all low-level getters of a stream
+		// FIXME: validate that the extra out values for all low-level calls are identical
+		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
-\t\tif (ret < 0) {{
-\t\t\tgoto cleanup;
-\t\t}}
+		if (ret < 0) {{
+			goto cleanup;
+		}}
 
-\t\tif (stream_chunk_offset != *ret_{data_underscore_name}_length) {{ // stream out-of-sync
-\t\t\tgoto discard;
-\t\t}}
+		if (stream_chunk_offset != *ret_{data_underscore_name}_length) {{ // stream out-of-sync
+			goto discard;
+		}}
 
-\t\tstream_chunk_length = stream_total_length - stream_chunk_offset;
+		stream_chunk_length = stream_total_length - stream_chunk_offset;
 
-\t\tif (stream_chunk_length > {chunk_cardinality}) {{
-\t\t\tstream_chunk_length = {chunk_cardinality};
-\t\t}}
+		if (stream_chunk_length > {chunk_cardinality}) {{
+			stream_chunk_length = {chunk_cardinality};
+		}}
 
-\t\tmemcpy(&ret_{data_underscore_name}[*ret_{data_underscore_name}_length], stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
-\t\t*ret_{data_underscore_name}_length += stream_chunk_length;
-\t}}
+		memcpy(&ret_{data_underscore_name}[*ret_{data_underscore_name}_length], stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
+		*ret_{data_underscore_name}_length += stream_chunk_length;
+	}}
 
-\tgoto cleanup;
+	goto cleanup;
 
 discard:
-\t*ret_{data_underscore_name}_length = 0; // return empty array
+	*ret_{data_underscore_name}_length = 0; // return empty array
 
-\t// discard remaining stream to bring it back in-sync
-\twhile (stream_chunk_offset + {chunk_cardinality} < stream_total_length) {{
-\t\t// FIXME: validate that total length is identical for all low-level getters of a stream
-\t\t// FIXME: validate that stream_chunk_offset grows
-\t\tret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+	// discard remaining stream to bring it back in-sync
+	while (stream_chunk_offset + {chunk_cardinality} < stream_total_length) {{
+		// FIXME: validate that total length is identical for all low-level getters of a stream
+		// FIXME: validate that stream_chunk_offset grows
+		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
-\t\tif (ret < 0) {{
-\t\t\tgoto cleanup;
-\t\t}}
-\t}}
+		if (ret < 0) {{
+			goto cleanup;
+		}}
+	}}
 
-\tret = E_STREAM_OUT_OF_SYNC;
+	ret = E_STREAM_OUT_OF_SYNC;
 
 cleanup:
-\tmutex_unlock(&device_p->stream_mutex);
+	mutex_unlock(&device_p->stream_mutex);
 
-\treturn ret;
+	return ret;
 }}
 """
 
@@ -651,7 +651,7 @@ cleanup:
 
         template = """
 void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data) {{
-\tdevice_register_callback({0}->p, id, callback, user_data);
+	device_register_callback({0}->p, id, callback, user_data);
 }}
 """
         return template.format(self.get_underscore_name(), self.get_camel_case_name())
@@ -660,63 +660,63 @@ void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data
         functions = ''
         template = """
 static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePrivate *device_p{parameters}) {{
-\t{camel_case_name}_CallbackFunction callback_function;
-\tvoid *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
-\tLowLevelCallback *low_level_callback = &device_p->low_level_callbacks[-{device_upper_case_name}_CALLBACK_{upper_case_name}];
-\tuint16_t stream_chunk_length = {stream_total_length} - stream_chunk_offset; // FIXME: uint16_t is not always the correct type
+	{camel_case_name}_CallbackFunction callback_function;
+	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
+	LowLevelCallback *low_level_callback = &device_p->low_level_callbacks[-{device_upper_case_name}_CALLBACK_{upper_case_name}];
+	uint16_t stream_chunk_length = {stream_total_length} - stream_chunk_offset; // FIXME: uint16_t is not always the correct type
 
-\t*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
+	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
 
-\tif (stream_chunk_length > {chunk_cardinality}) {{
-\t\tstream_chunk_length = {chunk_cardinality};
-\t}}
+	if (stream_chunk_length > {chunk_cardinality}) {{
+		stream_chunk_length = {chunk_cardinality};
+	}}
 
-\t// FIXME: validate that extra parameters are identical for all low-level callbacks of a stream
-\t// FIXME: validate that total length is identical for all low-level callbacks of a stream
-\t// FIXME: validate chunk offset < total length
+	// FIXME: validate that extra parameters are identical for all low-level callbacks of a stream
+	// FIXME: validate that total length is identical for all low-level callbacks of a stream
+	// FIXME: validate chunk offset < total length
 
-\tif (low_level_callback->data == NULL) {{ // no stream in-progress
-\t\tif (stream_chunk_offset == 0) {{ // stream starts
-\t\t\tlow_level_callback->data = malloc(sizeof({chunk_c_type}) * {stream_total_length});
-\t\t\tlow_level_callback->data_length = stream_chunk_length;
+	if (low_level_callback->data == NULL) {{ // no stream in-progress
+		if (stream_chunk_offset == 0) {{ // stream starts
+			low_level_callback->data = malloc(sizeof({chunk_c_type}) * {stream_total_length});
+			low_level_callback->data_length = stream_chunk_length;
 
-\t\t\tmemcpy(low_level_callback->data, stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
+			memcpy(low_level_callback->data, stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
 
-\t\t\tif (low_level_callback->data_length >= {stream_total_length}) {{ // stream complete
-\t\t\t\tif (callback_function != NULL) {{
-\t\t\t\t\tcallback_function({high_level_parameters}user_data);
-\t\t\t\t}}
+			if (low_level_callback->data_length >= {stream_total_length}) {{ // stream complete
+				if (callback_function != NULL) {{
+					callback_function({high_level_parameters}user_data);
+				}}
 
-\t\t\t\tfree(low_level_callback->data);
-\t\t\t\tlow_level_callback->data = NULL;
-\t\t\t\tlow_level_callback->data_length = 0;
-\t\t\t}}
-\t\t}} else {{ // ignore tail of current stream, wait for next stream start
-\t\t}}
-\t}} else {{ // stream in-progress
-\t\tif (stream_chunk_offset != low_level_callback->data_length) {{ // stream out-of-sync
-\t\t\tfree(low_level_callback->data);
-\t\t\tlow_level_callback->data = NULL;
-\t\t\tlow_level_callback->data_length = 0;
+				free(low_level_callback->data);
+				low_level_callback->data = NULL;
+				low_level_callback->data_length = 0;
+			}}
+		}} else {{ // ignore tail of current stream, wait for next stream start
+		}}
+	}} else {{ // stream in-progress
+		if (stream_chunk_offset != low_level_callback->data_length) {{ // stream out-of-sync
+			free(low_level_callback->data);
+			low_level_callback->data = NULL;
+			low_level_callback->data_length = 0;
 
-\t\t\tif (callback_function != NULL) {{
-\t\t\t\tcallback_function({high_level_parameters}user_data);
-\t\t\t}}
-\t\t}} else {{ // stream in-sync
-\t\t\tmemcpy(&(({chunk_c_type} *)low_level_callback->data)[low_level_callback->data_length], stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
-\t\t\tlow_level_callback->data_length += stream_chunk_length;
+			if (callback_function != NULL) {{
+				callback_function({high_level_parameters}user_data);
+			}}
+		}} else {{ // stream in-sync
+			memcpy(&(({chunk_c_type} *)low_level_callback->data)[low_level_callback->data_length], stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
+			low_level_callback->data_length += stream_chunk_length;
 
-\t\t\tif (low_level_callback->data_length >= {stream_total_length}) {{ // stream complete
-\t\t\t\tif (callback_function != NULL) {{
-\t\t\t\t\tcallback_function({high_level_parameters}user_data);
-\t\t\t\t}}
+			if (low_level_callback->data_length >= {stream_total_length}) {{ // stream complete
+				if (callback_function != NULL) {{
+					callback_function({high_level_parameters}user_data);
+				}}
 
-\t\t\t\tfree(low_level_callback->data);
-\t\t\t\tlow_level_callback->data = NULL;
-\t\t\t\tlow_level_callback->data_length = 0;
-\t\t\t}}
-\t\t}}
-\t}}
+				free(low_level_callback->data);
+				low_level_callback->data = NULL;
+				low_level_callback->data_length = 0;
+			}}
+		}}
+	}}
 }}
 """
 
@@ -742,30 +742,30 @@ static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePr
         functions = []
         template = """
 static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
-\t{3}_CallbackFunction callback_function;
-\tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
+	{3}_CallbackFunction callback_function;
+	void *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
 
-\t*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {7}];
+	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {7}];
 
-\tif (callback_function == NULL) {{
-\t\treturn;
-\t}}
+	if (callback_function == NULL) {{
+		return;
+	}}
 {6}{11}
-\tcallback_function({5}{4}user_data);
+	callback_function({5}{4}user_data);
 }}
 """
         template_low_level = """
 static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
-\t{3}_CallbackFunction callback_function;
-\tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
+	{3}_CallbackFunction callback_function;
+	void *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
 
-\t*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {7}];
+	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {7}];
 {6}{11}
-\t{0}_callback_wrapper_{12}(device_p, {5});
+	{0}_callback_wrapper_{12}(device_p, {5});
 
-\tif (callback_function != NULL) {{
-\t\tcallback_function({5}{4}user_data);
-\t}}
+	if (callback_function != NULL) {{
+		callback_function({5}{4}user_data);
+	}}
 }}
 """
 

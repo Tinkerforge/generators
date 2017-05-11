@@ -53,8 +53,8 @@ class {0}(Device):"""
 
     def get_shell_init_method(self):
         template = """
-\tdef __init__(self, uid, ipcon):
-\t\tDevice.__init__(self, uid, ipcon)
+	def __init__(self, uid, ipcon):
+		Device.__init__(self, uid, ipcon)
 
 {0}
 """
@@ -91,7 +91,7 @@ class {0}(Device):"""
     def get_shell_call_header(self):
         template = """
 def call_{0}_{1}(ctx, argv):
-\tprog_prefix = 'call {2} <uid>'
+	prog_prefix = 'call {2} <uid>'
 
 """
 
@@ -100,22 +100,22 @@ def call_{0}_{1}(ctx, argv):
                                self.get_shell_device_name())
 
     def get_shell_call_functions(self):
-        setter = """\tdef {0}(ctx, argv):
-\t\tparser = ParserWithExpectResponse(ctx, prog_prefix + ' {1}')
+        setter = """	def {0}(ctx, argv):
+		parser = ParserWithExpectResponse(ctx, prog_prefix + ' {1}')
 {2}
-\t\targs = parser.parse_args(argv)
+		args = parser.parse_args(argv)
 
-\t\tdevice_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [], [])
+		device_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [], [])
 """
-        getter = """\tdef {0}(ctx, argv):
-\t\tparser = ParserWithExecute(ctx, prog_prefix + ' {1}')
+        getter = """	def {0}(ctx, argv):
+		parser = ParserWithExecute(ctx, prog_prefix + ' {1}')
 {2}
-\t\targs = parser.parse_args(argv)
+		args = parser.parse_args(argv)
 
-\t\tdevice_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
+		device_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
 """
-        get_identity = """\tdef get_identity(ctx, argv):
-\t\tcommon_get_identity(ctx, prog_prefix, {0}, argv)
+        get_identity = """	def get_identity(ctx, argv):
+		common_get_identity(ctx, prog_prefix, {0}, argv)
 """
         functions = []
         entries = []
@@ -206,7 +206,7 @@ def call_{0}_{1}(ctx, argv):
     def get_shell_call_footer(self):
         template = """
 
-\tcall_generic(ctx, '{0}', functions, argv)
+	call_generic(ctx, '{0}', functions, argv)
 """
 
         return template.format(self.get_shell_device_name())
@@ -214,7 +214,7 @@ def call_{0}_{1}(ctx, argv):
     def get_shell_dispatch_header(self):
         template = """
 def dispatch_{0}_{1}(ctx, argv):
-\tprog_prefix = 'dispatch {2} <uid>'
+	prog_prefix = 'dispatch {2} <uid>'
 
 """
 
@@ -223,12 +223,12 @@ def dispatch_{0}_{1}(ctx, argv):
                                self.get_shell_device_name())
 
     def get_shell_dispatch_functions(self):
-        template = """\tdef {0}(ctx, argv):
-\t\tparser = ParserWithExecute(ctx, prog_prefix + ' {1}')
+        template = """	def {0}(ctx, argv):
+		parser = ParserWithExecute(ctx, prog_prefix + ' {1}')
 
-\t\targs = parser.parse_args(argv)
+		args = parser.parse_args(argv)
 
-\t\tdevice_callback(ctx, {2}{3}, {4}, args.execute, [{5}], [{6}])
+		device_callback(ctx, {2}{3}, {4}, args.execute, [{5}], [{6}])
 """
 
         functions = []
@@ -283,7 +283,7 @@ def dispatch_{0}_{1}(ctx, argv):
     def get_shell_dispatch_footer(self):
         template = """
 
-\tdispatch_generic(ctx, '{0}', callbacks, argv)
+	dispatch_generic(ctx, '{0}', callbacks, argv)
 """
 
         return template.format(self.get_shell_device_name())

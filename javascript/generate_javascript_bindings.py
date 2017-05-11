@@ -72,17 +72,17 @@ var Device = require('./Device');
 
     def get_javascript_class_opening(self):
         template = """function {0}(uid, ipcon) {{
-\t//{1}
+	//{1}
 
-\t/*
-\tCreates an object with the unique device ID *uid* and adds it to
-\tthe IP Connection *ipcon*.
-\t*/
-\tDevice.call(this, this, uid, ipcon);
-\t{2}.prototype = Object.create(Device);
-\tthis.responseExpected = {{}};
-\tthis.callbackFormats = {{}};
-\tthis.APIVersion = [{3}, {4}, {5}];\n"""
+	/*
+	Creates an object with the unique device ID *uid* and adds it to
+	the IP Connection *ipcon*.
+	*/
+	Device.call(this, this, uid, ipcon);
+	{2}.prototype = Object.create(Device);
+	this.responseExpected = {{}};
+	this.callbackFormats = {{}};
+	this.APIVersion = [{3}, {4}, {5}];\n"""
 
         return template.format(self.get_javascript_class_name(),
                                common.select_lang(self.get_description()),
@@ -132,21 +132,21 @@ var Device = require('./Device');
             pack_format = packet.get_javascript_format_list('in')
             unpack_format = packet.get_javascript_format_list('out')
             doc = packet.get_javascript_formatted_doc()
+            no_param_method_code = """	this.{0} = function(returnCallback, errorCallback) {{
+		/*
+		{1}
+		*/
+		this.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback);
+	}};
+"""
+            param_method_code = """	this.{0} = function({1}, returnCallback, errorCallback) {{
+		/*
+		{2}
+		*/
+		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback);
+	}};
+"""
 
-            no_param_method_code = """\tthis.{0} = function(returnCallback, errorCallback) {{
-\t\t/*
-\t\t{1}
-\t\t*/
-\t\tthis.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback);
-\t}};
-"""
-            param_method_code = """\tthis.{0} = function({1}, returnCallback, errorCallback) {{
-\t\t/*
-\t\t{2}
-\t\t*/
-\t\tthis.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback);
-\t}};
-"""
             if len(param_list) == 0:
                 methods += no_param_method_code.format(name, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
             else:
@@ -227,36 +227,36 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         self.released_files.append('TinkerforgeSource.js')
 
         self.browser_api_file.write("""function Tinkerforge() {
-\tthis.IPConnection = require('./IPConnection');
+	this.IPConnection = require('./IPConnection');
 """)
 
         self.npm_main_file.write("""function Tinkerforge() {
-\tthis.IPConnection = require('./lib/IPConnection');
+	this.IPConnection = require('./lib/IPConnection');
 """)
 
         self.source_main_file.write("""function Tinkerforge() {
-\tthis.IPConnection = require('./Tinkerforge/IPConnection');
+	this.IPConnection = require('./Tinkerforge/IPConnection');
 """)
 
         return ret
 
     def add_browser_api_function(self, device):
         if device.is_released():
-            api = """\tthis.{0}{1} = require('./{0}{1}');
+            api = """	this.{0}{1} = require('./{0}{1}');
 """
             api_format = api.format(device.get_camel_case_category(), device.get_camel_case_name())
             self.browser_api_file.write(api_format)
 
     def add_npm_main_function(self, device):
         if device.is_released():
-            npm_main = """\tthis.{0}{1} = require('./lib/{0}{1}');
+            npm_main = """	this.{0}{1} = require('./lib/{0}{1}');
 """
             npm_main_format = npm_main.format(device.get_camel_case_category(), device.get_camel_case_name())
             self.npm_main_file.write(npm_main_format)
 
     def add_source_main_function(self, device):
         if device.is_released():
-            source_main = """\tthis.{0}{1} = require('./Tinkerforge/{0}{1}');
+            source_main = """	this.{0}{1} = require('./Tinkerforge/{0}{1}');
 """
             source_main_format = source_main.format(device.get_camel_case_category(), device.get_camel_case_name())
             self.source_main_file.write(source_main_format)
