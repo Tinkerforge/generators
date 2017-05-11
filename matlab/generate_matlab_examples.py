@@ -28,7 +28,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from java.java_common import get_java_type
+from java.java_common import JavaDevice, get_java_type
 
 global_line_prefix = ''
 global_quote = None
@@ -44,13 +44,13 @@ end
 
 class MATLABFprintfFormatMixin(object):
     def get_matlab_fprintf_format(self):
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type in ['char', 'string'] or ':bitmask:' in type:
+        if type_ in ['char', 'string'] or ':bitmask:' in type_:
             return '%s'
-        elif type == 'float':
+        elif type_ == 'float':
             return '%f'
-        elif type.split(':')[0] != 'float' and self.get_divisor() == None:
+        elif type_.split(':')[0] != 'float' and self.get_divisor() == None:
             if global_is_octave:
                 return '%d'
             else:
@@ -226,19 +226,19 @@ end{functions}
 
 class MATLABExampleArgument(common.ExampleArgument):
     def get_matlab_source(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'true'
             else:
                 return 'false'
-        elif type in  ['char', 'string']:
+        elif type_ in  ['char', 'string']:
             return global_quote + value + global_quote
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             return common.make_c_like_bitmask(value, shift='bitshift({0}, {1})', combine='bitor({0}, {1})')
-        elif type.endswith(':constant'):
+        elif type_.endswith(':constant'):
             return self.get_value_constant().get_matlab_source()
         else:
             return str(value)
@@ -246,9 +246,9 @@ class MATLABExampleArgument(common.ExampleArgument):
 class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
     def needs_octave_java2int(self):
         if global_is_octave:
-            type = self.get_type().split(':')[0]
+            type_ = self.get_type().split(':')[0]
 
-            if 'int' in type and get_java_type(type) != 'int':
+            if 'int' in type_ and get_java_type(type_, self.get_device().has_java_legacy_types()) != 'int':
                 return True
 
         return False
@@ -266,11 +266,11 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
             java2int_prefix = ''
             java2int_suffix = ''
 
-        type = self.get_type()
+        type_ = self.get_type()
 
         # FIXME: dec2bin doesn't support leading zeros. therefore,
         #        the result is not padded to the requested number of digits
-        if ':bitmask:' in type:
+        if ':bitmask:' in type_:
             to_binary_prefix = 'dec2bin('
             to_binary_suffix = ')'
         else:
@@ -291,9 +291,9 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
 class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
     def needs_octave_java2int(self):
         if global_is_octave:
-            type = self.get_type().split(':')[0]
+            type_ = self.get_type().split(':')[0]
 
-            if 'int' in type and get_java_type(type) != 'int':
+            if 'int' in type_ and get_java_type(type_, self.get_device().has_java_legacy_types()) != 'int':
                 return True
 
         return False
@@ -329,11 +329,11 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
             java2int_prefix = ''
             java2int_suffix = ''
 
-        type = self.get_type()
+        type_ = self.get_type()
 
         # FIXME: dec2bin doesn't support leading zeros. therefore,
         #        the result is not padded to the requested number of digits
-        if ':bitmask:' in type:
+        if ':bitmask:' in type_:
             to_binary_prefix = 'dec2bin('
             to_binary_suffix = ')'
         else:
@@ -576,11 +576,11 @@ class MATLABExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_matlab_source(self):
         global global_line_prefix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""    % Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
     {device_initial_name}.setDebouncePeriod({period_msec});
 """
@@ -589,7 +589,7 @@ class MATLABExampleSpecialFunction(common.ExampleSpecialFunction):
             return template.format(device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}    pause({duration});{comment2}\n'
             duration = self.get_sleep_duration()
 
@@ -602,15 +602,15 @@ class MATLABExampleSpecialFunction(common.ExampleSpecialFunction):
                                    duration=duration,
                                    comment1=self.get_formatted_sleep_comment1(global_line_prefix + '    % {0}\n', '\r', '\n' + global_line_prefix + '    % '),
                                    comment2=self.get_formatted_sleep_comment2(' % {0}', ''))
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}    for i = 0:{limit}\n'
             global_line_prefix = '    '
 
             return template.format(limit=self.get_loop_header_limit() - 1,
                                    comment=self.get_formatted_loop_header_comment('    % {0}\n', '', '\n    # '))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
 
             return '\r    end\n'
@@ -618,6 +618,9 @@ class MATLABExampleSpecialFunction(common.ExampleSpecialFunction):
 class MATLABExamplesGenerator(common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'matlab'
+
+    def get_device_class(self):
+        return JavaDevice
 
     def get_constant_class(self):
         return MATLABConstant
@@ -657,6 +660,7 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)

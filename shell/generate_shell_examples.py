@@ -97,19 +97,19 @@ class ShellExampleArgument(common.ExampleArgument):
         if constant != None:
             return '{0}-{1}'.format(constant.get_constant_group().get_dash_name(), constant.get_dash_name())
 
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'true'
             else:
                 return 'false'
-        elif type == 'char':
+        elif type_ == 'char':
             return '{0}'.format(value)
-        elif type == 'string':
+        elif type_ == 'string':
             return '"{0}"'.format(value)
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             return str(value)
         else:
             return str(value)
@@ -308,11 +308,11 @@ class ShellExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_shell_source(self):
         global global_line_prefix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""# Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
 tinkerforge call {device_dash_name}-{device_dash_category} $uid set-debounce-period {period_msec}
 """
@@ -322,7 +322,7 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-debounce-per
                                    device_dash_category=self.get_device().get_dash_category(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}sleep {duration}{comment2}\n'
             duration = self.get_sleep_duration()
 
@@ -335,15 +335,15 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-debounce-per
                                    duration=duration,
                                    comment1=self.get_formatted_sleep_comment1(global_line_prefix + '# {0}\n', '\r', '\n' + global_line_prefix + '# '),
                                    comment2=self.get_formatted_sleep_comment2(' # {0}', ''))
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}for i in {limit}; do\n'
             global_line_prefix = '\t'
 
             return template.format(limit=' '.join(map(str, range(self.get_loop_header_limit()))),
                                    comment=self.get_formatted_loop_header_comment('# {0}\n', '', '\n# '))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
 
             return '\rdone\n'
@@ -387,6 +387,7 @@ class ShellExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)

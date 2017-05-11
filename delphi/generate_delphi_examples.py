@@ -172,32 +172,32 @@ end.
 
 class DelphiExampleArgument(common.ExampleArgument):
     def get_delphi_source(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'true'
             else:
                 return 'false'
-        elif type in ['char', 'string']:
+        elif type_ in ['char', 'string']:
             return "'{0}'".format(value)
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             return common.make_c_like_bitmask(value, shift='{0} shl {1}', combine='({0}) or ({1})')
-        elif type.endswith(':constant'):
+        elif type_.endswith(':constant'):
             return self.get_value_constant().get_delphi_source()
         else:
             return str(value)
 
 class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
     def get_delphi_source(self):
-        template = 'const {headless_camel_case_name}: {type}'
+        template = 'const {headless_camel_case_name}: {type_}'
         headless_camel_case_name = self.get_headless_camel_case_name()
 
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return template.format(type= delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
+        return template.format(type_=delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
                                headless_camel_case_name=headless_camel_case_name)
 
     def get_delphi_write_ln(self):
@@ -528,11 +528,11 @@ class DelphiExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_delphi_source(self):
         global global_line_prefix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""  {{ Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms) }}
   {device_initial_name}.SetDebouncePeriod({period_msec});
 """
@@ -541,22 +541,22 @@ class DelphiExampleSpecialFunction(common.ExampleSpecialFunction):
             return template.format(device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}  Sleep({duration});{comment2}\n'
 
             return template.format(global_line_prefix=global_line_prefix,
                                    duration=self.get_sleep_duration(),
                                    comment1=self.get_formatted_sleep_comment1(global_line_prefix + '  {{ {0} }}\n', '\r', '\n' + global_line_prefix + '    '),
                                    comment2=self.get_formatted_sleep_comment2(' {{ {0} }}', ''))
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}  for i := 0 to {limit} do begin\n'
             global_line_prefix = '  '
 
             return template.format(limit=self.get_loop_header_limit() - 1,
                                    comment=self.get_formatted_loop_header_comment('  {{ {0} }}\n', '', '\n    '))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
 
             return '\r  end;\n'
@@ -603,6 +603,7 @@ class DelphiExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)

@@ -46,8 +46,8 @@ vbnet_types = {
     'string': 'String'
 }
 
-def get_vbnet_type(type):
-     return vbnet_types[type]
+def get_vbnet_type(type_):
+     return vbnet_types[type_]
 
 class VBNETConstant(common.Constant):
     def get_vbnet_source(self):
@@ -133,21 +133,21 @@ End Module
 
 class VBNETExampleArgument(common.ExampleArgument):
     def get_vbnet_source(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'True'
             else:
                 return 'False'
-        elif type == 'char':
+        elif type_ == 'char':
             return '"{0}"C'.format(value)
-        elif type == 'string':
+        elif type_ == 'string':
             return '"{0}"'.format(value)
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             return common.make_c_like_bitmask(value, combine='({0}) or ({1})')
-        elif type.endswith(':constant'):
+        elif type_.endswith(':constant'):
             return self.get_value_constant().get_vbnet_source()
         else:
             return str(value)
@@ -165,7 +165,7 @@ class VBNETExampleParameter(common.ExampleParameter):
         if self.get_label_name() == None:
             return None
 
-        type = self.get_type()
+        type_ = self.get_type()
         divisor = self.get_formatted_divisor('/{0}')
 
         # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
@@ -173,7 +173,7 @@ class VBNETExampleParameter(common.ExampleParameter):
         if ':bitmask:' in self.get_type():
             to_string_prefix = 'Convert.ToString('
             to_string_suffix = ', 2)'
-        elif type in ['char', 'string']:
+        elif type_ in ['char', 'string']:
             to_string_prefix = ''
             to_string_suffix = ''
         elif len(divisor) > 0:
@@ -192,13 +192,13 @@ class VBNETExampleParameter(common.ExampleParameter):
 
 class VBNETExampleResult(common.ExampleResult):
     def get_vbnet_variable_declaration(self):
-        template = '        Dim {headless_camel_case_name} As {type}'
+        template = '        Dim {headless_camel_case_name} As {type_}'
         headless_camel_case_name = self.get_headless_camel_case_name()
 
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return template.format(type=get_vbnet_type(self.get_type().split(':')[0]),
+        return template.format(type_=get_vbnet_type(self.get_type().split(':')[0]),
                                headless_camel_case_name=headless_camel_case_name)
 
     def get_vbnet_variable_reference(self):
@@ -220,15 +220,15 @@ class VBNETExampleResult(common.ExampleResult):
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        type = self.get_type()
+        type_ = self.get_type()
         divisor = self.get_formatted_divisor('/{0}')
 
         # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
         #        the result is not padded to the requested number of digits
-        if ':bitmask:' in type:
+        if ':bitmask:' in type_:
             to_string_prefix = 'Convert.ToString('
             to_string_suffix = ', 2)'
-        elif type in ['char', 'string']:
+        elif type_ in ['char', 'string']:
             to_string_prefix = ''
             to_string_suffix = ''
         elif len(divisor) > 0:
@@ -486,11 +486,11 @@ class VBNETExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_vbnet_source(self):
         global global_line_prefix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""        ' Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
         {device_initial_name}.SetDebouncePeriod({period_msec})
 """
@@ -499,20 +499,20 @@ class VBNETExampleSpecialFunction(common.ExampleSpecialFunction):
             return template.format(device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}        Thread.Sleep({duration}){comment2}\n'
 
             return template.format(global_line_prefix=global_line_prefix,
                                    duration=self.get_sleep_duration(),
                                    comment1=self.get_formatted_sleep_comment1(global_line_prefix + "        ' {0}\n", '\r', "\n" + global_line_prefix + "        ' "),
                                    comment2=self.get_formatted_sleep_comment2(" ' {0}", ''))
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}        Dim i As Integer\n        For i = 0 To {limit}\n'
             global_line_prefix = '    '
 
             return template.format(limit=self.get_loop_header_limit() - 1,
                                    comment=self.get_formatted_loop_header_comment("        ' {0}\n", '', "\n        ' "))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
 
             return '\r        Next i\n'
@@ -559,6 +559,7 @@ class VBNETExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)

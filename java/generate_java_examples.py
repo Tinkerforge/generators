@@ -47,24 +47,24 @@ class JavaExample(common.Example):
 import com.tinkerforge.{device_camel_case_category}{device_camel_case_name};{imports}{incomplete}
 
 public class Example{example_camel_case_name} {{
-\tprivate static final String HOST = "localhost";
-\tprivate static final int PORT = 4223;
+	private static final String HOST = "localhost";
+	private static final int PORT = 4223;
 
-\t// Change {dummy_uid} to the UID of your {device_long_display_name}
-\tprivate static final String UID = "{dummy_uid}";
+	// Change {dummy_uid} to the UID of your {device_long_display_name}
+	private static final String UID = "{dummy_uid}";
 
-\t// Note: To make the example code cleaner we do not handle exceptions. Exceptions
-\t//       you might normally want to catch are described in the documentation
-\tpublic static void main(String args[]) throws Exception {{
-\t\tIPConnection ipcon = new IPConnection(); // Create IP connection
-\t\t{device_camel_case_category}{device_camel_case_name} {device_initial_name} ={constructor_break}new {device_camel_case_category}{device_camel_case_name}(UID, ipcon); // Create device object
+	// Note: To make the example code cleaner we do not handle exceptions. Exceptions
+	//       you might normally want to catch are described in the documentation
+	public static void main(String args[]) throws Exception {{
+		IPConnection ipcon = new IPConnection(); // Create IP connection
+		{device_camel_case_category}{device_camel_case_name} {device_initial_name} ={constructor_break}new {device_camel_case_category}{device_camel_case_name}(UID, ipcon); // Create device object
 
-\t\tipcon.connect(HOST, PORT); // Connect to brickd
-\t\t// Don't use device before ipcon is connected
+		ipcon.connect(HOST, PORT); // Connect to brickd
+		// Don't use device before ipcon is connected
 {sources}
-\t\tSystem.out.println("Press key to exit"); System.in.read();{cleanups}
-\t\tipcon.disconnect();
-\t}}
+		System.out.println("Press key to exit"); System.in.read();{cleanups}
+		ipcon.disconnect();
+	}}
 }}
 """
 
@@ -236,8 +236,8 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction):
             return []
 
     def get_java_source(self):
-        template = r"""\t\t// Get current {function_comment_name}{comments}
-\t\t{variable} = {device_initial_name}.{function_headless_camel_case_name}({arguments}); // Can throw com.tinkerforge.TimeoutException
+        template = r"""		// Get current {function_comment_name}{comments}
+		{variable} = {device_initial_name}.{function_headless_camel_case_name}({arguments}); // Can throw com.tinkerforge.TimeoutException
 {printlns}
 """
         comments = []
@@ -301,15 +301,15 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
         return []
 
     def get_java_source(self):
-        template1A = r"""\t\t// Add {function_comment_name} listener{comments}
+        template1A = r"""		// Add {function_comment_name} listener{comments}
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""\t\t{device_initial_name}.add{function_camel_case_name}Listener(new {device_camel_case_category}{device_camel_case_name}.{function_camel_case_name}Listener() {{
-\t\t\tpublic void {function_headless_camel_case_name}({parameters}) {{
+        template2 = r"""		{device_initial_name}.add{function_camel_case_name}Listener(new {device_camel_case_category}{device_camel_case_name}.{function_camel_case_name}Listener() {{
+			public void {function_headless_camel_case_name}({parameters}) {{
 {printlns}{extra_message}
-\t\t\t}}
-\t\t}});
+			}}
+		}});
 """
         override_comment = self.get_formatted_override_comment('\t\t// {0}', None, '\n\t\t// ')
 
@@ -360,13 +360,13 @@ class JavaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         return []
 
     def get_java_source(self):
-        templateA = r"""\t\t// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-\t\t{device_initial_name}.set{function_camel_case_name}Period({arguments}{period_msec});
+        templateA = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+		{device_initial_name}.set{function_camel_case_name}Period({arguments}{period_msec});
 """
-        templateB = r"""\t\t// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-\t\t// Note: The {function_comment_name} callback is only called every {period_sec_long}
-\t\t//       if the {function_comment_name} has changed since the last call!
-\t\t{device_initial_name}.set{function_camel_case_name}CallbackPeriod({arguments}{period_msec});
+        templateB = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+		// Note: The {function_comment_name} callback is only called every {period_sec_long}
+		//       if the {function_comment_name} has changed since the last call!
+		{device_initial_name}.set{function_camel_case_name}CallbackPeriod({arguments}{period_msec});
 """
 
         if self.get_device().get_underscore_name().startswith('imu'):
@@ -417,8 +417,8 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         return []
 
     def get_java_source(self):
-        template = r"""\t\t// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
-\t\t{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
+        template = r"""		// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+		{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
 """
         arguments = []
 
@@ -453,35 +453,35 @@ class JavaExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_java_source(self):
         global global_line_prefix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
-            template = r"""\t\t// Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-\t\t{device_initial_name}.setDebouncePeriod({period_msec});
+        elif type_ == 'debounce_period':
+            template = r"""		// Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
+		{device_initial_name}.setDebouncePeriod({period_msec});
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
             return template.format(device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}\t\tThread.sleep({duration});{comment2}\n'
 
             return template.format(global_line_prefix=global_line_prefix,
                                    duration=self.get_sleep_duration(),
                                    comment1=self.get_formatted_sleep_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
                                    comment2=self.get_formatted_sleep_comment2(' // {0}', ''))
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}\t\tfor(int i = 0; i < {limit}; i++) {{\n'
             global_line_prefix = '\t'
 
             return template.format(limit=self.get_loop_header_limit(),
                                    comment=self.get_formatted_loop_header_comment('\t\t// {0}\n', '', '\n\t\t// '))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
 
             return '\r\t\t}\n'
@@ -489,6 +489,9 @@ class JavaExampleSpecialFunction(common.ExampleSpecialFunction):
 class JavaExamplesGenerator(common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'java'
+
+    def get_device_class(self):
+        return java_common.JavaDevice
 
     def get_constant_class(self):
         return JavaConstant
@@ -528,6 +531,7 @@ class JavaExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)

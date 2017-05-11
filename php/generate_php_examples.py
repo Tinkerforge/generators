@@ -116,19 +116,19 @@ $ipcon->dispatchCallbacks(-1); // Dispatch callbacks forever
 
 class PHPExampleArgument(common.ExampleArgument):
     def get_php_source(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'TRUE'
             else:
                 return 'FALSE'
-        elif type in ['char', 'string']:
+        elif type_ in ['char', 'string']:
             return "'{0}'".format(value)
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             return common.make_c_like_bitmask(value)
-        elif type.endswith(':constant'):
+        elif type_.endswith(':constant'):
             return self.get_value_constant().get_php_source()
         else:
             return str(value)
@@ -146,12 +146,12 @@ class PHPExampleParameter(common.ExampleParameter):
         if self.get_label_name() == None:
             return None
 
-        type = self.get_type()
+        type_ = self.get_type()
         divisor = self.get_formatted_divisor('/{0}')
         sprintf_prefix = ''
         sprintf_suffix = ''
 
-        if ':bitmask:' in type:
+        if ':bitmask:' in type_:
             template = templateA
             sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type.split(':')[2]))
             sprintf_suffix = ')'
@@ -199,11 +199,11 @@ class PHPExampleResult(common.ExampleResult):
             else:
                 template = templateB
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if ':bitmask:' in type:
+        if ':bitmask:' in type_:
             template = templateA
-            sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type.split(':')[2]))
+            sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type_.split(':')[2]))
             sprintf_suffix = ')'
         else:
             sprintf_prefix = ''
@@ -426,11 +426,11 @@ class PHPExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_php_source(self):
         global global_line_prefix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""// Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
 ${device_initial_name}->setDebouncePeriod({period_msec});
 """
@@ -439,7 +439,7 @@ ${device_initial_name}->setDebouncePeriod({period_msec});
             return template.format(device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             templateA = '{comment1}{global_line_prefix}sleep({duration});{comment2}\n'
             templateB = '{comment1}{global_line_prefix}usleep({duration}*1000);{comment2}\n'
             duration = self.get_sleep_duration()
@@ -454,15 +454,15 @@ ${device_initial_name}->setDebouncePeriod({period_msec});
                                    duration=duration,
                                    comment1=self.get_formatted_sleep_comment1(global_line_prefix + '// {0}\n', '\r', '\n' + global_line_prefix + '// '),
                                    comment2=self.get_formatted_sleep_comment2(' // {0}', ''))
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}for($i = 0; $i < {limit}; $i++) {{\n'
             global_line_prefix = '    '
 
             return template.format(limit=self.get_loop_header_limit(),
                                    comment=self.get_formatted_loop_header_comment('// {0}\n', '', '\n// '))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
 
             return '\r}\n'
@@ -509,6 +509,7 @@ class PHPExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)

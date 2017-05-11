@@ -275,19 +275,19 @@ process.stdin.on('data',
 
 class JavaScriptExampleArgument(common.ExampleArgument):
     def get_javascript_source(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'true'
             else:
                 return 'false'
-        elif type in ['char', 'string']:
+        elif type_ in ['char', 'string']:
             return "'{0}'".format(value)
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             return common.make_c_like_bitmask(value)
-        elif type.endswith(':constant'):
+        elif type_.endswith(':constant'):
             return self.get_value_constant().get_javascript_source()
         else:
             return str(value)
@@ -573,11 +573,11 @@ class JavaScriptExampleSpecialFunction(common.ExampleSpecialFunction):
         global global_last_sleep_function
         global global_inside_for_loop
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""{global_line_prefix}        // Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
 {global_line_prefix}        {device_initial_name}.setDebouncePeriod({period_msec});
 """
@@ -587,7 +587,7 @@ class JavaScriptExampleSpecialFunction(common.ExampleSpecialFunction):
                                    device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             result = end_previous_sleep_function('')
             template = '{comment1}{global_line_prefix}        setTimeout(function () {{\n\xFF'
             result += template.format(global_line_prefix=global_line_prefix,
@@ -597,16 +597,16 @@ class JavaScriptExampleSpecialFunction(common.ExampleSpecialFunction):
             global_last_sleep_function = self
 
             return result
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}        for(var i = 0; i < {limit}; ++i) {{\n\xFF'
             global_line_prefix = '    '
             global_inside_for_loop = True
 
             return template.format(limit=self.get_loop_header_limit(),
                                    comment=self.get_formatted_loop_header_comment('        // {0}\n', '', '\n        // '))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             result = common.wrap_non_empty('', end_previous_sleep_function(''), '\n')
             global_line_prefix = ''
             global_inside_for_loop = False
@@ -655,6 +655,7 @@ class JavaScriptExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)

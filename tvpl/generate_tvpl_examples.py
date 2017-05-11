@@ -54,8 +54,8 @@ def add_tvpl_number_value(parent, name, number):
 def add_tvpl_print_block(parent):
     block = ET.SubElement(parent, 'block', {'type': 'text_print'})
     value = ET.SubElement(block, 'value', {'name': 'TEXT'})
-    next = ET.SubElement(block, 'next')
-    return value, next
+    next_ = ET.SubElement(block, 'next')
+    return value, next_
 
 def add_tvpl_join_block(parent, count):
     block = ET.SubElement(parent, 'block', {'type': 'text_join'})
@@ -72,8 +72,8 @@ def add_tvpl_set_variable_block(parent, variable):
     field = ET.SubElement(block, 'field', {'name': 'VAR'})
     field.text = variable
     value = ET.SubElement(block, 'value', {'name': 'VALUE'})
-    next = ET.SubElement(block, 'next')
-    return value, next
+    next_ = ET.SubElement(block, 'next')
+    return value, next_
 
 def add_tvpl_get_variable_block(parent, variable):
     block = ET.SubElement(parent, 'block', {'type': 'variables_get'})
@@ -209,20 +209,20 @@ class TVPLExampleArgument(common.ExampleArgument):
             field.text = self.get_tvpl_value()
 
     def get_tvpl_type(self):
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'bool':
+        if type_ == 'bool':
             return 'logic_boolean', 'BOOL'
-        elif type in  ['char', 'string']:
+        elif type_ in  ['char', 'string']:
             return 'text', 'TEXT'
         else:
             return 'math_number', 'NUM'
 
     def get_tvpl_value(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'TRUE'
             else:
@@ -240,12 +240,12 @@ class TVPLExampleParameter(common.ExampleParameter):
         if self.get_label_name() == None:
             return None
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if ':bitmask:' in type:
+        if ':bitmask:' in type_:
             format_prefix = 'format('
-            format_suffix = ', "0{0}b")'.format(int(type.split(':')[2]))
-        elif type in ['char', 'string']:
+            format_suffix = ', "0{0}b")'.format(int(type_.split(':')[2]))
+        elif type_ in ['char', 'string']:
             format_prefix = ''
             format_suffix = ''
         else:
@@ -304,12 +304,12 @@ class TVPLExampleResult(common.ExampleResult):
         if underscore_name == self.get_device().get_initial_name():
             underscore_name += '_'
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if ':bitmask:' in type:
+        if ':bitmask:' in type_:
             format_prefix = 'format('
-            format_suffix = ', "0{0}b")'.format(int(type.split(':')[2]))
-        elif type in ['char', 'string']:
+            format_suffix = ', "0{0}b")'.format(int(type_.split(':')[2]))
+        elif type_ in ['char', 'string']:
             format_prefix = ''
             format_suffix = ''
         else:
@@ -580,11 +580,11 @@ class TVPLExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_tvpl_source(self):
         global global_line_prefix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""    # Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
     {device_initial_name}.set_debounce_period({period_msec})
 """
@@ -593,7 +593,7 @@ class TVPLExampleSpecialFunction(common.ExampleSpecialFunction):
             return template.format(device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}    time.sleep({duration}){comment2}\n'
             duration = self.get_sleep_duration()
 
@@ -606,15 +606,15 @@ class TVPLExampleSpecialFunction(common.ExampleSpecialFunction):
                                    duration=duration,
                                    comment1=self.get_formatted_sleep_comment1(global_line_prefix + '    # {0}\n', '\r', '\n' + global_line_prefix + '    # '),
                                    comment2=self.get_formatted_sleep_comment2(' # {0}', ''))
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}    for i in range({limit}):\n'
             global_line_prefix = '    '
 
             return template.format(limit=self.get_loop_header_limit(),
                                    comment=self.get_formatted_loop_header_comment('    # {0}\n', '', '\n    # '))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
 
             return '\r'
@@ -661,6 +661,7 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)
@@ -706,7 +707,7 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
                 print('  - ' + filename)
 
             with open(filepath, 'wb') as f:
-                f.write(example.get_tvpl_source())
+                f.write(example.get_tvpl_source().encode('utf-8'))
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', TVPLExamplesGenerator)

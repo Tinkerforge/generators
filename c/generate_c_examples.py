@@ -48,14 +48,14 @@ class CPrintfFormatMixin(object):
             return []
 
     def get_c_printf_format(self):
-        type = self.get_type().split(':')[0]
+        type_ = self.get_type().split(':')[0]
 
-        if type == 'char':
+        if type_ == 'char':
             return '%c'
-        elif type == 'string':
+        elif type_ == 'string':
             return '%s'
-        elif type != 'float' and self.get_divisor() == None:
-            if type == 'int64':
+        elif type_ != 'float' and self.get_divisor() == None:
+            if type_ == 'int64':
                 return '%"PRId64"'
             else:
                 return '%d'
@@ -173,30 +173,30 @@ int main(void) {{
 
 class CExampleArgument(common.ExampleArgument):
     def get_c_source(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'true'
             else:
                 return 'false'
-        elif type == 'char':
+        elif type_ == 'char':
             return "'{0}'".format(value)
-        elif type == 'string':
+        elif type_ == 'string':
             return '"{0}"'.format(value)
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             return common.make_c_like_bitmask(value)
-        elif type.endswith(':constant'):
+        elif type_.endswith(':constant'):
             return self.get_value_constant().get_c_source()
         else:
             return str(value)
 
 class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin):
     def get_c_source(self):
-        template = '{type} {underscore_name}'
+        template = '{type_} {underscore_name}'
 
-        return template.format(type=self.get_c_type(),
+        return template.format(type_=self.get_c_type(),
                                underscore_name=self.get_underscore_name())
 
     def get_c_unused(self):
@@ -553,11 +553,11 @@ class CExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_c_source(self):
         global global_line_prefix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""	// Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
 	{device_underscore_name}_set_debounce_period(&{device_initial_name}, {period_msec});
 """
@@ -567,22 +567,22 @@ class CExampleSpecialFunction(common.ExampleSpecialFunction):
                                    device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}\tmillisleep({duration});{comment2}\n'
 
             return template.format(global_line_prefix=global_line_prefix,
                                    duration=self.get_sleep_duration(),
                                    comment1=self.get_formatted_sleep_comment1(global_line_prefix + '\t// {0}\n', '\r', '\n' + global_line_prefix + '\t// '),
                                    comment2=self.get_formatted_sleep_comment2(' // {0}', ''))
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}\tint i;\n\tfor(i = 0; i < {limit}; ++i) {{\n'
             global_line_prefix = '\t'
 
             return template.format(limit=self.get_loop_header_limit(),
                                    comment=self.get_formatted_loop_header_comment('\t// {0}\n', '', '\n\t// '))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
 
             return '\r\t}\n'
@@ -629,6 +629,7 @@ class CExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)

@@ -105,19 +105,19 @@ ReleaseNETObject[ipcon]
 
 class MathematicaExampleArgument(common.ExampleArgument):
     def get_mathematica_source(self):
-        type = self.get_type()
+        type_ = self.get_type()
         value = self.get_value()
 
-        if type == 'bool':
+        if type_ == 'bool':
             if value:
                 return 'True'
             else:
                 return 'False'
-        elif type == 'char':
+        elif type_ == 'char':
             return 'ToCharacterCode["{0}"][[1]]'.format(value)
-        elif type == 'string':
+        elif type_ == 'string':
             return '"{0}"'.format(value)
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             bits = []
 
             for i in range(64):
@@ -126,10 +126,10 @@ class MathematicaExampleArgument(common.ExampleArgument):
                 else:
                     bits = ['0'] + bits
 
-            length = int(type.split(':')[2])
+            length = int(type_.split(':')[2])
 
             return 'FromDigits[{{{0}}},2]'.format(','.join(bits[-length:]))
-        elif type.endswith(':constant'):
+        elif type_.endswith(':constant'):
             return self.get_value_constant().get_mathematica_source()
         else:
             return str(value)
@@ -150,7 +150,7 @@ class MathematicaExampleParameter(common.ExampleParameter):
         if self.get_label_name() == None:
             return None
 
-        type = self.get_type()
+        type_ = self.get_type()
         quantity_name = self.get_unit_formatted_final_name('{0}' + self.get_formatted_divisor('/{0}', cast=int))
         divisor = self.get_formatted_divisor('{0}')
         bitmask_length = 0
@@ -159,9 +159,9 @@ class MathematicaExampleParameter(common.ExampleParameter):
             template = templateA
         elif len(divisor) > 0:
             template = templateB
-        elif type == 'char':
+        elif type_ == 'char':
             template = templateC
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             template = templateD
             bitmask_length = int(type.split(':')[2])
         else:
@@ -202,7 +202,7 @@ class MathematicaExampleResult(common.ExampleResult):
 
             value = headless_camel_case_name
 
-        type = self.get_type()
+        type_ = self.get_type()
         quantity_name = self.get_unit_formatted_final_name('{0}' + self.get_formatted_divisor('/{0}', cast=int))
         divisor = self.get_formatted_divisor('{0}')
         bitmask_length = 0
@@ -211,11 +211,11 @@ class MathematicaExampleResult(common.ExampleResult):
             template = templateA
         elif len(divisor) > 0:
             template = templateB
-        elif type == 'char':
+        elif type_ == 'char':
             template = templateC
-        elif ':bitmask:' in type:
+        elif ':bitmask:' in type_:
             template = templateD
-            bitmask_length = int(type.split(':')[2])
+            bitmask_length = int(type_.split(':')[2])
         else:
             template = templateE
 
@@ -444,11 +444,11 @@ class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):
         global global_line_prefix
         global global_line_suffix
 
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'empty':
+        if type_ == 'empty':
             return ''
-        elif type == 'debounce_period':
+        elif type_ == 'debounce_period':
             template = r"""(*Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)*)
 {device_initial_name}@SetDebouncePeriod[{period_msec}]
 """
@@ -457,7 +457,7 @@ class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):
             return template.format(device_initial_name=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
-        elif type == 'sleep':
+        elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}Pause[{duration}]{global_line_suffix}{comment2}\n'
             duration = self.get_sleep_duration()
 
@@ -471,16 +471,16 @@ class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):
                                    duration=duration,
                                    comment1=re.sub('\\(\\*[ ]*\\*\\)\n', '', self.get_formatted_sleep_comment1('(*{0}*)\n', '\r', '*)\n' + global_line_prefix + '(*')),
                                    comment2=self.get_formatted_sleep_comment2('(*{0}*)', ''))
-        elif type == 'wait':
+        elif type_ == 'wait':
             return None
-        elif type == 'loop_header':
+        elif type_ == 'loop_header':
             template = '{comment}For[i=0,i<{limit},i++,\n'
             global_line_prefix = ' '
             global_line_suffix = ';'
 
             return template.format(limit=self.get_loop_header_limit(),
                                    comment=re.sub('\\(\\*[ ]*\\*\\)\n', '', self.get_formatted_loop_header_comment('(*{0}*)\n', '', '*)\n' + global_line_prefix + '(*')))
-        elif type == 'loop_footer':
+        elif type_ == 'loop_footer':
             global_line_prefix = ''
             global_line_suffix = ''
 
@@ -528,6 +528,7 @@ class MathematicaExamplesGenerator(common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            print('  \033[01;31m- skipped\033[0m')
             return
 
         examples_directory = self.get_examples_directory(device)
