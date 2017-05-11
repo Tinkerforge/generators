@@ -223,9 +223,12 @@
 - Add sensor and fusion mode configuration functions to IMU Brick 2.0 API
 - Fix enumerate callback unregistration
 
-2017-04-21: 2.1.12 (<unknown>)
+2017-04-21: 2.1.12 (044bd9b)
 - Add support for Silent Stepper Brick
 - Add get/set_configuration functions to Laser Range Finder Bricklet API to
   support Bricklets with LIDAR-Lite sensor hardware version 3
 - Add get_send_timeout_count function to all Brick APIs
 - Avoid that the disconnect function can block on Windows for several seconds
+
+2017-05-11: 2.1.13 (<unknown>)
+- Add support for GPS Bricklet 2.0

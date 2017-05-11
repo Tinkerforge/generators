@@ -185,8 +185,11 @@
 - Use correct CompilerVersion check for generics
 - Avoid compiler bug when assigning constants to a uint64 variable
 
-2017-04-21: 2.1.14 (<unknown>)
+2017-04-21: 2.1.14 (044bd9b)
 - Add support for Silent Stepper Brick
 - Add Set/GetConfiguration functions to Laser Range Finder Bricklet API to
   support Bricklets with LIDAR-Lite sensor hardware version 3
 - Add GetSendTimeoutCount function to all Brick APIs
+
+2017-05-11: 2.1.15 (<unknown>)
+- Add support for GPS Bricklet 2.0

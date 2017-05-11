@@ -108,7 +108,7 @@
 - Add Get/SetStatusLEDConfig methods to Motion Detector Bricklet API
 - Add sensor and fusion mode configuration functions to IMU Brick 2.0 API
 
-2017-04-21: 2.1.12 (<unknown>)
+2017-04-21: 2.1.12 (044bd9b)
 - Add support for Silent Stepper Brick
 - Add Get/SetConfiguration methods to Laser Range Finder Bricklet API to support
   Bricklets with LIDAR-Lite sensor hardware version 3
@@ -117,3 +117,6 @@
   methods
 - Use an AppService instead of a socket when connecting to localhost on
   Universal Windows Platform (UWP)
+
+2017-05-11: 2.1.13 (<unknown>)
+- Add support for GPS Bricklet 2.0
