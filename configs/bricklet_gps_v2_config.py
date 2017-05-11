@@ -19,8 +19,8 @@ com = {
         'de': 'Bestimmt Position, Geschwindigkeit und Höhe mittels GPS'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }
