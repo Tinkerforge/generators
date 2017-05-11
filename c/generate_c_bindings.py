@@ -743,7 +743,7 @@ static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePr
         template = """
 static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 	{3}_CallbackFunction callback_function;
-	void *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
+	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {7}];{9}{10}{8}
 
 	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {7}];
 
@@ -757,7 +757,7 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
         template_low_level = """
 static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 	{3}_CallbackFunction callback_function;
-	void *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
+	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {7}];{9}{10}{8}
 
 	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {7}];
 {6}{11}
