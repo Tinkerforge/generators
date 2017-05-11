@@ -34,16 +34,14 @@ global_line_prefix = ''
 
 class DelphiPrintfFormatMixin(object):
     def get_delphi_printf_format(self):
-        type = self.get_type()
+        type_ = self.get_type()
 
-        if type == 'char':
-            return '%c'
-        elif type == 'string':
+        if type_ in ['char', 'string']:
             return '%s'
-        elif type.split(':')[0] != 'float' and self.get_divisor() == None:
+        elif type_.split(':')[0] != 'float' and self.get_divisor() == None:
             return '%d'
         else:
-            return '%f'
+            return '%f' # FIXME: use %.<decimals>f instead, because %f defaults to %.2f
 
 class DelphiConstant(common.Constant):
     def get_delphi_source(self):
