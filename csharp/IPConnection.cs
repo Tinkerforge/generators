@@ -50,22 +50,68 @@ namespace Tinkerforge
 		internal const int DISCONNECT_PROBE_INTERVAL = 5000;
 
 		// enumeration_type parameter to the enumerate callback
+		/// <summary>
+		///  Device is available (enumeration triggered by user: Enumerate()).
+		///  This enumeration type can occur multiple times for the same device.
+		/// </summary>
 		public const short ENUMERATION_TYPE_AVAILABLE = 0;
+
+		/// <summary>
+		///  Device is newly connected (automatically send by Brick after
+		///  establishing a communication connection). This indicates that the
+		///  device has potentially lost its previous configuration and needs
+		///  to be reconfigured.
+		/// </summary>
 		public const short ENUMERATION_TYPE_CONNECTED = 1;
+
+		/// <summary>
+		///  Device is disconnected (only possible for USB connection). In this
+		///  case only uid and enumerationType are valid.
+		/// </summary>
 		public const short ENUMERATION_TYPE_DISCONNECTED = 2;
 
 		// connect_reason parameter to the connected callback
+		/// <summary>
+		///  Connection established after request from user.
+		/// </summary>
 		public const short CONNECT_REASON_REQUEST = 0;
+
+		/// <summary>
+		///  Connection after auto-reconnect.
+		/// </summary>
 		public const short CONNECT_REASON_AUTO_RECONNECT = 1;
 
 		// disconnect_reason parameter to the disconnected callback
+		/// <summary>
+		///  Disconnect was requested by user.
+		/// </summary>
 		public const short DISCONNECT_REASON_REQUEST = 0;
+
+		/// <summary>
+		///  Disconnect because of an unresolvable error.
+		/// </summary>
 		public const short DISCONNECT_REASON_ERROR = 1;
+
+		/// <summary>
+		///  Disconnect initiated by Brick Daemon or WIFI/Ethernet Extension.
+		/// </summary>
 		public const short DISCONNECT_REASON_SHUTDOWN = 2;
 
 		// returned by get_connection_state
+		/// <summary>
+		///  No connection is established.
+		/// </summary>
 		public const short CONNECTION_STATE_DISCONNECTED = 0;
+
+		/// <summary>
+		///  A connection to the Brick Daemon or the WIFI/Ethernet Extension is
+		///  established.
+		/// </summary>
 		public const short CONNECTION_STATE_CONNECTED = 1;
+
+		/// <summary>
+		///  IP Connection is currently trying to connect.
+		/// </summary>
 		public const short CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
 
 		internal const int QUEUE_EXIT = 0;
@@ -990,11 +1036,15 @@ namespace Tinkerforge
 		}
 	}
 
+	/// <summary>
+	/// </summary>
 	public struct UID
 	{
 		private string StringRepresentation;
 		private int IntRepresentation;
 
+		/// <summary>
+		/// </summary>
 		public UID(string uid)
 		{
 			StringRepresentation = uid;
@@ -1015,16 +1065,22 @@ namespace Tinkerforge
 			IntRepresentation = (int)uidTmp;
 		}
 
+		/// <summary>
+		/// </summary>
 		public int ToInt()
 		{
 			return IntRepresentation;
 		}
 
+		/// <summary>
+		/// </summary>
 		public static explicit operator int(UID uid)
 		{
 			return uid.ToInt();
 		}
 
+		/// <summary>
+		/// </summary>
 		public override string ToString()
 		{
 			return StringRepresentation;
