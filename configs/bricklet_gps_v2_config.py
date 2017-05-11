@@ -209,11 +209,12 @@ Verfügung:
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Satellite System Status',
+'name': 'Get Satellite System Status Low Level',
 'elements': [('Satellite System', 'uint8', 1, 'in', ('Satellite System', [('GPS', 0),
                                                                           ('GLONASS', 1),
                                                                           ('Galileo', 2)])),
-             ('Satellite Numbers', 'int8', 12, 'out'), # FIXME: why is this signed?
+             ('Satellite Numbers Length', 'uint8', 1, 'out'),
+             ('Satellite Numbers Data', 'uint8', 12, 'out'),
              ('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
                                                  ('2D Fix', 2),
                                                  ('3D Fix', 3)])),
@@ -243,7 +244,7 @@ a valid satellite number and can be ignored in the list.
 """
 Gibt die
 
-* Liste der Satelliten,
+* Liste der Satellitennummern,
 * Fix-Wert,
 * PDOP-Wert,
 * HDOP-Wert and
