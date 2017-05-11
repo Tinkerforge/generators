@@ -123,8 +123,8 @@ class MATLABZipGenerator(common.ZipGenerator):
                 common.execute('/usr/bin/javac ' +
                                classpath +
                                '-Xlint ' +
-                               '-source 1.5 ' +
-                               '-target 1.5 ' +
+                               '-source 1.6 ' +
+                               '-target 1.6 ' +
                                os.path.join(tmp_source_com_tinkerforge_dir, '*.java'),
                                shell=True)
 
