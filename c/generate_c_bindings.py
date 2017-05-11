@@ -745,7 +745,7 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 \t{3}_CallbackFunction callback_function;
 \tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
 
-\t*(void **)(&callback_function) = device_p->registered_callbacks[{7}];
+\t*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {7}];
 
 \tif (callback_function == NULL) {{
 \t\treturn;
@@ -759,7 +759,7 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 \t{3}_CallbackFunction callback_function;
 \tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{10}{8}
 
-\t*(void **)(&callback_function) = device_p->registered_callbacks[{7}];
+\t*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {7}];
 {6}{11}
 \t{0}_callback_wrapper_{12}(device_p, {5});
 
