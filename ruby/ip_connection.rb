@@ -61,8 +61,8 @@ module Tinkerforge
         r = []
 
         if f0 == '?'
-          _f1 = (Integer(f1) / 8.0).ceil
-          r = Array.new(_f1, 0)
+          n1 = (Integer(f1) / 8.0).ceil
+          r = Array.new(n1, 0)
 
           unpacked[0].each_with_index do |b, i|
             if b
@@ -70,7 +70,7 @@ module Tinkerforge
             end
           end
 
-          data += r.pack "C#{_f1}"
+          data += r.pack "C#{n1}"
         elsif f0 == 'k'
           unpacked[0].each { |c| r << c.ord }
           data += r.pack "c#{f1}"
@@ -136,7 +136,7 @@ module Tinkerforge
           end
           data = r[-1]
           r.delete_at(-1)
-          r.each { |i| u << i }
+          r.each { |k| u << k }
         end
 
         if u.length == 1
