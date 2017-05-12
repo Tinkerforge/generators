@@ -2513,13 +2513,6 @@ class ExamplesTester:
         self.failure_count = 0
         self.pool = multiprocessing.dummy.Pool(processes=self.PROCESSES)
 
-    def walker(self, arg, dirname, names):
-        for name in names:
-            if not name.endswith(self.extension):
-                continue
-
-            self.handle_source(os.path.join(dirname, name), False)
-
     def execute(self, cookie, args, env=None):
         def callback(result):
             self.handle_result(*result)
@@ -2583,7 +2576,12 @@ class ExamplesTester:
 
             # test
             for subdir in self.subdirs:
-                os.path.walk(os.path.join(tmp_dir, subdir), self.walker, None)
+                for root, _, files in os.walk(os.path.join(tmp_dir, subdir)):
+                    for name in files:
+                        if not name.endswith(self.extension):
+                            continue
+
+                        self.handle_source(os.path.join(root, name), False)
 
             for extra_example in self.extra_examples:
                 self.handle_source(extra_example, True)
@@ -2613,13 +2611,6 @@ class SourceTester:
         self.zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(name, *version)
         self.test_count = 0
         self.failure_count = 0
-
-    def walker(self, arg, dirname, names):
-        for name in names:
-            if not name.endswith(self.extension):
-                continue
-
-            self.handle_source(os.path.join(dirname, name))
 
     def handle_source(self, src):
         self.test_count += 1
@@ -2674,7 +2665,12 @@ class SourceTester:
 
             # test
             for subdir in self.subdirs:
-                os.path.walk(os.path.join(tmp_dir, subdir), self.walker, None)
+                for root, _, files in os.walk(os.path.join(tmp_dir, subdir)):
+                    for name in files:
+                        if not name.endswith(self.extension):
+                            continue
+
+                        self.handle_source(os.path.join(root, name))
 
             # report
             if self.comment is not None:
