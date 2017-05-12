@@ -66,7 +66,7 @@ com['packets'].append({
              ('Temperatures', 'uint16', 4, 'out'), # focal plain array, focal plain array at last ffc, housing, housing at last ffc 
              ('Resolution', 'uint8', 1, 'out', ('Resolution', [('0 To 6553 Kelvin', 0),
                                                               ('0 To 655 Kelvin', 1)])),
-             ('Status', 'uint16', 1, 'out') # Lots of status bits
+             ('Status', 'uint16', 1, 'out') # Lots of status bits # FIXME: convert to bools or add constants
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
