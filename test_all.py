@@ -5,18 +5,39 @@ import sys
 import os
 
 path = os.getcwd()
-bindings = []
+positive = set()
+negative = set()
+bindings = set()
+
+for arg in sys.argv[1:]:
+    if arg.startswith('-'):
+        negative.add(arg[1:])
+    else:
+        positive.add(arg)
+
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if not d in ('configs', '.git', '__pycache__'):
-            bindings.append(d)
-bindings = sorted(bindings)
+        if d not in ['configs', '.git', '__pycache__']:
+            bindings.add(d)
+
+if not positive <= bindings or not negative <= bindings:
+    print('Error: Invalid argument')
+
+if len(positive) > 0 and len(negative) > 0:
+    print('Error: Cannot mix positive and negative arguments')
+
+if len(positive) > 0:
+    bindings = positive
+else:
+    bindings -= negative
+
+bindings = sorted(list(bindings))
 
 for binding in bindings:
-    if binding in ('tcpip', 'modbus', 'json') or '-' + binding in sys.argv:
+    if binding in ['tcpip', 'modbus', 'json']:
         continue
 
-    path_binding = '{0}/{1}'.format(path, binding)
+    path_binding = os.path.join(path, binding)
     sys.path.append(path_binding)
     module = __import__('test_{0}_bindings'.format(binding))
 
@@ -24,7 +45,7 @@ for binding in bindings:
 
     success = module.run(path_binding)
 
-    if type(success) != bool:
+    if not isinstance(success, bool):
         raise Exception('test_{0}_bindings.py returns wrong type from its run() function'.format(binding))
 
     if not success:

@@ -6,37 +6,54 @@ import os
 import socket
 import common
 
-args = sys.argv[1:]
+positive = set()
+negative = set()
+actions = {'bindings', 'examples', 'doc', 'zip'}
 
-if len(args) == 0:
-    args = ['bindings', 'doc', 'zip']
+for arg in sys.argv[1:]:
+    if arg.startswith('-'):
+        negative.add(arg[1:])
+    else:
+        positive.add(arg)
 
-if not set(args).issubset({'bindings', 'doc', 'zip'}):
-    print('Invalid argument')
+if not positive.issubset(actions) or not negative.issubset(actions):
+    print('Error: Invalid argument')
+
+if len(positive) > 0 and len(negative) > 0:
+    print('Error: Cannot mix positive and negative arguments')
+
+if len(positive) > 0:
+    actions = positive
+else:
+    actions -= negative
+
+# exclude examples if not explicitly specified
+if 'examples' not in positive and 'examples' in actions:
+    actions.remove('examples')
 
 path = os.getcwd()
 bindings = []
 
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if not d in ('configs', '.git', '__pycache__'):
+        if d not in ['configs', '.git', '__pycache__']:
             bindings.append(d)
             sys.path.append(os.path.join(path, d))
 
 bindings = sorted(bindings)
 
 # bindings
-if 'bindings' in args and socket.gethostname() != 'tinkerforge.com':
+if 'bindings' in actions and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
         if binding in ['tcpip', 'modbus']:
             continue
 
         module = __import__('generate_{0}_bindings'.format(binding))
-        print("\nGenerating bindings for {0}:".format(binding))
+        print('\nGenerating bindings for {0}:'.format(binding))
         module.generate(os.path.join(path, binding))
 
 # examples
-if 'examples' in args and socket.gethostname() != 'tinkerforge.com':
+if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
         if binding in ['tcpip', 'modbus', 'json']:
             continue
@@ -47,11 +64,11 @@ if 'examples' in args and socket.gethostname() != 'tinkerforge.com':
             print("\nNo example generator for {0}".format(binding))
             continue
 
-        print("\nGenerating examples for {0}:".format(binding))
+        print('\nGenerating examples for {0}:'.format(binding))
         module.generate(os.path.join(path, binding))
 
 # doc
-if 'doc' in args:
+if 'doc' in actions:
     for binding in bindings:
         if binding in ['json']:
             continue
@@ -59,17 +76,17 @@ if 'doc' in args:
         module = __import__('generate_{0}_doc'.format(binding))
 
         for lang in ['en', 'de']:
-            print("\nGenerating '{0}' documentation for {1}:".format(lang, binding))
+            print('\nGenerating {0} documentation for {1}:'.format(lang, binding))
             module.generate(os.path.join(path, binding), lang)
 
 # zip
-if 'zip' in args and socket.gethostname() != 'tinkerforge.com':
+if 'zip' in actions and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
         if binding in ['tcpip', 'modbus']:
             continue
 
         module = __import__('generate_{0}_zip'.format(binding))
-        print("\nGenerating ZIP for {0}:".format(binding))
+        print('\nGenerating ZIP for {0}:'.format(binding))
         module.generate(os.path.join(path, binding))
 
 print('')
