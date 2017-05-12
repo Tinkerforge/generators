@@ -434,7 +434,7 @@ def find_examples(examples_directory, filename_regex, sort_key=default_example_s
                 example_path = os.path.join(examples_directory, example_filename)
                 lines = 0
 
-                if example_path.endswith('.png'):
+                if example_path.endswith('.vi.png'):
                     size = get_image_size(example_path)
                     lines = size[0] * size[1]
                 elif example_path.endswith('.vi'):
