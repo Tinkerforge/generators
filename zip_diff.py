@@ -33,7 +33,7 @@ if os.system('bash -c "pushd {1} && diff -ur latest/ {2}_{3}_{4}/ > diff1.diff; 
     print 'diff latest vs current failed'
     sys.exit(1)
 
-with open(os.path.join(tmp, 'diff1.diff'), 'rb') as f:
+with open(os.path.join(tmp, 'diff1.diff'), 'r') as f:
     diffs = [[[]]] # list of diffs as lists of lines
 
     for line in f.readlines():
@@ -217,7 +217,7 @@ for diff in diffs:
     else:
         filtered += filtered_lines
 
-with open(os.path.join(tmp, 'diff2.diff'), 'wb') as f:
+with open(os.path.join(tmp, 'diff2.diff'), 'w') as f:
     f.writelines(filtered)
 
 if os.system('bash -c "pushd {0} && geany diff2.diff && popd"'.format(tmp)) != 0:

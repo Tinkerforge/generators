@@ -479,7 +479,7 @@ class PythonBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}_{1}.py'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
             f.write(device.get_python_source())
 
         if device.is_released():
@@ -516,7 +516,7 @@ def create_device(device_identifier, uid, ipcon):
             imports.append(template_import.format(import_name, class_name))
             classes.append('{0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', 'device_factory.py'), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', 'device_factory.py'), 'w') as f:
             f.write(template.format(self.get_header_comment('hash'),
                                     '\n'.join(imports),
                                     '\n'.join(classes)))

@@ -581,7 +581,7 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}.cs'.format(device.get_csharp_class_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
             f.write(device.get_csharp_source())
 
         if device.is_released():

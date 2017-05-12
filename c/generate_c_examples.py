@@ -655,7 +655,7 @@ class CExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            with open(filepath, 'wb') as f:
+            with open(filepath, 'w') as f:
                 f.write(example.get_c_source())
 
 def generate(bindings_root_directory):

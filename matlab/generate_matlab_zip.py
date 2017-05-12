@@ -110,7 +110,7 @@ class MATLABZipGenerator(common.ZipGenerator):
             # Make manifest
             version = common.get_changelog_version(root_dir)
 
-            with open(os.path.join(tmp_dir, 'manifest.txt'), 'wb') as f:
+            with open(os.path.join(tmp_dir, 'manifest.txt'), 'w') as f:
                 f.write('Bindings-Version: {1}.{2}.{3}\nBindings-Flavor: {0}\n'.format(flavor.upper(), *version))
 
             # Make jar

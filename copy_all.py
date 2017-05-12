@@ -13,10 +13,10 @@ def text_files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
 
     try:
-        with open(src_file, 'rb') as f:
+        with open(src_file, 'r') as f:
             lines1 = f.readlines()
 
-        with file(dest_file, 'rb') as f:
+        with open(dest_file, 'r') as f:
             lines2 = f.readlines()
     except:
         return True
@@ -42,7 +42,7 @@ def files_are_not_the_same(src_file, dest_path):
             with open(src_file, 'rb') as f:
                 data1 = f.read()
 
-            with file(dest_file, 'rb') as f:
+            with open(dest_file, 'rb') as f:
                 data2 = f.read()
         except:
             return True

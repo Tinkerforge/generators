@@ -218,9 +218,9 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         npm_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'TinkerforgeNPM.js')
         source_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'TinkerforgeSource.js')
 
-        self.browser_api_file = open(browser_api_filename, 'wb')
-        self.npm_main_file = open(npm_main_filename, 'wb')
-        self.source_main_file = open(source_main_filename, 'wb')
+        self.browser_api_file = open(browser_api_filename, 'w')
+        self.npm_main_file = open(npm_main_filename, 'w')
+        self.source_main_file = open(source_main_filename, 'w')
 
         self.released_files.append('BrowserAPI.js')
         self.released_files.append('TinkerforgeNPM.js')
@@ -268,7 +268,7 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
 
         filename = '{0}{1}.js'.format(device.get_camel_case_category(), device.get_camel_case_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
             f.write(device.get_javascript_source())
 
         if device.is_released():

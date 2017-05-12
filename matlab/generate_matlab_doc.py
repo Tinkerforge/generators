@@ -537,19 +537,11 @@ class MATLABDocGenerator(common.DocGenerator):
     def get_element_class(self):
         return matlab_common.MATLABElement
 
-    def compare_examples(self, example1, example2):
-        flavor1 = example1[1].split('_')[0]
-        flavor2 = example2[1].split('_')[0]
-
-        if flavor1 == flavor2:
-            return common.DocGenerator.compare_examples(self, example1, example2)
-        elif flavor1 == 'matlab':
-            return -1
-        else:
-            return 1
+    def get_example_sort_key(self, example):
+        return example[1].split('_')[0], example[2], example[0] # flavor, lines, filename
 
     def generate(self, device):
-        with open(device.get_doc_rst_path(), 'wb') as f:
+        with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_matlab_doc())
 
 def generate(bindings_root_directory, language):

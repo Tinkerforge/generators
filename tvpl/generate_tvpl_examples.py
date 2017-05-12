@@ -706,7 +706,7 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            with open(filepath, 'wb') as f:
+            with open(filepath, 'w') as f:
                 f.write(example.get_tvpl_source().encode('utf-8'))
 
 def generate(bindings_root_directory):

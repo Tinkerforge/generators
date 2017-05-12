@@ -823,13 +823,13 @@ class TVPLBindingsGenerator(common.BindingsGenerator):
         filename_tvpl_code_generator_python = '{devicecategory}_{devicename}.generator.python'.format(devicecategory = device.get_underscore_category(),
                                                                                                       devicename = device.get_underscore_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_block), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_block), 'w') as f:
             f.write(device.get_tvpl_source_block(self.get_bindings_root_directory()))
 
-        with open(os.path.join(self.bindings_root_directory, self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_javascript), 'wb') as f:
+        with open(os.path.join(self.bindings_root_directory, self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_javascript), 'w') as f:
             f.write(device.get_tvpl_source_generator_javascript())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_python), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_python), 'w') as f:
             f.write(device.get_tvpl_source_generator_python())
 
         if device.is_released():

@@ -994,7 +994,7 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         elif self.is_octave():
             suffix = '_octave'
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, filename), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, filename), 'w') as f:
             f.write(device.get_java_source())
 
         if device.is_released():
@@ -1039,7 +1039,7 @@ public class DeviceFactory {{
         elif self.is_octave():
             suffix = '_octave'
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, 'DeviceFactory.java'), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, 'DeviceFactory.java'), 'w') as f:
             f.write(template.format(self.get_header_comment('asterisk'),
                                     '\n'.join(classes),
                                     '\n'.join(display_names)))

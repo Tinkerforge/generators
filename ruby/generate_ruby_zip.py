@@ -84,14 +84,17 @@ class RubyZipGenerator(common.ZipGenerator):
 
         # Make version.rb
         version = common.get_changelog_version(root_dir)
-        file(os.path.join(self.tmp_source_lib_tinkerforge_dir, 'version.rb'), 'wb').write("""
+
+        with open(os.path.join(self.tmp_source_lib_tinkerforge_dir, 'version.rb'), 'w') as f:
+            f.write("""
 module Tinkerforge
   VERSION = '{0}.{1}.{2}'
 end
 """.format(*version))
 
         # Make tinkerforge.rb
-        file(os.path.join(self.tmp_source_lib_dir, 'tinkerforge.rb'), 'wb').write("""
+        with open(os.path.join(self.tmp_source_lib_dir, 'tinkerforge.rb'), 'w') as f:
+            f.write("""
 require 'tinkerforge/version'
 
 module Tinkerforge

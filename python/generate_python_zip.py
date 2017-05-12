@@ -80,7 +80,7 @@ class PythonZipGenerator(common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make __init__.py
-        with open(os.path.join(self.tmp_source_tinkerforge_dir, '__init__.py'), 'wb') as f:
+        with open(os.path.join(self.tmp_source_tinkerforge_dir, '__init__.py'), 'w') as f:
             f.write(' ')
 
         # Make setup.py

@@ -94,7 +94,7 @@ class JavaZipGenerator(common.ZipGenerator):
         # Make manifest
         version = common.get_changelog_version(root_dir)
 
-        with open(os.path.join(self.tmp_dir, 'manifest.txt'), 'wb') as f:
+        with open(os.path.join(self.tmp_dir, 'manifest.txt'), 'w') as f:
             f.write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
 
         # Compile source

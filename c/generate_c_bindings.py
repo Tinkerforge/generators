@@ -1284,13 +1284,13 @@ class CBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.c'), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.c'), 'w') as f:
             f.write(device.get_c_source())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.h'), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.h'), 'w') as f:
             f.write(device.get_c_header())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.symbols'), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.symbols'), 'w') as f:
             f.write(device.get_c_symbols())
 
         if device.is_released():

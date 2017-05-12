@@ -422,10 +422,10 @@ class ShellExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            with open(filepath, 'wb') as f:
+            with open(filepath, 'w') as f:
                 f.write(example.get_shell_source())
 
-            os.chmod(filepath, 0755)
+            os.chmod(filepath, 0o755)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', ShellExamplesGenerator)

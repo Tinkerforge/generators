@@ -44,10 +44,10 @@ class ShellExamplesTester(common.ExamplesTester):
     def test(self, cookie, src, is_extra_example):
         src_check = src.replace('.sh', '-check.sh')
 
-        with open(src, 'rb') as f:
+        with open(src, 'r') as f:
             code = f.read()
 
-        with open(src_check, 'wb') as f:
+        with open(src_check, 'w') as f:
             f.write(code.replace('; read dummy', '').replace('kill -- -$$', 'kill $(jobs -p)'))
 
         os.chmod(src_check, 0755)

@@ -218,7 +218,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
             params.insert(len(params) - 1, 'Aand')
 
         if len(params) > 0:
-            if self.get_elements('out') > 0:
+            if len(self.get_elements('out')) > 0:
                 params.insert(0, 'Awith')
             else:
                 params.insert(0, 'Ato')
@@ -316,7 +316,7 @@ class TVPLDocGenerator(common.DocGenerator):
         return tvpl_common.TVPLElement
 
     def generate(self, device):
-        with open(device.get_doc_rst_path(), 'wb') as f:
+        with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_tvpl_doc())
 
 def generate(bindings_root_directory, language):

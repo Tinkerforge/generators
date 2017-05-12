@@ -437,7 +437,7 @@ class LabVIEWDocGenerator(common.DocGenerator):
         return LabVIEWDocElement
 
     def generate(self, device):
-        with open(device.get_doc_rst_path(), 'wb') as f:
+        with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_labview_doc())
 
 def generate(bindings_root_directory, language):

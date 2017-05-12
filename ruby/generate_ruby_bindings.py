@@ -280,7 +280,7 @@ class RubyBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}_{1}.rb'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
             f.write(device.get_ruby_source())
 
         if device.is_released():

@@ -49,10 +49,10 @@ class PerlExamplesTester(common.ExamplesTester):
 
         src_check = src.replace('.pl', '_check.pl')
 
-        with open(src, 'rb') as f:
+        with open(src, 'r') as f:
             code = f.read()
 
-        with open(src_check, 'wb') as f:
+        with open(src_check, 'w') as f:
             f.write('use lib "/tmp/tester/perl/source/lib"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
 
         args = ['perl',

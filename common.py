@@ -123,7 +123,7 @@ def get_changelog_version(bindings_root_directory):
     r = re.compile('^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
     last = None
 
-    with open(os.path.join(bindings_root_directory, 'changelog.txt'), 'rb') as f:
+    with open(os.path.join(bindings_root_directory, 'changelog.txt'), 'r') as f:
         for line in f.readlines():
             m = r.match(line)
 
@@ -421,15 +421,10 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     copy_examples(copy_files, device.get_generator().get_bindings_root_directory())
     return examples
 
-def default_example_compare(i, j):
-    c = cmp(i[2], j[2]) # lines
+def default_example_sort_key(example):
+    return example[2], example[0] # lines, filename
 
-    if c != 0:
-        return c
-
-    return cmp(i[0], j[0]) # filename
-
-def find_examples(examples_directory, filename_regex, compare_examples=default_example_compare):
+def find_examples(examples_directory, filename_regex, sort_key=default_example_sort_key):
     compiled_filename_regex = re.compile(filename_regex)
     examples = []
 
@@ -442,13 +437,15 @@ def find_examples(examples_directory, filename_regex, compare_examples=default_e
                 if example_path.endswith('.png'):
                     size = get_image_size(example_path)
                     lines = size[0] * size[1]
+                elif example_path.endswith('.vi'):
+                    lines = os.stat(example_path).st_size
                 else:
-                    for line in open(example_path):
-                        lines += 1
+                    with open(example_path, 'r') as f:
+                        lines = len(f.readlines())
 
                 examples.append((example_filename, example_path, lines))
 
-        examples.sort(compare_examples)
+        examples.sort(key=sort_key)
 
     return examples
 
@@ -456,11 +453,13 @@ def find_device_examples(device, filename_regex):
     bindings_name = device.get_generator().get_bindings_name()
     examples_directory = os.path.join(device.get_git_directory(), 'software', 'examples', bindings_name)
 
-    return find_examples(examples_directory, filename_regex, device.get_generator().compare_examples)
+    return find_examples(examples_directory, filename_regex, sort_key=device.get_generator().get_example_sort_key)
 
 def copy_examples(copy_files, path):
     doc_path = os.path.join(path, 'doc', lang)
+
     print('  * Copying examples:')
+
     for copy_file in copy_files:
         doc_dest = os.path.join(doc_path, copy_file[1])
         doc_src = copy_file[0]
@@ -583,7 +582,7 @@ def specialize_template(template_filename, destination_filename, replacements):
     lines = []
     replaced = set()
 
-    with open(template_filename, 'rb') as f:
+    with open(template_filename, 'r') as f:
         for line in f.readlines():
             for key in replacements:
                 replaced_line = line.replace(key, replacements[key])
@@ -598,7 +597,7 @@ def specialize_template(template_filename, destination_filename, replacements):
     if replaced != set(replacements.keys()):
         raise GeneratorError('Not all replacements for {0} have been applied'.format(template_filename))
 
-    with open(destination_filename, 'wb') as f:
+    with open(destination_filename, 'w') as f:
         f.writelines(lines)
 
 def make_c_like_bitmask(value, shift='{0} << {1}', combine='({0}) | ({1})'):
@@ -766,7 +765,7 @@ def generate(bindings_root_directory, language, generator_class):
                            {'en': 'Makes all Bricklet signals available',
                             'de': 'Macht alle Bricklet Signale zugänglich'}))
 
-    with open(os.path.join(bindings_root_directory, '..', 'device_infos.py'), 'wb') as f:
+    with open(os.path.join(bindings_root_directory, '..', 'device_infos.py'), 'w') as f:
         f.write('from collections import namedtuple\n')
         f.write('\n')
         f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part is_released is_documented has_bindings description')\n")
@@ -774,7 +773,7 @@ def generate(bindings_root_directory, language, generator_class):
         f.write('brick_infos = \\\n')
         f.write('[\n')
 
-        for brick_info in sorted(brick_infos):
+        for brick_info in sorted(brick_infos, key=lambda info: info[2].lower()):
             f.write('    DeviceInfo{0},\n'.format(brick_info))
 
         f.write(']\n')
@@ -782,7 +781,7 @@ def generate(bindings_root_directory, language, generator_class):
         f.write('bricklet_infos = \\\n')
         f.write('[\n')
 
-        for bricklet_info in sorted(bricklet_infos):
+        for bricklet_info in sorted(bricklet_infos, key=lambda info: info[2].lower()):
             f.write('    DeviceInfo{0},\n'.format(bricklet_info))
 
         f.write(']\n')
@@ -2337,6 +2336,9 @@ class Generator:
     def get_example_special_function_class(self):
         return ExampleSpecialFunction
 
+    def get_example_sort_key(self, example):
+        return example[2], example[0] # lines, filename
+
     def get_bindings_root_directory(self):
         return self.bindings_root_directory
 
@@ -2401,9 +2403,6 @@ class Generator:
     def is_doc(self):
         return False
 
-    def compare_examples(self, example1, example2):
-        return cmp(example1[2], example2[2])
-
     def prepare(self):
         pass
 
@@ -2439,7 +2438,7 @@ class DocGenerator(Generator):
         if example_regex != None:
             print(' * ip_connection')
 
-            examples = find_examples(self.get_bindings_root_directory(), example_regex, self.compare_examples)
+            examples = find_examples(self.get_bindings_root_directory(), example_regex, sort_key=self.get_example_sort_key)
             copy_files = []
 
             for example in examples:
@@ -2460,7 +2459,7 @@ class BindingsGenerator(Generator):
         recreate_directory(os.path.join(self.get_bindings_root_directory(), self.bindings_subdirectory_name))
 
     def finish(self):
-        with open(os.path.join(self.get_bindings_root_directory(), self.get_bindings_name() + '_released_files.py'), 'wb') as f:
+        with open(os.path.join(self.get_bindings_root_directory(), self.get_bindings_name() + '_released_files.py'), 'w') as f:
             f.write('released_files = ' + repr(self.released_files))
 
 class ZipGenerator(Generator):

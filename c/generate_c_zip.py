@@ -68,19 +68,19 @@ class CZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme and merge symbols
-        with open(os.path.join(root_dir, 'ip_connection.symbols'), 'rb') as f:
+        with open(os.path.join(root_dir, 'ip_connection.symbols'), 'r') as f:
             symbols = 'EXPORTS\n' + f.read()
 
         for filename in released_files:
             path = os.path.join(root_dir, 'bindings', filename)
 
             if path.endswith('.symbols'):
-                with open(path, 'rb') as f:
+                with open(path, 'r') as f:
                     symbols += f.read()
             else:
                 shutil.copy(path, self.tmp_source_dir)
 
-        with open(os.path.join(self.tmp_source_dir, 'tinkerforge.def'), 'wb') as f:
+        with open(os.path.join(self.tmp_source_dir, 'tinkerforge.def'), 'w') as f:
             f.write(symbols)
 
         shutil.copy(os.path.join(root_dir, 'ip_connection.c'),              self.tmp_source_dir)
