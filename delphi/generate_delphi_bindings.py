@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import math
 import delphi_common
 from xml.sax.saxutils import escape
 
@@ -55,7 +56,7 @@ unit {1}{2};
 interface
 
 uses
-  Device, IPConnection, LEConverter;
+  Device, IPConnection, LEConverter, Math;
 
 """
 
@@ -344,25 +345,45 @@ begin
             if has_array:
                 method += ' i: longint;'
 
+            for element in packet.get_elements():
+                if element.get_cardinality() > 1 and element.get_type() == 'bool':
+                    method += ' ' + \
+                              element.get_headless_camel_case_name() + \
+                              'Bits : array[0 .. ' + \
+                              str(int(math.ceil(element.get_cardinality() / 8.0) - 1)) + \
+                              '] of Byte;'
+
             method += '\n'
             method += 'begin\n'
             method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_size())
+
+            method_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
+  for i := 0 to {1} do if {2}[i] then {0}[Floor(i/8)] := {0}[Floor(i/8)] or (1 shl (i mod 8));
+  for i := 0 to {3} do LEConvertUInt8To({0}[i], {4} + (i * 1), request);
+''';
 
             # Serialize request
             offset = 8
 
             for element in packet.get_elements('in'):
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_type() != 'bool':
                     prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_headless_camel_case_name())
                     method += '  {0}LEConvert{1}To({2}[i], {3} + (i * {4}), request);\n'.format(prefix,
                                                                                                 element.get_delphi_le_convert_type(),
                                                                                                 element.get_headless_camel_case_name(),
                                                                                                 offset,
                                                                                                 element.get_item_size())
+                elif element.get_cardinality() > 1 and element.get_type() == 'bool':
+                    method += method_bool_array_fmt.format(element.get_headless_camel_case_name() + 'Bits',
+                                                           element.get_cardinality() - 1,
+                                                           element.get_headless_camel_case_name(),
+                                                           str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
+                                                           offset);
                 elif element.get_type() == 'string':
                     method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(element.get_headless_camel_case_name(),
                                                                                       offset,
                                                                                       element.get_cardinality())
+
                 else:
                     method += '  LEConvert{0}To({1}, {2}, request);\n'.format(element.get_delphi_le_convert_type(),
                                                                               element.get_headless_camel_case_name(),
@@ -378,19 +399,30 @@ begin
             # Deserialize response
             offset = 8
 
+            method_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
+  for i := 0 to {1} do {0}[i] := LEConvertUInt8From({2} + (i * 1), packet);
+  for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
+''';
+
             for element in packet.get_elements('out'):
                 if out_count > 1:
                     result = element.get_headless_camel_case_name()
                 else:
                     result = 'result'
 
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_type() != 'bool':
                     prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                     method += '  {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), response);\n'.format(prefix,
                                                                                                      result,
                                                                                                      element.get_delphi_le_convert_type(),
                                                                                                      offset,
                                                                                                      element.get_item_size())
+                elif element.get_cardinality() > 1 and element.get_type() == 'bool':
+                    method += method_bool_array_fmt.format(element.get_headless_camel_case_name() + 'Bits',
+                                                           str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
+                                                           offset,
+                                                           element.get_cardinality() - 1,
+                                                           element.get_headless_camel_case_name());
                 elif element.get_type() == 'string':
                     method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
                                                                                            offset,
@@ -428,6 +460,14 @@ begin
             if has_array:
                 wrapper += ' i: longint;'
 
+            for element in packet.get_elements():
+                if element.get_cardinality() > 1 and element.get_type() == 'bool':
+                    wrapper += ' ' + \
+                               element.get_headless_camel_case_name() + \
+                               'Bits : array[0 .. ' + \
+                               str(int(math.ceil(element.get_cardinality() / 8.0) - 1)) + \
+                               '] of Byte;'
+
             wrapper += '\n'
             wrapper += 'begin\n'
 
@@ -439,16 +479,27 @@ begin
             offset = 8
             parameter_names = []
 
+            wrapper_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
+  for i := 0 to {1} do {0}[i] := LEConvertUInt8From({2} + (i * 1), packet);
+  for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
+''';
+
             for element in packet.get_elements('out'):
                 parameter_names.append(element.get_headless_camel_case_name())
 
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_type() != 'bool':
                     prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                     wrapper += '    {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), packet);\n'.format(prefix,
                                                                                                       element.get_headless_camel_case_name(),
                                                                                                       element.get_delphi_le_convert_type(),
                                                                                                       offset,
                                                                                                       element.get_item_size())
+                elif element.get_cardinality() > 1 and element.get_type() == 'bool':
+                    wrapper += wrapper_bool_array_fmt.format(element.get_headless_camel_case_name() + 'Bits',
+                                                             str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
+                                                             offset,
+                                                             element.get_cardinality() - 1,
+                                                             element.get_headless_camel_case_name());
                 else:
                     wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_headless_camel_case_name(),
                                                                                     element.get_delphi_le_convert_type(),
