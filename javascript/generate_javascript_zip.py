@@ -28,17 +28,10 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from javascript_released_files import released_files
-
-def check_output_and_error(*popenargs, **kwargs):
-    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE, *popenargs, **kwargs)
-    output, error = process.communicate()
-    retcode = process.poll()
-    return (retcode, output + error)
 
 class JavaScriptZipGenerator(common.ZipGenerator):
     tmp_dir                           = '/tmp/generator/javascript'
@@ -135,7 +128,7 @@ class JavaScriptZipGenerator(common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, 'es5-sham.js'),                  self.tmp_nodejs_source_tinkerforge_dir)
 
         # Make Tinkerforge.js for browser with browserify
-        retcode, output = check_output_and_error(['browserify', '--version'])
+        retcode, output = common.check_output_and_error(['browserify', '--version'])
 
         if retcode != 0:
             raise common.GeneratorError('Could not get browserify version')

@@ -31,12 +31,6 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def check_output_and_error(*popenargs, **kwargs):
-    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE, *popenargs, **kwargs)
-    output, error = process.communicate()
-    retcode = process.poll()
-    return (retcode, output + error)
-
 class JavaExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
         common.ExamplesTester.__init__(self, 'java', '.java', path, extra_examples=extra_examples)
@@ -88,7 +82,7 @@ class JavaSourceTester(common.SourceTester):
                 '--html',
                 src]
 
-        retcode, output = check_output_and_error(args)
+        retcode, output = common.check_output_and_error(args)
         output = output.strip('\r\n')
 
         if len(output) > 0:

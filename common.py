@@ -856,6 +856,13 @@ def break_string(string, marker, continuation='', max_length=90):
 
     return result
 
+def check_output_and_error(*popenargs, **kwargs):
+    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE, *popenargs, **kwargs)
+    output, error = process.communicate()
+    retcode = process.poll()
+
+    return retcode, (output + error).decode('utf-8')
+
 class GeneratorError(Exception):
     pass
 

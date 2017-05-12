@@ -26,16 +26,9 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-
-def check_output_and_error(*popenargs, **kwargs):
-    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE, *popenargs, **kwargs)
-    output, error = process.communicate()
-    retcode = process.poll()
-    return (retcode, output + error)
 
 class ShellExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
@@ -50,13 +43,13 @@ class ShellExamplesTester(common.ExamplesTester):
         with open(src_check, 'w') as f:
             f.write(code.replace('; read dummy', '').replace('kill -- -$$', 'kill $(jobs -p)'))
 
-        os.chmod(src_check, 0755)
+        os.chmod(src_check, 0o755)
 
         args = [src_check]
         env = {'TINKERFORGE_SHELL_BINDINGS_DRY_RUN': '1',
                'PATH': '/tmp/tester/shell:{0}'.format(os.environ['PATH'])}
 
-        retcode, output = check_output_and_error(args, env=env)
+        retcode, output = common.check_output_and_error(args, env=env)
         success = retcode == 0 and output.strip() in ['', 'Press key to exit']
 
         self.handle_result(cookie, output, success)
