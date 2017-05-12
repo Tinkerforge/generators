@@ -3,7 +3,7 @@
 
 """
 Python Bindings Tester
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_python_bindings.py: Tests the Python bindings
 
@@ -48,6 +48,37 @@ class PythonExamplesTester(common.ExamplesTester):
 
         self.execute(cookie, args)
 
+class PylintExamplesTester(common.ExamplesTester):
+    def __init__(self, path, python, comment, extra_examples):
+        common.ExamplesTester.__init__(self, 'python', '.py', path, comment=comment, subdirs=['examples', 'source'], extra_examples=extra_examples)
+
+        self.python = python
+
+    def test(self, cookie, src, is_extra_example):
+        if is_extra_example:
+            shutil.copy(src, '/tmp/tester/python')
+            src = os.path.join('/tmp/tester/python', os.path.split(src)[1])
+
+        if self.python == 'python3':
+            with open(src, 'r') as f:
+                code = f.read()
+
+            code = code.replace('raw_input(', 'input(')
+            src_check = src.replace('.py', '_check.py')
+
+            with open(src_check, 'w') as f:
+                 f.write(code)
+
+            src = src_check
+
+        args = [self.python,
+                '-c',
+                'import sys; sys.path.insert(0, "/tmp/tester/python/source"); import pylint; pylint.run_pylint()',
+                '-E',
+                src]
+
+        self.execute(cookie, args)
+
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/demo/starter_kit_weather_station_demo/main.py'),
                       os.path.join(path, '../../weather-station/xively/python/weather_xively.py'),
@@ -75,7 +106,19 @@ def run(path):
     if not success:
         return success
 
-    return PythonExamplesTester(path, 'python3', extra_examples).run()
+    success = PythonExamplesTester(path, 'python3', extra_examples).run()
+
+    if not success:
+        return success
+
+    # FIXME: doesn't handle PyQt related super false-positves yet
+    success = PylintExamplesTester(path, 'python', 'pylint', []).run()#extra_examples).run()
+
+    if not success:
+        return success
+
+    # FIXME: doesn't handle unicode false-positves yet
+    return True #PylintExamplesTester(path, 'python3', 'pylint3', extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))
