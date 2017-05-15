@@ -1197,7 +1197,7 @@ class CBindingsPacket(c_common.CPacket):
             elif element.get_type() == 'bool':
                 if element.get_cardinality() > 1:
                     needs_i = True
-                    struct_list += '\n\tmemset({0}.{1}, 0, {3}); for (i = 0; i < {2}; i++) {0}.{1}[i / 8] = ({1}[i] ? 1 : 0) << (i % 8);' \
+                    struct_list += '\n\tmemset({0}.{1}, 0, {3}); for (i = 0; i < {2}; i++) {0}.{1}[i / 8] |= ({1}[i] ? 1 : 0) << (i % 8);' \
                                    .format(sf, element.get_underscore_name(), element.get_cardinality(),
                                            int(math.ceil(element.get_cardinality() / 8.0)))
                 else:
