@@ -35,13 +35,7 @@ class PythonBindingsDevice(python_common.PythonDevice):
     def get_python_import(self):
         template = """# -*- coding: utf-8 -*-
 {0}{1}
-try:
-    from collections import namedtuple
-except ImportError:
-    try:
-        from .ip_connection import namedtuple
-    except ValueError:
-        from ip_connection import namedtuple
+from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error
