@@ -83,7 +83,17 @@ delphi_header2 = re.compile(r'^@@ -1,5 \+1,5 @@\n' + \
 '   Delphi/Lazarus Bindings Version 2\.[0-9]+\.[0-9]+\n' + \
 ' \n$')
 
-javascript_header = re.compile(r'^@@ -[0-9]+,9 \+[0-9]+,9 @@\n' + \
+javascript_header1 = re.compile(r'^@@ -[0-9]+,7 \+[0-9]+,7 @@\n' + \
+' \n' + \
+' },{"\./Device":[0-9]+}\],[0-9]+:\[function\(require,module,exports\){\n' + \
+' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n' + \
+'- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'  \*                                                           \*\n' + \
+'  \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'  \*                                                           \*\n$')
+
+javascript_header2 = re.compile(r'^@@ -[0-9]+,9 \+[0-9]+,9 @@\n' + \
 ' \n' + \
 ' module\.exports = Brick[A-Za-z0-9]+;\n' + \
 ' \n' + \
@@ -195,7 +205,8 @@ for diff in diffs:
            not c_like_header2.match(hunk) and \
            not delphi_header1.match(hunk) and \
            not delphi_header2.match(hunk) and \
-           not javascript_header.match(hunk) and \
+           not javascript_header1.match(hunk) and \
+           not javascript_header2.match(hunk) and \
            not perl_header1.match(hunk) and \
            not perl_header2.match(hunk) and \
            not php_header1.match(hunk) and \
