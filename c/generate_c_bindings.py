@@ -394,10 +394,8 @@ int {0}_{1}({2} *{0}{3}) {{
 		return ret;
 	}}
 {7}
-
 	ret = device_send_request(device_p, (Packet *)&request, {10});
 {8}
-
 	return ret;
 }}
 """
@@ -405,8 +403,8 @@ int {0}_{1}({2} *{0}{3}) {{
 	if (ret < 0) {{
 		return ret;
 	}}
-{2}
-"""
+
+{2}"""
 
         device_name = self.get_underscore_name()
         c = self.get_camel_case_name()
@@ -419,6 +417,9 @@ int {0}_{1}({2} *{0}{3}) {{
                                             packet.get_upper_case_name())
             f = packet.get_camel_case_name()
             h, needs_i = packet.get_c_struct_list()
+
+            if len(h) > 0:
+                h += '\n'
 
             if len(packet.get_elements(direction='out')) > 0:
                 g = '\n\t' + f + '_Response response;'
@@ -874,7 +875,6 @@ typedef Device {3};
         template = """
 typedef void (*{0}_CallbackFunction)({1});
 """
-
 
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
