@@ -1387,9 +1387,14 @@ class Device(NameMixin):
 
         check_name(raw_data['name'], display_name=raw_data['display_name'])
 
-        for i, raw_packet in zip(range(len(raw_data['packets'])), raw_data['packets']):
+        next_function_id = 1
+        for raw_packet in raw_data['packets']:
             if not 'function_id' in raw_packet:
-                raw_packet['function_id'] = i + 1
+                raw_packet['function_id'] = next_function_id
+            else:
+                next_function_id = raw_packet['function_id']
+
+            next_function_id += 1
 
             packet = generator.get_packet_class()(raw_packet, self)
 
