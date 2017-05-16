@@ -165,7 +165,7 @@ class {0} extends Device
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK'
                 flag = 'self::RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements('out')) > 0:
+            elif len(packet.get_elements(direction='out')) > 0:
                 prefix = 'FUNCTION'
                 flag = 'self::RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
@@ -227,7 +227,7 @@ class {0} extends Device
             parameter = packet.get_php_parameter_list()
             pack = []
 
-            for element in packet.get_elements('in'):
+            for element in packet.get_elements(direction='in'):
                 underscore_name = element.get_underscore_name()
                 cardinality = element.get_cardinality()
                 pack_format = element.get_php_pack_format()
@@ -280,11 +280,11 @@ class {0} extends Device
                     else:
                         pack.append('        $payload .= pack(\'{0}\', ${1});'.format(pack_format, underscore_name))
 
-            has_multi_return_value = len(packet.get_elements('out')) > 1
+            has_multi_return_value = len(packet.get_elements(direction='out')) > 1
             unpack_formats = []
             collect = []
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 underscore_name = element.get_underscore_name()
                 cardinality = element.get_cardinality()
                 unpack_fix = element.get_php_unpack_fix()
@@ -399,7 +399,7 @@ class {0} extends Device
             collect = []
             result = []
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 underscore_name = element.get_underscore_name()
                 cardinality = element.get_cardinality()
 

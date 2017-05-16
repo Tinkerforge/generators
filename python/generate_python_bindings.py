@@ -64,7 +64,7 @@ except ValueError:
 """
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements('out')) < 2:
+            if len(packet.get_elements(direction='out')) < 2:
                 continue
 
             name = packet.get_camel_case_name()
@@ -75,7 +75,7 @@ except ValueError:
 
             params = []
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 params.append("'{0}'".format(element.get_underscore_name()))
 
             tuples += template.format(name, name_tup, ", ".join(params))
@@ -150,7 +150,7 @@ class {0}(Device):
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK_'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements('out')) > 0:
+            elif len(packet.get_elements(direction='out')) > 0:
                 prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
@@ -235,7 +235,7 @@ class {0}(Device):
             in_f = packet.get_python_format_list('in')
             out_f = packet.get_python_format_list('out')
 
-            elements = len(packet.get_elements('out'))
+            elements = len(packet.get_elements(direction='out'))
 
             if elements > 1:
                 methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc)
@@ -450,7 +450,7 @@ class PythonBindingsPacket(python_common.PythonPacket):
     def get_python_format_list(self, io):
         forms = []
 
-        for element in self.get_elements(io):
+        for element in self.get_elements(direction=io):
             forms.append(element.get_python_struct_format())
 
         return ' '.join(forms)

@@ -235,7 +235,8 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
         }
         desc = '\n'
         param = ' :request {0}: {1}\n'
-        for element in self.get_elements('in'):
+
+        for element in self.get_elements(direction='in'):
             desc += param.format(element.get_underscore_name(), element.get_modbus_type())
 
         if desc == '\n':
@@ -254,7 +255,8 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
         }
         desc = '\n'
         returns = ' :response {0}: {1}\n'
-        for element in self.get_elements('out'):
+
+        for element in self.get_elements(direction='out'):
             desc += returns.format(element.get_underscore_name(), element.get_modbus_type())
 
         if desc == '\n':

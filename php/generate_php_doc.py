@@ -370,7 +370,7 @@ class PHPDocPacket(php_common.PHPPacket):
         return common.shift_right(text, 1)
 
     def get_php_object_desc(self):
-        if len(self.get_elements('out')) < 2:
+        if len(self.get_elements(direction='out')) < 2:
             return ''
 
         desc = {
@@ -388,16 +388,16 @@ class PHPDocPacket(php_common.PHPPacket):
         }
 
         var = []
-        for element in self.get_elements('out'):
+
+        for element in self.get_elements(direction='out'):
             var.append('``{0}``'.format(element.get_underscore_name()))
 
         if len(var) == 1:
             return common.select_lang(desc).format(var[0])
-
-        if len(var) == 2:
+        elif len(var) == 2:
             return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
-
-        return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
+        else:
+            return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class PHPDocGenerator(common.DocGenerator):
     def get_bindings_name(self):

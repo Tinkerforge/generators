@@ -36,7 +36,7 @@ class DelphiDevice(common.Device):
 
 class DelphiPacket(common.Packet):
     def get_delphi_return_type(self, for_doc):
-        elements = self.get_elements('out')
+        elements = self.get_elements(direction='out')
 
         if len(elements) != 1:
             return ''
@@ -56,7 +56,8 @@ class DelphiPacket(common.Packet):
 
     def get_delphi_parameter_list(self, for_doc, with_modifiers=True):
         param = []
-        if len(self.get_elements('out')) > 1 or self.get_type() == 'callback':
+
+        if len(self.get_elements(direction='out')) > 1 or self.get_type() == 'callback':
             for element in self.get_elements():
                 delphi_type = element.get_delphi_type()
 
@@ -84,7 +85,7 @@ class DelphiPacket(common.Packet):
                                                   element.get_headless_camel_case_name(),
                                                   final_type))
         else:
-            for element in self.get_elements('in'):
+            for element in self.get_elements(direction='in'):
                 delphi_type = element.get_delphi_type()
 
                 if with_modifiers:

@@ -124,7 +124,7 @@ class JavaPacket(common.Packet):
         return name
 
     def get_java_return_type(self, for_doc=False):
-        elements = self.get_elements('out')
+        elements = self.get_elements(direction='out')
 
         if len(elements) == 0:
             return 'void'

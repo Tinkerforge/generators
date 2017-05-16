@@ -330,7 +330,7 @@ class VBNETDocPacket(common.Packet):
         return common.shift_right(text, 1)
 
     def get_vbnet_return_type(self):
-        elements = self.get_elements('out')
+        elements = self.get_elements(direction='out')
 
         if len(elements) == 1:
             vbnet_type = elements[0].get_vbnet_type()
@@ -345,7 +345,7 @@ class VBNETDocPacket(common.Packet):
     def get_vbnet_parameter_list(self):
         param = []
 
-        if len(self.get_elements('out')) > 1 or self.get_type() == 'callback':
+        if len(self.get_elements(direction='out')) > 1 or self.get_type() == 'callback':
             for element in self.get_elements():
                 vbnet_type = element.get_vbnet_type()
 
@@ -361,7 +361,7 @@ class VBNETDocPacket(common.Packet):
 
                 param.append('{0}{1} As {2}'.format(modifier, name, vbnet_type))
         else:
-            for element in self.get_elements('in'):
+            for element in self.get_elements(direction='in'):
                 vbnet_type = element.get_vbnet_type()
                 name = element.get_headless_camel_case_name()
 

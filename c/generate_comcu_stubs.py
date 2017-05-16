@@ -97,8 +97,10 @@ class COMCUBindingsDevice(common.Device):
                     continue
 
                 struct_body = ''
-                for element in packet.get_elements('in'):
+
+                for element in packet.get_elements(direction='in'):
                     c_type = element.get_c_type(False)
+
                     if element.get_cardinality() > 1:
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                                   element.get_underscore_name(),
@@ -108,12 +110,14 @@ class COMCUBindingsDevice(common.Device):
 
                 structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), ''))
 
-                if len(packet.get_elements('out')) == 0:
+                if len(packet.get_elements(direction='out')) == 0:
                     continue
 
                 struct_body = ''
-                for element in packet.get_elements('out'):
+
+                for element in packet.get_elements(direction='out'):
                     c_type = element.get_c_type(False)
+
                     if element.get_cardinality() > 1:
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                                   element.get_underscore_name(),
@@ -128,11 +132,11 @@ class COMCUBindingsDevice(common.Device):
     def get_h_function_prototypes(self):
         prototype =  'BootloaderHandleMessageResponse {0}(const {1} *data);'
         prototype_with_response =  'BootloaderHandleMessageResponse {0}(const {1} *data, {2} *response);'
-
         prototypes = []
+
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200:
-                if len(packet.get_elements('out')) == 0:
+                if len(packet.get_elements(direction='out')) == 0:
                     prototypes.append(prototype.format(packet.get_underscore_name(), packet.get_camel_case_name()))
                 else:
                     prototypes.append(prototype_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + '_Response'))
@@ -173,11 +177,11 @@ class COMCUBindingsDevice(common.Device):
     def get_c_cases(self):
         case =  '\t\tcase FID_{0}: return {1}(message);'
         case_with_response = '\t\tcase FID_{0}: return {1}(message, response);'
-
         cases = []
+
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200:
-                if len(packet.get_elements('out')) == 0:
+                if len(packet.get_elements(direction='out')) == 0:
                     cases.append(case.format(packet.get_upper_case_name(), packet.get_underscore_name()))
                 else:
                     cases.append(case_with_response.format(packet.get_upper_case_name(), packet.get_underscore_name()))
@@ -198,9 +202,10 @@ class COMCUBindingsDevice(common.Device):
 }}
 """
         functions = []
+
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200:
-                if len(packet.get_elements('out')) == 0:
+                if len(packet.get_elements(direction='out')) == 0:
                     functions.append(function.format(packet.get_underscore_name(), packet.get_camel_case_name()))
                 else:
                     functions.append(function_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + '_Response'))
@@ -240,7 +245,7 @@ bool handle_{0}_callback(void) {{
 
 class COMCUBindingsPacket(c_common.CPacket):
     pass
- 
+
 class COMCUBindingsGenerator(common.BindingsGenerator):
     c_file = """/* {0}-bricklet
  * Copyright (C) {1} {2} <{3}>
@@ -377,7 +382,7 @@ void communication_init(void);
                 s = s.replace("""<<<EMAIL>>>""", email)
                 with open(fpath, "w") as f:
                     f.write(s)
-    
+
     def generate(self, device):
         folder = os.path.join(self.get_bindings_root_directory(), 'comcu_output', '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name()))
         try:

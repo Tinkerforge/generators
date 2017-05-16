@@ -344,7 +344,7 @@ class LabVIEWDocPacket(common.Packet):
         else:
             direction = 'in'
 
-        for element in self.get_elements(direction):
+        for element in self.get_elements(direction=direction):
             inputs.append(element.get_headless_camel_case_name())
 
         return ', '.join(inputs)
@@ -357,7 +357,7 @@ class LabVIEWDocPacket(common.Packet):
         else:
             direction = 'in'
 
-        for element in self.get_elements(direction):
+        for element in self.get_elements(direction=direction):
             name = element.get_headless_camel_case_name()
             type = element.get_labview_type()
 
@@ -369,7 +369,7 @@ class LabVIEWDocPacket(common.Packet):
         outputs = []
 
         if self.get_type() == 'function':
-            for element in self.get_elements('out'):
+            for element in self.get_elements(direction='out'):
                 outputs.append(element.get_headless_camel_case_name())
 
         return ', '.join(outputs)
@@ -378,7 +378,7 @@ class LabVIEWDocPacket(common.Packet):
         descriptions = []
 
         if self.get_type() == 'function':
-            for element in self.get_elements('out'):
+            for element in self.get_elements(direction='out'):
                 name = element.get_headless_camel_case_name()
                 type = element.get_labview_type()
 

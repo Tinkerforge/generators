@@ -353,7 +353,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
         desc = '\n'
         param = ' :param {0}: {1}\n'
 
-        for element in self.get_elements(io):
+        for element in self.get_elements(direction=io):
             desc += param.format(element.get_underscore_name(), element.get_ruby_type())
 
         return desc
@@ -362,7 +362,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
         ret = ' -> {0}'
         ret_list = []
 
-        for element in self.get_elements('out'):
+        for element in self.get_elements(direction='out'):
             ret_list.append(element.get_ruby_type())
 
         if len(ret_list) == 0:
@@ -373,7 +373,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
         return ret.format('[' + ', '.join(ret_list) + ']')
 
     def get_ruby_object_desc(self):
-        if len(self.get_elements('out')) < 2:
+        if len(self.get_elements(direction='out')) < 2:
             return ''
 
         desc = {
@@ -391,16 +391,16 @@ class RubyDocPacket(ruby_common.RubyPacket):
         }
 
         var = []
-        for element in self.get_elements('out'):
+
+        for element in self.get_elements(direction='out'):
             var.append('``{0}``'.format(element.get_underscore_name()))
 
         if len(var) == 1:
             return common.select_lang(desc).format(var[0])
-
-        if len(var) == 2:
+        elif len(var) == 2:
             return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
-
-        return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
+        else:
+            return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class RubyDocGenerator(common.DocGenerator):
     def get_bindings_name(self):

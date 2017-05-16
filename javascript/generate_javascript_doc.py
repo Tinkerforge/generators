@@ -423,7 +423,8 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
     def get_javascript_parameter_desc(self, io):
         desc = '\n'
         param = ' :param {0}: {1}\n'
-        for element in self.get_elements(io):
+
+        for element in self.get_elements(direction=io):
             t = element.get_javascript_type()
             desc += param.format(element.get_headless_camel_case_name(), t)
 
@@ -432,14 +433,15 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
     def get_javascript_return_desc(self):
         desc = []
         param = ' :return {0}: {1}'
-        for element in self.get_elements('out'):
+
+        for element in self.get_elements(direction='out'):
             t = element.get_javascript_type()
             desc.append(param.format(element.get_headless_camel_case_name(), t))
 
         if len(desc) == 0:
             return '\n :noreturn: undefined\n'
-
-        return '\n' + '\n'.join(desc) + '\n'
+        else:
+            return '\n' + '\n'.join(desc) + '\n'
 
 class JavaScriptDocGenerator(common.DocGenerator):
     def get_bindings_name(self):

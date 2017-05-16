@@ -380,7 +380,7 @@ class PerlDocPacket(common.Packet):
     def get_perl_parameter_list(self):
         params = []
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             params.append(element.get_perl_doc_name())
 
         return ', '.join(params)
@@ -409,7 +409,8 @@ class PerlDocPacket(common.Packet):
     def get_perl_parameter_desc(self, io):
         desc = '\n'
         param = ' :param {0}: {1}\n'
-        for element in self.get_elements(io):
+
+        for element in self.get_elements(direction=io):
             t = element.get_perl_type()
             desc += param.format(element.get_perl_doc_name(), t)
 
@@ -418,17 +419,19 @@ class PerlDocPacket(common.Packet):
     def get_perl_return_desc(self):
         ret = ' :rtype: {0}\n'
         ret_list = []
-        for element in self.get_elements('out'):
+
+        for element in self.get_elements(direction='out'):
             ret_list.append(element.get_perl_type())
+
         if len(ret_list) == 0:
             return ret.format('undef')
         elif len(ret_list) == 1:
             return ret.format(ret_list[0])
-
-        return ret.format('[' + ', '.join(ret_list) + ']')
+        else:
+            return ret.format('[' + ', '.join(ret_list) + ']')
 
     def get_perl_object_desc(self):
-        if len(self.get_elements('out')) < 2:
+        if len(self.get_elements(direction='out')) < 2:
             return ''
 
         desc = {
@@ -446,7 +449,8 @@ class PerlDocPacket(common.Packet):
         }
 
         var = []
-        for element in self.get_elements('out'):
+
+        for element in self.get_elements(direction='out'):
             var.append('``{0}``'.format(element.get_underscore_name()))
 
         if len(var) == 1:

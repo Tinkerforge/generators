@@ -373,7 +373,8 @@ class PythonDocPacket(python_common.PythonPacket):
     def get_python_parameter_desc(self, io):
         desc = '\n'
         param = ' :param {0}: {1}\n'
-        for element in self.get_elements(io):
+
+        for element in self.get_elements(direction=io):
             t = element.get_python_type()
             desc += param.format(element.get_underscore_name(), t)
 
@@ -382,7 +383,7 @@ class PythonDocPacket(python_common.PythonPacket):
     def get_python_return_desc(self):
         ret = ' :rtype: {0}\n'
         ret_list = []
-        for element in self.get_elements('out'):
+        for element in self.get_elements(direction='out'):
             ret_list.append(element.get_python_type())
         if len(ret_list) == 0:
             return ret.format(None)
@@ -392,7 +393,7 @@ class PythonDocPacket(python_common.PythonPacket):
         return ret.format('(' + ', '.join(ret_list) + ')')
 
     def get_python_object_desc(self):
-        if len(self.get_elements('out')) < 2:
+        if len(self.get_elements(direction='out')) < 2:
             return ''
 
         desc = {
@@ -410,16 +411,16 @@ class PythonDocPacket(python_common.PythonPacket):
         }
 
         var = []
-        for element in self.get_elements('out'):
+
+        for element in self.get_elements(direction='out'):
             var.append('``{0}``'.format(element.get_underscore_name()))
 
         if len(var) == 1:
             return common.select_lang(desc).format(var[0])
-
-        if len(var) == 2:
+        elif len(var) == 2:
             return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
-
-        return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
+        else:
+            return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class PythonDocGenerator(common.DocGenerator):
     def get_bindings_name(self):

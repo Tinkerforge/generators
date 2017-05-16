@@ -442,7 +442,7 @@ class ShellDocPacket(shell_common.ShellPacket):
         'de': 'hat Symbole'
         }
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             t = element.get_shell_type(True)
             desc += param.format(element.get_dash_name(), t)
 
@@ -462,12 +462,13 @@ class ShellDocPacket(shell_common.ShellPacket):
         'en': 'has symbols',
         'de': 'hat Symbole'
         }
-        elements = self.get_elements('out')
+        elements = self.get_elements(direction='out')
 
         if len(elements) == 0:
             return '\n :noreturn: {0}\n'.format(common.select_lang(nothing))
 
         ret = '\n'
+
         for element in elements:
             t = element.get_shell_type(True)
             ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)

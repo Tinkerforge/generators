@@ -39,7 +39,7 @@ class ShellBindingsPacket(shell_common.ShellPacket):
     def get_shell_format_list(self, direction):
         formats = []
 
-        for element in self.get_elements(direction):
+        for element in self.get_elements(direction=direction):
             formats.append(element.get_shell_struct_format())
 
         return ' '.join(formats)
@@ -61,7 +61,7 @@ class {0}(Device):"""
         response_expected = []
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements('out')) > 0:
+            if len(packet.get_elements(direction='out')) > 0:
                 flag = 1 #'Device.RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
                 flag = 3 #'Device.RESPONSE_EXPECTED_TRUE'
@@ -127,7 +127,7 @@ def call_{0}_{1}(ctx, argv):
                 params = []
                 request_data = []
 
-                for element in packet.get_elements('in'):
+                for element in packet.get_elements(direction='in'):
                     name = element.get_underscore_name()
                     type_converter = element.get_shell_type_converter()
                     help = element.get_shell_help()
@@ -147,7 +147,7 @@ def call_{0}_{1}(ctx, argv):
                 output_names = []
                 output_symbols = []
 
-                for element in packet.get_elements('out'):
+                for element in packet.get_elements(direction='out'):
                     output_names.append("'{0}'".format(element.get_dash_name()))
 
                     constant_group = element.get_constant_group()
@@ -238,7 +238,7 @@ def dispatch_{0}_{1}(ctx, argv):
             output_names = []
             output_symbols = []
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 output_names.append("'{0}'".format(element.get_dash_name()))
 
                 constant_group = element.get_constant_group()

@@ -41,7 +41,7 @@ class ShellPacket(common.Packet):
     def get_shell_parameter_list(self):
         params = []
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             params.append('<{0}>'.format(element.get_dash_name()))
 
         return ' '.join(params)

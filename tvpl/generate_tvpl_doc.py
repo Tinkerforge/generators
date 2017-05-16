@@ -185,6 +185,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
             c += common.select_lang(for_) + ' '
 
             e = []
+
             for element in constant_group.get_elements():
                 e.append(element.get_name())
 
@@ -211,14 +212,14 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
     def get_tvpl_parameter_list(self):
         params = []
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             params.append('L{0}'.format(element.get_name().replace(' ', '_')))
 
         if len(params) > 1:
             params.insert(len(params) - 1, 'Aand')
 
         if len(params) > 0:
-            if len(self.get_elements('out')) > 0:
+            if len(self.get_elements(direction='out')) > 0:
                 params.insert(0, 'Awith')
             else:
                 params.insert(0, 'Ato')
@@ -237,7 +238,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         'de': 'Liste_mit_'
         }
 
-        for element in self.get_elements('out'):
+        for element in self.get_elements(direction='out'):
             ret_list.append(element.get_name().replace(' ', '_'))
 
         if len(ret_list) == 0:
@@ -255,7 +256,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         'de': 'hat Symbole'
         }
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             t = element.get_tvpl_doc_type()
             desc += param.format(element.get_name().replace(' ', '$nbsp;'), t)
 
@@ -275,7 +276,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         'en': 'has symbols',
         'de': 'hat Symbole'
         }
-        elements = self.get_elements('out')
+        elements = self.get_elements(direction='out')
 
         if len(elements) == 0:
             return '\n :noreturn: {0}\n'.format(common.select_lang(nothing))

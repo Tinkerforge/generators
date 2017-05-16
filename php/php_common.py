@@ -37,12 +37,14 @@ class PHPDevice(common.Device):
 
 class PHPPacket(common.Packet):
     def get_php_return_type(self):
-        if len(self.get_elements('out')) == 0:
+        elements = self.get_elements(direction='out')
+
+        if len(elements) == 0:
             return 'void'
-        if len(self.get_elements('out')) > 1:
+        elif len(elements) > 1:
             return 'array'
 
-        for element in self.get_elements('out'):
+        for element in elements:
             if element.get_cardinality() > 1 and element.get_type() != 'string':
                 return 'array'
             else:

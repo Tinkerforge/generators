@@ -96,7 +96,7 @@ var Device = require('./Device');
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK_'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements('out')) > 0:
+            elif len(packet.get_elements(direction='out')) > 0:
                 prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
@@ -190,7 +190,7 @@ class JavaScriptBindingsPacket(javascript_common.JavaScriptPacket):
     def get_javascript_format_list(self, io):
         forms = []
 
-        for element in self.get_elements(io):
+        for element in self.get_elements(direction=io):
             forms.append(element.get_javascript_struct_format())
 
         return ' '.join(forms)

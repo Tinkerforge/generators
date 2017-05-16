@@ -41,7 +41,7 @@ class PythonPacket(common.Packet):
     def get_python_parameters(self, high_level=False):
         parameters = []
 
-        for element in self.get_elements('in', high_level=high_level):
+        for element in self.get_elements(direction='in', high_level=high_level):
             parameters.append(element.get_underscore_name())
 
         return ', '.join(parameters)

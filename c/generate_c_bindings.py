@@ -245,7 +245,7 @@ typedef struct {{
 
             struct_body = ''
 
-            for element in packet.get_elements('in'):
+            for element in packet.get_elements(direction='in'):
                 c_type = element.get_c_type(False, struct=True)
 
                 if element.get_cardinality() > 1:
@@ -262,12 +262,12 @@ typedef struct {{
 
             structs += struct_template.format(struct_body, packet.get_camel_case_name(), 'Request')
 
-            if len(packet.get_elements('out')) == 0:
+            if len(packet.get_elements(direction='out')) == 0:
                 continue
 
             struct_body = ''
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 c_type = element.get_c_type(False, struct=True)
 
                 if element.get_cardinality() > 1:
@@ -325,7 +325,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK'
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements('out')) > 0:
+            elif len(packet.get_elements(direction='out')) > 0:
                 prefix = 'FUNCTION'
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
@@ -420,7 +420,7 @@ int {0}_{1}({2} *{0}{3}) {{
             f = packet.get_camel_case_name()
             h, needs_i = packet.get_c_struct_list()
 
-            if len(packet.get_elements('out')) > 0:
+            if len(packet.get_elements(direction='out')) > 0:
                 g = '\n\t' + f + '_Response response;'
                 rl, needs_i2 = packet.get_c_return_list()
                 i = template_ret.format(f, device_name, rl)
@@ -1178,7 +1178,7 @@ class CBindingsPacket(c_common.CPacket):
         struct_list = ''
         needs_i = False
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             sf = 'request'
 
             if element.get_type() == 'string':
@@ -1224,7 +1224,7 @@ class CBindingsPacket(c_common.CPacket):
         return_list = ''
         needs_i = False
 
-        for element in self.get_elements('out'):
+        for element in self.get_elements(direction='out'):
             sf = 'response'
 
             if element.get_type() == 'string':

@@ -129,11 +129,12 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
         cbs = ''
         cls = self.get_matlab_class_name()
+
         for packet in self.get_packets('callback'):
             desc = packet.get_matlab_formatted_doc(1)
             params = []
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 matlab_type = element.get_matlab_type()
                 name = element.get_headless_camel_case_name()
 
@@ -480,7 +481,7 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
         return common.shift_right(text, shift_right)
 
     def get_matlab_object_desc(self):
-        if len(self.get_elements('out')) < 2:
+        if len(self.get_elements(direction='out')) < 2:
             return ''
 
         desc = {
@@ -491,14 +492,13 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
  Das zurückgegebene Objekt enthält die Public-Member-Variablen {0}.
 """
         }
-
         and_ = {
         'en': ' and ',
         'de': ' und '
         }
-
         var = []
-        for element in self.get_elements('out'):
+
+        for element in self.get_elements(direction='out'):
             typ = element.get_matlab_type()
 
             if element.get_cardinality() > 1 and element.get_type() != 'string':
@@ -509,11 +509,10 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
 
         if len(var) == 1:
             return common.select_lang(desc).format(var[0])
-
-        if len(var) == 2:
+        elif len(var) == 2:
             return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
-
-        return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
+        else:
+            return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class MATLABDocGenerator(common.DocGenerator):
     def get_bindings_name(self):

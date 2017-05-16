@@ -538,8 +538,9 @@ Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
 }
     str_constant = '* {0}FUNCTION_{1} = {2}\n'
     str_constants = select_lang(str_constants).format(select_lang(constants_name))
+
     for packet in device.get_packets('function'):
-        if len(packet.get_elements('out')) == 0 and packet.get_function_id() >= 0:
+        if len(packet.get_elements(direction='out')) == 0 and packet.get_function_id() >= 0:
             str_constants += str_constant.format(prefix,
                                                  packet.get_upper_case_name(),
                                                  packet.get_function_id())

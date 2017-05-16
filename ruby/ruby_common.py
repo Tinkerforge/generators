@@ -38,7 +38,7 @@ class RubyPacket(common.Packet):
     def get_ruby_parameter_list(self):
         params = []
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             params.append(element.get_underscore_name())
 
         return ', '.join(params)

@@ -38,7 +38,7 @@ class JavaScriptPacket(common.Packet):
     def get_javascript_parameter_list(self):
         params = []
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             params.append(element.get_headless_camel_case_name())
 
         return ', '.join(params)

@@ -171,14 +171,14 @@ public class {0} extends Device {{
             if packet.has_prototype_in_device():
                 continue
 
-            if len(packet.get_elements('out')) < 2:
+            if len(packet.get_elements(direction='out')) < 2:
                 continue
 
             name = packet.get_java_object_name()
             params = []
             tostr = []
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 typ = element.get_java_type()
 
                 if self.get_generator().is_octave() and typ == 'char':
@@ -268,7 +268,7 @@ public class {0} extends Device {{
             name_upper = 'FUNCTION_' + packet.get_upper_case_name()
             setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
 
-            if len(packet.get_elements('out')) > 0:
+            if len(packet.get_elements(direction='out')) > 0:
                 setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
             elif packet.get_doc_type() in ['ccf', 'llf']:
                 setto = 'RESPONSE_EXPECTED_FLAG_TRUE;'
@@ -312,7 +312,7 @@ public class {0} extends Device {{
             parameter = ', '.join(parameter_list)
             cbdata = ''
 
-            if len(packet.get_elements('out')) > 0:
+            if len(packet.get_elements(direction='out')) > 0:
                 bbgets, bbret = packet.get_java_bbgets()
                 bbgets = bbgets.replace('\t\t', '\t\t\t\t')
                 cbdata = data.format(name_lower,
@@ -361,7 +361,7 @@ public class {0} extends Device {{
             parameter = ', '.join(parameter_list)
             cbdata = ''
 
-            if len(packet.get_elements('out')) > 0:
+            if len(packet.get_elements(direction='out')) > 0:
                 bbgets, bbret = packet.get_java_bbgets()
                 bbgets = bbgets.replace('\t\t', '\t\t\t\t')
                 cbdata = data.format(name_lower,
@@ -687,7 +687,7 @@ public class {0} extends Device {{
             bbput = '\t\tbb.put{0}({1}{2});'
             bbput_bool_array = ''
 
-            for element in packet.get_elements('in'):
+            for element in packet.get_elements(direction='in'):
                 name = element.get_headless_camel_case_name()
 
                 if element.get_type() == 'bool':
@@ -737,10 +737,10 @@ public class {0} extends Device {{
 
             throw = 'throws TimeoutException, NotConnectedException'
 
-            if len(packet.get_elements('out')) == 0:
+            if len(packet.get_elements(direction='out')) == 0:
                 bbgets = ''
                 bbret = ''
-            elif len(packet.get_elements('out')) > 1:
+            elif len(packet.get_elements(direction='out')) > 1:
                 bbgets, bbret = packet.get_java_bbgets(True)
                 obj_name = packet.get_java_object_name()
                 obj = '\t\t{0} obj = new {0}();\n'.format(obj_name)
@@ -749,7 +749,7 @@ public class {0} extends Device {{
             else:
                 bbgets, bbret = packet.get_java_bbgets(False)
 
-            if len(packet.get_elements('out')) == 0:
+            if len(packet.get_elements(direction='out')) == 0:
                 response = template_noresponse.format(name_upper)
             else:
                 response = template_response.format(name_upper,
@@ -868,7 +868,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
 {1}
 		}}
 """
-        for element in self.get_elements('out'):
+        for element in self.get_elements(direction='out'):
             bbget_format_bool_array = False
             typ = ''
 

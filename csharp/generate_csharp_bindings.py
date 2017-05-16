@@ -263,7 +263,7 @@ namespace Tinkerforge
             name_upper = 'FUNCTION_' + packet.get_upper_case_name()
             setto = 'ResponseExpectedFlag.FALSE;'
 
-            if len(packet.get_elements('out')) > 0:
+            if len(packet.get_elements(direction='out')) > 0:
                 setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
             elif packet.get_doc_type() in ['ccf', 'llf']:
                 setto = 'ResponseExpectedFlag.TRUE;'
@@ -297,7 +297,7 @@ namespace Tinkerforge
             name_upper = packet.get_upper_case_name()
             eles = []
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 eles.append(element.get_headless_camel_case_name())
 
             callParams = ", ".join(eles)
@@ -316,7 +316,7 @@ namespace Tinkerforge
 
             pos = 8
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 csharp_type = element.get_csharp_type()
                 cname = element.get_headless_camel_case_name()
                 from_method = element.get_csharp_le_converter_from_method()
@@ -373,7 +373,7 @@ namespace Tinkerforge
 {0}"""
 
         for packet in self.get_packets('function'):
-            ret_count = len(packet.get_elements('out'))
+            ret_count = len(packet.get_elements(direction='out'))
             size = str(packet.get_request_size())
             name_upper = packet.get_upper_case_name()
             doc = packet.get_csharp_formatted_doc()
@@ -397,7 +397,7 @@ namespace Tinkerforge
 
             pos = 8
 
-            for element in packet.get_elements('in'):
+            for element in packet.get_elements(direction='in'):
                 wname = element.get_headless_camel_case_name()
                 csharp_type = element.get_csharp_le_converter_type()
 
@@ -439,7 +439,7 @@ namespace Tinkerforge
 
             pos = 8
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 aname = element.get_headless_camel_case_name()
                 from_method = element.get_csharp_le_converter_from_method()
                 length = ''

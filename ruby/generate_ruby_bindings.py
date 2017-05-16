@@ -116,7 +116,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements('out')) > 0:
+            elif len(packet.get_elements(direction='out')) > 0:
                 prefix = 'FUNCTION'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
@@ -247,7 +247,7 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
         forms = []
         total_size = 0
 
-        for element in self.get_elements(io):
+        for element in self.get_elements(direction=io):
             num_str = ''
             num_int = 1
 

@@ -43,6 +43,7 @@ class CSharpPacket(common.Packet):
                 continue
 
             out = ''
+
             if element.get_direction() == 'out' and self.get_type() == 'function':
                 out = 'out '
 
@@ -60,7 +61,7 @@ class CSharpPacket(common.Packet):
         return_type = 'void'
 
         if ret_count == 1:
-            return_type = self.get_elements('out')[0].get_csharp_type()
+            return_type = self.get_elements(direction='out')[0].get_csharp_type()
 
         class_prefix = ''
 

@@ -399,7 +399,7 @@ class MathematicaDocPacket(common.Packet):
     def get_mathematica_parameter_list(self):
         params = []
 
-        if len(self.get_elements('out')) > 1 or self.get_type() == 'callback':
+        if len(self.get_elements(direction='out')) > 1 or self.get_type() == 'callback':
             for element in self.get_elements():
                 if element.get_direction() == 'in' or self.get_type() == 'callback':
                     modifier = ''
@@ -408,14 +408,14 @@ class MathematicaDocPacket(common.Packet):
 
                 params.append(modifier + element.get_mathematica_signature_name())
         else:
-            for element in self.get_elements('in'):
+            for element in self.get_elements(direction='in'):
                 params.append(element.get_mathematica_signature_name())
 
         return ', '.join(params)
 
     def get_mathematica_parameter_description(self):
         descriptions = []
-        normal_return = len(self.get_elements('out')) <= 1
+        normal_return = len(self.get_elements(direction='out')) <= 1
 
         for element in self.get_elements():
             if self.get_type() == 'function' and normal_return and element.get_direction() == 'out':
@@ -429,20 +429,24 @@ class MathematicaDocPacket(common.Packet):
         return '\n' + ''.join(descriptions)
 
     def get_mathematica_return(self):
-        if len(self.get_elements('out')) == 1 and self.get_type() == 'function':
-            element = self.get_elements('out')[0]
+        elements = self.get_elements(direction='out')
+
+        if len(elements) == 1 and self.get_type() == 'function':
+            element = elements[0]
 
             return element.get_mathematica_signature_name()
         else:
             return 'Null'
 
     def get_mathematica_return_description(self):
-        if len(self.get_elements('out')) == 1 and self.get_type() == 'function':
-            element = self.get_elements('out')[0]
-            name = element.get_mathematica_description_name()
-            type = element.get_mathematica_type()
+        elements = self.get_elements(direction='out')
 
-            return ' :ret {0}: {1}\n'.format(name, type)
+        if len(elements) == 1 and self.get_type() == 'function':
+            element = elements[0]
+            name = element.get_mathematica_description_name()
+            type_ = element.get_mathematica_type()
+
+            return ' :ret {0}: {1}\n'.format(name, type_)
         else:
             return ''
 

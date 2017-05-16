@@ -273,7 +273,7 @@ begin
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK_'
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements('out')) > 0:
+            elif len(packet.get_elements(direction='out')) > 0:
                 prefix = 'FUNCTION_'
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
@@ -316,7 +316,7 @@ begin
 
         for packet in self.get_packets('function'):
             ret_type = packet.get_delphi_return_type(False)
-            out_count = len(packet.get_elements('out'))
+            out_count = len(packet.get_elements(direction='out'))
             name = packet.get_camel_case_name()
             params = packet.get_delphi_parameter_list(False)
             function_id = '{0}_{1}_FUNCTION_{2}'.format(self.get_upper_case_category(),
@@ -365,7 +365,7 @@ begin
             # Serialize request
             offset = 8
 
-            for element in packet.get_elements('in'):
+            for element in packet.get_elements(direction='in'):
                 if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_type() != 'bool':
                     prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_headless_camel_case_name())
                     method += '  {0}LEConvert{1}To({2}[i], {3} + (i * {4}), request);\n'.format(prefix,
@@ -404,7 +404,7 @@ begin
   for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
 ''';
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 if out_count > 1:
                     result = element.get_headless_camel_case_name()
                 else:
@@ -447,7 +447,7 @@ begin
             wrapper = 'procedure {0}.CallbackWrapper{1}(const packet: TByteArray);\n'.format(self.get_delphi_class_name(),
                                                                                              packet.get_camel_case_name())
 
-            if len(packet.get_elements('out')) > 0:
+            if len(packet.get_elements(direction='out')) > 0:
                 wrapper += 'var ' + packet.get_delphi_parameter_list(False, False) + ';'
 
             has_array = False
@@ -471,7 +471,7 @@ begin
             wrapper += '\n'
             wrapper += 'begin\n'
 
-            if len(packet.get_elements('out')) == 0:
+            if len(packet.get_elements(direction='out')) == 0:
                 wrapper += '  Assert(packet <> nil); { Avoid \'Parameter not used\' warning }\n'
 
             wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
@@ -484,7 +484,7 @@ begin
   for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
 ''';
 
-            for element in packet.get_elements('out'):
+            for element in packet.get_elements(direction='out'):
                 parameter_names.append(element.get_headless_camel_case_name())
 
                 if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_type() != 'bool':

@@ -183,7 +183,7 @@ sub new
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK_'
                 flag = '_RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements('out')) > 0:
+            elif len(packet.get_elements(direction='out')) > 0:
                 prefix = 'FUNCTION_'
                 flag = '_RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
@@ -272,7 +272,7 @@ sub {0}
             device_in_format = packet.get_perl_format_list('in')
             device_out_format = packet.get_perl_format_list('out')
 
-            elements = len(packet.get_elements('out'))
+            elements = len(packet.get_elements(direction='out'))
 
             if elements > 1:
                 methods += multiple_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format)
@@ -297,7 +297,7 @@ class PerlBindingsPacket(common.Packet):
     def get_perl_parameter_list(self):
         params = []
 
-        for element in self.get_elements('in'):
+        for element in self.get_elements(direction='in'):
             params.append('$' + element.get_underscore_name())
 
         return ', '.join(params)
@@ -318,7 +318,7 @@ class PerlBindingsPacket(common.Packet):
     def get_perl_format_list(self, io):
         forms = []
 
-        for element in self.get_elements(io):
+        for element in self.get_elements(direction=io):
             forms.append(element.get_perl_pack_format())
 
         return ' '.join(forms)

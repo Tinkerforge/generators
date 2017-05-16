@@ -35,8 +35,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     def get_tvpl_source_block(self, dir_bindings_root):
         def get_source_block(packet):
             is_getter = False
-            elements_in = packet.get_elements('in')
-            elements_out = packet.get_elements('out')
+            elements_in = packet.get_elements(direction='in')
+            elements_out = packet.get_elements(direction='out')
 
             if len(elements_out) > 0:
                 is_getter = True
@@ -343,8 +343,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             generator_code_body = ''
             function_to_generate = ''
             returned_blockly_code = ''
-            elements_in = packet.get_elements('in')
-            elements_out = packet.get_elements('out')
+            elements_in = packet.get_elements(direction='in')
+            elements_out = packet.get_elements(direction='out')
             block_name = '_'.join([self.get_tvpl_device_name(), packet.get_underscore_name()])
 
             generator_code_header = '''Blockly.JavaScript['{blockname}'] = function(block) {{
@@ -571,8 +571,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                 continue
 
             has_in_args = False
-            elements_in = packet.get_elements('in')
-            elements_out = packet.get_elements('out')
+            elements_in = packet.get_elements(direction='in')
+            elements_out = packet.get_elements(direction='out')
             block_name = '_'.join([self.get_tvpl_device_name(), packet.get_underscore_name()])
             generator_code_header = '''Blockly.Python['{blockname}'] = function(block) {{
   var value_{devicename}_ipcon_uid = Blockly.Python.valueToCode(block, '_UID', Blockly.Python.ORDER_ATOMIC);
