@@ -1464,7 +1464,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Time Base',
 'elements': [('Time Base', 'uint32', 1, 'in')],
-'since_firmware': [1, 1, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -1495,7 +1495,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Time Base',
 'elements': [('Time Base', 'uint32', 1, 'out')],
-'since_firmware': [1, 1, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -1517,7 +1517,7 @@ com['packets'].append({
              ('Stack Voltage', 'uint16', 1, 'out'),
              ('External Voltage', 'uint16', 1, 'out'),
              ('Current Consumption', 'uint16', 1, 'out')],
-'since_firmware': [1, 1, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -1544,7 +1544,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set All Data Period',
 'elements': [('Period', 'uint32', 1, 'in')],
-'since_firmware': [1, 1, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -1563,7 +1563,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get All Data Period',
 'elements': [('Period', 'uint32', 1, 'out')],
-'since_firmware': [1, 1, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -1585,7 +1585,7 @@ com['packets'].append({
              ('Stack Voltage', 'uint16', 1, 'out'),
              ('External Voltage', 'uint16', 1, 'out'),
              ('Current Consumption', 'uint16', 1, 'out')],
-'since_firmware': [1, 1, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -1619,7 +1619,7 @@ com['packets'].append({
                                                               ('Deacceleration', 4),
                                                               ('Direction Change To Forward', 5),
                                                               ('Direction Change To Backward', 6)]))],
-'since_firmware': [1, 1, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
