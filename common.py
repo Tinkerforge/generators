@@ -965,10 +965,11 @@ class ConstantGroup(NameMixin):
         self.elements += elements
 
 class Element(NameMixin):
-    def __init__(self, raw_data, packet, high_level=False):
+    def __init__(self, raw_data, packet, level, role):
         self.raw_data = raw_data
         self.packet = packet
-        self.high_level = high_level
+        self.level = level
+        self.role = role
         self.constant_group = None
 
         check_name(raw_data[0])
@@ -1001,8 +1002,11 @@ class Element(NameMixin):
     def get_direction(self):
         return self.raw_data[3]
 
-    def is_high_level(self):
-        return self.high_level
+    def get_role(self):
+        return self.role
+
+    def get_level(self):
+        return self.level
 
     def get_constant_group(self):
         return self.constant_group
@@ -1031,108 +1035,78 @@ class Element(NameMixin):
         else:
             return self.get_item_size() * self.get_cardinality()
 
-class HighLevelStream(object):
-    def __init__(self, raw_data, packet):
+class Stream(NameMixin):
+    def __init__(self, raw_data, packet, direction):
         self.raw_data = raw_data
         self.packet = packet
+        self.direction = direction
+
+        check_name(raw_data['name'])
+
+        if raw_data.get('single_chunk', False):
+            if 'fixed_total_length' in raw_data:
+                raise GeneratorError("Cannot mix fixed-total-length and single-chunk for high-level feature 'stream_{0}'".format(direction))
+
+            self.total_length_element = packet.get_elements(name=self.get_name() + ' Length', direction=direction)[0]
+            self.chunk_offset_element = None
+            self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Data', direction=direction)[0]
+        elif 'fixed_total_length' in raw_data:
+            self.total_length_element = None
+            self.chunk_offset_element = packet.get_elements(name=self.get_name() + ' Chunk Offset', direction=direction)[0]
+            self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Chunk Data', direction=direction)[0]
+        else:
+            self.total_length_element = packet.get_elements(name=self.get_name() + ' Total Length', direction=direction)[0]
+            self.chunk_offset_element = packet.get_elements(name=self.get_name() + ' Chunk Offset', direction=direction)[0]
+            self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Chunk Data', direction=direction)[0]
+
+        if 'fixed_total_length' not in raw_data and \
+           not raw_data.get('single_chunk', False) \
+           and self.total_length_element == None:
+            raise GeneratorError("Missing total-length element for high-level feature 'stream_{0}'".format(direction))
+
+        if not raw_data.get('single_chunk', False) and \
+           self.chunk_offset_element == None:
+            raise GeneratorError("Missing chunk-offset element for high-level feature 'stream_{0}'".format(direction))
+
+        if self.chunk_data_element == None:
+            raise GeneratorError("Missing chunk-data element for high-level feature 'stream_{0}'".format(direction))
+
+        if 'fixed_total_length' not in raw_data and \
+           not raw_data.get('single_chunk', False) and \
+           self.total_length_element.get_type() != self.chunk_offset_element.get_type():
+            raise GeneratorError("Type of total-length element and chunk-offset are different")
 
     def get_packet(self): # parent
         return self.packet
 
+    def _get_name(self): # for NameMixin
+        return self.raw_data['name']
+
+    def get_total_length_element(self):
+        return self.total_length_element
+
+    def get_chunk_offset_element(self):
+        return self.chunk_offset_element
+
+    def get_chunk_data_element(self):
+        return self.chunk_data_element
+
     def get_fixed_total_length(self, default=None):
         return self.raw_data.get('fixed_total_length', default)
 
-    # FIXME: avoid all this NameMixin duplication here
-    def _get_data_name(self):
-        return self.raw_data.get('data_name', 'Data')
+    def has_single_chunk(self):
+        return self.raw_data.get('single_chunk', False)
 
-    def get_data_name(self, skip=0, remove=None):
-        words = skip_words(self._get_data_name().split(' '), skip)
-
-        if remove in words:
-            words.remove(remove)
-
-        return ' '.join(words)
-
-    def get_data_camel_case_name(self, skip=0):
-        return ''.join(skip_words(self._get_data_name().split(' '), skip))
-
-    def get_data_headless_camel_case_name(self, skip=0):
-        words = skip_words(self._get_data_name().split(' '), skip)
-
-        return ''.join([words[0].lower()] + words[1:])
-
-    def get_data_underscore_name(self, skip=0):
-        return '_'.join(skip_words(self._get_data_name().split(' '), skip)).lower()
-
-    def get_data_upper_case_name(self, skip=0):
-        return '_'.join(skip_words(self._get_data_name().split(' '), skip)).upper()
-
-    def get_data_dash_name(self, skip=0):
-        return '-'.join(skip_words(self._get_data_name().split(' '), skip)).lower()
-
-class HighLevelStreamIn(HighLevelStream):
+class StreamIn(Stream):
     def __init__(self, raw_data, packet):
-        HighLevelStream.__init__(self, raw_data, packet)
-
-        if 'fixed_total_length' not in raw_data and \
-           packet.elements_in[-3].get_name() != 'Stream Total Length':
-            raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
-
-        if packet.elements_in[-2].get_name() != 'Stream Chunk Offset' or \
-           packet.elements_in[-1].get_name() != 'Stream Chunk Data':
-            raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
-
-        if 'fixed_total_length' not in raw_data and \
-           packet.elements_in[-3].get_type() != packet.elements_in[-2].get_type():
-            raise GeneratorError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
-
-        if raw_data.get('short_write', False) and \
-           packet.elements_out[-1].get_name() != 'Stream Chunk Written':
-            raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
-
-    def get_total_length_element(self):
-        if 'fixed_total_length' in self.raw_data:
-            return None
-        else:
-            return self.packet.elements_in[-3]
-
-    def get_chunk_offset_element(self):
-        return self.packet.elements_in[-2]
-
-    def get_chunk_data_element(self):
-        return self.packet.elements_in[-1]
+        Stream.__init__(self, raw_data, packet, 'in')
 
     def has_short_write(self):
         return self.raw_data.get('short_write', False)
 
-class HighLevelStreamOut(HighLevelStream):
+class StreamOut(Stream):
     def __init__(self, raw_data, packet):
-        HighLevelStream.__init__(self, raw_data, packet)
-
-        if 'fixed_total_length' not in raw_data and \
-           packet.elements_out[-3].get_name() != 'Stream Total Length':
-            raise GeneratorError("Invalid element names for high-level feature 'stream_out'")
-
-        if packet.elements_out[-2].get_name() != 'Stream Chunk Offset' or \
-           packet.elements_out[-1].get_name() != 'Stream Chunk Data':
-            raise GeneratorError("Invalid element names for high-level feature 'stream_out'")
-
-        if 'fixed_total_length' not in raw_data and \
-           packet.elements_out[-3].get_type() != packet.elements_out[-2].get_type():
-            raise GeneratorError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
-
-    def get_total_length_element(self):
-        if 'fixed_total_length' in self.raw_data:
-            return None
-        else:
-            return self.packet.elements_out[-3]
-
-    def get_chunk_offset_element(self):
-        return self.packet.elements_out[-2]
-
-    def get_chunk_data_element(self):
-        return self.packet.elements_out[-1]
+        Stream.__init__(self, raw_data, packet, 'out')
 
 class Packet(NameMixin):
     valid_types = set(['int8',
@@ -1151,19 +1125,54 @@ class Packet(NameMixin):
     def __init__(self, raw_data, device):
         self.raw_data = raw_data
         self.device = device
-        self.elements_in = []
-        self.elements_out = []
+        self.elements = []
         self.high_level = {}
-        self.high_level_elements_in = []
-        self.high_level_elements_out = []
 
         check_name(raw_data['name'])
 
         if 'high_level' in raw_data and not raw_data['name'].endswith(' Low Level'):
             raise GeneratorError("Name of packet with high-level features has to end with 'Low Level'")
 
+        raw_stream_in = raw_data.get('high_level', {}).get('stream_in', None)
+        raw_stream_out = raw_data.get('high_level', {}).get('stream_out', None)
+        stream_name = None
+
+        if raw_stream_in != None and raw_stream_out != None:
+            raise GeneratorError("Cannot combine high-level features 'stream_in' and 'stream_out'")
+
+        if raw_stream_in != None:
+            stream_name = raw_stream_in['name']
+
+        if raw_stream_out != None:
+            stream_name = raw_stream_out['name']
+
+        stream_written_type = None
+        payload_in_size = 0
+        payload_out_size = 0
+
         for raw_element in self.raw_data['elements']:
-            element = device.get_generator().get_element_class()(raw_element, self)
+            raw_element = list(raw_element)
+
+            if stream_name != None and raw_element[0].startswith(stream_name + ' '):
+                level = 'low'
+
+                if raw_element[0].endswith(' Length'):
+                    role = 'stream_total_length'
+                    stream_written_type = raw_element[1]
+                elif raw_element[0].endswith(' Offset'):
+                    role = 'stream_chunk_offset'
+                    stream_written_type = raw_element[1]
+                elif raw_element[0].endswith(' Data'):
+                    role = 'stream_chunk_data'
+                elif raw_element[0].endswith(' Written'):
+                    role = 'stream_chunk_written'
+                else:
+                    raise GeneratorError('Unknown low-level element')
+            else:
+                level = 'normal'
+                role = None
+
+            element = device.get_generator().get_element_class()(raw_element, self, level, role)
 
             if element.get_type() not in Packet.valid_types:
                 raise GeneratorError('Invalid element type: ' + element.get_type())
@@ -1171,42 +1180,50 @@ class Packet(NameMixin):
             if element.get_cardinality() < 1:
                 raise GeneratorError('Invalid element cardinality: ' + element.get_cardinality())
 
-            if element.get_direction() == 'in':
-                if len(self.elements_out) > 0:
-                    raise GeneratorError("'in' element cannot come after 'out' element: " + element.get_name())
-
-                self.elements_in.append(element)
-            elif element.get_direction() == 'out':
-                self.elements_out.append(element)
-            else:
+            if element.get_direction() not in ['in', 'out']:
                 raise GeneratorError('Invalid element direction ' + element.get_direction())
 
-        raw_stream_in = raw_data.get('high_level', {}).get('stream_in', None)
-        raw_stream_out = raw_data.get('high_level', {}).get('stream_out', None)
+            if element.get_direction() == 'in' and len(self.elements) > 0 and self.elements[-1].get_direction() == 'out':
+                raise GeneratorError("'in' element cannot come after 'out' element")
 
-        if raw_stream_in != None and raw_stream_out != None:
-            raise GeneratorError("Cannot combine high-level features 'stream_in' and 'stream_out'")
-        elif raw_stream_in != None:
-            stream_in = HighLevelStreamIn(raw_stream_in, self)
-            raw_element = list(self.elements_in[-1].raw_data)
-            raw_element[0] = stream_in.get_data_name()
-            raw_element[2] = -1
+            if element.get_direction() == 'in':
+                payload_in_size += element.get_size()
+            else:
+                payload_out_size += element.get_size()
 
+            if payload_in_size > 64 or payload_out_size > 64:
+                raise GeneratorError('Payload too long: ' + raw_data['name'])
+
+            self.elements.append(element)
+
+            if level == 'low':
+                if element.get_name().endswith(' Data'):
+                    raw_element = deepcopy(raw_element)
+                    raw_element[0] = stream_name
+                    raw_element[2] = -1
+
+                    self.elements.append(device.get_generator().get_element_class()(raw_element, self, 'high', 'stream_data'))
+                elif element.get_name().endswith(' Written'):
+                    if stream_written_type == None:
+                        raise GeneratorError("Missing stream-written-type")
+
+                    raw_element = deepcopy(raw_element)
+                    raw_element[0] = stream_name + ' Written'
+                    raw_element[1] = stream_written_type
+
+                    self.elements.append(device.get_generator().get_element_class()(raw_element, self, 'high', 'stream_written'))
+
+        if raw_stream_in != None:
+            stream_in = StreamIn(raw_stream_in, self)
             self.high_level['stream_in'] = stream_in
-            self.high_level_elements_in.append(device.get_generator().get_element_class()(tuple(raw_element), self, high_level=True))
 
-        elif raw_stream_out != None:
-            stream_out = HighLevelStreamOut(raw_stream_out, self)
-            raw_element = list(self.elements_out[-1].raw_data)
-            raw_element[0] = stream_out.get_data_name()
-            raw_element[2] = -1
-
+        if raw_stream_out != None:
+            stream_out = StreamOut(raw_stream_out, self)
             self.high_level['stream_out'] = stream_out
-            self.high_level_elements_out.append(device.get_generator().get_element_class()(tuple(raw_element), self, high_level=True))
 
         self.constant_groups = []
 
-        for element in self.elements_in + self.elements_out:
+        for element in self.elements:
             constant_group = element.get_constant_group()
 
             if constant_group is None:
@@ -1256,38 +1273,31 @@ class Packet(NameMixin):
     def _get_name(self): # for NameMixin
         return self.raw_data['name']
 
-    def get_elements(self, direction=None, high_level=False):
-        elements_in = self.elements_in
-        elements_out = self.elements_out
-
-        if high_level:
-            stream_in = self.get_high_level('stream_in')
-            stream_out = self.get_high_level('stream_out')
-
-            if stream_in != None:
-                if stream_in.get_fixed_total_length() == None:
-                    elements_in = elements_in[:-3]
-                else:
-                    elements_in = elements_in[:-2]
-
-                elements_in += self.high_level_elements_in
-
-            if stream_out != None:
-                if stream_out.get_fixed_total_length() == None:
-                    elements_out = elements_out[:-3]
-                else:
-                    elements_out = elements_out[:-2]
-
-                elements_out += self.high_level_elements_out
-
-        if direction is None:
-            return elements_in + elements_out
-        elif direction == 'in':
-            return elements_in
-        elif direction == 'out':
-            return elements_out
-        else:
+    def get_elements(self, name=None, direction=None, high_level=False, role=None, default=None):
+        if direction not in [None, 'in', 'out']:
             raise GeneratorError('Invalid element direction ' + direction)
+
+        elements = []
+
+        for element in self.elements:
+            if name != None and element.get_name() != name:
+                continue
+
+            if direction != None and element.get_direction() != direction:
+                continue
+
+            if high_level and element.get_level() == 'low':
+                continue
+
+            if not high_level and element.get_level() == 'high':
+                continue
+
+            if role != None and element.get_role() != role:
+                continue
+
+            elements.append(element)
+
+        return elements
 
     def has_high_level(self):
         return len(self.high_level) > 0
@@ -1339,14 +1349,18 @@ class Packet(NameMixin):
 
     def get_request_size(self):
         size = 8 # header
-        for element in self.elements_in:
+
+        for element in self.get_elements(direction='in'):
             size += element.get_size()
+
         return size
 
     def get_response_size(self):
         size = 8 # header
-        for element in self.elements_out:
+
+        for element in self.get_elements(direction='out'):
             size += element.get_size()
+
         return size
 
     def get_constant_groups(self):

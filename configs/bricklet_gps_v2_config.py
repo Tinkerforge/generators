@@ -221,6 +221,7 @@ com['packets'].append({
              ('PDOP', 'uint16', 1, 'out'),
              ('HDOP', 'uint16', 1, 'out'),
              ('VDOP', 'uint16', 1, 'out')],
+'high_level': {'stream_out': {'name': 'Satellite Numbers', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

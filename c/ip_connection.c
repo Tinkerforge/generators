@@ -1165,7 +1165,7 @@ static void device_destroy(DevicePrivate *device_p) {
 	table_remove(&device_p->ipcon_p->devices, device_p->uid);
 
 	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; i++) {
-		free(device_p->low_level_callbacks[i].data);
+		free(device_p->high_level_callbacks[i].data);
 	}
 
 	mutex_destroy(&device_p->stream_mutex);
@@ -1246,9 +1246,9 @@ void device_create(Device *device, const char *uid_str,
 
 	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; i++) {
 		device_p->callback_wrappers[i] = NULL;
-		device_p->low_level_callbacks[i].exists = false;
-		device_p->low_level_callbacks[i].data = NULL;
-		device_p->low_level_callbacks[i].data_length = 0;
+		device_p->high_level_callbacks[i].exists = false;
+		device_p->high_level_callbacks[i].data = NULL;
+		device_p->high_level_callbacks[i].length = 0;
 	}
 
 	// add to IPConnection
@@ -1768,7 +1768,7 @@ static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response
 
 	if (sequence_number == 0) {
 		if (device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + response->header.function_id] != NULL ||
-		    device_p->low_level_callbacks[response->header.function_id].exists) {
+		    device_p->high_level_callbacks[-(int)response->header.function_id].exists) {
 			callback = (Packet *)malloc(response->header.length);
 
 			memcpy(callback, response, response->header.length);

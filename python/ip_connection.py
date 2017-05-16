@@ -112,7 +112,7 @@ class Device:
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
         self.callback_formats = {}
-        self.low_level_callbacks = {}
+        self.high_level_callbacks = {}
         self.expected_response_function_id = None # protected by request_lock
         self.expected_response_sequence_number = None # protected by request_lock
         self.response_queue = queue.Queue()
@@ -784,48 +784,59 @@ class IPConnection:
 
         device = self.devices[uid]
 
-        if function_id in device.low_level_callbacks:
-            llcb = device.low_level_callbacks[function_id] # [options, data]
+        if -function_id in device.high_level_callbacks:
+            hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
             form = device.callback_formats[function_id] # FIXME: currently assuming that form is longer than 1
-            values = self.deserialize_data(payload, form)
-            fixed_total_length = llcb[0].get('fixed_total_length', None)
-            result = None
+            llvalues = self.deserialize_data(payload, form)
+            fixed_total_length = hlcb[1]['fixed_total_length']
+            has_data = False
+            data = None
 
-            if fixed_total_length == None:
-                extra = tuple(values[:-3])
-                total_length = values[-3]
+            if hlcb[1]['fixed_total_length'] != None:
+                total_length = hlcb[1]['fixed_total_length']
             else:
-                extra = tuple(values[:-2])
-                total_length = fixed_total_length
+                total_length = llvalues[hlcb[0].index('stream_total_length')]
 
-            # FIXME: validate that extra parameters are identical for all low-level callbacks of a stream
-            # FIXME: validate that total length is identical for all low-level callbacks of a stream
+            if not hlcb[1]['single_chunk']:
+                chunk_offset = llvalues[hlcb[0].index('stream_chunk_offset')]
+            else:
+                chunk_offset = 0
 
-            chunk_offset = values[-2] # FIXME: validate chunk offset < total length
-            chunk_data = values[-1]
+            chunk_data = llvalues[hlcb[0].index('stream_chunk_data')]
 
-            if llcb[1] == None: # no stream in-progress
+            if hlcb[2] == None: # no stream in-progress
                 if chunk_offset == 0: # stream starts
-                    llcb[1] = chunk_data
+                    hlcb[2] = chunk_data
 
-                    if len(llcb[1]) >= total_length: # stream complete
-                        result = extra + (llcb[1][:total_length],)
-                        llcb[1] = None
+                    if len(hlcb[2]) >= total_length: # stream complete
+                        has_data = True
+                        data = hlcb[2][:total_length]
+                        hlcb[2] = None
                 else: # ignore tail of current stream, wait for next stream start
                     pass
             else: # stream in-progress
-                if chunk_offset != len(llcb[1]): # stream out-of-sync
-                    result = extra + (None,)
-                    llcb[1] = None
+                if chunk_offset != len(hlcb[2]): # stream out-of-sync
+                    has_data = True
+                    data = None
+                    hlcb[2] = None
                 else: # stream in-sync
-                    llcb[1] += chunk_data
+                    hlcb[2] += chunk_data
 
-                    if len(llcb[1]) >= total_length: # stream complete
-                        result = extra + (llcb[1][:total_length],)
-                        llcb[1] = None
+                    if len(hlcb[2]) >= total_length: # stream complete
+                        has_data = True
+                        data = hlcb[2][:total_length]
+                        hlcb[2] = None
 
-            if result != None and -function_id in device.registered_callbacks:
-                device.registered_callbacks[-function_id](*result)
+            if has_data and -function_id in device.registered_callbacks:
+                result = []
+
+                for role, llvalue in zip(hlcb[0], llvalues):
+                    if role == 'stream_chunk_data':
+                        result.append(data)
+                    elif role == None or not role.startswith('stream_'):
+                        result.append(llvalue)
+
+                device.registered_callbacks[-function_id](*tuple(result))
 
         if function_id in device.registered_callbacks:
             cb = device.registered_callbacks[function_id]
@@ -1118,7 +1129,7 @@ class IPConnection:
 
         if sequence_number == 0:
             if function_id in device.registered_callbacks or \
-               function_id in device.low_level_callbacks:
+               -function_id in device.high_level_callbacks:
                 self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 

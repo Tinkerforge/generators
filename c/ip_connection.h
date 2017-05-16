@@ -179,15 +179,15 @@ typedef struct _DevicePrivate DevicePrivate;
 #ifdef IPCON_EXPOSE_INTERNALS
 
 typedef struct _CallbackContext CallbackContext;
-typedef struct _LowLevelCallback LowLevelCallback;
+typedef struct _HighLevelCallback HighLevelCallback;
 
 /**
  * \internal
  */
-struct _LowLevelCallback {
+struct _HighLevelCallback {
 	bool exists;
 	void *data;
-	uint16_t data_length; // FIXME: uint16_t is not always the correct type
+	size_t length;
 };
 
 #endif
@@ -248,7 +248,7 @@ struct _DevicePrivate {
 	void *registered_callbacks[DEVICE_NUM_FUNCTION_IDS * 2];
 	void *registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS * 2];
 	CallbackWrapperFunction callback_wrappers[DEVICE_NUM_FUNCTION_IDS];
-	LowLevelCallback low_level_callbacks[DEVICE_NUM_FUNCTION_IDS];
+	HighLevelCallback high_level_callbacks[DEVICE_NUM_FUNCTION_IDS];
 };
 
 /**

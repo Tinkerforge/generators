@@ -38,22 +38,16 @@ class CPacket(common.Packet):
             c_type = element.get_c_type(True)
             modifier = ''
             name = element.get_underscore_name()
+            role = element.get_role()
             array = ''
-
-            if name == 'stream_chunk_written':
-                if high_level:
-                    c_type = 'uint16_t' # FIXME: uint16_t is not always the correct type
-                    name = 'written'
-                elif not signature:
-                    modifier = '&'
 
             if element.get_direction() == 'out' and self.get_type() == 'function':
                 if signature:
                     modifier = '*'
                     name = 'ret_{0}'.format(name)
-                elif name in ['stream_total_length', 'stream_chunk_offset']:
+                elif role in ['stream_total_length', 'stream_chunk_offset', 'stream_chunk_written']:
                     modifier = '&'
-                elif name not in ['stream_chunk_data', 'stream_chunk_written']:
+                elif role not in ['stream_chunk_data', 'stream_chunk_written']:
                     name = 'ret_{0}'.format(name)
 
             if element.get_cardinality() < 0 and signature and \
@@ -65,23 +59,35 @@ class CPacket(common.Packet):
                 modifier = ''
                 array = '[{0}]'.format(element.get_cardinality())
 
-            if high_level and callback_wrapper and element.is_high_level() and element.get_cardinality() < 0:
-                name = 'low_level_callback->data'
-
-                parameters.append('({0} *){1}'.format(element.get_c_type(False), name))
+            if high_level and callback_wrapper and element.get_level() == 'high' and element.get_cardinality() < 0:
+                parameters.append(name + '_data')
             elif signature:
                 parameters.append('{0} {1}{2}{3}'.format(c_type, modifier, name, array))
             else:
                 parameters.append('{0}{1}'.format(modifier, name))
 
-            if high_level and element.is_high_level() and element.get_cardinality() < 0:
+            total_length_elements = self.get_elements(role='stream_total_length')
+            chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
+
+            if high_level and \
+               element.get_level() == 'high' and \
+               element.get_cardinality() < 0 and \
+               (element.get_direction() == 'out' or \
+                len(total_length_elements) > 0):
                 if signature:
                     if element.get_direction() == 'out' and self.get_type() == 'function':
                         modifier = '*'
                     else:
                         modifier = ''
 
-                    parameters.append('uint16_t {0}{1}_length'.format(modifier, name)) # FIXME: uint16_t is not always the correct type
+                    if len(total_length_elements) > 0:
+                        c_type = total_length_elements[0].get_c_type(True)
+                    elif len(chunk_offset_elements) > 0:
+                        c_type = chunk_offset_elements[0].get_c_type(True)
+                    else:
+                        raise common.GeneratorError('Malformed stream config')
+
+                    parameters.append('{0} {1}{2}_length'.format(c_type, modifier, name))
                 else:
                     parameters.append('{0}{1}_length'.format(modifier, name))
 

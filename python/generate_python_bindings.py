@@ -74,6 +74,26 @@ except ValueError:
 
             tuples += template.format(name, name_tup, ", ".join(params))
 
+        for packet in self.get_packets('function'):
+            if not packet.has_high_level():
+                continue
+
+            if len(packet.get_elements(direction='out', high_level=True)) < 2:
+                continue
+
+            name = packet.get_camel_case_name(skip=-2)
+            name_tup = name
+
+            if name_tup.startswith('Get'):
+                name_tup = name_tup[3:]
+
+            params = []
+
+            for element in packet.get_elements(direction='out', high_level=True):
+                params.append("'{0}'".format(element.get_underscore_name()))
+
+            tuples += template.format(name, name_tup, ", ".join(params))
+
         return tuples
 
     def get_python_class(self):
@@ -173,19 +193,26 @@ class {0}(Device):
 
         return callback_formats + '\n'
 
-    def get_python_low_level_callbacks(self):
-        low_level_callbacks = ''
-        template = "        self.low_level_callbacks[{0}.CALLBACK_{1}] = [{{'fixed_total_length': {2}}}, None]\n"
+    def get_python_high_level_callbacks(self):
+        high_level_callbacks = ''
+        template = "        self.high_level_callbacks[{0}.CALLBACK_{1}] = [{4}, {{'fixed_total_length': {2}, 'single_chunk': {3}}}, None]\n"
 
         for packet in self.get_packets('callback'):
             stream = packet.get_high_level('stream_*')
 
             if stream != None:
-                low_level_callbacks += template.format(self.get_python_class_name(),
-                                                       packet.get_upper_case_name(),
-                                                       stream.get_fixed_total_length())
+                roles = []
 
-        return low_level_callbacks
+                for element in packet.get_elements(direction='out'):
+                    roles.append(element.get_role())
+
+                high_level_callbacks += template.format(self.get_python_class_name(),
+                                                        packet.get_upper_case_name(skip=-2),
+                                                        stream.get_fixed_total_length(),
+                                                        stream.has_single_chunk(),
+                                                        repr(tuple(roles)))
+
+        return high_level_callbacks
 
     def get_python_methods(self):
         m_tup = """
@@ -242,149 +269,272 @@ class {0}(Device):
 
     def get_python_high_level_methods(self):
         methods = ''
-        # FIXME: move the bulk of this logic to a helper function in ip_connection.py
         template_stream_in = """
     def {underscore_name}(self{high_level_parameter_list}):
-        stream_total_length = len({data_underscore_name})
-        stream_chunk_offset = 0
-        stream_result = None
+        {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
+        {stream_underscore_name}_total_length = len({stream_underscore_name})
+        {stream_underscore_name}_chunk_offset = 0
+        result = None
+
+        if {stream_underscore_name}_total_length == 0:
+            {stream_underscore_name}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
+            result = self.{underscore_name}_low_level({parameter_list})
+        else:
+            with self.stream_lock:
+                while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_total_length:
+                    {stream_underscore_name}_chunk_data = {stream_underscore_name}[{stream_underscore_name}_chunk_offset:{stream_underscore_name}_chunk_offset + {chunk_cardinality}]
+
+                    if len({stream_underscore_name}_chunk_data) < {chunk_cardinality}:
+                        {stream_underscore_name}_chunk_data.extend([{chunk_padding}] * ({chunk_cardinality} - len({stream_underscore_name}_chunk_data)))
+
+                    result = self.{underscore_name}_low_level({parameter_list})
+                    {stream_underscore_name}_chunk_offset += {chunk_cardinality}
+
+        return result
+"""
+        template_stream_in_fixed_total_length = """
+    def {underscore_name}(self{high_level_parameter_list}):
+        {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
+        {stream_underscore_name}_total_length = {fixed_total_length}
+        {stream_underscore_name}_chunk_offset = 0
+        result = None
+
+        if len({stream_underscore_name}) != {stream_underscore_name}_total_length:
+            raise Error(Error.INVALID_PARAMETER, '{stream_underscore_name} has to be {{0}} items long'.format({stream_underscore_name}_total_length))
 
         with self.stream_lock:
-            while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = {data_underscore_name}[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
+            while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_total_length:
+                {stream_underscore_name}_chunk_data = {stream_underscore_name}[{stream_underscore_name}_chunk_offset:{stream_underscore_name}_chunk_offset + {chunk_cardinality}]
 
-                if len(stream_chunk_data) < {chunk_cardinality}:
-                    stream_chunk_data.extend([{chunk_padding}]*({chunk_cardinality} - len(stream_chunk_data)))
+                if len({stream_underscore_name}_chunk_data) < {chunk_cardinality}:
+                    {stream_underscore_name}_chunk_data.extend([{chunk_padding}] * ({chunk_cardinality} - len({stream_underscore_name}_chunk_data)))
 
-                # FIXME: validate that the result of all the low-level calls is identical
-                stream_result = self.{underscore_name}_low_level({parameter_list})
+                result = self.{underscore_name}_low_level({parameter_list})
+                {stream_underscore_name}_chunk_offset += {chunk_cardinality}
 
-                stream_chunk_offset += {chunk_cardinality}
-
-        return stream_result
+        return result
 """
-        # FIXME: move the bulk of this logic to a helper function in ip_connection.py
         template_stream_in_short_write = """
     def {underscore_name}(self{high_level_parameter_list}):
-        stream_extra = ()
-        stream_total_written = 0
-        stream_total_length = len({data_underscore_name})
-        stream_chunk_offset = 0
+        {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
+        {stream_underscore_name}_total_length = len({stream_underscore_name})
+        {stream_underscore_name}_chunk_offset = 0
+        {stream_underscore_name}_total_written = 0
 
-        with self.stream_lock:
-            while stream_chunk_offset < stream_total_length:
-                stream_chunk_data = {data_underscore_name}[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
+        if {stream_underscore_name}_total_length == 0:
+            {stream_underscore_name}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
+            {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list})
 
-                if len(stream_chunk_data) < {chunk_cardinality}:
-                    stream_chunk_data.extend([{chunk_padding}]*({chunk_cardinality} - len(stream_chunk_data)))
-
-                stream_result = self.{underscore_name}_low_level({parameter_list})
-
-                if isinstance(stream_result, tuple):
-                    stream_extra = stream_result[:-1] # FIXME: validate that the extra of all the low-level calls is identical
-                    stream_chunk_written = stream_result[-1]
-                else:
-                    stream_extra = ()
-                    stream_chunk_written = stream_result
-
-                stream_total_written += stream_chunk_written
-
-                if stream_chunk_written < {chunk_cardinality}:
-                    break # either last chunk or short write
-
-                stream_chunk_offset += {chunk_cardinality}
-
-        if len(stream_extra) > 0:
-            return stream_extra + (stream_total_written,) # FIXME: need to return this as a namedtuple
+            if isinstance({stream_underscore_name}_chunk_result, namedtuple):
+                {stream_underscore_name}_total_written = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_written
+            else:
+                {stream_underscore_name}_total_written = {stream_underscore_name}_chunk_result
         else:
-            return stream_total_written
+            with self.stream_lock:
+                while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_total_length:
+                    {stream_underscore_name}_chunk_data = {stream_underscore_name}[{stream_underscore_name}_chunk_offset:{stream_underscore_name}_chunk_offset + {chunk_cardinality}]
+
+                    if len({stream_underscore_name}_chunk_data) < {chunk_cardinality}:
+                        {stream_underscore_name}_chunk_data.extend([{chunk_padding}] * ({chunk_cardinality} - len({stream_underscore_name}_chunk_data)))
+
+                    {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list})
+
+                    if isinstance({stream_underscore_name}_chunk_result, namedtuple):
+                        {stream_underscore_name}_chunk_written = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_written
+                    else:
+                        {stream_underscore_name}_chunk_written = {stream_underscore_name}_chunk_result
+
+                    {stream_underscore_name}_total_written += {stream_underscore_name}_chunk_written
+
+                    if {stream_underscore_name}_chunk_written < {chunk_cardinality}:
+                        break # either last chunk or short write
+
+                    {stream_underscore_name}_chunk_offset += {chunk_cardinality}
+{result}
 """
-        # FIXME: move the bulk of this logic to a helper function in ip_connection.py
+        template_stream_in_short_write_result = """
+        return {stream_underscore_name}_total_written"""
+        template_stream_in_short_write_namedtuple_result = """
+        result = {{}}
+
+        for field in {result_fields}:
+            result[field] = getattr({stream_underscore_name}_chunk_result, field)
+
+        result['{stream_underscore_name}_written'] = {stream_underscore_name}_total_written
+
+        return {result_camel_case_name}(**result)"""
+        template_stream_in_single_chunk = """
+    def {underscore_name}(self{high_level_parameter_list}):
+        {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list, also makes a copy so we can potentialy extend it
+        {stream_underscore_name}_length = len({stream_underscore_name})
+        {stream_underscore_name}_data = {stream_underscore_name}
+
+        if {stream_underscore_name}_length > {chunk_cardinality}:
+            raise Error(Error.INVALID_PARAMETER, '{stream_underscore_name} is too long')
+
+        if {stream_underscore_name}_length < {chunk_cardinality}:
+            {stream_underscore_name}_data.extend([{chunk_padding}] * ({chunk_cardinality} - {stream_underscore_name}_length))
+
+        return self.{underscore_name}_low_level({parameter_list})
+"""
         template_stream_out = """
     def {underscore_name}(self{high_level_parameter_list}):
-        stream_extra = ()
-        stream_total_length = {fixed_total_length}
-        stream_chunk_offset = 0
-        stream_result = None
-        stream_data = ()
-
-        STREAM_CHUNK_OFFSET_NO_DATA = (1 << 16) - 1 # FIXME: make this depend on the stream_chunk_offset type
+        {stream_underscore_name}_total_length = {fixed_total_length}
+        {stream_underscore_name}_chunk_result = None
+        {stream_underscore_name}_chunk_offset = 0
+        {stream_underscore_name}_data = ()
 
         with self.stream_lock:
-            stream_result = self.{underscore_name}_low_level({parameter_list})
-            stream_extra = stream_result[:-{stream_parameter_count}] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-            stream_chunk_offset = stream_result.stream_chunk_offset
-            stream_data = stream_result.stream_chunk_data
+            {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list})
+            {stream_underscore_name}_total_length = getattr({stream_underscore_name}_chunk_result, '{stream_underscore_name}_total_length', {stream_underscore_name}_total_length)
+            {stream_underscore_name}_chunk_offset = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_offset
+            {stream_underscore_name}_data = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_data{chunk_offset_check}
 
-            if stream_total_length == None: # dynamic stream-total-length
-                stream_total_length = stream_result.stream_total_length
-            elif stream_chunk_offset == STREAM_CHUNK_OFFSET_NO_DATA: # fixed stream-total-length and no-data
-                stream_total_length = 0
-                stream_chunk_offset = 0
-
-            if stream_chunk_offset != 0: # stream out-of-sync
+            if {stream_underscore_name}_chunk_offset != 0: # stream out-of-sync
                 # discard remaining stream to bring it back in-sync
-                while stream_chunk_offset + {chunk_cardinality} < stream_total_length:
-                    # FIXME: validate that total length is identical for all low-level getters of a stream
-                    # FIXME: validate that stream_chunk_offset grows
-                    stream_result = self.{underscore_name}_low_level({parameter_list})
-                    stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                    stream_chunk_offset = stream_result.stream_chunk_offset
+                while {stream_underscore_name}_chunk_offset + {chunk_cardinality} < {stream_underscore_name}_total_length:
+                    {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list})
+                    {stream_underscore_name}_total_length = getattr({stream_underscore_name}_chunk_result, '{stream_underscore_name}_total_length', {stream_underscore_name}_total_length)
+                    {stream_underscore_name}_chunk_offset = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_offset
 
-                raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+                raise Error(Error.STREAM_OUT_OF_SYNC, '{stream_underscore_name} stream is out-of-sync')
 
-            # FIXME: validate chunk offset < total length
+            while len({stream_underscore_name}_data) < {stream_underscore_name}_total_length:
+                {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list})
+                {stream_underscore_name}_total_length = getattr({stream_underscore_name}_chunk_result, '{stream_underscore_name}_total_length', {stream_underscore_name}_total_length)
+                {stream_underscore_name}_chunk_offset = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_offset
 
-            while len(stream_data) < stream_total_length:
-                stream_result = self.{underscore_name}_low_level({parameter_list})
-                stream_extra = stream_result[:-{stream_parameter_count}] # FIXME: validate that extra parameters are identical for all low-level getters of a stream
-                stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                stream_chunk_offset = stream_result.stream_chunk_offset
-
-                # FIXME: validate that total length is identical for all low-level getters of a stream
-
-                if stream_chunk_offset != len(stream_data): # stream out-of-sync
+                if {stream_underscore_name}_chunk_offset != len({stream_underscore_name}_data): # stream out-of-sync
                     # discard remaining stream to bring it back in-sync
-                    while stream_chunk_offset + {chunk_cardinality} < stream_total_length:
-                        # FIXME: validate that total length is identical for all low-level getters of a stream
-                        # FIXME: validate that stream_chunk_offset grows
-                        stream_result = self.{underscore_name}_low_level({parameter_list})
-                        stream_total_length = getattr(stream_result, 'stream_total_length', stream_total_length)
-                        stream_chunk_offset = stream_result.stream_chunk_offset
+                    while {stream_underscore_name}_chunk_offset + {chunk_cardinality} < {stream_underscore_name}_total_length:
+                        {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list})
+                        {stream_underscore_name}_total_length = getattr({stream_underscore_name}_chunk_result, '{stream_underscore_name}_total_length', {stream_underscore_name}_total_length)
+                        {stream_underscore_name}_chunk_offset = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_offset
 
-                    raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+                    raise Error(Error.STREAM_OUT_OF_SYNC, '{stream_underscore_name} stream is out-of-sync')
 
-                stream_data += stream_result.stream_chunk_data
-
-        if len(stream_extra) > 0:
-            return stream_extra + (stream_data[:stream_total_length],) # FIXME: need to return this as a namedtuple
-        else:
-            return stream_data[:stream_total_length]
+                {stream_underscore_name}_data += {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_data
+{result}
 """
+        template_stream_out_chunk_offset_check = """
+
+            if {stream_underscore_name}_chunk_offset == (1 << {shift_size}) - 1: # maximum chunk offset -> stream has no data
+                {stream_underscore_name}_total_length = 0
+                {stream_underscore_name}_chunk_offset = 0
+                {stream_underscore_name}_data = ()"""
+        template_stream_out_single_chunk = """
+    def {underscore_name}(self{high_level_parameter_list}):
+        {stream_underscore_name}_result = self.{underscore_name}_low_level({parameter_list})
+        {stream_underscore_name}_length = {stream_underscore_name}_result.{stream_underscore_name}_length
+        {stream_underscore_name}_data = {stream_underscore_name}_result.{stream_underscore_name}_data
+{result}
+"""
+        template_stream_out_chunk_result = """
+        return {stream_underscore_name}_data[:{stream_underscore_name}_total_length]"""
+        template_stream_out_result = """
+        return {stream_underscore_name}_data[:{stream_underscore_name}_length]"""
+        template_stream_out_namedtuple_chunk_result = """
+        result = {{}}
+
+        for field in {result_fields}:
+            result[field] = getattr({stream_underscore_name}_chunk_result, field)
+
+        result['{stream_underscore_name}'] = {stream_underscore_name}_data[:{stream_underscore_name}_total_length]
+
+        return {result_camel_case_name}(**result)"""
+        template_stream_out_namedtuple_result = """
+        result = {{}}
+
+        for field in {result_fields}:
+            result[field] = getattr({stream_underscore_name}_result, field)
+
+        result['{stream_underscore_name}'] = {stream_underscore_name}_data[:{stream_underscore_name}_length]
+
+        return {result_camel_case_name}(**result)"""
 
         for packet in self.get_packets('function'):
             stream_in = packet.get_high_level('stream_in')
             stream_out = packet.get_high_level('stream_out')
 
             if stream_in != None:
-                if stream_in.has_short_write():
+                if stream_in.get_fixed_total_length() != None:
+                    template = template_stream_in_fixed_total_length
+                elif stream_in.has_short_write() and stream_in.has_single_chunk():
+                    # the single chunk template also covers short writes
+                    template = template_stream_in_single_chunk
+                elif stream_in.has_short_write():
                     template = template_stream_in_short_write
+                elif stream_in.has_single_chunk():
+                    template = template_stream_in_single_chunk
                 else:
                     template = template_stream_in
+
+                if stream_in.has_short_write():
+                    if len(packet.get_elements(direction='out', high_level=True)) < 2:
+                        result = template_stream_in_short_write_result.format(stream_underscore_name=stream_in.get_underscore_name())
+                    else:
+                        fields = []
+
+                        for element in packet.get_elements(direction='out', high_level=True):
+                            if element.get_role() != 'stream_written':
+                                fields.append(element.get_underscore_name())
+
+                        result = template_stream_in_short_write_namedtuple_result.format(stream_underscore_name=stream_in.get_underscore_name(),
+                                                                                         result_camel_case_name=packet.get_camel_case_name(skip=-2),
+                                                                                         result_fields=repr(fields))
+                else:
+                    result = ''
 
                 methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                            parameter_list=packet.get_python_parameters(),
                                            high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
-                                           data_underscore_name=stream_in.get_data_underscore_name(),
+                                           stream_underscore_name=stream_in.get_underscore_name(),
+                                           fixed_total_length=stream_in.get_fixed_total_length(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
-                                           chunk_padding=repr(stream_in.get_chunk_data_element().get_python_default_value()))
+                                           chunk_padding=repr(stream_in.get_chunk_data_element().get_python_default_value()),
+                                           result=result)
             elif stream_out != None:
-                methods += template_stream_out.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
-                                                      parameter_list=packet.get_python_parameters(),
-                                                      high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
-                                                      fixed_total_length=stream_out.get_fixed_total_length(),
-                                                      stream_parameter_count=2 if stream_out.get_fixed_total_length() != None else 3,
-                                                      chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
+                if stream_out.get_fixed_total_length() != None:
+                    shift_size = int(stream_out.get_chunk_offset_element().get_type().replace('uint', ''))
+                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_underscore_name=stream_out.get_underscore_name(),
+                                                                                       shift_size=shift_size)
+                else:
+                    chunk_offset_check = ''
+
+                if len(packet.get_elements(direction='out', high_level=True)) < 2:
+                    if stream_out.has_single_chunk():
+                        result = template_stream_out_result.format(stream_underscore_name=stream_out.get_underscore_name())
+                    else:
+                        result = template_stream_out_chunk_result.format(stream_underscore_name=stream_out.get_underscore_name())
+                else:
+                    fields = []
+
+                    for element in packet.get_elements(direction='out', high_level=True):
+                        if element.get_role() != 'stream_data':
+                            fields.append(element.get_underscore_name())
+
+                    if stream_out.has_single_chunk():
+                        result = template_stream_out_namedtuple_result.format(stream_underscore_name=stream_out.get_underscore_name(),
+                                                                              result_camel_case_name=packet.get_camel_case_name(skip=-2),
+                                                                              result_fields=repr(fields))
+                    else:
+                        result = template_stream_out_namedtuple_chunk_result.format(stream_underscore_name=stream_out.get_underscore_name(),
+                                                                                    result_camel_case_name=packet.get_camel_case_name(skip=-2),
+                                                                                    result_fields=repr(fields))
+
+                if stream_out.has_single_chunk():
+                    template = template_stream_out_single_chunk
+                else:
+                    template = template_stream_out
+
+                methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                           parameter_list=packet.get_python_parameters(),
+                                           high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
+                                           stream_underscore_name=stream_out.get_underscore_name(),
+                                           fixed_total_length=stream_out.get_fixed_total_length(),
+                                           chunk_offset_check=chunk_offset_check,
+                                           chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality(),
+                                           result=result)
 
         return methods
 
@@ -419,7 +569,7 @@ class {0}(Device):
         source += self.get_python_constants()
         source += self.get_python_init_method()
         source += self.get_python_callback_formats()
-        source += self.get_python_low_level_callbacks()
+        source += self.get_python_high_level_callbacks()
         source += self.get_python_methods()
         source += self.get_python_high_level_methods()
         source += self.get_python_register_callback_method()

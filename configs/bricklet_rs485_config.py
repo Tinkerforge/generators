@@ -40,11 +40,11 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Write Low Level',
-'elements': [('Stream Total Length', 'uint16', 1, 'in'),
-             ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'char', 60, 'in'),
-             ('Stream Chunk Written', 'uint8', 1, 'out')],
-'high_level': {'stream_in': {'short_write': True, 'data_name': 'Message'}},
+'elements': [('Message Total Length', 'uint16', 1, 'in'),
+             ('Message Chunk Offset', 'uint16', 1, 'in'),
+             ('Message Chunk Data', 'char', 60, 'in'),
+             ('Message Chunk Written', 'uint8', 1, 'out')],
+'high_level': {'stream_in': {'name': 'Message', 'short_write': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -74,10 +74,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Read Low Level',
 'elements': [('Length', 'uint16', 1, 'in'),
-             ('Stream Total Length', 'uint16', 1, 'out'),
-             ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'char', 60, 'out')],
-'high_level': {'stream_out': {'data_name': 'Message'}},
+             ('Message Total Length', 'uint16', 1, 'out'),
+             ('Message Chunk Offset', 'uint16', 1, 'out'),
+             ('Message Chunk Data', 'char', 60, 'out')],
+'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -669,10 +669,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Coils Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Stream Total Length', 'uint16', 1, 'in'),
-             ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'bool', 472, 'in')],
-'high_level': {'stream_in': {'data_name': 'Coils'}},
+             ('Coils Total Length', 'uint16', 1, 'in'),
+             ('Coils Chunk Offset', 'uint16', 1, 'in'),
+             ('Coils Chunk Data', 'bool', 472, 'in')],
+'high_level': {'stream_in': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -751,10 +751,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Holding Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Stream Total Length', 'uint16', 1, 'in'),
-             ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'uint16', 29, 'in')],
-'high_level': {'stream_in': {'data_name': 'Holding Registers'}},
+             ('Holding Registers Total Length', 'uint16', 1, 'in'),
+             ('Holding Registers Chunk Offset', 'uint16', 1, 'in'),
+             ('Holding Registers Chunk Data', 'uint16', 29, 'in')],
+'high_level': {'stream_in': {'name': 'Holding Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1011,11 +1011,11 @@ com['packets'].append({
 'name': 'Modbus Master Write Multiple Coils Low Level',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint32', 1, 'in'),
-             ('Stream Total Length', 'uint16', 1, 'in'),
-             ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'bool', 440, 'in'),
+             ('Coils Total Length', 'uint16', 1, 'in'),
+             ('Coils Chunk Offset', 'uint16', 1, 'in'),
+             ('Coils Chunk Data', 'bool', 440, 'in'),
              ('Request ID', 'uint8', 1, 'out')],
-'high_level': {'stream_in': {'data_name': 'Coils'}},
+'high_level': {'stream_in': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1087,11 +1087,11 @@ com['packets'].append({
 'name': 'Modbus Master Write Multiple Registers Low Level',
 'elements': [('Slave Address', 'uint8', 1, 'in'),
              ('Starting Address', 'uint32', 1, 'in'),
-             ('Stream Total Length', 'uint16', 1, 'in'),
-             ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'uint16', 27, 'in'),
+             ('Registers Total Length', 'uint16', 1, 'in'),
+             ('Registers Chunk Offset', 'uint16', 1, 'in'),
+             ('Registers Chunk Data', 'uint16', 27, 'in'),
              ('Request ID', 'uint8', 1, 'out')],
-'high_level': {'stream_in': {'data_name': 'Registers'}},
+'high_level': {'stream_in': {'name': 'Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1134,10 +1134,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Discrete Inputs Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Stream Total Length', 'uint16', 1, 'in'),
-             ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'bool', 472, 'in')],
-'high_level': {'stream_in': {'data_name': 'Discrete Inputs'}},
+             ('Discrete Inputs Total Length', 'uint16', 1, 'in'),
+             ('Discrete Inputs Chunk Offset', 'uint16', 1, 'in'),
+             ('Discrete Inputs Chunk Data', 'bool', 472, 'in')],
+'high_level': {'stream_in': {'name': 'Discrete Inputs'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1213,10 +1213,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Input Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Stream Total Length', 'uint16', 1, 'in'),
-             ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'uint16', 29, 'in')],
-'high_level': {'stream_in': {'data_name': 'Input Registers'}},
+             ('Input Registers Total Length', 'uint16', 1, 'in'),
+             ('Input Registers Chunk Offset', 'uint16', 1, 'in'),
+             ('Input Registers Chunk Data', 'uint16', 29, 'in')],
+'high_level': {'stream_in': {'name': 'Input Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':
@@ -1291,12 +1291,12 @@ zurückgegeben Request ID überein.
 com['packets'].append({
 'type': 'callback',
 'name': 'Read Low Level',
-'elements': [('Stream Total Length', 'uint16', 1, 'out'),
-             ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'char', 60, 'out')],
-'high_level': {'stream_out': {'data_name': 'Message'}},
+'elements': [('Message Total Length', 'uint16', 1, 'out'),
+             ('Message Chunk Offset', 'uint16', 1, 'out'),
+             ('Message Chunk Data', 'char', 60, 'out')],
+'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
-'doc': ['c', {
+'doc': ['llc', {
 'en':
 """
 This callback is called if new data is available.
@@ -1367,10 +1367,10 @@ com['packets'].append({
 'name': 'Modbus Master Read Coils Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
-             ('Stream Total Length', 'uint16', 1, 'out'),
-             ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'bool', 464, 'out')],
-'high_level': {'stream_out': {'data_name': 'Coils'}},
+             ('Coils Total Length', 'uint16', 1, 'out'),
+             ('Coils Chunk Offset', 'uint16', 1, 'out'),
+             ('Coils Chunk Data', 'bool', 464, 'out')],
+'high_level': {'stream_out': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1441,10 +1441,10 @@ com['packets'].append({
 'name': 'Modbus Master Read Holding Registers Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
-             ('Stream Total Length', 'uint16', 1, 'out'),
-             ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint16', 29, 'out')],
-'high_level': {'stream_out': {'data_name': 'Holding Registers'}},
+             ('Holding Registers Total Length', 'uint16', 1, 'out'),
+             ('Holding Registers Chunk Offset', 'uint16', 1, 'out'),
+             ('Holding Registers Chunk Data', 'uint16', 29, 'out')],
+'high_level': {'stream_out': {'name': 'Holding Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1623,10 +1623,10 @@ com['packets'].append({
 'name': 'Modbus Slave Write Multiple Coils Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint32', 1, 'out'),
-             ('Stream Total Length', 'uint16', 1, 'out'),
-             ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'bool', 440, 'out')],
-'high_level': {'stream_out': {'data_name': 'Coils'}},
+             ('Coils Total Length', 'uint16', 1, 'out'),
+             ('Coils Chunk Offset', 'uint16', 1, 'out'),
+             ('Coils Chunk Data', 'bool', 440, 'out')],
+'high_level': {'stream_out': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1694,10 +1694,10 @@ com['packets'].append({
 'name': 'Modbus Slave Write Multiple Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint32', 1, 'out'),
-             ('Stream Total Length', 'uint16', 1, 'out'),
-             ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint16', 27, 'out')],
-'high_level': {'stream_out': {'data_name': 'Registers'}},
+             ('Registers Total Length', 'uint16', 1, 'out'),
+             ('Registers Chunk Offset', 'uint16', 1, 'out'),
+             ('Registers Chunk Data', 'uint16', 27, 'out')],
+'high_level': {'stream_out': {'name': 'Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1795,10 +1795,10 @@ com['packets'].append({
 'name': 'Modbus Master Read Discrete Inputs Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
-             ('Stream Total Length', 'uint16', 1, 'out'),
-             ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'bool', 464, 'out')],
-'high_level': {'stream_out': {'data_name': 'Discrete Inputs'}},
+             ('Discrete Inputs Total Length', 'uint16', 1, 'out'),
+             ('Discrete Inputs Chunk Offset', 'uint16', 1, 'out'),
+             ('Discrete Inputs Chunk Data', 'bool', 464, 'out')],
+'high_level': {'stream_out': {'name': 'Discrete Inputs'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -1869,10 +1869,10 @@ com['packets'].append({
 'name': 'Modbus Master Read Input Registers Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
-             ('Stream Total Length', 'uint16', 1, 'out'),
-             ('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint16', 29, 'out')],
-'high_level': {'stream_out': {'data_name': 'Input Registers'}},
+             ('Input Registers Total Length', 'uint16', 1, 'out'),
+             ('Input Registers Chunk Offset', 'uint16', 1, 'out'),
+             ('Input Registers Chunk Data', 'uint16', 29, 'out')],
+'high_level': {'stream_out': {'name': 'Input Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':

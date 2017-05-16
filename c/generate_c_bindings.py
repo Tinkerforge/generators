@@ -305,8 +305,8 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 """
         cb_temp = """
 	device_p->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
-        llcb_temp = """
-	device_p->low_level_callbacks[{2}_CALLBACK_{1}].exists = true;"""
+        hlcb_temp = """
+	device_p->high_level_callbacks[-{2}_CALLBACK_{1}].exists = true;"""
         callbacks = ''
 
         for packet in self.get_packets('callback'):
@@ -317,7 +317,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
-                callbacks += llcb_temp.format(self.get_underscore_name(), packet.get_upper_case_name(), self.get_upper_case_name())
+                callbacks += hlcb_temp.format(self.get_underscore_name(), packet.get_upper_case_name(skip=-2), self.get_upper_case_name())
 
         response_expected = ''
 
@@ -446,36 +446,78 @@ int {0}_{1}({2} *{0}{3}) {{
         template_stream_in = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
 	DevicePrivate *device_p = {device_underscore_name}->p;
-	int ret = 0;
-	uint16_t stream_total_length = {data_underscore_name}_length; // FIXME: uint16_t is not always the correct type
-	uint16_t stream_chunk_offset = 0; // FIXME: uint16_t is not always the correct type
-	{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
-	uint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+	int ret;
+	{stream_length_type} {stream_underscore_name}_total_length = {stream_underscore_name}_length;
+	{stream_length_type} {stream_underscore_name}_chunk_offset = 0;
+	{chunk_data_type} {stream_underscore_name}_chunk_data[{chunk_cardinality}];
+	{stream_length_type} {stream_underscore_name}_chunk_length;
+
+	if ({stream_underscore_name}_total_length == 0) {{
+		memset(&{stream_underscore_name}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
+
+		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+	}} else {{
+		mutex_lock(&device_p->stream_mutex);
+
+		while ({stream_underscore_name}_chunk_offset < {stream_underscore_name}_total_length) {{
+			{stream_underscore_name}_chunk_length = {stream_underscore_name}_total_length - {stream_underscore_name}_chunk_offset;
+
+			if ({stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
+				{stream_underscore_name}_chunk_length = {chunk_cardinality};
+			}}
+
+			memcpy({stream_underscore_name}_chunk_data, &{stream_underscore_name}[{stream_underscore_name}_chunk_offset], sizeof({chunk_data_type}) * {stream_underscore_name}_chunk_length);
+
+			if ({stream_underscore_name}_chunk_length < {chunk_cardinality}) {{
+				memset(&{stream_underscore_name}_chunk_data[{stream_underscore_name}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_underscore_name}_chunk_length));
+			}}
+
+			ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+			if (ret < 0) {{
+				break;
+			}}
+
+			{stream_underscore_name}_chunk_offset += {chunk_cardinality};
+		}}
+
+		mutex_unlock(&device_p->stream_mutex);
+	}}
+
+	return ret;
+}}
+"""
+        template_stream_in_fixed_total_length = """
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
+	DevicePrivate *device_p = {device_underscore_name}->p;
+	int ret;
+	{stream_length_type} {stream_underscore_name}_total_length = {fixed_total_length};
+	{stream_length_type} {stream_underscore_name}_chunk_offset = 0;
+	{chunk_data_type} {stream_underscore_name}_chunk_data[{chunk_cardinality}];
+	{stream_length_type} {stream_underscore_name}_chunk_length;
 
 	mutex_lock(&device_p->stream_mutex);
 
-	while (stream_chunk_offset < stream_total_length) {{
-		stream_chunk_length = stream_total_length - stream_chunk_offset;
+	while ({stream_underscore_name}_chunk_offset < {stream_underscore_name}_total_length) {{
+		{stream_underscore_name}_chunk_length = {stream_underscore_name}_total_length - {stream_underscore_name}_chunk_offset;
 
-		if (stream_chunk_length > {chunk_cardinality}) {{
-			stream_chunk_length = {chunk_cardinality};
+		if ({stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
+			{stream_underscore_name}_chunk_length = {chunk_cardinality};
 		}}
 
-		// FIXME: only do memcpy/memset for last short chunk
-		memcpy(stream_chunk_data, &{data_underscore_name}[stream_chunk_offset], sizeof({chunk_c_type}) * stream_chunk_length);
+		memcpy({stream_underscore_name}_chunk_data, &{stream_underscore_name}[{stream_underscore_name}_chunk_offset], sizeof({chunk_data_type}) * {stream_underscore_name}_chunk_length);
 
-		if (stream_chunk_length < {chunk_cardinality}) {{
-			memset(&stream_chunk_data[stream_chunk_length], 0, sizeof({chunk_c_type}) * ({chunk_cardinality} - stream_chunk_length));
+		if ({stream_underscore_name}_chunk_length < {chunk_cardinality}) {{
+			memset(&{stream_underscore_name}_chunk_data[{stream_underscore_name}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_underscore_name}_chunk_length));
 		}}
 
-		// FIXME: validate that the extra out values for all low-level calls are identical
 		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
 		if (ret < 0) {{
 			break;
 		}}
 
-		stream_chunk_offset += {chunk_cardinality};
+		{stream_underscore_name}_chunk_offset += {chunk_cardinality};
 	}}
 
 	mutex_unlock(&device_p->stream_mutex);
@@ -486,50 +528,104 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
         template_stream_in_short_write = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
 	DevicePrivate *device_p = {device_underscore_name}->p;
-	int ret = 0;
-	uint16_t stream_total_written = 0; // FIXME: uint16_t is not always the correct type
-	uint16_t stream_total_length = {data_underscore_name}_length; // FIXME: uint16_t is not always the correct type
-	uint16_t stream_chunk_offset = 0; // FIXME: uint16_t is not always the correct type
-	uint8_t stream_chunk_written;
-	{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
-	uint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+	int ret;
+	{stream_length_type} {stream_underscore_name}_total_length = {stream_underscore_name}_length;
+	{stream_length_type} {stream_underscore_name}_chunk_offset = 0;
+	{chunk_data_type} {stream_underscore_name}_chunk_data[{chunk_cardinality}];
+	{stream_length_type} {stream_underscore_name}_chunk_length;
+	uint8_t {stream_underscore_name}_chunk_written;
 
-	mutex_lock(&device_p->stream_mutex);
+	*ret_{stream_underscore_name}_written = 0;
 
-	while (stream_chunk_offset < stream_total_length) {{
-		stream_chunk_length = stream_total_length - stream_chunk_offset;
+	if ({stream_underscore_name}_total_length == 0) {{
+		memset(&{stream_underscore_name}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
 
-		if (stream_chunk_length > {chunk_cardinality}) {{
-			stream_chunk_length = {chunk_cardinality};
-		}}
-
-		// FIXME: only do memcpy/memset for last short chunk
-		memcpy(stream_chunk_data, &{data_underscore_name}[stream_chunk_offset], sizeof({chunk_c_type}) * stream_chunk_length);
-
-		if (stream_chunk_length < {chunk_cardinality}) {{
-			memset(&stream_chunk_data[stream_chunk_length], 0, sizeof({chunk_c_type}) * ({chunk_cardinality} - stream_chunk_length));
-		}}
-
-		// FIXME: validate that the extra out values for all low-level calls are identical
 		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
 		if (ret < 0) {{
-			stream_total_written = 0;
-			break;
+			return ret;
 		}}
 
-		stream_total_written += stream_chunk_written;
+		*ret_{stream_underscore_name}_written = {stream_underscore_name}_chunk_written;
+	}} else {{
+		mutex_lock(&device_p->stream_mutex);
 
-		if (stream_chunk_written < {chunk_cardinality}) {{
-			break; // either last chunk or short write
+		while ({stream_underscore_name}_chunk_offset < {stream_underscore_name}_total_length) {{
+			{stream_underscore_name}_chunk_length = {stream_underscore_name}_total_length - {stream_underscore_name}_chunk_offset;
+
+			if ({stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
+				{stream_underscore_name}_chunk_length = {chunk_cardinality};
+			}}
+
+			memcpy({stream_underscore_name}_chunk_data, &{stream_underscore_name}[{stream_underscore_name}_chunk_offset], sizeof({chunk_data_type}) * {stream_underscore_name}_chunk_length);
+
+			if ({stream_underscore_name}_chunk_length < {chunk_cardinality}) {{
+				memset(&{stream_underscore_name}_chunk_data[{stream_underscore_name}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_underscore_name}_chunk_length));
+			}}
+
+			ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+			if (ret < 0) {{
+				*ret_{stream_underscore_name}_written = 0;
+
+				break;
+			}}
+
+			*ret_{stream_underscore_name}_written += {stream_underscore_name}_chunk_written;
+
+			if ({stream_underscore_name}_chunk_written < {chunk_cardinality}) {{
+				break; // either last chunk or short write
+			}}
+
+			{stream_underscore_name}_chunk_offset += {chunk_cardinality};
 		}}
 
-		stream_chunk_offset += {chunk_cardinality};
+		mutex_unlock(&device_p->stream_mutex);
 	}}
 
-	mutex_unlock(&device_p->stream_mutex);
+	return ret;
+}}
+"""
+        template_stream_in_single_chunk = """
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
+	{chunk_data_type} {stream_underscore_name}_data[{chunk_cardinality}];
 
-	*ret_written = stream_total_written;
+	if ({stream_underscore_name}_length > {chunk_cardinality}) {{
+		return E_INVALID_PARAMETER;
+	}}
+
+	memcpy({stream_underscore_name}_data, {stream_underscore_name}, sizeof({chunk_data_type}) * {stream_underscore_name}_length);
+
+	if ({stream_underscore_name}_length < {chunk_cardinality}) {{
+		memset(&{stream_underscore_name}_data[{stream_underscore_name}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_underscore_name}_length));
+	}}
+
+	return {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+}}
+"""
+        template_stream_in_short_write_single_chunk = """
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
+	int ret;
+	{chunk_data_type} {stream_underscore_name}_data[{chunk_cardinality}];
+	uint8_t {stream_underscore_name}_written = 0;
+
+	if ({stream_underscore_name}_length > {chunk_cardinality}) {{
+		return E_INVALID_PARAMETER;
+	}}
+
+	memcpy({stream_underscore_name}_data, {stream_underscore_name}, sizeof({chunk_data_type}) * {stream_underscore_name}_length);
+
+	if ({stream_underscore_name}_length < {chunk_cardinality}) {{
+		memset(&{stream_underscore_name}_data[{stream_underscore_name}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_underscore_name}_length));
+	}}
+
+	ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+	if (ret < 0) {{
+		return ret;
+	}}
+
+	*ret_{stream_underscore_name}_written = {stream_underscore_name}_written;
 
 	return ret;
 }}
@@ -537,13 +633,13 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
         template_stream_out = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
 	DevicePrivate *device_p = {device_underscore_name}->p;
-	int ret = 0;
-	uint16_t stream_total_length = {fixed_total_length}; // FIXME: uint16_t is not always the correct type
-	uint16_t stream_chunk_offset; // FIXME: uint16_t is not always the correct type
-	{chunk_c_type} stream_chunk_data[{chunk_cardinality}];
-	uint16_t stream_chunk_length; // FIXME: uint16_t is not always the correct type
+	int ret;
+	{stream_length_type} {stream_underscore_name}_total_length = {fixed_total_length};
+	{stream_length_type} {stream_underscore_name}_chunk_offset;
+	{chunk_data_type} {stream_underscore_name}_chunk_data[{chunk_cardinality}];
+	{stream_length_type} {stream_underscore_name}_chunk_length;
 
-	*ret_{data_underscore_name}_length = 0;
+	*ret_{stream_underscore_name}_length = 0;
 
 	mutex_lock(&device_p->stream_mutex);
 
@@ -551,54 +647,52 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
 
 	if (ret < 0) {{
 		goto cleanup;
-	}}
+	}}{chunk_offset_check}
 
-	if (stream_chunk_offset != 0) {{ // stream out-of-sync
+	if ({stream_underscore_name}_chunk_offset != 0) {{ // stream out-of-sync
 		goto discard;
 	}}
 
-	stream_chunk_length = stream_total_length - stream_chunk_offset;
+	{stream_underscore_name}_chunk_length = {stream_underscore_name}_total_length - {stream_underscore_name}_chunk_offset;
 
-	if (stream_chunk_length > {chunk_cardinality}) {{
-		stream_chunk_length = {chunk_cardinality};
+	if ({stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
+		{stream_underscore_name}_chunk_length = {chunk_cardinality};
 	}}
 
-	memcpy(ret_{data_underscore_name}, stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
-	*ret_{data_underscore_name}_length = stream_chunk_length;
+	if ({stream_underscore_name}_total_length > 0) {{
+		memcpy(ret_{stream_underscore_name}, {stream_underscore_name}_chunk_data, sizeof({chunk_data_type}) * {stream_underscore_name}_chunk_length);
+	}}
 
-	while (*ret_{data_underscore_name}_length < stream_total_length) {{
-		// FIXME: validate chunk offset < total length
-		// FIXME: validate that total length is identical for all low-level getters of a stream
-		// FIXME: validate that the extra out values for all low-level calls are identical
+	*ret_{stream_underscore_name}_length = {stream_underscore_name}_chunk_length;
+
+	while (*ret_{stream_underscore_name}_length < {stream_underscore_name}_total_length) {{
 		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
 		if (ret < 0) {{
 			goto cleanup;
 		}}
 
-		if (stream_chunk_offset != *ret_{data_underscore_name}_length) {{ // stream out-of-sync
+		if ({stream_underscore_name}_chunk_offset != *ret_{stream_underscore_name}_length) {{ // stream out-of-sync
 			goto discard;
 		}}
 
-		stream_chunk_length = stream_total_length - stream_chunk_offset;
+		{stream_underscore_name}_chunk_length = {stream_underscore_name}_total_length - {stream_underscore_name}_chunk_offset;
 
-		if (stream_chunk_length > {chunk_cardinality}) {{
-			stream_chunk_length = {chunk_cardinality};
+		if ({stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
+			{stream_underscore_name}_chunk_length = {chunk_cardinality};
 		}}
 
-		memcpy(&ret_{data_underscore_name}[*ret_{data_underscore_name}_length], stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
-		*ret_{data_underscore_name}_length += stream_chunk_length;
+		memcpy(&ret_{stream_underscore_name}[*ret_{stream_underscore_name}_length], {stream_underscore_name}_chunk_data, sizeof({chunk_data_type}) * {stream_underscore_name}_chunk_length);
+		*ret_{stream_underscore_name}_length += {stream_underscore_name}_chunk_length;
 	}}
 
 	goto cleanup;
 
 discard:
-	*ret_{data_underscore_name}_length = 0; // return empty array
+	*ret_{stream_underscore_name}_length = 0; // return empty array
 
 	// discard remaining stream to bring it back in-sync
-	while (stream_chunk_offset + {chunk_cardinality} < stream_total_length) {{
-		// FIXME: validate that total length is identical for all low-level getters of a stream
-		// FIXME: validate that stream_chunk_offset grows
+	while ({stream_underscore_name}_chunk_offset + {chunk_cardinality} < {stream_underscore_name}_total_length) {{
 		ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
 
 		if (ret < 0) {{
@@ -614,14 +708,58 @@ cleanup:
 	return ret;
 }}
 """
+        template_stream_out_chunk_offset_check = """
+
+	if ({stream_underscore_name}_chunk_offset == (1U << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
+		return E_OK;
+	}}"""
+        template_stream_out_single_chunk = """
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
+	int ret;
+	{stream_length_type} {stream_underscore_name}_length;
+	{chunk_data_type} {stream_underscore_name}_data[{chunk_cardinality}];
+
+	*ret_{stream_underscore_name}_length = 0;
+
+	ret = {device_underscore_name}_{underscore_name}_low_level({device_underscore_name}{parameters});
+
+	if (ret < 0) {{
+		return ret;
+	}}
+
+	memcpy(ret_{stream_underscore_name}, {stream_underscore_name}_data, sizeof({chunk_data_type}) * {stream_underscore_name}_length);
+
+	if ({stream_underscore_name}_length < {chunk_cardinality}) {{
+		memset(&{stream_underscore_name}_data[{stream_underscore_name}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_underscore_name}_length));
+	}}
+
+	*ret_{stream_underscore_name}_length = {stream_underscore_name}_length;
+
+	return ret;
+}}
+"""
 
         for packet in self.get_packets('function'):
             stream_in = packet.get_high_level('stream_in')
             stream_out = packet.get_high_level('stream_out')
 
             if stream_in != None:
-                if stream_in.has_short_write():
+                total_length_element = stream_in.get_total_length_element()
+                chunk_offset_element = stream_in.get_chunk_offset_element()
+
+                if total_length_element != None:
+                    stream_length_type = total_length_element.get_c_type(False)
+                elif chunk_offset_element != None:
+                    stream_length_type = chunk_offset_element.get_c_type(False)
+
+                if stream_in.get_fixed_total_length() != None:
+                    template = template_stream_in_fixed_total_length
+                elif stream_in.has_short_write() and stream_in.has_single_chunk():
+                    template = template_stream_in_short_write_single_chunk
+                elif stream_in.has_short_write():
                     template = template_stream_in_short_write
+                elif stream_in.has_single_chunk():
+                    template = template_stream_in_single_chunk
                 else:
                     template = template_stream_in
 
@@ -630,19 +768,44 @@ cleanup:
                                              underscore_name=packet.get_underscore_name(skip=-2),
                                              parameters=common.wrap_non_empty(', ', packet.get_c_parameters(signature=False), ''),
                                              high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
-                                             data_underscore_name=stream_in.get_data_underscore_name(),
-                                             chunk_c_type=stream_in.get_chunk_data_element().get_c_type(False),
+                                             stream_underscore_name=stream_in.get_underscore_name(),
+                                             stream_length_type=stream_length_type,
+                                             fixed_total_length=stream_in.get_fixed_total_length(),
+                                             chunk_data_type=stream_in.get_chunk_data_element().get_c_type(False),
                                              chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
             elif stream_out != None:
-                functions += template_stream_out.format(device_camel_case_name=packet.get_device().get_camel_case_name(),
-                                                        device_underscore_name=packet.get_device().get_underscore_name(),
-                                                        underscore_name=packet.get_underscore_name(skip=-2),
-                                                        parameters=common.wrap_non_empty(', ', packet.get_c_parameters(signature=False), ''),
-                                                        high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
-                                                        data_underscore_name=stream_out.get_data_underscore_name(),
-                                                        fixed_total_length=stream_out.get_fixed_total_length(default='0'),
-                                                        chunk_c_type=stream_out.get_chunk_data_element().get_c_type(False),
-                                                        chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
+                total_length_element = stream_out.get_total_length_element()
+                chunk_offset_element = stream_out.get_chunk_offset_element()
+
+                if total_length_element != None:
+                    stream_length_type = total_length_element.get_c_type(False)
+                    shift_size = int(total_length_element.get_type().replace('uint', ''))
+                elif chunk_offset_element != None:
+                    stream_length_type = chunk_offset_element.get_c_type(False)
+                    shift_size = int(chunk_offset_element.get_type().replace('uint', ''))
+
+                if stream_out.has_single_chunk():
+                    template = template_stream_out_single_chunk
+                else:
+                    template = template_stream_out
+
+                if stream_out.get_fixed_total_length() != None:
+                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_underscore_name=stream_out.get_underscore_name(),
+                                                                                       shift_size=shift_size)
+                else:
+                    chunk_offset_check = ''
+
+                functions += template.format(device_camel_case_name=packet.get_device().get_camel_case_name(),
+                                             device_underscore_name=packet.get_device().get_underscore_name(),
+                                             underscore_name=packet.get_underscore_name(skip=-2),
+                                             parameters=common.wrap_non_empty(', ', packet.get_c_parameters(signature=False), ''),
+                                             high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
+                                             stream_underscore_name=stream_out.get_underscore_name(),
+                                             stream_length_type=stream_length_type,
+                                             fixed_total_length=stream_out.get_fixed_total_length(default='0'),
+                                             chunk_offset_check=chunk_offset_check,
+                                             chunk_data_type=stream_out.get_chunk_data_element().get_c_type(False),
+                                             chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
 
         return functions
 
@@ -659,64 +822,83 @@ void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data
 
     def get_c_high_level_callback_wrapper_functions(self):
         functions = ''
-        template = """
+        template_stream_out = """
 static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePrivate *device_p{parameters}) {{
 	{camel_case_name}_CallbackFunction callback_function;
 	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
-	LowLevelCallback *low_level_callback = &device_p->low_level_callbacks[-{device_upper_case_name}_CALLBACK_{upper_case_name}];
-	uint16_t stream_chunk_length = {stream_total_length} - stream_chunk_offset; // FIXME: uint16_t is not always the correct type
+	HighLevelCallback *high_level_callback = &device_p->high_level_callbacks[-{device_upper_case_name}_CALLBACK_{upper_case_name}];
+	{stream_length_type} {stream_underscore_name}_chunk_length = {stream_total_length} - {stream_underscore_name}_chunk_offset;
+	{chunk_data_type} *{stream_underscore_name}_data;
+	{stream_length_type} {stream_underscore_name}_length;
 
 	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
 
-	if (stream_chunk_length > {chunk_cardinality}) {{
-		stream_chunk_length = {chunk_cardinality};
+	if ({stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
+		{stream_underscore_name}_chunk_length = {chunk_cardinality};
 	}}
 
-	// FIXME: validate that extra parameters are identical for all low-level callbacks of a stream
-	// FIXME: validate that total length is identical for all low-level callbacks of a stream
-	// FIXME: validate chunk offset < total length
+	if (high_level_callback->data == NULL) {{ // no stream in-progress
+		if ({stream_underscore_name}_chunk_offset == 0) {{ // stream starts
+			high_level_callback->data = malloc(sizeof({chunk_data_type}) * {stream_total_length});
+			high_level_callback->length = {stream_underscore_name}_chunk_length;
 
-	if (low_level_callback->data == NULL) {{ // no stream in-progress
-		if (stream_chunk_offset == 0) {{ // stream starts
-			low_level_callback->data = malloc(sizeof({chunk_c_type}) * {stream_total_length});
-			low_level_callback->data_length = stream_chunk_length;
+			memcpy(high_level_callback->data, {stream_underscore_name}_chunk_data, sizeof({chunk_data_type}) * {stream_underscore_name}_chunk_length);
 
-			memcpy(low_level_callback->data, stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
-
-			if (low_level_callback->data_length >= {stream_total_length}) {{ // stream complete
+			if (high_level_callback->length >= {stream_total_length}) {{ // stream complete
 				if (callback_function != NULL) {{
+					{stream_underscore_name}_data = ({chunk_data_type} *)high_level_callback->data;
+					{stream_underscore_name}_length = high_level_callback->length;
+
 					callback_function({high_level_parameters}user_data);
 				}}
 
-				free(low_level_callback->data);
-				low_level_callback->data = NULL;
-				low_level_callback->data_length = 0;
+				free(high_level_callback->data);
+				high_level_callback->data = NULL;
+				high_level_callback->length = 0;
 			}}
 		}} else {{ // ignore tail of current stream, wait for next stream start
 		}}
 	}} else {{ // stream in-progress
-		if (stream_chunk_offset != low_level_callback->data_length) {{ // stream out-of-sync
-			free(low_level_callback->data);
-			low_level_callback->data = NULL;
-			low_level_callback->data_length = 0;
+		if ({stream_underscore_name}_chunk_offset != high_level_callback->length) {{ // stream out-of-sync
+			free(high_level_callback->data);
+			high_level_callback->data = NULL;
+			high_level_callback->length = 0;
 
 			if (callback_function != NULL) {{
+				{stream_underscore_name}_data = ({chunk_data_type} *)high_level_callback->data;
+				{stream_underscore_name}_length = high_level_callback->length;
+
 				callback_function({high_level_parameters}user_data);
 			}}
 		}} else {{ // stream in-sync
-			memcpy(&(({chunk_c_type} *)low_level_callback->data)[low_level_callback->data_length], stream_chunk_data, sizeof({chunk_c_type}) * stream_chunk_length);
-			low_level_callback->data_length += stream_chunk_length;
+			memcpy(&(({chunk_data_type} *)high_level_callback->data)[high_level_callback->length], {stream_underscore_name}_chunk_data, sizeof({chunk_data_type}) * {stream_underscore_name}_chunk_length);
+			high_level_callback->length += {stream_underscore_name}_chunk_length;
 
-			if (low_level_callback->data_length >= {stream_total_length}) {{ // stream complete
+			if (high_level_callback->length >= {stream_total_length}) {{ // stream complete
 				if (callback_function != NULL) {{
+					{stream_underscore_name}_data = ({chunk_data_type} *)high_level_callback->data;
+					{stream_underscore_name}_length = high_level_callback->length;
+
 					callback_function({high_level_parameters}user_data);
 				}}
 
-				free(low_level_callback->data);
-				low_level_callback->data = NULL;
-				low_level_callback->data_length = 0;
+				free(high_level_callback->data);
+				high_level_callback->data = NULL;
+				high_level_callback->length = 0;
 			}}
 		}}
+	}}
+}}
+"""
+        template_stream_out_single_chunk = """
+static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePrivate *device_p{parameters}) {{
+	{camel_case_name}_CallbackFunction callback_function;
+	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
+
+	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_upper_case_name}_CALLBACK_{upper_case_name}];
+
+	if (callback_function != NULL) {{
+		callback_function({high_level_parameters}user_data);
 	}}
 }}
 """
@@ -725,6 +907,21 @@ static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePr
             stream_out = packet.get_high_level('stream_out')
 
             if stream_out != None:
+                if stream_out.has_single_chunk():
+                    template = template_stream_out_single_chunk
+                else:
+                    template = template_stream_out
+
+                stream_total_length = 'stream_total_length'
+                total_length_element = stream_out.get_total_length_element()
+                chunk_offset_element = stream_out.get_chunk_offset_element()
+
+                if total_length_element != None:
+                    stream_total_length = total_length_element.get_underscore_name()
+                    stream_length_type = total_length_element.get_c_type(False)
+                elif chunk_offset_element != None:
+                    stream_length_type = chunk_offset_element.get_c_type(False)
+
                 functions += template.format(device_underscore_name=packet.get_device().get_underscore_name(),
                                              device_upper_case_name=packet.get_device().get_upper_case_name(),
                                              underscore_name=packet.get_underscore_name(skip=-2),
@@ -732,9 +929,10 @@ static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePr
                                              camel_case_name=packet.get_camel_case_name(skip=-2),
                                              parameters=common.wrap_non_empty(', ', packet.get_c_parameters(), ''),
                                              high_level_parameters=common.wrap_non_empty('', packet.get_c_parameters(signature=False, high_level=True, callback_wrapper=True), ', '),
-                                             data_underscore_name=stream_out.get_data_underscore_name(),
-                                             stream_total_length=stream_out.get_fixed_total_length(default='stream_total_length'),
-                                             chunk_c_type=stream_out.get_chunk_data_element().get_c_type(False),
+                                             stream_underscore_name=stream_out.get_underscore_name(),
+                                             stream_length_type=stream_length_type,
+                                             stream_total_length=stream_out.get_fixed_total_length(default=stream_total_length),
+                                             chunk_data_type=stream_out.get_chunk_data_element().get_c_type(False),
                                              chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
 
         return functions
@@ -878,15 +1076,9 @@ typedef void (*{0}_CallbackFunction)({1});
 
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
-            c_type_list = []
+            parameters = packet.get_c_parameters(signature=True)
 
-            for element in packet.get_elements():
-                if element.get_cardinality() > 1:
-                    c_type_list.append('{0}[{1}]'.format(element.get_c_type(True), element.get_cardinality()))
-                else:
-                    c_type_list.append(element.get_c_type(True))
-
-            typedefs += template.format(name, ', '.join(c_type_list + ['void *']))
+            typedefs += template.format(name, common.wrap_non_empty('', parameters, ', ') + 'void *user_data')
 
         return typedefs
 
@@ -901,18 +1093,9 @@ typedef void (*{0}_CallbackFunction)({1});
                 continue
 
             name = packet.get_camel_case_name(skip=-2)
-            c_type_list = []
+            parameters = packet.get_c_parameters(signature=True, high_level=True)
 
-            for element in packet.get_elements(high_level=True):
-                if element.get_cardinality() > 1:
-                    c_type_list.append('{0}[{1}]'.format(element.get_c_type(True), element.get_cardinality()))
-                elif element.get_cardinality() < 1:
-                    c_type_list.append('{0} *'.format(element.get_c_type(True)))
-                    c_type_list.append('uint16_t') # FIXME: uint16_t is not always the correct type
-                else:
-                    c_type_list.append(element.get_c_type(True))
-
-            typedefs += template.format(name, ', '.join(c_type_list + ['void *']))
+            typedefs += template.format(name, common.wrap_non_empty('', parameters, ', ') + 'void *user_data')
 
         return typedefs
 

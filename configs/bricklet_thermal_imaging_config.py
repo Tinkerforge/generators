@@ -28,9 +28,9 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Get High Contrast Image Low Level',
-'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint8', 62, 'out')],
-'high_level': {'stream_out': {'fixed_total_length': 60*80, 'data_name': 'Image'}},
+'elements': [('Image Chunk Offset', 'uint16', 1, 'out'),
+             ('Image Chunk Data', 'uint8', 62, 'out')],
+'high_level': {'stream_out': {'name': 'Image', 'fixed_total_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -45,9 +45,9 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Image Low Level',
-'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint16', 31, 'out')],
-'high_level': {'stream_out': {'fixed_total_length': 60*80, 'data_name': 'Image'}},
+'elements': [('Image Chunk Offset', 'uint16', 1, 'out'),
+             ('Image Chunk Data', 'uint16', 31, 'out')],
+'high_level': {'stream_out': {'name': 'Image', 'fixed_total_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -224,9 +224,9 @@ com['packets'].append({
 com['packets'].append({
 'type': 'callback',
 'name': 'High Contrast Image Low Level',
-'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint8', 62, 'out')],
-'high_level': {'stream_out': {'fixed_total_length': 60*80, 'data_name': 'Image'}},
+'elements': [('Image Chunk Offset', 'uint16', 1, 'out'),
+             ('Image Chunk Data', 'uint8', 62, 'out')],
+'high_level': {'stream_out': {'name': 'Image', 'fixed_total_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
@@ -241,9 +241,9 @@ com['packets'].append({
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature Image Low Level',
-'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
-             ('Stream Chunk Data', 'uint16', 31, 'out')],
-'high_level': {'stream_out': {'fixed_total_length': 60*80, 'data_name': 'Image'}},
+'elements': [('Image Chunk Offset', 'uint16', 1, 'out'),
+             ('Image Chunk Data', 'uint16', 31, 'out')],
+'high_level': {'stream_out': {'name': 'Image', 'fixed_total_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
 'en':
