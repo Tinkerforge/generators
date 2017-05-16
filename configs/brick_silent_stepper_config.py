@@ -535,25 +535,11 @@ des Stapels verfügbar sein, erfolgt die Versorgung des Motors über diese.
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Current Consumption',
-'elements': [('Current', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the current consumption of the motor in mA.
-""",
-'de':
-"""
-Gibt die Stromaufnahme des Motors zurück (in mA).
-"""
-}]
-})
+
 
 com['packets'].append({
 'type': 'function',
+'function_id': 22,
 'name': 'Set Motor Current',
 'elements': [('Current', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
