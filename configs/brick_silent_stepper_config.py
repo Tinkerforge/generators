@@ -1315,7 +1315,10 @@ Returns the current driver status.
 
 * Motor Stalled: Is true if a motor stall was detected.
 
-* Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode.
+* Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode. 
+  The returned value is between 0 and 31. It represents a multiplier of 1/32 to 32/32 of the
+  ``Motor Run Current`` as set by :func:`Set Basic Configuration`. Example: If a ``Motor Run Current``
+  of 1000mA was set and the returned value is 15, the ``Actual Motor Current` is 16/32*1000mA = 500mA.
 
 * Stallguard Result: Indicates the load of the motor. A lower value signals a higher load. Per trial and error
   you can find out which value corresponds to a suitable torque for the velocity used in your application.
@@ -1345,6 +1348,10 @@ Gibt den aktuellen Treiberstatus zurück.
 * Motor Stalled: Ist True, wenn erkannt wurde, dass der Motor blockiert.
 
 * Actual Motor Current: Gibt die aktuelle Motorstromskalierung im Coolstep Modus aus.
+  Der zurückgegebene Wert ist zwischen 0 und 31. Er repräsentiert einer Multiplikator von 1/32 bis zu 32/32 vom
+  ``Motor Run Current``, wie von :func:`Set Basic Configuration` gesetzt. Beispiel: Wenn ein ``Motor Run Current``
+  von 1000mA gesetzt wurde und ein Wert von 15 zurückgegeben wird, entspricht das einem ``Actual Motor Current``
+  von 16/32*1000mA = 500mA.
 
 * Stallguard Result: Der Stallguard Wert gibt einen Hinweis auf die Last des Motors. Ein niedriger Wert bedeutet eine
   höhere Last. Über Ausprobieren kann man mit diesem Wert herausfinden, welcher Wert zu einem geeigneten Drehmoment bei 
@@ -1525,6 +1532,14 @@ Returns the following :word:`parameters`: The current velocity,
 the current position, the remaining steps, the stack voltage, the external
 voltage and the current consumption of the stepper motor.
 
+The current consumption is calculated by multiplying the ``Actual Motor Current``
+value (see :func:`Set Basic Configuration`) with the ``Motor Run Current``
+(see :func:`Get Driver Status`). This is an internal calculation of the
+driver, not an independent external measurement.
+
+The current consumption calculation was broken up to firmware 2.0.1, it is fixed
+since firmware 2.0.2.
+
 There is also a callback for this function, see :cb:`All Data` callback.
 """,
 'de':
@@ -1533,6 +1548,15 @@ Gibt die folgenden :word:`parameters` zurück: Die aktuelle
 Geschwindigkeit, die aktuelle Position, die verbleibenden Schritte,
 die Spannung des Stapels, die externe Spannung und der aktuelle Stromverbrauch
 des Schrittmotors.
+
+Der Stromverbrauch des Schrittmotors wird berechnet aus dem 
+``Actual Motor Current``-Wert (siehe :func:`Set Basic Configuration`) multipliziert
+mit dem  ``Motor Run Current`` (see :func:`Get Driver Status`). Es handelt
+sich dabei um eine interne Berechnung des Treibers, nicht um eine externe
+unabhängige Messung.
+
+Die Stromverbrauchsberechnung war bis Firmware 2.0.1 fehlerhaft, sie
+funktioniert seit Version 2.0.2 wie beschrieben.
 
 Es existiert auch ein Callback für diese Funktion, siehe :cb:`All Data`
 Callback.
