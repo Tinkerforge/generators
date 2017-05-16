@@ -222,8 +222,11 @@ for diff in diffs:
     if len(filtered_lines) == 0:
         continue
 
-    if filtered_lines[0].startswith('diff -ur ') and \
-       filtered_lines[-1].endswith('// dropped header hunk\n'):
+    if len(filtered_lines) == 4 and \
+       filtered_lines[0].startswith('diff -ur ') and \
+       filtered_lines[1].startswith('--- ') and \
+       filtered_lines[2].startswith('+++ ') and \
+       filtered_lines[3].endswith('// dropped header hunk\n'):
         filtered += [filtered_lines[0].rstrip() + ' // dropped header diff\n']
     else:
         filtered += filtered_lines
