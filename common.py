@@ -1767,7 +1767,7 @@ class ExampleArgument(ExampleItem):
 
         for packet in self.get_device().get_packets('function'):
             if packet.get_name() == function_name:
-                return packet.get_elements('in')[self.get_index()]
+                return packet.get_elements(direction='in')[self.get_index()]
 
         return None
 

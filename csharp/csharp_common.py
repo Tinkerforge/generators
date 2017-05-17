@@ -56,7 +56,7 @@ class CSharpPacket(common.Packet):
 
     def get_csharp_method_signature(self, print_full_name=False, is_doc=False):
         sig_format = "public {4}{0} {1}{2}({3})"
-        ret_count = len(self.get_elements('out'))
+        ret_count = len(self.get_elements(direction='out'))
         params = self.get_csharp_parameter_list(ret_count > 1)
         return_type = 'void'
 
