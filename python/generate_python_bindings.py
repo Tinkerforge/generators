@@ -323,12 +323,7 @@ class {0}(Device):
 
         if {stream_underscore_name}_total_length == 0:
             {stream_underscore_name}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
-            {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list})
-
-            if isinstance({stream_underscore_name}_chunk_result, namedtuple):
-                {stream_underscore_name}_total_written = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_written
-            else:
-                {stream_underscore_name}_total_written = {stream_underscore_name}_chunk_result
+            {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list}){chunk_written_0}
         else:
             with self.stream_lock:
                 while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_total_length:
@@ -337,13 +332,7 @@ class {0}(Device):
                     if len({stream_underscore_name}_chunk_data) < {chunk_cardinality}:
                         {stream_underscore_name}_chunk_data.extend([{chunk_padding}] * ({chunk_cardinality} - len({stream_underscore_name}_chunk_data)))
 
-                    {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list})
-
-                    if isinstance({stream_underscore_name}_chunk_result, namedtuple):
-                        {stream_underscore_name}_chunk_written = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_written
-                    else:
-                        {stream_underscore_name}_chunk_written = {stream_underscore_name}_chunk_result
-
+                    {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameter_list}){chunk_written_n}
                     {stream_underscore_name}_total_written += {stream_underscore_name}_chunk_written
 
                     if {stream_underscore_name}_chunk_written < {chunk_cardinality}:
@@ -352,6 +341,12 @@ class {0}(Device):
                     {stream_underscore_name}_chunk_offset += {chunk_cardinality}
 {result}
 """
+        template_stream_in_short_write_chunk_written = ["""
+            {stream_underscore_name}_total_written = {stream_underscore_name}_chunk_result""", """
+                    {stream_underscore_name}_chunk_written = {stream_underscore_name}_chunk_result"""]
+        template_stream_in_short_write_namedtuple_chunk_written = ["""
+            {stream_underscore_name}_total_written = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_written""", """
+                    {stream_underscore_name}_chunk_written = {stream_underscore_name}_chunk_result.{stream_underscore_name}_chunk_written"""]
         template_stream_in_short_write_result = """
         return {stream_underscore_name}_total_written"""
         template_stream_in_short_write_namedtuple_result = """
@@ -470,6 +465,13 @@ class {0}(Device):
                     template = template_stream_in
 
                 if stream_in.has_short_write():
+                    if len(packet.get_elements(direction='out')) < 2:
+                        chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
+                        chunk_written_n = template_stream_in_short_write_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name())
+                    else:
+                        chunk_written_0 = template_stream_in_short_write_namedtuple_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
+                        chunk_written_n = template_stream_in_short_write_namedtuple_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name())
+
                     if len(packet.get_elements(direction='out', high_level=True)) < 2:
                         result = template_stream_in_short_write_result.format(stream_underscore_name=stream_in.get_underscore_name())
                     else:
@@ -484,6 +486,8 @@ class {0}(Device):
                                                                                          result_fields=repr(fields))
                 else:
                     result = ''
+                    chunk_written_0 = ''
+                    chunk_written_n = ''
 
                 methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                            parameter_list=packet.get_python_parameters(),
@@ -492,6 +496,8 @@ class {0}(Device):
                                            fixed_total_length=stream_in.get_fixed_total_length(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                            chunk_padding=repr(stream_in.get_chunk_data_element().get_python_default_value()),
+                                           chunk_written_0=chunk_written_0,
+                                           chunk_written_n=chunk_written_n,
                                            result=result)
             elif stream_out != None:
                 if stream_out.get_fixed_total_length() != None:
