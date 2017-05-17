@@ -246,7 +246,7 @@ com['packets'].append({
 """
 Sets the configuration for the RS485 Modbus communication. Available options:
 
-* Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 0 to 247.
+* Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 1 to 247.
 * Master Request Timeout: Specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
 
 The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds (1 second).
@@ -255,7 +255,7 @@ The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds
 """
 Setzt die Konfiguration für die RS485 Modbus Kommunikation. Verfügbare Optionen:
 
-* Slave Address: Addresse die vom Modbus-Slave im Modbus-Slave Modus genutzt wird. Der gültige Adressbereich ist 0 bis 247.
+* Slave Address: Addresse die vom Modbus-Slave im Modbus-Slave Modus genutzt wird. Der gültige Adressbereich ist 1 bis 247.
 * Master Request Timeout: Spezifiziert wie lange der Modbus-Master auf eine Antwort von einem Modbus-Slave wartet. Die Angabe ist in Millisekunden.
 
 Die Standardwerte sind Slave Address = 1 und Master Request Timeout = 1000 Millisekunden (1 Sekunde).
