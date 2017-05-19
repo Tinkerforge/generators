@@ -321,6 +321,7 @@ void communication_init(void) {{
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "bricklib2/protocols/tfp/tfp.h"
 #include "bricklib2/bootloader/bootloader.h"
 
 // Default functions
