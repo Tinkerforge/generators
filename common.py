@@ -1498,9 +1498,6 @@ class Device(NameMixin):
     def get_author(self):
         return self.raw_data['author']
 
-    def get_author_email(self):
-        return self.raw_data['author']
-
     def get_api_version(self):
         return self.raw_data['api_version']
 
