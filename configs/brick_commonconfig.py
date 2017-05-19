@@ -51,7 +51,6 @@ Im normalen Betrieb sollten alle Zähler fast immer auf 0 stehen bleiben.
 }]
 })
 
-'''
 common_packets.append({
 'type': 'function',
 'function_id': 234,
@@ -180,7 +179,6 @@ ausgibt.
 """
 }]
 })
-'''
 common_packets.append({
 'type': 'function',
 'function_id': 238,

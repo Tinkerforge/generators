@@ -370,7 +370,7 @@ void communication_init(void);
         shutil.copytree(os.path.join(folder_src, 'hardware'),  os.path.join(folder_dst, 'hardware'))
         shutil.copytree(os.path.join(folder_src, 'datasheets'),  os.path.join(folder_dst, 'datasheets'))
 
-    def fill_templates(self, folder, device_name_dash, device_name, year, name, email):
+    def fill_templates(self, folder, device_name_dash, device_name, device_identifier, year, name, email):
         for dname, dirs, files in os.walk(folder):
             for fname in files:
                 fpath = os.path.join(dname, fname)
@@ -378,6 +378,7 @@ void communication_init(void);
                     s = f.read()
                 s = s.replace("""<<<DEVICE_NAME_DASH>>>""", device_name_dash)
                 s = s.replace("""<<<DEVICE_NAME_READABLE>>>""", device_name)
+                s = s.replace("""<<<DEVICE_IDENTIFIER>>>""", str(device_identifier))
                 s = s.replace("""<<<YEAR>>>""", str(year))
                 s = s.replace("""<<<NAME>>>""", name)
                 s = s.replace("""<<<EMAIL>>>""", email)
@@ -395,11 +396,11 @@ void communication_init(void);
 
         device_name_dash = device.get_underscore_name().replace('_', '-')
         year = datetime.datetime.now().year
-        name = 'Olaf Lüke'             # Change before generation
-        email = 'olaf@tinkerforge.com' # Change before generation
+        name = device.get_author().split("<")[0].rstrip()             #author syntax: Firstname Lastname <email>
+        email = device.get_author().split("<")[1].replace(">","")
 
         self.copy_templates_to(folder)
-        self.fill_templates(folder, device_name_dash, device.get_name(), year, name, email)
+        self.fill_templates(folder, device_name_dash, device.get_name(), device.get_device_identifier(), year, name, email)
 
         h_constants = device.get_h_constants()
         h_defines = device.get_h_defines()
