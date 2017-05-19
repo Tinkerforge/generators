@@ -727,6 +727,7 @@ def generate(bindings_root_directory, language, generator_class):
                                software_doc_prefix,
                                device.get_git_name(),
                                firmware_url_part,
+                               False,
                                device.is_released(),
                                device.is_documented(),
                                True,
@@ -747,6 +748,7 @@ def generate(bindings_root_directory, language, generator_class):
                                software_doc_prefix,
                                device.get_git_name(),
                                firmware_url_part,
+                               device.has_comcu(),
                                device.is_released(),
                                device.is_documented(),
                                True,
@@ -758,18 +760,18 @@ def generate(bindings_root_directory, language, generator_class):
 
     generator.finish()
 
-    brick_infos.append((None, 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, True, True, False,
+    brick_infos.append((None, 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, False, True, True, False,
                         {'en': 'For Firmware Developers: JTAG and serial console',
                          'de': 'Für Firmware Entwickler: JTAG und serielle Konsole'}))
 
-    bricklet_infos.append((None, 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, True, True, False,
+    bricklet_infos.append((None, 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, False, True, True, False,
                            {'en': 'Makes all Bricklet signals available',
                             'de': 'Macht alle Bricklet Signale zugänglich'}))
 
     with open(os.path.join(bindings_root_directory, '..', 'device_infos.py'), 'w') as f:
         f.write('from collections import namedtuple\n')
         f.write('\n')
-        f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part is_released is_documented has_bindings description')\n")
+        f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part has_comcu is_released is_documented has_bindings description')\n")
         f.write('\n')
         f.write('brick_infos = \\\n')
         f.write('[\n')
@@ -1483,6 +1485,9 @@ class Device(NameMixin):
 
     def get_generator(self): # parent
         return self.generator
+
+    def has_comcu(self):
+        return self.raw_data.get('comcu', False)
 
     def is_released(self):
         return self.raw_data['released']
