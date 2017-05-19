@@ -35,10 +35,10 @@ class RubyDevice(common.Device):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
 class RubyPacket(common.Packet):
-    def get_ruby_parameter_list(self):
+    def get_ruby_parameters(self, high_level=False):
         params = []
 
-        for element in self.get_elements(direction='in'):
+        for element in self.get_elements(direction='in', high_level=high_level):
             params.append(element.get_underscore_name())
 
         return ', '.join(params)
@@ -74,6 +74,21 @@ class RubyElement(common.Element):
         'string': ('Z', 1)
     }
 
+    ruby_default_values = {
+        'int8':   '0',
+        'uint8':  '0',
+        'int16':  '0',
+        'uint16': '0',
+        'int32':  '0',
+        'uint32': '0',
+        'int64':  '0',
+        'uint64': '0',
+        'float':  '0.0',
+        'bool':   'false',
+        'char':   "'\\0'",
+        'string': "'\\0'"
+    }
+
     def get_ruby_type(self):
         t = RubyElement.ruby_types[self.get_type()]
 
@@ -84,3 +99,6 @@ class RubyElement(common.Element):
 
     def get_ruby_pack_format(self):
         return RubyElement.ruby_pack_formats[self.get_type()]
+
+    def get_ruby_default_value(self):
+        return RubyElement.ruby_default_values[self.get_type()]

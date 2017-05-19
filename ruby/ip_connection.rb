@@ -52,8 +52,12 @@ module Tinkerforge
   class NotSupportedException < TinkerforgeException
   end
 
+  class StreamOutOfSyncException < TinkerforgeException
+  end
+
   def pack(unpacked, format)
     data = ''
+
     format.split(' ').each do |f|
       if f.length > 1
         f0 = f[0, 1]
@@ -109,6 +113,7 @@ module Tinkerforge
 
   def unpack(data, format)
     unpacked = []
+
     format.split(' ').each do |f|
       if f.length > 1
         f0 = f[0, 1]
@@ -202,6 +207,7 @@ module Tinkerforge
     attr_accessor :expected_response_function_id
     attr_accessor :expected_response_sequence_number
     attr_accessor :callback_formats
+    attr_accessor :high_level_callbacks
     attr_accessor :registered_callbacks
 
     # Creates the device object with the unique device ID <tt>uid</tt> and adds
@@ -238,7 +244,10 @@ module Tinkerforge
       @response_condition = ConditionVariable.new
       @response_queue = Queue.new
 
+      @stream_mutex = Mutex.new
+
       @callback_formats = {}
+      @high_level_callbacks = {}
       @registered_callbacks = {}
 
       @ipcon.devices[@uid] = self # FIXME: use a weakref here
@@ -460,11 +469,11 @@ module Tinkerforge
     end
 
     def get_authentication_nonce
-      send_request(FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 4, 'C4')
+      send_request FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 4, 'C4'
     end
 
     def authenticate(client_nonce, digest)
-      send_request(FUNCTION_AUTHENTICATE, [client_nonce, digest], 'C4 C20', 0, '')
+      send_request FUNCTION_AUTHENTICATE, [client_nonce, digest], 'C4 C20', 0, ''
     end
   end
 
@@ -995,13 +1004,77 @@ module Tinkerforge
       if function_id == CALLBACK_ENUMERATE and \
          @registered_callbacks.has_key? CALLBACK_ENUMERATE
         payload = unpack packet[8..-1], 'Z8 Z8 k C3 C3 S C'
-        @registered_callbacks[CALLBACK_ENUMERATE].call(*payload)
+        @registered_callbacks[CALLBACK_ENUMERATE].call *payload
       elsif @devices.has_key? uid
         device = @devices[uid]
 
+        if device.high_level_callbacks.has_key? -function_id
+          hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
+          payload = unpack packet[8..-1], device.callback_formats[function_id]
+          fixed_total_length = hlcb[1]['fixed_total_length']
+          has_data = false
+          data = nil
+
+          if hlcb[1]['fixed_total_length'] != nil
+            total_length = hlcb[1]['fixed_total_length']
+          else
+            total_length = payload[hlcb[0].index 'stream_total_length']
+          end
+
+          if not hlcb[1]['single_chunk']
+            chunk_offset = payload[hlcb[0].index 'stream_chunk_offset']
+          else
+            chunk_offset = 0
+          end
+
+          chunk_data = payload[hlcb[0].index 'stream_chunk_data']
+
+          if hlcb[2] == nil # no stream in-progress
+            if chunk_offset == 0 # stream starts
+              hlcb[2] = chunk_data
+
+              if hlcb[2].length >= total_length # stream complete
+                has_data = true
+                data = hlcb[2][0, total_length]
+                hlcb[2] = nil
+              else # ignore tail of current stream, wait for next stream start
+                foobar = 0
+              end
+            else # stream in-progress
+              if chunk_offset != hlcb[2].length # stream out-of-sync
+                has_data = true
+                data = nil
+                hlcb[2] = nil
+              else # stream in-sync
+                hlcb[2] += chunk_data
+
+                if hlcb[2].length >= total_length # stream complete
+                  has_data = true
+                  data = hlcb[2][0, total_length]
+                  hlcb[2] = nil
+                end
+              end
+            end
+
+            if has_data and device.registered_callbacks.has_key? -function_id
+              result = []
+
+              hlcb[0].zip(payload).each do |role, value|
+                if role == 'stream_chunk_data'
+                  result << data
+                elsif role == nil or not role.start_with? 'stream_'
+                  result << value
+                end
+              end
+
+              device.registered_callbacks[-function_id].call *result
+            end
+          end
+        end
+
         if device.registered_callbacks.has_key? function_id
           payload = unpack packet[8..-1], device.callback_formats[function_id]
-          device.registered_callbacks[function_id].call(*payload)
+          device.registered_callbacks[function_id].call *payload
         end
       end
     end
@@ -1096,7 +1169,8 @@ module Tinkerforge
         device = @devices[uid]
 
         if sequence_number == 0
-          if device.registered_callbacks.has_key? function_id
+          if device.registered_callbacks.has_key? function_id or \
+             device.high_level_callbacks.has_key? -function_id
             @callback.queue.push [QUEUE_KIND_PACKET, packet]
           end
         elsif device.expected_response_function_id == function_id and \

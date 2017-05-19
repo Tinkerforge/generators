@@ -64,7 +64,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
                 continue
 
             name = packet.get_underscore_name()
-            params = packet.get_ruby_parameter_list()
+            params = packet.get_ruby_parameters()
 
             if len(params) > 0:
                 params = '(' + params + ')'
