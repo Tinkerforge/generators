@@ -167,6 +167,9 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         return high_level_callbacks + '    end\n'
 
     def get_ruby_methods(self):
+        methods = ''
+
+        # normal and low-level
         method0 = """
     # {4}
     def {0}
@@ -179,7 +182,6 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
       send_request FUNCTION_{2}, [{1}], '{3}', {4}, '{5}'
     end
 """
-        methods = ''
 
         for packet in self.get_packets('function'):
             name = packet.get_underscore_name()
@@ -194,10 +196,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
             else:
                 methods += method0.format(name, fid, out_size, out_format, doc)
 
-        return methods
-
-    def get_ruby_high_level_methods(self):
-        methods = ''
+        # high-level
         template_stream_in = """
     def {underscore_name}{high_level_parameters}
       {stream_underscore_name}_total_length = {stream_underscore_name}.length
@@ -556,7 +555,6 @@ end
         source += self.get_ruby_callback_formats()
         source += self.get_ruby_high_level_callbacks()
         source += self.get_ruby_methods()
-        source += self.get_ruby_high_level_methods()
         source += self.get_ruby_register_callback_method()
 
         return source

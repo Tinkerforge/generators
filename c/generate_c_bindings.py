@@ -377,6 +377,9 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
                                self.get_camel_case_name())
 
     def get_c_functions(self):
+        functions = ''
+
+        # normal and low-level
         template_version = """
 int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
 	return device_get_api_version({0}->p, ret_api_version);
@@ -408,7 +411,7 @@ int {0}_{1}({2} *{0}{3}) {{
 
         device_name = self.get_underscore_name()
         c = self.get_camel_case_name()
-        functions = []
+        functions += template_version.format(device_name, c)
 
         for packet in self.get_packets('function'):
             packet_name = packet.get_underscore_name()
@@ -437,12 +440,9 @@ int {0}_{1}({2} *{0}{3}) {{
             else:
                 k = ''
 
-            functions.append(template.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r))
+            functions += template.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r)
 
-        return template_version.format(device_name, c) + ''.join(functions)
-
-    def get_c_high_level_functions(self):
-        functions = ''
+        # high-level
         template_stream_in = """
 int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters}) {{
 	DevicePrivate *device_p = {device_underscore_name}->p;
@@ -820,8 +820,10 @@ void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data
 """
         return template.format(self.get_underscore_name(), self.get_camel_case_name())
 
-    def get_c_high_level_callback_wrapper_functions(self):
+    def get_c_callback_wrapper_functions(self):
         functions = ''
+
+        # high-level
         template_stream_out = """
 static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePrivate *device_p{parameters}) {{
 	{camel_case_name}_CallbackFunction callback_function;
@@ -935,11 +937,8 @@ static void {device_underscore_name}_callback_wrapper_{underscore_name}(DevicePr
                                              chunk_data_type=stream_out.get_chunk_data_element().get_c_type(False),
                                              chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
 
-        return functions
-
-    def get_c_callback_wrapper_functions(self):
-        functions = []
-        template = """
+        # normal and low-level
+        template_normal = """
 static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 	{3}_CallbackFunction callback_function;
 	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {7}];{9}{10}{8}
@@ -1023,13 +1022,13 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
                 cb = '\n\t(void)packet;'
 
             if packet.get_high_level('stream_out') != None:
-                temp = template_low_level
+                template = template_low_level
             else:
-                temp = template
+                template = template_normal
 
-            functions.append(temp.format(a, b, c, d, e, f, endian, fid, cb, i, variables, unpacks, packet.get_underscore_name(skip=-2)))
+            functions += template.format(a, b, c, d, e, f, endian, fid, cb, i, variables, unpacks, packet.get_underscore_name(skip=-2))
 
-        return ''.join(functions)
+        return functions
 
     def get_c_include_h(self):
         template = """{0}
@@ -1074,20 +1073,14 @@ typedef Device {3};
 typedef void (*{0}_CallbackFunction)({1});
 """
 
+        # normal and low-level
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
             parameters = packet.get_c_parameters(signature=True)
 
             typedefs += template.format(name, common.wrap_non_empty('', parameters, ', ') + 'void *user_data')
 
-        return typedefs
-
-    def get_c_high_level_typedefs(self):
-        typedefs = ''
-        template = """
-typedef void (*{0}_CallbackFunction)({1});
-"""
-
+        # high-level
         for packet in self.get_packets('callback'):
             if not packet.has_high_level():
                 continue
@@ -1180,56 +1173,41 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected);
                                self.get_camel_case_category())
 
     def get_c_function_declaration(self):
-        func_version = """
-/**
- * \ingroup {2}{1}
- *
- * Returns the API version (major, minor, release) of the bindings for this
- * device.
- */
-int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]);
-"""
-        func = """
-/**
- * \ingroup {5}{2}
- *
- * {4}
- */
-int {0}_{1}({2} *{0}{3});
-"""
-
-        a = self.get_underscore_name()
-        c = self.get_camel_case_name()
         functions = ''
 
-        for packet in self.get_packets('function'):
-            b = packet.get_underscore_name()
-            d = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
-            doc = packet.get_c_formatted_doc()
-
-            functions += func.format(a, b, c, d, doc, self.get_camel_case_category())
-
-        return func_version.format(a, c, self.get_camel_case_category()) + functions
-
-    def get_c_high_level_function_declaration(self):
-        functions = ''
+        # normal and low-level
         template = """
 /**
  * \ingroup {category}{device_camel_case_name}
  *
  * {doc}
  */
-int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{high_level_parameters});
+int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device_underscore_name}{parameters});
 """
+        functions += template.format(category=self.get_category(),
+                                     device_camel_case_name=self.get_camel_case_name(),
+                                     device_underscore_name=self.get_underscore_name(),
+                                     doc='Returns the API version (major, minor, release) of the bindings for this\n * device.',
+                                     underscore_name='get_api_version',
+                                     parameters=', uint8_t ret_api_version[3]')
 
         for packet in self.get_packets('function'):
-            if packet.get_high_level('stream_*') != None:
-                functions += template.format(category=packet.get_device().get_category(),
-                                             device_camel_case_name=packet.get_device().get_camel_case_name(),
+            functions += template.format(category=self.get_category(),
+                                         device_camel_case_name=self.get_camel_case_name(),
+                                         device_underscore_name=self.get_underscore_name(),
+                                         doc=packet.get_c_formatted_doc(),
+                                         underscore_name=packet.get_underscore_name(),
+                                         parameters=common.wrap_non_empty(', ', packet.get_c_parameters(), ''))
+
+        # high-level
+        for packet in self.get_packets('function'):
+            if packet.has_high_level():
+                functions += template.format(category=self.get_category(),
+                                             device_camel_case_name=self.get_camel_case_name(),
+                                             device_underscore_name=self.get_underscore_name(),
                                              doc=packet.get_c_formatted_doc(),
-                                             device_underscore_name=packet.get_device().get_underscore_name(),
                                              underscore_name=packet.get_underscore_name(skip=-2),
-                                             high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''))
+                                             parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''))
 
         return functions
 
@@ -1251,16 +1229,13 @@ void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data
     def get_c_source(self):
         source  = self.get_c_include_c()
         source += self.get_c_typedefs()
-        source += self.get_c_high_level_typedefs()
         source += self.get_c_structs()
-        source += self.get_c_high_level_callback_wrapper_functions()
         source += self.get_c_callback_wrapper_functions()
         source += self.get_c_create_function()
         source += self.get_c_destroy_function()
         source += self.get_c_response_expected_functions()
         source += self.get_c_register_callback_function()
         source += self.get_c_functions()
-        source += self.get_c_high_level_functions()
         source += self.get_c_end_c()
 
         return source
@@ -1277,7 +1252,6 @@ void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data
         header += self.get_c_response_expected_declarations()
         header += self.get_c_register_callback_declaration()
         header += self.get_c_function_declaration()
-        header += self.get_c_high_level_function_declaration()
         header += self.get_c_end_h()
 
         return header
@@ -1297,8 +1271,14 @@ void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data
 
         symbols.append('{0}_get_api_version'.format(underscore_name))
 
+        # normal and low-level
         for packet in self.get_packets('function'):
             symbols.append('{0}_{1}'.format(underscore_name, packet.get_underscore_name()))
+
+        # high-level
+        for packet in self.get_packets('function'):
+            if packet.has_high_level():
+                symbols.append('{0}_{1}'.format(underscore_name, packet.get_underscore_name(skip=-2)))
 
         return '\n'.join(symbols) + '\n'
 

@@ -239,6 +239,7 @@ class {0}(Device):
         methods = ''
         cls = self.get_python_class_name()
 
+        # normal and low-level
         for packet in self.get_packets('function'):
             nb = packet.get_camel_case_name()
             ns = packet.get_underscore_name()
@@ -265,10 +266,7 @@ class {0}(Device):
             else:
                 methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
 
-        return methods
-
-    def get_python_high_level_methods(self):
-        methods = ''
+        # high-level
         template_stream_in = """
     def {underscore_name}(self{high_level_parameters}):
         {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
@@ -557,7 +555,6 @@ class {0}(Device):
         source += self.get_python_callback_formats()
         source += self.get_python_high_level_callbacks()
         source += self.get_python_methods()
-        source += self.get_python_high_level_methods()
         source += self.get_python_register_callback_method()
         source += self.get_python_old_name()
 
