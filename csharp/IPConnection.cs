@@ -293,6 +293,7 @@ namespace Tinkerforge
 			autoReconnectPending = false;
 
 			short connectReason = IPConnection.CONNECT_REASON_REQUEST;
+
 			if (isAutoReconnect)
 			{
 				connectReason = CONNECT_REASON_AUTO_RECONNECT;
@@ -570,11 +571,13 @@ namespace Tinkerforge
 		internal int GetNextSequenceNumber()
 		{
 			int currentSequenceNumber;
+
 			lock (sequenceNumberLock)
 			{
 				currentSequenceNumber = nextSequenceNumber + 1;
 				nextSequenceNumber = currentSequenceNumber % 15;
 			}
+
 			return currentSequenceNumber;
 		}
 
@@ -644,6 +647,7 @@ namespace Tinkerforge
 					Array.Copy(pendingData, 0, packet, 0, length);
 					Array.Copy(pendingData, length, pendingData, 0, pendingLength - length);
 					pendingLength -= length;
+
 					HandleResponse(packet);
 				}
 			}
@@ -688,6 +692,7 @@ namespace Tinkerforge
 					Thread.Sleep(100);
 
 					var disconHandler = DisconnectedCallback;
+
 					if (disconHandler != null)
 					{
 						disconHandler(this, cqo.parameter);
@@ -769,6 +774,7 @@ namespace Tinkerforge
 				{
 					Device device = devices[uid];
 					Device.CallbackWrapper wrapper = device.callbackWrappers[fid];
+
 					if (wrapper != null)
 					{
 						wrapper(cqo.packet);
@@ -782,6 +788,7 @@ namespace Tinkerforge
 			while (true)
 			{
 				CallbackQueueObject cqo;
+
 				if (!localCallback.queue.TryDequeue(out cqo, Timeout.Infinite))
 				{
 					continue;
@@ -828,8 +835,8 @@ namespace Tinkerforge
 			LEConverter.To(FUNCTION_DISCONNECT_PROBE, 5, request);
 			LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, request);
 			LEConverter.To((byte)0, 7, request);
-
 			bool response;
+
 			while (true)
 			{
 				if (localDisconnectProbeQueue.TryDequeue(out response, DISCONNECT_PROBE_INTERVAL))
@@ -996,8 +1003,7 @@ namespace Tinkerforge
 		{
 		}
 
-		public TinkerforgeException(string message)
-			: base(message)
+		public TinkerforgeException(string message) : base(message)
 		{
 		}
 	}
@@ -1007,8 +1013,7 @@ namespace Tinkerforge
 	/// </summary>
 	public class TimeoutException : TinkerforgeException
 	{
-		public TimeoutException(string message)
-			: base(message)
+		public TimeoutException(string message) : base(message)
 		{
 		}
 	}
@@ -1019,8 +1024,7 @@ namespace Tinkerforge
 	/// </summary>
 	public class AlreadyConnectedException : TinkerforgeException
 	{
-		public AlreadyConnectedException(string message)
-			: base(message)
+		public AlreadyConnectedException(string message) : base(message)
 		{
 		}
 	}
@@ -1049,6 +1053,7 @@ namespace Tinkerforge
 		{
 			StringRepresentation = uid;
 			long uidTmp = Base58.Decode(uid);
+
 			if (uidTmp > 0xFFFFFFFFL)
 			{
 				// convert from 64bit to 32bit
@@ -1258,6 +1263,7 @@ namespace Tinkerforge
 			LEConverter.To((int)this.internalUID, 0, packet);
 			LEConverter.To((byte)length, 4, packet);
 			LEConverter.To((byte)fid, 5, packet);
+
 			if (GetResponseExpected(fid))
 			{
 				LEConverter.To((byte)((1 << 3) | (ipcon.GetNextSequenceNumber() << 4)), 6, packet);
@@ -1266,6 +1272,7 @@ namespace Tinkerforge
 			{
 				LEConverter.To((byte)((ipcon.GetNextSequenceNumber() << 4)), 6, packet);
 			}
+
 			LEConverter.To((byte)0, 7, packet);
 
 			return packet;
@@ -1368,7 +1375,8 @@ namespace Tinkerforge
 		}
 
 		public override void GetIdentity(out string uid, out string connectedUid, out char position,
-		                                 out byte[] hardwareVersion, out byte[] firmwareVersion, out int deviceIdentifier)
+		                                 out byte[] hardwareVersion, out byte[] firmwareVersion,
+		                                 out int deviceIdentifier)
 		{
 			uid = "";
 			connectedUid = "";
