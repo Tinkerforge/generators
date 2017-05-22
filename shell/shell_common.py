@@ -72,7 +72,7 @@ class ShellElement(common.Element):
         'int64':  'q',
         'uint64': 'Q',
         'float':  'f',
-        'bool':   '?',
+        'bool':   '!',
         'char':   'c',
         'string': 's'
     }
