@@ -1768,7 +1768,7 @@ static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response
 
 	if (sequence_number == 0) {
 		if (device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + response->header.function_id] != NULL ||
-		    device_p->high_level_callbacks[-(int)response->header.function_id].exists) {
+		    device_p->high_level_callbacks[response->header.function_id].exists) {
 			callback = (Packet *)malloc(response->header.length);
 
 			memcpy(callback, response, response->header.length);
