@@ -31,7 +31,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class CPacket(common.Packet):
-    def get_c_parameters(self, signature=True, high_level=False, callback_wrapper=False):
+    def get_c_parameters(self, signature=True, high_level=False, callback_wrapper=False, single_chunk=False):
         parameters = []
 
         for element in self.get_elements(high_level=high_level):
@@ -45,7 +45,7 @@ class CPacket(common.Packet):
                 if signature:
                     modifier = '*'
                     name = 'ret_{0}'.format(name)
-                elif role in ['stream_total_length', 'stream_chunk_offset', 'stream_chunk_written']:
+                elif role in ['stream_length', 'stream_chunk_offset', 'stream_chunk_written']:
                     modifier = '&'
                 elif role not in ['stream_chunk_data', 'stream_chunk_written']:
                     name = 'ret_{0}'.format(name)
@@ -60,34 +60,39 @@ class CPacket(common.Packet):
                 array = '[{0}]'.format(element.get_cardinality())
 
             if high_level and callback_wrapper and element.get_level() == 'high' and element.get_cardinality() < 0:
-                parameters.append(name + '_data')
+                if single_chunk:
+                    parameters.append('{0}_data'.format(name))
+                else:
+                    parameters.append('({0} *)high_level_callback->data'.format(c_type))
             elif signature:
                 parameters.append('{0} {1}{2}{3}'.format(c_type, modifier, name, array))
             else:
                 parameters.append('{0}{1}'.format(modifier, name))
 
-            total_length_elements = self.get_elements(role='stream_total_length')
+            length_elements = self.get_elements(role='stream_length')
             chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
 
             if high_level and \
                element.get_level() == 'high' and \
                element.get_cardinality() < 0 and \
                (element.get_direction() == 'out' or \
-                len(total_length_elements) > 0):
+                len(length_elements) > 0):
                 if signature:
                     if element.get_direction() == 'out' and self.get_type() == 'function':
                         modifier = '*'
                     else:
                         modifier = ''
 
-                    if len(total_length_elements) > 0:
-                        c_type = total_length_elements[0].get_c_type(True)
+                    if len(length_elements) > 0:
+                        c_type = length_elements[0].get_c_type(True)
                     elif len(chunk_offset_elements) > 0:
                         c_type = chunk_offset_elements[0].get_c_type(True)
                     else:
                         raise common.GeneratorError('Malformed stream config')
 
                     parameters.append('{0} {1}{2}_length'.format(c_type, modifier, name))
+                elif callback_wrapper and not single_chunk:
+                    parameters.append('high_level_callback->length')
                 else:
                     parameters.append('{0}{1}_length'.format(modifier, name))
 

@@ -1046,25 +1046,25 @@ class Stream(NameMixin):
         check_name(raw_data['name'])
 
         if raw_data.get('single_chunk', False):
-            if 'fixed_total_length' in raw_data:
-                raise GeneratorError("Cannot mix fixed-total-length and single-chunk for high-level feature 'stream_{0}'".format(direction))
+            if 'fixed_length' in raw_data:
+                raise GeneratorError("Cannot mix fixed-length and single-chunk for high-level feature 'stream_{0}'".format(direction))
 
-            self.total_length_element = packet.get_elements(name=self.get_name() + ' Length', direction=direction)[0]
+            self.length_element = packet.get_elements(name=self.get_name() + ' Length', direction=direction)[0]
             self.chunk_offset_element = None
             self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Data', direction=direction)[0]
-        elif 'fixed_total_length' in raw_data:
-            self.total_length_element = None
+        elif 'fixed_length' in raw_data:
+            self.length_element = None
             self.chunk_offset_element = packet.get_elements(name=self.get_name() + ' Chunk Offset', direction=direction)[0]
             self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Chunk Data', direction=direction)[0]
         else:
-            self.total_length_element = packet.get_elements(name=self.get_name() + ' Total Length', direction=direction)[0]
+            self.length_element = packet.get_elements(name=self.get_name() + ' Length', direction=direction)[0]
             self.chunk_offset_element = packet.get_elements(name=self.get_name() + ' Chunk Offset', direction=direction)[0]
             self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Chunk Data', direction=direction)[0]
 
-        if 'fixed_total_length' not in raw_data and \
+        if 'fixed_length' not in raw_data and \
            not raw_data.get('single_chunk', False) \
-           and self.total_length_element == None:
-            raise GeneratorError("Missing total-length element for high-level feature 'stream_{0}'".format(direction))
+           and self.length_element == None:
+            raise GeneratorError("Missing length element for high-level feature 'stream_{0}'".format(direction))
 
         if not raw_data.get('single_chunk', False) and \
            self.chunk_offset_element == None:
@@ -1073,10 +1073,10 @@ class Stream(NameMixin):
         if self.chunk_data_element == None:
             raise GeneratorError("Missing chunk-data element for high-level feature 'stream_{0}'".format(direction))
 
-        if 'fixed_total_length' not in raw_data and \
+        if 'fixed_length' not in raw_data and \
            not raw_data.get('single_chunk', False) and \
-           self.total_length_element.get_type() != self.chunk_offset_element.get_type():
-            raise GeneratorError("Type of total-length element and chunk-offset are different")
+           self.length_element.get_type() != self.chunk_offset_element.get_type():
+            raise GeneratorError("Type of length element and chunk-offset are different")
 
     def get_packet(self): # parent
         return self.packet
@@ -1084,8 +1084,8 @@ class Stream(NameMixin):
     def _get_name(self): # for NameMixin
         return self.raw_data['name']
 
-    def get_total_length_element(self):
-        return self.total_length_element
+    def get_length_element(self):
+        return self.length_element
 
     def get_chunk_offset_element(self):
         return self.chunk_offset_element
@@ -1093,8 +1093,8 @@ class Stream(NameMixin):
     def get_chunk_data_element(self):
         return self.chunk_data_element
 
-    def get_fixed_total_length(self, default=None):
-        return self.raw_data.get('fixed_total_length', default)
+    def get_fixed_length(self, default=None):
+        return self.raw_data.get('fixed_length', default)
 
     def has_single_chunk(self):
         return self.raw_data.get('single_chunk', False)
@@ -1159,7 +1159,7 @@ class Packet(NameMixin):
                 level = 'low'
 
                 if raw_element[0].endswith(' Length'):
-                    role = 'stream_total_length'
+                    role = 'stream_length'
                     stream_written_type = raw_element[1]
                 elif raw_element[0].endswith(' Offset'):
                     role = 'stream_chunk_offset'

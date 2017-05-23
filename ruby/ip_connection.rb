@@ -1011,14 +1011,14 @@ module Tinkerforge
         if device.high_level_callbacks.has_key? -function_id
           hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
           payload = unpack packet[8..-1], device.callback_formats[function_id]
-          fixed_total_length = hlcb[1]['fixed_total_length']
+          fixed_length = hlcb[1]['fixed_length']
           has_data = false
           data = nil
 
-          if hlcb[1]['fixed_total_length'] != nil
-            total_length = hlcb[1]['fixed_total_length']
+          if hlcb[1]['fixed_length'] != nil
+            length = hlcb[1]['fixed_length']
           else
-            total_length = payload[hlcb[0].index 'stream_total_length']
+            length = payload[hlcb[0].index 'stream_length']
           end
 
           if not hlcb[1]['single_chunk']
@@ -1033,9 +1033,9 @@ module Tinkerforge
             if chunk_offset == 0 # stream starts
               hlcb[2] = chunk_data
 
-              if hlcb[2].length >= total_length # stream complete
+              if hlcb[2].length >= length # stream complete
                 has_data = true
-                data = hlcb[2][0, total_length]
+                data = hlcb[2][0, length]
                 hlcb[2] = nil
               else # ignore tail of current stream, wait for next stream start
                 foobar = 0
@@ -1048,9 +1048,9 @@ module Tinkerforge
               else # stream in-sync
                 hlcb[2] += chunk_data
 
-                if hlcb[2].length >= total_length # stream complete
+                if hlcb[2].length >= length # stream complete
                   has_data = true
-                  data = hlcb[2][0, total_length]
+                  data = hlcb[2][0, length]
                   hlcb[2] = nil
                 end
               end
