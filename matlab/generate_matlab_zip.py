@@ -103,6 +103,7 @@ class MATLABZipGenerator(common.ZipGenerator):
             shutil.copy(os.path.join(root_dir, '..', 'java', 'CryptoException.java'),           tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'NetworkException.java'),          tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeListener.java'),       tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-amd64.so'),        tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'changelog.txt'),                                self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'readme.txt'),                                   self.tmp_dir)
             shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),                 self.tmp_dir)

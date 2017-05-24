@@ -11,12 +11,59 @@ package com.tinkerforge;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.io.File;
+import java.io.InputStream;
+import java.io.FileOutputStream;
 import org.octave.OctaveReference;
 
 public class IPConnection extends IPConnectionBase {
 	List<OctaveReference> listenerEnumerate = new CopyOnWriteArrayList<OctaveReference>();
 	List<OctaveReference> listenerConnected = new CopyOnWriteArrayList<OctaveReference>();
 	List<OctaveReference> listenerDisconnected = new CopyOnWriteArrayList<OctaveReference>();
+
+	static private boolean haveOctaveInvokeWrapper = false;
+
+	static {
+		if (System.getProperty("os.name").equals("Linux") &&
+		    System.getProperty("os.arch").equals("amd64")) {
+			try {
+				InputStream input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-linux-amd64.so");
+
+				File tmp = File.createTempFile("liboctaveinvokewrapper-linux-amd64-", ".so");
+				tmp.deleteOnExit();
+
+				FileOutputStream output = new FileOutputStream(tmp);
+
+				byte[] buffer = new byte[1024];
+				int readBytes;
+
+				try {
+					while ((readBytes = input.read(buffer)) != -1) {
+						output.write(buffer, 0, readBytes);
+					}
+				} finally {
+					output.close();
+					input.close();
+				}
+
+				System.load(tmp.getAbsolutePath());
+
+				haveOctaveInvokeWrapper = true;
+			} catch (Exception e) {
+				e.printStackTrace(); // FIXME
+			}
+		}
+	}
+
+	public native static void doOctaveInvokeWrapper(int id, Object[] args);
+
+	public static void doOctaveInvoke(OctaveReference reference, Object[] args) {
+		if (haveOctaveInvokeWrapper) {
+			doOctaveInvokeWrapper(reference.getID(), args);
+		} else {
+			reference.invoke(args);
+		}
+	}
 
 	interface DeviceCallbackListener {
 		public void callback(Device device, byte data[]);
@@ -128,9 +175,9 @@ public class IPConnection extends IPConnectionBase {
 	                                      short[] hardwareVersion, short[] firmwareVersion,
 	                                      int deviceIdentifier, short enumerationType) {
 		for(OctaveReference listener: listenerEnumerate) {
-			listener.invoke(new Object[]{new EnumerateCallbackData(this, uid, connectedUid, position,
-			                                                       hardwareVersion, firmwareVersion,
-			                                                       deviceIdentifier, enumerationType)});
+			doOctaveInvoke(listener, new Object[]{new EnumerateCallbackData(this, uid, connectedUid, position,
+			                                                                hardwareVersion, firmwareVersion,
+			                                                                deviceIdentifier, enumerationType)});
 		}
 	}
 
@@ -142,14 +189,14 @@ public class IPConnection extends IPConnectionBase {
 	@Override
 	protected void callConnectedListeners(short connectReason) {
 		for(OctaveReference listener: listenerConnected) {
-			listener.invoke(new Object[]{new ConnectedCallbackData(this, connectReason)});
+			doOctaveInvoke(listener, new Object[]{new ConnectedCallbackData(this, connectReason)});
 		}
 	}
 
 	@Override
 	protected void callDisconnectedListeners(short disconnectReason) {
 		for(OctaveReference listener: listenerDisconnected) {
-			listener.invoke(new Object[]{new DisconnectedCallbackData(this, disconnectReason)});
+			doOctaveInvoke(listener, new Object[]{new DisconnectedCallbackData(this, disconnectReason)});
 		}
 	}
 

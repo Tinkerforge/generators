@@ -337,7 +337,7 @@ public class {0} extends Device {{
 		callbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
 			public void callback({5}byte[] data_) {{{1}
 				for(OctaveReference listener: listener{2}) {{
-					listener.invoke(new Object[]{{{4}}});
+					IPConnection.doOctaveInvoke(listener, new Object[]{{{4}}});
 				}}
 			}}
 		}};
