@@ -28,6 +28,7 @@ import sys
 import os
 import datetime
 import shutil
+from sets import Set
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -81,7 +82,7 @@ class COMCUBindingsDevice(common.Device):
 
         structs = []
         for packet in self.get_packets():
-            if packet.get_function_id() < 200:
+            if packet.get_function_id() < 200 and not packet.is_part_of_callback_value():
                 if packet.get_type() == 'callback':
                     struct_body = ''
                     for element in packet.get_elements():
@@ -135,7 +136,7 @@ class COMCUBindingsDevice(common.Device):
         prototypes = []
 
         for packet in self.get_packets('function'):
-            if packet.get_function_id() < 200:
+            if packet.get_function_id() < 200 and not packet.is_part_of_callback_value():
                 if len(packet.get_elements(direction='out')) == 0:
                     prototypes.append(prototype.format(packet.get_underscore_name(), packet.get_camel_case_name()))
                 else:
@@ -177,14 +178,29 @@ class COMCUBindingsDevice(common.Device):
     def get_c_cases(self):
         case =  '\t\tcase FID_{0}: return {1}(message);'
         case_with_response = '\t\tcase FID_{0}: return {1}(message, response);'
+        case_cv =  '\t\tcase FID_{0}: return {1}(message, &callback_value_{2});'
+        case_cv_with_response = '\t\tcase FID_{0}: return {1}(message, response, &callback_value_{2});'
         cases = []
 
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200:
-                if len(packet.get_elements(direction='out')) == 0:
-                    cases.append(case.format(packet.get_upper_case_name(), packet.get_underscore_name()))
+                if packet.is_part_of_callback_value():
+                    if not 'corresponding_getter' in packet.raw_data:
+                        callback_value_function_name = 'get_callback_value'
+                    elif packet.raw_data['name'].startswith('Get '):
+                        callback_value_function_name = 'get_callback_value_callback_configuration'
+                    else:
+                        callback_value_function_name = 'set_callback_value_callback_configuration'
+
+                    if len(packet.get_elements(direction='out')) == 0:
+                        cases.append(case_cv.format(packet.get_upper_case_name(), callback_value_function_name, packet.get_callback_value_underscore_name()))
+                    else:
+                        cases.append(case_cv_with_response.format(packet.get_upper_case_name(), callback_value_function_name, packet.get_callback_value_underscore_name()))
                 else:
-                    cases.append(case_with_response.format(packet.get_upper_case_name(), packet.get_underscore_name()))
+                    if len(packet.get_elements(direction='out')) == 0:
+                        cases.append(case.format(packet.get_upper_case_name(), packet.get_underscore_name()))
+                    else:
+                        cases.append(case_with_response.format(packet.get_upper_case_name(), packet.get_underscore_name()))
 
         return cases
 
@@ -204,7 +220,7 @@ class COMCUBindingsDevice(common.Device):
         functions = []
 
         for packet in self.get_packets('function'):
-            if packet.get_function_id() < 200:
+            if packet.get_function_id() < 200 and not packet.is_part_of_callback_value():
                 if len(packet.get_elements(direction='out')) == 0:
                     functions.append(function.format(packet.get_underscore_name(), packet.get_camel_case_name()))
                 else:
@@ -235,12 +251,58 @@ bool handle_{0}_callback(void) {{
 
 \treturn false;
 }}"""
+
+        callback_cv = """
+bool handle_{0}_callback(void) {{
+\treturn handle_callback_value_callback(&callback_value_{1}, FID_CALLBACK_{2});
+}}"""
+
         callbacks = []
         for packet in self.get_packets('callback'):
             if packet.get_function_id() < 200:
-                callbacks.append(callback.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_upper_case_name()))
+                if packet.is_part_of_callback_value():
+                    callbacks.append(callback_cv.format(packet.get_underscore_name(), packet.get_callback_value_underscore_name(), packet.get_upper_case_name()))
+                else:
+                    callbacks.append(callback.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_upper_case_name()))
 
         return callbacks
+
+    def get_c_callback_value_include(self):
+        callback_values = Set()
+        for packet in self.get_packets('function'):
+            if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
+                callback_values.add(packet.get_callback_value_underscore_name())
+
+        if len(callback_values) == 0:
+            return ''
+
+        cv = """#include "bricklib2/utility/callback_value.h"
+
+{0}
+"""
+        cv_declaration = ''
+        for callback_value in callback_values:
+            cv_declaration += 'CallbackValue callback_value_{0};\n'.format(callback_value)
+
+        return cv.format(cv_declaration)
+
+    def get_c_callback_value_init(self):
+        callback_values = Set()
+        for packet in self.get_packets('function'):
+            if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
+                callback_values.add(packet.get_callback_value_underscore_name())
+
+        if len(callback_values) == 0:
+            return ''
+
+        cv = """\t// TODO: Add proper functions
+{0}
+"""
+        cv_declaration = ''
+        for callback_value in callback_values:
+            cv_declaration += '\tcallback_value_init(&callback_value_{0}, NULL);;\n'.format(callback_value)
+
+        return cv.format(cv_declaration)
 
 
 class COMCUBindingsPacket(c_common.CPacket):
@@ -272,7 +334,7 @@ class COMCUBindingsGenerator(common.BindingsGenerator):
 
 #include "bricklib2/utility/communication_callback.h"
 #include "bricklib2/protocols/tfp/tfp.h"
-
+{7}
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {{
 \tswitch(tfp_get_fid_from_message(message)) {{
 {4}
@@ -287,11 +349,11 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 {6}
 
 void communication_tick(void) {{
-	communication_callback_tick();
+\tcommunication_callback_tick();
 }}
 
 void communication_init(void) {{
-	communication_callback_init();
+{8}\tcommunication_callback_init();
 }}
 """
     h_file = """/* {0}-bricklet
@@ -421,9 +483,11 @@ void communication_init(void);
         c_cases_string = '\n'.join(c_cases)
         c_functions_string = '\n'.join(c_functions)
         c_callbacks_string = '\n'.join(c_callbacks)
+        c_callback_value_include_string = device.get_c_callback_value_include()
+        c_callback_value_init_string = device.get_c_callback_value_init()
 
         with open(os.path.join(folder, 'software', 'src', 'communication.c'), 'w') as c:
-            c.write(self.c_file.format(device_name_dash, year, name, email, c_cases_string, c_functions_string, c_callbacks_string))
+            c.write(self.c_file.format(device_name_dash, year, name, email, c_cases_string, c_functions_string, c_callbacks_string, c_callback_value_include_string, c_callback_value_init_string))
 
         with open(os.path.join(folder, 'software', 'src', 'communication.h'), 'w') as h:
             h.write(self.h_file.format(device_name_dash, year, name, email, h_constants_string, h_defines_string, h_structs_string, h_function_prototypes_string, h_callback_prototypes_string, h_callback_list_string))
