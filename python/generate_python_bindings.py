@@ -289,8 +289,7 @@ class {0}(Device):
 
                     result = self.{underscore_name}_low_level({parameters})
                     {stream_underscore_name}_chunk_offset += {chunk_cardinality}
-
-        return result
+{result}
 """
         template_stream_in_fixed_length = """
     def {underscore_name}(self{high_level_parameters}):
@@ -313,9 +312,12 @@ class {0}(Device):
 
                 result = self.{underscore_name}_low_level({parameters})
                 {stream_underscore_name}_chunk_offset += {chunk_cardinality}
-
-        return result
+{result}
 """
+        template_stream_in_result = """
+        return result"""
+        template_stream_in_namedtuple_result = """
+        return {result_camel_case_name}(*result)"""
         template_stream_in_short_write = """
     def {underscore_name}(self{high_level_parameters}):
         \"\"\"
@@ -466,9 +468,13 @@ class {0}(Device):
                         result = template_stream_in_short_write_namedtuple_result.format(result_camel_case_name=packet.get_camel_case_name(skip=-2),
                                                                                          result_fields=', '.join(fields))
                 else:
-                    result = ''
                     chunk_written_0 = ''
                     chunk_written_n = ''
+
+                    if len(packet.get_elements(direction='out', high_level=True)) < 2:
+                        result = template_stream_in_result
+                    else:
+                        result = template_stream_in_namedtuple_result.format(result_camel_case_name=packet.get_camel_case_name(skip=-2))
 
                 methods += template.format(doc=packet.get_python_formatted_doc(),
                                            underscore_name=packet.get_underscore_name(skip=-2),
