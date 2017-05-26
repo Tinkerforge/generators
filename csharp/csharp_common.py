@@ -157,7 +157,7 @@ class CSharpElement(common.Element):
         'float':  '0.0',
         'bool':   'false',
         'char':   "'\\0'",
-        'string': '""'
+        'string': None
     }
 
     def get_csharp_type(self):
@@ -189,4 +189,9 @@ class CSharpElement(common.Element):
         if self.get_cardinality() != 1:
             return 'null'
         else:
-            return CSharpElement.csharp_default_item_values[self.get_type()]
+            value = CSharpElement.csharp_default_item_values[self.get_type()]
+
+            if value == None:
+                common.GeneratorError('Invalid array item type: ' + self.get_type())
+
+            return value

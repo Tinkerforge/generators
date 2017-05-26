@@ -89,7 +89,7 @@ class PythonElement(common.Element):
         'float':  '0.0',
         'bool':   'False',
         'char':   "'\\0'",
-        'string': "'\\0'"
+        'string': None
     }
 
     def get_python_type(self):
@@ -110,4 +110,9 @@ class PythonElement(common.Element):
         return f
 
     def get_python_default_item_value(self):
-        return PythonElement.python_default_item_values[self.get_type()]
+        value = PythonElement.python_default_item_values[self.get_type()]
+
+        if value == None:
+            common.GeneratorError('Invalid array item type: ' + self.get_type())
+
+        return value
