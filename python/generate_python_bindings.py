@@ -38,9 +38,9 @@ class PythonBindingsDevice(python_common.PythonDevice):
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error
+    from .ip_connection import Device, IPConnection, Error, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error
+    from ip_connection import Device, IPConnection, Error, create_chunk_data
 
 """
 
@@ -282,11 +282,7 @@ class {0}(Device):
         else:
             with self.stream_lock:
                 while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_length:
-                    {stream_underscore_name}_chunk_data = {stream_underscore_name}[{stream_underscore_name}_chunk_offset:{stream_underscore_name}_chunk_offset + {chunk_cardinality}]
-
-                    if len({stream_underscore_name}_chunk_data) < {chunk_cardinality}:
-                        {stream_underscore_name}_chunk_data += [{chunk_padding}] * ({chunk_cardinality} - len({stream_underscore_name}_chunk_data))
-
+                    {stream_underscore_name}_chunk_data = create_chunk_data({stream_underscore_name}, {stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding})
                     result = self.{underscore_name}_low_level({parameters})
                     {stream_underscore_name}_chunk_offset += {chunk_cardinality}
 {result}
@@ -305,11 +301,7 @@ class {0}(Device):
 
         with self.stream_lock:
             while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_length:
-                {stream_underscore_name}_chunk_data = {stream_underscore_name}[{stream_underscore_name}_chunk_offset:{stream_underscore_name}_chunk_offset + {chunk_cardinality}]
-
-                if len({stream_underscore_name}_chunk_data) < {chunk_cardinality}:
-                    {stream_underscore_name}_chunk_data += [{chunk_padding}] * ({chunk_cardinality} - len({stream_underscore_name}_chunk_data))
-
+                {stream_underscore_name}_chunk_data = create_chunk_data({stream_underscore_name}, {stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding})
                 result = self.{underscore_name}_low_level({parameters})
                 {stream_underscore_name}_chunk_offset += {chunk_cardinality}
 {result}
@@ -335,11 +327,7 @@ class {0}(Device):
 
             with self.stream_lock:
                 while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_length:
-                    {stream_underscore_name}_chunk_data = {stream_underscore_name}[{stream_underscore_name}_chunk_offset:{stream_underscore_name}_chunk_offset + {chunk_cardinality}]
-
-                    if len({stream_underscore_name}_chunk_data) < {chunk_cardinality}:
-                        {stream_underscore_name}_chunk_data += [{chunk_padding}] * ({chunk_cardinality} - len({stream_underscore_name}_chunk_data))
-
+                    {stream_underscore_name}_chunk_data = create_chunk_data({stream_underscore_name}, {stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding})
                     {stream_underscore_name}_chunk_result = self.{underscore_name}_low_level({parameters}){chunk_written_n}
                     {stream_underscore_name}_written += {stream_underscore_name}_chunk_written
 
