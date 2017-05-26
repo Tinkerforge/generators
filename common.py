@@ -1346,6 +1346,35 @@ class Packet(NameMixin):
 
         return filtered_subsitutions
 
+    def get_corresponding_callback_value_getter(self):
+        for packet in self.device.get_packets():
+            if packet.raw_data.get('corresponding_getter') == self.raw_data.get('name'):
+                return self
+
+            if self.raw_data.get('corresponding_getter') == packet.raw_data.get('name'):
+                return packet
+
+        return None
+
+    def is_part_of_callback_value(self):
+        # Packet is for callback value configuration
+        if 'corresponding_getter' in self.raw_data:
+            return True
+
+        # Check if this packet is the getter of a callback value
+        for packet in self.device.get_packets():
+            if packet.raw_data.get('corresponding_getter') == self.raw_data['name']:
+                return True
+
+        # If packet is not for configuration and not the getter, it is not part of a callback value
+        return False
+
+    def get_callback_value_underscore_name(self):
+        try:
+            return self.get_corresponding_callback_value_getter().get_underscore_name().replace('get_', '')
+        except:
+            return None
+
     def get_function_id(self):
         return self.raw_data['function_id']
 
