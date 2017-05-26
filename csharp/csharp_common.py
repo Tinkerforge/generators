@@ -156,7 +156,7 @@ class CSharpElement(common.Element):
         'uint64': '0',
         'float':  '0.0',
         'bool':   'false',
-        'char':   "''",
+        'char':   "'\\0'",
         'string': '""'
     }
 
