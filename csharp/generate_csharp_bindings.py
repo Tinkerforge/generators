@@ -617,11 +617,7 @@ namespace Tinkerforge
 						{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 						Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
-
-						if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
-						{{
-							Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
-						}}
+						Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
 
 						{result_assignment}{camel_case_name}LowLevel({parameters});
 
@@ -654,11 +650,7 @@ namespace Tinkerforge
 					{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 					Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
-
-					if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
-					{{
-						Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
-					}}
+					Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
 
 					{result_assignment}{camel_case_name}LowLevel({parameters});
 
@@ -698,11 +690,7 @@ namespace Tinkerforge
 						{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 						Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
-
-						if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
-						{{
-							Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
-						}}
+						Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
 
 						{result_assignment}{camel_case_name}LowLevel({parameters});
 
@@ -734,11 +722,7 @@ namespace Tinkerforge
 			{chunk_data_type} {stream_headless_camel_case_name}Data = {chunk_data_new};
 
 			Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}Length);
-
-			if ({stream_headless_camel_case_name}Length < {chunk_cardinality})
-			{{
-				Array.Clear({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}Length, {chunk_cardinality} - {stream_headless_camel_case_name}Length);
-			}}
+			Array.Clear({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}Length, {chunk_cardinality} - {stream_headless_camel_case_name}Length);
 
 			{result_single_return}{camel_case_name}LowLevel({parameters});
 		}}
