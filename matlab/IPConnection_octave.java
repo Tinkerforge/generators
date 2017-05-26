@@ -14,6 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.io.File;
 import java.io.InputStream;
 import java.io.FileOutputStream;
+import org.octave.Octave;
 import org.octave.OctaveReference;
 
 public class IPConnection extends IPConnectionBase {
@@ -24,33 +25,55 @@ public class IPConnection extends IPConnectionBase {
 	static private boolean haveOctaveInvokeWrapper = false;
 
 	static {
-		if (System.getProperty("os.name").equals("Linux") &&
-		    System.getProperty("os.arch").equals("amd64")) {
+		// check if JNI is working for Octave
+		boolean okay = true;
+
+		try {
+			Octave.needThreadedInvokation();
+		} catch (UnsatisfiedLinkError e) {
+			okay = false;
+		}
+
+		// if not, work around the UnsatisfiedLinkError
+		if (!okay) {
+			String suffix = System.getProperty("os.name").toLowerCase() + "-" + System.getProperty("os.arch").toLowerCase();
+			InputStream input;
+
 			try {
-				InputStream input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-linux-amd64.so");
-
-				File tmp = File.createTempFile("liboctaveinvokewrapper-linux-amd64-", ".so");
-				tmp.deleteOnExit();
-
-				FileOutputStream output = new FileOutputStream(tmp);
-
-				byte[] buffer = new byte[1024];
-				int readBytes;
-
-				try {
-					while ((readBytes = input.read(buffer)) != -1) {
-						output.write(buffer, 0, readBytes);
-					}
-				} finally {
-					output.close();
-					input.close();
-				}
-
-				System.load(tmp.getAbsolutePath());
-
-				haveOctaveInvokeWrapper = true;
+				input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".so");
 			} catch (Exception e) {
-				e.printStackTrace(); // FIXME
+				input = null;
+			}
+
+			if (input != null) {
+				try {
+					File tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".so");
+					tmp.deleteOnExit();
+
+					FileOutputStream output = new FileOutputStream(tmp);
+					byte[] buffer = new byte[1024];
+					int readBytes;
+
+					try {
+						while ((readBytes = input.read(buffer)) != -1) {
+							output.write(buffer, 0, readBytes);
+						}
+					} finally {
+						output.close();
+					}
+
+					System.load(tmp.getAbsolutePath());
+
+					haveOctaveInvokeWrapper = true;
+				} catch (Exception e) {
+					e.printStackTrace(); // FIXME
+				} finally {
+					try {
+						input.close();
+					} catch (Exception e) {
+						e.printStackTrace(); // FIXME
+					}
+				}
 			}
 		}
 	}

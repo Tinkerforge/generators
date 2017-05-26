@@ -6,7 +6,11 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
+// Ubuntu:
 // gcc -Wall -O2 -o liboctaveinvokewrapper.so liboctaveinvokewrapper.c -shared -fpic -I /usr/lib/jvm/default-java/include/
+
+// RED Brick:
+// gcc -Wall -O2 -o liboctaveinvokewrapper.so liboctaveinvokewrapper.c -shared -fpic -I /usr/lib/jvm/jdk1.8.0/include/ -I /usr/lib/jvm/jdk1.8.0/include/linux/
 
 #include <jni.h>
 
