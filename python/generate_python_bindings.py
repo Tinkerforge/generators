@@ -471,14 +471,14 @@ class {0}(Device):
                     chunk_written_n = ''
 
                 methods += template.format(doc=packet.get_python_formatted_doc(),
-                                           underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                           underscore_name=packet.get_underscore_name(skip=-2),
                                            parameters=packet.get_python_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
                                            stream_name=stream_in.get_name(),
                                            stream_underscore_name=stream_in.get_underscore_name(),
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
-                                           chunk_padding=repr(stream_in.get_chunk_data_element().get_python_default_value()),
+                                           chunk_padding=stream_in.get_chunk_data_element().get_python_default_item_value(),
                                            chunk_written_0=chunk_written_0,
                                            chunk_written_n=chunk_written_n,
                                            result=result)
@@ -520,7 +520,7 @@ class {0}(Device):
                     template = template_stream_out
 
                 methods += template.format(doc=packet.get_python_formatted_doc(),
-                                           underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                           underscore_name=packet.get_underscore_name(skip=-2),
                                            parameters=packet.get_python_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
                                            stream_name=stream_out.get_name(),

@@ -74,7 +74,7 @@ class RubyElement(common.Element):
         'string': ('Z', 1)
     }
 
-    ruby_default_values = {
+    ruby_default_item_values = {
         'int8':   '0',
         'uint8':  '0',
         'int16':  '0',
@@ -100,5 +100,5 @@ class RubyElement(common.Element):
     def get_ruby_pack_format(self):
         return RubyElement.ruby_pack_formats[self.get_type()]
 
-    def get_ruby_default_value(self):
-        return RubyElement.ruby_default_values[self.get_type()]
+    def get_ruby_default_item_value(self):
+        return RubyElement.ruby_default_item_values[self.get_type()]

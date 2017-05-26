@@ -437,7 +437,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                                            fixed_length=stream_in.get_fixed_length(default='nil'),
                                            chunk_result_predefinition=chunk_result_predefinition,
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
-                                           chunk_padding=stream_in.get_chunk_data_element().get_ruby_default_value(),
+                                           chunk_padding=stream_in.get_chunk_data_element().get_ruby_default_item_value(),
                                            chunk_written_0=chunk_written_0,
                                            chunk_written_n=chunk_written_n,
                                            result=result)
