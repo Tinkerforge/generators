@@ -76,9 +76,11 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
 """
 
         cbs = ''
+
         for packet in self.get_packets('callback'):
             desc = packet.get_csharp_formatted_doc(2)
-            params = packet.get_csharp_parameter_list()
+            params = packet.get_csharp_parameters()
+
             if len(params) > 0:
                 params = ', ' + params
 

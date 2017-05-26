@@ -178,35 +178,57 @@ namespace Tinkerforge
 
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
-            parameter = packet.get_csharp_parameter_list()
+            parameters = common.wrap_non_empty(', ', packet.get_csharp_parameters(), '')
             doc = packet.get_csharp_formatted_doc()
 
-            if parameter != '':
-                parameter = ', ' + parameter
-
-            delegates += template.format(name, parameter, doc, self.get_csharp_class_name())
+            delegates += template.format(name, parameters, doc, self.get_csharp_class_name())
 
             if self.get_csharp_class_name() in LEGACY_CALLBACK_DEVICES:
                 delegates += template_legacy.format(name)
+
+        for packet in self.get_packets('callback'):
+            if not packet.has_high_level():
+                continue
+
+            name = packet.get_camel_case_name(skip=-2)
+            parameters = common.wrap_non_empty(', ', packet.get_csharp_parameters(high_level=True), '')
+            doc = packet.get_csharp_formatted_doc()
+
+            delegates += template.format(name, parameters, doc, self.get_csharp_class_name())
 
         return delegates
 
     def get_csharp_function_id_definitions(self):
         function_ids = ''
-        template = """
+
+        # normal and low-level
+        template_function = """
 		/// <summary>
 		///  Function ID to be used with
 		///  <see cref="Tinkerforge.Device.GetResponseExpected"/>,
 		///  <see cref="Tinkerforge.Device.SetResponseExpected"/> and
 		///  <see cref="Tinkerforge.Device.SetResponseExpectedAll"/>.
 		/// </summary>
-		public const byte {2}_{0} = {1};
+		public const byte FUNCTION_{0} = {1};
+"""
+        template_callback = """
+		private const int CALLBACK_{0} = {1};
 """
 
-        for packet in self.get_packets():
-            function_ids += template.format(packet.get_upper_case_name(),
-                                            packet.get_function_id(),
-                                            packet.get_type().upper())
+        for packet in self.get_packets('function'):
+            function_ids += template_function.format(packet.get_upper_case_name(),
+                                                     packet.get_function_id())
+
+        for packet in self.get_packets('callback'):
+            function_ids += template_callback.format(packet.get_upper_case_name(),
+                                                     packet.get_function_id())
+
+        # high-level
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                function_ids += template_callback.format(packet.get_upper_case_name(skip=-2),
+                                                         -packet.get_function_id())
+
         return function_ids
 
     def get_csharp_constants(self):
@@ -233,6 +255,7 @@ namespace Tinkerforge
     def get_csharp_constructor(self):
         callbacks = []
         template = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1}Callback);'
+        template_high_level = '\t\t\thighLevelCallbacks[-CALLBACK_{0}] = new HighLevelCallback();'
         constructor = """
 		/// <summary>
 		///  Creates an object with the unique device ID <c>uid</c> and adds  it to
@@ -248,9 +271,12 @@ namespace Tinkerforge
 """
 
         for packet in self.get_packets('callback'):
-            name_upper = packet.get_upper_case_name()
-            name_pascal = packet.get_camel_case_name()
-            callbacks.append(template.format(name_upper, name_pascal))
+            callbacks.append(template.format(packet.get_upper_case_name(),
+                                             packet.get_camel_case_name()))
+
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                callbacks.append(template_high_level.format(packet.get_upper_case_name(skip=-2)))
 
         return constructor.format(self.get_csharp_class_name(), '\n'.join(callbacks),
                                   *self.get_api_version())
@@ -283,37 +309,98 @@ namespace Tinkerforge
 		/// <summary>
 		/// </summary>
 		protected void On{0}Callback(byte[] response)
-		{{
-{1}			var handler = {0}Callback;
-			if(handler != null)
+		{{{1}{3}			var handler = {0}Callback;
+
+			if (handler != null)
 			{{
-				handler(this{3});
+				handler(this{2});
 			}}
 		}}
+"""
+        template_stream_out = """			HighLevelCallback highLevelCallback = highLevelCallbacks[-CALLBACK_{upper_case_name}];
+			{stream_length_type} {stream_headless_camel_case_name}ChunkLength = Math.Min({stream_length} - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+			var highLevelHandler = {camel_case}Callback;
+
+			if (highLevelCallback.data == null) // no stream in-progress
+			{{
+				if ({stream_headless_camel_case_name}ChunkOffset == 0) // stream starts
+				{{
+					highLevelCallback.data = {stream_data_new};
+					highLevelCallback.length = {stream_headless_camel_case_name}ChunkLength;
+
+					Array.Copy({stream_headless_camel_case_name}ChunkData, ({chunk_data_type})highLevelCallback.data, {stream_headless_camel_case_name}ChunkLength);
+
+					if (highLevelCallback.length >= {stream_length}) // stream complete
+					{{
+						if (highLevelHandler != null)
+						{{
+							highLevelHandler(this, {high_level_parameters});
+						}}
+
+						highLevelCallback.data = null;
+						highLevelCallback.length = 0;
+					}}
+				}}
+				else // ignore tail of current stream, wait for next stream start
+				{{
+				}}
+			}}
+			else // stream in-progress
+			{{
+				if ({stream_headless_camel_case_name}ChunkOffset != highLevelCallback.length) // stream out-of-sync
+				{{
+					highLevelCallback.data = null;
+					highLevelCallback.length = 0;
+
+					if (highLevelHandler != null)
+					{{
+						highLevelHandler(this, {high_level_parameters});
+					}}
+				}}
+				else // stream in-sync
+				{{
+					Array.Copy({stream_headless_camel_case_name}ChunkData, 0, ({chunk_data_type})highLevelCallback.data, highLevelCallback.length, {stream_headless_camel_case_name}ChunkLength);
+					highLevelCallback.length += {stream_headless_camel_case_name}ChunkLength;
+
+					if (highLevelCallback.length >= {stream_length}) // stream complete
+					{{
+						if (highLevelHandler != null)
+						{{
+							highLevelHandler(this, {high_level_parameters});
+						}}
+
+						highLevelCallback.data = null;
+						highLevelCallback.length = 0;
+					}}
+				}}
+			}}
+
+"""
+        template_stream_out_single_chunk = """			var highLevelHandler = {camel_case}Callback;
+
+			if (highLevelHandler != null)
+			{{
+				{chunk_data_type} {stream_headless_camel_case_name} = {stream_data_new};
+
+				Array.Copy({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}, {stream_headless_camel_case_name}Length);
+
+				highLevelHandler(this, {high_level_parameters});
+			}}
+
 """
 
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
-            name_upper = packet.get_upper_case_name()
-            eles = []
-
-            for element in packet.get_elements(direction='out'):
-                eles.append(element.get_headless_camel_case_name())
-
-            callParams = ", ".join(eles)
-            signatureParams = packet.get_csharp_parameter_list()
             size = str(packet.get_request_size())
-
-            convs = ''
+            convs = '\n'
             conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, response{4});\n'
             conv_bool_array ="""			bool[] {0} = new bool[{1}];
 			byte[] {2} = new byte[{3}];
 			{2} = LEConverter.ByteArrayFrom({4}, response, {3});
-			for(int i = 0; i < {1}; i++) {{
+			for (int i = 0; i < {1}; i++) {{
 				{0}[i] = ({2}[i / 8] & (1 << (i % 8))) != 0;
 			}}
 """
-
             pos = 8
 
             for element in packet.get_elements(direction='out'):
@@ -342,18 +429,45 @@ namespace Tinkerforge
 
                 pos += element.get_size()
 
-            if convs != '':
-                convs += '\n'
+            params = common.wrap_non_empty(', ', packet.get_csharp_parameters(context='call'), '')
+            stream_out = packet.get_high_level('stream_out')
 
-            if callParams != '':
-                callParams = ', ' + callParams
+            if stream_out != None:
+                if stream_out.has_single_chunk():
+                    template2 = template_stream_out_single_chunk
+                    callback_wrapper = False
+                else:
+                    template2 = template_stream_out
+                    callback_wrapper = True
 
-            callbacks += template.format(name, convs, name_upper, callParams, pos, signatureParams)
+                length_element = stream_out.get_length_element()
+                chunk_offset_element = stream_out.get_chunk_offset_element()
+
+                if length_element != None:
+                    stream_length_type = length_element.get_csharp_type()
+                elif chunk_offset_element != None:
+                    stream_length_type = chunk_offset_element.get_csharp_type()
+
+                high_level_handling = template2.format(camel_case=packet.get_camel_case_name(skip=-2),
+                                                       upper_case_name=packet.get_upper_case_name(skip=-2),
+                                                       high_level_parameters=packet.get_csharp_parameters(context='call', high_level=True, callback_wrapper=callback_wrapper),
+                                                       stream_headless_camel_case_name=stream_out.get_headless_camel_case_name(),
+                                                       stream_length=stream_out.get_fixed_length(default='{0}Length'.format(stream_out.get_headless_camel_case_name())),
+                                                       stream_length_type=stream_length_type,
+                                                       stream_data_new=stream_out.get_chunk_data_element().get_csharp_new(cardinality=stream_out.get_fixed_length(default='{0}Length'.format(stream_out.get_headless_camel_case_name()))),
+                                                       chunk_data_type=stream_out.get_chunk_data_element().get_csharp_type(),
+                                                       chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
+            else:
+                high_level_handling = ''
+
+            callbacks += template.format(name, convs, params, high_level_handling)
 
         return callbacks + "\t}\n}\n"
 
     def get_csharp_methods(self):
         methods = ''
+
+        # normal and low-level
         template = """
 		/// <summary>
 		///  {5}
@@ -387,7 +501,7 @@ namespace Tinkerforge
 			}}
 			LEConverter.To({1}, {4}, {2}, request);\n"""
             write_conv_bool_array = """			byte[] {0} = new byte[{1}];
-			for(int i = 0; i < {2}; i++) {{
+			for (int i = 0; i < {2}; i++) {{
 				if ({3}[i]) {{
 					{0}[i / 8] |= (byte)(1 << (i % 8));
 				}}
@@ -433,7 +547,7 @@ namespace Tinkerforge
             read_conv_bool_array = """\n			byte[] {0} = new byte[{1}];
 			{4} = new bool[{3}];
 			{0} = LEConverter.ByteArrayFrom({2}, response, {1});
-			for(int i = 0; i < {3}; i++) {{
+			for (int i = 0; i < {3}; i++) {{
 				{4}[i] = ({0}[i / 8] & (1 << (i % 8))) != 0;
 			}}"""
 
@@ -469,13 +583,372 @@ namespace Tinkerforge
             else:
                 method_tail = template_noresponse
 
-            signature = packet.get_csharp_method_signature()
-            methods += template.format(signature,
+            methods += template.format(packet.get_csharp_method_signature(),
                                        size,
                                        name_upper,
                                        write_convs,
                                        method_tail,
                                        doc)
+
+        # high-level
+        template_stream_in = """
+		/// <summary>
+		///  {doc}
+		/// </summary>
+		public {return_type} {camel_case_name}({high_level_parameters})
+		{{{result_variable}
+			{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.Length; // FIXME: check overflow
+			{stream_length_type} {stream_headless_camel_case_name}ChunkOffset = 0;
+			{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
+			{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
+
+			if ({stream_headless_camel_case_name}Length == 0)
+			{{
+				Array.Clear({stream_headless_camel_case_name}ChunkData, 0, {chunk_cardinality});
+
+				{result_assignment}{camel_case_name}LowLevel({parameters});
+			}}
+			else
+			{{{extra_default}
+				lock (streamLock)
+				{{
+					while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length)
+					{{
+						{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+
+						Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
+
+						if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
+						{{
+							Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
+						}}
+
+						{result_assignment}{camel_case_name}LowLevel({parameters});
+
+						{stream_headless_camel_case_name}ChunkOffset += {chunk_cardinality};
+					}}
+				}}
+			}}{result_return}
+		}}
+"""
+        template_stream_in_fixed_length = """
+		/// <summary>
+		///  {doc}
+		/// </summary>
+		public {return_type} {camel_case_name}({high_level_parameters})
+		{{{result_variable}
+			{stream_length_type} {stream_headless_camel_case_name}Length = {fixed_length};
+			{stream_length_type} {stream_headless_camel_case_name}ChunkOffset = 0;
+			{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
+			{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
+
+			if ({stream_headless_camel_case_name}.Length != {stream_headless_camel_case_name}Length) // FIXME: check overflow
+			{{
+				throw new ArgumentException("{stream_name} has to be " + {stream_headless_camel_case_name}Length + " items long");
+			}}
+
+			lock (streamLock)
+			{{{extra_default}
+				while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length)
+				{{
+					{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+
+					Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
+
+					if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
+					{{
+						Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
+					}}
+
+					{result_assignment}{camel_case_name}LowLevel({parameters});
+
+					{stream_headless_camel_case_name}ChunkOffset += {chunk_cardinality};
+				}}
+			}}{result_return}
+		}}
+"""
+        template_stream_in_short_write = """
+		/// <summary>
+		///  {doc}
+		/// </summary>
+		public {return_type} {camel_case_name}({high_level_parameters})
+		{{{result_variable}
+			{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.Length; // FIXME: check overflow
+			{stream_length_type} {stream_headless_camel_case_name}ChunkOffset = 0;
+			{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
+			{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
+			byte {stream_headless_camel_case_name}ChunkWritten;
+
+			if ({stream_headless_camel_case_name}Length == 0)
+			{{
+				Array.Clear({stream_headless_camel_case_name}ChunkData, 0, {chunk_cardinality});
+
+				{result_assignment}{camel_case_name}LowLevel({parameters});
+
+				{stream_headless_camel_case_name}Written = {stream_headless_camel_case_name}ChunkWritten;
+			}}
+			else
+			{{{extra_default}
+				{stream_headless_camel_case_name}Written = 0;
+
+				lock (streamLock)
+				{{
+					while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length)
+					{{
+						{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+
+						Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
+
+						if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
+						{{
+							Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
+						}}
+
+						{result_assignment}{camel_case_name}LowLevel({parameters});
+
+						{stream_headless_camel_case_name}Written += {stream_headless_camel_case_name}ChunkWritten;
+
+						if ({stream_headless_camel_case_name}ChunkWritten < {chunk_cardinality})
+						{{
+							break; // either last chunk or short write
+						}}
+
+						{stream_headless_camel_case_name}ChunkOffset += {chunk_cardinality};
+					}}
+				}}
+			}}{result_return}
+		}}
+"""
+        template_stream_in_single_chunk = """
+		/// <summary>
+		///  {doc}
+		/// </summary>
+		public {return_type} {camel_case_name}({high_level_parameters})
+		{{
+			if ({stream_headless_camel_case_name}.Length > {chunk_cardinality})
+			{{
+				throw new ArgumentException("{stream_name} can be at most {chunk_cardinality} items long");
+			}}
+
+			{stream_length_type} {stream_headless_camel_case_name}Length = ({stream_length_type}){stream_headless_camel_case_name}.Length;
+			{chunk_data_type} {stream_headless_camel_case_name}Data = {chunk_data_new};
+
+			Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}Length);
+
+			if ({stream_headless_camel_case_name}Length < {chunk_cardinality})
+			{{
+				Array.Clear({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}Length, {chunk_cardinality} - {stream_headless_camel_case_name}Length);
+			}}
+
+			{result_single_return}{camel_case_name}LowLevel({parameters});
+		}}
+"""
+        template_stream_out = """
+		/// <summary>
+		///  {doc}
+		/// </summary>
+		public {return_type} {camel_case_name}({high_level_parameters})
+		{{{result_variable}
+			{stream_length_type} {stream_headless_camel_case_name}Length = {fixed_length};
+			{stream_length_type} {stream_headless_camel_case_name}ChunkOffset;
+			{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
+			{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
+			bool {stream_headless_camel_case_name}OutOfSync;
+			{stream_length_type} {stream_headless_camel_case_name}CurrentLength;
+
+			lock (streamLock)
+			{{{extra_default}
+				{camel_case_name}LowLevel({parameters});
+
+				{chunk_offset_check}{stream_headless_camel_case_name}OutOfSync = {stream_headless_camel_case_name}ChunkOffset != 0;{chunk_offset_check_end}
+
+				if (!{stream_headless_camel_case_name}OutOfSync) {{
+					{stream_headless_camel_case_name} = {stream_data_new};
+					{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+
+					Array.Copy({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkLength);
+					{stream_headless_camel_case_name}CurrentLength = {stream_headless_camel_case_name}ChunkLength;
+
+					while ({stream_headless_camel_case_name}CurrentLength < {stream_headless_camel_case_name}Length)
+					{{
+						{camel_case_name}LowLevel({parameters});
+
+						{stream_headless_camel_case_name}OutOfSync = {stream_headless_camel_case_name}ChunkOffset != {stream_headless_camel_case_name}CurrentLength;
+
+						if ({stream_headless_camel_case_name}OutOfSync) {{
+							break;
+						}}
+
+						{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+
+						Array.Copy({stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}, {stream_headless_camel_case_name}CurrentLength, {stream_headless_camel_case_name}ChunkLength);
+						{stream_headless_camel_case_name}CurrentLength += {stream_headless_camel_case_name}ChunkLength;
+					}}
+				}}
+
+				if ({stream_headless_camel_case_name}OutOfSync) {{
+					// discard remaining stream to bring it back in-sync
+					while ({stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality} < {stream_headless_camel_case_name}Length)
+					{{
+						{camel_case_name}LowLevel({parameters});
+					}}
+
+					throw new StreamOutOfSyncException("{stream_name} is out-of-sync");
+				}}
+			}}{result_return}
+		}}
+"""
+        template_stream_out_chunk_offset_check = """if ({stream_headless_camel_case_name}ChunkOffset == (1U << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
+					{stream_headless_camel_case_name}Length = 0;
+					{stream_headless_camel_case_name}ChunkOffset = 0;
+					{stream_headless_camel_case_name}OutOfSync = false;
+				}} else {{
+					"""
+        template_stream_out_single_chunk = """
+		/// <summary>
+		///  {doc}
+		/// </summary>
+		public {return_type} {camel_case_name}({high_level_parameters})
+		{{{result_variable}
+			{stream_length_type} {stream_headless_camel_case_name}Length;
+			{chunk_data_type} {stream_headless_camel_case_name}Data = {chunk_data_new};
+
+			{camel_case_name}LowLevel({parameters});
+
+			{stream_headless_camel_case_name} = {stream_data_new};
+
+			Array.Copy({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}, {stream_headless_camel_case_name}Length);{result_return}
+		}}
+"""
+
+        for packet in self.get_packets('function'):
+            stream_in = packet.get_high_level('stream_in')
+            stream_out = packet.get_high_level('stream_out')
+
+            if stream_in != None:
+                length_element = stream_in.get_length_element()
+                chunk_offset_element = stream_in.get_chunk_offset_element()
+
+                if length_element != None:
+                    stream_length_type = length_element.get_csharp_type()
+                elif chunk_offset_element != None:
+                    stream_length_type = chunk_offset_element.get_csharp_type()
+
+                if stream_in.get_fixed_length() != None:
+                    template = template_stream_in_fixed_length
+                elif stream_in.has_short_write() and stream_in.has_single_chunk():
+                    # the single chunk template also covers short writes
+                    template = template_stream_in_single_chunk
+                elif stream_in.has_short_write():
+                    template = template_stream_in_short_write
+                elif stream_in.has_single_chunk():
+                    template = template_stream_in_single_chunk
+                else:
+                    template = template_stream_in
+
+                return_element = packet.get_csharp_return_element(high_level=True)
+
+                if return_element != None:
+                    return_type = return_element.get_csharp_type()
+                    result_name = return_element.get_headless_camel_case_name()
+                    result_variable = '\n\t\t\t{0} {1} = {2}; // stop the compiler from wrongly complaining that this variable is used unassigned' \
+                                      .format(return_type, result_name, return_element.get_csharp_default_value())
+                    result_assignment = '{0} = '.format(packet.get_csharp_return_element().get_headless_camel_case_name())
+                    result_return = '\n\n\t\t\treturn {0};'.format(result_name)
+                    result_single_return = 'return '
+                else:
+                    return_type = 'void'
+                    result_variable = ''
+                    result_assignment = ''
+                    result_return = ''
+                    result_single_return = ''
+
+                extra_default = ''
+
+                for element in packet.get_elements(direction='out', high_level=True):
+                    if element.get_role() == None:
+                        extra_default += '\t\t\t\t{0} = {1}; // stop the compiler from wrongly complaining that this variable is used unassigned\n' \
+                                          .format(element.get_headless_camel_case_name(), element.get_csharp_default_value())
+
+                methods += template.format(doc=packet.get_csharp_formatted_doc(),
+                                           camel_case_name=packet.get_camel_case_name(skip=-2),
+                                           return_type=return_type,
+                                           result_variable=result_variable,
+                                           result_assignment=result_assignment,
+                                           result_return=result_return,
+                                           result_single_return=result_single_return,
+                                           high_level_parameters=packet.get_csharp_parameters(high_level=True),
+                                           parameters=packet.get_csharp_parameters(context='call'),
+                                           stream_name=stream_in.get_name(),
+                                           stream_headless_camel_case_name=stream_in.get_headless_camel_case_name(),
+                                           stream_length_type=stream_length_type,
+                                           fixed_length=stream_in.get_fixed_length(),
+                                           chunk_data_type=stream_in.get_chunk_data_element().get_csharp_type(),
+                                           chunk_data_new=stream_in.get_chunk_data_element().get_csharp_new(),
+                                           chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
+                                           extra_default=common.wrap_non_empty('\n', extra_default, ''))
+            elif stream_out != None:
+                length_element = stream_out.get_length_element()
+                chunk_offset_element = stream_out.get_chunk_offset_element()
+
+                if length_element != None:
+                    stream_length_type = length_element.get_csharp_type()
+                    shift_size = int(length_element.get_type().replace('uint', ''))
+                elif chunk_offset_element != None:
+                    stream_length_type = chunk_offset_element.get_csharp_type()
+                    shift_size = int(chunk_offset_element.get_type().replace('uint', ''))
+
+                if stream_out.has_single_chunk():
+                    template = template_stream_out_single_chunk
+                else:
+                    template = template_stream_out
+
+                if stream_out.get_fixed_length() != None:
+                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_headless_camel_case_name=stream_out.get_headless_camel_case_name(),
+                                                                                       shift_size=shift_size)
+                    chunk_offset_check_end = '\n\t\t\t\t}'
+                else:
+                    chunk_offset_check = ''
+                    chunk_offset_check_end = ''
+
+                return_element = packet.get_csharp_return_element(high_level=True)
+
+                if return_element != None:
+                    return_type = return_element.get_csharp_type()
+                    result_name = return_element.get_headless_camel_case_name()
+                    result_variable = '\n\t\t\t{0} {1} = {2}; // stop the compiler from wrongly complaining that this variable is used unassigned' \
+                                      .format(return_type, result_name, return_element.get_csharp_default_value())
+                    result_return = '\n\n\t\t\treturn {0};'.format(result_name)
+                    extra_default = ''
+                else:
+                    return_type = 'void'
+                    result_variable = ''
+                    result_return = ''
+                    extra_default = ''
+
+                    for element in packet.get_elements(direction='out', high_level=True):
+                        if element.get_role() != None:
+                            extra_default += '\t\t\t\t{0} = {1}; // stop the compiler from wrongly complaining that this variable is used unassigned\n' \
+                                             .format(element.get_headless_camel_case_name(), element.get_csharp_default_value())
+
+                methods += template.format(doc=packet.get_csharp_formatted_doc(),
+                                           camel_case_name=packet.get_camel_case_name(skip=-2),
+                                           return_type=return_type,
+                                           result_variable=result_variable,
+                                           result_return=result_return,
+                                           high_level_parameters=packet.get_csharp_parameters(high_level=True),
+                                           parameters=packet.get_csharp_parameters(context='call'),
+                                           stream_name=stream_out.get_name(),
+                                           stream_headless_camel_case_name=stream_out.get_headless_camel_case_name(),
+                                           stream_length_type=stream_length_type,
+                                           stream_data_new=stream_out.get_chunk_data_element().get_csharp_new(cardinality='{0}Length'.format(stream_out.get_headless_camel_case_name())),
+                                           fixed_length=stream_out.get_fixed_length(default='0'),
+                                           chunk_offset_check=chunk_offset_check,
+                                           chunk_offset_check_end=chunk_offset_check_end,
+                                           chunk_data_type=stream_out.get_chunk_data_element().get_csharp_type(),
+                                           chunk_data_new=stream_out.get_chunk_data_element().get_csharp_new(),
+                                           chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality(),
+                                           extra_default=common.wrap_non_empty('\n', extra_default, ''))
 
         return methods
 

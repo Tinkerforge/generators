@@ -939,9 +939,7 @@ namespace Tinkerforge
 
 			if (sequenceNumber == 0)
 			{
-				Device.CallbackWrapper wrapper = device.callbackWrappers[functionID];
-
-				if (wrapper != null)
+				if (device.callbackWrappers[functionID] != null)
 				{
 					callback.queue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, 0, packet));
 				}
@@ -1041,6 +1039,16 @@ namespace Tinkerforge
 	}
 
 	/// <summary>
+	///  Used to report if a stream method call hit an out-of-sync condition.
+	/// </summary>
+	public class StreamOutOfSyncException : TinkerforgeException
+	{
+		public StreamOutOfSyncException(string message) : base(message)
+		{
+		}
+	}
+
+	/// <summary>
 	/// </summary>
 	public struct UID
 	{
@@ -1102,10 +1110,12 @@ namespace Tinkerforge
 		internal byte expectedResponseFunctionID = 0; // protected by requestLock
 		internal byte expectedResponseSequenceNumber = 0; // protected by requestLock
 		internal CallbackWrapper[] callbackWrappers = new CallbackWrapper[256];
+		internal HighLevelCallback[] highLevelCallbacks = new HighLevelCallback[256];
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
 		internal object requestLock = new object();
 		internal UID internalUID;
+		internal object streamLock = new object();
 
 		public string UID
 		{
@@ -1339,6 +1349,12 @@ namespace Tinkerforge
 
 			return response;
 		}
+	}
+
+	internal class HighLevelCallback
+	{
+		internal object data = null;
+		internal long length = 0;
 	}
 
 	internal class BrickDaemon : Device

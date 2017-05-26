@@ -35,29 +35,45 @@ class CSharpDevice(common.Device):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
 class CSharpPacket(common.Packet):
-    def get_csharp_parameter_list(self, use_out_params=True):
-        param = []
+    def get_csharp_parameters(self, context='signature', high_level=False, callback_wrapper=False):
+        parameters = []
+        out_count = len(self.get_elements(direction='out', high_level=high_level))
 
-        for element in self.get_elements():
-            if (not use_out_params) and element.get_direction() == 'out':
-                continue
-
-            out = ''
-
+        for element in self.get_elements(high_level=high_level):
             if element.get_direction() == 'out' and self.get_type() == 'function':
-                out = 'out '
+                if out_count == 1:
+                    continue
+                else:
+                    out = 'out '
+            else:
+                out = ''
 
-            csharp_type = element.get_csharp_type()
-            name = element.get_headless_camel_case_name()
+            if context == 'call':
+                csharp_type = ''
+            else: # signature
+                csharp_type = element.get_csharp_type() + ' '
 
-            param.append('{0}{1} {2}'.format(out, csharp_type, name))
+            if high_level and callback_wrapper and element.get_level() == 'high' and element.get_cardinality() < 0:
+                name = '({0})highLevelCallback.data'.format(element.get_csharp_type())
+            else:
+                name = element.get_headless_camel_case_name()
 
-        return ', '.join(param)
+            parameters.append(''.join([out, csharp_type, name]))
+
+        return ', '.join(parameters)
+
+    def get_csharp_return_element(self, high_level=False):
+        elements = self.get_elements(direction='out', high_level=high_level)
+
+        if len(elements) == 1:
+            return elements[0]
+        else:
+            return None
 
     def get_csharp_method_signature(self, print_full_name=False, is_doc=False):
         sig_format = "public {4}{0} {1}{2}({3})"
         ret_count = len(self.get_elements(direction='out'))
-        params = self.get_csharp_parameter_list(ret_count > 1)
+        params = self.get_csharp_parameters()
         return_type = 'void'
 
         if ret_count == 1:
@@ -90,10 +106,10 @@ csharp_types = {
     'string': 'string'
 }
 
-def get_csharp_type(type, cardinality):
-    t = csharp_types[type]
+def get_csharp_type(type_, cardinality):
+    t = csharp_types[type_]
 
-    if cardinality > 1 and type != 'string':
+    if (cardinality > 1 and type_ != 'string') or cardinality < 0:
         t += '[]'
 
     return t
@@ -129,7 +145,22 @@ class CSharpElement(common.Element):
         'string': 'StringFrom'
     }
 
-    def get_csharp_type(self):
+    csharp_default_values = {
+        'int8':   '0',
+        'uint8':  '0',
+        'int16':  '0',
+        'uint16': '0',
+        'int32':  '0',
+        'uint32': '0',
+        'int64':  '0',
+        'uint64': '0',
+        'float':  '0.0',
+        'bool':   'false',
+        'char':   "''",
+        'string': '""'
+    }
+
+    def get_csharp_type(self, ignore_cardinality=False):
         return get_csharp_type(self.get_type(), self.get_cardinality())
 
     def get_csharp_le_converter_type(self):
@@ -147,3 +178,15 @@ class CSharpElement(common.Element):
             m = m.replace('From', 'ArrayFrom')
 
         return m
+
+    def get_csharp_new(self, cardinality=None):
+        if cardinality == None:
+            return 'new {0}[{1}]'.format(csharp_types[self.get_type()], self.get_cardinality())
+        else:
+            return 'new {0}[{1}]'.format(csharp_types[self.get_type()], cardinality)
+
+    def get_csharp_default_value(self):
+        if self.get_cardinality() != 1:
+            return 'null'
+        else:
+            return CSharpElement.csharp_default_values[self.get_type()]

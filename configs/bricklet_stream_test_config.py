@@ -122,6 +122,28 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': 'Normal Write Extra In Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'in'),
+             ('Message Length', 'uint16', 1, 'in'),
+             ('Extra 2', 'uint8', 1, 'in'),
+             ('Message Chunk Offset', 'uint16', 1, 'in'),
+             ('Extra 3', 'uint8', 1, 'in'),
+             ('Message Chunk Data', 'char', 56, 'in'),
+             ('Extra 4', 'uint8', 1, 'in')],
+'high_level': {'stream_in': {'name': 'Message'}},
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Normal Write Extra Out 1 Low Level',
 'elements': [('Message Length', 'uint16', 1, 'in'),
              ('Message Chunk Offset', 'uint16', 1, 'in'),
@@ -238,6 +260,26 @@ com['packets'].append({
              ('Message Chunk Data', 'char', 60, 'in'),
              ('Extra 1', 'uint8', 1, 'in'),
              ('Extra 2', 'uint8', 1, 'in')],
+'high_level': {'stream_in': {'name': 'Message', 'fixed_length': 1000}},
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Fixed Write Extra In Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'in'),
+             ('Message Chunk Offset', 'uint16', 1, 'in'),
+             ('Extra 2', 'uint8', 1, 'in'),
+             ('Message Chunk Data', 'char', 59, 'in'),
+             ('Extra 3', 'uint8', 1, 'in')],
 'high_level': {'stream_in': {'name': 'Message', 'fixed_length': 1000}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
@@ -472,6 +514,31 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': 'Short Write Extra Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'in'),
+             ('Message Length', 'uint16', 1, 'in'),
+             ('Extra 2', 'uint8', 1, 'in'),
+             ('Message Chunk Offset', 'uint16', 1, 'in'),
+             ('Extra 3', 'uint8', 1, 'in'),
+             ('Message Chunk Data', 'char', 56, 'in'),
+             ('Extra 4', 'uint8', 1, 'in'),
+             ('Extra 5', 'uint8', 1, 'out'),
+             ('Message Chunk Written', 'uint8', 1, 'out'),
+             ('Extra 6', 'uint8', 1, 'out')],
+'high_level': {'stream_in': {'name': 'Message', 'short_write': True}},
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Single Write Low Level',
 'elements': [('Message Length', 'uint8', 1, 'in'),
              ('Message Data', 'char', 63, 'in')],
@@ -549,6 +616,26 @@ com['packets'].append({
              ('Message Data', 'char', 61, 'in'),
              ('Extra 1', 'uint8', 1, 'in'),
              ('Extra 2', 'uint8', 1, 'in')],
+'high_level': {'stream_in': {'name': 'Message', 'single_chunk': True}},
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Single Write Extra In Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'in'),
+             ('Message Length', 'uint8', 1, 'in'),
+             ('Extra 2', 'uint8', 1, 'in'),
+             ('Message Data', 'char', 60, 'in'),
+             ('Extra 3', 'uint8', 1, 'in')],
 'high_level': {'stream_in': {'name': 'Message', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
@@ -774,6 +861,29 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': 'Short Single Write Extra Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'in'),
+             ('Message Length', 'uint8', 1, 'in'),
+             ('Extra 2', 'uint8', 1, 'in'),
+             ('Message Data', 'char', 60, 'in'),
+             ('Extra 3', 'uint8', 1, 'in'),
+             ('Extra 4', 'uint8', 1, 'out'),
+             ('Message Written', 'uint8', 1, 'out'),
+             ('Extra 5', 'uint8', 1, 'out')],
+'high_level': {'stream_in': {'name': 'Message', 'short_write': True, 'single_chunk': True}},
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Normal Read Low Level',
 'elements': [('Message Length', 'uint16', 1, 'out'),
              ('Message Chunk Offset', 'uint16', 1, 'out'),
@@ -895,6 +1005,28 @@ com['packets'].append({
              ('Message Chunk Data', 'char', 58, 'out'),
              ('Extra 1', 'uint8', 1, 'out'),
              ('Extra 2', 'uint8', 1, 'out')],
+'high_level': {'stream_out': {'name': 'Message'}},
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Normal Read Extra Out Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'out'),
+             ('Message Length', 'uint16', 1, 'out'),
+             ('Extra 2', 'uint8', 1, 'out'),
+             ('Message Chunk Offset', 'uint16', 1, 'out'),
+             ('Extra 3', 'uint8', 1, 'out'),
+             ('Message Chunk Data', 'char', 56, 'out'),
+             ('Extra 4', 'uint8', 1, 'out')],
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
@@ -1037,6 +1169,26 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': 'Fixed Read Extra Out Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'out'),
+             ('Message Chunk Offset', 'uint16', 1, 'out'),
+             ('Extra 2', 'uint8', 1, 'out'),
+             ('Message Chunk Data', 'char', 59, 'out'),
+             ('Extra 3', 'uint8', 1, 'out')],
+'high_level': {'stream_out': {'name': 'Message', 'fixed_length': 1000}},
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Single Read Low Level',
 'elements': [('Message Length', 'uint8', 1, 'out'),
              ('Message Data', 'char', 63, 'out')],
@@ -1164,6 +1316,26 @@ com['packets'].append({
 })
 
 com['packets'].append({
+'type': 'function',
+'name': 'Single Read Extra Out Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'out'),
+             ('Message Length', 'uint8', 1, 'out'),
+             ('Extra 2', 'uint8', 1, 'out'),
+             ('Message Data', 'char', 60, 'out'),
+             ('Extra 3', 'uint8', 1, 'out')],
+'high_level': {'stream_out': {'name': 'Message', 'single_chunk': True}},
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': 'Normal Read Low Level',
 'elements': [('Message Length', 'uint16', 1, 'out'),
@@ -1247,6 +1419,28 @@ com['packets'].append({
              ('Message Chunk Data', 'char', 58, 'out'),
              ('Extra 1', 'uint8', 1, 'out'),
              ('Extra 2', 'uint8', 1, 'out')],
+'high_level': {'stream_out': {'name': 'Message'}},
+'since_firmware': [1, 0, 0],
+'doc': ['llc', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Normal Read Extra Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'out'),
+             ('Message Length', 'uint16', 1, 'out'),
+             ('Extra 2', 'uint8', 1, 'out'),
+             ('Message Chunk Offset', 'uint16', 1, 'out'),
+             ('Extra 3', 'uint8', 1, 'out'),
+             ('Message Chunk Data', 'char', 56, 'out'),
+             ('Extra 4', 'uint8', 1, 'out')],
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
@@ -1352,6 +1546,26 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
+'name': 'Fixed Read Extra Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'out'),
+             ('Message Chunk Offset', 'uint16', 1, 'out'),
+             ('Extra 2', 'uint8', 1, 'out'),
+             ('Message Chunk Data', 'char', 59, 'out'),
+             ('Extra 3', 'uint8', 1, 'out')],
+'high_level': {'stream_out': {'name': 'Message', 'fixed_length': 1000}},
+'since_firmware': [1, 0, 0],
+'doc': ['llc', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
 'name': 'Single Read Low Level',
 'elements': [('Message Length', 'uint8', 1, 'out'),
              ('Message Data', 'char', 63, 'out')],
@@ -1429,6 +1643,26 @@ com['packets'].append({
              ('Message Data', 'char', 61, 'out'),
              ('Extra 1', 'uint8', 1, 'out'),
              ('Extra 2', 'uint8', 1, 'out')],
+'high_level': {'stream_out': {'name': 'Message', 'single_chunk': True}},
+'since_firmware': [1, 0, 0],
+'doc': ['llc', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Single Read Extra Full Low Level',
+'elements': [('Extra 1', 'uint8', 1, 'out'),
+             ('Message Length', 'uint8', 1, 'out'),
+             ('Extra 2', 'uint8', 1, 'out'),
+             ('Message Data', 'char', 60, 'out'),
+             ('Extra 3', 'uint8', 1, 'out')],
 'high_level': {'stream_out': {'name': 'Message', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['llc', {
