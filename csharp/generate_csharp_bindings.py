@@ -833,10 +833,14 @@ namespace Tinkerforge
                 return_element = packet.get_csharp_return_element(high_level=True)
 
                 if return_element != None:
+                    if not stream_in.has_single_chunk():
+                        comment = ' // stop the compiler from wrongly complaining that this variable is used unassigned'
+                    else:
+                        comment = ''
+
                     return_type = return_element.get_csharp_type()
                     result_name = return_element.get_headless_camel_case_name()
-                    result_variable = '\n\t\t\t{0} {1} = {2}; // stop the compiler from wrongly complaining that this variable is used unassigned' \
-                                      .format(return_type, result_name, return_element.get_csharp_default_value())
+                    result_variable = '\n\t\t\t{0} {1} = {2};{3}'.format(return_type, result_name, return_element.get_csharp_default_value(), comment)
                     result_assignment = '{0} = '.format(packet.get_csharp_return_element().get_headless_camel_case_name())
                     result_return = '\n\n\t\t\treturn {0};'.format(result_name)
                     result_single_return = 'return '
@@ -898,10 +902,14 @@ namespace Tinkerforge
                 return_element = packet.get_csharp_return_element(high_level=True)
 
                 if return_element != None:
+                    if not stream_out.has_single_chunk():
+                        comment = ' // stop the compiler from wrongly complaining that this variable is used unassigned'
+                    else:
+                        comment = ''
+
                     return_type = return_element.get_csharp_type()
                     result_name = return_element.get_headless_camel_case_name()
-                    result_variable = '\n\t\t\t{0} {1} = {2}; // stop the compiler from wrongly complaining that this variable is used unassigned' \
-                                      .format(return_type, result_name, return_element.get_csharp_default_value())
+                    result_variable = '\n\t\t\t{0} {1} = {2};{3}'.format(return_type, result_name, return_element.get_csharp_default_value(), comment)
                     result_return = '\n\n\t\t\treturn {0};'.format(result_name)
                     extra_default = ''
                 else:
