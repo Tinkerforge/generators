@@ -204,9 +204,9 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 
       if {stream_underscore_name}_length == 0
         {stream_underscore_name}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
-        result = {underscore_name}_low_level{parameters}
+        ret = {underscore_name}_low_level{parameters}
       else
-        result = nil # assigned in block
+        ret = nil # assigned in block
 
         @stream_mutex.synchronize {{
           while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_length
@@ -216,20 +216,20 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
               {stream_underscore_name}_chunk_data += [{chunk_padding}] * ({chunk_cardinality} - {stream_underscore_name}_chunk_data.length)
             end
 
-            result = {underscore_name}_low_level{parameters}
+            ret = {underscore_name}_low_level{parameters}
             {stream_underscore_name}_chunk_offset += {chunk_cardinality}
           end
         }}
       end
 
-      result
+      ret
     end
 """
         template_stream_in_fixed_length = """
     def {underscore_name}{high_level_parameters}
       {stream_underscore_name}_length = {fixed_length}
       {stream_underscore_name}_chunk_offset = 0
-      result = nil # assigned in block
+      ret = nil # assigned in block
 
       if {stream_underscore_name}.length != {stream_underscore_name}_length
         raise ArgumentError, "{stream_name} has to be #{{{stream_underscore_name}_length}} items long"
@@ -243,12 +243,12 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
             {stream_underscore_name}_chunk_data += [{chunk_padding}] * ({chunk_cardinality} - {stream_underscore_name}_chunk_data.length)
           end
 
-          result = {underscore_name}_low_level{parameters}
+          ret = {underscore_name}_low_level{parameters}
           {stream_underscore_name}_chunk_offset += {chunk_cardinality}
         end
       }}
 
-      result
+      ret
     end
 """
         template_stream_in_short_write = """
@@ -258,7 +258,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 
       if {stream_underscore_name}_length == 0
         {stream_underscore_name}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
-        {stream_underscore_name}_chunk_result = {underscore_name}_low_level{parameters}{chunk_written_0}
+        ret = {underscore_name}_low_level{parameters}{chunk_written_0}
       else{chunk_result_predefinition}
         {stream_underscore_name}_written = 0 # assigned in block
 
@@ -270,7 +270,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
               {stream_underscore_name}_chunk_data += [{chunk_padding}] * ({chunk_cardinality} - {stream_underscore_name}_chunk_data.length)
             end
 
-            {stream_underscore_name}_chunk_result = {underscore_name}_low_level{parameters}{chunk_written_n}
+            ret = {underscore_name}_low_level{parameters}{chunk_written_n}
             {stream_underscore_name}_written += {stream_underscore_name}_chunk_written
 
             if {stream_underscore_name}_chunk_written < {chunk_cardinality}
@@ -285,13 +285,13 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     end
 """
         template_stream_in_short_write_chunk_result_predefinition = """
-        {stream_underscore_name}_chunk_result = nil # assigned in block"""
+        ret = nil # assigned in block"""
         template_stream_in_short_write_chunk_written = ["""
-        {stream_underscore_name}_written = {stream_underscore_name}_chunk_result""", """
-            {stream_underscore_name}_chunk_written = {stream_underscore_name}_chunk_result"""]
+        {stream_underscore_name}_written = ret""", """
+            {stream_underscore_name}_chunk_written = ret"""]
         template_stream_in_short_write_namedtuple_chunk_written = ["""
-        {stream_underscore_name}_written = {stream_underscore_name}_chunk_result[{chunk_written_index}]""", """
-            {stream_underscore_name}_chunk_written = {stream_underscore_name}_chunk_result[{chunk_written_index}]"""]
+        {stream_underscore_name}_written = ret[{chunk_written_index}]""", """
+            {stream_underscore_name}_chunk_written = ret[{chunk_written_index}]"""]
         template_stream_in_short_write_result = """
       {stream_underscore_name}_written"""
         template_stream_in_short_write_namedtuple_result = """
@@ -319,22 +319,22 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
       {stream_underscore_name}_data = nil # assigned in block
 
       @stream_mutex.synchronize {{
-        {stream_underscore_name}_chunk_result = {underscore_name}_low_level{parameters}{dynamic_length_4}
-        {stream_underscore_name}_chunk_offset = {stream_underscore_name}_chunk_result[{chunk_offset_index}]
+        ret = {underscore_name}_low_level{parameters}{dynamic_length_4}
+        {stream_underscore_name}_chunk_offset = ret[{chunk_offset_index}]
 {chunk_offset_check}{stream_underscore_name}_out_of_sync = {stream_underscore_name}_chunk_offset != 0
-        {chunk_offset_check_indent}{stream_underscore_name}_data = {stream_underscore_name}_chunk_result[{chunk_data_index}]{chunk_offset_check_end}
+        {chunk_offset_check_indent}{stream_underscore_name}_data = ret[{chunk_data_index}]{chunk_offset_check_end}
 
         while not {stream_underscore_name}_out_of_sync and {stream_underscore_name}_data.length < {stream_underscore_name}_length
-          {stream_underscore_name}_chunk_result = {underscore_name}_low_level{parameters}{dynamic_length_5}
-          {stream_underscore_name}_chunk_offset = {stream_underscore_name}_chunk_result[{chunk_offset_index}]
+          ret = {underscore_name}_low_level{parameters}{dynamic_length_5}
+          {stream_underscore_name}_chunk_offset = ret[{chunk_offset_index}]
           {stream_underscore_name}_out_of_sync = {stream_underscore_name}_chunk_offset != {stream_underscore_name}_data.length
-          {stream_underscore_name}_data += {stream_underscore_name}_chunk_result[{chunk_data_index}]
+          {stream_underscore_name}_data += ret[{chunk_data_index}]
         end
 
         if {stream_underscore_name}_out_of_sync # discard remaining stream to bring it back in-sync
           while {stream_underscore_name}_chunk_offset + {chunk_cardinality} < {stream_underscore_name}_length
-            {stream_underscore_name}_chunk_result = {underscore_name}_low_level{parameters}{dynamic_length_6}
-            {stream_underscore_name}_chunk_offset = {stream_underscore_name}_chunk_result[{chunk_offset_index}]
+            ret = {underscore_name}_low_level{parameters}{dynamic_length_6}
+            {stream_underscore_name}_chunk_offset = ret[{chunk_offset_index}]
           end
 
           raise StreamOutOfSyncException, '{stream_name} stream is out-of-sync'
@@ -344,9 +344,9 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     end
 """
         template_stream_out_chunk_result_predefinition = """
-      {stream_underscore_name}_chunk_result = nil # assigned in block"""
+      ret = nil # assigned in block"""
         template_stream_out_dynamic_length = """
-{{indent}}{stream_underscore_name}_length = {stream_underscore_name}_chunk_result[{length_index}]"""
+{{indent}}{stream_underscore_name}_length = ret[{length_index}]"""
         template_stream_out_chunk_offset_check = """
         if {stream_underscore_name}_chunk_offset == (1 << {shift_size}) - 1 # maximum chunk offset -> stream has no data
           {stream_underscore_name}_length = 0
@@ -357,9 +357,9 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
           """
         template_stream_out_single_chunk = """
     def {underscore_name}{high_level_parameters}
-      {stream_underscore_name}_result = {underscore_name}_low_level{parameters}
-      {stream_underscore_name}_length = {stream_underscore_name}_result[{length_index}]
-      {stream_underscore_name}_data = {stream_underscore_name}_result[{chunk_data_index}]
+      ret = {underscore_name}_low_level{parameters}
+      {stream_underscore_name}_length = ret[{length_index}]
+      {stream_underscore_name}_data = ret[{chunk_data_index}]
 {result}
     end
 """
@@ -420,7 +420,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                                         index = i
                                         break
 
-                                fields.append('{0}_chunk_result[{1}]'.format(stream_in.get_underscore_name(), index))
+                                fields.append('ret[{0}]'.format(index))
 
                         result = template_stream_in_short_write_namedtuple_result.format(result_fields=', '.join(fields))
                 else:
@@ -437,7 +437,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                                            fixed_length=stream_in.get_fixed_length(default='nil'),
                                            chunk_result_predefinition=chunk_result_predefinition,
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
-                                           chunk_padding=stream_in.get_chunk_data_element().get_ruby_default_value(),
+                                           chunk_padding=stream_in.get_chunk_data_element().get_ruby_default_item_value(),
                                            chunk_written_0=chunk_written_0,
                                            chunk_written_n=chunk_written_n,
                                            result=result)
@@ -486,10 +486,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                                     index = i
                                     break
 
-                            if stream_out.has_single_chunk():
-                                fields.append('{0}_result[{1}]'.format(stream_out.get_underscore_name(), index))
-                            else:
-                                fields.append('{0}_chunk_result[{1}]'.format(stream_out.get_underscore_name(), index))
+                            fields.append('ret[{0}]'.format(index))
 
                     result = template_stream_out_namedtuple_result.format(result_fields=', '.join(fields))
 

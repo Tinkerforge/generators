@@ -617,11 +617,7 @@ namespace Tinkerforge
 						{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 						Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
-
-						if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
-						{{
-							Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
-						}}
+						Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
 
 						{result_assignment}{camel_case_name}LowLevel({parameters});
 
@@ -654,11 +650,7 @@ namespace Tinkerforge
 					{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 					Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
-
-					if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
-					{{
-						Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
-					}}
+					Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
 
 					{result_assignment}{camel_case_name}LowLevel({parameters});
 
@@ -698,11 +690,7 @@ namespace Tinkerforge
 						{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 						Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkOffset, {stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}ChunkLength);
-
-						if ({stream_headless_camel_case_name}ChunkLength < {chunk_cardinality})
-						{{
-							Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
-						}}
+						Array.Clear({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}ChunkLength, {chunk_cardinality} - {stream_headless_camel_case_name}ChunkLength);
 
 						{result_assignment}{camel_case_name}LowLevel({parameters});
 
@@ -734,11 +722,7 @@ namespace Tinkerforge
 			{chunk_data_type} {stream_headless_camel_case_name}Data = {chunk_data_new};
 
 			Array.Copy({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}Length);
-
-			if ({stream_headless_camel_case_name}Length < {chunk_cardinality})
-			{{
-				Array.Clear({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}Length, {chunk_cardinality} - {stream_headless_camel_case_name}Length);
-			}}
+			Array.Clear({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}Length, {chunk_cardinality} - {stream_headless_camel_case_name}Length);
 
 			{result_single_return}{camel_case_name}LowLevel({parameters});
 		}}
@@ -849,10 +833,14 @@ namespace Tinkerforge
                 return_element = packet.get_csharp_return_element(high_level=True)
 
                 if return_element != None:
+                    if not stream_in.has_single_chunk():
+                        comment = ' // stop the compiler from wrongly complaining that this variable is used unassigned'
+                    else:
+                        comment = ''
+
                     return_type = return_element.get_csharp_type()
                     result_name = return_element.get_headless_camel_case_name()
-                    result_variable = '\n\t\t\t{0} {1} = {2}; // stop the compiler from wrongly complaining that this variable is used unassigned' \
-                                      .format(return_type, result_name, return_element.get_csharp_default_value())
+                    result_variable = '\n\t\t\t{0} {1} = {2};{3}'.format(return_type, result_name, return_element.get_csharp_default_value(), comment)
                     result_assignment = '{0} = '.format(packet.get_csharp_return_element().get_headless_camel_case_name())
                     result_return = '\n\n\t\t\treturn {0};'.format(result_name)
                     result_single_return = 'return '
@@ -914,10 +902,14 @@ namespace Tinkerforge
                 return_element = packet.get_csharp_return_element(high_level=True)
 
                 if return_element != None:
+                    if not stream_out.has_single_chunk():
+                        comment = ' // stop the compiler from wrongly complaining that this variable is used unassigned'
+                    else:
+                        comment = ''
+
                     return_type = return_element.get_csharp_type()
                     result_name = return_element.get_headless_camel_case_name()
-                    result_variable = '\n\t\t\t{0} {1} = {2}; // stop the compiler from wrongly complaining that this variable is used unassigned' \
-                                      .format(return_type, result_name, return_element.get_csharp_default_value())
+                    result_variable = '\n\t\t\t{0} {1} = {2};{3}'.format(return_type, result_name, return_element.get_csharp_default_value(), comment)
                     result_return = '\n\n\t\t\treturn {0};'.format(result_name)
                     extra_default = ''
                 else:

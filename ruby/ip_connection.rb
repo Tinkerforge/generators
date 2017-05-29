@@ -1004,14 +1004,13 @@ module Tinkerforge
       if function_id == CALLBACK_ENUMERATE and \
          @registered_callbacks.has_key? CALLBACK_ENUMERATE
         payload = unpack packet[8..-1], 'Z8 Z8 k C3 C3 S C'
-        @registered_callbacks[CALLBACK_ENUMERATE].call *payload
+        @registered_callbacks[CALLBACK_ENUMERATE].call(*payload)
       elsif @devices.has_key? uid
         device = @devices[uid]
 
-        if device.high_level_callbacks.has_key? -function_id
+        if device.high_level_callbacks.has_key?(-function_id)
           hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
           payload = unpack packet[8..-1], device.callback_formats[function_id]
-          fixed_length = hlcb[1]['fixed_length']
           has_data = false
           data = nil
 
@@ -1038,7 +1037,6 @@ module Tinkerforge
                 data = hlcb[2][0, length]
                 hlcb[2] = nil
               else # ignore tail of current stream, wait for next stream start
-                foobar = 0
               end
             else # stream in-progress
               if chunk_offset != hlcb[2].length # stream out-of-sync
@@ -1056,7 +1054,7 @@ module Tinkerforge
               end
             end
 
-            if has_data and device.registered_callbacks.has_key? -function_id
+            if has_data and device.registered_callbacks.has_key?(-function_id)
               result = []
 
               hlcb[0].zip(payload).each do |role, value|
@@ -1067,14 +1065,14 @@ module Tinkerforge
                 end
               end
 
-              device.registered_callbacks[-function_id].call *result
+              device.registered_callbacks[-function_id].call(*result)
             end
           end
         end
 
         if device.registered_callbacks.has_key? function_id
           payload = unpack packet[8..-1], device.callback_formats[function_id]
-          device.registered_callbacks[function_id].call *payload
+          device.registered_callbacks[function_id].call(*payload)
         end
       end
     end
@@ -1170,7 +1168,7 @@ module Tinkerforge
 
         if sequence_number == 0
           if device.registered_callbacks.has_key? function_id or \
-             device.high_level_callbacks.has_key? -function_id
+             device.high_level_callbacks.has_key?(-function_id)
             @callback.queue.push [QUEUE_KIND_PACKET, packet]
           end
         elsif device.expected_response_function_id == function_id and \

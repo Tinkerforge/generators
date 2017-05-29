@@ -77,28 +77,28 @@ class PythonElement(common.Element):
         'string': 's'
     }
 
-    python_default_values = {
-        'int8':   0,
-        'uint8':  0,
-        'int16':  0,
-        'uint16': 0,
-        'int32':  0,
-        'uint32': 0,
-        'int64':  0,
-        'uint64': 0,
-        'float':  0.0,
-        'bool':   False,
-        'char':   '\0',
-        'string': '\0'
+    python_default_item_values = {
+        'int8':   '0',
+        'uint8':  '0',
+        'int16':  '0',
+        'uint16': '0',
+        'int32':  '0',
+        'uint32': '0',
+        'int64':  '0',
+        'uint64': '0',
+        'float':  '0.0',
+        'bool':   'False',
+        'char':   "'\\0'",
+        'string': None
     }
 
     def get_python_type(self):
-        t = PythonElement.python_types[self.get_type()]
+        python_type = PythonElement.python_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or t == 'str':
-            return t
-
-        return '[' + ', '.join([t]*self.get_cardinality()) + ']'
+        if self.get_cardinality() == 1 or python_type == 'str':
+            return python_type
+        else:
+            return '[' + ', '.join([python_type] * self.get_cardinality()) + ']'
 
     def get_python_struct_format(self):
         f = PythonElement.python_struct_formats[self.get_type()]
@@ -109,5 +109,10 @@ class PythonElement(common.Element):
 
         return f
 
-    def get_python_default_value(self):
-        return PythonElement.python_default_values[self.get_type()]
+    def get_python_default_item_value(self):
+        value = PythonElement.python_default_item_values[self.get_type()]
+
+        if value == None:
+            common.GeneratorError('Invalid array item type: ' + self.get_type())
+
+        return value

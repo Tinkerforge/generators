@@ -107,12 +107,12 @@ csharp_types = {
 }
 
 def get_csharp_type(type_, cardinality):
-    t = csharp_types[type_]
+    csharp_type = csharp_types[type_]
 
     if (cardinality > 1 and type_ != 'string') or cardinality < 0:
-        t += '[]'
+        csharp_type += '[]'
 
-    return t
+    return csharp_type
 
 class CSharpElement(common.Element):
     csharp_le_converter_types = {
@@ -145,7 +145,7 @@ class CSharpElement(common.Element):
         'string': 'StringFrom'
     }
 
-    csharp_default_values = {
+    csharp_default_item_values = {
         'int8':   '0',
         'uint8':  '0',
         'int16':  '0',
@@ -156,28 +156,28 @@ class CSharpElement(common.Element):
         'uint64': '0',
         'float':  '0.0',
         'bool':   'false',
-        'char':   "''",
-        'string': '""'
+        'char':   "'\\0'",
+        'string': None
     }
 
-    def get_csharp_type(self, ignore_cardinality=False):
+    def get_csharp_type(self):
         return get_csharp_type(self.get_type(), self.get_cardinality())
 
     def get_csharp_le_converter_type(self):
-        t = CSharpElement.csharp_le_converter_types[self.get_type()]
+        converter_type = CSharpElement.csharp_le_converter_types[self.get_type()]
 
         if self.get_cardinality() > 1 and self.get_type() != 'string':
-            t += '[]'
+            converter_type += '[]'
 
-        return t
+        return converter_type
 
     def get_csharp_le_converter_from_method(self):
-        m =  CSharpElement.csharp_le_converter_from_methods[self.get_type()]
+        from_method = CSharpElement.csharp_le_converter_from_methods[self.get_type()]
 
-        if m != 'StringFrom' and self.get_cardinality() > 1:
-            m = m.replace('From', 'ArrayFrom')
+        if from_method != 'StringFrom' and self.get_cardinality() > 1:
+            from_method = from_method.replace('From', 'ArrayFrom')
 
-        return m
+        return from_method
 
     def get_csharp_new(self, cardinality=None):
         if cardinality == None:
@@ -189,4 +189,9 @@ class CSharpElement(common.Element):
         if self.get_cardinality() != 1:
             return 'null'
         else:
-            return CSharpElement.csharp_default_values[self.get_type()]
+            value = CSharpElement.csharp_default_item_values[self.get_type()]
+
+            if value == None:
+                common.GeneratorError('Invalid array item type: ' + self.get_type())
+
+            return value
