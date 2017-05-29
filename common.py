@@ -1557,6 +1557,13 @@ class Device(NameMixin):
     def get_device_identifier(self):
         return self.raw_data['device_identifier']
 
+    def has_callback_value(self):
+        # If the device has a packet with 'correspondin' field, it has callback values
+        for packet in self.all_packets:
+            if 'corresponding_getter' in packet.raw_data:
+                return True
+        return False
+
     def _get_name(self): # for NameMixin
         return self.raw_data['name']
 
