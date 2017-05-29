@@ -28,7 +28,9 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set Color',
-'elements': [('Red', 'uint8', 1, 'in'),('Green', 'uint8', 1, 'in'), ('Blue', 'uint8', 1, 'in')],
+'elements': [('Red', 'uint8', 1, 'in'),
+             ('Green', 'uint8', 1, 'in'),
+             ('Blue', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -43,7 +45,9 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Color',
-'elements': [('Red', 'uint8', 1, 'out'),('Green', 'uint8', 1, 'out'), ('Blue', 'uint8', 1, 'out')],
+'elements': [('Red', 'uint8', 1, 'out'),
+             ('Green', 'uint8', 1, 'out'),
+             ('Blue', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -58,7 +62,8 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Button State',
-'elements': [('State', 'uint8', 1, 'out', ('Button State', [('Pressed', 0), ('Released', 1)]))],
+'elements': [('State', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
+                                                            ('Released', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -73,7 +78,8 @@ com['packets'].append({
 com['packets'].append({
 'type': 'callback',
 'name': 'Button State Changed',
-'elements': [('State', 'uint8', 1, 'out', ('Button State', [('Pressed', 0), ('Released', 1)]))],
+'elements': [('State', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
+                                                            ('Released', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
