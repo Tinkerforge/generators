@@ -41,7 +41,7 @@ SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/ringbuffer.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/pearson_hash.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/communication_callback.c"
-
+<<<CMAKE_SOURCE_CALLBACK_VALUE>>>
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/xmclib/XMCLib/src/xmc_gpio.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/xmclib/XMCLib/src/xmc1_gpio.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/xmclib/XMCLib/src/xmc_spi.c"

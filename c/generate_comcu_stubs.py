@@ -432,7 +432,7 @@ void communication_init(void);
         shutil.copytree(os.path.join(folder_src, 'hardware'),  os.path.join(folder_dst, 'hardware'))
         shutil.copytree(os.path.join(folder_src, 'datasheets'),  os.path.join(folder_dst, 'datasheets'))
 
-    def fill_templates(self, folder, device_name_dash, device_name, device_identifier, year, name, email):
+    def fill_templates(self, folder, device_name_dash, device_name, device_identifier, year, name, email, callback_value):
         for dname, dirs, files in os.walk(folder):
             for fname in files:
                 fpath = os.path.join(dname, fname)
@@ -444,6 +444,7 @@ void communication_init(void);
                 s = s.replace("""<<<YEAR>>>""", str(year))
                 s = s.replace("""<<<NAME>>>""", name)
                 s = s.replace("""<<<EMAIL>>>""", email)
+                s = s.replace("""<<<CMAKE_SOURCE_CALLBACK_VALUE>>>""", callback_value)
                 with open(fpath, "w") as f:
                     f.write(s)
 
@@ -460,9 +461,12 @@ void communication_init(void);
         year = datetime.datetime.now().year
         name = device.get_author().split("<")[0].rstrip()             #author syntax: Firstname Lastname <email>
         email = device.get_author().split("<")[1].replace(">","")
+        callback_value = ''
+        if device.has_callback_value():
+            callback_value = """\t"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/callback_value.c"\n"""
 
         self.copy_templates_to(folder)
-        self.fill_templates(folder, device_name_dash, device.get_name(), device.get_device_identifier(), year, name, email)
+        self.fill_templates(folder, device_name_dash, device.get_name(), device.get_device_identifier(), year, name, email, callback_value)
 
         h_constants = device.get_h_constants()
         h_defines = device.get_h_defines()
