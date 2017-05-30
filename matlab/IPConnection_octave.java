@@ -43,7 +43,6 @@ public class IPConnection extends IPConnectionBase {
 				if(suffix.startsWith("windows")) {
 					suffix = "windows-" + System.getProperty("os.arch").toLowerCase();
 					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".dll");
-					System.out.println(suffix);
 				} else {
 					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".so");
 				}
