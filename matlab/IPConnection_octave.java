@@ -40,14 +40,25 @@ public class IPConnection extends IPConnectionBase {
 			InputStream input;
 
 			try {
-				input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".so");
+				if(suffix.startsWith("windows")) {
+					suffix = "windows-" + System.getProperty("os.arch").toLowerCase();
+					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".dll");
+					System.out.println(suffix);
+				} else {
+					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".so");
+				}
 			} catch (Exception e) {
 				input = null;
 			}
 
 			if (input != null) {
 				try {
-					File tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".so");
+					File tmp;
+					if(suffix.startsWith("windows")) {
+						tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".dll");
+					} else {
+						tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".so");
+					}
 					tmp.deleteOnExit();
 
 					FileOutputStream output = new FileOutputStream(tmp);

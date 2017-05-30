@@ -12,6 +12,9 @@
 // RED Brick:
 // gcc -Wall -O2 -o liboctaveinvokewrapper.so liboctaveinvokewrapper.c -shared -fpic -I /usr/lib/jvm/jdk1.8.0/include/ -I /usr/lib/jvm/jdk1.8.0/include/linux/
 
+// Windows:
+// gcc -Wl,--add-stdcall-alias -O2 -o liboctaveinvokewrapper.dll liboctaveinvokewrapper.c -shared -fpic -I "C:\Program Files\Java\jdk1.8.0_131\include" -I "C:\Program Files\Java\jdk1.8.0_131\include\win32" -L "C:\Octave\Octave-4.2.1\lib\octave\4.2.1" -loctinterp
+
 #include <jni.h>
 
 // since Octave 3.8 trying to invoke an OctaveReference object results in an
@@ -34,4 +37,3 @@ JNIEXPORT void JNICALL Java_com_tinkerforge_IPConnection_doOctaveInvokeWrapper(J
 	// because we don't have the correct value here to pass along anyway
 	Java_org_octave_Octave_doInvoke(env, NULL, id, args);
 }
-
