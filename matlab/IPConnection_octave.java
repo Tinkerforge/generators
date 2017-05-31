@@ -43,6 +43,9 @@ public class IPConnection extends IPConnectionBase {
 				if(suffix.startsWith("windows")) {
 					suffix = "windows-" + System.getProperty("os.arch").toLowerCase();
 					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".dll");
+				} else if(suffix.startsWith("mac")) {
+					suffix = "mac-" + System.getProperty("os.arch").toLowerCase();
+					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".dynlib");
 				} else {
 					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".so");
 				}
@@ -55,6 +58,8 @@ public class IPConnection extends IPConnectionBase {
 					File tmp;
 					if(suffix.startsWith("windows")) {
 						tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".dll");
+					} else if(suffix.startsWith("mac")) {
+						tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".dynlib");
 					} else {
 						tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".so");
 					}

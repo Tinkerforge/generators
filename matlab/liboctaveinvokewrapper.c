@@ -15,6 +15,9 @@
 // Windows:
 // gcc -Wl,--add-stdcall-alias -O2 -o liboctaveinvokewrapper.dll liboctaveinvokewrapper.c -shared -fpic -I "C:\Program Files\Java\jdk1.8.0_131\include" -I "C:\Program Files\Java\jdk1.8.0_131\include\win32" -L "C:\Octave\Octave-4.2.1\lib\octave\4.2.1" -loctinterp
 
+// Mac OS X:
+// gcc -Wall -O2 -dynamiclib -o liboctaveinvokewrapper.dynlib liboctaveinvokewrapper.c -fpic -I/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/include -I/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/include/darwin -L/opt/local/lib/octave/4.2.1/ -loctinterp
+
 #include <jni.h>
 
 // since Octave 3.8 trying to invoke an OctaveReference object results in an
