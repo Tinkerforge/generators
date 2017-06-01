@@ -314,7 +314,7 @@ namespace Tinkerforge
 """
         template_stream_out = """			HighLevelCallback highLevelCallback = highLevelCallbacks[-CALLBACK_{upper_case_name}];
 			{stream_length_type} {stream_headless_camel_case_name}ChunkLength = Math.Min({stream_length} - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
-			var highLevelHandler = {camel_case}Callback;
+			var highLevelHandler = {camel_case_name}Callback;
 
 			if (highLevelCallback.data == null) // no stream in-progress
 			{{
@@ -371,7 +371,7 @@ namespace Tinkerforge
 			}}
 
 """
-        template_stream_out_single_chunk = """			var highLevelHandler = {camel_case}Callback;
+        template_stream_out_single_chunk = """			var highLevelHandler = {camel_case_name}Callback;
 
 			if (highLevelHandler != null)
 			{{
@@ -443,7 +443,7 @@ namespace Tinkerforge
                 elif chunk_offset_element != None:
                     stream_length_type = chunk_offset_element.get_csharp_type()
 
-                high_level_handling = template2.format(camel_case=packet.get_camel_case_name(skip=-2),
+                high_level_handling = template2.format(camel_case_name=packet.get_camel_case_name(skip=-2),
                                                        upper_case_name=packet.get_upper_case_name(skip=-2),
                                                        high_level_parameters=packet.get_csharp_parameters(context='call', high_level=True, callback_wrapper=callback_wrapper),
                                                        stream_headless_camel_case_name=stream_out.get_headless_camel_case_name(),
