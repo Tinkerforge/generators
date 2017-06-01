@@ -212,7 +212,7 @@ public class IPConnection extends IPConnectionBase {
 	protected void callEnumerateListeners(String uid, String connectedUid, char position,
 	                                      short[] hardwareVersion, short[] firmwareVersion,
 	                                      int deviceIdentifier, short enumerationType) {
-		for(OctaveReference listener: listenerEnumerate) {
+		for (OctaveReference listener: listenerEnumerate) {
 			doOctaveInvoke(listener, new Object[]{new EnumerateCallbackData(this, uid, connectedUid, position,
 			                                                                hardwareVersion, firmwareVersion,
 			                                                                deviceIdentifier, enumerationType)});
@@ -226,14 +226,14 @@ public class IPConnection extends IPConnectionBase {
 
 	@Override
 	protected void callConnectedListeners(short connectReason) {
-		for(OctaveReference listener: listenerConnected) {
+		for (OctaveReference listener: listenerConnected) {
 			doOctaveInvoke(listener, new Object[]{new ConnectedCallbackData(this, connectReason)});
 		}
 	}
 
 	@Override
 	protected void callDisconnectedListeners(short disconnectReason) {
-		for(OctaveReference listener: listenerDisconnected) {
+		for (OctaveReference listener: listenerDisconnected) {
 			doOctaveInvoke(listener, new Object[]{new DisconnectedCallbackData(this, disconnectReason)});
 		}
 	}

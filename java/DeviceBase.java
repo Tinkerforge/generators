@@ -32,7 +32,8 @@ public abstract class DeviceBase {
 
 	public DeviceBase(String uid, IPConnection ipcon) {
 		long uidTmp = IPConnection.base58Decode(uid);
-		if(uidTmp > 0xFFFFFFFFL) {
+
+		if (uidTmp > 0xFFFFFFFFL) {
 			// convert from 64bit to 32bit
 			long value1 = uidTmp & 0xFFFFFFFFL;
 			long value2 = (uidTmp >> 32) & 0xFFFFFFFFL;
@@ -44,10 +45,10 @@ public abstract class DeviceBase {
 			uidTmp |= (value2 & 0x3F000000L) << 2;
 		}
 
-		this.uid   = uidTmp;
+		this.uid = uidTmp;
 		this.ipcon = ipcon;
 
-		for(int i = 0; i < responseExpected.length; i++) {
+		for (int i = 0; i < responseExpected.length; i++) {
 			responseExpected[i] = RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID;
 		}
 	}
@@ -80,7 +81,7 @@ public abstract class DeviceBase {
 	public boolean getResponseExpected(byte functionId) {
 		byte flag = responseExpected[IPConnection.unsignedByte(functionId)];
 
-		if(flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
+		if (flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
 		}
 
@@ -105,15 +106,15 @@ public abstract class DeviceBase {
 		int index = IPConnection.unsignedByte(functionId);
 		byte flag = this.responseExpected[index];
 
-		if(flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
+		if (flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
 		}
 
-		if(flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE) {
+		if (flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE) {
 			throw new IllegalArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
 		}
 
-		if(responseExpected) {
+		if (responseExpected) {
 			this.responseExpected[index] = RESPONSE_EXPECTED_FLAG_TRUE;
 		} else {
 			this.responseExpected[index] = RESPONSE_EXPECTED_FLAG_FALSE;
@@ -126,13 +127,14 @@ public abstract class DeviceBase {
 	 */
 	public void setResponseExpectedAll(boolean responseExpected) {
 		byte flag = RESPONSE_EXPECTED_FLAG_FALSE;
-		if(responseExpected) {
+
+		if (responseExpected) {
 			flag = RESPONSE_EXPECTED_FLAG_TRUE;
 		}
 
-		for(int i = 0; i < this.responseExpected.length; i++) {
-			if(this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_TRUE ||
-			   this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_FALSE) {
+		for (int i = 0; i < this.responseExpected.length; i++) {
+			if (this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_TRUE ||
+			    this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_FALSE) {
 				this.responseExpected[i] = flag;
 			}
 		}
@@ -144,14 +146,14 @@ public abstract class DeviceBase {
 		if (IPConnection.getResponseExpectedFromData(request)) {
 			byte functionID = IPConnection.getFunctionIDFromData(request);
 
-			synchronized(requestMutex) {
+			synchronized (requestMutex) {
 				expectedResponseFunctionID = functionID;
 				expectedResponseSequenceNumber = IPConnection.getSequenceNumberFromData(request);
 
 				try {
 					ipcon.sendRequest(request);
 
-					while(true) {
+					while (true) {
 						response = null;
 
 						try {
@@ -160,12 +162,12 @@ public abstract class DeviceBase {
 							e.printStackTrace();
 						}
 
-						if(response == null) {
+						if (response == null) {
 							throw new TimeoutException("Did not receive response in time for function ID " + functionID);
 						}
 
-						if(expectedResponseFunctionID == IPConnection.getFunctionIDFromData(response) &&
-						   expectedResponseSequenceNumber == IPConnection.getSequenceNumberFromData(response)) {
+						if (expectedResponseFunctionID == IPConnection.getFunctionIDFromData(response) &&
+						    expectedResponseSequenceNumber == IPConnection.getSequenceNumberFromData(response)) {
 							// ignore old responses that arrived after the timeout expired, but before setting
 							// expectedResponseFunctionID and expectedResponseSequenceNumber back to 0
 							break;
@@ -178,7 +180,8 @@ public abstract class DeviceBase {
 			}
 
 			byte errorCode = IPConnection.getErrorCodeFromData(response);
-			switch(errorCode) {
+
+			switch (errorCode) {
 				case 0:
 					break;
 				case 1:

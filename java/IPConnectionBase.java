@@ -37,44 +37,47 @@ class ReceiveThread extends Thread {
 		int pendingLength = 0;
 		long socketID = ipcon.socketID;
 
-		while(ipcon.receiveFlag) {
+		while (ipcon.receiveFlag) {
 			int length;
 
 			try {
 				length = ipcon.in.read(pendingData, pendingLength,
 				                       pendingData.length - pendingLength);
-			} catch(java.net.SocketException e) {
-				if(ipcon.receiveFlag) {
+			} catch (java.net.SocketException e) {
+				if (ipcon.receiveFlag) {
 					ipcon.handleDisconnectByPeer(IPConnectionBase.DISCONNECT_REASON_ERROR,
 					                             socketID, false);
 				}
+
 				return;
-			} catch(Exception e) {
-				if(ipcon.receiveFlag) {
+			} catch (Exception e) {
+				if (ipcon.receiveFlag) {
 					e.printStackTrace();
 				}
+
 				return;
 			}
 
-			if(length <= 0) {
-				if(ipcon.receiveFlag) {
+			if (length <= 0) {
+				if (ipcon.receiveFlag) {
 					ipcon.handleDisconnectByPeer(IPConnectionBase.DISCONNECT_REASON_SHUTDOWN,
 					                             socketID, false);
 				}
+
 				return;
 			}
 
 			pendingLength += length;
 
-			while(ipcon.receiveFlag) {
-				if(pendingLength < 8) {
+			while (ipcon.receiveFlag) {
+				if (pendingLength < 8) {
 					// Wait for complete header
 					break;
 				}
 
 				length = IPConnectionBase.getLengthFromData(pendingData);
 
-				if(pendingLength < length) {
+				if (pendingLength < length) {
 					// Wait for complete packet
 					break;
 				}
@@ -130,7 +133,7 @@ class CallbackThread extends Thread {
 			if (Thread.currentThread() != this) {
 				// FIXME: cannot lock callback mutex here because this can
 				//        deadlock due to an ordering problem with the socket mutex
-				/*synchronized(mutex)*/ {
+				/*synchronized (mutex)*/ {
 					packetDispatchAllowed = false;
 				}
 			} else {
@@ -150,15 +153,16 @@ class CallbackThread extends Thread {
 				// need to do this here, the receive loop is not allowed to
 				// hold the socket mutex because this could cause a deadlock
 				// with a concurrent call to the (dis-)connect function
-				if(cqo.parameter != IPConnectionBase.DISCONNECT_REASON_REQUEST) {
-					synchronized(ipcon.socketMutex) {
+				if (cqo.parameter != IPConnectionBase.DISCONNECT_REASON_REQUEST) {
+					synchronized (ipcon.socketMutex) {
 						// don't close the socket if it got disconnected or
 						// reconnected in the meantime
 						if (ipcon.socket != null && ipcon.socketID == cqo.socketID) {
 							ipcon.disconnectProbeThread.shutdown();
+
 							try {
 								ipcon.disconnectProbeThread.join();
-							} catch(InterruptedException e) {
+							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
 
@@ -169,25 +173,25 @@ class CallbackThread extends Thread {
 
 				try {
 					Thread.sleep(100);
-				} catch(InterruptedException e) {
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
 				ipcon.callDisconnectedListeners(cqo.parameter);
 
-				if(cqo.parameter != IPConnectionBase.DISCONNECT_REASON_REQUEST &&
-				   ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
+				if (cqo.parameter != IPConnectionBase.DISCONNECT_REASON_REQUEST &&
+				    ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
 					ipcon.autoReconnectPending = true;
 					boolean retry = true;
 
-					while(retry) {
+					while (retry) {
 						retry = false;
 
-						synchronized(ipcon.socketMutex) {
-							if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
+						synchronized (ipcon.socketMutex) {
+							if (ipcon.autoReconnectAllowed && ipcon.socket == null) {
 								try {
 									ipcon.connectUnlocked(true);
-								} catch(Exception e) {
+								} catch (Exception e) {
 									retry = true;
 								}
 							} else {
@@ -195,10 +199,10 @@ class CallbackThread extends Thread {
 							}
 						}
 
-						if(retry) {
+						if (retry) {
 							try {
 								Thread.sleep(100);
-							} catch(InterruptedException e) {
+							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
 						}
@@ -212,22 +216,22 @@ class CallbackThread extends Thread {
 	void dispatchPacket(IPConnectionBase.CallbackQueueObject cqo) {
 		byte functionID = IPConnectionBase.getFunctionIDFromData(cqo.packet);
 
-		if(functionID == IPConnectionBase.CALLBACK_ENUMERATE) {
-			if(ipcon.hasEnumerateListeners()) {
+		if (functionID == IPConnectionBase.CALLBACK_ENUMERATE) {
+			if (ipcon.hasEnumerateListeners()) {
 				int length = IPConnectionBase.getLengthFromData(cqo.packet);
 				ByteBuffer bb = ByteBuffer.wrap(cqo.packet, 8, length - 8);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				String uid_str = "";
-				for(int i = 0; i < 8; i++) {
+				for (int i = 0; i < 8; i++) {
 					char c = (char)bb.get();
-					if(c != '\0') {
+					if (c != '\0') {
 						uid_str += c;
 					}
 				}
 				String connectedUid_str = "";
-				for(int i = 0; i < 8; i++) {
+				for (int i = 0; i < 8; i++) {
 					char c = (char)bb.get();
-					if(c != '\0') {
+					if (c != '\0') {
 						connectedUid_str += c;
 					}
 				}
@@ -250,28 +254,30 @@ class CallbackThread extends Thread {
 		} else {
 			long uid = IPConnectionBase.getUIDFromData(cqo.packet);
 			Device device = ipcon.devices.get(uid);
+
 			ipcon.callDeviceListener(device, functionID, cqo.packet);
 		}
 	}
 
 	@Override
 	public void run() {
-		while(true) {
+		while (true) {
 			IPConnectionBase.CallbackQueueObject cqo = null;
+
 			try {
 				cqo = callbackQueue.take();
-			} catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 				continue;
 			}
 
-			if(cqo == null) {
+			if (cqo == null) {
 				continue;
 			}
 
 			// FIXME: cannot lock callback mutex here because this can
 			//        deadlock due to an ordering problem with the socket mutex
-			/*synchronized(mutex)*/ {
+			/*synchronized (mutex)*/ {
 				switch(cqo.kind) {
 					case IPConnectionBase.QUEUE_EXIT:
 						return;
@@ -314,7 +320,7 @@ class DisconnectProbeThread extends Thread {
 	void shutdown() {
 		try {
 			queue.put(new Boolean(true));
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -336,14 +342,14 @@ class DisconnectProbeThread extends Thread {
 
 			if (ipcon.disconnectProbeFlag) {
 				try {
-					synchronized(ipcon.socketSendMutex) {
+					synchronized (ipcon.socketSendMutex) {
 						ipcon.out.write(request);
 					}
-				} catch(java.net.SocketException e) {
+				} catch (java.net.SocketException e) {
 					ipcon.handleDisconnectByPeer(IPConnectionBase.DISCONNECT_REASON_ERROR,
 					                             ipcon.socketID, false);
 					break;
-				} catch(Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else {
@@ -457,7 +463,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		CallbackThread callbackThreadTmp = null;
 		LinkedBlockingQueue<CallbackQueueObject> callbackQueueTmp = null;
 
-		synchronized(socketMutex) {
+		synchronized (socketMutex) {
 			if (socket != null) {
 				throw new AlreadyConnectedException("Already connected to " + this.host + ":" + this.port);
 			}
@@ -467,7 +473,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 			try {
 				connectUnlocked(false);
-			} catch(NetworkException e) {
+			} catch (NetworkException e) {
 				exception = e;
 
 				callbackThreadTmp = callbackThread;
@@ -481,14 +487,14 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		if (exception != null) {
 			try {
 				callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0, (short)0, 0, null));
-			} catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 
-			if(Thread.currentThread() != callbackThreadTmp) {
+			if (Thread.currentThread() != callbackThreadTmp) {
 				try {
 					callbackThreadTmp.join();
-				} catch(InterruptedException e) {
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
@@ -499,7 +505,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 	// NOTE: Assumes that socket is null and socketMutex is locked
 	void connectUnlocked(boolean isAutoReconnect) throws NetworkException {
-		if(callbackThread == null) {
+		if (callbackThread == null) {
 			callbackQueue = new LinkedBlockingQueue<CallbackQueueObject>();
 			callbackThread = new CallbackThread(this, callbackQueue);
 			callbackThread.start();
@@ -509,13 +515,13 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 		try {
 			tmpSocket = new Socket(host, port);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new NetworkException("Could not create socket: " + e.getMessage(), e);
 		}
 
 		try {
 			tmpSocket.setTcpNoDelay(true);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new NetworkException("Could not enable TCP-No-Delay socket option: " + e.getMessage(), e);
 		}
 
@@ -524,19 +530,19 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 		try {
 			tmpIn = tmpSocket.getInputStream();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new NetworkException("Could not get socket input stream: " + e.getMessage(), e);
 		}
 
 		try {
 			tmpOut = tmpSocket.getOutputStream();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new NetworkException("Could not get socket output stream: " + e.getMessage(), e);
 		}
 
 		try {
 			tmpOut.flush();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new NetworkException("Could not flush socket output stream: " + e.getMessage(), e);
 		}
 
@@ -560,14 +566,15 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		autoReconnectPending = false;
 
 		short connectReason = IPConnectionBase.CONNECT_REASON_REQUEST;
-		if(isAutoReconnect) {
+
+		if (isAutoReconnect) {
 			connectReason = CONNECT_REASON_AUTO_RECONNECT;
 		}
 
 		try {
 			callbackQueue.put(new CallbackQueueObject(QUEUE_META, CALLBACK_CONNECTED,
 			                                          connectReason, 0, null));
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -581,7 +588,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	public void close() throws java.io.IOException {
 		try {
 			disconnect();
-		} catch(NotConnectedException e) {
+		} catch (NotConnectedException e) {
 			throw new java.io.IOException(e.getMessage(), e);
 		}
 	}
@@ -594,13 +601,13 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		CallbackThread callbackThreadTmp = null;
 		LinkedBlockingQueue<CallbackQueueObject> callbackQueueTmp = null;
 
-		synchronized(socketMutex) {
+		synchronized (socketMutex) {
 			autoReconnectAllowed = false;
 
-			if(autoReconnectPending) {
+			if (autoReconnectPending) {
 				autoReconnectPending = false;
 			} else {
-				if(socket == null) {
+				if (socket == null) {
 					throw new NotConnectedException();
 				}
 
@@ -617,20 +624,20 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		try {
 			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
 			                                             DISCONNECT_REASON_REQUEST, 0, null));
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		try {
 			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0, (short)0, 0, null));
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		if(Thread.currentThread() != callbackThreadTmp) {
+		if (Thread.currentThread() != callbackThreadTmp) {
 			try {
 				callbackThreadTmp.join();
-			} catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -641,7 +648,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		disconnectProbeThread.shutdown();
 		try {
 			disconnectProbeThread.join();
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
@@ -654,10 +661,10 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 		closeSocket();
 
-		if(receiveThread != null) {
+		if (receiveThread != null) {
 			try {
 				receiveThread.join();
-			} catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 
@@ -677,7 +684,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	 * http://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
 	 */
 	public void authenticate(String secret) throws TimeoutException, NotConnectedException, CryptoException {
-		synchronized(authenticationMutex) {
+		synchronized (authenticationMutex) {
 			if (nextAuthenticationNonce == 0) {
 				byte[] seed = new SecureRandom().generateSeed(4);
 				ByteBuffer bb = ByteBuffer.wrap(seed, 0, 4);
@@ -727,11 +734,11 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	 *   connect.
 	 */
 	public short getConnectionState() {
-		if(socket != null) {
+		if (socket != null) {
 			return CONNECTION_STATE_CONNECTED;
 		}
 
-		if(autoReconnectPending) {
+		if (autoReconnectPending) {
 			return CONNECTION_STATE_PENDING;
 		}
 
@@ -748,7 +755,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	public void setAutoReconnect(boolean autoReconnect) {
 		this.autoReconnect = autoReconnect;
 
-		if(!autoReconnect) {
+		if (!autoReconnect) {
 			autoReconnectAllowed = false;
 		}
 	}
@@ -767,7 +774,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	 * Default timeout is 2500.
 	 */
 	public void setTimeout(int timeout) {
-		if(timeout < 0) {
+		if (timeout < 0) {
 			throw new IllegalArgumentException("Timeout cannot be negative");
 		}
 
@@ -813,7 +820,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 	protected abstract void callDisconnectedListeners(short disconnectReason);
 
-	protected abstract void callDeviceListener(Device device, byte functionID, byte[] data);
+	protected abstract void callDeviceListener(Device device, byte functionID, byte[] packet);
 
 	void handleResponse(byte[] packet) {
 		byte functionID = getFunctionIDFromData(packet);
@@ -821,26 +828,26 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 		disconnectProbeFlag = false;
 
-		if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE) {
+		if (sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE) {
 			handleEnumerate(packet);
 			return;
 		}
 
 		long uid = getUIDFromData(packet);
 
-		if(!devices.containsKey(uid)) {
+		if (!devices.containsKey(uid)) {
 			// Message for an unknown device, ignoring it
 			return;
 		}
 
 		Device device = devices.get(uid);
 
-		if(sequenceNumber == 0) {
-			if(device.callbacks[functionID] != null) {
+		if (sequenceNumber == 0) {
+			if (device.callbacks[functionID] != null) {
 				try {
 					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
 					                                          (short)0, 0, packet));
-				} catch(InterruptedException e) {
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
@@ -848,13 +855,14 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 			return;
 		}
 
-		if(functionID == device.expectedResponseFunctionID &&
-		   sequenceNumber == device.expectedResponseSequenceNumber) {
+		if (functionID == device.expectedResponseFunctionID &&
+		    sequenceNumber == device.expectedResponseSequenceNumber) {
 			try {
 				device.responseQueue.put(packet);
-			} catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+
 			return;
 		}
 
@@ -865,40 +873,40 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	void handleDisconnectByPeer(short disconnectReason, long socketID, boolean disconnectImmediately) {
 		autoReconnectAllowed = true;
 
-		if(disconnectImmediately) {
+		if (disconnectImmediately) {
 			disconnectUnlocked();
 		}
 
 		try {
 			callbackQueue.put(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
 			                                          disconnectReason, socketID, null));
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
 	// NOTE: Assumes that socketMutex is locked
 	void closeSocket() {
-		if(in != null) {
+		if (in != null) {
 			try {
 				in.close();
-			} catch(java.io.IOException e) {
+			} catch (java.io.IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-		if(out != null) {
+		if (out != null) {
 			try {
 				out.close();
-			} catch(java.io.IOException e) {
+			} catch (java.io.IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-		if(socket != null) {
+		if (socket != null) {
 			try {
 				socket.close();
-			} catch(java.io.IOException e) {
+			} catch (java.io.IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -937,7 +945,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		StringBuilder builder = new StringBuilder(length);
 		int i = 0;
 
-		while(i < length) {
+		while (i < length) {
 			char c = (char)buffer.get();
 			++i;
 
@@ -948,7 +956,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 			builder.append(c);
 		}
 
-		while(i < length) {
+		while (i < length) {
 			buffer.get();
 			++i;
 		}
@@ -969,19 +977,19 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	}
 
 	void sendRequest(byte[] request) throws NotConnectedException {
-		synchronized(socketMutex) {
+		synchronized (socketMutex) {
 			if (getConnectionState() != CONNECTION_STATE_CONNECTED) {
 				throw new NotConnectedException();
 			}
 
 			try {
-				synchronized(socketSendMutex) {
+				synchronized (socketSendMutex) {
 					out.write(request);
 				}
-			} catch(java.net.SocketException e) {
+			} catch (java.net.SocketException e) {
 				handleDisconnectByPeer(DISCONNECT_REASON_ERROR, 0, true);
 				throw new NotConnectedException("Disconnected during send operartion: " + e.getMessage(), e);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
@@ -990,7 +998,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	}
 
 	private void handleEnumerate(byte[] packet) {
-		if(hasEnumerateListeners()) {
+		if (hasEnumerateListeners()) {
 			try {
 				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
 				                                          (short)0, 0, packet));
@@ -1001,7 +1009,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	}
 
 	byte getNextSequenceNumber() {
-		synchronized(sequenceNumberMutex) {
+		synchronized (sequenceNumberMutex) {
 			int sequenceNumber = nextSequenceNumber + 1;
 			nextSequenceNumber = sequenceNumber % 15;
 			return (byte)sequenceNumber;
@@ -1038,7 +1046,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	static String base58Encode(long value) {
 		String encoded = "";
 
-		while(value >= 58) {
+		while (value >= 58) {
 			long div = value / 58;
 			int mod = (int)(value % 58);
 			encoded = BASE58.charAt(mod) + encoded;
@@ -1052,10 +1060,10 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		long value = 0;
 		long columnMultiplier = 1;
 
-		for(int i = encoded.length() - 1; i >= 0; i--) {
+		for (int i = encoded.length() - 1; i >= 0; i--) {
 			int column = BASE58.indexOf(encoded.charAt(i));
 
-			if(column < 0) {
+			if (column < 0) {
 				throw new IllegalArgumentException("Invalid Base58 value: " + encoded);
 			}
 

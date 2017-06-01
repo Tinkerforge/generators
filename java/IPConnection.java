@@ -94,7 +94,7 @@ public class IPConnection extends IPConnectionBase {
 	public void addListener(Object object) {
 		boolean knownListener = false;
 
-		if(object instanceof EnumerateListener) {
+		if (object instanceof EnumerateListener) {
 			knownListener = true;
 
 			if (!listenerEnumerate.contains((EnumerateListener)object)) {
@@ -102,7 +102,7 @@ public class IPConnection extends IPConnectionBase {
 			}
 		}
 
-		if(object instanceof ConnectedListener) {
+		if (object instanceof ConnectedListener) {
 			knownListener = true;
 
 			if (!listenerConnected.contains((ConnectedListener)object)) {
@@ -110,7 +110,7 @@ public class IPConnection extends IPConnectionBase {
 			}
 		}
 
-		if(object instanceof DisconnectedListener) {
+		if (object instanceof DisconnectedListener) {
 			knownListener = true;
 
 			if (!listenerDisconnected.contains((DisconnectedListener)object)) {
@@ -118,7 +118,7 @@ public class IPConnection extends IPConnectionBase {
 			}
 		}
 
-		if(!knownListener) {
+		if (!knownListener) {
 			throw new IllegalArgumentException("Unknown listener type");
 		}
 	}
@@ -127,7 +127,7 @@ public class IPConnection extends IPConnectionBase {
 	protected void callEnumerateListeners(String uid, String connectedUid, char position,
 	                                      short[] hardwareVersion, short[] firmwareVersion,
 	                                      int deviceIdentifier, short enumerationType) {
-		for(IPConnection.EnumerateListener listener: listenerEnumerate) {
+		for (IPConnection.EnumerateListener listener: listenerEnumerate) {
 			listener.enumerate(uid, connectedUid, position,
 			                   hardwareVersion, firmwareVersion,
 			                   deviceIdentifier, enumerationType);
@@ -141,14 +141,14 @@ public class IPConnection extends IPConnectionBase {
 
 	@Override
 	protected void callConnectedListeners(short connectReason) {
-		for(IPConnection.ConnectedListener listener: listenerConnected) {
+		for (IPConnection.ConnectedListener listener: listenerConnected) {
 			listener.connected(connectReason);
 		}
 	}
 
 	@Override
 	protected void callDisconnectedListeners(short disconnectReason) {
-		for(IPConnection.DisconnectedListener listener: listenerDisconnected) {
+		for (IPConnection.DisconnectedListener listener: listenerDisconnected) {
 			listener.disconnected(disconnectReason);
 		}
 	}
