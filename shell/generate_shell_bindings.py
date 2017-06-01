@@ -64,9 +64,9 @@ class {0}(Device):"""
             if len(packet.get_elements(direction='out')) > 0:
                 flag = 1 #'Device.RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                flag = 3 #'Device.RESPONSE_EXPECTED_TRUE'
+                flag = 2 #'Device.RESPONSE_EXPECTED_TRUE'
             else:
-                flag = 4 #'Device.RESPONSE_EXPECTED_FALSE'
+                flag = 3 #'Device.RESPONSE_EXPECTED_FALSE'
 
             response_expected.append('re[{0}] = {1}'.format(packet.get_function_id(), flag))
 

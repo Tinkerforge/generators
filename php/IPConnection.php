@@ -179,9 +179,8 @@ abstract class Device
      */
     const RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
     const RESPONSE_EXPECTED_ALWAYS_TRUE = 1; // getter
-    const RESPONSE_EXPECTED_ALWAYS_FALSE = 2; // callback
-    const RESPONSE_EXPECTED_TRUE = 3; // setter
-    const RESPONSE_EXPECTED_FALSE = 4; // setter, default
+    const RESPONSE_EXPECTED_TRUE = 2; // setter
+    const RESPONSE_EXPECTED_FALSE = 3; // setter, default
 
     public $uid = '0'; # Base10
     public $apiVersion = array(0, 0, 0);
@@ -234,9 +233,6 @@ abstract class Device
         for ($i = 0; $i < 256; ++$i) {
             $this->responseExpected[$i] = self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
         }
-
-        $this->responseExpected[IPConnection::FUNCTION_ENUMERATE] = self::RESPONSE_EXPECTED_ALWAYS_FALSE;
-        $this->responseExpected[IPConnection::CALLBACK_ENUMERATE] = self::RESPONSE_EXPECTED_ALWAYS_FALSE;
 
         $ipcon->devices[$this->uid] = $this; // FIXME: use a weakref here
     }
@@ -323,8 +319,7 @@ abstract class Device
             throw new \InvalidArgumentException('Invalid function ID ' . $functionID);
         }
 
-        if ($flag === self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
-            $flag === self::RESPONSE_EXPECTED_ALWAYS_FALSE) {
+        if ($flag === self::RESPONSE_EXPECTED_ALWAYS_TRUE) {
             throw new \InvalidArgumentException('Response Expected flag cannot be changed for function ID ' . $functionID);
         }
 

@@ -30,11 +30,9 @@ use Tinkerforge::IPConnection;
 use Tinkerforge::Error;
 
 # constants
-use constant _RESPONSE_EXPECTED_INVALID_FUNCTION_ID => 0;
-use constant _RESPONSE_EXPECTED_ALWAYS_TRUE => 1; # GETTER
-use constant _RESPONSE_EXPECTED_ALWAYS_FALSE => 2; # CALLBACK
-use constant _RESPONSE_EXPECTED_TRUE => 3; # SETTER
-use constant _RESPONSE_EXPECTED_FALSE => 4; # SETTER; DEFAULT
+use constant _RESPONSE_EXPECTED_ALWAYS_TRUE => 1; # getter
+use constant _RESPONSE_EXPECTED_TRUE => 2; # setter
+use constant _RESPONSE_EXPECTED_FALSE => 3; # setter,default
 
 # the constructor
 sub _new
@@ -51,8 +49,7 @@ sub _new
 	                                 response_queue => Thread::Queue->new(),
 	                                 device_lock_ref => undef,
 	                                 request_lock_ref => undef,
-	                                 response_expected => shared_clone({Tinkerforge::IPConnection->_FUNCTION_ENUMERATE => &_RESPONSE_EXPECTED_ALWAYS_FALSE,
-	                                                                    Tinkerforge::IPConnection->CALLBACK_ENUMERATE => &_RESPONSE_EXPECTED_ALWAYS_FALSE})});
+	                                 response_expected => shared_clone({})});
 
 	bless($self, $class);
 

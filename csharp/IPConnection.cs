@@ -1128,10 +1128,9 @@ namespace Tinkerforge
 		internal enum ResponseExpectedFlag
 		{
 			INVALID_FUNCTION_ID = 0,
-			ALWAYS_TRUE = 1,
-			ALWAYS_FALSE = 2,
-			TRUE = 3,
-			FALSE = 4
+			ALWAYS_TRUE = 1, // getter
+			TRUE = 2, // setter
+			FALSE = 3 // setter, default
 		}
 
 		internal delegate void CallbackWrapper(byte[] data);
@@ -1149,9 +1148,6 @@ namespace Tinkerforge
 			{
 				responseExpected[i] = ResponseExpectedFlag.INVALID_FUNCTION_ID;
 			}
-
-			responseExpected[IPConnection.FUNCTION_ENUMERATE] = ResponseExpectedFlag.ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_ENUMERATE] = ResponseExpectedFlag.ALWAYS_FALSE;
 
 			ipcon.AddDevice(this);
 		}
@@ -1219,8 +1215,7 @@ namespace Tinkerforge
 				throw new ArgumentException("Invalid function ID " + functionId);
 			}
 
-			if (flag == ResponseExpectedFlag.ALWAYS_TRUE ||
-			    flag == ResponseExpectedFlag.ALWAYS_FALSE)
+			if (flag == ResponseExpectedFlag.ALWAYS_TRUE)
 			{
 				throw new ArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
 			}

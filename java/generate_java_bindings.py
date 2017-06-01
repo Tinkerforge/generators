@@ -262,23 +262,17 @@ public class {0} extends Device {{
 
     def get_java_response_expected(self):
         response_expected = ''
-        template = "\t\tresponseExpected[IPConnection.unsignedByte({0})] = {1}\n"
+        template = "\t\tresponseExpected[IPConnection.unsignedByte(FUNCTION_{0})] = {1}\n"
 
         for packet in self.get_packets('function'):
-            name_upper = 'FUNCTION_' + packet.get_upper_case_name()
-            setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
-
             if len(packet.get_elements(direction='out')) > 0:
-                setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
+                flag = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                setto = 'RESPONSE_EXPECTED_FLAG_TRUE;'
+                flag = 'RESPONSE_EXPECTED_FLAG_TRUE;'
+            else:
+                flag = 'RESPONSE_EXPECTED_FLAG_FALSE;'
 
-            response_expected += template.format(name_upper, setto)
-
-        for packet in self.get_packets('callback'):
-            name_upper = 'CALLBACK_' + packet.get_upper_case_name()
-            setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;'
-            response_expected += template.format(name_upper, setto)
+            response_expected += template.format(packet.get_upper_case_name(), flag)
 
         return response_expected
 

@@ -179,22 +179,16 @@ sub new
 """
         response_expecteds = []
 
-        for packet in self.get_packets():
-            if packet.get_type() == 'callback':
-                prefix = 'CALLBACK_'
-                flag = '_RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements(direction='out')) > 0:
-                prefix = 'FUNCTION_'
+        for packet in self.get_packets('function'):
+            if len(packet.get_elements(direction='out')) > 0:
                 flag = '_RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                prefix = 'FUNCTION_'
                 flag = '_RESPONSE_EXPECTED_TRUE'
             else:
-                prefix = 'FUNCTION_'
                 flag = '_RESPONSE_EXPECTED_FALSE'
 
-            response_expecteds.append('\t$self->{{response_expected}}->{{&{0}{1}}} = Tinkerforge::Device->{2};'
-                                      .format(prefix, packet.get_upper_case_name(), flag))
+            response_expecteds.append('\t$self->{{response_expected}}->{{&FUNCTION_{0}}} = Tinkerforge::Device->{1};'
+                                      .format(packet.get_upper_case_name(), flag))
 
         callbacks = []
 

@@ -321,24 +321,16 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 
         response_expected = ''
 
-        for packet in self.get_packets():
-            if packet.get_type() == 'callback':
-                prefix = 'CALLBACK'
-                flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements(direction='out')) > 0:
-                prefix = 'FUNCTION'
+        for packet in self.get_packets('function'):
+            if len(packet.get_elements(direction='out')) > 0:
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                prefix = 'FUNCTION'
                 flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
             else:
-                prefix = 'FUNCTION'
                 flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
-            response_expected += '\tdevice_p->response_expected[{1}_{2}_{3}] = {4};\n' \
-                                 .format(self.get_underscore_name(),
-                                         self.get_upper_case_name(),
-                                         prefix,
+            response_expected += '\tdevice_p->response_expected[{0}_FUNCTION_{1}] = {2};\n' \
+                                 .format(self.get_upper_case_name(),
                                          packet.get_upper_case_name(),
                                          flag)
 
@@ -793,8 +785,8 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
             return '\n'
 
         template = """
-void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data) {{
-	device_register_callback({0}->p, id, callback, user_data);
+void {0}_register_callback({1} *{0}, int16_t callback_id, void *function, void *user_data) {{
+	device_register_callback({0}->p, callback_id, function, user_data);
 }}
 """
         return template.format(self.get_underscore_name(), self.get_camel_case_name())
@@ -1187,10 +1179,10 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
 /**
  * \ingroup {2}{1}
  *
- * Registers a callback with ID \c id to the function \c callback. The
- * \c user_data will be given as a parameter of the callback.
+ * Registers the \c function with the given \c callback_id. The \c user_data
+ * will be given as a parameter of the function.
  */
-void {0}_register_callback({1} *{0}, int16_t id, void *callback, void *user_data);
+void {0}_register_callback({1} *{0}, int16_t callback_id, void *function, void *user_data);
 """
         return template.format(self.get_underscore_name(), self.get_camel_case_name(), self.get_camel_case_category())
 

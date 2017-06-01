@@ -257,7 +257,6 @@ struct _DevicePrivate {
 enum {
 	DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0,
 	DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE, // getter
-	DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE, // callback
 	DEVICE_RESPONSE_EXPECTED_TRUE, // setter
 	DEVICE_RESPONSE_EXPECTED_FALSE // setter, default
 };
@@ -294,8 +293,8 @@ int device_set_response_expected_all(DevicePrivate *device_p, bool response_expe
 /**
  * \internal
  */
-void device_register_callback(DevicePrivate *device_p, int16_t id, void *callback,
-                              void *user_data);
+void device_register_callback(DevicePrivate *device_p, int16_t callback_id,
+                              void *function, void *user_data);
 
 /**
  * \internal
@@ -567,10 +566,11 @@ void ipcon_unwait(IPConnection *ipcon);
 /**
  * \ingroup IPConnection
  *
- * Registers a callback for a given ID.
+ * Registers the \c function with the given \c callback_id. The \c user_data
+ * will be given as a parameter of the function.
  */
-void ipcon_register_callback(IPConnection *ipcon, int16_t id,
-                             void *callback, void *user_data);
+void ipcon_register_callback(IPConnection *ipcon, int16_t callback_id,
+                             void *function, void *user_data);
 
 #ifdef IPCON_EXPOSE_INTERNALS
 

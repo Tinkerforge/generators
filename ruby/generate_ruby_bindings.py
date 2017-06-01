@@ -117,22 +117,16 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     def get_ruby_response_expected(self):
         response_expected = ''
 
-        for packet in self.get_packets():
-            if packet.get_type() == 'callback':
-                prefix = 'CALLBACK'
-                flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements(direction='out')) > 0:
-                prefix = 'FUNCTION'
+        for packet in self.get_packets('function'):
+            if len(packet.get_elements(direction='out')) > 0:
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                prefix = 'FUNCTION'
                 flag = 'RESPONSE_EXPECTED_TRUE'
             else:
-                prefix = 'FUNCTION'
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
-            response_expected += '      @response_expected[{0}_{1}] = {2}\n' \
-                                 .format(prefix, packet.get_upper_case_name(), flag)
+            response_expected += '      @response_expected[FUNCTION_{0}] = {1}\n' \
+                                 .format(packet.get_upper_case_name(), flag)
 
         return response_expected + '\n'
 

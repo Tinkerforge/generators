@@ -6,11 +6,9 @@ with or without modification, are permitted. See the Creative
 Commons Zero (CC0 1.0) License for more details.
 */
 
-Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
-Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1; // Getter
-Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2; // Callback
-Device.RESPONSE_EXPECTED_TRUE = 3; // Setter
-Device.RESPONSE_EXPECTED_FALSE = 4; // Setter, default
+Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1; // getter
+Device.RESPONSE_EXPECTED_TRUE = 2; // setter
+Device.RESPONSE_EXPECTED_FALSE = 3; // setter, default
 Device.ERROR_INVALID_FUNCTION_ID = 21;
 
 function base58Decode(str) {
@@ -32,6 +30,8 @@ function base58Decode(str) {
 function Device(deviceRegistering, uid, ipcon) {
     if (deviceRegistering !== undefined && uid !== undefined && ipcon !== undefined) {
         this.uid = base58Decode(uid);
+        this.responseExpected = {};
+        this.callbackFormats = {};
         this.registeredCallbacks = {};
         this.ipcon = ipcon;
         this.deviceOID = 0;

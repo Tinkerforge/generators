@@ -160,27 +160,18 @@ class {0}(Device):
 """
         response_expected = ''
 
-        for packet in self.get_packets():
-            if packet.get_type() == 'callback':
-                prefix = 'CALLBACK_'
-                flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements(direction='out')) > 0:
-                prefix = 'FUNCTION_'
+        for packet in self.get_packets('function'):
+            if len(packet.get_elements(direction='out')) > 0:
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_TRUE'
             else:
-                prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
-            response_expected += '        self.response_expected[{0}.{1}{2}] = {0}.{3}\n' \
-                                 .format(self.get_python_class_name(), prefix, packet.get_upper_case_name(), flag)
+            response_expected += '        self.response_expected[{0}.FUNCTION_{1}] = {0}.{2}\n' \
+                                 .format(self.get_python_class_name(), packet.get_upper_case_name(), flag)
 
-        if len(response_expected) > 0:
-            response_expected += '\n'
-
-        return template.format(*self.get_api_version()) + response_expected
+        return template.format(*self.get_api_version()) + common.wrap_non_empty('', response_expected, '\n')
 
     def get_python_callback_formats(self):
         callback_formats = ''

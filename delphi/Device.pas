@@ -17,10 +17,9 @@ uses
 
 const
   DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
-  DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE = 1; { Getter }
-  DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE = 2; { Callback }
-  DEVICE_RESPONSE_EXPECTED_TRUE = 3; { Setter }
-  DEVICE_RESPONSE_EXPECTED_FALSE = 4; { Setter, default }
+  DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE = 1; { getter }
+  DEVICE_RESPONSE_EXPECTED_TRUE = 2; { setter }
+  DEVICE_RESPONSE_EXPECTED_FALSE = 3; { setter, default }
 
 type
   { TDevice }
@@ -157,8 +156,6 @@ begin
   for i := 0 to Length(responseExpected) - 1 do begin
     responseExpected[i] := DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
   end;
-  responseExpected[IPCON_FUNCTION_ENUMERATE] := DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
-  responseExpected[IPCON_CALLBACK_ENUMERATE] := DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
   (ipcon as TIPConnection).devices.Insert(uid_, self);
 end;
 
@@ -198,8 +195,7 @@ begin
   if (flag = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID) then begin
     raise Exception.Create('Invalid function ID ' + IntToStr(functionID));
   end;
-  if ((flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE) or
-      (flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE)) then begin
+  if (flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE) then begin
     raise Exception.Create('Response Expected flag cannot be changed for function ID ' + IntToStr(functionID));
   end;
   if (responseExpected_) then begin

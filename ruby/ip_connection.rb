@@ -199,9 +199,8 @@ module Tinkerforge
   class Device
     RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
     RESPONSE_EXPECTED_ALWAYS_TRUE = 1 # getter
-    RESPONSE_EXPECTED_ALWAYS_FALSE = 2 # callback
-    RESPONSE_EXPECTED_TRUE = 3 # setter
-    RESPONSE_EXPECTED_FALSE = 4 # setter, default
+    RESPONSE_EXPECTED_TRUE = 2 # setter
+    RESPONSE_EXPECTED_FALSE = 3 # setter, default
 
     attr_accessor :uid
     attr_accessor :expected_response_function_id
@@ -234,8 +233,6 @@ module Tinkerforge
       @request_mutex = Mutex.new
 
       @response_expected = Array.new(256, RESPONSE_EXPECTED_INVALID_FUNCTION_ID)
-      @response_expected[IPConnection::FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
-      @response_expected[IPConnection::CALLBACK_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
 
       @expected_response_function_id = 0
       @expected_response_sequence_number = 0
@@ -315,8 +312,7 @@ module Tinkerforge
         raise ArgumentError, "Invalid function ID #{function_id}"
       end
 
-      if flag == RESPONSE_EXPECTED_ALWAYS_TRUE or \
-         flag == RESPONSE_EXPECTED_ALWAYS_FALSE
+      if flag == RESPONSE_EXPECTED_ALWAYS_TRUE
         raise ArgumentError, "Response Expected flag cannot be changed for function ID #{function_id}"
       end
 

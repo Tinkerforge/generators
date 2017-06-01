@@ -158,19 +158,19 @@ class CDocDevice(common.Device):
 
         register_str = {
         'en': """
-.. c:function:: void {1}_register_callback({2} *{1}, uint8_t id, void *callback, void *user_data)
+.. c:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
 
- Registers a callback with ID ``id`` to the function ``callback``. The
- ``user_data`` will be given as a parameter of the callback.
+ Registers the ``function`` with the given ``callback_id``. The ``user_data``
+ will be given as parameter to the function.
 
  The available IDs with corresponding function signatures are listed
  :ref:`below <{0}_c_callbacks>`.
 """,
         'de': """
-.. c:function:: void {1}_register_callback({2} *{1}, uint8_t id, void *callback, void *user_data)
+.. c:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
 
- Registriert einen Callback mit der ID ``id`` mit der Funktion ``callback``.
- Der Parameter ``user_data`` wird bei jedem Callback wieder mit übergeben.
+ Registriert die ``function`` für die gegebene ``callback_id``. Der Parameter
+ ``user_data`` wird der Funktion mit übergeben.
 
  Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
  :ref:`unten <{0}_c_callbacks>` zu finden.

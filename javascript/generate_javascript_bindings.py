@@ -80,8 +80,6 @@ var Device = require('./Device');
 	*/
 	Device.call(this, this, uid, ipcon);
 	{2}.prototype = Object.create(Device);
-	this.responseExpected = {{}};
-	this.callbackFormats = {{}};
 	this.APIVersion = [{3}, {4}, {5}];\n"""
 
         return template.format(self.get_javascript_class_name(),
@@ -92,22 +90,16 @@ var Device = require('./Device');
     def get_javascript_response_expecteds(self):
         response_expected = ''
 
-        for packet in self.get_packets():
-            if packet.get_type() == 'callback':
-                prefix = 'CALLBACK_'
-                flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements(direction='out')) > 0:
-                prefix = 'FUNCTION_'
+        for packet in self.get_packets('function'):
+            if len(packet.get_elements(direction='out')) > 0:
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_TRUE'
             else:
-                prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
-            response_expected += '\tthis.responseExpected[{0}.{1}{2}] = Device.{3};\n' \
-                                 .format(self.get_javascript_class_name(), prefix, packet.get_upper_case_name(), flag)
+            response_expected += '\tthis.responseExpected[{0}.FUNCTION_{1}] = Device.{2};\n' \
+                                 .format(self.get_javascript_class_name(), packet.get_upper_case_name(), flag)
 
         return response_expected
 

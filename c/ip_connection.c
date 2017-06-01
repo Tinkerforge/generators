@@ -1232,9 +1232,6 @@ void device_create(Device *device, const char *uid_str,
 		device_p->response_expected[i] = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
 	}
 
-	device_p->response_expected[IPCON_FUNCTION_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
-	device_p->response_expected[IPCON_CALLBACK_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
-
 	// stream
 	mutex_create(&device_p->stream_mutex);
 
@@ -1318,14 +1315,14 @@ int device_set_response_expected_all(DevicePrivate *device_p, bool response_expe
 	return E_OK;
 }
 
-void device_register_callback(DevicePrivate *device_p, int16_t id, void *callback,
-                              void *user_data) {
-	if (id == 0 || abs(id) >= DEVICE_NUM_FUNCTION_IDS) {
+void device_register_callback(DevicePrivate *device_p, int16_t callback_id,
+                              void *function, void *user_data) {
+	if (callback_id == 0 || abs(callback_id) >= DEVICE_NUM_FUNCTION_IDS) {
 		return;
 	}
 
-	device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + id] = callback;
-	device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + id] = user_data;
+	device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + callback_id] = function;
+	device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + callback_id] = user_data;
 }
 
 int device_get_api_version(DevicePrivate *device_p, uint8_t ret_api_version[3]) {
@@ -2315,16 +2312,16 @@ void ipcon_unwait(IPConnection *ipcon) {
 	semaphore_release(&ipcon->p->wait);
 }
 
-void ipcon_register_callback(IPConnection *ipcon, int16_t id, void *callback,
-                             void *user_data) {
+void ipcon_register_callback(IPConnection *ipcon, int16_t callback_id,
+                             void *function, void *user_data) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
 
-	if (id < 1 || id >= IPCON_NUM_CALLBACK_IDS) {
+	if (callback_id < 1 || callback_id >= IPCON_NUM_CALLBACK_IDS) {
 		return;
 	}
 
-	ipcon_p->registered_callbacks[id] = callback;
-	ipcon_p->registered_callback_user_data[id] = user_data;
+	ipcon_p->registered_callbacks[callback_id] = function;
+	ipcon_p->registered_callback_user_data[callback_id] = user_data;
 }
 
 int packet_header_create(PacketHeader *header, uint8_t length,

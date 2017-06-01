@@ -269,24 +269,17 @@ begin
 """
         response_expected = ''
 
-        for packet in self.get_packets():
-            if packet.get_type() == 'callback':
-                prefix = 'CALLBACK_'
-                flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE'
-            elif len(packet.get_elements(direction='out')) > 0:
-                prefix = 'FUNCTION_'
+        for packet in self.get_packets('function'):
+            if len(packet.get_elements(direction='out')) > 0:
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                prefix = 'FUNCTION_'
                 flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
             else:
-                prefix = 'FUNCTION_'
                 flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
-            response_expected += '  responseExpected[{0}_{1}_{2}{3}] := {4};\n' \
+            response_expected += '  responseExpected[{0}_{1}_FUNCTION_{2}] := {3};\n' \
                                  .format(self.get_upper_case_category(),
                                          self.get_upper_case_name(),
-                                         prefix,
                                          packet.get_upper_case_name(),
                                          flag)
 

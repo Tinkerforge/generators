@@ -26,10 +26,9 @@ public abstract class DeviceBase {
 	IPConnection.DeviceCallbackListener[] callbacks = new IPConnection.DeviceCallbackListener[256];
 
 	final static byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
-	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1;
-	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE = 2;
-	final static byte RESPONSE_EXPECTED_FLAG_TRUE = 3;
-	final static byte RESPONSE_EXPECTED_FLAG_FALSE = 4;
+	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1; // getter
+	final static byte RESPONSE_EXPECTED_FLAG_TRUE = 2; // setter
+	final static byte RESPONSE_EXPECTED_FLAG_FALSE = 3; // setter, default
 
 	public DeviceBase(String uid, IPConnection ipcon) {
 		long uidTmp = IPConnection.base58Decode(uid);
@@ -51,9 +50,6 @@ public abstract class DeviceBase {
 		for(int i = 0; i < responseExpected.length; i++) {
 			responseExpected[i] = RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID;
 		}
-
-		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
-		responseExpected[IPConnection.unsignedByte(IPConnection.CALLBACK_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 	}
 
 	/**
@@ -113,8 +109,7 @@ public abstract class DeviceBase {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
 		}
 
-		if(flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
-		   flag == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
+		if(flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE) {
 			throw new IllegalArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
 		}
 

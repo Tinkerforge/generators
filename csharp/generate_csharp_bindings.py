@@ -283,23 +283,18 @@ namespace Tinkerforge
 
     def get_csharp_response_expected(self):
         response_expected = '\n'
-        template = "\t\t\tresponseExpected[{0}] = {1}\n"
+        template = "\t\t\tresponseExpected[FUNCTION_{0}] = {1}\n"
 
         for packet in self.get_packets('function'):
-            name_upper = 'FUNCTION_' + packet.get_upper_case_name()
-            setto = 'ResponseExpectedFlag.FALSE;'
 
             if len(packet.get_elements(direction='out')) > 0:
-                setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
+                flag = 'ResponseExpectedFlag.ALWAYS_TRUE;'
             elif packet.get_doc_type() in ['ccf', 'llf']:
-                setto = 'ResponseExpectedFlag.TRUE;'
+                flag = 'ResponseExpectedFlag.TRUE;'
+            else:
+                flag = 'ResponseExpectedFlag.FALSE;'
 
-            response_expected += template.format(name_upper, setto)
-
-        for packet in self.get_packets('callback'):
-            name_upper = 'CALLBACK_' + packet.get_upper_case_name()
-            setto = 'ResponseExpectedFlag.ALWAYS_FALSE;'
-            response_expected += template.format(name_upper, setto)
+            response_expected += template.format(packet.get_upper_case_name(), flag)
 
         return response_expected + '\t\t}\n'
 
@@ -751,6 +746,7 @@ namespace Tinkerforge
 					{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 					Array.Copy({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}, {stream_headless_camel_case_name}ChunkLength);
+
 					{stream_headless_camel_case_name}CurrentLength = {stream_headless_camel_case_name}ChunkLength;
 
 					while ({stream_headless_camel_case_name}CurrentLength < {stream_headless_camel_case_name}Length)
@@ -766,6 +762,7 @@ namespace Tinkerforge
 						{stream_headless_camel_case_name}ChunkLength = Math.Min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 						Array.Copy({stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}, {stream_headless_camel_case_name}CurrentLength, {stream_headless_camel_case_name}ChunkLength);
+
 						{stream_headless_camel_case_name}CurrentLength += {stream_headless_camel_case_name}ChunkLength;
 					}}
 				}}
