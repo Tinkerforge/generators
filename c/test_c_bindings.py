@@ -40,7 +40,7 @@ class CExamplesTester(common.ExamplesTester):
 
     def test(self, cookie, src, is_extra_example):
         # skip OLED scribble example because mingw32 has no libgd package
-        if self.compiler == 'mingw32-gcc' and src.endswith('example_scribble.c'):
+        if self.compiler.startswith('mingw32-') and src.endswith('example_scribble.c'):
             self.execute(cookie, ['true'])
             return
 
@@ -63,7 +63,9 @@ class CExamplesTester(common.ExamplesTester):
         elif self.compiler == 'g++':
             args += ['/usr/bin/g++', '-std=c++98', '-pthread']
         elif self.compiler == 'mingw32-gcc':
-            args += ['/usr/bin/x86_64-w64-mingw32-gcc', '-Wno-error=return-type', '-lws2_32']
+            args += ['/usr/bin/x86_64-w64-mingw32-gcc', '-Wno-error=return-type']
+        elif self.compiler == 'mingw32-g++':
+            args += ['/usr/bin/x86_64-w64-mingw32-g++', '-Wno-error=return-type']
         elif self.compiler == 'scan-build clang':
             args += ['/usr/bin/scan-build', '/usr/bin/clang', '-std=c99', '-pthread']
         else:
@@ -88,7 +90,7 @@ class CExamplesTester(common.ExamplesTester):
 
         args.append(src)
 
-        if self.compiler == 'mingw32-gcc':
+        if self.compiler.startswith('mingw32-'):
             args += ['-lws2_32']
 
         if src.endswith('example_scribble.c'):
@@ -112,6 +114,11 @@ def run(path):
         return success
 
     success = CExamplesTester(path, 'mingw32-gcc', extra_examples).run()
+
+    if not success:
+        return success
+
+    success = CExamplesTester(path, 'mingw32-g++', extra_examples).run()
 
     if not success:
         return success
