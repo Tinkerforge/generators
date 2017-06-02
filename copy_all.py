@@ -8,6 +8,7 @@ import filecmp
 import socket
 import zipfile
 import tempfile
+import glob
 
 def text_files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
@@ -94,9 +95,8 @@ doc_copy = [('_Brick_', 'Bricks'),
 doc_path = 'doc/{0}/source/Software'
 labview_image_path = 'doc/en/source/Images/Screenshots/LabVIEW'
 
-print('')
-
 for lang in ['en', 'de']:
+    print('')
     print("Copying '{0}' documentation and examples:".format(lang))
 
     for t in doc_copy:
@@ -129,10 +129,9 @@ for lang in ['en', 'de']:
                         shutil.copy(src_file, dest_path)
                         print(' * {0}'.format(f))
 
-print('')
-
 if socket.gethostname() != 'tinkerforge.com':
     for lang in ['en', 'de']:
+        print('')
         print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
 
         src_file = os.path.join(path, 'javascript', 'Tinkerforge.js')
@@ -152,6 +151,7 @@ else:
     zf.close()
 
     for lang in ['en', 'de']:
+        print('')
         print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
 
         src_file = os.path.join(tmp_dir, 'browser', 'source', 'Tinkerforge.js')
@@ -165,6 +165,41 @@ else:
             print(' * Tinkerforge.js')
 
     shutil.rmtree(tmp_dir)
+
+if socket.gethostname() == 'tinkerforge.com':
+    print('')
+    print('Linking 3D models:')
+
+    for git in os.listdir(os.path.join(path, '..')):
+        if not git.endswith('-brick') and not git.endswith('-bricklet'):
+            continue
+
+        hardware_dir = os.path.normpath(os.path.join(path, '..', git, 'hardware'))
+
+        if not os.path.exists(hardware_dir):
+            continue
+
+        models = glob.glob(os.path.join(hardware_dir, '*.step')) + glob.glob(os.path.join(hardware_dir, '*.FCStd'))
+
+        if len(models) == 0:
+            continue
+
+        if git.endswith('-brick'):
+            category = 'bricks'
+        else:
+            category = 'bricklets'
+
+        device = '_'.join(git.split('-')[:-1])
+        target_dir = os.path.join('/srv/web/com.tinkerforge.download/downloads/3d', category, device)
+
+        if not os.path.exists(target_dir):
+            os.mkdir(target_dir)
+
+        for model in models:
+            name = os.path.split(model)[-1]
+
+            os.symlink(model, os.path.join(target_dir, name))
+            print(' * {0}'.format(name))
 
 print('')
 print('>>> Done <<<')
