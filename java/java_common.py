@@ -280,7 +280,10 @@ class JavaElement(common.Element):
             return 'new {0}[{1}]'.format(java_type, cardinality)
 
     def get_java_default_item_value(self):
-        value = JavaElement.java_default_item_values[self.get_type()]
+        if self.get_generator().is_octave() and self.get_type() == 'char':
+            value = '""';
+        else:
+            value = JavaElement.java_default_item_values[self.get_type()]
 
         if value == None:
             common.GeneratorError('Invalid array item type: ' + self.get_type())
