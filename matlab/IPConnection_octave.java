@@ -36,33 +36,30 @@ public class IPConnection extends IPConnectionBase {
 
 		// if not, work around the UnsatisfiedLinkError
 		if (!okay) {
-			String suffix = System.getProperty("os.name").toLowerCase() + "-" + System.getProperty("os.arch").toLowerCase();
+			String osName = System.getProperty("os.name").toLowerCase();
+			String osArch = System.getProperty("os.arch").toLowerCase();
+			String extension = ".so";
+
+			if (osName.startsWith("windows")) {
+				osName = "windows";
+				extension = ".dll";
+			} else if (osName.startsWith("mac")) {
+				osName = "macos";
+				extension = ".dynlib";
+			}
+
+			String suffix = osName + "-" + osArch;
 			InputStream input;
 
 			try {
-				if(suffix.startsWith("windows")) {
-					suffix = "windows-" + System.getProperty("os.arch").toLowerCase();
-					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".dll");
-				} else if(suffix.startsWith("mac")) {
-					suffix = "mac-" + System.getProperty("os.arch").toLowerCase();
-					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".dynlib");
-				} else {
-					input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + ".so");
-				}
+				input = IPConnection.class.getResourceAsStream("/com/tinkerforge/liboctaveinvokewrapper-" + suffix + extension);
 			} catch (Exception e) {
 				input = null;
 			}
 
 			if (input != null) {
 				try {
-					File tmp;
-					if(suffix.startsWith("windows")) {
-						tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".dll");
-					} else if(suffix.startsWith("mac")) {
-						tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".dynlib");
-					} else {
-						tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, ".so");
-					}
+					File tmp = File.createTempFile("liboctaveinvokewrapper-" + suffix, extension);
 					tmp.deleteOnExit();
 
 					FileOutputStream output = new FileOutputStream(tmp);
