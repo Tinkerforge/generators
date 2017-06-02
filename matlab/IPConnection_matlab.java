@@ -17,7 +17,7 @@ public class IPConnection extends IPConnectionBase {
 	List<DisconnectedListener> listenerDisconnected = new CopyOnWriteArrayList<DisconnectedListener>();
 
 	interface DeviceCallbackListener {
-		public void callback(Device device, byte data[]);
+		public void callback(Device device, byte[] packet);
 	}
 
 	public class EnumerateCallbackData extends java.util.EventObject {
@@ -164,9 +164,9 @@ public class IPConnection extends IPConnectionBase {
 	}
 
 	@Override
-	protected void callDeviceListener(final Device device, final byte functionID, byte[] data) {
-		if(device.callbacks[functionID] != null) {
-			device.callbacks[functionID].callback(device, data);
+	protected void callDeviceListener(final Device device, final byte functionID, byte[] packet) {
+		if (device.callbacks[functionID] != null) {
+			device.callbacks[functionID].callback(device, packet);
 		}
 	}
 }

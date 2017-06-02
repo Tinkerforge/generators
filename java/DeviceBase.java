@@ -24,6 +24,8 @@ public abstract class DeviceBase {
 	LinkedBlockingQueue<byte[]> responseQueue = new LinkedBlockingQueue<byte[]>();
 	IPConnection ipcon = null;
 	IPConnection.DeviceCallbackListener[] callbacks = new IPConnection.DeviceCallbackListener[256];
+	IPConnection.DeviceHighLevelCallback[] highLevelCallbacks = new IPConnection.DeviceHighLevelCallback[256];
+	Object streamMutex = new Object();
 
 	final static byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
 	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1; // getter

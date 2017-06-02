@@ -116,8 +116,9 @@ class JavaDevice(common.Device):
         return self.get_java_class_name() in LEGACY_TYPE_DEVICES
 
 class JavaPacket(common.Packet):
-    def get_java_object_name(self):
-        name = self.get_camel_case_name()
+    def get_java_object_name(self, skip=0):
+        name = self.get_camel_case_name(skip=skip)
+
         if name.startswith('Get'):
             name = name[3:]
 
@@ -128,46 +129,41 @@ class JavaPacket(common.Packet):
 
         if len(elements) == 0:
             return 'void'
-
-        if len(elements) > 1:
+        elif len(elements) > 1:
             if for_doc:
                 return self.get_device().get_java_class_name() + '.' + self.get_java_object_name()
             else:
                 return self.get_java_object_name()
+        else:
+            return elements[0].get_java_type()
 
-        return_type = elements[0].get_java_type()
-        if hasattr(self.get_generator(), 'is_octave') and \
-           self.get_generator().is_octave() and return_type == 'char':
-            return_type = 'String'
+    def get_java_parameters(self, context='signature', high_level=False):
+        parameters = []
 
-        if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
-            return_type += '[]'
-
-        return return_type
-
-    def get_java_parameter_list(self, just_types=False):
-        param = []
-
-        for element in self.get_elements():
+        for element in self.get_elements(high_level=high_level):
             if element.get_direction() == 'out' and self.get_type() == 'function':
                 continue
+
             java_type = element.get_java_type()
-            if hasattr(self.get_generator(), 'is_octave') and \
-               self.get_generator().is_octave() and java_type == 'char':
-                java_type = 'String'
             name = element.get_headless_camel_case_name()
-            arr = ''
-            if element.get_cardinality() > 1 and element.get_type() != 'string':
-                arr = '[]'
 
-            if just_types:
-                param.append('{0}{1}'.format(java_type, arr))
+            if context == 'signature':
+                parameters.append('{0} {1}'.format(java_type, name))
+            elif context == 'call':
+                parameters.append(name)
+            elif context == 'listener':
+                if high_level and element.get_level() == 'high' and element.get_cardinality() < 0:
+                    name = '({0})highLevelCallback.data'.format(java_type)
+
+                parameters.append(name)
+            elif context == 'link':
+                parameters.append(java_type)
             else:
-                param.append('{0}{1} {2}'.format(java_type, arr, name))
+                raise common.GeneratorError('Invalid context: ' + context)
 
-        return ', '.join(param)
+        return ', '.join(parameters)
 
-java_legacy_type = {
+java_legacy_types = {
     'int8':   'byte',
     'uint8':  'short',
     'int16':  'short',
@@ -182,7 +178,7 @@ java_legacy_type = {
     'string': 'String'
 }
 
-java_type = {
+java_types = {
     'int8':   'int',
     'uint8':  'int',
     'int16':  'int',
@@ -197,11 +193,19 @@ java_type = {
     'string': 'String'
 }
 
-def get_java_type(type_, legacy):
+def get_java_type(type_, cardinality, legacy=False, octave=False):
     if legacy:
-        return java_legacy_type[type_]
+        java_type = java_legacy_types[type_]
     else:
-        return java_type[type_]
+        java_type = java_types[type_]
+
+    if java_type == 'char' and octave:
+        java_type = 'String'
+
+    if (cardinality > 1 and type_ != 'string') or cardinality < 0:
+        java_type += '[]'
+
+    return java_type
 
 class JavaElement(common.Element):
     java_byte_buffer_method_suffix = {
@@ -234,11 +238,57 @@ class JavaElement(common.Element):
         'string': 'byte'
     }
 
+    java_default_item_values = {
+        'int8':   '0',
+        'uint8':  '0',
+        'int16':  '0',
+        'uint16': '0',
+        'int32':  '0',
+        'uint32': '0',
+        'int64':  '0',
+        'uint64': '0',
+        'float':  '0.0',
+        'bool':   'false',
+        'char':   "'\\0'",
+        'string': None
+    }
+
     def get_java_type(self):
-        return get_java_type(self.get_type(), self.get_device().has_java_legacy_types())
+        return get_java_type(self.get_type(), self.get_cardinality(),
+                             legacy=self.get_device().has_java_legacy_types(),
+                             octave=self.get_generator().is_octave())
 
     def get_java_byte_buffer_method_suffix(self):
         return JavaElement.java_byte_buffer_method_suffix[self.get_type()]
 
     def get_java_byte_buffer_storage_type(self):
-        return JavaElement.java_byte_buffer_storage_type[self.get_type()]
+        storage_type = JavaElement.java_byte_buffer_storage_type[self.get_type()]
+
+        if (self.get_cardinality() > 1 and storage_type != 'string') or self.get_cardinality() < 0:
+            storage_type += '[]'
+
+        return storage_type
+
+    def get_java_new(self, cardinality=None):
+        java_type = get_java_type(self.get_type(), 1,
+                                  legacy=self.get_device().has_java_legacy_types(),
+                                  octave=self.get_generator().is_octave())
+
+        if cardinality == None:
+            return 'new {0}[{1}]'.format(java_type, self.get_cardinality())
+        else:
+            return 'new {0}[{1}]'.format(java_type, cardinality)
+
+    def get_java_default_item_value(self):
+        value = JavaElement.java_default_item_values[self.get_type()]
+
+        if value == None:
+            common.GeneratorError('Invalid array item type: ' + self.get_type())
+
+        return value
+
+    def get_java_default_value(self):
+        if self.get_cardinality() != 1:
+            return 'null'
+        else:
+            return self.get_java_default_item_value()

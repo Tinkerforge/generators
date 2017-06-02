@@ -17,7 +17,7 @@ public class IPConnection extends IPConnectionBase {
 	List<DisconnectedListener> listenerDisconnected = new CopyOnWriteArrayList<DisconnectedListener>();
 
 	interface DeviceCallbackListener {
-		public void callback(byte data[]);
+		public void callback(byte[] packet);
 	}
 
 	public interface EnumerateListener extends TinkerforgeListener {
@@ -154,9 +154,9 @@ public class IPConnection extends IPConnectionBase {
 	}
 
 	@Override
-	protected void callDeviceListener(Device device, byte functionID, byte[] data) {
-		if(device.callbacks[functionID] != null) {
-			device.callbacks[functionID].callback(data);
+	protected void callDeviceListener(Device device, byte functionID, byte[] packet) {
+		if (device.callbacks[functionID] != null) {
+			device.callbacks[functionID].callback(packet);
 		}
 	}
 }

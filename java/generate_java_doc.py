@@ -64,7 +64,7 @@ class JavaDocDevice(java_common.JavaDevice):
 
             ret_type = packet.get_java_return_type(True)
             name = packet.get_headless_camel_case_name()
-            params = packet.get_java_parameter_list()
+            params = packet.get_java_parameters()
             desc = packet.get_java_formatted_doc(1)
             obj_desc = packet.get_java_object_desc()
             func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start,
@@ -109,7 +109,7 @@ class JavaDocDevice(java_common.JavaDevice):
         cls = self.get_java_class_name()
         for packet in self.get_packets('callback'):
             desc = packet.get_java_formatted_doc(2)
-            params = packet.get_java_parameter_list()
+            params = packet.get_java_parameters()
 
             cbs += common.select_lang(cb).format(cls,
                                                  packet.get_camel_case_name(),
@@ -424,12 +424,7 @@ class JavaDocPacket(java_common.JavaPacket):
         var = []
 
         for element in self.get_elements(direction='out'):
-            typ = element.get_java_type()
-
-            if element.get_cardinality() > 1 and element.get_type() != 'string':
-                typ += '[]'
-
-            var.append('``{0} {1}``'.format(typ,
+            var.append('``{0} {1}``'.format(element.get_java_type(),
                                             element.get_headless_camel_case_name()))
 
         if len(var) == 1:
@@ -464,6 +459,12 @@ class JavaDocGenerator(common.DocGenerator):
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_java_doc())
+
+    def is_matlab(self):
+        return False
+
+    def is_octave(self):
+        return False
 
 def generate(bindings_root_directory, language):
     common.generate(bindings_root_directory, language, JavaDocGenerator)

@@ -444,6 +444,11 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		}
 	}
 
+	static class DeviceHighLevelCallback {
+		Object data = null;
+		int length = 0;
+	}
+
 	public IPConnectionBase() {
 	}
 
