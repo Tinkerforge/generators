@@ -197,8 +197,12 @@ if socket.gethostname() == 'tinkerforge.com':
 
         for model in models:
             name = os.path.split(model)[-1]
+            target = os.path.join(target_dir, name)
 
-            os.symlink(model, os.path.join(target_dir, name))
+            if os.path.islink(target):
+                os.remove(target)
+
+            os.symlink(model, target)
             print(' * {0}'.format(name))
 
 print('')
