@@ -323,6 +323,8 @@ Der Parameter setzt die Haltezeit der Break Condition (in ms).
 
 com['examples'].append({
 'name': 'Loopback',
-'functions': [('setter', 'Enable Read Callback', [], 'Enable read callback', None)],
+'description': 'For this example connect the RX1 and TX pin to receive the send message',
+'functions': [('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', None, None, None, None), (('Length', 'Length'), 'uint8', None, None, None, None)], None, None), # FIXME: wrong message type
+              ('setter', 'Enable Read Callback', [], 'Enable read callback', None)],
 'incomplete': True # because of special logic and callback with array parameter
 })
