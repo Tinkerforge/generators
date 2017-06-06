@@ -54,7 +54,7 @@ class DelphiConstant(common.Constant):
 
 class DelphiExample(common.Example):
     def get_delphi_source(self):
-        template = r"""program Example{example_camel_case_name};{incomplete}
+        template = r"""program Example{example_camel_case_name};{incomplete}{description}
 
 {{$ifdef MSWINDOWS}}{{$apptype CONSOLE}}{{$endif}}
 {{$ifdef FPC}}{{$mode OBJFPC}}{{$H+}}{{$endif}}
@@ -108,6 +108,11 @@ end.
         else:
             incomplete = ''
 
+        if self.get_description() != None:
+            description = '\n\n{{ {0} }}'.format(self.get_description().replace('\n', '\n  '))
+        else:
+            description = ''
+
         prototypes = []
         procedures = []
         variable_declarations = []
@@ -158,6 +163,7 @@ end.
             variable_declarations = ''
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                example_camel_case_name=self.get_camel_case_name(),
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),

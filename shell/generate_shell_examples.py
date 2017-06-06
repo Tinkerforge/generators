@@ -34,7 +34,7 @@ global_line_prefix = ''
 class ShellExample(common.Example):
     def get_shell_source(self):
         template = r"""#!/bin/sh
-# Connects to localhost:4223 by default, use --host and --port to change this{incomplete}
+# Connects to localhost:4223 by default, use --host and --port to change this{incomplete}{description}
 
 uid={dummy_uid} # Change {dummy_uid} to the UID of your {device_long_display_name}
 {sources}{cleanups}"""
@@ -43,6 +43,11 @@ uid={dummy_uid} # Change {dummy_uid} to the UID of your {device_long_display_nam
             incomplete = '\n\n# FIXME: This example is incomplete'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n# {0}'.format(self.get_description().replace('\n', '\n# '))
+        else:
+            description = ''
 
         sources = []
         add_read_call = False
@@ -78,6 +83,7 @@ uid={dummy_uid} # Change {dummy_uid} to the UID of your {device_long_display_nam
             cleanups.append('kill -- -$$ # Stop callback dispatch in background\n')
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),

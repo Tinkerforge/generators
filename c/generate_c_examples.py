@@ -78,7 +78,7 @@ class CConstant(common.Constant):
 
 class CExample(common.Example):
     def get_c_source(self):
-        template = r"""#include <stdio.h>{includes}{incomplete}
+        template = r"""#include <stdio.h>{includes}{incomplete}{description}
 {defines}
 #include "ip_connection.h"
 #include "{device_underscore_category}_{device_underscore_name}.h"
@@ -115,6 +115,11 @@ int main(void) {{
             incomplete = '\n\n// FIXME: This example is incomplete'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n// {0}'.format(self.get_description().replace('\n', '\n// '))
+        else:
+            description = ''
 
         includes = []
         defines = []
@@ -160,6 +165,7 @@ int main(void) {{
 
         return template.format(includes=common.wrap_non_empty('\n', ''.join(unique_includes), ''),
                                incomplete=incomplete,
+                               description=description,
                                device_underscore_category=self.get_device().get_underscore_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_underscore_name=self.get_device().get_underscore_name(),

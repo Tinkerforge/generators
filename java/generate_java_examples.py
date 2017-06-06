@@ -44,7 +44,7 @@ class JavaConstant(common.Constant):
 class JavaExample(common.Example):
     def get_java_source(self):
         template = r"""import com.tinkerforge.IPConnection;
-import com.tinkerforge.{device_camel_case_category}{device_camel_case_name};{imports}{incomplete}
+import com.tinkerforge.{device_camel_case_category}{device_camel_case_name};{imports}{incomplete}{description}
 
 public class Example{example_camel_case_name} {{
 	private static final String HOST = "localhost";
@@ -72,6 +72,11 @@ public class Example{example_camel_case_name} {{
             incomplete = '\n\n// FIXME: This example is incomplete'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n// {0}'.format(self.get_description().replace('\n', '\n// '))
+        else:
+            description = ''
 
         imports = []
         sources = []
@@ -106,6 +111,7 @@ public class Example{example_camel_case_name} {{
             constructor_break = ' '
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                example_camel_case_name=self.get_camel_case_name(),
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),

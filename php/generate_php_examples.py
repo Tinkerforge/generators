@@ -42,7 +42,7 @@ class PHPConstant(common.Constant):
 
 class PHPExample(common.Example):
     def get_php_source(self):
-        template = r"""<?php{incomplete}
+        template = r"""<?php{incomplete}{description}
 
 require_once('Tinkerforge/IPConnection.php');
 require_once('Tinkerforge/{device_camel_case_category}{device_camel_case_name}.php');
@@ -76,6 +76,11 @@ $ipcon->dispatchCallbacks(-1); // Dispatch callbacks forever
         else:
             incomplete = ''
 
+        if self.get_description() != None:
+            description = '\n\n// {0}'.format(self.get_description().replace('\n', '\n// '))
+        else:
+            description = ''
+
         subroutines = []
         sources = []
         cleanups = []
@@ -105,6 +110,7 @@ $ipcon->dispatchCallbacks(-1); // Dispatch callbacks forever
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),

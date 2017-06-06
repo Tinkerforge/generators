@@ -84,7 +84,7 @@ class MATLABExample(common.Example):
 
         template = r"""function matlab_example_{example_underscore_name}()
     import com.tinkerforge.IPConnection;
-    import com.tinkerforge.{device_camel_case_category}{device_camel_case_name};{incomplete}
+    import com.tinkerforge.{device_camel_case_category}{device_camel_case_name};{incomplete}{description}
 
     HOST = 'localhost';
     PORT = 4223;
@@ -105,6 +105,11 @@ end{functions}
             incomplete = '\n\n    % FIXME: This example is incomplete'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n    % {0}'.format(self.get_description().replace('\n', '\n    % '))
+        else:
+            description = ''
 
         functions = []
         sources = []
@@ -140,6 +145,7 @@ end{functions}
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                example_underscore_name=self.get_underscore_name(),
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
@@ -158,7 +164,7 @@ end{functions}
         global_is_octave = True
 
         template = r"""function octave_example_{example_underscore_name}()
-    more off;{incomplete}
+    more off;{incomplete}{description}
 
     HOST = "localhost";
     PORT = 4223;
@@ -179,6 +185,11 @@ end{functions}
             incomplete = '\n\n    % FIXME: This example is incomplete'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n    % {0}'.format(self.get_description().replace('\n', '\n    % '))
+        else:
+            description = ''
 
         functions = []
         sources = []
@@ -214,6 +225,7 @@ end{functions}
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                example_underscore_name=self.get_underscore_name(),
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),

@@ -41,7 +41,7 @@ class PerlConstant(common.Constant):
 
 class PerlExample(common.Example):
     def get_perl_source(self):
-        template = r"""#!/usr/bin/perl{incomplete}
+        template = r"""#!/usr/bin/perl{incomplete}{description}
 
 use Tinkerforge::IPConnection;
 use Tinkerforge::{device_camel_case_category}{device_camel_case_name};
@@ -65,6 +65,11 @@ $ipcon->disconnect();
             incomplete = '\n\n# FIXME: This example is incomplete'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n# {0}'.format(self.get_description().replace('\n', '\n# '))
+        else:
+            description = ''
 
         subroutines = []
         sources = []
@@ -91,6 +96,7 @@ $ipcon->disconnect();
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),

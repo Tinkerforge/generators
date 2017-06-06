@@ -44,7 +44,7 @@ class CSharpConstant(common.Constant):
 class CSharpExample(common.Example):
     def get_csharp_source(self):
         template = r"""using System;
-{imports}using Tinkerforge;{incomplete}
+{imports}using Tinkerforge;{incomplete}{description}
 
 class Example
 {{
@@ -70,6 +70,11 @@ class Example
             incomplete = '\n\n// FIXME: This example is incomplete'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n// {0}'.format(self.get_description().replace('\n', '\n// '))
+        else:
+            description = ''
 
         imports = []
         functions = []
@@ -110,6 +115,7 @@ class Example
             constructor_break = ' '
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),

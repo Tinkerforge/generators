@@ -1754,6 +1754,9 @@ class Example(NameMixin):
     def _get_name(self): # for NameMixin
         return self.raw_data['name']
 
+    def get_description(self):
+        return self.raw_data.get('description', None)
+
     def get_functions(self):
         return self.functions
 

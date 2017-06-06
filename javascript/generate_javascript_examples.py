@@ -88,7 +88,7 @@ class JavaScriptExample(common.Example):
         global_sleep_duration_offset = 0
         global_total_sleep_duration = 0
 
-        template = r"""var Tinkerforge = require('tinkerforge');{incomplete}
+        template = r"""var Tinkerforge = require('tinkerforge');{incomplete}{description}
 
 var HOST = 'localhost';
 var PORT = 4223;
@@ -123,6 +123,11 @@ process.stdin.on('data',
         else:
             incomplete = ''
 
+        if self.get_description() != None:
+            description = '\n\n// {0}'.format(self.get_description().replace('\n', '\n// '))
+        else:
+            description = ''
+
         functions = []
         sources = []
         cleanups = []
@@ -154,6 +159,7 @@ process.stdin.on('data',
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),
@@ -177,7 +183,7 @@ process.stdin.on('data',
         global_sleep_duration_offset = 0
         global_total_sleep_duration = 0
 
-        template = r"""<!DOCTYPE html>{incomplete}
+        template = r"""<!DOCTYPE html>{incomplete}{description}
 <html>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <head>
@@ -234,6 +240,11 @@ process.stdin.on('data',
         else:
             incomplete = ''
 
+        if self.get_description() != None:
+            description = '\n\n<!-- {0} -->\n'.format(self.get_description().replace('\n', '\n     '))
+        else:
+            description = ''
+
         functions = []
         sources = []
         cleanups = []
@@ -265,6 +276,7 @@ process.stdin.on('data',
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                example_name=self.get_name(),
                                device_long_display_name=self.get_device().get_long_display_name(),
                                device_camel_case_category=self.get_device().get_camel_case_category(),

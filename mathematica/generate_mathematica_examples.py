@@ -45,7 +45,7 @@ class MathematicaConstant(common.Constant):
 class MathematicaExample(common.Example):
     def get_mathematica_source(self):
         template = r"""Needs["NETLink`"]
-LoadNETAssembly["Tinkerforge",NotebookDirectory[]<>"../../.."]{incomplete}
+LoadNETAssembly["Tinkerforge",NotebookDirectory[]<>"../../.."]{incomplete}{description}
 
 host="localhost"
 port=4223
@@ -66,6 +66,11 @@ ReleaseNETObject[ipcon]
             incomplete = '\n\n(*FIXME: This example is incomplete*)'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n(*{0}*)'.format(self.get_description())
+        else:
+            description = ''
 
         sources = []
         add_input_call = False
@@ -95,6 +100,7 @@ ReleaseNETObject[ipcon]
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),

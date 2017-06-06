@@ -44,7 +44,7 @@ class RubyConstant(common.Constant):
 class RubyExample(common.Example):
     def get_ruby_source(self):
         template = r"""#!/usr/bin/env ruby
-# -*- ruby encoding: utf-8 -*-{incomplete}
+# -*- ruby encoding: utf-8 -*-{incomplete}{description}
 
 require 'tinkerforge/ip_connection'
 require 'tinkerforge/{device_underscore_category}_{device_underscore_name}'
@@ -71,6 +71,11 @@ ipcon.disconnect
         else:
             incomplete = ''
 
+        if self.get_description() != None:
+            description = '\n\n# {0}'.format(self.get_description().replace('\n', '\n# '))
+        else:
+            description = ''
+
         sources = []
 
         for function in self.get_functions():
@@ -91,6 +96,7 @@ ipcon.disconnect
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_underscore_category=self.get_device().get_underscore_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),

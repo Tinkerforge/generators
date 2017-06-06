@@ -42,7 +42,7 @@ class PythonConstant(common.Constant):
 class PythonExample(common.Example):
     def get_python_source(self):
         template = r"""#!/usr/bin/env python
-# -*- coding: utf-8 -*-{incomplete}
+# -*- coding: utf-8 -*-{incomplete}{description}
 
 HOST = "localhost"
 PORT = 4223
@@ -66,6 +66,11 @@ if __name__ == "__main__":
             incomplete = '\n\n# FIXME: This example is incomplete'
         else:
             incomplete = ''
+
+        if self.get_description() != None:
+            description = '\n\n# {0}'.format(self.get_description().replace('\n', '\n# '))
+        else:
+            description = ''
 
         imports = []
         functions = []
@@ -101,6 +106,7 @@ if __name__ == "__main__":
             cleanups.remove(None)
 
         return template.format(incomplete=incomplete,
+                               description=description,
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_underscore_category=self.get_device().get_underscore_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),

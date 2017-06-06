@@ -126,7 +126,7 @@ class TVPLExample(common.Example):
 
 
         template = r"""#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-{description}
 
 HOST = "localhost"
 PORT = 4223
@@ -148,6 +148,11 @@ if __name__ == "__main__":
 
         if self.is_incomplete():
             template = "# FIXME: This example is incomplete\n\n" + template
+
+        if self.get_description() != None:
+            description = '"\n\n# {0}'.format(self.get_description().replace('\n', '\n# '))
+        else:
+            description = ''
 
         imports = []
         functions = []
@@ -176,7 +181,8 @@ if __name__ == "__main__":
         if len(sources) == 0:
             sources = ['    # TODO: Add example code here\n']
 
-        return template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+        return template.format(description=description,
+                               device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_underscore_category=self.get_device().get_underscore_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_underscore_name=self.get_device().get_underscore_name(),
