@@ -252,7 +252,8 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 
       if {stream_underscore_name}_length == 0
         {stream_underscore_name}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
-        ret = {underscore_name}_low_level{parameters}{chunk_written_0}
+        ret = {underscore_name}_low_level{parameters}
+        {chunk_written_0}
       else{chunk_result_predefinition}
         {stream_underscore_name}_written = 0 # assigned in block
 
@@ -264,10 +265,10 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
               {stream_underscore_name}_chunk_data += [{chunk_padding}] * ({chunk_cardinality} - {stream_underscore_name}_chunk_data.length)
             end
 
-            ret = {underscore_name}_low_level{parameters}{chunk_written_n}
-            {stream_underscore_name}_written += {stream_underscore_name}_chunk_written
+            ret = {underscore_name}_low_level{parameters}
+            {chunk_written_n}
 
-            if {stream_underscore_name}_chunk_written < {chunk_cardinality}
+            if {chunk_written_test} < {chunk_cardinality}
               break # either last chunk or short write
             end
 
@@ -280,12 +281,12 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 """
         template_stream_in_short_write_chunk_result_predefinition = """
         ret = nil # assigned in block"""
-        template_stream_in_short_write_chunk_written = ["""
-        {stream_underscore_name}_written = ret""", """
-            {stream_underscore_name}_chunk_written = ret"""]
-        template_stream_in_short_write_namedtuple_chunk_written = ["""
-        {stream_underscore_name}_written = ret[{chunk_written_index}]""", """
-            {stream_underscore_name}_chunk_written = ret[{chunk_written_index}]"""]
+        template_stream_in_short_write_chunk_written = ['{stream_underscore_name}_written = ret',
+                                                        '{stream_underscore_name}_written += ret',
+                                                        'ret']
+        template_stream_in_short_write_namedtuple_chunk_written = ['{stream_underscore_name}_written = ret[{chunk_written_index}]',
+                                                                   '{stream_underscore_name}_written += ret[{chunk_written_index}]',
+                                                                   'ret[{chunk_written_index}]']
         template_stream_in_short_write_result = """
       {stream_underscore_name}_written"""
         template_stream_in_short_write_namedtuple_result = """
@@ -352,13 +353,13 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         template_stream_out_single_chunk = """
     def {underscore_name}{high_level_parameters}
       ret = {underscore_name}_low_level{parameters}
-      {stream_underscore_name}_length = ret[{length_index}]
-      {stream_underscore_name}_data = ret[{chunk_data_index}]
 {result}
     end
 """
         template_stream_out_result = """
       {stream_underscore_name}_data[0, {stream_underscore_name}_length]"""
+        template_stream_out_single_chunk_result = """
+      ret[{chunk_data_index}][0, ret[{length_index}]]"""
         template_stream_out_namedtuple_result = """
       [{result_fields}]"""
 
@@ -383,6 +384,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                     if len(packet.get_elements(direction='out')) < 2:
                         chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
                         chunk_written_n = template_stream_in_short_write_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name())
+                        chunk_written_test = template_stream_in_short_write_chunk_written[2].format(stream_underscore_name=stream_in.get_underscore_name())
                     else:
                         chunk_written_index = None
 
@@ -395,6 +397,8 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                                                                                                             chunk_written_index=chunk_written_index)
                         chunk_written_n = template_stream_in_short_write_namedtuple_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name(),
                                                                                                             chunk_written_index=chunk_written_index)
+                        chunk_written_test = template_stream_in_short_write_namedtuple_chunk_written[2].format(stream_underscore_name=stream_in.get_underscore_name(),
+                                                                                                               chunk_written_index=chunk_written_index)
 
                     if len(packet.get_elements(direction='out', high_level=True)) < 2:
                         chunk_result_predefinition = ''
@@ -420,6 +424,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                 else:
                     chunk_written_0 = ''
                     chunk_written_n = ''
+                    chunk_written_test = ''
                     chunk_result_predefinition = ''
                     result = ''
 
@@ -434,6 +439,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                                            chunk_padding=stream_in.get_chunk_data_element().get_ruby_default_item_value(),
                                            chunk_written_0=chunk_written_0,
                                            chunk_written_n=chunk_written_n,
+                                           chunk_written_test=chunk_written_test,
                                            result=result)
             elif stream_out != None:
                 length_index = None
@@ -464,7 +470,12 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 
                 if len(packet.get_elements(direction='out', high_level=True)) < 2:
                     chunk_result_predefinition = ''
-                    result = template_stream_out_result.format(stream_underscore_name=stream_out.get_underscore_name())
+
+                    if stream_out.has_single_chunk():
+                        result = template_stream_out_single_chunk_result.format(chunk_data_index=chunk_data_index,
+                                                                                length_index=length_index)
+                    else:
+                        result = template_stream_out_result.format(stream_underscore_name=stream_out.get_underscore_name())
                 else:
                     chunk_result_predefinition = template_stream_out_chunk_result_predefinition.format(stream_underscore_name=stream_out.get_underscore_name())
                     fields = []
