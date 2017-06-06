@@ -139,7 +139,7 @@ class JavaExampleArgument(common.ExampleArgument):
             return '"{0}"'.format(value)
         elif ':bitmask:' in type_:
             value = common.make_c_like_bitmask(value)
-            cast = java_common.get_java_type(type_.split(':')[0], legacy=self.get_device().has_java_legacy_types(), octave=self.get_generator().is_octave())
+            cast = java_common.get_java_type(type_.split(':')[0], 1, legacy=self.get_device().has_java_legacy_types())
 
             if cast in ['byte', 'short']:
                 return '({0})({1})'.format(cast, value)
@@ -148,7 +148,7 @@ class JavaExampleArgument(common.ExampleArgument):
         elif type_.endswith(':constant'):
             return self.get_value_constant().get_java_source()
         else:
-            cast = java_common.get_java_type(type_, legacy=self.get_device().has_java_legacy_types(), octave=self.get_generator().is_octave())
+            cast = java_common.get_java_type(type_, 1, legacy=self.get_device().has_java_legacy_types())
 
             if cast in ['byte', 'short']:
                 cast = '({0})'.format(cast)
@@ -161,7 +161,7 @@ class JavaExampleParameter(common.ExampleParameter):
     def get_java_source(self):
         template = '{type_} {headless_camel_case_name}'
 
-        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], legacy=self.get_device().has_java_legacy_types(), octave=self.get_generator().is_octave()),
+        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
     def get_java_println(self):
@@ -194,7 +194,7 @@ class JavaExampleResult(common.ExampleResult):
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], legacy=self.get_device().has_java_legacy_types(), octave=self.get_generator().is_octave()),
+        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
                                headless_camel_case_name=headless_camel_case_name)
 
     def get_java_println(self):
@@ -400,7 +400,7 @@ class JavaExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshold
         template = '{minimum},<BP>{maximum}'
         minimum = self.get_formatted_minimum()
         maximum = self.get_formatted_maximum()
-        cast = java_common.get_java_type(self.get_type(), legacy=self.get_device().has_java_legacy_types(), octave=self.get_generator().is_octave())
+        cast = java_common.get_java_type(self.get_type(), 1, legacy=self.get_device().has_java_legacy_types())
 
         if cast in ['byte', 'short']:
             cast = '({0})'.format(cast)

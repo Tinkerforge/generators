@@ -260,7 +260,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
         if global_is_octave:
             type_ = self.get_type().split(':')[0]
 
-            if 'int' in type_ and get_java_type(type_, self.get_device().has_java_legacy_types()) != 'int':
+            if 'int' in type_ and get_java_type(type_, 1, legacy=self.get_device().has_java_legacy_types(), octave=True) != 'int':
                 return True
 
         return False
@@ -305,7 +305,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
         if global_is_octave:
             type_ = self.get_type().split(':')[0]
 
-            if 'int' in type_ and get_java_type(type_, self.get_device().has_java_legacy_types()) != 'int':
+            if 'int' in type_ and get_java_type(type_, 1, legacy=self.get_device().has_java_legacy_types(), octave=True) != 'int':
                 return True
 
         return False
