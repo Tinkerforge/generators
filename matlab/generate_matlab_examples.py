@@ -170,8 +170,8 @@ end{functions}
     PORT = 4223;
     UID = "{dummy_uid}"; % Change {dummy_uid} to the UID of your {device_long_display_name}
 
-    ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
-    {device_initial_name} = java_new("com.tinkerforge.{device_camel_case_category}{device_camel_case_name}", UID, ipcon); % Create device object
+    ipcon = javaObject("com.tinkerforge.IPConnection"); % Create IP connection
+    {device_initial_name} = javaObject("com.tinkerforge.{device_camel_case_category}{device_camel_case_name}", UID, ipcon); % Create device object
 
     ipcon.connect(HOST, PORT); % Connect to brickd
     % Don't use device before ipcon is connected
