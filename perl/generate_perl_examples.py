@@ -317,14 +317,19 @@ class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
                                 extra_message=extra_message)
 
     def get_perl_source(self):
-        template = r"""# Register {function_comment_name} callback to subroutine cb_{function_underscore_name}
-${device_initial_name}->register_callback(${device_initial_name}->CALLBACK_{function_upper_case_name}, 'cb_{function_underscore_name}');
+        template1 = r"""# Register {function_comment_name} callback to<BP>subroutine cb_{function_underscore_name}
+"""
+        template2 = r"""${device_initial_name}->register_callback(${device_initial_name}->CALLBACK_{function_upper_case_name},<BP>'cb_{function_underscore_name}');
 """
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_upper_case_name=self.get_upper_case_name(),
-                               function_comment_name=self.get_comment_name())
+        result1 = template1.format(function_underscore_name=self.get_underscore_name(),
+                                   function_comment_name=self.get_comment_name())
+        result2 = template2.format(device_initial_name=self.get_device().get_initial_name(),
+                                   function_underscore_name=self.get_underscore_name(),
+                                   function_upper_case_name=self.get_upper_case_name())
+
+        return common.break_string(result1, '# ', extra='# ') + \
+               common.break_string(result2, 'register_callback(')
 
 class PerlExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_perl_subroutine(self):

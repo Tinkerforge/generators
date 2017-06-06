@@ -339,18 +339,21 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, 'cb_{}('.format(self.get_headless_camel_case_name()))
 
     def get_php_source(self):
-        template = r"""// Register {function_comment_name} callback to function cb_{function_headless_camel_case_name}
-${device_initial_name}->registerCallback({device_camel_case_category}{device_camel_case_name}::CALLBACK_{function_upper_case_name},<BP>'cb_{function_headless_camel_case_name}');
+        template1 = r"""// Register {function_comment_name} callback to<BP>function cb_{function_headless_camel_case_name}
+"""
+        template2 = r"""${device_initial_name}->registerCallback({device_camel_case_category}{device_camel_case_name}::CALLBACK_{function_upper_case_name},<BP>'cb_{function_headless_camel_case_name}');
 """
 
-        result = template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                 device_camel_case_name=self.get_device().get_camel_case_name(),
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                 function_upper_case_name=self.get_upper_case_name(),
-                                 function_comment_name=self.get_comment_name())
+        result1 = template1.format( function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                   function_comment_name=self.get_comment_name())
+        result2 = template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                   device_camel_case_name=self.get_device().get_camel_case_name(),
+                                   device_initial_name=self.get_device().get_initial_name(),
+                                   function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                   function_upper_case_name=self.get_upper_case_name())
 
-        return common.break_string(result, '->registerCallback(')
+        return common.break_string(result1, '// ', extra='// ') + \
+               common.break_string(result2, '->registerCallback(')
 
 class PHPExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_php_subroutine(self):

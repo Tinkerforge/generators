@@ -425,13 +425,15 @@ end;
         return []
 
     def get_delphi_source(self):
-        template = r"""  {{ Register {function_comment_name} callback to procedure {function_camel_case_name}CB }}
+        template = r"""  {{ Register {function_comment_name} callback<BP>to procedure {function_camel_case_name}CB }}
   {device_initial_name}.On{function_camel_case_name} := {{$ifdef FPC}}@{{$endif}}{function_camel_case_name}CB;
 """
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name())
+        result = template.format(device_initial_name=self.get_device().get_initial_name(),
+                                 function_camel_case_name=self.get_camel_case_name(),
+                                 function_comment_name=self.get_comment_name())
+
+        return common.break_string(result, '{ ')
 
 class DelphiExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_delphi_prototype(self):

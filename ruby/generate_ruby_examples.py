@@ -294,7 +294,7 @@ class RubyExampleCallbackFunction(common.ExampleCallbackFunction):
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""{device_initial_name}.register_callback({device_camel_case_category}{device_camel_case_name}::CALLBACK_{function_upper_case_name}) do{parameters}
+        template2 = r"""{device_initial_name}.register_callback({device_camel_case_category}{device_camel_case_name}::CALLBACK_{function_upper_case_name})<BP>do{parameters}
 {puts}{extra_message}
 end
 """
@@ -336,11 +336,11 @@ end
                                   device_initial_name=self.get_device().get_initial_name(),
                                   function_underscore_name=self.get_underscore_name(),
                                   function_upper_case_name=self.get_upper_case_name(),
-                                  parameters=common.wrap_non_empty(' |', ',<BP>'.join(parameters), '|'),
+                                  parameters=common.wrap_non_empty(' |', ', '.join(parameters), '|'),
                                   puts='\n'.join(puts),
                                   extra_message=extra_message)
 
-        return common.break_string(result, 'do |', continuation=' \\')
+        return common.break_string(result, '', continuation=' \\')
 
 class RubyExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_ruby_source(self):

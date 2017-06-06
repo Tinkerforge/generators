@@ -392,13 +392,18 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, '{}CB('.format(self.get_camel_case_name()), continuation=' _')
 
     def get_vbnet_source(self):
-        template = r"""        ' Register {function_comment_name} callback to subroutine {function_camel_case_name}CB
-        AddHandler {device_initial_name}.{function_camel_case_name}Callback, AddressOf {function_camel_case_name}CB
+        template1 = r"""        ' Register {function_comment_name} callback to<BP>subroutine {function_camel_case_name}CB
+"""
+        template2 = r"""        AddHandler {device_initial_name}.{function_camel_case_name}Callback,<BP>AddressOf {function_camel_case_name}CB
 """
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name())
+        result1 = template1.format(function_camel_case_name=self.get_camel_case_name(),
+                                   function_comment_name=self.get_comment_name())
+        result2 = template2.format(device_initial_name=self.get_device().get_initial_name(),
+                                   function_camel_case_name=self.get_camel_case_name())
+
+        return common.break_string(result1, "' ", extra="' ") + \
+               common.break_string(result2, 'AddHandler ', continuation=' _')
 
 class VBNETExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_vbnet_imports(self):

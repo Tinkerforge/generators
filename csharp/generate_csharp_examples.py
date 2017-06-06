@@ -374,13 +374,15 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, '{}CB('.format(self.get_camel_case_name()))
 
     def get_csharp_source(self):
-        template = r"""		// Register {function_comment_name} callback to function {function_camel_case_name}CB
+        template = r"""		// Register {function_comment_name} callback<BP>to function {function_camel_case_name}CB
 		{device_initial_name}.{function_camel_case_name}Callback += {function_camel_case_name}CB;
 """
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name())
+        result = template.format(device_initial_name=self.get_device().get_initial_name(),
+                                 function_camel_case_name=self.get_camel_case_name(),
+                                 function_comment_name=self.get_comment_name())
+
+        return common.break_string(result, '// ', extra='// ')
 
 class CSharpExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_csharp_imports(self):

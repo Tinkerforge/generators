@@ -441,20 +441,22 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, 'cb_{}('.format(self.get_underscore_name()))
 
     def get_c_source(self):
-        template = r"""	// Register {function_comment_name} callback to function cb_{function_underscore_name}
+        template = r"""	// Register {function_comment_name} callback<BP>to function cb_{function_underscore_name}
 	{device_underscore_name}_register_callback(&{device_initial_name},
 	{spaces}                   {device_upper_case_name}_CALLBACK_{function_upper_case_name},
 	{spaces}                   (void *)cb_{function_underscore_name},
 	{spaces}                   NULL);
 """
 
-        return template.format(device_underscore_name=self.get_device().get_underscore_name(),
-                               device_upper_case_name=self.get_device().get_upper_case_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_upper_case_name=self.get_upper_case_name(),
-                               function_comment_name=self.get_comment_name(),
-                               spaces=' ' * len(self.get_device().get_underscore_name()))
+        result = template.format(device_underscore_name=self.get_device().get_underscore_name(),
+                                 device_upper_case_name=self.get_device().get_upper_case_name(),
+                                 device_initial_name=self.get_device().get_initial_name(),
+                                 function_underscore_name=self.get_underscore_name(),
+                                 function_upper_case_name=self.get_upper_case_name(),
+                                 function_comment_name=self.get_comment_name(),
+                                 spaces=' ' * len(self.get_device().get_underscore_name()))
+
+        return common.break_string(result, '// ', extra='// ')
 
 class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_c_includes(self):

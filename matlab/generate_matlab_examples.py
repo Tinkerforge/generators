@@ -490,22 +490,26 @@ end
         return functions
 
     def get_matlab_source(self):
-        templateA = r"""    % Register {function_comment_name} callback to function cb_{function_underscore_name}
-    set({device_initial_name}, '{function_camel_case_name}Callback', @(h, e) cb_{function_underscore_name}(e));
+        template1 = r"""    % Register {function_comment_name} callback to<BP>function cb_{function_underscore_name}
 """
-        templateB = r"""    % Register {function_comment_name} callback to function cb_{function_underscore_name}
-    {device_initial_name}.add{function_camel_case_name}Callback(@cb_{function_underscore_name});
+        templateA2 = r"""    set({device_initial_name}, '{function_camel_case_name}Callback',<BP>@(h, e) cb_{function_underscore_name}(e));
+"""
+        templateB2 = r"""    {device_initial_name}.add{function_camel_case_name}Callback(@cb_{function_underscore_name});
 """
 
         if not global_is_octave:
-            template = templateA
+            template2 = templateA2
         else:
-            template = templateB
+            template2 = templateB2
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name())
+        result1 = template1.format(function_underscore_name=self.get_underscore_name(),
+                                   function_comment_name=self.get_comment_name())
+        result2 = template2.format(device_initial_name=self.get_device().get_initial_name(),
+                                   function_underscore_name=self.get_underscore_name(),
+                                   function_camel_case_name=self.get_camel_case_name())
+
+        return common.break_string(result1, '% ', extra='% ') + \
+               common.break_string(result2, 'set(',)
 
 class MATLABExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_matlab_functions(self, phase):
