@@ -285,8 +285,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
 'elements': [('Mode', 'uint8', 1, 'in',('Mode', [('RS485', 0),
-                                                 ('Modbus Slave RTU', 1),
-                                                 ('Modbus Master RTU', 2)]))],
+                                                 ('Modbus Master RTU', 1),
+                                                 ('Modbus Slave RTU', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -294,8 +294,8 @@ com['packets'].append({
 Sets the mode of the Bricklet in which it operates. Available options are
 
 * RS485,
-* Modbus Slave RTU and
-* Modbus Master RTU.
+* Modbus Master RTU and
+* Modbus Slave RTU.
 
 The default is: RS485 mode.
 """,
@@ -304,8 +304,8 @@ The default is: RS485 mode.
 Setzt den Modus des Bricklets. Verfügbare Optionen sind
 
 * RS485,
-* Modbus Slave RTU und
-* Modbus Master RTU.
+* Modbus Master RTU und
+* Modbus Slave RTU.
 
 Der Standardmodus ist RS485.
 """
@@ -316,8 +316,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Mode',
 'elements': [('Mode', 'uint8', 1, 'out',('Mode', [('RS485', 0),
-                                                  ('Modbus Slave RTU', 1),
-                                                  ('Modbus Master RTU', 2)]))],
+                                                  ('Modbus Master RTU', 1),
+                                                  ('Modbus Slave RTU', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
