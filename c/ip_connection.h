@@ -566,8 +566,8 @@ void ipcon_unwait(IPConnection *ipcon);
 /**
  * \ingroup IPConnection
  *
- * Registers the \c function with the given \c callback_id. The \c user_data
- * will be given as a parameter of the function.
+ * Registers the given \c function with the given \c callback_id. The
+ * \c user_data will be passed as the last parameter to the \c function.
  */
 void ipcon_register_callback(IPConnection *ipcon, int16_t callback_id,
                              void *function, void *user_data);

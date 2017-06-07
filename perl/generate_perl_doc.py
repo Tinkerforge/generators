@@ -139,8 +139,9 @@ class PerlDocDevice(perl_common.PerlDevice):
  :param $callback: string
  :rtype: undef
 
- Registers a callback with ID ``$id`` to the function named ``$callback``. The
- available IDs with corresponding function signatures are listed
+ Registers the given ``$function`` name with the given ``$callback_id``.
+
+ The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_perl_callbacks>`.
 """,
         'de': """
@@ -150,9 +151,10 @@ class PerlDocDevice(perl_common.PerlDevice):
  :param $callback: string
  :rtype: undef
 
- Registriert einen Callback mit der ID ``$id`` mit der Funktion namens ``$callback``.
- Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
- :ref:`unten <{0}_perl_callbacks>` zu finden.
+ Registriert den ``$function`` Namen für die gegebene ``$callback_id``.
+
+ Die verfügbaren Callback IDs mit den zugehörigen Funktionssignaturen
+ sind :ref:`unten <{0}_perl_callbacks>` zu finden.
 """
         }
 

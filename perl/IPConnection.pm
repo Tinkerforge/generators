@@ -866,16 +866,16 @@ sub enumerate
 
 =item register_callback()
 
-Registers a callback with ID $id to the function named $callback.
+Registers the given $function name with the given $callback_id.
 
 =back
 =cut
 
 sub register_callback
 {
-	my ($self, $function_id, $function_name) = @_;
+	my ($self, $callback_id, $function) = @_;
 
-	$self->{registered_callbacks}->{$function_id} = '\&'.caller.'::'.$function_name;
+	$self->{registered_callbacks}->{$function_id} = '\&'.caller.'::'.$function;
 }
 
 sub _create_packet_header

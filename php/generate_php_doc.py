@@ -143,22 +143,22 @@ class PHPDocDevice(php_common.PHPDevice):
 
         register_str = {
         'en': """
-.. php:function:: void {1}::registerCallback(int $id, callable $callback, mixed $user_data = NULL)
+.. php:function:: void {1}::registerCallback(int $callback_id, callable $callback, mixed $user_data = NULL)
 
- Registers a callback with ID *$id* to the callable *$callback*.
- The *$user_data*  will be given as a parameter of the callback.
+ Registriert die ``$function`` für die gegebene ``$callback_id``. Die optionalen
+ ``$user_data`` werden der Funktion als letztes Parameter mit übergeben.
 
- The available  IDs with corresponding function signatures are listed
+ The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_php_callbacks>`.
 """,
         'de': """
-.. php:function:: void {1}::registerCallback(int $id, callable $callback, mixed $user_data = NULL)
+.. php:function:: void {1}::registerCallback(int $callback_id, callable $callback, mixed $user_data = NULL)
 
- Registriert einen Callback mit der ID *$id* zu der Callable *$callback*.
- Der Parameter *$user_data* wird bei jedem Callback wieder mit übergeben.
+ Registriert die ``$function`` für die gegebene ``$callback_id``. Die optionalen
+ ``$user_data`` werden der Funktion als letztes Parameter mit übergeben.
 
- Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_php_callbacks>`
- zu finden.
+ Die verfügbaren Callback IDs mit den zugehörigen Funktionssignaturen sind
+ :ref:`unten <{0}_php_callbacks>` zu finden.
 """
         }
 

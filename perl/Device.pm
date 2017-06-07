@@ -249,17 +249,17 @@ sub _send_request
 
 =item register_callback()
 
-Registers a callback with ID $id to the function named $callback.
+Registers the given $function name with the given $callback_id.
 
 =cut
 
 sub register_callback
 {
-	my ($self, $id, $callback) = @_;
+	my ($self, $callback_id, $function) = @_;
 
 	lock(${$self->{device_lock_ref}});
 
-	$self->{registered_callbacks}->{$id} = '&'.caller.'::'.$callback;
+	$self->{registered_callbacks}->{$callback_id} = '&'.caller.'::'.$function;
 }
 
 =item get_api_version()

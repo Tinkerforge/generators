@@ -1145,8 +1145,8 @@ function IPConnection() {
             }
         }.bind(this), IPConnection.TASK_KIND_AUTHENTICATE);
     };
-    this.on = function (FID, CBFunction) {
-        this.registeredCallbacks[FID] = CBFunction;
+    this.on = function (callbackID, function_) {
+        this.registeredCallbacks[callbackID] = function_;
     };
     this.getNextSequenceNumber = function () {
         if (this.nextSequenceNumber >= 15) {

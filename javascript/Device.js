@@ -57,8 +57,8 @@ function Device(deviceRegistering, uid, ipcon) {
         this.getAPIVersion = function () {
             return this.APIVersion;
         };
-        this.on = function (id, callback) {
-            this.registeredCallbacks[id] = callback;
+        this.on = function (callbackID, function_) {
+            this.registeredCallbacks[callbackID] = function_;
         };
         this.getResponseExpected = function (functionID, errorCallback) {
             if (this.responseExpected[functionID] === undefined) {

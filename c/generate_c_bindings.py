@@ -1179,8 +1179,8 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
 /**
  * \ingroup {2}{1}
  *
- * Registers the \c function with the given \c callback_id. The \c user_data
- * will be given as a parameter of the function.
+ * Registers the given \c function with the given \c callback_id. The
+ * \c user_data will be passed as the last parameter to the \c function.
  */
 void {0}_register_callback({1} *{0}, int16_t callback_id, void *function, void *user_data);
 """

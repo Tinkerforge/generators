@@ -551,14 +551,14 @@ class {0}(Device):
             return ''
 
         return """
-    def register_callback(self, id_, callback):
+    def register_callback(self, callback_id, function):
         \"\"\"
-        Registers a callback with ID *id* to the function *callback*.
+        Registers the given *function* with the given *callback_id*.
         \"\"\"
-        if callback is None:
-            self.registered_callbacks.pop(id_, None)
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
         else:
-            self.registered_callbacks[id_] = callback
+            self.registered_callbacks[callback_id] = function
 """
 
     def get_python_old_name(self):

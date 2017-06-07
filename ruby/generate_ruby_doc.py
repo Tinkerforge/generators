@@ -138,22 +138,24 @@ class RubyDocDevice(ruby_common.RubyDevice):
 
         register_str = {
         'en': """
-.. rb:function:: {1}#register_callback(id) {{ |param [, ...]| block }} -> nil
+.. rb:function:: {1}#register_callback(callback_id) {{ |param [, ...]| block }} -> nil
 
- :param id: int
+ :param callback_id: int
 
- Registers a callback with ID *id* to the given block. The available
- IDs with corresponding function signatures are listed
+ Registers the given ``block`` with the given ``callback_id``.
+
+ The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_ruby_callbacks>`.
 """,
         'de': """
-.. rb:function:: {1}#register_callback(id) {{ |param [, ...]| block }} -> nil
+.. rb:function:: {1}#register_callback(callback_id) {{ |param [, ...]| block }} -> nil
 
- :param id: int
+ :param callback_id: int
 
- Registriert einen Callback mit der ID *id* in den gegebenen Block. Die verfügbaren
- IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_ruby_callbacks>`
- zu finden.
+ Registriert den ``block`` für die gegebene ``callback_id``.
+
+ Die verfügbaren Callback IDs mit den zugehörigen Funktionssignaturen sind
+ :ref:`unten <{0}_ruby_callbacks>` zu finden.
 """
         }
 

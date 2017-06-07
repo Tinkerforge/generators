@@ -171,24 +171,26 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
         register_str = {
         'en': """
-.. javascript:function:: {1}.on(id, callback)
+.. javascript:function:: {1}.on(callback_id, function)
 
- :param id: int
- :param callback: function
+ :param callback_id: int
+ :param function: function
 
- Registers a callback with ID *id* to the function *callback*. The available
- IDs with corresponding function signatures are listed
- :ref:`below <{0}_javascript_callbacks>`.
+ Registers the given ``function`` with the given ``callback_id``.
+
+ The available callback IDs with corresponding function signatures are
+ listed :ref:`below <{0}_javascript_callbacks>`.
 """,
         'de': """
-.. javascript:function:: {1}.on(id, callback)
+.. javascript:function:: {1}.on(callback_id, function)
 
- :param id: int
- :param callback: function
+ :param callback_id: int
+ :param function: function
 
- Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die
- verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
- :ref:`unten <{0}_javascript_callbacks>` zu finden.
+ Registriert die ``function`` für die gegebene ``callback_id``.
+
+ Die verfügbaren Callback IDs mit den zugehörigen Funktionssignaturen
+ sind :ref:`unten <{0}_javascript_callbacks>` zu finden.
 """
         }
 

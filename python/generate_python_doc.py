@@ -130,25 +130,27 @@ class PythonDocDevice(python_common.PythonDevice):
 
         register_str = {
         'en': """
-.. py:function:: {2}{1}.register_callback(id, callback)
+.. py:function:: {2}{1}.register_callback(callback_id, function)
 
- :param id: int
- :param callback: callable
+ :param callback_id: int
+ :param function: callable
  :rtype: None
 
- Registers a callback with ID *id* to the function *callback*. The available
- IDs with corresponding function signatures are listed
+ Registers the given ``function`` with the given ``callback_id``.
+
+ The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_python_callbacks>`.
 """,
         'de': """
-.. py:function:: {2}{1}.register_callback(id, callback)
+.. py:function:: {2}{1}.register_callback(callback_id, function)
 
- :param id: int
- :param callback: callable
+ :param callback_id: int
+ :param function: callable
  :rtype: None
 
- Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die
- verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
+ Registriert die ``function`` für die gegebene ``callback_id``.
+
+ Die verfügbaren Callback IDs mit den zugehörigen Funktionssignaturen sind
  :ref:`unten <{0}_python_callbacks>` zu finden.
 """
         }
