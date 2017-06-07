@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2012-2016, Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (c) 2012-2017, Matthias Bolte <matthias@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -183,20 +183,20 @@ abstract class Device
     const RESPONSE_EXPECTED_FALSE = 3; // setter, default
 
     public $uid = '0'; # Base10
-    public $apiVersion = array(0, 0, 0);
+    public $api_version = array(0, 0, 0);
 
     public $ipcon = NULL;
 
-    public $responseExpected = array();
+    public $response_expected = array();
 
-    public $expectedResponseFunctionID = 0;
-    public $expectedResponseSequenceNumber = 0;
-    public $receivedResponse = NULL;
+    public $expected_response_function_id = 0;
+    public $expected_response_sequence_number = 0;
+    public $received_response = NULL;
 
-    public $registeredCallbacks = array();
-    public $registeredCallbackUserData = array();
-    public $callbackWrappers = array();
-    public $pendingCallbacks = array();
+    public $registered_callbacks = array();
+    public $registered_callback_user_data = array();
+    public $callback_wrappers = array();
+    public $pending_callbacks = array();
 
     /**
      * Creates the device object with the unique device ID *$uid* and adds
@@ -207,31 +207,31 @@ abstract class Device
      */
     public function __construct($uid, $ipcon)
     {
-        $longUid = Base58::decode($uid);
+        $long_uid = Base58::decode($uid);
 
-        if (bccomp($longUid, '4294967295' /* 0xFFFFFFFF */) > 0) {
+        if (bccomp($long_uid, '4294967295' /* 0xFFFFFFFF */) > 0) {
             // Convert from 64bit to 32bit
-            $value1a = (int)bcmod($longUid, '65536' /* 0x10000 */);
-            $value1b = (int)bcmod(bcdiv($longUid, '65536' /* 0x10000 */), '65536' /* 0x10000 */);
-            $value2a = (int)bcmod(bcdiv($longUid, '4294967296' /* 0x100000000 */), '65536' /* 0x10000 */);
-            $value2b = (int)bcmod(bcdiv($longUid, '281474976710656' /* 0x10000000000 */), '65536' /* 0x10000 */);
+            $value1a = (int)bcmod($long_uid, '65536' /* 0x10000 */);
+            $value1b = (int)bcmod(bcdiv($long_uid, '65536' /* 0x10000 */), '65536' /* 0x10000 */);
+            $value2a = (int)bcmod(bcdiv($long_uid, '4294967296' /* 0x100000000 */), '65536' /* 0x10000 */);
+            $value2b = (int)bcmod(bcdiv($long_uid, '281474976710656' /* 0x10000000000 */), '65536' /* 0x10000 */);
 
-            $shortUid1  =  $value1a & 0x0FFF;
-            $shortUid1 |= ($value1b & 0x0F00) << 4;
+            $short_uid1  =  $value1a & 0x0FFF;
+            $short_uid1 |= ($value1b & 0x0F00) << 4;
 
-            $shortUid2  =  $value2a & 0x003F;
-            $shortUid2 |= ($value2b & 0x000F) << 6;
-            $shortUid2 |= ($value2b & 0x3F00) << 2;
+            $short_uid2  =  $value2a & 0x003F;
+            $short_uid2 |= ($value2b & 0x000F) << 6;
+            $short_uid2 |= ($value2b & 0x3F00) << 2;
 
-            $this->uid = bcadd(bcmul($shortUid2, '65536' /* 0x10000 */), $shortUid1);
+            $this->uid = bcadd(bcmul($short_uid2, '65536' /* 0x10000 */), $short_uid1);
         } else {
-            $this->uid = $longUid;
+            $this->uid = $long_uid;
         }
 
         $this->ipcon = $ipcon;
 
         for ($i = 0; $i < 256; ++$i) {
-            $this->responseExpected[$i] = self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
+            $this->response_expected[$i] = self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
         }
 
         $ipcon->devices[$this->uid] = $this; // FIXME: use a weakref here
@@ -245,12 +245,12 @@ abstract class Device
      */
     public function getAPIVersion()
     {
-        return $this->apiVersion;
+        return $this->api_version;
     }
 
     /**
      * Returns the response expected flag for the function specified by the
-     * *$functionId* parameter. It is *true* if the function is expected to
+     * $function_id parameter. It is *true* if the function is expected to
      * send a response, *false* otherwise.
      *
      * For getter functions this is enabled by default and cannot be disabled,
@@ -265,20 +265,20 @@ abstract class Device
      * disabled for a setter function then no response is send and errors are
      * silently ignored, because they cannot be detected.
      *
-     * @param int $functionId
+     * @param int $function_id
      *
      * @return boolean
      */
-    public function getResponseExpected($functionID)
+    public function getResponseExpected($function_id)
     {
-        if ($functionID < 0 || $functionID > 255) {
-            throw new \InvalidArgumentException('Function ID ' . $functionID . ' out of range');
+        if ($function_id < 0 || $function_id > 255) {
+            throw new \InvalidArgumentException('Function ID ' . $function_id . ' out of range');
         }
 
-        $flag = $this->responseExpected[$functionID];
+        $flag = $this->response_expected[$function_id];
 
         if ($flag === self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
-            throw new \InvalidArgumentException('Invalid function ID ' . $functionID);
+            throw new \InvalidArgumentException('Invalid function ID ' . $function_id);
         }
 
         if ($flag === self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
@@ -291,7 +291,7 @@ abstract class Device
 
     /**
      * Changes the response expected flag of the function specified by the
-     * *$functionId* parameter. This flag can only be changed for setter
+     * $function_id parameter. This flag can only be changed for setter
      * (default value: *false*) and callback configuration functions
      * (default value: *true*). For getter functions it is always enabled.
      *
@@ -301,49 +301,49 @@ abstract class Device
      * flag is disabled for a setter function then no response is send and
      * errors are silently ignored, because they cannot be detected.
      *
-     * @param int $functionId
-     * @param boolean $responseExpected
+     * @param int $function_id
+     * @param boolean $response_expected
      *
      * @return void
      */
-    public function setResponseExpected($functionID, $responseExpected)
+    public function setResponseExpected($function_id, $response_expected)
     {
-        if ($functionID < 0 || $functionID > 255) {
-            throw new \InvalidArgumentException('Function ID ' . $functionID . ' out of range');
+        if ($function_id < 0 || $function_id > 255) {
+            throw new \InvalidArgumentException('Function ID ' . $function_id . ' out of range');
         }
 
-        $flag = $this->responseExpected[$functionID];
+        $flag = $this->response_expected[$function_id];
 
         if ($flag === self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
-            throw new \InvalidArgumentException('Invalid function ID ' . $functionID);
+            throw new \InvalidArgumentException('Invalid function ID ' . $function_id);
         }
 
         if ($flag === self::RESPONSE_EXPECTED_ALWAYS_TRUE) {
-            throw new \InvalidArgumentException('Response Expected flag cannot be changed for function ID ' . $functionID);
+            throw new \InvalidArgumentException('Response Expected flag cannot be changed for function ID ' . $function_id);
         }
 
-        $this->responseExpected[$functionID] =
-            $responseExpected ? self::RESPONSE_EXPECTED_TRUE
-                              : self::RESPONSE_EXPECTED_FALSE;
+        $this->response_expected[$function_id] =
+            $response_expected ? self::RESPONSE_EXPECTED_TRUE
+                               : self::RESPONSE_EXPECTED_FALSE;
     }
 
     /**
      * Changes the response expected flag for all setter and callback
      * configuration functions of this device at once.
      *
-     * @param boolean $responseExpected
+     * @param boolean $response_expected
      *
      * @return void
      */
-    public function setResponseExpectedAll($responseExpected)
+    public function setResponseExpectedAll($response_expected)
     {
-        $flag = $responseExpected ? self::RESPONSE_EXPECTED_TRUE
-                                  : self::RESPONSE_EXPECTED_FALSE;
+        $flag = $response_expected ? self::RESPONSE_EXPECTED_TRUE
+                                   : self::RESPONSE_EXPECTED_FALSE;
 
         for ($i = 0; $i < 256; ++$i) {
-            if ($this->responseExpected[$i] === self::RESPONSE_EXPECTED_TRUE ||
-                $this->responseExpected[$i] === self::RESPONSE_EXPECTED_FALSE) {
-                $this->responseExpected[$i] = $flag;
+            if ($this->response_expected[$i] === self::RESPONSE_EXPECTED_TRUE ||
+                $this->response_expected[$i] === self::RESPONSE_EXPECTED_FALSE) {
+                $this->response_expected[$i] = $flag;
             }
         }
     }
@@ -353,63 +353,63 @@ abstract class Device
      */
     public function dispatchPendingCallbacks()
     {
-        $pendingCallbacks = $this->pendingCallbacks;
-        $this->pendingCallbacks = array();
+        $pending_callbacks = $this->pending_callbacks;
+        $this->pending_callbacks = array();
 
-        foreach ($pendingCallbacks as $pendingCallback) {
+        foreach ($pending_callbacks as $pending_callback) {
             if ($this->ipcon->socket === FALSE) {
                 break;
             }
 
-            $this->handleCallback($pendingCallback[0], $pendingCallback[1]);
+            $this->handleCallback($pending_callback[0], $pending_callback[1]);
         }
     }
 
     /**
      * @internal
      */
-    protected function sendRequest($functionID, $payload)
+    protected function sendRequest($function_id, $payload)
     {
         if ($this->ipcon->socket === FALSE) {
             throw new NotConnectedException('Not connected');
         }
 
-        $header = $this->ipcon->createPacketHeader($this, 8 + strlen($payload), $functionID);
+        $header = $this->ipcon->createPacketHeader($this, 8 + strlen($payload), $function_id);
         $request = $header[0] . $payload;
-        $sequenceNumber = $header[1];
-        $responseExpected = $header[2];
+        $sequence_number = $header[1];
+        $response_expected = $header[2];
 
-        if ($responseExpected) {
-            $this->expectedResponseFunctionID = $functionID;
-            $this->expectedResponseSequenceNumber = $sequenceNumber;
-            $this->receivedResponse = NULL;
+        if ($response_expected) {
+            $this->expected_response_function_id = $function_id;
+            $this->expected_response_sequence_number = $sequence_number;
+            $this->received_response = NULL;
         }
 
         $this->ipcon->send($request);
 
-        if ($responseExpected) {
+        if ($response_expected) {
             $this->ipcon->receive($this->ipcon->timeout, $this, FALSE /* FIXME: this can delay callback up to the current timeout */);
 
-            $this->expectedResponseFunctionID = 0;
-            $this->expectedResponseSequenceNumber = 0;
+            $this->expected_response_function_id = 0;
+            $this->expected_response_sequence_number = 0;
 
-            if ($this->receivedResponse === NULL) {
-                throw new TimeoutException("Did not receive response in time for function ID $functionID");
+            if ($this->received_response === NULL) {
+                throw new TimeoutException("Did not receive response in time for function ID $function_id");
             }
 
-            $response = $this->receivedResponse;
-            $this->receivedResponse = NULL;
+            $response = $this->received_response;
+            $this->received_response = NULL;
 
-            $errorCode = ($response[0]['errorCodeAndFutureUse'] >> 6) & 0x03;
+            $error_code = ($response[0]['error_code_and_future_use'] >> 6) & 0x03;
 
-            if ($errorCode === 0) {
+            if ($error_code === 0) {
                 // no error
-            } else if ($errorCode === 1) {
-                throw new NotSupportedException("Got invalid parameter for function ID $functionID");
-            } else if ($errorCode === 2) {
-                throw new NotSupportedException("Function ID $functionID is not supported");
+            } else if ($error_code === 1) {
+                throw new NotSupportedException("Got invalid parameter for function ID $function_id");
+            } else if ($error_code === 2) {
+                throw new NotSupportedException("Function ID $function_id is not supported");
             } else {
-                throw new NotSupportedException("Function ID $functionID returned an unknown error");
+                throw new NotSupportedException("Function ID $function_id returned an unknown error");
             }
 
             $payload = $response[1];
@@ -434,10 +434,10 @@ class BrickDaemon extends Device
     {
         parent::__construct($uid, $ipcon);
 
-        $this->apiVersion = array(2, 0, 0);
+        $this->api_version = array(2, 0, 0);
 
-        $this->responseExpected[self::FUNCTION_GET_AUTHENTICATION_NONCE] = self::RESPONSE_EXPECTED_ALWAYS_TRUE;
-        $this->responseExpected[self::FUNCTION_AUTHENTICATE] = self::RESPONSE_EXPECTED_TRUE;
+        $this->response_expected[self::FUNCTION_GET_AUTHENTICATION_NONCE] = self::RESPONSE_EXPECTED_ALWAYS_TRUE;
+        $this->response_expected[self::FUNCTION_AUTHENTICATE] = self::RESPONSE_EXPECTED_TRUE;
     }
 
     public function getAuthenticationNonce()
@@ -451,12 +451,12 @@ class BrickDaemon extends Device
         return IPConnection::collectUnpackedArray($payload, 'nonce', 4);
     }
 
-    public function authenticate($clientNonce, $digest)
+    public function authenticate($client_nonce, $digest)
     {
         $payload = '';
 
         for ($i = 0; $i < 4; $i++) {
-            $payload .= pack('C', $clientNonce[$i]);
+            $payload .= pack('C', $client_nonce[$i]);
         }
 
         for ($i = 0; $i < 20; $i++) {
@@ -682,23 +682,23 @@ class IPConnection
 
     public $timeout = 2.5; // seconds
 
-    private $nextSequenceNumber = 0;
-    private $nextAuthenticationNonce = 0;
+    private $next_sequence_number = 0;
+    private $next_authentication_nonce = 0;
 
     public $devices = array();
 
-    private $registeredCallbacks = array();
-    private $registeredCallbackUserData = array();
-    private $pendingCallbacks = array();
+    private $registered_callbacks = array();
+    private $registered_callback_user_data = array();
+    private $pending_callbacks = array();
 
     private $host = "";
     private $port = 0;
 
     public $socket = FALSE;
-    private $pendingData = '';
+    private $pending_data = '';
 
-    private $disconnectProbeRequest = '';
-    private $nextDisconnectProbe = 0.0;
+    private $disconnect_probe_request = '';
+    private $next_disconnect_probe = 0.0;
 
     private $brickd = NULL;
 
@@ -709,8 +709,8 @@ class IPConnection
     public function __construct()
     {
         $result = $this->createPacketHeader(NULL, 8, self::FUNCTION_DISCONNECT_PROBE);
-        $this->disconnectProbeRequest = $result[0];
-        $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
+        $this->disconnect_probe_request = $result[0];
+        $this->next_disconnect_probe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
 
         $this->brickd = new BrickDaemon('2', $this);
     }
@@ -723,7 +723,7 @@ class IPConnection
     }
 
     /**
-     * Creates a TCP/IP connection to the given *$host* and *$port*. The host
+     * Creates a TCP/IP connection to the given $host and $port. The host
      * and port can point to a Brick Daemon or to a WIFI/Ethernet Extension.
      *
      * Devices can only be controlled when the connection was established
@@ -766,13 +766,13 @@ class IPConnection
             $this->socket = new StreamSocket($address, $port);
         }
 
-        if (array_key_exists(self::CALLBACK_CONNECTED, $this->registeredCallbacks)) {
-            call_user_func_array($this->registeredCallbacks[self::CALLBACK_CONNECTED],
+        if (array_key_exists(self::CALLBACK_CONNECTED, $this->registered_callbacks)) {
+            call_user_func_array($this->registered_callbacks[self::CALLBACK_CONNECTED],
                                  array(self::CONNECT_REASON_REQUEST,
-                                       $this->registeredCallbackUserData[self::CALLBACK_CONNECTED]));
+                                       $this->registered_callback_user_data[self::CALLBACK_CONNECTED]));
         }
 
-        $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
+        $this->next_disconnect_probe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
     }
 
     /**
@@ -791,7 +791,7 @@ class IPConnection
 
         $this->disconnectInternal(self::DISCONNECT_REASON_REQUEST);
 
-        $this->pendingData = '';
+        $this->pending_data = '';
     }
 
     /**
@@ -811,32 +811,32 @@ class IPConnection
      */
     public function authenticate($secret)
     {
-        if ($this->nextAuthenticationNonce === 0) {
-            $this->nextAuthenticationNonce = self::getRandomUInt32();
+        if ($this->next_authentication_nonce === 0) {
+            $this->next_authentication_nonce = self::getRandomUInt32();
         }
 
-        $serverNonce = $this->brickd->getAuthenticationNonce();
-        $serverNonceBytes = pack('C4', $serverNonce[0], $serverNonce[1], $serverNonce[2], $serverNonce[3]);
+        $server_nonce = $this->brickd->getAuthenticationNonce();
+        $server_nonce_bytes = pack('C4', $server_nonce[0], $server_nonce[1], $server_nonce[2], $server_nonce[3]);
 
-        $clientNonceNumber = $this->nextAuthenticationNonce;
-        $this->nextAuthenticationNonce = bcadd($this->nextAuthenticationNonce, '1');
+        $client_nonce_number = $this->next_authentication_nonce;
+        $this->next_authentication_nonce = bcadd($this->next_authentication_nonce, '1');
 
-        // cannot use pack() here because $clientNonceNumber might be a number in a string
-        $clientNonce = array((int)bcmod(      $clientNonceNumber,              '256'),
-                             (int)bcmod(bcdiv($clientNonceNumber,      '256'), '256'),
-                             (int)bcmod(bcdiv($clientNonceNumber,    '65536'), '256'),
-                             (int)bcmod(bcdiv($clientNonceNumber, '16777216'), '256'));
-        $clientNonceBytes = pack('C4', $clientNonce[0], $clientNonce[1], $clientNonce[2], $clientNonce[3]);
+        // cannot use pack() here because $client_nonce_number might be a number in a string
+        $client_nonce = array((int)bcmod(      $client_nonce_number,              '256'),
+                              (int)bcmod(bcdiv($client_nonce_number,      '256'), '256'),
+                              (int)bcmod(bcdiv($client_nonce_number,    '65536'), '256'),
+                              (int)bcmod(bcdiv($client_nonce_number, '16777216'), '256'));
+        $client_nonce_bytes = pack('C4', $client_nonce[0], $client_nonce[1], $client_nonce[2], $client_nonce[3]);
 
-        $digestBytes = hash_hmac('sha1', $serverNonceBytes . $clientNonceBytes, $secret, true);
+        $digest_bytes = hash_hmac('sha1', $server_nonce_bytes . $client_nonce_bytes, $secret, true);
 
-        if ($digestBytes === FALSE) {
+        if ($digest_bytes === FALSE) {
             throw new \Exception('HMAC-SHA1 not avialable');
         }
 
-        $digest = self::collectUnpackedArray(unpack('C20digest', $digestBytes), 'digest', 20);
+        $digest = self::collectUnpackedArray(unpack('C20digest', $digest_bytes), 'digest', 20);
 
-        $this->brickd->authenticate($clientNonce, $digest);
+        $this->brickd->authenticate($client_nonce, $digest);
     }
 
     /**
@@ -935,46 +935,47 @@ class IPConnection
     }
 
     /**
-     * Registers a callback for a given ID.
+     * Registers the given $function with the given $callback_id. The optional
+     * $user_data will be passed as the last parameter to the $function.
      *
-     * @param int $id
-     * @param callable $callback
+     * @param int $callback_id
+     * @param callable $function
      * @param mixed $user_data
      *
      * @return void
      */
-    public function registerCallback($id, $callback, $user_data = NULL)
+    public function registerCallback($callback_id, $function, $user_data = NULL)
     {
-        if (!is_callable($callback)) {
-            throw new \Exception('Callback function is not callable');
+        if (!is_callable($function)) {
+            throw new \Exception('Function is not callable');
         }
 
-        $this->registeredCallbacks[$id] = $callback;
-        $this->registeredCallbackUserData[$id] = $user_data;
+        $this->registered_callbacks[$callback_id] = $function;
+        $this->registered_callback_user_data[$callback_id] = $user_data;
     }
 
     /**
      * @internal
      */
-    public function createPacketHeader($device, $length, $functionID)
+    public function createPacketHeader($device, $length, $function_id)
     {
         $uid = '0';
-        $sequenceNumber = $this->nextSequenceNumber + 1;
-        $this->nextSequenceNumber = $sequenceNumber % 15;
-        $responseExpected = 0;
+        $sequence_number = $this->next_sequence_number + 1;
+        $this->next_sequence_number = $sequence_number % 15;
+        $response_expected = 0;
 
         if ($device !== NULL) {
             $uid = $device->uid;
 
-            if ($device->getResponseExpected($functionID)) {
-                $responseExpected = 1;
+            if ($device->getResponseExpected($function_id)) {
+                $response_expected = 1;
             }
         }
 
-        $sequenceNumberAndOptions = ($sequenceNumber << 4) | ($responseExpected << 3);
-        $header = Base256::encodeAndPack($uid, 4) . pack('CCCC', $length, $functionID, $sequenceNumberAndOptions, 0);
+        $sequence_number_and_options = ($sequence_number << 4) | ($response_expected << 3);
+        $header = Base256::encodeAndPack($uid, 4) . pack('CCCC', $length, $function_id, $sequence_number_and_options, 0);
 
-        return array($header, $sequenceNumber, $responseExpected);
+        return array($header, $sequence_number, $response_expected);
     }
 
     /**
@@ -989,13 +990,13 @@ class IPConnection
                                             socket_strerror(socket_last_error($this->socket)));
         }
 
-        $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
+        $this->next_disconnect_probe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
     }
 
     /**
      * @internal
      */
-    public function receive($seconds, $device, $directCallbackDispatch)
+    public function receive($seconds, $device, $direct_callback_dispatch)
     {
         if ($seconds < 0) {
             $seconds = 0;
@@ -1012,16 +1013,16 @@ class IPConnection
             $now = microtime(true);
 
             // FIXME: this works for timeout < DISCONNECT_PROBE_INTERVAL only
-            if ($this->nextDisconnectProbe < $now ||
-                ($this->nextDisconnectProbe - $now) > self::DISCONNECT_PROBE_INTERVAL) {
-                if ($this->socket->send($this->disconnectProbeRequest,
-                                        strlen($this->disconnectProbeRequest)) === FALSE) {
+            if ($this->next_disconnect_probe < $now ||
+                ($this->next_disconnect_probe - $now) > self::DISCONNECT_PROBE_INTERVAL) {
+                if ($this->socket->send($this->disconnect_probe_request,
+                                        strlen($this->disconnect_probe_request)) === FALSE) {
                     $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
                     return;
                 }
 
                 $now = microtime(true);
-                $this->nextDisconnectProbe = $now + self::DISCONNECT_PROBE_INTERVAL;
+                $this->next_disconnect_probe = $now + self::DISCONNECT_PROBE_INTERVAL;
             }
 
             $timeout = $end - $now;
@@ -1045,26 +1046,26 @@ class IPConnection
             } else if ($result == Socket::RECEIVE_DATA) {
                 $before = microtime(true);
 
-                $this->pendingData .= $data;
+                $this->pending_data .= $data;
 
                 while (TRUE) {
-                    if (strlen($this->pendingData) < 8) {
+                    if (strlen($this->pending_data) < 8) {
                         // Wait for complete header
                         break;
                     }
 
-                    $tmp = unpack('C', substr($this->pendingData, 4));
+                    $tmp = unpack('C', substr($this->pending_data, 4));
                     $length = $tmp[1];
 
-                    if (strlen($this->pendingData) < $length) {
+                    if (strlen($this->pending_data) < $length) {
                         // Wait for complete packet
                         break;
                     }
 
-                    $packet = substr($this->pendingData, 0, $length);
-                    $this->pendingData = substr($this->pendingData, $length);
+                    $packet = substr($this->pending_data, 0, $length);
+                    $this->pending_data = substr($this->pending_data, $length);
 
-                    $this->handleResponse($packet, $directCallbackDispatch);
+                    $this->handleResponse($packet, $direct_callback_dispatch);
                 }
 
                 $after = microtime(true);
@@ -1073,7 +1074,7 @@ class IPConnection
                     $end += $after - $before;
                 }
 
-                if ($device !== NULL && $device->receivedResponse !== NULL) {
+                if ($device !== NULL && $device->received_response !== NULL) {
                     break;
                 }
             }
@@ -1085,42 +1086,42 @@ class IPConnection
     /**
      * @internal
      */
-    private function disconnectInternal($disconnectReason)
+    private function disconnectInternal($disconnect_reason)
     {
         $this->socket->close();
         $this->socket = FALSE;
 
-        if (array_key_exists(self::CALLBACK_DISCONNECTED, $this->registeredCallbacks)) {
-            call_user_func_array($this->registeredCallbacks[self::CALLBACK_DISCONNECTED],
-                                 array($disconnectReason,
-                                       $this->registeredCallbackUserData[self::CALLBACK_DISCONNECTED]));
+        if (array_key_exists(self::CALLBACK_DISCONNECTED, $this->registered_callbacks)) {
+            call_user_func_array($this->registered_callbacks[self::CALLBACK_DISCONNECTED],
+                                 array($disconnect_reason,
+                                       $this->registered_callback_user_data[self::CALLBACK_DISCONNECTED]));
         }
     }
 
     /**
      * @internal
      */
-    private function handleResponse($packet, $directCallbackDispatch)
+    private function handleResponse($packet, $direct_callback_dispatch)
     {
         $uid = Base256::decode(self::collectUnpackedArray(unpack('C4uid', $packet), 'uid', 4));
-        $header = unpack('Clength/CfunctionID/CsequenceNumberAndOptions/CerrorCodeAndFutureUse', substr($packet, 4));
+        $header = unpack('Clength/Cfunction_id/Csequence_number_and_options/Cerror_code_and_future_use', substr($packet, 4));
         $header['uid'] = $uid;
-        $functionID = $header['functionID'];
-        $sequenceNumber = ($header['sequenceNumberAndOptions'] >> 4) & 0x0F;
+        $function_id = $header['function_id'];
+        $sequence_number = ($header['sequence_number_and_options'] >> 4) & 0x0F;
         $payload = substr($packet, 8);
 
-        $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
+        $this->next_disconnect_probe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
 
-        if ($sequenceNumber === 0 && $functionID === self::CALLBACK_ENUMERATE) {
-            if (array_key_exists(self::CALLBACK_ENUMERATE, $this->registeredCallbacks)) {
-                if ($directCallbackDispatch) {
+        if ($sequence_number === 0 && $function_id === self::CALLBACK_ENUMERATE) {
+            if (array_key_exists(self::CALLBACK_ENUMERATE, $this->registered_callbacks)) {
+                if ($direct_callback_dispatch) {
                     if ($this->socket === FALSE) {
                         return;
                     }
 
                     $this->handleEnumerate($header, $payload);
                 } else {
-                    array_push($this->pendingCallbacks, array($header, $payload));
+                    array_push($this->pending_callbacks, array($header, $payload));
                 }
             }
 
@@ -1134,25 +1135,25 @@ class IPConnection
 
         $device = $this->devices[$uid];
 
-        if ($sequenceNumber === 0) {
-            if (array_key_exists($functionID, $device->registeredCallbacks)) {
-                if ($directCallbackDispatch) {
+        if ($sequence_number === 0) {
+            if (array_key_exists($function_id, $device->registered_callbacks)) {
+                if ($direct_callback_dispatch) {
                     if ($this->socket === FALSE) {
                         return;
                     }
 
                     $device->handleCallback($header, $payload);
                 } else {
-                    array_push($device->pendingCallbacks, array($header, $payload));
+                    array_push($device->pending_callbacks, array($header, $payload));
                 }
             }
 
             return;
         }
 
-        if ($device->expectedResponseFunctionID === $functionID &&
-            $device->expectedResponseSequenceNumber === $sequenceNumber) {
-            $device->receivedResponse = array($header, $payload);
+        if ($device->expected_response_function_id === $function_id &&
+            $device->expected_response_sequence_number === $sequence_number) {
+            $device->received_response = array($header, $payload);
             return;
         }
 
@@ -1164,24 +1165,24 @@ class IPConnection
      */
     private function handleEnumerate($header, $payload)
     {
-        if (!array_key_exists(self::CALLBACK_ENUMERATE, $this->registeredCallbacks)) {
+        if (!array_key_exists(self::CALLBACK_ENUMERATE, $this->registered_callbacks)) {
             return;
         }
 
-        $payload = unpack('c8uid/c8connectedUid/cposition/C3hardwareVersion/C3firmwareVersion/vdeviceIdentifier/CenumerationType', $payload);
+        $payload = unpack('c8uid/c8connected_uid/cposition/C3hardware_version/C3firmware_version/vdevice_identifier/Cenumeration_type', $payload);
 
         $uid = self::implodeUnpackedString($payload, 'uid', 8);
-        $connectedUid = self::implodeUnpackedString($payload, 'connectedUid', 8);
+        $connected_uid = self::implodeUnpackedString($payload, 'connected_uid', 8);
         $position = chr($payload['position']);
-        $hardwareVersion = self::collectUnpackedArray($payload, 'hardwareVersion', 3);
-        $firmwareVersion = self::collectUnpackedArray($payload, 'firmwareVersion', 3);
-        $deviceIdentifier = $payload['deviceIdentifier'];
-        $enumerationType = $payload['enumerationType'];
+        $hardware_version = self::collectUnpackedArray($payload, 'hardware_version', 3);
+        $firmware_version = self::collectUnpackedArray($payload, 'firmware_version', 3);
+        $device_identifier = $payload['device_identifier'];
+        $enumeration_type = $payload['enumeration_type'];
 
-        call_user_func_array($this->registeredCallbacks[self::CALLBACK_ENUMERATE],
-                             array($uid, $connectedUid, $position, $hardwareVersion,
-                                   $firmwareVersion, $deviceIdentifier, $enumerationType,
-                                   $this->registeredCallbackUserData[self::CALLBACK_ENUMERATE]));
+        call_user_func_array($this->registered_callbacks[self::CALLBACK_ENUMERATE],
+                             array($uid, $connected_uid, $position, $hardware_version,
+                                   $firmware_version, $device_identifier, $enumeration_type,
+                                   $this->registered_callback_user_data[self::CALLBACK_ENUMERATE]));
     }
 
     /**
@@ -1189,16 +1190,16 @@ class IPConnection
      */
     private function dispatchPendingCallbacks()
     {
-        $pendingCallbacks = $this->pendingCallbacks;
-        $this->pendingCallbacks = array();
+        $pending_callbacks = $this->pending_callbacks;
+        $this->pending_callbacks = array();
 
-        foreach ($pendingCallbacks as $pendingCallback) {
+        foreach ($pending_callbacks as $pending_callback) {
             if ($this->socket === FALSE) {
                 break;
             }
 
-            if ($pendingCallback[0]['functionID'] === self::CALLBACK_ENUMERATE) {
-                $this->handleEnumerate($pendingCallback[0], $pendingCallback[1]);
+            if ($pending_callback[0]['function_id'] === self::CALLBACK_ENUMERATE) {
+                $this->handleEnumerate($pending_callback[0], $pending_callback[1]);
             }
         }
 
@@ -1361,12 +1362,12 @@ class IPConnection
         $_payload = array_fill(0, ceil($length/8), 0);
         $result = array_fill(0, $length, (bool)false);
 
-        for($i = 1; $i <= ceil($length/8); $i++) {
-          $_payload[$i - 1] = $payload[$field . $i];
+        for ($i = 1; $i <= ceil($length/8); $i++) {
+            $_payload[$i - 1] = $payload[$field . $i];
         }
 
-        for($i = 0; $i < $length; $i++) {
-          $result[$i] = (($_payload[$i / 8] & (1 << ($i % 8))) != 0);
+        for ($i = 0; $i < $length; $i++) {
+            $result[$i] = (($_payload[$i / 8] & (1 << ($i % 8))) != 0);
         }
 
         return $result;

@@ -67,7 +67,7 @@ class {0} extends Device
     def get_php_callback_wrapper_definitions(self):
         callbacks = ''
         template = """
-        $this->callbackWrappers[self::CALLBACK_{0}] = 'callbackWrapper{1}';"""
+        $this->callback_wrappers[self::CALLBACK_{0}] = 'callbackWrapper{1}';"""
 
         for packet in self.get_packets('callback'):
             typ = packet.get_upper_case_name()
@@ -157,7 +157,7 @@ class {0} extends Device
     {{
         parent::__construct($uid, $ipcon);
 
-        $this->apiVersion = array({0}, {1}, {2});
+        $this->api_version = array({0}, {1}, {2});
 """
         response_expected = ''
 
@@ -169,7 +169,7 @@ class {0} extends Device
             else:
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
-            response_expected += '        $this->responseExpected[self::FUNCTION_{0}] = self::{1};\n' \
+            response_expected += '        $this->response_expected[self::FUNCTION_{0}] = self::{1};\n' \
                                  .format(packet.get_upper_case_name(), flag)
 
         return template.format(*self.get_api_version()) + common.wrap_non_empty('\n', response_expected, '')
@@ -339,7 +339,7 @@ class {0} extends Device
      */
     public function handleCallback($header, $data)
     {
-        call_user_func(array($this, $this->callbackWrappers[$header['functionID']]), $data);
+        call_user_func(array($this, $this->callback_wrappers[$header['function_id']]), $data);
     }
 """ + methods
 
@@ -349,22 +349,23 @@ class {0} extends Device
 
         wrappers = """
     /**
-     * Registers a callback with ID $id to the callable $callback.
+     * Registers the given $function with the given $callback_id. The optional
+     * $user_data will be passed as the last parameter to the $function.
      *
-     * @param int $id
-     * @param callable $callback
+     * @param int $callback_id
+     * @param callable $function
      * @param mixed $user_data
      *
      * @return void
      */
-    public function registerCallback($id, $callback, $user_data = NULL)
+    public function registerCallback($callback_id, $function, $user_data = NULL)
     {
-        if (!is_callable($callback)) {
-            throw new \Exception('Callback function is not callable');
+        if (!is_callable($function)) {
+            throw new \Exception('Function is not callable');
         }
 
-        $this->registeredCallbacks[$id] = $callback;
-        $this->registeredCallbackUserData[$id] = $user_data;
+        $this->registered_callbacks[$callback_id] = $function;
+        $this->registered_callback_user_data[$callback_id] = $user_data;
     }
 """
         wrapper = """
@@ -378,9 +379,9 @@ class {0} extends Device
 {1}
 
 {2}
-        array_push($result, $this->registeredCallbackUserData[self::CALLBACK_{3}]);
+        array_push($result, $this->registered_callback_user_data[self::CALLBACK_{3}]);
 
-        call_user_func_array($this->registeredCallbacks[self::CALLBACK_{3}], $result);
+        call_user_func_array($this->registered_callbacks[self::CALLBACK_{3}], $result);
     }}
 """
 
