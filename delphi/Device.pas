@@ -79,8 +79,7 @@ type
     ///  Changes the response expected flag of the function specified by
     ///  the function ID parameter. This flag can only be changed for setter
     ///  (default value: *false*) and callback configuration functions
-    ///  (default value: *true*). For getter functions it is always enabled
-    ///  and callbacks it is always disabled.
+    ///  (default value: *true*). For getter functions it is always enabled.
     ///
     ///  Enabling the response expected flag for a setter function allows to
     ///  detect timeouts and other error conditions calls of this setter as

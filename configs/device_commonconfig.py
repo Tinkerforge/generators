@@ -103,7 +103,7 @@ common_packets.append({
 Changes the response expected flag of the function specified by the
 function ID parameter. This flag can only be changed for setter (default value:
 *false*) and callback configuration functions (default value: *true*). For
-getter functions it is always enabled and callbacks it is always disabled.
+getter functions it is always enabled.
 
 Enabling the response expected flag for a setter function allows to detect
 timeouts and other error conditions calls of this setter as well. The
@@ -116,7 +116,7 @@ because they cannot be detected.
 Ändert das Response-Expected-Flag für die Funktion mit der angegebenen Funktion
 IDs. Diese Flag kann nur für Setter-Funktionen (Standardwert: *false*) und
 Konfigurationsfunktionen für Callbacks (Standardwert: *true*) geändert werden.
-Für Getter-Funktionen ist das Flag immer gesetzt und für Callbacks niemals.
+Für Getter-Funktionen ist das Flag immer gesetzt.
 
 Wenn das Response-Expected-Flag für eine Setter-Funktion gesetzt ist, können
 Timeouts und andere Fehlerfälle auch für Aufrufe dieser Setter-Funktion

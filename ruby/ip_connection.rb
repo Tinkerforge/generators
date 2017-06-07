@@ -293,8 +293,7 @@ module Tinkerforge
     # Changes the response expected flag of the function specified by the
     # <tt>function_id</tt> parameter. This flag can only be changed for setter
     # (default value: <tt>false</tt>) and callback configuration functions
-    # (default value: <tt>true</tt>). For getter functions it is always enabled
-    # and callbacks it is always disabled.
+    # (default value: <tt>true</tt>). For getter functions it is always enabled.
     #
     # Enabling the response expected flag for a setter function allows to
     # detect timeouts and other error conditions calls of this setter as
