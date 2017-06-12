@@ -1158,25 +1158,24 @@ class Packet(NameMixin):
 
         for raw_element in self.raw_data['elements']:
             raw_element = list(raw_element)
+            level = 'normal'
+            role = None
 
             if stream_name != None and raw_element[0].startswith(stream_name + ' '):
-                level = 'low'
-
                 if raw_element[0].endswith(' Length'):
+                    level = 'low'
                     role = 'stream_length'
                     stream_written_type = raw_element[1]
                 elif raw_element[0].endswith(' Offset'):
+                    level = 'low'
                     role = 'stream_chunk_offset'
                     stream_written_type = raw_element[1]
                 elif raw_element[0].endswith(' Data'):
+                    level = 'low'
                     role = 'stream_chunk_data'
                 elif raw_element[0].endswith(' Written'):
+                    level = 'low'
                     role = 'stream_chunk_written'
-                else:
-                    raise GeneratorError('Unknown low-level element')
-            else:
-                level = 'normal'
-                role = None
 
             element = device.get_generator().get_element_class()(raw_element, self, level, role)
 
