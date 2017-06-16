@@ -210,7 +210,7 @@ if socket.gethostname() == 'tinkerforge.com':
                 os.remove(target)
 
             os.symlink(model, target)
-            print(' * {0}'.format(name))
+            print(' * {0}/{1}/{2}'.format(category, device, name))
 
 print('')
 print('>>> Done <<<')
