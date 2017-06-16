@@ -272,13 +272,13 @@ abstract class Device
     public function getResponseExpected($function_id)
     {
         if ($function_id < 0 || $function_id > 255) {
-            throw new \InvalidArgumentException('Function ID ' . $function_id . ' out of range');
+            throw new \InvalidArgumentException("Function ID $function_id out of range");
         }
 
         $flag = $this->response_expected[$function_id];
 
         if ($flag === self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
-            throw new \InvalidArgumentException('Invalid function ID ' . $function_id);
+            throw new \InvalidArgumentException("Invalid function ID $function_id");
         }
 
         if ($flag === self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
@@ -309,17 +309,17 @@ abstract class Device
     public function setResponseExpected($function_id, $response_expected)
     {
         if ($function_id < 0 || $function_id > 255) {
-            throw new \InvalidArgumentException('Function ID ' . $function_id . ' out of range');
+            throw new \InvalidArgumentException("Function ID $function_id out of range");
         }
 
         $flag = $this->response_expected[$function_id];
 
         if ($flag === self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
-            throw new \InvalidArgumentException('Invalid function ID ' . $function_id);
+            throw new \InvalidArgumentException("Invalid function ID $function_id");
         }
 
         if ($flag === self::RESPONSE_EXPECTED_ALWAYS_TRUE) {
-            throw new \InvalidArgumentException('Response Expected flag cannot be changed for function ID ' . $function_id);
+            throw new \InvalidArgumentException("Response Expected flag cannot be changed for function ID $function_id");
         }
 
         $this->response_expected[$function_id] =
@@ -504,7 +504,7 @@ class ExtensionSocket extends Socket
             socket_close($this->handle);
             $this->handle = FALSE;
 
-            throw new \Exception('Could not connect socket: ' . $error);
+            throw new \Exception("Could not connect socket: $error");
         }
     }
 
@@ -584,7 +584,7 @@ class StreamSocket extends Socket
         $this->handle = stream_socket_client("tcp://$address:$port", $errno, $message);
 
         if ($this->handle === FALSE) {
-            throw new \Exception('Could not connect socket: ' . $message);
+            throw new \Exception("Could not connect socket: $message");
         }
     }
 
