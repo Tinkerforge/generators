@@ -171,9 +171,6 @@ if socket.gethostname() == 'tinkerforge.com':
     print('Linking 3D models:')
 
     for git in os.listdir(os.path.join(path, '..')):
-        if not git.endswith('-brick') and not git.endswith('-bricklet'):
-            continue
-
         hardware_dir = os.path.normpath(os.path.join(path, '..', git, 'hardware'))
 
         if not os.path.exists(hardware_dir):
@@ -186,10 +183,20 @@ if socket.gethostname() == 'tinkerforge.com':
 
         if git.endswith('-brick'):
             category = 'bricks'
-        else:
+            device = '_'.join(git.split('-')[:-1])
+        elif git.endswith('-bricklet'):
             category = 'bricklets'
+            device = '_'.join(git.split('-')[:-1])
+        elif git.endswith('-extension'):
+            category = 'extensions'
+            device = '_'.join(git.split('-')[:-1])
+        elif git.endswith('-powersupply'):
+            category = 'power_supplies'
+            device = '_'.join(git.split('-')[:-1])
+        else:
+            category = 'accessories'
+            device = git.split('-', '_')
 
-        device = '_'.join(git.split('-')[:-1])
         target_dir = os.path.join('/srv/web/com.tinkerforge.download/downloads/3d', category, device)
 
         if not os.path.exists(target_dir):
