@@ -50,19 +50,24 @@ class PHPPacket(common.Packet):
             else:
                 return element.get_php_type()
 
-    def get_php_parameter_list(self, for_doc=False):
+    def get_php_parameters(self, context='signature', high_level=False):
         param = []
 
-        for element in self.get_elements():
+        for element in self.get_elements(high_level=high_level):
             if element.get_direction() == 'out' and self.get_type() == 'function':
                 continue
+
             name = element.get_underscore_name()
-            if for_doc:
+
+            if context == 'doc':
                 php_type = element.get_php_type()
+
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
                     php_type = 'array'
 
                 param.append('{0} ${1}'.format(php_type, name))
+            elif context == 'callback_wrapper':
+                param.append("$payload['{0}']".format(name))
             else:
                 param.append('${0}'.format(name))
 
@@ -97,6 +102,21 @@ class PHPElement(common.Element):
         'bool':   'C',
         'char':   'c',
         'string': 'c'
+    }
+
+    php_default_item_values = {
+        'int8':   '0',
+        'uint8':  '0',
+        'int16':  '0',
+        'uint16': '0',
+        'int32':  '0',
+        'uint32': '0',
+        'int64':  '0',
+        'uint64': '0',
+        'float':  '0.0',
+        'bool':   'false',
+        'char':   "'\\0'",
+        'string': None
     }
 
     def get_php_type(self):
@@ -163,4 +183,12 @@ class PHPElement(common.Element):
             elif self.get_type() == 'char':
                 return ('chr(', ')', '[', ']')
             else:
-                return ('', '', '[', ']')
+                return None
+
+    def get_php_default_item_value(self):
+        value = PHPElement.php_default_item_values[self.get_type()]
+
+        if value == None:
+            common.GeneratorError('Invalid array item type: ' + self.get_type())
+
+        return value

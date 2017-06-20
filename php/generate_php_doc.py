@@ -65,7 +65,7 @@ class PHPDocDevice(php_common.PHPDevice):
 
             ret_type = packet.get_php_return_type()
             name = packet.get_headless_camel_case_name()
-            params = packet.get_php_parameter_list(True)
+            params = packet.get_php_parameters(context='doc')
             desc = packet.get_php_formatted_doc()
             obj_desc = packet.get_php_object_desc()
             func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
@@ -97,11 +97,13 @@ class PHPDocDevice(php_common.PHPDevice):
         func_start = '.. php:member:: int '
         cls = self.get_php_class_name()
         for packet in self.get_packets('callback'):
-            params = packet.get_php_parameter_list(True)
+            params = packet.get_php_parameters(context='doc')
+
             if len(params) > 0:
                 params += " [, mixed $user_data]"
             else:
                 params += "[mixed $user_data]"
+
             desc = packet.get_php_formatted_doc()
             signature = common.select_lang(signature_str).format(params)
             func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,

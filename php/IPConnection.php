@@ -172,6 +172,12 @@ class NotSupportedException extends TinkerforgeException
 }
 
 
+class StreamOutOfSyncException extends TinkerforgeException
+{
+
+}
+
+
 abstract class Device
 {
     /**
@@ -196,6 +202,7 @@ abstract class Device
     public $registered_callbacks = array();
     public $registered_callback_user_data = array();
     public $callback_wrappers = array();
+    public $high_level_callbacks = array();
     public $pending_callbacks = array();
 
     /**
@@ -418,6 +425,20 @@ abstract class Device
         }
 
         return $payload;
+    }
+
+    /**
+     * @internal
+     */
+    protected function createChunkData($data, $chunk_offset, $chunk_length, $chunk_padding)
+    {
+        $chunk_data = array_slice($data, $chunk_offset, $chunk_length);
+
+        if (count($chunk_data) < $chunk_length) {
+            $chunk_data = array_pad($chunk_data, $chunk_length, $chunk_padding);
+        }
+
+        return $chunk_data;
     }
 }
 
@@ -1136,7 +1157,8 @@ class IPConnection
         $device = $this->devices[$uid];
 
         if ($sequence_number === 0) {
-            if (array_key_exists($function_id, $device->registered_callbacks)) {
+            if (array_key_exists($function_id, $device->registered_callbacks) ||
+                array_key_exists(-$function_id, $device->high_level_callbacks)) {
                 if ($direct_callback_dispatch) {
                     if ($this->socket === FALSE) {
                         return;
