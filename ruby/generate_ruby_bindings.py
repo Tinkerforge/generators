@@ -482,7 +482,10 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 
                     for element in packet.get_elements(direction='out', high_level=True):
                         if element.get_role() == 'stream_data':
-                            fields.append('{0}_data[0, {0}_length]'.format(stream_out.get_underscore_name()))
+                            if stream_out.has_single_chunk():
+                                fields.append('ret[{0}][0, ret[{1}]]'.format(chunk_data_index, length_index))
+                            else:
+                                fields.append('{0}_data[0, {0}_length]'.format(stream_out.get_underscore_name()))
                         else:
                             index = None
 
