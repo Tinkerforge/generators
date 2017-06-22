@@ -225,8 +225,8 @@ com['packets'].append({
 """
 Sets the error LED configuration.
 
-By default the error LED turns on if there is any error (see :cb:`Get Error Count`
-callback). If you call this function with the SHOW ERROR option again, the LED
+By default the error LED turns on if there is any error (see :cb:`Frame Error Count`
+callback). If you call this function with the Show-Error option again, the LED
 will turn off until the next error occurs.
 
 You can also turn the LED permanently on/off or show a heartbeat.
@@ -237,8 +237,8 @@ If the Bricklet is in bootloader mode, the LED is off.
 """
 Setzt die Konfiguration der Error-LED.
 
-Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :cb:`Get Error Count`
-Callback). Wenn diese Funktion danach nochmal mit der "SHOW ERROR"-Option
+Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :cb:`Frame Error Count`
+Callback). Wenn diese Funktion danach nochmal mit der Show-Error-Option
 aufgerufen wird, geht die LED wieder aus bis der nächste Error auftritt.
 
 Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag
