@@ -115,19 +115,19 @@ use overload ('""' => '_stringify');
 # the constructor
 sub _new
 {
-    my ($class, $code, $message) =  @_;
-    my $self = {code => $code, message => $message};
-    bless($self, $class);
+	my ($class, $code, $message) =  @_;
+	my $self = {code => $code, message => $message};
+	bless($self, $class);
 
-    return $self;
+	return $self;
 }
 
 # function stringify() to overload with
 sub _stringify
 {
-    my $self = shift;
+	my $self = shift;
 
-    return shortmess($self->{message});
+	return shortmess($self->{message});
 }
 
 =item get_code()

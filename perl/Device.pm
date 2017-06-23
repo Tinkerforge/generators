@@ -78,7 +78,6 @@ sub _base58_decode
 
 	my $i = 0;
 	my %BASE58 = map{ $_ => $i++} @BASE58;
-
 	my $decoded = 0;
 	my $multi = 1;
 	my $base = @BASE58;
@@ -103,7 +102,6 @@ sub _send_request
 	my $packed_data = undef;
 	my $packet = undef;
 	my $length = undef;
-
 	my $response_packet = undef;
 
 	if(scalar(@{$data}) > 0 && $form_data ne '')
@@ -133,22 +131,26 @@ sub _send_request
 
 						next;
 					}
-
-					if($form_data_arr_tmp[0] eq '?') {
+					elsif($form_data_arr_tmp[0] eq '?')
+					{
 						my $n = ceil($form_pack_numeric / 8);
 						my @bool_array_bits = (0) x $n;
 
-						for(my $j = 0; $j < $form_pack_numeric; $j++) {
-							if (${@{$data}[$i]}[$j]) {
+						for(my $j = 0; $j < $form_pack_numeric; $j++)
+						{
+							if (${@{$data}[$i]}[$j])
+							{
 								$bool_array_bits[floor($j / 8)] |= 1 << ($j % 8);
 							}
 						}
 
-						for(my $j = 0; $j < $n; $j++) {
+						for(my $j = 0; $j < $n; $j++)
+						{
 							$packed_data .= pack("C", $bool_array_bits[$j]);
 						}
 					}
-					else {
+					else
+					{
 						my $j = 0;
 
 						for(; $j < $form_pack_numeric; $j ++)
@@ -157,17 +159,21 @@ sub _send_request
 						}
 					}
 				}
+
 				if(split('', $form_data_arr[$i]) == 1)
 				{
-					if($form_data_arr[$i] eq '?') {
+					if($form_data_arr[$i] eq '?')
+					{
 						$packed_data .= pack("C", @{$data}[$i]);
 					}
-					else {
+					else
+					{
 						$packed_data .= pack("$form_data_arr[$i]", @{$data}[$i]);
 					}
 				}
 			}
 		}
+
 		$length = 8 + length($packed_data);
 	}
 	else
@@ -175,7 +181,7 @@ sub _send_request
 		$length = 8;
 	}
 
-	#creating a packet header for the request
+	# creating a packet header for the request
 	$packet_header = $self->{ipcon}->_create_packet_header($self, $length, $function_id);
 
 	my $_seq = $self->{ipcon}->_get_seq_from_data($packet_header);
@@ -183,23 +189,21 @@ sub _send_request
 	$self->{expected_response_sequence_number} = share($_seq);
 	$self->{expected_response_function_id} = share($function_id);
 
-	#means there is data in payload
-	if($length > 8)
+	if($length > 8) # means there is data in payload
 	{
 		$packet = $packet_header.$packed_data;
 	}
-	#means no data in payload
-	else
+	else # means no data in payload
 	{
 		$packet = $packet_header;
 	}
 
 	$self->{ipcon}->_ipcon_send($packet);
 
-	#checking whether response is expected
+	# checking whether response is expected
 	if($self->get_response_expected($function_id))
 	{
-		#waiting for response
+		# waiting for response
 		$response_packet = $self->{response_queue}->dequeue_timed($self->{ipcon}->{timeout});
 
 		if(defined($response_packet))
@@ -209,6 +213,7 @@ sub _send_request
 				if(length($response_packet) >= 8)
 				{
 					my $_err_code = $self->{ipcon}->_get_err_from_data($response_packet);
+
 					if($_err_code != 0)
 					{
 						my $_fid = $self->{ipcon}->_get_fid_from_data($response_packet);
@@ -229,7 +234,9 @@ sub _send_request
 							return 1;
 						}
 					}
+
 					my $response_packet_payload = $self->{ipcon}->_get_payload_from_data($response_packet);
+
 					return $self->{ipcon}->_dispatch_response($response_packet_payload, $form_return, undef, undef);
 				}
 			}
