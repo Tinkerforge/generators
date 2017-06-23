@@ -875,7 +875,7 @@ sub register_callback
 {
 	my ($self, $callback_id, $function) = @_;
 
-	$self->{registered_callbacks}->{$function_id} = '\&'.caller.'::'.$function;
+	$self->{registered_callbacks}->{$callback_id} = '\&'.caller.'::'.$function;
 }
 
 sub _create_packet_header
