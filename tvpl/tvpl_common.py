@@ -96,8 +96,8 @@ class TVPLElement(common.Element):
         t = common.select_lang(self.tvpl_doc_types)[self.get_type()]
         c = self.get_cardinality()
         list_of = {
-        'en': 'List of ',
-        'de': 'Liste von '
+            'en': 'List of ',
+            'de': 'Liste von '
         }
 
         if c == 1 or self.get_type() == 'string':

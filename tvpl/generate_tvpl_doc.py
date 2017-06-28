@@ -118,7 +118,7 @@ class TVPLDocDevice(tvpl_common.TVPLDevice):
 
     def get_tvpl_api(self):
         api = {
-        'en': """
+            'en': """
 .. _{0}_tvpl_api:
 
 API
@@ -128,7 +128,7 @@ API
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_tvpl_api:
 
 API
@@ -178,8 +178,8 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
             c = '* {0} = {1}, '.format(constant.get_name(), value)
 
             for_ = {
-            'en': 'for',
-            'de': 'für'
+                'en': 'for',
+                'de': 'für'
             }
 
             c += common.select_lang(for_) + ' '
@@ -191,8 +191,8 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
 
             if len(e) > 1:
                 and_ = {
-                'en': 'and',
-                'de': 'und'
+                    'en': 'and',
+                    'de': 'und'
                 }
 
                 c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
@@ -230,12 +230,12 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         ret = ' R{0}'
         ret_list = []
         and_ = {
-        'en': '_and_',
-        'de': '_und_'
+            'en': '_and_',
+            'de': '_und_'
         }
         list_of = {
-        'en': 'List_of_',
-        'de': 'Liste_mit_'
+            'en': 'List_of_',
+            'de': 'Liste_mit_'
         }
 
         for element in self.get_elements(direction='out'):
@@ -252,8 +252,8 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         desc = '\n'
         param = ' :param {0}: {1}'
         has_symbols = {
-        'en': 'has symbols',
-        'de': 'hat Symbole'
+            'en': 'has symbols',
+            'de': 'hat Symbole'
         }
 
         for element in self.get_elements(direction='in'):
@@ -269,12 +269,12 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
 
     def get_tvpl_return_desc(self):
         nothing = {
-        'en': 'no output',
-        'de': 'keine Ausgabe'
+            'en': 'no output',
+            'de': 'keine Ausgabe'
         }
         has_symbols = {
-        'en': 'has symbols',
-        'de': 'hat Symbole'
+            'en': 'has symbols',
+            'de': 'hat Symbole'
         }
         elements = self.get_elements(direction='out')
 
