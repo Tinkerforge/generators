@@ -3,7 +3,7 @@
 
 """
 Java Bindings Tester
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_java_bindings.py: Tests the Java bindings
 
@@ -31,31 +31,28 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class JavaExamplesTester(common.ExamplesTester):
-    def __init__(self, path, extra_examples):
-        common.ExamplesTester.__init__(self, 'java', '.java', path, extra_examples=extra_examples)
+class JavaExamplesTester(common.Tester):
+    def __init__(self, bindings_root_directory, extra_paths):
+        common.Tester.__init__(self, 'java', '.java', bindings_root_directory, extra_paths=extra_paths)
 
-    def test(self, cookie, src, is_extra_example):
-        if is_extra_example:
-            shutil.copy(src, '/tmp/tester/java')
-            src = os.path.join('/tmp/tester/java', os.path.split(src)[1])
+    def test(self, cookie, path, extra):
+        if extra:
+            shutil.copy(path, '/tmp/tester/java')
+            path = os.path.join('/tmp/tester/java', os.path.split(path)[1])
 
         args = ['/usr/bin/javac',
                 '-Xlint',
                 '-cp',
                 '/tmp/tester/java/Tinkerforge.jar:.',
-                src]
+                path]
 
         self.execute(cookie, args)
 
-class JavaSourceTester(common.SourceTester):
-    def __init__(self, path):
-        common.SourceTester.__init__(self, 'java', '.html', path, subdirs=['javadoc/com/tinkerforge'])
+class JavaDocTester(common.Tester):
+    def __init__(self, bindings_root_directory):
+        common.Tester.__init__(self, 'java', '.html', bindings_root_directory, subdirs=['javadoc/com/tinkerforge'])
 
     def after_unzip(self):
-        if not common.SourceTester.after_unzip(self):
-            return False
-
         print('>>> generating javadoc')
 
         args = ['/usr/bin/javadoc',
@@ -75,31 +72,25 @@ class JavaSourceTester(common.SourceTester):
 
         return rc == 0
 
-    def test(self, src):
+    def test(self, cookie, path, extra):
         args = ['/usr/bin/xmllint',
                 '--noout',
                 '--valid',
                 '--html',
-                src]
+                path]
 
-        retcode, output = common.check_output_and_error(args)
-        output = output.strip('\r\n')
+        self.execute(cookie, args)
 
-        if len(output) > 0:
-            print(output)
+def run(bindings_root_directory):
+    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/examples/GuitarStation.java'),
+                   os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/java/WeatherStation.java'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/java/RemoteSwitch.java'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/java/SmokeDetector.java')]
 
-        return retcode == 0 and len(output) == 0
-
-def run(path):
-    extra_examples = [os.path.join(path, '../../weather-station/examples/GuitarStation.java'),
-                      os.path.join(path, '../../weather-station/write_to_lcd/java/WeatherStation.java'),
-                      os.path.join(path, '../../hardware-hacking/remote_switch/java/RemoteSwitch.java'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/java/SmokeDetector.java')]
-
-    if not JavaExamplesTester(path, extra_examples).run():
+    if not JavaExamplesTester(bindings_root_directory, extra_paths).run():
         return False
 
-    return JavaSourceTester(path).run()
+    return JavaDocTester(bindings_root_directory).run()
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())

@@ -3,7 +3,7 @@
 
 """
 C# Bindings Tester
-Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_csharp_bindings.py: Tests the C# bindings
 
@@ -25,42 +25,41 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import subprocess
 import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class CSharpExamplesTester(common.ExamplesTester):
-    def __init__(self, path, extra_examples):
-        common.ExamplesTester.__init__(self, 'csharp', '.cs', path, extra_examples=extra_examples)
+class CSharpExamplesTester(common.Tester):
+    def __init__(self, bindings_root_directory, extra_paths):
+        common.Tester.__init__(self, 'csharp', '.cs', bindings_root_directory, extra_paths=extra_paths)
 
-    def test(self, cookie, src, is_extra_example):
-        if is_extra_example:
-            shutil.copy(src, '/tmp/tester/csharp')
-            src = os.path.join('/tmp/tester/csharp', os.path.split(src)[1])
+    def test(self, cookie, path, extra):
+        if extra:
+            shutil.copy(path, '/tmp/tester/csharp')
+            path = os.path.join('/tmp/tester/csharp', os.path.split(path)[1])
 
-        dest = src[:-3] + '.exe';
+        output = path[:-3] + '.exe'
 
         args = ['/usr/bin/mcs',
                 '/warn:4',
                 '/optimize',
                 '/target:exe',
                 '/sdk:2',
-                '/out:' + dest,
+                '/out:' + output,
                 '/reference:System.Drawing.dll',
                 '/reference:/tmp/tester/csharp/Tinkerforge.dll',
-                src]
+                path]
 
         self.execute(cookie, args)
 
-def run(path):
-    extra_examples = [os.path.join(path, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),
-                      os.path.join(path, '../../weather-station/write_to_lcd/csharp/WeatherStation.cs'),
-                      os.path.join(path, '../../hardware-hacking/remote_switch/csharp/RemoteSwitch.cs'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/csharp/SmokeDetector.cs')]
+def run(bindings_root_directory):
+    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),
+                   os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/csharp/WeatherStation.cs'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/csharp/RemoteSwitch.cs'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/csharp/SmokeDetector.cs')]
 
-    return CSharpExamplesTester(path, extra_examples).run()
+    return CSharpExamplesTester(bindings_root_directory, extra_paths).run()
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())

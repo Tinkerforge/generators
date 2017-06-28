@@ -25,100 +25,84 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import subprocess
-import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class PythonExamplesTester(common.ExamplesTester):
-    def __init__(self, path, python, extra_examples):
-        common.ExamplesTester.__init__(self, 'python', '.py', path, comment=python, subdirs=['examples', 'source'], extra_examples=extra_examples)
+class PythonTester(common.Tester):
+    def __init__(self, bindings_root_directory, python, extra_paths):
+        common.Tester.__init__(self, 'python', '.py', bindings_root_directory, comment=python, subdirs=['examples', 'source'], extra_paths=extra_paths)
 
         self.python = python
 
-    def test(self, cookie, src, is_extra_example):
-        if is_extra_example:
-            shutil.copy(src, '/tmp/tester/python')
-            src = os.path.join('/tmp/tester/python', os.path.split(src)[1])
-
+    def test(self, cookie, path, extra):
         args = [self.python,
                 '-c',
-                'import py_compile; py_compile.compile("{0}", doraise=True)'.format(src)]
+                'import py_compile; py_compile.compile("{0}", doraise=True)'.format(path)]
 
         self.execute(cookie, args)
 
-class PylintExamplesTester(common.ExamplesTester):
-    def __init__(self, path, python, comment, extra_examples):
-        common.ExamplesTester.__init__(self, 'python', '.py', path, comment=comment, subdirs=['examples', 'source'], extra_examples=extra_examples)
+class PylintTester(common.Tester):
+    def __init__(self, bindings_root_directory, python, comment, extra_paths):
+        common.Tester.__init__(self, 'python', '.py', bindings_root_directory, comment=comment, subdirs=['examples', 'source'], extra_paths=extra_paths)
 
         self.python = python
 
-    def test(self, cookie, src, is_extra_example):
-        if is_extra_example:
-            shutil.copy(src, '/tmp/tester/python')
-            src = os.path.join('/tmp/tester/python', os.path.split(src)[1])
-
+    def test(self, cookie, path, extra):
         if self.python == 'python3':
-            with open(src, 'r') as f:
+            with open(path, 'r') as f:
                 code = f.read()
 
             code = code.replace('raw_input(', 'input(')
-            src_check = src.replace('.py', '_check.py')
+            path_check = path.replace('.py', '_check.py')
 
-            with open(src_check, 'w') as f:
-                 f.write(code)
+            with open(path_check, 'w') as f:
+                f.write(code)
 
-            src = src_check
+            path = path_check
 
         args = [self.python,
                 '-c',
                 'import sys; sys.path.insert(0, "/tmp/tester/python/source"); import pylint; pylint.run_pylint()',
                 '-E',
-                src]
+                path]
 
         self.execute(cookie, args)
 
-def run(path):
-    extra_examples = [os.path.join(path, '../../weather-station/demo/starter_kit_weather_station_demo/main.py'),
-                      os.path.join(path, '../../weather-station/xively/python/weather_xively.py'),
-                      os.path.join(path, '../../weather-station/write_to_lcd/python/weather_station.py'),
-                      os.path.join(path, '../../hardware-hacking/remote_switch/python/remote_switch.py'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/python/smoke_detector.py'),
-                      os.path.join(path, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/main.py'),
-                      os.path.join(path, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/fire_widget.py'),
-                      os.path.join(path, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/pong_widget.py'),
-                      os.path.join(path, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/tetris_widget.py'),
-                      os.path.join(path, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/images_widget.py'),
-                      os.path.join(path, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/rainbow_widget.py'),
-                      os.path.join(path, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/text_widget.py'),
-                      os.path.join(path, '../../blinkenlights/fire/python/fire.py'),
-                      os.path.join(path, '../../blinkenlights/games/python/keypress.py'),
-                      os.path.join(path, '../../blinkenlights/games/python/pong.py'),
-                      os.path.join(path, '../../blinkenlights/games/python/repeated_timer.py'),
-                      os.path.join(path, '../../blinkenlights/games/python/tetris.py'),
-                      os.path.join(path, '../../blinkenlights/images/python/images.py'),
-                      os.path.join(path, '../../blinkenlights/rainbow/python/rainbow.py'),
-                      os.path.join(path, '../../blinkenlights/text/python/text.py')]
+def run(bindings_root_directory):
+    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/demo/starter_kit_weather_station_demo/main.py'),
+                   os.path.join(bindings_root_directory, '../../weather-station/xively/python/weather_xively.py'),
+                   os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/python/weather_station.py'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/python/remote_switch.py'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/python/smoke_detector.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/main.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/fire_widget.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/pong_widget.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/tetris_widget.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/images_widget.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/rainbow_widget.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/demo/starter_kit_blinkenlights_demo/text_widget.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/fire/python/fire.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/games/python/keypress.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/games/python/pong.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/games/python/repeated_timer.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/games/python/tetris.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/images/python/images.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/rainbow/python/rainbow.py'),
+                   os.path.join(bindings_root_directory, '../../blinkenlights/text/python/text.py')]
 
-    success = PythonExamplesTester(path, 'python', extra_examples).run()
+    if not PythonTester(bindings_root_directory, 'python', extra_paths).run():
+        return False
 
-    if not success:
-        return success
-
-    success = PythonExamplesTester(path, 'python3', extra_examples).run()
-
-    if not success:
-        return success
+    if not PythonTester(bindings_root_directory, 'python3', extra_paths).run():
+        return False
 
     # FIXME: doesn't handle PyQt related super false-positves yet
-    success = PylintExamplesTester(path, 'python', 'pylint', []).run()#extra_examples).run()
-
-    if not success:
-        return success
+    if not PylintTester(bindings_root_directory, 'python', 'pylint', []).run():#extra_paths).run()
+        return False
 
     # FIXME: doesn't handle unicode false-positves yet
-    return True #PylintExamplesTester(path, 'python3', 'pylint3', extra_examples).run()
+    return True #PylintTester(bindings_root_directory, 'python3', 'pylint3', extra_paths).run()
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())

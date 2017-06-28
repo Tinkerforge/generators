@@ -3,7 +3,7 @@
 
 """
 Shell Bindings Tester
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_shell_bindings.py: Tests the Shell bindings
 
@@ -25,27 +25,26 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class ShellExamplesTester(common.ExamplesTester):
-    def __init__(self, path, extra_examples):
-        common.ExamplesTester.__init__(self, 'shell', '.sh', path, extra_examples=extra_examples)
+class ShellExamplesTester(common.Tester):
+    def __init__(self, bindings_root_directory):
+        common.Tester.__init__(self, 'shell', '.sh', bindings_root_directory)
 
-    def test(self, cookie, src, is_extra_example):
-        src_check = src.replace('.sh', '-check.sh')
+    def test(self, cookie, path, extra):
+        path_check = path.replace('.sh', '-check.sh')
 
-        with open(src, 'r') as f:
+        with open(path, 'r') as f:
             code = f.read()
 
-        with open(src_check, 'w') as f:
+        with open(path_check, 'w') as f:
             f.write(code.replace('; read dummy', '').replace('kill -- -$$', 'kill $(jobs -p)'))
 
-        os.chmod(src_check, 0o755)
+        os.chmod(path_check, 0o755)
 
-        args = [src_check]
+        args = [path_check]
         env = {'TINKERFORGE_SHELL_BINDINGS_DRY_RUN': '1',
                'PATH': '/tmp/tester/shell:{0}'.format(os.environ['PATH'])}
 
@@ -54,8 +53,8 @@ class ShellExamplesTester(common.ExamplesTester):
 
         self.handle_result(cookie, output, success)
 
-def run(path):
-    return ShellExamplesTester(path, []).run()
+def run(bindings_root_directory):
+    return ShellExamplesTester(bindings_root_directory).run()
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())

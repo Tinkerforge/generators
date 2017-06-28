@@ -3,7 +3,7 @@
 
 """
 Tinkerforge Visual Programming Language (TVPL) Bindings Tester
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_tvpl_bindings.py: Tests the TVPL bindings
 
@@ -26,9 +26,9 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 
-def run(path):
+def run(bindings_root_directory):
     print('### no tests available')
     return True
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())

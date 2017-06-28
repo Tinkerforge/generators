@@ -25,32 +25,26 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class PerlExamplesTester(common.ExamplesTester):
-    def __init__(self, path, extra_examples):
-        # FIXME: currently only the exampels code is checked, but not the actual bindings code in .pm files
-        common.ExamplesTester.__init__(self, 'perl', '.pl', path, extra_examples=extra_examples)
+class PerlCheckExamplesTester(common.Tester):
+    def __init__(self, bindings_root_directory):
+        common.Tester.__init__(self, 'perl', '.pl', bindings_root_directory, comment='check')
 
-    def test(self, cookie, src, is_extra_example):
-        if is_extra_example:
-            shutil.copy(src, '/tmp/tester/perl')
-            src = os.path.join('/tmp/tester/perl', os.path.split(src)[1])
+    def test(self, cookie, path, extra):
+        path_check = path.replace('.pl', '_check.pl')
 
-        src_check = src.replace('.pl', '_check.pl')
-
-        with open(src, 'r') as f:
+        with open(path, 'r') as f:
             code = f.read()
 
-        with open(src_check, 'w') as f:
-            f.write('use lib "/tmp/tester/perl/source/lib"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
+        with open(path_check, 'w') as f:
+            f.write('use lib "/tmp/tester/perl/source/lib"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n')
 
         args = ['perl',
                 '-cWT',
-                src_check]
+                path_check]
 
         retcode, output = common.check_output_and_error(args)
         output = output.strip('\r\n')
@@ -61,10 +55,30 @@ class PerlExamplesTester(common.ExamplesTester):
 
         self.handle_result(cookie, output, success)
 
-def run(path):
-    extra_examples = []
+class PerlLintExamplesTester(common.Tester):
+    def __init__(self, bindings_root_directory):
+        common.Tester.__init__(self, 'perl', '.pl', bindings_root_directory, comment='lint')
 
-    return PerlExamplesTester(path, extra_examples).run()
+    def test(self, cookie, path, extra):
+        path_lint = path.replace('.pl', '_lint.pl')
+
+        with open(path, 'r') as f:
+            code = f.read()
+
+        with open(path_lint, 'w') as f:
+            f.write('use lib "/tmp/tester/perl/source/lib";' + code)
+
+        args = ['perl',
+                '-MO=Lint,all',
+                path_lint]
+
+        self.execute(cookie, args)
+
+def run(bindings_root_directory):
+    if not PerlCheckExamplesTester(bindings_root_directory).run():
+        return False
+
+    return PerlLintExamplesTester(bindings_root_directory).run()
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())

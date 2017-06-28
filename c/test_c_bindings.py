@@ -3,7 +3,7 @@
 
 """
 C/C++ Bindings Tester
-Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_c_bindings.py: Tests the C/C++ bindings
 
@@ -25,33 +25,32 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import subprocess
 import glob
 import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class CExamplesTester(common.ExamplesTester):
-    def __init__(self, path, compiler, extra_examples):
-        common.ExamplesTester.__init__(self, 'c', '.c', path, comment=compiler, extra_examples=extra_examples)
+class CExamplesTester(common.Tester):
+    def __init__(self, bindings_root_directory, compiler, extra_paths):
+        common.Tester.__init__(self, 'c', '.c', bindings_root_directory, comment=compiler, extra_paths=extra_paths)
 
         self.compiler = compiler
 
-    def test(self, cookie, src, is_extra_example):
+    def test(self, cookie, path, extra):
         # skip OLED scribble example because mingw32 has no libgd package
-        if self.compiler.startswith('mingw32-') and src.endswith('example_scribble.c'):
+        if self.compiler.startswith('mingw32-') and path.endswith('example_scribble.c'):
             self.execute(cookie, ['true'])
             return
 
-        if is_extra_example:
-            shutil.copy(src, '/tmp/tester/c')
-            src = os.path.join('/tmp/tester/c', os.path.split(src)[1])
+        if extra:
+            shutil.copy(path, '/tmp/tester/c')
+            path = os.path.join('/tmp/tester/c', os.path.split(path)[1])
 
-        dest = src[:-2]
+        output = path[:-2]
 
-        if not is_extra_example and '/brick' in src:
-            dirname = os.path.split(src)[0]
+        if not extra and '/brick' in path:
+            dirname = os.path.split(path)[0]
             device = '/tmp/tester/c/source/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
         else:
             device = ''
@@ -69,7 +68,7 @@ class CExamplesTester(common.ExamplesTester):
         elif self.compiler == 'scan-build clang':
             args += ['/usr/bin/scan-build', '/usr/bin/clang', '-std=c99', '-pthread']
         else:
-            raise common.GeneratorError('Invalid compiler ' + self.compiler);
+            raise common.GeneratorError('Invalid compiler ' + self.compiler)
 
         args += ['-Wall',
                  '-Wextra',
@@ -77,53 +76,45 @@ class CExamplesTester(common.ExamplesTester):
                  '-O2',
                  '-I/tmp/tester/c/source',
                  '-o',
-                 dest,
+                 output,
                  '/tmp/tester/c/source/ip_connection.c']
 
         if len(device) > 0:
             args.append(device)
-        elif is_extra_example:
-            deps = glob.glob('/tmp/tester/c/source/*.c')
-            deps.remove('/tmp/tester/c/source/ip_connection.c')
+        elif extra:
+            dependencies = glob.glob('/tmp/tester/c/source/*.c')
+            dependencies.remove('/tmp/tester/c/source/ip_connection.c')
             args.append('-Wno-error=unused-parameter')
-            args += deps
+            args += dependencies
 
-        args.append(src)
+        args.append(path)
 
         if self.compiler.startswith('mingw32-'):
             args += ['-lws2_32']
 
-        if src.endswith('example_scribble.c'):
+        if path.endswith('example_scribble.c'):
             args += ['-lm', '-lgd']
 
         self.execute(cookie, args)
 
-def run(path):
-    extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/c/weather_station.c'),
-                      os.path.join(path, '../../hardware-hacking/remote_switch/c/remote_switch.c'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/c/smoke_detector.c')]
+def run(bindings_root_directory):
+    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/c/weather_station.c'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/c/remote_switch.c'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/c/smoke_detector.c')]
 
-    success = CExamplesTester(path, 'gcc', extra_examples).run()
+    if not CExamplesTester(bindings_root_directory, 'gcc', extra_paths).run():
+        return False
 
-    if not success:
-        return success
+    if not CExamplesTester(bindings_root_directory, 'g++', extra_paths).run():
+        return False
 
-    success = CExamplesTester(path, 'g++', extra_examples).run()
+    if not CExamplesTester(bindings_root_directory, 'mingw32-gcc', extra_paths).run():
+        return False
 
-    if not success:
-        return success
+    if not CExamplesTester(bindings_root_directory, 'mingw32-g++', extra_paths).run():
+        return False
 
-    success = CExamplesTester(path, 'mingw32-gcc', extra_examples).run()
-
-    if not success:
-        return success
-
-    success = CExamplesTester(path, 'mingw32-g++', extra_examples).run()
-
-    if not success:
-        return success
-
-    return CExamplesTester(path, 'scan-build clang', extra_examples).run()
+    return CExamplesTester(bindings_root_directory, 'scan-build clang', extra_paths).run()
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())

@@ -2565,29 +2565,29 @@ class ExamplesGenerator(Generator):
     def get_examples_directory(self, device):
         return os.path.join(device.get_git_directory(), 'software', 'examples', self.get_bindings_name())
 
-def examples_tester_worker(cookie, args, env):
+def tester_worker(cookie, args, env):
     try:
-        with open(os.devnull) as DEVNULL:
-            output = subprocess.check_output(args, env=env, stderr=subprocess.STDOUT, stdin=DEVNULL).decode('utf-8')
+        with open(os.devnull) as f:
+            output = subprocess.check_output(args, env=env, stderr=subprocess.STDOUT, stdin=f).decode('utf-8')
     except subprocess.CalledProcessError as e:
         return cookie, e.output.decode('utf-8'), e.returncode == 0
     except Exception as e:
-        return cookie, 'ExamplesTester Exception: ' + str(e), False
+        return cookie, 'Tester Exception: ' + str(e), False
 
     return cookie, output, True
 
-class ExamplesTester:
+class Tester(object):
     PROCESSES = 4
 
-    def __init__(self, name, extension, path, subdirs=['examples'], comment=None, extra_examples=[]):
-        version = get_changelog_version(path)
+    def __init__(self, name, extension, bindings_root_directory, subdirs=None, comment=None, extra_paths=None):
+        version = get_changelog_version(bindings_root_directory)
 
         self.name = name
         self.extension = extension
-        self.path = path
-        self.subdirs = subdirs[:]
+        self.bindings_root_directory = bindings_root_directory
+        self.subdirs = subdirs if subdirs != None else ['examples']
         self.comment = comment
-        self.extra_examples = extra_examples[:]
+        self.extra_paths = extra_paths if extra_paths != None else []
         self.zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(name, *version)
         self.test_count = 0
         self.success_count = 0
@@ -2598,20 +2598,19 @@ class ExamplesTester:
         def callback(result):
             self.handle_result(*result)
 
-        self.pool.apply_async(examples_tester_worker, args=(cookie, args, env),
-                              callback=callback)
+        self.pool.apply_async(tester_worker, args=(cookie, args, env), callback=callback)
 
-    def handle_source(self, src, is_extra_example):
+    def handle_source(self, path, extra):
         self.test_count += 1
-        self.test((src,), src, is_extra_example)
+        self.test((path,), path, extra)
 
     def handle_result(self, cookie, output, success):
-        src = cookie[0]
+        path = cookie[0]
 
         if self.comment != None:
-            print('>>> [{0}] testing {1}'.format(self.comment, src))
+            print('>>> [{0}] testing {1}'.format(self.comment, path))
         else:
-            print('>>> testing {0}'.format(src))
+            print('>>> testing {0}'.format(path))
 
         output = output.strip()
 
@@ -2625,106 +2624,23 @@ class ExamplesTester:
             self.failure_count += 1
             print('\033[01;31m>>> test failed\033[0m\n')
 
-    def test(self, cookie, src, is_extra_example):
-        raise NotImplementedError()
-
-    def run(self):
-        tmp_dir = os.path.join('/tmp/tester', self.name)
-
-        # Make temporary examples directory
-        if os.path.exists(tmp_dir):
-            shutil.rmtree(tmp_dir)
-
-        os.makedirs(tmp_dir)
-
-        with ChangedDirectory(tmp_dir):
-            shutil.copy(os.path.join(self.path, self.zipname), tmp_dir)
-
-            # unzip
-            print('>>> unpacking {0} to {1}'.format(self.zipname, tmp_dir))
-
-            args = ['/usr/bin/unzip',
-                    '-q',
-                    os.path.join(tmp_dir, self.zipname)]
-
-            rc = subprocess.call(args)
-
-            if rc != 0:
-                print('### could not unpack {0}'.format(self.zipname))
-                return False
-
-            print('>>> unpacking {0} done\n'.format(self.zipname))
-
-            # test
-            for subdir in self.subdirs:
-                for root, _, files in os.walk(os.path.join(tmp_dir, subdir)):
-                    for name in files:
-                        if not name.endswith(self.extension):
-                            continue
-
-                        self.handle_source(os.path.join(root, name), False)
-
-            for extra_example in self.extra_examples:
-                self.handle_source(extra_example, True)
-
-        self.pool.close()
-        self.pool.join()
-
-        # report
-        if self.comment != None:
-            print('### [{0}] {1} file(s) tested, {2} test(s) succeded, {3} failure(s) occurred'
-                  .format(self.comment, self.test_count, self.success_count, self.failure_count))
-        else:
-            print('### {0} file(s) tested, {1} test(s) succeded, {2} failure(s) occurred'
-                  .format(self.test_count, self.success_count, self.failure_count))
-
-        return self.failure_count == 0
-
-class SourceTester:
-    def __init__(self, name, extension, path, subdirs=['source'], comment=None):
-        version = get_changelog_version(path)
-
-        self.name = name
-        self.extension = extension
-        self.path = path
-        self.subdirs = subdirs[:]
-        self.comment = comment
-        self.zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(name, *version)
-        self.test_count = 0
-        self.failure_count = 0
-
-    def handle_source(self, src):
-        self.test_count += 1
-
-        if self.comment is not None:
-            print('>>> [{0}] testing {1}'.format(self.comment, src))
-        else:
-            print('>>> testing {0}'.format(src))
-
-        if not self.test(src):
-            self.failure_count += 1
-
-            print('\033[01;31m>>> test failed\033[0m\n')
-        else:
-            print('\033[01;32m>>> test succeded\033[0m\n')
-
     def after_unzip(self):
         return True
 
-    def test(self, src):
+    def test(self, cookie, path, extra):
         raise NotImplementedError()
 
     def run(self):
         tmp_dir = os.path.join('/tmp/tester', self.name)
 
-        # make temporary examples directory
+        # Make temporary directory
         if os.path.exists(tmp_dir):
             shutil.rmtree(tmp_dir)
 
         os.makedirs(tmp_dir)
 
         with ChangedDirectory(tmp_dir):
-            shutil.copy(os.path.join(self.path, self.zipname), tmp_dir)
+            shutil.copy(os.path.join(self.bindings_root_directory, self.zipname), tmp_dir)
 
             # unzip
             print('>>> unpacking {0} to {1}'.format(self.zipname, tmp_dir))
@@ -2751,13 +2667,21 @@ class SourceTester:
                         if not name.endswith(self.extension):
                             continue
 
-                        self.handle_source(os.path.join(root, name))
+                        self.handle_source(os.path.join(root, name), False)
 
-            # report
-            if self.comment is not None:
-                print('### [{0}] {1} files tested, {2} failure(s) occurred'.format(self.comment, self.test_count, self.failure_count))
-            else:
-                print('### {0} files tested, {1} failure(s) occurred'.format(self.test_count, self.failure_count))
+            for extra_path in self.extra_paths:
+                self.handle_source(extra_path, True)
+
+        self.pool.close()
+        self.pool.join()
+
+        # report
+        if self.comment != None:
+            print('### [{0}] {1} file(s) tested, {2} test(s) succeded, {3} failure(s) occurred'
+                  .format(self.comment, self.test_count, self.success_count, self.failure_count))
+        else:
+            print('### {0} file(s) tested, {1} test(s) succeded, {2} failure(s) occurred'
+                  .format(self.test_count, self.success_count, self.failure_count))
 
         return self.failure_count == 0
 

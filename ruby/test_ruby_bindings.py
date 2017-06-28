@@ -3,7 +3,7 @@
 
 """
 Ruby Bindings Tester
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_ruby_bindings.py: Tests the Ruby bindings
 
@@ -29,14 +29,14 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class RubyExamplesTester(common.ExamplesTester):
-    def __init__(self, path, extra_examples):
-        common.ExamplesTester.__init__(self, 'ruby', '.rb', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
+class RubyTester(common.Tester):
+    def __init__(self, bindings_root_directory, extra_paths):
+        common.Tester.__init__(self, 'ruby', '.rb', bindings_root_directory, subdirs=['examples', 'source'], extra_paths=extra_paths)
 
-    def test(self, cookie, src, is_extra_example):
+    def test(self, cookie, path, extra):
         args = ['/usr/bin/ruby',
                 '-wc',
-                src]
+                path]
 
         retcode, output = common.check_output_and_error(args)
         output = output.strip('\r\n')
@@ -44,12 +44,12 @@ class RubyExamplesTester(common.ExamplesTester):
 
         self.handle_result(cookie, output, success)
 
-def run(path):
-    extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/ruby/weather_station.rb'),
-                      os.path.join(path, '../../hardware-hacking/remote_switch/ruby/remote_switch.rb'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/ruby/smoke_detector.rb')]
+def run(bindings_root_directory):
+    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/ruby/weather_station.rb'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/ruby/remote_switch.rb'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/ruby/smoke_detector.rb')]
 
-    return RubyExamplesTester(path, extra_examples).run()
+    return RubyTester(bindings_root_directory, extra_paths).run()
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())

@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Bindings Tester
-Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
 
 test_vbnet_bindings.py: Tests the Visual Basic .NET bindings
 
@@ -25,22 +25,21 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import subprocess
 import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class VBNETExamplesTester(common.ExamplesTester):
-    def __init__(self, path, extra_examples):
-        common.ExamplesTester.__init__(self, 'vbnet', '.vb', path, extra_examples=extra_examples)
+class VBNETExamplesTester(common.Tester):
+    def __init__(self, bindings_root_directory, extra_paths):
+        common.Tester.__init__(self, 'vbnet', '.vb', bindings_root_directory, extra_paths=extra_paths)
 
-    def test(self, cookie, src, is_extra_example):
-        if is_extra_example:
-            shutil.copy(src, '/tmp/tester/vbnet')
-            src = os.path.join('/tmp/tester/vbnet', os.path.split(src)[1])
+    def test(self, cookie, path, extra):
+        if extra:
+            shutil.copy(path, '/tmp/tester/vbnet')
+            path = os.path.join('/tmp/tester/vbnet', os.path.split(path)[1])
 
-        dest = src[:-3] + '.exe'
+        output = path[:-3] + '.exe'
 
         args = ['/usr/bin/vbnc2',
                 '/nologo',
@@ -48,19 +47,19 @@ class VBNETExamplesTester(common.ExamplesTester):
                 '/optionstrict',
                 '/warnaserror',
                 '/target:exe',
-                '/out:' + dest,
+                '/out:' + output,
                 '/reference:System.Drawing.dll',
                 '/reference:/tmp/tester/vbnet/Tinkerforge.dll',
-                src]
+                path]
 
         self.execute(cookie, args)
 
-def run(path):
-    extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/vbnet/WeatherStation.vb'),
-                      os.path.join(path, '../../hardware-hacking/remote_switch/vbnet/RemoteSwitch.vb'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/vbnet/SmokeDetector.vb')]
+def run(bindings_root_directory):
+    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/vbnet/WeatherStation.vb'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/vbnet/RemoteSwitch.vb'),
+                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/vbnet/SmokeDetector.vb')]
 
-    return VBNETExamplesTester(path, extra_examples).run()
+    return VBNETExamplesTester(bindings_root_directory, extra_paths).run()
 
 if __name__ == "__main__":
-    sys.exit(run(os.getcwd()))
+    run(os.getcwd())
