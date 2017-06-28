@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -103,7 +99,7 @@ class VBNETDocDevice(common.Device):
 
     def get_vbnet_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. vbnet:function:: Class {1}(ByVal uid As String, ByVal ipcon As IPConnection)
 
  Creates an object with the unique device ID ``uid``:
@@ -115,7 +111,7 @@ class VBNETDocDevice(common.Device):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_vbnet_examples>`).
 """,
-        'de': """
+            'de': """
 .. vbnet:function:: Class {1}(ByVal uid As String, ByVal ipcon As IPConnection)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
@@ -130,7 +126,7 @@ class VBNETDocDevice(common.Device):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_vbnet_callbacks:
 
 Callbacks
@@ -157,7 +153,7 @@ The available callback property and their type of parameters are described below
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_vbnet_callbacks:
 
 Callbacks
@@ -189,7 +185,7 @@ unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_vbnet_api:
 
 API
@@ -204,7 +200,7 @@ All functions and procedures listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_vbnet_api:
 
 API
@@ -222,7 +218,7 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_vbnet_constants:
 
 Constants
@@ -241,7 +237,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_vbnet_constants:
 
 Konstanten
@@ -304,9 +300,6 @@ Konstanten
         return doc
 
 class VBNETDocPacket(common.Packet):
-    def get_vbnet_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
-
     def get_vbnet_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
         text = self.get_device().specialize_vbnet_doc_function_links(text)
@@ -402,7 +395,7 @@ class VBNETDocGenerator(common.DocGenerator):
         return 'VBNET'
 
     def get_doc_example_regex(self):
-        return '^Example.*\.vb$'
+        return r'^Example.*\.vb$'
 
     def get_device_class(self):
         return VBNETDocDevice

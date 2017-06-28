@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -93,7 +89,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
 
     def get_csharp_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. csharp:function:: class {1}(String uid, IPConnection ipcon)
 
  Creates an object with the unique device ID ``uid``:
@@ -105,7 +101,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_csharp_examples>`).
 """,
-        'de': """
+            'de': """
 .. csharp:function:: class {1}(String uid, IPConnection ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
@@ -120,7 +116,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_csharp_callbacks:
 
 Callbacks
@@ -148,7 +144,7 @@ The available events are described below.
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_csharp_callbacks:
 
 Callbacks
@@ -180,7 +176,7 @@ Die verfügbaren Events werden weiter unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_csharp_api:
 
 API
@@ -205,7 +201,7 @@ All methods listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_csharp_api:
 
 API
@@ -234,7 +230,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_csharp_constants:
 
 Constants
@@ -253,7 +249,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_csharp_constants:
 
 Konstanten
@@ -348,7 +344,7 @@ class CSharpDocGenerator(common.DocGenerator):
         return 'CSharp'
 
     def get_doc_example_regex(self):
-        return '^Example.*\.cs$'
+        return r'^Example.*\.cs$'
 
     def get_device_class(self):
         return CSharpDocDevice

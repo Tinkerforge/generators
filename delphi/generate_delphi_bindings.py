@@ -353,7 +353,7 @@ begin
             method_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
   for i := 0 to {1} do if {2}[i] then {0}[Floor(i/8)] := {0}[Floor(i/8)] or (1 shl (i mod 8));
   for i := 0 to {3} do LEConvertUInt8To({0}[i], {4} + (i * 1), request);
-''';
+'''
 
             # Serialize request
             offset = 8
@@ -371,7 +371,7 @@ begin
                                                            element.get_cardinality() - 1,
                                                            element.get_headless_camel_case_name(),
                                                            str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
-                                                           offset);
+                                                           offset)
                 elif element.get_type() == 'string':
                     method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(element.get_headless_camel_case_name(),
                                                                                       offset,
@@ -395,7 +395,7 @@ begin
             method_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
   for i := 0 to {1} do {0}[i] := LEConvertUInt8From({2} + (i * 1), packet);
   for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
-''';
+'''
 
             for element in packet.get_elements(direction='out'):
                 if out_count > 1:
@@ -415,7 +415,7 @@ begin
                                                            str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
                                                            offset,
                                                            element.get_cardinality() - 1,
-                                                           element.get_headless_camel_case_name());
+                                                           element.get_headless_camel_case_name())
                 elif element.get_type() == 'string':
                     method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
                                                                                            offset,
@@ -475,7 +475,7 @@ begin
             wrapper_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
   for i := 0 to {1} do {0}[i] := LEConvertUInt8From({2} + (i * 1), packet);
   for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
-''';
+'''
 
             for element in packet.get_elements(direction='out'):
                 parameter_names.append(element.get_headless_camel_case_name())
@@ -492,7 +492,7 @@ begin
                                                              str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
                                                              offset,
                                                              element.get_cardinality() - 1,
-                                                             element.get_headless_camel_case_name());
+                                                             element.get_headless_camel_case_name())
                 else:
                     wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_headless_camel_case_name(),
                                                                                     element.get_delphi_le_convert_type(),

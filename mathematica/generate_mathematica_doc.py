@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -63,13 +59,13 @@ class MathematicaDocDevice(common.Device):
         return common.make_rst_examples(title_from_filename, self,
                                         url_fixer=url_fixer, display_name_fixer=display_name_fixer)
 
-    def get_mathematica_functions(self, type):
+    def get_mathematica_functions(self, type_):
         function = '.. mathematica:function:: {0}@{1}[{2}] -> {3}\n{4}{5}{6}\n'
         functions = []
         cls = self.get_mathematica_class_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != type:
+            if packet.get_doc_type() != type_:
                 continue
 
             name = packet.get_camel_case_name()
@@ -109,7 +105,7 @@ class MathematicaDocDevice(common.Device):
 
     def get_mathematica_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. mathematica:function:: {1}[uid, ipcon] -> {2}
 
  :param uid: String
@@ -136,7 +132,7 @@ class MathematicaDocDevice(common.Device):
  corresponding Mathematica `.NET/Link documentation
  <http://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromTheWolframLanguage.html#14400>`__.
 """,
-        'de': """
+            'de': """
 .. mathematica:function:: {1}[uid, ipcon] -> {2}
 
  :param uid: String
@@ -168,7 +164,7 @@ class MathematicaDocDevice(common.Device):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_mathematica_callbacks:
 
 Callbacks
@@ -197,7 +193,7 @@ The available callback property and their type of parameters are described below
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_mathematica_callbacks:
 
 Callbacks
@@ -232,7 +228,7 @@ unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_mathematica_api:
 
 API
@@ -258,7 +254,7 @@ The namespace for all Brick/Bricklet bindings and the IPConnection is
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_mathematica_api:
 
 API
@@ -289,7 +285,7 @@ Der Namensraum für alle Brick/Bricklet Bindings und die IPConnection ist
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_mathematica_constants:
 
 Constants
@@ -308,7 +304,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_mathematica_constants:
 
 Konstanten
@@ -422,9 +418,9 @@ class MathematicaDocPacket(common.Packet):
                 continue
 
             name = element.get_mathematica_description_name()
-            type = element.get_mathematica_type()
+            type_ = element.get_mathematica_type()
 
-            descriptions.append(' :param {0}: {1}\n'.format(name, type))
+            descriptions.append(' :param {0}: {1}\n'.format(name, type_))
 
         return '\n' + ''.join(descriptions)
 
@@ -504,7 +500,7 @@ class MathematicaDocGenerator(common.DocGenerator):
         return 'Mathematica'
 
     def get_doc_example_regex(self):
-        return '^Example.*\.nb.txt$'
+        return r'^Example.*\.nb.txt$'
 
     def get_device_class(self):
         return MathematicaDocDevice

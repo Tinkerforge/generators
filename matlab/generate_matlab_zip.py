@@ -27,8 +27,6 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
-import glob
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -70,7 +68,7 @@ class MATLABZipGenerator(common.ZipGenerator):
             if not os.path.exists(tmp_examples_device_dir):
                 os.makedirs(tmp_examples_device_dir)
 
-            for example in common.find_device_examples(device, '^{0}_example_.*\.m$'.format(flavor)):
+            for example in common.find_device_examples(device, r'^{0}_example_.*\.m$'.format(flavor)):
                 shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
@@ -83,7 +81,7 @@ class MATLABZipGenerator(common.ZipGenerator):
             tmp_examples_dir = self.tmp_flavor_examples_dir[flavor]
 
             # Copy IP Connection examples
-            for example in common.find_examples(root_dir, '^' + flavor + '_example_.*\.m$'):
+            for example in common.find_examples(root_dir, '^' + flavor + r'_example_.*\.m$'):
                 shutil.copy(example[1], tmp_examples_dir)
 
             # Copy bindings and readme

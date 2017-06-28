@@ -27,7 +27,6 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -60,14 +59,14 @@ class JavaZipGenerator(common.ZipGenerator):
         if not os.path.exists(tmp_examples_device_dir):
             os.makedirs(tmp_examples_device_dir)
 
-        for example in common.find_device_examples(device, '^Example.*\.java$'):
+        for example in common.find_device_examples(device, r'^Example.*\.java$'):
             shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
         root_dir = self.get_bindings_root_directory()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, '^Example.*\.java$'):
+        for example in common.find_examples(root_dir, r'^Example.*\.java$'):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme

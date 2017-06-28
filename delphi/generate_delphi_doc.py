@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -78,7 +74,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
     def get_delphi_callbacks(self):
         cbs = ''
         cb = {
-        'en': """.. delphi:function:: property {0}.On{1}
+            'en': """.. delphi:function:: property {0}.On{1}
 
  .. code-block:: delphi
 
@@ -86,7 +82,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
 {3}
 """,
-        'de': """.. delphi:function:: property {0}.On{1}
+            'de': """.. delphi:function:: property {0}.On{1}
 
  .. code-block:: delphi
 
@@ -110,7 +106,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
     def get_delphi_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. delphi:function:: constructor {1}.Create(const uid: string; ipcon: TIPConnection)
 
  Creates an object with the unique device ID ``uid``:
@@ -122,7 +118,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_delphi_examples>`).
 """,
-        'de': """
+            'de': """
 .. delphi:function:: constructor {1}.Create(const uid: string; ipcon: TIPConnection)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
@@ -137,7 +133,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_delphi_callbacks:
 
 Callbacks
@@ -165,7 +161,7 @@ The available callback property and their type of parameters are described below
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_delphi_callbacks:
 
 Callbacks
@@ -198,7 +194,7 @@ unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_delphi_api:
 
 API
@@ -213,7 +209,7 @@ All functions and procedures listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_delphi_api:
 
 API
@@ -231,7 +227,7 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_delphi_constants:
 
 Constants
@@ -250,7 +246,7 @@ Constants
 
  This constant represents the human readable name of a {4}.
 """,
-        'de': """
+            'de': """
 .. _{0}_delphi_constants:
 
 Konstanten
@@ -347,7 +343,7 @@ class DelphiDocGenerator(common.DocGenerator):
         return 'Delphi'
 
     def get_doc_example_regex(self):
-        return '^Example.*\.pas$'
+        return r'^Example.*\.pas$'
 
     def get_device_class(self):
         return DelphiBindingsDevice

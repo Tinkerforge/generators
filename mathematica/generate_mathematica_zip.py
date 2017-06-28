@@ -3,7 +3,7 @@
 
 """
 Mathematica ZIP Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_mathematica_zip.py: Generator for Mathematica ZIP
@@ -27,7 +27,6 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -58,14 +57,14 @@ class MathematicaZipGenerator(common.ZipGenerator):
         if not os.path.exists(tmp_examples_device_dir):
             os.makedirs(tmp_examples_device_dir)
 
-        for example in common.find_device_examples(device, '^Example.*\.nb$'):
+        for example in common.find_device_examples(device, r'^Example.*\.nb$'):
             shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
         root_dir = self.get_bindings_root_directory()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, '^Example.*\.nb$'):
+        for example in common.find_examples(root_dir, r'^Example.*\.nb$'):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme

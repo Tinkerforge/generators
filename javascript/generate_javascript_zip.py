@@ -76,20 +76,20 @@ class JavaScriptZipGenerator(common.ZipGenerator):
         if not os.path.exists(tmp_browser_examples_device):
             os.makedirs(tmp_browser_examples_device)
 
-        for example in common.find_device_examples(device, '^Example.*\.js'):
+        for example in common.find_device_examples(device, r'^Example.*\.js'):
             shutil.copy(example[1], tmp_nodejs_examples_device)
 
-        for example in common.find_device_examples(device, '^Example.*\.html'):
+        for example in common.find_device_examples(device, r'^Example.*\.html'):
             shutil.copy(example[1], tmp_browser_examples_device)
 
     def finish(self):
         root_dir = self.get_bindings_root_directory()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, '^Example.*\.js'):
+        for example in common.find_examples(root_dir, r'^Example.*\.js'):
             shutil.copy(example[1], self.tmp_nodejs_examples_dir)
 
-        for example in common.find_examples(root_dir, '^Example.*\.html'):
+        for example in common.find_examples(root_dir, r'^Example.*\.html'):
             shutil.copy(example[1], self.tmp_browser_examples_dir)
 
         # Copy bindings and readme

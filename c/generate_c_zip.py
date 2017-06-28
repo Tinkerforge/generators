@@ -57,14 +57,14 @@ class CZipGenerator(common.ZipGenerator):
         if not os.path.exists(tmp_examples_device_dir):
             os.makedirs(tmp_examples_device_dir)
 
-        for example in common.find_device_examples(device, '^example_.*\.c$'):
+        for example in common.find_device_examples(device, r'^example_.*\.c$'):
             shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
         root_dir = self.get_bindings_root_directory()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, '^example_.*\.c$'):
+        for example in common.find_examples(root_dir, r'^example_.*\.c$'):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme and merge symbols

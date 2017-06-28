@@ -23,7 +23,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 
@@ -130,10 +129,10 @@ def call_{0}_{1}(ctx, argv):
                 for element in packet.get_elements(direction='in'):
                     name = element.get_underscore_name()
                     type_converter = element.get_shell_type_converter()
-                    help = element.get_shell_help()
+                    help_ = element.get_shell_help()
                     metavar = "'<{0}>'".format(element.get_dash_name())
 
-                    params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type_converter, help, metavar))
+                    params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type_converter, help_, metavar))
                     request_data.append('args.{0}'.format(name))
 
                 comma = ''

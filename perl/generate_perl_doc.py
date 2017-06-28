@@ -27,10 +27,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -97,7 +93,7 @@ class PerlDocDevice(perl_common.PerlDevice):
 
     def get_perl_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. perl:function:: {1}->new($uid, $ipcon)
 
  :param $uid: string
@@ -113,7 +109,7 @@ class PerlDocDevice(perl_common.PerlDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_perl_examples>`).
 """,
-        'de': """
+            'de': """
 .. perl:function:: {1}->new($uid, $ipcon)
 
  :param $uid: string
@@ -132,7 +128,7 @@ class PerlDocDevice(perl_common.PerlDevice):
         }
 
         register_str = {
-        'en': """
+            'en': """
 .. perl:function:: {1}->register_callback($id, $callback)
 
  :param $id: int
@@ -144,7 +140,7 @@ class PerlDocDevice(perl_common.PerlDevice):
  The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_perl_callbacks>`.
 """,
-        'de': """
+            'de': """
 .. perl:function:: {1}->register_callback($id, $callback)
 
  :param $id: int
@@ -159,7 +155,7 @@ class PerlDocDevice(perl_common.PerlDevice):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_perl_callbacks:
 
 Callbacks
@@ -197,7 +193,7 @@ described below.
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_perl_callbacks:
 
 Callbacks
@@ -241,7 +237,7 @@ weiter unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_perl_api:
 
 API
@@ -267,7 +263,7 @@ All methods listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_perl_api:
 
 API
@@ -296,7 +292,7 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_perl_constants:
 
 Constants
@@ -315,7 +311,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_perl_constants:
 
 Konstanten
@@ -437,17 +433,17 @@ class PerlDocPacket(common.Packet):
             return ''
 
         desc = {
-        'en': """
+            'en': """
  The returned array contains the elements {0}.
 """,
-        'de': """
+            'de': """
  Das zurückgegebene Array enthält die Elemente {0}.
 """
         }
 
         and_ = {
-        'en': ' and ',
-        'de': ' und '
+            'en': ' and ',
+            'de': ' und '
         }
 
         var = []
@@ -474,7 +470,7 @@ class PerlDocGenerator(common.DocGenerator):
         return 'Perl'
 
     def get_doc_example_regex(self):
-        return '^example_.*\.pl$'
+        return r'^example_.*\.pl$'
 
     def get_device_class(self):
         return PerlDocDevice

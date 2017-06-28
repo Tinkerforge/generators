@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -96,7 +92,7 @@ class PythonDocDevice(python_common.PythonDevice):
 
     def get_python_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. py:function:: {1}(uid, ipcon)
 
  :param uid: string
@@ -111,7 +107,7 @@ class PythonDocDevice(python_common.PythonDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_python_examples>`).
 """,
-        'de': """
+            'de': """
 .. py:function:: {1}(uid, ipcon)
 
  :param uid: string
@@ -129,7 +125,7 @@ class PythonDocDevice(python_common.PythonDevice):
         }
 
         register_str = {
-        'en': """
+            'en': """
 .. py:function:: {2}{1}.register_callback(callback_id, function)
 
  :param callback_id: int
@@ -141,7 +137,7 @@ class PythonDocDevice(python_common.PythonDevice):
  The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_python_callbacks>`.
 """,
-        'de': """
+            'de': """
 .. py:function:: {2}{1}.register_callback(callback_id, function)
 
  :param callback_id: int
@@ -156,7 +152,7 @@ class PythonDocDevice(python_common.PythonDevice):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_python_callbacks:
 
 Callbacks
@@ -185,7 +181,7 @@ described below.
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_python_callbacks:
 
 Callbacks
@@ -218,7 +214,7 @@ weiter unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_python_api:
 
 API
@@ -241,7 +237,7 @@ All methods listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_python_api:
 
 API
@@ -267,7 +263,7 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_python_constants:
 
 Constants
@@ -286,7 +282,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_python_constants:
 
 Konstanten
@@ -399,17 +395,17 @@ class PythonDocPacket(python_common.PythonPacket):
             return ''
 
         desc = {
-        'en': """
+            'en': """
  The returned namedtuple has the variables {0}.
 """,
-        'de': """
+            'de': """
  Das zurückgegebene namedtuple enthält die Variablen {0}.
 """
         }
 
         and_ = {
-        'en': ' and ',
-        'de': ' und '
+            'en': ' and ',
+            'de': ' und '
         }
 
         var = []
@@ -435,7 +431,7 @@ class PythonDocGenerator(common.DocGenerator):
         return 'Python'
 
     def get_doc_example_regex(self):
-        return '^example_.*\.py$'
+        return r'^example_.*\.py$'
 
     def get_device_class(self):
         return PythonDocDevice

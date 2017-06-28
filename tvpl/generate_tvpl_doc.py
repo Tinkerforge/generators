@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -305,7 +301,7 @@ class TVPLDocGenerator(common.DocGenerator):
         return 'TVPL'
 
     def get_doc_example_regex(self):
-        return '^example_.*\.tvpl$'
+        return r'^example_.*\.tvpl$'
 
     def get_device_class(self):
         return TVPLDocDevice

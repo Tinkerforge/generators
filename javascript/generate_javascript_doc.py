@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -43,7 +39,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
                                                                                    packet.get_upper_case_name(skip=-2 if high_level else 0))
             else:
                 return ':javascript:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_javascript_class_name(),
-                                                       packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
+                                                                   packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='javascript')
 
@@ -137,7 +133,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
     def get_javascript_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. javascript:function:: new {1}(uid, ipcon)
 
  :param uid: string
@@ -152,7 +148,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_javascript_examples>`).
 """,
-        'de': """
+            'de': """
 .. javascript:function:: new {1}(uid, ipcon)
 
  :param uid: string
@@ -170,7 +166,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
         }
 
         register_str = {
-        'en': """
+            'en': """
 .. javascript:function:: {1}.on(callback_id, function)
 
  :param callback_id: int
@@ -181,7 +177,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
  The available callback IDs with corresponding function signatures are
  listed :ref:`below <{0}_javascript_callbacks>`.
 """,
-        'de': """
+            'de': """
 .. javascript:function:: {1}.on(callback_id, function)
 
  :param callback_id: int
@@ -195,7 +191,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_javascript_callbacks:
 
 Callbacks
@@ -225,7 +221,7 @@ described below.
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_javascript_callbacks:
 
 Callbacks
@@ -259,7 +255,7 @@ weiter unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_javascript_api:
 
 API
@@ -287,7 +283,7 @@ The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_javascript_api:
 
 API
@@ -318,7 +314,7 @@ Der Namespace der JavaScript Bindings ist ``Tinkerforge.*``.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_javascript_constants:
 
 Constants
@@ -337,7 +333,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_javascript_constants:
 
 Konstanten
@@ -456,7 +452,7 @@ class JavaScriptDocGenerator(common.DocGenerator):
         return 'JavaScript'
 
     def get_doc_example_regex(self):
-        return '^Example.*\.(?:js|html)$'
+        return r'^Example.*\.(?:js|html)$'
 
     def get_device_class(self):
         return JavaScriptDocDevice

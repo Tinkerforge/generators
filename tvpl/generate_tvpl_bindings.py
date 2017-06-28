@@ -248,12 +248,9 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             return ''
 
         source = ''
-        device = '_'.join([self.get_underscore_category(),
-                           self.get_underscore_name()]).upper()
         xml_toolbox_uid = '_UID'
         xml_toolbox_host = '_HOST'
         xml_toolbox_port = '_PORT'
-        xml_toolbox_part_function = ''
 
         e_device = etree.Element('category')
         e_device.set('name', self.get_short_display_name())
@@ -352,8 +349,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
   var value_{blockname}_ipcon_uid = Blockly.JavaScript.valueToCode(block, '_UID', Blockly.JavaScript.ORDER_ATOMIC);
   var value_{blockname}_ipcon_host = Blockly.JavaScript.valueToCode(block, '_HOST', Blockly.JavaScript.ORDER_ATOMIC);
   var value_{blockname}_ipcon_port = Blockly.JavaScript.valueToCode(block, '_PORT', Blockly.JavaScript.ORDER_ATOMIC);
-'''.format(blockname=block_name,
-           devicenameupper=self.get_tvpl_device_name().upper())
+'''.format(blockname=block_name)
 
             generator_code_footer = '''return {returncode};
 }};
@@ -586,8 +582,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     value_{devicename}_ipcon_port = 4223;
   }}
 '''.format(blockname=block_name,
-           devicename=self.get_tvpl_device_name(),
-           devicenameupper=self.get_tvpl_device_name().upper())
+           devicename=self.get_tvpl_device_name())
 
             generator_code_fixed_definitions = '''  Blockly.Python.definitions_['common_python_import'] = '_ipcon_cache = {}\\n'+
 '_device_cache = {}\\n'+

@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -108,7 +104,7 @@ class ShellDocDevice(shell_common.ShellDevice):
 
     def get_shell_api(self):
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_shell_callbacks:
 
 Callbacks
@@ -130,7 +126,7 @@ The available callbacks are described below.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_shell_callbacks:
 
 Callbacks
@@ -156,7 +152,7 @@ Die verfügbaren Callbacks werden weiter unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_shell_api:
 
 API
@@ -251,7 +247,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_shell_api:
 
 API
@@ -400,8 +396,8 @@ class ShellDocPacket(shell_common.ShellPacket):
             c = '* ``{0}-{1}`` = {2}, '.format(constant_group.get_dash_name(), constant.get_dash_name(), value)
 
             for_ = {
-            'en': 'for',
-            'de': 'für'
+                'en': 'for',
+                'de': 'für'
             }
 
             c += common.select_lang(for_) + ' '
@@ -416,8 +412,8 @@ class ShellDocPacket(shell_common.ShellPacket):
 
             if len(e) > 1:
                 and_ = {
-                'en': 'and',
-                'de': 'und'
+                    'en': 'and',
+                    'de': 'und'
                 }
 
                 c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
@@ -438,8 +434,8 @@ class ShellDocPacket(shell_common.ShellPacket):
         desc = '\n'
         param = ' :param <{0}>: {1}'
         has_symbols = {
-        'en': 'has symbols',
-        'de': 'hat Symbole'
+            'en': 'has symbols',
+            'de': 'hat Symbole'
         }
 
         for element in self.get_elements(direction='in'):
@@ -455,12 +451,12 @@ class ShellDocPacket(shell_common.ShellPacket):
 
     def get_shell_return_desc(self):
         nothing = {
-        'en': 'no output',
-        'de': 'keine Ausgabe'
+            'en': 'no output',
+            'de': 'keine Ausgabe'
         }
         has_symbols = {
-        'en': 'has symbols',
-        'de': 'hat Symbole'
+            'en': 'has symbols',
+            'de': 'hat Symbole'
         }
         elements = self.get_elements(direction='out')
 
@@ -492,7 +488,7 @@ class ShellDocGenerator(common.DocGenerator):
         return 'Shell'
 
     def get_doc_example_regex(self):
-        return '^example-.*\.sh$'
+        return r'^example-.*\.sh$'
 
     def get_device_class(self):
         return ShellDocDevice

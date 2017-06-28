@@ -130,7 +130,7 @@ public class {0} extends Device {{
 
                 tostr.append(to)
                 params.append('\t\tpublic {0} {1};'.format(type_, name))
-                assignments.append('\t\t\tthis.{0} = {0};'.format(name));
+                assignments.append('\t\t\tthis.{0} = {0};'.format(name))
 
             objects += template.format(packet.get_java_object_name(),
                                        '\n'.join(params),
@@ -158,7 +158,7 @@ public class {0} extends Device {{
 
                 tostr.append(to)
                 params.append('\t\tpublic {0} {1};'.format(type_, name))
-                assignments.append('\t\t\tthis.{0} = {0};'.format(name));
+                assignments.append('\t\t\tthis.{0} = {0};'.format(name))
 
             objects += template.format(packet.get_java_object_name(skip=-2),
                                        '\n'.join(params),
@@ -754,8 +754,8 @@ public class {0} extends Device {{
     def get_java_constructor(self):
         template = """
 	/**
-	 * Creates an object with the unique device ID \c uid. and adds it to
-	 * the IP Connection \c ipcon.
+	 * Creates an object with the unique device ID \\c uid. and adds it to
+	 * the IP Connection \\c ipcon.
 	 */
 	public {0}(String uid, IPConnection ipcon) {{
 		super(uid, ipcon);
@@ -814,10 +814,8 @@ public class {0} extends Device {{
 
 {2}
 {3}"""
-        cls = self.get_camel_case_name()
 
         for packet in self.get_packets('function'):
-            options = 0
             ret = packet.get_java_return_type()
             name_lower = packet.get_headless_camel_case_name()
             parameter = packet.get_java_parameters()
@@ -1012,8 +1010,6 @@ public class {0} extends Device {{
         template_stream_in_short_write_namedtuple_chunk_written = ['{stream_headless_camel_case_name}Written = ret.{stream_headless_camel_case_name}ChunkWritten;',
                                                                    '{stream_headless_camel_case_name}Written += ret.{stream_headless_camel_case_name}ChunkWritten;',
                                                                    'ret.{stream_headless_camel_case_name}ChunkWritten']
-        template_stream_in_short_write_namedtuple_result = """
-		return new {result_camel_case_name}({result_fields});"""
         template_stream_in_single_chunk = """
 	/**
 	 * {doc}
@@ -1367,7 +1363,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
         text = text.replace('.. warning::', '\\warning')
 
         def format_parameter(name):
-            return '\c {0}'.format(name) # FIXME
+            return '\\c {0}'.format(name) # FIXME
 
         text = common.handle_rst_param(text, format_parameter)
         text = common.handle_rst_word(text)

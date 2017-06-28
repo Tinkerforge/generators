@@ -24,13 +24,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -41,7 +36,7 @@ class PHPDocDevice(php_common.PHPDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(packet.get_device().get_php_class_name(),
-                                                                              packet.get_upper_case_name(skip=-2 if high_level else 0))
+                                                                               packet.get_upper_case_name(skip=-2 if high_level else 0))
             else:
                 return ':php:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_php_class_name(),
                                                              packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
@@ -81,12 +76,12 @@ class PHPDocDevice(php_common.PHPDevice):
 
     def get_php_callbacks(self):
         signature_str = {
-        'en':  """
+            'en':  """
  .. code-block:: php
 
   <?php   void callback({0})   ?>
 """,
-        'de':  """
+            'de':  """
  .. code-block:: php
 
   <?php   void callback({0})   ?>
@@ -117,7 +112,7 @@ class PHPDocDevice(php_common.PHPDevice):
 
     def get_php_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. php:function:: class {1}(string $uid, IPConnection $ipcon)
 
  Creates an object with the unique device ID ``$uid``:
@@ -129,7 +124,7 @@ class PHPDocDevice(php_common.PHPDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_php_examples>`).
 """,
-        'de': """
+            'de': """
 .. php:function:: class {1}(string $uid, IPConnection $ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``$uid``:
@@ -144,7 +139,7 @@ class PHPDocDevice(php_common.PHPDevice):
         }
 
         register_str = {
-        'en': """
+            'en': """
 .. php:function:: void {1}::registerCallback(int $callback_id, callable $callback, mixed $user_data = NULL)
 
  Registriert die ``$function`` für die gegebene ``$callback_id``. Die optionalen
@@ -153,7 +148,7 @@ class PHPDocDevice(php_common.PHPDevice):
  The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_php_callbacks>`.
 """,
-        'de': """
+            'de': """
 .. php:function:: void {1}::registerCallback(int $callback_id, callable $callback, mixed $user_data = NULL)
 
  Registriert die ``$function`` für die gegebene ``$callback_id``. Die optionalen
@@ -165,7 +160,7 @@ class PHPDocDevice(php_common.PHPDevice):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_php_callbacks:
 
 Callbacks
@@ -200,7 +195,7 @@ described below.
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_php_callbacks:
 
 Callbacks
@@ -239,7 +234,7 @@ weiter unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_php_api:
 
 API
@@ -251,7 +246,7 @@ Functions that return multiple values return them in an associative array.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_php_api:
 
 API
@@ -267,7 +262,7 @@ zurück.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_php_constants:
 
 Constants
@@ -286,7 +281,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_php_constants:
 
 Konstanten
@@ -376,17 +371,17 @@ class PHPDocPacket(php_common.PHPPacket):
             return ''
 
         desc = {
-        'en': """
+            'en': """
  The returned array has the keys {0}.
 """,
-        'de': """
+            'de': """
  Das zurückgegebene Array enthält die Keys {0}.
 """
         }
 
         and_ = {
-        'en': ' and ',
-        'de': ' und '
+            'en': ' and ',
+            'de': ' und '
         }
 
         var = []
@@ -412,7 +407,7 @@ class PHPDocGenerator(common.DocGenerator):
         return 'PHP'
 
     def get_doc_example_regex(self):
-        return '^Example.*\.php$'
+        return r'^Example.*\.php$'
 
     def get_device_class(self):
         return PHPDocDevice

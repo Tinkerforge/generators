@@ -385,7 +385,7 @@ class {0} extends Device
         ${stream_underscore_name}_chunk_offset = 0;
 
         if (count(${stream_underscore_name}) !== ${stream_underscore_name}_length) {{
-            throw new \InvalidArgumentException("{stream_name} has to be ${stream_underscore_name}_length items long");
+            throw new \\InvalidArgumentException("{stream_name} has to be ${stream_underscore_name}_length items long");
         }}
 
         while (${stream_underscore_name}_chunk_offset < ${stream_underscore_name}_length) {{
@@ -449,7 +449,7 @@ class {0} extends Device
         ${stream_underscore_name}_data = ${stream_underscore_name};
 
         if (${stream_underscore_name}_length > {chunk_cardinality}) {{
-            throw new \InvalidArgumentException('{stream_name} can be at most {chunk_cardinality} items long');
+            throw new \\InvalidArgumentException('{stream_name} can be at most {chunk_cardinality} items long');
         }}
 
         if (${stream_underscore_name}_length < {chunk_cardinality}) {{
@@ -667,7 +667,7 @@ class {0} extends Device
     public function registerCallback($callback_id, $function, $user_data = NULL)
     {
         if (!is_callable($function)) {
-            throw new \Exception('Function is not callable');
+            throw new \\Exception('Function is not callable');
         }
 
         $this->registered_callbacks[$callback_id] = $function;
@@ -787,7 +787,7 @@ class {0} extends Device
 
                 high_level_handling = template.format(camel_case_name=packet.get_camel_case_name(skip=-2),
                                                       upper_case_name=packet.get_upper_case_name(skip=-2),
-                                                      high_level_parameters= common.wrap_non_empty('', packet.get_php_parameters(context='callback_wrapper', high_level=True), ', '),
+                                                      high_level_parameters=common.wrap_non_empty('', packet.get_php_parameters(context='callback_wrapper', high_level=True), ', '),
                                                       stream_underscore_name=stream_out.get_underscore_name(),
                                                       stream_length=stream_out.get_fixed_length(default="$payload['{0}_length']".format(stream_out.get_underscore_name())),
                                                       chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())

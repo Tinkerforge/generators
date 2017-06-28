@@ -65,9 +65,9 @@ extern "C" {{
 
     def get_c_function_id_defines(self):
         defines = ''
-        template =  """
+        template = """
 /**
- * \ingroup {4}{3}
+ * \\ingroup {4}{3}
  */
 #define {0}_FUNCTION_{1} {2}
 """
@@ -85,7 +85,7 @@ extern "C" {{
         defines = ''
         template = """
 /**
- * \ingroup {5}{4}
+ * \\ingroup {5}{4}
  *
  * {3}
  */
@@ -102,7 +102,7 @@ extern "C" {{
 
         template = """
 /**
- * \ingroup {5}{4}
+ * \\ingroup {5}{4}
  *
  * {3}
  */
@@ -121,9 +121,9 @@ extern "C" {{
         if self.get_long_display_name() == 'RS232 Bricklet':
             defines += """
 /**
- * \ingroup BrickletRS232
+ * \\ingroup BrickletRS232
  *
- * Signature: \code void callback(char ret_message[60], uint8_t length, void *user_data) \endcode
+ * Signature: \\code void callback(char ret_message[60], uint8_t length, void *user_data) \\endcode
  *
  * This callback is called if new data is available. The message has
  * a maximum size of 60 characters. The actual length of the message
@@ -134,9 +134,9 @@ extern "C" {{
 #define RS232_CALLBACK_READ_CALLBACK RS232_CALLBACK_READ // for backward compatibility
 
 /**
- * \ingroup BrickletRS232
+ * \\ingroup BrickletRS232
  *
- * Signature: \code void callback(uint8_t error, void *user_data) \endcode
+ * Signature: \\code void callback(uint8_t error, void *user_data) \\endcode
  *
  * This callback is called if an error occurs.
  * Possible errors are overrun, parity or framing error.
@@ -151,7 +151,7 @@ extern "C" {{
     def get_c_constants(self):
         constant_format = """
 /**
- * \ingroup {doxygen}
+ * \\ingroup {doxygen}
  */
 #define {prefix}_{constant_group_upper_case_name}_{constant_upper_case_name} {constant_value}
 """
@@ -163,13 +163,13 @@ extern "C" {{
     def get_c_device_identifier_define(self):
         template = """
 /**
- * \ingroup {3}{2}
+ * \\ingroup {3}{2}
  *
  * This constant is used to identify a {5}.
  *
  * The {{@link {4}_get_identity}} function and the
  * {{@link IPCON_CALLBACK_ENUMERATE}} callback of the IP Connection have a
- * \c device_identifier parameter to specify the Brick's or Bricklet's type.
+ * \\c device_identifier parameter to specify the Brick's or Bricklet's type.
  */
 #define {0}_DEVICE_IDENTIFIER {1}
 """
@@ -184,7 +184,7 @@ extern "C" {{
     def get_c_device_display_name_define(self):
         template = """
 /**
- * \ingroup {3}{2}
+ * \\ingroup {3}{2}
  *
  * This constant represents the display name of a {1}.
  */
@@ -236,7 +236,7 @@ typedef struct {{
 
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                                   element.get_underscore_name(),
-                                                                  length);
+                                                                  length)
                     else:
                         struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
@@ -256,7 +256,7 @@ typedef struct {{
 
                     struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                               element.get_underscore_name(),
-                                                              length);
+                                                              length)
                 else:
                     struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
@@ -278,7 +278,7 @@ typedef struct {{
 
                     struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                               element.get_underscore_name(),
-                                                              length);
+                                                              length)
                 else:
                     struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
@@ -1002,11 +1002,11 @@ extern "C" {{
 #endif
 
 /**
- * \defgroup {4}{3} {6}
+ * \\defgroup {4}{3} {6}
  */
 
 /**
- * \ingroup {4}{3}
+ * \\ingroup {4}{3}
  *
  * {5}
  */
@@ -1055,10 +1055,10 @@ typedef void (*{0}_CallbackFunction)({1});
     def get_c_create_declaration(self):
         template = """
 /**
- * \ingroup {2}{1}
+ * \\ingroup {2}{1}
  *
- * Creates the device object \c {0} with the unique device ID \c uid and adds
- * it to the IPConnection \c ipcon.
+ * Creates the device object \\c {0} with the unique device ID \\c uid and adds
+ * it to the IPConnection \\c ipcon.
  */
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon);
 """
@@ -1069,9 +1069,9 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon);
     def get_c_destroy_declaration(self):
         template = """
 /**
- * \ingroup {2}{1}
+ * \\ingroup {2}{1}
  *
- * Removes the device object \c {0} from its IPConnection and destroys it.
+ * Removes the device object \\c {0} from its IPConnection and destroys it.
  * The device object cannot be used anymore afterwards.
  */
 void {0}_destroy({1} *{0});
@@ -1083,10 +1083,10 @@ void {0}_destroy({1} *{0});
     def get_c_response_expected_declarations(self):
         template = """
 /**
- * \ingroup {2}{1}
+ * \\ingroup {2}{1}
  *
  * Returns the response expected flag for the function specified by the
- * \c function_id parameter. It is *true* if the function is expected to
+ * \\c function_id parameter. It is *true* if the function is expected to
  * send a response, *false* otherwise.
  *
  * For getter functions this is enabled by default and cannot be disabled,
@@ -1104,10 +1104,10 @@ void {0}_destroy({1} *{0});
 int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected);
 
 /**
- * \ingroup {2}{1}
+ * \\ingroup {2}{1}
  *
  * Changes the response expected flag of the function specified by the
- * \c function_id parameter. This flag can only be changed for setter
+ * \\c function_id parameter. This flag can only be changed for setter
  * (default value: *false*) and callback configuration functions
  * (default value: *true*). For getter functions it is always enabled.
  *
@@ -1120,7 +1120,7 @@ int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_
 int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected);
 
 /**
- * \ingroup {2}{1}
+ * \\ingroup {2}{1}
  *
  * Changes the response expected flag for all setter and callback configuration
  * functions of this device at once.
@@ -1137,7 +1137,7 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected);
         # normal and low-level
         template = """
 /**
- * \ingroup {category}{device_camel_case_name}
+ * \\ingroup {category}{device_camel_case_name}
  *
  * {doc}
  */
@@ -1176,10 +1176,10 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
 
         template = """
 /**
- * \ingroup {2}{1}
+ * \\ingroup {2}{1}
  *
- * Registers the given \c function with the given \c callback_id. The
- * \c user_data will be passed as the last parameter to the \c function.
+ * Registers the given \\c function with the given \\c callback_id. The
+ * \\c user_data will be passed as the last parameter to the \\c function.
  */
 void {0}_register_callback({1} *{0}, int16_t callback_id, void *function, void *user_data);
 """
@@ -1281,13 +1281,13 @@ class CBindingsPacket(c_common.CPacket):
             if len(parameters) > 0:
                 parameters += ', '
 
-            text = 'Signature: \code void callback({0}void *user_data) \endcode\n'.format(parameters) + text
+            text = 'Signature: \\code void callback({0}void *user_data) \\endcode\n'.format(parameters) + text
 
         text = text.replace('.. note::', '\\note')
         text = text.replace('.. warning::', '\\warning')
 
         def format_parameter(name):
-            return '\c {0}'.format(name) # FIXME
+            return '\\c {0}'.format(name) # FIXME
 
         text = common.handle_rst_param(text, format_parameter)
         text = common.handle_rst_word(text)

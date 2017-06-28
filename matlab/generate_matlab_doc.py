@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -95,7 +91,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
     def get_matlab_callbacks(self):
         cb = {
-        'en': """
+            'en': """
 .. matlab:member:: public callback {0}.{1}Callback
 
 {2}
@@ -110,7 +106,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
  the ``remove{1}Callback()`` function.
 
 """,
-        'de': """
+            'de': """
 .. matlab:member:: public callback {0}.{1}Callback
 
 {2}
@@ -152,7 +148,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
     def get_matlab_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. matlab:function:: class {1}(String uid, IPConnection ipcon)
 
  Creates an object with the unique device ID ``uid``.
@@ -174,7 +170,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_matlab_examples>`).
 """,
-        'de': """
+            'de': """
 .. matlab:function:: class {1}(String uid, IPConnection ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``.
@@ -199,13 +195,13 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         }
 
         ccf_str = {
-        'en': """
+            'en': """
 Callback Configuration Functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 """,
-        'de': """
+            'de': """
 Konfigurationsfunktionen für Callbacks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -214,7 +210,7 @@ Konfigurationsfunktionen für Callbacks
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_matlab_callbacks:
 
 Callbacks
@@ -261,7 +257,7 @@ below.
 
 {1}
 """,
-        'de': """
+            'de': """
 .. _{0}_matlab_callbacks:
 
 Callbacks
@@ -312,7 +308,7 @@ Strukturfeldern werden unterhalb beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_matlab_api:
 
 API
@@ -343,7 +339,7 @@ All methods listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_matlab_api:
 
 API
@@ -379,7 +375,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_matlab_constants:
 
 Constants
@@ -398,7 +394,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_matlab_constants:
 
 Konstanten
@@ -485,16 +481,16 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
             return ''
 
         desc = {
-        'en': """
+            'en': """
  The returned object has the public member variables {0}.
 """,
-        'de': """
+            'de': """
  Das zurückgegebene Objekt enthält die Public-Member-Variablen {0}.
 """
         }
         and_ = {
-        'en': ' and ',
-        'de': ' und '
+            'en': ' and ',
+            'de': ' und '
         }
         var = []
 
@@ -525,7 +521,7 @@ class MATLABDocGenerator(common.DocGenerator):
         return 'MATLAB'
 
     def get_doc_example_regex(self):
-        return '^(matlab|octave)_example_.*\.m$'
+        return r'^(matlab|octave)_example_.*\.m$'
 
     def get_device_class(self):
         return MATLABDocDevice

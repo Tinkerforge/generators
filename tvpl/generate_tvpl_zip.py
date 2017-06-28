@@ -4,7 +4,7 @@
 """
 Tinkerforge Visual Programming Language (TVPL) ZIP Generator
 Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_tvpl_zip.py: Generator for TVPL ZIP
 
@@ -27,7 +27,6 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -80,7 +79,7 @@ class TVPLZipGenerator(common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, 'programEditor.html'), self.tmp_source_dir)
 
         # Copy general examples
-        for example in common.find_examples(root_dir, '^example_.*\.tvpl$'):
+        for example in common.find_examples(root_dir, r'^example_.*\.tvpl$'):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy changelog.txt and readme.txt
@@ -130,7 +129,7 @@ class TVPLZipGenerator(common.ZipGenerator):
         if not os.path.exists(tmp_examples_device):
             os.makedirs(tmp_examples_device)
 
-        for example in common.find_device_examples(device, '^example_.*\.tvpl$'):
+        for example in common.find_device_examples(device, r'^example_.*\.tvpl$'):
             shutil.copy(example[1], tmp_examples_device)
 
     def finish(self):

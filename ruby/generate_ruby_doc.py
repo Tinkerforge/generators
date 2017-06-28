@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -104,7 +100,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
 
     def get_ruby_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. rb:function:: {1}::new(uid, ipcon) -> {2}
 
  :param uid: str
@@ -119,7 +115,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_ruby_examples>`).
 """,
-        'de': """
+            'de': """
 .. rb:function:: {1}::new(uid, ipcon) -> {2}
 
  :param uid: str
@@ -137,7 +133,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
         }
 
         register_str = {
-        'en': """
+            'en': """
 .. rb:function:: {1}#register_callback(callback_id) {{ |param [, ...]| block }} -> nil
 
  :param callback_id: int
@@ -147,7 +143,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
  The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_ruby_callbacks>`.
 """,
-        'de': """
+            'de': """
 .. rb:function:: {1}#register_callback(callback_id) {{ |param [, ...]| block }} -> nil
 
  :param callback_id: int
@@ -160,7 +156,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_ruby_callbacks:
 
 Callbacks
@@ -188,7 +184,7 @@ described below.
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_ruby_callbacks:
 
 Callbacks
@@ -220,7 +216,7 @@ weiter unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_ruby_api:
 
 API
@@ -232,7 +228,7 @@ All methods listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_ruby_api:
 
 API
@@ -247,7 +243,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_ruby_constants:
 
 Constants
@@ -266,7 +262,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_ruby_constants:
 
 Konstanten
@@ -379,17 +375,17 @@ class RubyDocPacket(ruby_common.RubyPacket):
             return ''
 
         desc = {
-        'en': """
+            'en': """
  The returned array has the values {0}.
 """,
-        'de': """
+            'de': """
  Das zurückgegebene Array enthält die Werte {0}.
 """
         }
 
         and_ = {
-        'en': ' and ',
-        'de': ' und '
+            'en': ' and ',
+            'de': ' und '
         }
 
         var = []
@@ -415,7 +411,7 @@ class RubyDocGenerator(common.DocGenerator):
         return 'Ruby'
 
     def get_doc_example_regex(self):
-        return '^example_.*\.rb$'
+        return r'^example_.*\.rb$'
 
     def get_device_class(self):
         return RubyDocDevice

@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -72,12 +68,12 @@ class CDocDevice(common.Device):
 
     def get_c_callbacks(self):
         param_format = {
-        'en': """
+            'en': """
  .. code-block:: c
 
   void callback({0})
 """,
-        'de': """
+            'de': """
  .. code-block:: c
 
   void callback({0})
@@ -97,9 +93,6 @@ class CDocDevice(common.Device):
 
             params = common.select_lang(param_format).format(plist)
             desc = packet.get_c_formatted_doc()
-            name = '{0}_{1}'.format(self.get_upper_case_name(),
-                                    packet.get_upper_case_name())
-
             func = '{0}{1}_CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                           self.get_upper_case_name(),
                                                           packet.get_upper_case_name(),
@@ -111,7 +104,7 @@ class CDocDevice(common.Device):
 
     def get_c_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
 
  Creates the device object ``{1}`` with the unique device ID ``uid`` and adds
@@ -125,7 +118,7 @@ class CDocDevice(common.Device):
  This device object can be used after the IP connection has been connected
  (see examples :ref:`above <{0}_c_examples>`).
 """,
-        'de': """
+            'de': """
 .. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
 
  Erzeugt ein Geräteobjekt ``{1}`` mit der eindeutigen Geräte ID ``uid`` und
@@ -142,13 +135,13 @@ class CDocDevice(common.Device):
         }
 
         destroy_str = {
-        'en': """
+            'en': """
 .. c:function:: void {0}_destroy({1} *{0})
 
  Removes the device object ``{0}`` from its IPConnection and destroys it.
  The device object cannot be used anymore afterwards.
 """,
-        'de': """
+            'de': """
 .. c:function:: void {0}_destroy({1} *{0})
 
  Entfernt das Geräteobjekt ``{0}`` von dessen IP Connection und zerstört es.
@@ -157,7 +150,7 @@ class CDocDevice(common.Device):
         }
 
         register_str = {
-        'en': """
+            'en': """
 .. c:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
 
  Registers the given ``function`` with the given ``callback_id``. The
@@ -166,7 +159,7 @@ class CDocDevice(common.Device):
  The available callback IDs with corresponding function signatures are
  listed :ref:`below <{0}_c_callbacks>`.
 """,
-        'de': """
+            'de': """
 .. c:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
 
  Registriert die ``function`` für die gegebene ``callback_id``. Die ``user_data``
@@ -178,7 +171,7 @@ class CDocDevice(common.Device):
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_c_callbacks:
 
 Callbacks
@@ -208,7 +201,7 @@ are described below.
 
 {3}
 """,
-        'de': """
+            'de': """
 .. _{0}_c_callbacks:
 
 Callbacks
@@ -242,7 +235,7 @@ werden weiter unten beschrieben.
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_c_api:
 
 API
@@ -276,7 +269,7 @@ All functions listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_c_api:
 
 API
@@ -313,7 +306,7 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_c_constants:
 
 Constants
@@ -331,7 +324,7 @@ Constants
 
  This constant represents the human readable name of a {4}.
 """,
-        'de': """
+            'de': """
 .. _{0}_c_constants:
 
 Konstanten
@@ -431,7 +424,7 @@ class CDocGenerator(common.DocGenerator):
         return 'C'
 
     def get_doc_example_regex(self):
-        return '^example_.*\.c$'
+        return r'^example_.*\.c$'
 
     def get_device_class(self):
         return CDocDevice

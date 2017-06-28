@@ -26,10 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -80,7 +76,7 @@ class JavaDocDevice(java_common.JavaDevice):
 
     def get_java_callbacks(self):
         cb = {
-        'en': """
+            'en': """
 .. java:function:: public class {0}.{1}Listener()
 
  This listener can be added with the ``add{1}Listener()`` function.
@@ -91,7 +87,7 @@ class JavaDocDevice(java_common.JavaDevice):
 
 {4}
 """,
-        'de': """
+            'de': """
 .. java:function:: public class {0}.{1}Listener()
 
  Dieser Listener kann mit der Funktion ``add{1}Listener()`` hinzugefügt werde.
@@ -121,7 +117,7 @@ class JavaDocDevice(java_common.JavaDevice):
 
     def get_java_api(self):
         create_str = {
-        'en': """
+            'en': """
 .. java:function:: class {1}(String uid, IPConnection ipcon)
 
  Creates an object with the unique device ID ``uid``:
@@ -133,7 +129,7 @@ class JavaDocDevice(java_common.JavaDevice):
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_java_examples>`).
 """,
-        'de': """
+            'de': """
 .. java:function:: class {1}(String uid, IPConnection ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
@@ -148,13 +144,13 @@ class JavaDocDevice(java_common.JavaDevice):
         }
 
         ccf_str = {
-        'en': """
+            'en': """
 Listener Configuration Functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 """,
-        'de': """
+            'de': """
 Konfigurationsfunktionen für Listener
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -163,7 +159,7 @@ Konfigurationsfunktionen für Listener
         }
 
         c_str = {
-        'en': """
+            'en': """
 .. _{0}_java_callbacks:
 
 Listeners
@@ -194,7 +190,7 @@ to remove them with the corresponding "remove*Listener" function.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_java_callbacks:
 
 Listener
@@ -230,7 +226,7 @@ Listener hinzuzufügen und auch mit einem korrespondierenden
         }
 
         api = {
-        'en': """
+            'en': """
 .. _{0}_java_api:
 
 API
@@ -261,7 +257,7 @@ All methods listed below are thread-safe.
 
 {2}
 """,
-        'de': """
+            'de': """
 .. _{0}_java_api:
 
 API
@@ -296,7 +292,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
         }
 
         const_str = {
-        'en': """
+            'en': """
 .. _{0}_java_constants:
 
 Constants
@@ -315,7 +311,7 @@ Constants
 
  This constant represents the human readable name of a {3}.
 """,
-        'de': """
+            'de': """
 .. _{0}_java_constants:
 
 Konstanten
@@ -408,17 +404,17 @@ class JavaDocPacket(java_common.JavaPacket):
             return ''
 
         desc = {
-        'en': """
+            'en': """
  The returned object has the public member variables {0}.
 """,
-        'de': """
+            'de': """
  Das zurückgegebene Objekt enthält die Public-Member-Variablen {0}.
 """
         }
 
         and_ = {
-        'en': ' and ',
-        'de': ' und '
+            'en': ' and ',
+            'de': ' und '
         }
 
         var = []
@@ -445,7 +441,7 @@ class JavaDocGenerator(common.DocGenerator):
         return 'Java'
 
     def get_doc_example_regex(self):
-        return '^Example.*\.java$'
+        return r'^Example.*\.java$'
 
     def get_device_class(self):
         return JavaDocDevice

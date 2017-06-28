@@ -121,8 +121,8 @@ delphi_types = {
     'string': ('string',   'String')
 }
 
-def get_delphi_type(type):
-    return delphi_types[type]
+def get_delphi_type(type_):
+    return delphi_types[type_]
 
 class DelphiElement(common.Element):
     delphi_le_convert_types = {

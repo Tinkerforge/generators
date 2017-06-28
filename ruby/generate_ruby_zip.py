@@ -27,8 +27,6 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
-import glob
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -63,14 +61,14 @@ class RubyZipGenerator(common.ZipGenerator):
         if not os.path.exists(tmp_examples_device):
             os.makedirs(tmp_examples_device)
 
-        for example in common.find_device_examples(device, '^example_.*\.rb$'):
+        for example in common.find_device_examples(device, r'^example_.*\.rb$'):
             shutil.copy(example[1], tmp_examples_device)
 
     def finish(self):
         root_dir = self.get_bindings_root_directory()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, '^example_.*\.rb$'):
+        for example in common.find_examples(root_dir, r'^example_.*\.rb$'):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme

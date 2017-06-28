@@ -32,9 +32,6 @@ import sys
 import copy
 import math
 import multiprocessing.dummy
-from collections import namedtuple
-from pprint import pprint
-from copy import deepcopy
 
 gen_text_rst = """..
  #############################################################
@@ -47,7 +44,7 @@ gen_text_rst = """..
 """
 
 bf_str = {
-'en': """
+    'en': """
 Basic Functions
 ^^^^^^^^^^^^^^^
 
@@ -55,7 +52,7 @@ Basic Functions
 
 {1}
 """,
-'de': """
+    'de': """
 Grundfunktionen
 ^^^^^^^^^^^^^^^
 
@@ -66,13 +63,13 @@ Grundfunktionen
 }
 
 af_str = {
-'en': """
+    'en': """
 Advanced Functions
 ^^^^^^^^^^^^^^^^^^
 
 {0}
 """,
-'de': """
+    'de': """
 Fortgeschrittene Funktionen
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -81,7 +78,7 @@ Fortgeschrittene Funktionen
 }
 
 ccf_str = {
-'en': """
+    'en': """
 Callback Configuration Functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -89,7 +86,7 @@ Callback Configuration Functions
 
 {1}
 """,
-'de': """
+    'de': """
 Konfigurationsfunktionen für Callbacks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -100,9 +97,9 @@ Konfigurationsfunktionen für Callbacks
 }
 
 breadcrumbs_str = {
-'en': """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../index.html#software-{0}">Software</a> / {1}
+    'en': """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../index.html#software-{0}">Software</a> / {1}
 """,
-'de': """:breadcrumbs: <a href="../../index.html">Startseite</a> / <a href="../../index.html#software-{0}">Software</a> / {1}
+    'de': """:breadcrumbs: <a href="../../index.html">Startseite</a> / <a href="../../index.html#software-{0}">Software</a> / {1}
 """
 }
 
@@ -120,7 +117,7 @@ def strip_trailing_whitespace(text):
     return '\n'.join(lines)
 
 def get_changelog_version(bindings_root_directory):
-    r = re.compile('^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
+    r = re.compile(r'^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
     last = None
 
     with open(os.path.join(bindings_root_directory, 'changelog.txt'), 'r') as f:
@@ -183,13 +180,13 @@ def make_rst_header(device, has_device_identifier_constant=True):
 
 def make_rst_summary(device, is_programming_language=True):
     not_released = {
-    'en': """
+        'en': """
 .. note::
  {0} is currently in the prototype stage and the software/hardware
  as well as the documentation is in an incomplete state.
 
 """,
-    'de': """
+        'de': """
 .. note::
  {0} ist im Moment in der Prototyp-Phase und die Software/Hardware
  sowie die Dokumentation sind in einem unfertigen Zustand.
@@ -198,12 +195,12 @@ def make_rst_summary(device, is_programming_language=True):
     }
 
     summary = {
-    'en': """
+        'en': """
 This is the description {0} for {1}. General information and technical
 specifications for the {2} are summarized in its :ref:`hardware description
 <{3}_description>`.
 """,
-    'de': """
+        'de': """
 Dies ist die Beschreibung {0} für {1}. Allgemeine Informationen über
 die Funktionen und technischen Spezifikationen des {2} sind in dessen
 :ref:`Hardware Beschreibung <{3}_description>` zusammengefasst.
@@ -211,44 +208,44 @@ die Funktionen und technischen Spezifikationen des {2} sind in dessen
     }
 
     summary_install = {
-    'en': """
+        'en': """
 An :ref:`installation guide <api_bindings_{0}_install>` for the {1} API
 bindings is part of their general description.
 """,
-    'de': """
+        'de': """
 Eine :ref:`Installationanleitung <api_bindings_{0}_install>` für die {1} API
 Bindings ist Teil deren allgemeine Beschreibung.
 """
     }
 
     brick = {
-    'en': 'This Brick',
-    'de': 'Dieser Brick'
+        'en': 'This Brick',
+        'de': 'Dieser Brick'
     }
 
     bricklet = {
-    'en': 'This Bricklet',
-    'de': 'Dieses Bricklet'
+        'en': 'This Bricklet',
+        'de': 'Dieses Bricklet'
     }
 
     programming_language_name_link = {
-    'en': 'of the :ref:`{0} API bindings <api_bindings_{1}>`',
-    'de': 'der :ref:`{0} API Bindings <api_bindings_{1}>`'
+        'en': 'of the :ref:`{0} API bindings <api_bindings_{1}>`',
+        'de': 'der :ref:`{0} API Bindings <api_bindings_{1}>`'
     }
 
     protocol_name_link = {
-    'en': 'of the :ref:`{0} protocol <llproto_{1}>`',
-    'de': 'des :ref:`{0} Protokolls <llproto_{1}>`'
+        'en': 'of the :ref:`{0} protocol <llproto_{1}>`',
+        'de': 'des :ref:`{0} Protokolls <llproto_{1}>`'
     }
 
     brick_name = {
-    'en': 'the :ref:`{0} <{1}_brick>`',
-    'de': 'den :ref:`{0} <{1}_brick>`',
+        'en': 'the :ref:`{0} <{1}_brick>`',
+        'de': 'den :ref:`{0} <{1}_brick>`',
     }
 
     bricklet_name = {
-    'en': 'the :ref:`{0} <{1}_bricklet>`',
-    'de': 'das :ref:`{0} <{1}_bricklet>`',
+        'en': 'the :ref:`{0} <{1}_bricklet>`',
+        'de': 'das :ref:`{0} <{1}_bricklet>`',
     }
 
     # format bindings name
@@ -296,7 +293,7 @@ def make_rst_examples(title_from_filename, device, url_fixer=None,
     filename_regex = device.get_generator().get_doc_example_regex()
 
     ex = {
-    'en': """
+        'en': """
 {0}
 
 Examples
@@ -305,7 +302,7 @@ Examples
 The example code below is `Public Domain (CC0 1.0)
 <http://creativecommons.org/publicdomain/zero/1.0/>`__.
 """,
-    'de': """
+        'de': """
 {0}
 
 Beispiele
@@ -492,17 +489,20 @@ def default_constant_format(prefix, constant_group, constant, value):
                                          constant.get_upper_case_name(), value)
 
 def format_constants(prefix, packet,
-                     constants_name={'en': 'constants', 'de': 'Konstanten'},
+                     constants_name=None,
                      char_format="'{0}'",
                      constant_format_func=default_constant_format,
                      constants_intro=None):
+    if constants_name == None:
+        constants_name = {'en': 'constants', 'de': 'Konstanten'}
+
     if constants_intro == None:
         constants_intro = {
-        'en': """
+            'en': """
 The following {0} are available for this function:
 
 """,
-        'de': """
+            'de': """
 Die folgenden {0} sind für diese Funktion verfügbar:
 
 """
@@ -524,18 +524,20 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     else:
         return ''
 
-def format_function_id_constants(prefix, device,
-                                 constants_name={'en': 'constants', 'de': 'Konstanten'}):
+def format_function_id_constants(prefix, device, constants_name=None):
+    if constants_name == None:
+        constants_name = {'en': 'constants', 'de': 'Konstanten'}
+
     str_constants = {
-'en': """
+        'en': """
 The following function ID {0} are available for this function:
 
 """,
-'de': """
+        'de': """
 Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
 
 """
-}
+    }
     str_constant = '* {0}FUNCTION_{1} = {2}\n'
     str_constants = select_lang(str_constants).format(select_lang(constants_name))
 
@@ -547,10 +549,16 @@ Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
 
     return str_constants
 
-def handle_rst_word(text,
-                    parameter={'en': 'parameter', 'de': 'Parameter'},
-                    parameters={'en': 'parameters', 'de': 'Parameter'},
-                    constants={'en': 'constants', 'de': 'Konstanten'}):
+def handle_rst_word(text, parameter=None, parameters=None, constants=None):
+    if parameter == None:
+        parameter = {'en': 'parameter', 'de': 'Parameter'}
+
+    if parameters == None:
+        parameters = {'en': 'parameters', 'de': 'Parameter'}
+
+    if constants == None:
+        constants = {'en': 'constants', 'de': 'Konstanten'}
+
     text = text.replace(":word:`parameter`", select_lang(parameter))
     text = text.replace(":word:`parameters`", select_lang(parameters))
     text = text.replace(":word:`constants`", select_lang(constants))
@@ -558,7 +566,7 @@ def handle_rst_word(text,
     return text
 
 def handle_rst_param(text, format_parameter):
-    return re.sub('\:param\:\`([^\`]+)\`', lambda match: format_parameter(match.group(1)), text)
+    return re.sub(r'\:param\:\`([^\`]+)\`', lambda match: format_parameter(match.group(1)), text)
 
 def handle_rst_substitutions(text, packet):
     subsitutions = packet.get_doc_substitutions()
@@ -654,6 +662,23 @@ def generate(bindings_root_directory, language, generator_class):
 
     generator.prepare()
 
+    def prepare_common_packets(com, common_packets):
+        for common_packet in common_packets:
+            if common_packet['since_firmware'] is None:
+                continue
+
+            if com['name'] in common_packet['since_firmware']:
+                common_packet['since_firmware'] = \
+                    common_packet['since_firmware'][com['name']]
+            else:
+                common_packet['since_firmware'] = \
+                    common_packet['since_firmware']['*']
+
+            if common_packet['since_firmware'] is None:
+                common_packet['to_be_removed'] = True
+
+        return filter(lambda x: 'to_be_removed' not in x, common_packets)
+
     for config in configs:
         if config.endswith('_config.py'):
             com = copy.deepcopy(__import__(config[:-3]).com)
@@ -670,26 +695,9 @@ def generate(bindings_root_directory, language, generator_class):
             else:
                 print(' * {0}'.format(config[:-10]))
 
-            def prepare_common_packets(common_packets):
-                for common_packet in common_packets:
-                    if common_packet['since_firmware'] is None:
-                        continue
-
-                    if com['name'] in common_packet['since_firmware']:
-                        common_packet['since_firmware'] = \
-                            common_packet['since_firmware'][com['name']]
-                    else:
-                        common_packet['since_firmware'] = \
-                            common_packet['since_firmware']['*']
-
-                    if common_packet['since_firmware'] is None:
-                        common_packet['to_be_removed'] = True
-
-                return filter(lambda x: 'to_be_removed' not in x, common_packets)
-
             if config.startswith('brick_') and 'common_included' not in com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_brick_packets)
-                com['packets'].extend(prepare_common_packets(common_packets))
+                com['packets'].extend(prepare_common_packets(com, common_packets))
                 com['common_included'] = True
 
             if config.startswith('bricklet_') and 'common_included' not in com:
@@ -698,7 +706,7 @@ def generate(bindings_root_directory, language, generator_class):
                 else:
                     common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
 
-                com['packets'].extend(prepare_common_packets(common_packets))
+                com['packets'].extend(prepare_common_packets(com, common_packets))
                 com['common_included'] = True
 
             device = generator.get_device_class()(com, generator)
@@ -879,7 +887,7 @@ def skip_words(words, skip):
     else:
         return words[skip:]
 
-class NameMixin:
+class NameMixin(object):
     def _get_name(self):
         raise NotImplementedError()
 
@@ -1203,7 +1211,7 @@ class Packet(NameMixin):
 
             if level == 'low':
                 if element.get_name().endswith(' Data'):
-                    raw_element = deepcopy(raw_element)
+                    raw_element = copy.deepcopy(raw_element)
                     raw_element[0] = stream_name
                     raw_element[2] = -1
 
@@ -1212,7 +1220,7 @@ class Packet(NameMixin):
                     if stream_written_type == None:
                         raise GeneratorError("Missing stream-written-type")
 
-                    raw_element = deepcopy(raw_element)
+                    raw_element = copy.deepcopy(raw_element)
                     raw_element[0] = stream_name + ' Written'
                     raw_element[1] = stream_written_type
 
@@ -1278,7 +1286,7 @@ class Packet(NameMixin):
     def _get_name(self): # for NameMixin
         return self.raw_data['name']
 
-    def get_elements(self, name=None, direction=None, high_level=False, role=None, default=None):
+    def get_elements(self, name=None, direction=None, high_level=False, role=None):
         if direction not in [None, 'in', 'out']:
             raise GeneratorError('Invalid element direction ' + direction)
 
@@ -1778,7 +1786,7 @@ class Example(NameMixin):
         else:
             return 'XYZ'
 
-class ExampleItem:
+class ExampleItem(object):
     def __init__(self, raw_data, index, example):
         self.raw_data = raw_data
         self.index = index
@@ -1810,7 +1818,6 @@ class ExampleArgument(ExampleItem):
 
     def get_element(self):
         function_name = self.get_function().get_name()
-        value = self.get_value()
 
         for packet in self.get_device().get_packets('function'):
             if packet.get_name() == function_name:
@@ -1900,12 +1907,12 @@ class ExampleParameter(ExampleItem, NameMixin):
         return self.raw_data[5]
 
     def get_formatted_range(self, template):
-        range = self.get_range()
+        range_ = self.get_range()
 
-        if range == None:
+        if range_ == None:
             return ''
         else:
-            return template.format(range[0], range[1])
+            return template.format(range_[0], range_[1])
 
     def get_formatted_comment(self):
         template = '{unit_raw_name}{range}'
@@ -1976,12 +1983,12 @@ class ExampleResult(ExampleItem, NameMixin):
         return self.raw_data[5]
 
     def get_formatted_range(self, template):
-        range = self.get_range()
+        range_ = self.get_range()
 
-        if range == None:
+        if range_ == None:
             return ''
         else:
-            return template.format(range[0], range[1])
+            return template.format(range_[0], range_[1])
 
     def get_formatted_comment(self):
         template = '{unit_raw_name}{range}'
@@ -2421,7 +2428,7 @@ class Generator:
 
     def get_header_comment(self, kind):
         comment = {
-        'asterisk': """/* ***********************************************************
+            'asterisk': """/* ***********************************************************
  * This file was automatically generated on {0}.      *
  *                                                           *
  * {1} Bindings Version {2}.{3}.{4}{5}*
@@ -2431,7 +2438,7 @@ class Generator:
  * to the generators git repository on tinkerforge.com       *
  *************************************************************/
 """,
-        'hash': """#############################################################
+            'hash': """#############################################################
 # This file was automatically generated on {0}.      #
 #                                                           #
 # {1} Bindings Version {2}.{3}.{4}{5}#
@@ -2441,7 +2448,7 @@ class Generator:
 # to the generators git repository on tinkerforge.com       #
 #############################################################
 """,
-        'curly': """{{
+            'curly': """{{
   This file was automatically generated on {0}.
 
   {1} Bindings Version {2}.{3}.{4}
@@ -2451,7 +2458,7 @@ class Generator:
   to the generator git on tinkerforge.com
 }}
 """,
-        'xml': """<!--
+            'xml': """<!--
   This file was automatically generated on {0}.
 
   {1} Bindings Version {2}.{3}.{4}
@@ -2755,13 +2762,14 @@ class SourceTester:
         return self.failure_count == 0
 
 # use "with ChangedDirectory('/path/to/abc')" instead of "os.chdir('/path/to/abc')"
-class ChangedDirectory:
+class ChangedDirectory(object):
     def __init__(self, directory):
         self.directory = directory
+        self.previous_directory = None
 
     def __enter__(self):
         self.previous_directory = os.getcwd()
         os.chdir(self.directory)
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, type_, value, traceback):
         os.chdir(self.previous_directory)

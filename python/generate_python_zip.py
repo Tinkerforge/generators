@@ -3,7 +3,7 @@
 
 """
 Python ZIP Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_zip.py: Generator for Python ZIP
@@ -27,7 +27,6 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -60,14 +59,14 @@ class PythonZipGenerator(common.ZipGenerator):
         if not os.path.exists(tmp_examples_device):
             os.makedirs(tmp_examples_device)
 
-        for example in common.find_device_examples(device, '^example_.*\.py$'):
+        for example in common.find_device_examples(device, r'^example_.*\.py$'):
             shutil.copy(example[1], tmp_examples_device)
 
     def finish(self):
         root_dir = self.get_bindings_root_directory()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, '^example_.*\.py$'):
+        for example in common.find_examples(root_dir, r'^example_.*\.py$'):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
