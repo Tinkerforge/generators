@@ -1636,14 +1636,7 @@ sub _dispatch_response
 
 			if(defined($fid))
 			{
-				if(defined($uid))
-				{
-					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
-				}
-				else
-				{
-					eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
-				}
+				$self->_dispatch_callback($uid, $fid, \@return_arr);
 			}
 
 			return @return_arr;
@@ -1673,14 +1666,7 @@ sub _dispatch_response
 
 			if(defined($fid))
 			{
-				if(defined($uid))
-				{
-					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
-				}
-				else
-				{
-					eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
-				}
+				$self->_dispatch_callback($uid, $fid, \@return_arr);
 			}
 
 			return @return_arr;
@@ -1708,14 +1694,7 @@ sub _dispatch_response
 
 				if(defined($fid))
 				{
-					if(defined($uid))
-					{
-						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
-					}
-					else
-					{
-						eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
-					}
+					$self->_dispatch_callback($uid, $fid, \@return_arr);
 				}
 
 				return \@return_arr;
@@ -1726,14 +1705,7 @@ sub _dispatch_response
 
 				if(defined($fid))
 				{
-					if(defined($uid))
-					{
-						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
-					}
-					else
-					{
-						eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
-					}
+					$self->_dispatch_callback($uid, $fid, \@return_arr);
 				}
 
 				return \@return_arr;
@@ -1744,14 +1716,7 @@ sub _dispatch_response
 
 				if(defined($fid))
 				{
-					if(defined($uid))
-					{
-						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($return_arr[0])");
-					}
-					else
-					{
-						eval("$self->{registered_callbacks}->{$fid}($return_arr[0])");
-					}
+					$self->_dispatch_callback($uid, $fid, $return_arr[0]);
 				}
 
 				return $return_arr[0];
@@ -1762,14 +1727,7 @@ sub _dispatch_response
 
 				if(defined($fid))
 				{
-					if(defined($uid))
-					{
-						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
-					}
-					else
-					{
-						eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
-					}
+					$self->_dispatch_callback($uid, $fid, \@return_arr);
 				}
 
 				return \@return_arr;
@@ -1781,14 +1739,7 @@ sub _dispatch_response
 
 			if(defined($fid))
 			{
-				if(defined($uid))
-				{
-					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($unpack_tmp)");
-				}
-				else
-				{
-					eval("$self->{registered_callbacks}->{$fid}($unpack_tmp)");
-				}
+				$self->_dispatch_callback($uid, $fid, $unpack_tmp);
 			}
 
 			return $unpack_tmp;
@@ -1798,17 +1749,62 @@ sub _dispatch_response
 	{
 		if(defined($fid))
 		{
-			if(defined($uid))
-			{
-				eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}()");
-			}
-			else
-			{
-				eval("$self->{registered_callbacks}->{$fid}()");
-			}
+			$self->_dispatch_callback($uid, $fid, undef);
 		}
 
 		return 1;
+	}
+
+	return 1;
+}
+
+sub _dispatch_callback
+{
+	my ($self, $uid, $fid, $args, $is_array) = @_;
+
+	if(defined($uid))
+	{
+		if(defined($args))
+		{
+			if(ref($args) eq "ARRAY")
+			{
+				# FIXME: for some unknown reason directly passing the reference
+				#        to an array doesn't work with eval. it only works if
+				#        the reference is created locally by eval
+				my @array = @{$args};
+				eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@array)");
+			}
+			else
+			{
+				eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($args)");
+			}
+		}
+		else
+		{
+			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}()");
+		}
+	}
+	else
+	{
+		if(defined($args))
+		{
+			if(ref($args) eq "ARRAY")
+			{
+				# FIXME: for some unknown reason directly passing the reference
+				#        to an array doesn't work with eval. it only works if
+				#        the reference is created locally by eval
+				my @array = @{$args};
+				eval("$self->{registered_callbacks}->{$fid}(\@array)");
+			}
+			else
+			{
+				eval("$self->{registered_callbacks}->{$fid}($args)");
+			}
+		}
+		else
+		{
+			eval("$self->{registered_callbacks}->{$fid}()");
+		}
 	}
 
 	return 1;
