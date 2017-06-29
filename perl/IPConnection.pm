@@ -374,6 +374,7 @@ sub _connect_unlocked
 		$socket->setsockopt(IPPROTO_TCP, TCP_NODELAY, 1);
 
 		$| = 1; # enable autoflush
+
 		if(defined(&{"MSG_NOSIGNAL"}))
 		{
 			$socket->send('', MSG_NOSIGNAL);
@@ -624,6 +625,7 @@ sub _destroy_socket
 		{
 			$socket->shutdown(2);
 		};
+
 		eval
 		{
 			$socket->close();
@@ -977,7 +979,8 @@ sub _handle_disconnect_by_peer
 
 	$self->{auto_reconnect_allowed} = 1;
 
-	if($disconnect_immediately) {
+	if($disconnect_immediately)
+	{
 		$self->_disconnect_unlocked();
 	}
 
@@ -997,6 +1000,7 @@ sub _ipcon_send
 	}
 
 	my $rc;
+
 	eval
 	{
 		lock(${$self->{send_lock_ref}});
@@ -1011,6 +1015,7 @@ sub _ipcon_send
 			$rc = $self->_get_local_socket()->send($packet);
 		}
 	};
+
 	if(!defined($rc))
 	{
 		$self->_handle_disconnect_by_peer(&DISCONNECT_REASON_ERROR, 0, 1);
@@ -1105,6 +1110,7 @@ sub _get_err_from_data
 	{
 		@bit_arr = split('', unpack('(b8)<', $data_arr[7]));
 		$err = $bit_arr[7].$bit_arr[6];
+
 		return oct("0b$err");
 	}
 
@@ -1126,6 +1132,7 @@ sub _get_payload_from_data
 		{
 			$payload .= $data_arr[$i];
 		}
+
 		return $payload;
 	}
 
@@ -1147,6 +1154,7 @@ sub _handle_packet
 		{
 			$self->{callback_queue}->enqueue([&_QUEUE_PACKET, $packet, undef, undef]);
 		}
+
 		return 1;
 	}
 
@@ -1186,8 +1194,10 @@ sub _handle_packet
 					return 1;
 				}
 			}
+
 			$self->{callback_queue}->enqueue([&_QUEUE_PACKET, $packet, undef, undef]);
 		}
+
 		return 1;
 	}
 
@@ -1412,7 +1422,8 @@ sub _dispatch_meta
 			{
 				$retry = 0;
 
-				if(1) {
+				if(1)
+				{
 					lock(${$self->{socket_lock_ref}});
 
 					if($self->{auto_reconnect_allowed} && !defined($self->{socket_fileno}))
@@ -1421,6 +1432,7 @@ sub _dispatch_meta
 						{
 							$self->_connect_unlocked(1);
 						};
+
 						if($!)
 						{
 							$retry = 1;
@@ -1455,14 +1467,17 @@ sub _dispatch_response
 	my @form_unpack_arr = split(' ', $form_unpack);
 	my @form_unpack_arr_patched = @form_unpack_arr;
 
-	foreach(@form_unpack_arr_patched) {
+	foreach(@form_unpack_arr_patched)
+	{
 		my @form_single_arr = split('', $_);
 
-		if($form_single_arr[0] eq '?' && scalar(@form_single_arr) == 1) {
+		if($form_single_arr[0] eq '?' && scalar(@form_single_arr) == 1)
+		{
 			$form_unpack_arr[$iter] = 'C';
 			$form_unpack_arr_patched[$iter] = 'C';
 		}
-		elsif($form_single_arr[0] eq '?' && scalar(@form_single_arr) > 1) {
+		elsif($form_single_arr[0] eq '?' && scalar(@form_single_arr) > 1)
+		{
 			my $count = $_;
 			$count =~ s/[^\d]//g;
 			$form_unpack_arr_patched[$iter] = 'C' . ceil($count / 8);
@@ -1491,18 +1506,21 @@ sub _dispatch_response
 			my $count = $_;
 			my @form_single_arr = split('', $_);
 
-			if($form_single_arr[0] eq '?') {
+			if($form_single_arr[0] eq '?')
+			{
 				if(scalar(@form_single_arr) > 1)
 				{
 					$count =~ s/[^\d]//g;
 					$return_arr[$iter] = [];
 					my @dummy_bool_array_bits = ();
 
-					for(my $i = 0; $i < ceil($count / 8); $i++) {
+					for(my $i = 0; $i < ceil($count / 8); $i++)
+					{
 						$dummy_bool_array_bits[$i] = $arguments_arr[$copy_from_index + $i];
 					}
 
-					for(my $i = 0; $i < $count; $i++) {
+					for(my $i = 0; $i < $count; $i++)
+					{
 						push(@{$return_arr[$iter]}, (($dummy_bool_array_bits[floor($i / 8)] & (1 << ($i % 8))) != 0));
 					}
 
@@ -1556,7 +1574,8 @@ sub _dispatch_response
 			{
 				if(scalar(@copy_info_arr) > 0)
 				{
-					if($copy_info_arr[0][0] == -1) {
+					if($copy_info_arr[0][0] == -1)
+					{
 						$anon_arr_index++;
 						$arguments_arr_index += $copy_info_arr[0][1];
 						shift(@copy_info_arr);
@@ -1844,13 +1863,14 @@ sub _disconnect_probe_thread_subroutine
 
 		if($self->{disconnect_probe_flag}) {
 			my $packet = $self->_create_packet_header(undef, 8, &_FUNCTION_DISCONNECT_PROBE);
-
 			my $rc;
+
 			eval
 			{
 				lock(${$self->{send_lock_ref}});
 
 				$| = 1; # enable autoflush
+
 				if(defined(&{"MSG_NOSIGNAL"}))
 				{
 					$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
@@ -1860,6 +1880,7 @@ sub _disconnect_probe_thread_subroutine
 					$rc = $self->_get_local_socket()->send($packet);
 				}
 			};
+
 			if(!defined($rc))
 			{
 				$self->_handle_disconnect_by_peer(&DISCONNECT_REASON_ERROR, $self->{socket_id}, 0);
