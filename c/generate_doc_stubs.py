@@ -329,7 +329,7 @@ See :ref:`Programming Interface <programming_interface>` for a detailed descript
         # {4} = thermal-imaging-bricklet
         # {5} = thermal-imaging
 
-        format0 = device.get_name() + ' ' +  device.get_camel_case_category()
+        format0 = device.get_long_display_name()
         format1 = device.get_underscore_name() + '_' + device.get_underscore_category()
         format2 = device.get_underscore_name()
         format3 = device.get_name().replace(' ', '_')
