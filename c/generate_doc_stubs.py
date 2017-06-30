@@ -195,7 +195,7 @@ See :ref:`Programming Interface <programming_interface>` for a detailed descript
 	Bricklets/bricklet_{2}_master_[100|600].jpg       {0} mit Master Brick
 	Cases/bricklet_{2}_case_[100|600].jpg             {0} im Gehäuse
 	Bricklets/bricklet_{2}_brickv_[100|].jpg          {0} im Brick Viewer
-	Dimensions/{1}_dimensions_[100|600].png  Outline and drilling plan
+	Dimensions/{1}_dimensions_[100|600].png  Umriss und Bohrplan
 
 	{{% tfgalleryend %}}
 
