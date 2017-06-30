@@ -55,145 +55,147 @@ module Tinkerforge
   class StreamOutOfSyncException < TinkerforgeException
   end
 
-  def pack(unpacked, format)
-    data = ''
+  class Packer
+    def self.pack(unpacked, format)
+      data = ''
 
-    format.split(' ').each do |f|
-      if f.length > 1
-        f0 = f[0, 1]
-        f1 = f[1..-1]
-        r = []
+      format.split(' ').each do |f|
+        if f.length > 1
+          f0 = f[0, 1]
+          f1 = f[1..-1]
+          r = []
 
-        if f0 == '?'
-          n1 = (Integer(f1) / 8.0).ceil
-          r = Array.new(n1, 0)
+          if f0 == '?'
+            n1 = (Integer(f1) / 8.0).ceil
+            r = Array.new(n1, 0)
 
-          unpacked[0].each_with_index do |b, i|
-            if b
-              r[i / 8] |= 1 << (i % 8)
+            unpacked[0].each_with_index do |b, i|
+              if b
+                r[i / 8] |= 1 << (i % 8)
+              end
+            end
+
+            data += r.pack "C#{n1}"
+          elsif f0 == 'k'
+            unpacked[0].each { |c| r << c.ord }
+            data += r.pack "c#{f1}"
+          else
+            r = unpacked[0]
+            if ['s', 'S', 'l', 'L', 'q', 'Q'].count(f0) > 0
+              data += r.pack "#{f0}<#{f1}"
+            elsif f0 == 'Z'
+              data += [r].pack "#{f0}#{f1}"
+            else
+              data += r.pack "#{f0}#{f1}"
             end
           end
-
-          data += r.pack "C#{n1}"
-        elsif f0 == 'k'
-          unpacked[0].each { |c| r << c.ord }
-          data += r.pack "c#{f1}"
         else
-          r = unpacked[0]
-          if ['s', 'S', 'l', 'L', 'q', 'Q'].count(f0) > 0
-            data += r.pack "#{f0}<#{f1}"
-          elsif f0 == 'Z'
-            data += [r].pack "#{f0}#{f1}"
+          if f == '?'
+            r = [unpacked[0] ? 1 : 0]
+            data += r.pack 'C'
+          elsif f == 'k'
+            r = [unpacked[0].ord]
+            data += r.pack 'c'
           else
-            data += r.pack "#{f0}#{f1}"
+            r = [unpacked[0]]
+            if ['s', 'S', 'l', 'L', 'q', 'Q'].count(f) > 0
+              data += r.pack "#{f}<"
+            else
+              data += r.pack f
+            end
           end
         end
-      else
-        if f == '?'
-          r = [unpacked[0] ? 1 : 0]
-          data += r.pack 'C'
-        elsif f == 'k'
-          r = [unpacked[0].ord]
-          data += r.pack 'c'
-        else
-          r = [unpacked[0]]
-          if ['s', 'S', 'l', 'L', 'q', 'Q'].count(f) > 0
-            data += r.pack "#{f}<"
+
+        unpacked = unpacked.drop 1
+      end
+
+      data
+    end
+
+    def self.unpack(data, format)
+      unpacked = []
+
+      format.split(' ').each do |f|
+        if f.length > 1
+          f0 = f[0, 1]
+          f1 = f[1..-1]
+          u = []
+
+          if f0 == '?'
+            r = data.unpack "C#{f1}a*"
+            data = r[-1]
+            r.delete_at(-1)
+
+            for i in 0..Integer(f1) - 1
+              u << ((r[i / 8] & (1 << (i % 8))) != 0)
+            end
+          elsif f0 == 'k'
+            r = data.unpack "c#{f1}a*"
+            data = r[-1]
+            r.delete_at(-1)
+            r.each { |c| u << c.chr }
           else
-            data += r.pack f
+            if ['s', 'S', 'l', 'L', 'q', 'Q'].count(f0) > 0
+              r = data.unpack "#{f}<a*"
+            else
+              r = data.unpack "#{f}a*"
+            end
+            data = r[-1]
+            r.delete_at(-1)
+            r.each { |k| u << k }
           end
+
+          if u.length == 1
+            u = u[0]
+          end
+
+          unpacked << u
+        else
+          r = []
+          u = nil
+
+          if f == '?'
+            r = data.unpack "Ca*"
+            u = r[0] != 0
+          elsif f == 'k'
+            r = data.unpack "ca*"
+            u = r[0].chr
+          else
+            if ['s', 'q', 'l', 'L', 'S', 'Q'].count(f) > 0
+              r = data.unpack "#{f}<a*"
+            else
+              r = data.unpack "#{f}a*"
+            end
+            u = r[0]
+          end
+
+          data = r[1]
+          unpacked << u
         end
       end
 
-      unpacked = unpacked.drop 1
+      unpacked
     end
 
-    data
-  end
-
-  def unpack(data, format)
-    unpacked = []
-
-    format.split(' ').each do |f|
-      if f.length > 1
-        f0 = f[0, 1]
-        f1 = f[1..-1]
-        u = []
-
-        if f0 == '?'
-          r = data.unpack "C#{f1}a*"
-          data = r[-1]
-          r.delete_at(-1)
-
-          for i in 0..Integer(f1) - 1
-            u << ((r[i / 8] & (1 << (i % 8))) != 0)
-          end
-        elsif f0 == 'k'
-          r = data.unpack "c#{f1}a*"
-          data = r[-1]
-          r.delete_at(-1)
-          r.each { |c| u << c.chr }
-        else
-          if ['s', 'S', 'l', 'L', 'q', 'Q'].count(f0) > 0
-            r = data.unpack "#{f}<a*"
-          else
-            r = data.unpack "#{f}a*"
-          end
-          data = r[-1]
-          r.delete_at(-1)
-          r.each { |k| u << k }
-        end
-
-        if u.length == 1
-          u = u[0]
-        end
-
-        unpacked << u
-      else
-        r = []
-        u = nil
-
-        if f == '?'
-          r = data.unpack "Ca*"
-          u = r[0] != 0
-        elsif f == 'k'
-          r = data.unpack "ca*"
-          u = r[0].chr
-        else
-          if ['s', 'q', 'l', 'L', 'S', 'Q'].count(f) > 0
-            r = data.unpack "#{f}<a*"
-          else
-            r = data.unpack "#{f}a*"
-          end
-          u = r[0]
-        end
-
-        data = r[1]
-        unpacked << u
-      end
+    def self.get_uid_from_data(data)
+      data[0, 4].unpack('L<')[0]
     end
 
-    unpacked
-  end
+    def self.get_length_from_data(data)
+      data[4, 1].unpack('C')[0]
+    end
 
-  def get_uid_from_data(data)
-    data[0, 4].unpack('L<')[0]
-  end
+    def self.get_function_id_from_data(data)
+      data[5, 1].unpack('C')[0]
+    end
 
-  def get_length_from_data(data)
-    data[4, 1].unpack('C')[0]
-  end
+    def self.get_sequence_number_from_data(data)
+      (data[6, 1].unpack('C')[0] >> 4) & 0x0F
+    end
 
-  def get_function_id_from_data(data)
-    data[5, 1].unpack('C')[0]
-  end
-
-  def get_sequence_number_from_data(data)
-    (data[6, 1].unpack('C')[0] >> 4) & 0x0F
-  end
-
-  def get_error_code_from_data(data)
-    (data[7, 1].unpack('C')[0] >> 6) & 0x03
+    def self.get_error_code_from_data(data)
+      (data[7, 1].unpack('C')[0] >> 6) & 0x03
+    end
   end
 
   class Device
@@ -345,7 +347,7 @@ module Tinkerforge
       response = nil
 
       if request_data.length > 0
-        payload = pack request_data, request_format
+        payload = Packer.pack request_data, request_format
       else
         payload = ''
       end
@@ -367,8 +369,8 @@ module Tinkerforge
             while true
               packet = dequeue_response "Did not receive response in time for function ID #{function_id}"
 
-              if function_id == get_function_id_from_data(packet) and \
-                 sequence_number == get_sequence_number_from_data(packet)
+              if function_id == Packer.get_function_id_from_data(packet) and \
+                 sequence_number == Packer.get_sequence_number_from_data(packet)
                 # ignore old responses that arrived after the timeout expired, but before setting
                 # expected_response_function_id and expected_response_sequence_number back to None
                 break
@@ -380,7 +382,7 @@ module Tinkerforge
           end
         }
 
-        error_code = get_error_code_from_data(packet)
+        error_code = Packer.get_error_code_from_data packet
 
         if error_code == 0
           # no error
@@ -393,7 +395,7 @@ module Tinkerforge
         end
 
         if response_length > 0
-          response = unpack packet[8..-1], response_format
+          response = Packer.unpack packet[8..-1], response_format
 
           if response.length == 1
             response = response[0]
@@ -615,11 +617,11 @@ module Tinkerforge
         end
 
         server_nonce = @brickd.get_authentication_nonce
-        client_nonce = unpack(pack([@next_authentication_nonce], 'L'), 'C4')[0]
+        client_nonce = Packer.unpack(Packer.pack([@next_authentication_nonce], 'L'), 'C4')[0]
         @next_authentication_nonce += 1
-        nonce_bytes = pack [server_nonce, client_nonce], 'C4 C4'
+        nonce_bytes = Packer.pack [server_nonce, client_nonce], 'C4 C4'
         digest_bytes = OpenSSL::HMAC.digest 'sha1', secret, nonce_bytes
-        digest = unpack(digest_bytes, 'C20')[0]
+        digest = Packer.unpack(digest_bytes, 'C20')[0]
 
         @brickd.authenticate client_nonce, digest
       }
@@ -735,7 +737,7 @@ module Tinkerforge
       end
 
       sequence_number_and_options = (sequence_number << 4) | (r_bit << 3)
-      header = pack [uid, length, function_id, sequence_number_and_options, 0], 'L C C C C'
+      header = Packer.pack [uid, length, function_id, sequence_number_and_options, 0], 'L C C C C'
 
       [header, response_expected, sequence_number]
     end
@@ -911,7 +913,7 @@ module Tinkerforge
             break
           end
 
-          length = get_length_from_data pending_data
+          length = Packer.get_length_from_data pending_data
 
           if pending_data.length < length
             # Wait for complete packet
@@ -993,19 +995,19 @@ module Tinkerforge
 
     # internal
     def dispatch_packet(packet)
-      uid = get_uid_from_data packet
-      function_id = get_function_id_from_data packet
+      uid = Packer.get_uid_from_data packet
+      function_id = Packer.get_function_id_from_data packet
 
       if function_id == CALLBACK_ENUMERATE and \
          @registered_callbacks.has_key? CALLBACK_ENUMERATE
-        payload = unpack packet[8..-1], 'Z8 Z8 k C3 C3 S C'
+        payload = Packer.unpack packet[8..-1], 'Z8 Z8 k C3 C3 S C'
         @registered_callbacks[CALLBACK_ENUMERATE].call(*payload)
       elsif @devices.has_key? uid
         device = @devices[uid]
 
         if device.high_level_callbacks.has_key?(-function_id)
           hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
-          payload = unpack packet[8..-1], device.callback_formats[function_id]
+          payload = Packer.unpack packet[8..-1], device.callback_formats[function_id]
           has_data = false
           data = nil
 
@@ -1066,7 +1068,7 @@ module Tinkerforge
         end
 
         if device.registered_callbacks.has_key? function_id
-          payload = unpack packet[8..-1], device.callback_formats[function_id]
+          payload = Packer.unpack packet[8..-1], device.callback_formats[function_id]
           device.registered_callbacks[function_id].call(*payload)
         end
       end
@@ -1150,9 +1152,9 @@ module Tinkerforge
     def handle_response(packet)
       @disconnect_probe_flag = false
 
-      uid = get_uid_from_data packet
-      function_id = get_function_id_from_data packet
-      sequence_number = get_sequence_number_from_data packet
+      uid = Packer.get_uid_from_data packet
+      function_id = Packer.get_function_id_from_data packet
+      sequence_number = Packer.get_sequence_number_from_data packet
 
       if sequence_number == 0 and function_id == CALLBACK_ENUMERATE
         if @registered_callbacks.has_key? CALLBACK_ENUMERATE
