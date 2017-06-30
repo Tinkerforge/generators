@@ -429,8 +429,15 @@ void communication_init(void);
     def copy_templates_to(self, folder_dst):
         folder_src = os.path.join(self.get_bindings_root_directory(), 'comcu_templates')
         shutil.copytree(os.path.join(folder_src, 'software'), os.path.join(folder_dst, 'software'))
-        shutil.copytree(os.path.join(folder_src, 'hardware'),  os.path.join(folder_dst, 'hardware'))
-        shutil.copytree(os.path.join(folder_src, 'datasheets'),  os.path.join(folder_dst, 'datasheets'))
+        if os.path.isdir(os.path.join(folder_src, 'hardware')):
+            shutil.copytree(os.path.join(folder_src, 'hardware'),  os.path.join(folder_dst, 'hardware'))
+        else:
+            os.mkdir(os.path.join(folder_dst, 'hardware'))
+        if os.path.isdir(os.path.join(folder_src, 'datasheets')):
+            shutil.copytree(os.path.join(folder_src, 'datasheets'),  os.path.join(folder_dst, 'datasheets'))
+        else:
+            os.mkdir(os.path.join(folder_dst, 'datasheets'))
+
 
     def fill_templates(self, folder, device_name_dash, device_name, device_identifier, year, name, email, callback_value):
         for dname, dirs, files in os.walk(folder):
@@ -455,7 +462,7 @@ void communication_init(void);
         except:
             pass # It is OK if the directory does not exist...
 
-        os.mkdir(folder)
+        os.makedirs(folder)
 
         device_name_dash = device.get_underscore_name().replace('_', '-')
         year = datetime.datetime.now().year
