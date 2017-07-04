@@ -14,6 +14,7 @@
 */doc/
 */*_package/
 c/comcu_output/
+c/doc_output/
 device_descriptions.py
 device_identifiers.py
 device_infos.py
