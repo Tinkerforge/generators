@@ -10,6 +10,103 @@ common_packets = []
 
 common_packets.append({
 'type': 'function',
+'function_id': 231,
+'name': 'Set SPITFP Baudrate Config',
+'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'in'),
+             ('Minimum Dynamic Baudrate', 'uint32', 1, 'in')],
+'since_firmware': {'*': [2, 0, 0],
+                   'DC': [2, 3, 5],
+                   'IMU': [2, 3, 5],
+                   'IMU V2': [2, 0, 10],
+                   'Master': [2, 4, 6],
+                   'RED': None,
+                   'Servo': [2, 3, 4],
+                   'Silent Stepper': [2, 0, 4],
+                   'Stepper': [2, 3, 6]},
+'doc': ['af', {
+'en':
+"""
+The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is
+enabled, the Brick will try to adapt the baudrate for the communication
+between Bricks and Bricklets according to the amount of data that is transferred.
+
+The baudrate will be increased exponetially if lots of data is send/receieved and
+decreased linearly if little data is send/received.
+
+This lowers the baudrate in applications where little data is transferred (e.g.
+a weather station) and increases the robustness. If there is lots of data to transfer
+(e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.
+
+In cases where some data has to transferred as fast as possible every few seconds
+(e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn
+the dynamic baudrate off to get the highest possible performance.
+
+The maximum value of the baudrate can be set per port with the function 
+:func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
+as set by :func:`Set SPITFP Baudrate` will be used statically.
+
+The minimum dynamic baudrate has a value range of 400000 to 2000000 baud.
+
+By default dynamic baudrate is enabled and the minimum dynamic baudrate is 400000.
+""",
+'de':
+"""
+Das SPITF-Protokoll kann mit einer dynamischen Baudrate genutzt werden. Wenn die dynamische
+Baudrate aktiviert ist, versucht der Brick die Baudrate anhand des Datenaufkommens
+zwischen Brick und Bricklet anzupassen.
+
+Die Baudrate wird exponentiell erhöht wenn viele Daten gesendet/empfangen werden
+und linear verringert wenn wenig daten gesendet/empfangen werden.
+
+Diese Vorgehensweise verringert die Baudrate in Anwendungen wo nur wenig Daten
+ausgetauscht werden müssen (z.B. eine Wetterstation) und erhöht die Robustheit.
+Wenn immer viele Daten ausgetauscht werden (z.B. Thermal Imaging Bricklet), wird
+die Baudrate automatisch erhöht.
+
+In Fällen wo wenige Daten all paar Sekunden so schnell wie Möglich übertragen werden
+sollen (z.B. RS485 Bricklet mit hoher Baudrate aber kleinem Payload) kann die
+dynamische Baudrate zum maximieren der Performance ausgestellt werden.
+
+Die maximale Baudrate kann pro Port mit der Funktion :func:`Set SPITFP Baudrate`.
+gesetzt werden. Falls die dynamsiche Baudrate nicht aktiviert ist, wird die Baudrate
+wie von :func:`Set SPITFP Baudrate` gesetzt statisch verwendet.
+
+Die minimale dynamische Baudrate hat einen Wertebereich von 400000 bis 2000000 Baud.
+
+Standardmäßig ist die dynamische Baudrate aktiviert und die minimale dynamische Baudrate ist 400000.
+"""
+}]
+})
+
+common_packets.append({
+'type': 'function',
+'function_id': 232,
+'name': 'Get SPITFP Baudrate Config',
+'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'out'),
+             ('Minimum Dynamic Baudrate', 'uint32', 1, 'out')],
+'since_firmware': {'*': [2, 0, 0],
+                   'DC': [2, 3, 5],
+                   'IMU': [2, 3, 5],
+                   'IMU V2': [2, 0, 10],
+                   'Master': [2, 4, 6],
+                   'RED': None,
+                   'Servo': [2, 3, 4],
+                   'Silent Stepper': [2, 0, 4],
+                   'Stepper': [2, 3, 6]},
+'doc': ['af', {
+'en':
+"""
+Returns the baudrate config, see :func:`Set SPITFP Baudrate Config`.
+""",
+'de':
+"""
+Gibt die Baudratenkonfiguration zurück, siehe :func:`Set SPITFP Baudrate Config`.
+"""
+}]
+})
+
+common_packets.append({
+'type': 'function',
 'function_id': 233,
 'name': 'Get Send Timeout Count',
 'elements': [('Communication Method', 'uint8', 1, 'in', ('Communication Method', [('None', 0),
@@ -76,6 +173,9 @@ the baudrate. If you get a high error count because of high
 interference (see :func:`Get SPITFP Error Count`) you can decrease the
 baudrate.
 
+If the dynamic baudrate feature is enabled, the baudrate set by this
+function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
+
 Regulatory testing is done with the default baudrate. If CE compatability
 or similar is necessary in you applications we recommend to not change
 the baudrate.
@@ -90,6 +190,9 @@ Baudrate hat einen möglichen Wertebereich von 400000 bis 2000000.
 Für einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden.
 Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist
 (siehe :func:`Get SPITFP Error Count`) kann die Baudrate verringert werden.
+
+Wenn das Feature der dynamische Baudrate aktiviert ist, setzt diese Funktion
+die maximale Baudrate (siehe :func:`Set SPITFP Baudrate Config`).
 
 EMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine
 CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die
