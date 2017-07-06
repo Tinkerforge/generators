@@ -58,7 +58,7 @@ den :cb:`Temperature` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Resistance',
-'elements': [('Resistance', 'uint16', 1, 'out')],
+'elements': [('Resistance', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -255,8 +255,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Resistance Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -302,8 +302,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Resistance Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -434,7 +434,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Resistance',
-'elements': [('Resistance', 'uint16', 1, 'out')],
+'elements': [('Resistance', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -460,7 +460,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Resistance Reached',
-'elements': [('Resistance', 'uint16', 1, 'out')],
+'elements': [('Resistance', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
