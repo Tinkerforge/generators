@@ -792,7 +792,6 @@ class IPConnection:
             hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
             form = device.callback_formats[function_id] # FIXME: currently assuming that form is longer than 1
             llvalues = self.deserialize_data(payload, form)
-            fixed_length = hlcb[1]['fixed_length']
             has_data = False
             data = None
 
