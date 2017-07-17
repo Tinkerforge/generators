@@ -1352,7 +1352,7 @@ To send a response of this request use :func:`Modbus Slave Answer Read Coils Req
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum lesen von Coils erhält. Die :word:`Parameter`
+gültige Anfrage eines Masters zum lesen von Coils erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
 Coils.
 
@@ -1394,7 +1394,7 @@ request within the master request timeout period as set by
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Read Coils-Anfrage zurück bekommt.
 
-Die :word:`Parameter` sind die Request ID der Anfrage, der Exception Code der
+Die :word:`parameters` sind die Request ID der Anfrage, der Exception Code der
 Antwort und die empfangenen Daten.
 
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
@@ -1426,7 +1426,7 @@ To send a response of this request use :func:`Modbus Slave Answer Read Holding R
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum lesen von Holding Registern erhält. Die :word:`Parameter`
+gültige Anfrage eines Masters zum lesen von Holding Registern erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
 Register.
 
@@ -1468,7 +1468,7 @@ request within the master request timeout period as set by
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Read Holding Registers-Anfrage zurück bekommt.
 
-Die The :word:`Parameter` sind die Request ID der Anfrage, der Exception Code der
+Die :word:`parameters` sind die Request ID der Anfrage, der Exception Code der
 Antwort und die empfangenen Daten.
 
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
@@ -1500,7 +1500,7 @@ To send a response of this request use :func:`Modbus Slave Answer Write Single C
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum schreiben einer einzelnen Coil erhält. Die :word:`Parameter`
+gültige Anfrage eines Masters zum schreiben einer einzelnen Coil erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Adresse der Coil und der Wert der zu schreibenen
 Coil.
 
@@ -1537,7 +1537,7 @@ by :func:`Set Modbus Configuration`.
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Write Single Coil-Anfrage zurück bekommt.
 
-Die The :word:`Parameter` sind die Request ID der Anfrage und der Exception Code der
+Die :word:`parameters` sind die Request ID der Anfrage und der Exception Code der
 Antwort.
 
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
@@ -1569,7 +1569,7 @@ To send a response of this request use :func:`Modbus Slave Answer Write Single R
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum schreiben einer einzelnen Registers erhält. Die :word:`Parameter`
+gültige Anfrage eines Masters zum schreiben einer einzelnen Registers erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Adresse des Registers und der Wert des zuschreibenen
 Registers.
 
@@ -1606,7 +1606,7 @@ timeout period as set by :func:`Set Modbus Configuration`.
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Write Single Register-Anfrage zurück bekommt.
 
-Die The :word:`Parameter` sind die Request ID der Anfrage und der Exception Code der
+Die :word:`parameters` sind die Request ID der Anfrage und der Exception Code der
 Antwort.
 
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
@@ -1641,7 +1641,7 @@ To send a response of this request use :func:`Modbus Slave Answer Write Multiple
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum schreiben einer mehrerer Coils erhält. Die :word:`Parameter`
+gültige Anfrage eines Masters zum schreiben einer mehrerer Coils erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Startadresse der Coils und die zu schreibenen Daten.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
@@ -1677,7 +1677,7 @@ timeout period as set by :func:`Set Modbus Configuration`.
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Write Multiple Coils-Anfrage zurück bekommt.
 
-Die The :word:`Parameter` sind die Request ID der Anfrage und der Exception Code der
+Die :word:`parameters` sind die Request ID der Anfrage und der Exception Code der
 Antwort.
 
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
@@ -1712,7 +1712,7 @@ To send a response of this request use :func:`Modbus Slave Answer Write Multiple
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum schreiben einer mehrerer Register erhält. Die :word:`Parameter`
+gültige Anfrage eines Masters zum schreiben einer mehrerer Register erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Startadresse der Register und die zu schreibenen Daten.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
@@ -1748,7 +1748,7 @@ request timeout period as set by :func:`Set Modbus Configuration`.
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Write Multiple Register-Anfrage zurück bekommt.
 
-Die The :word:`Parameter` sind die Request ID der Anfrage und der Exception Code der
+Die :word:`parameters` sind die Request ID der Anfrage und der Exception Code der
 Antwort.
 
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
@@ -1780,7 +1780,7 @@ To send a response of this request use :func:`Modbus Slave Answer Read Discrete 
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum lesen von Discrete Inputs erhält. Die :word:`Parameter`
+gültige Anfrage eines Masters zum lesen von Discrete Inputs erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
 Discrete Inputs.
 
@@ -1822,7 +1822,7 @@ request within the master request timeout period as set by
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Read Discrete Inputs-Anfrage zurück bekommt.
 
-Die The :word:`Parameter` sind die Request ID der Anfrage, der Exception Code der
+Die :word:`parameters` sind die Request ID der Anfrage, der Exception Code der
 Antwort und die empfangenen Daten.
 
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
@@ -1854,7 +1854,7 @@ To send a response of this request use :func:`Modbus Slave Answer Read Input Reg
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum lesen von Input Registern erhält. Die :word:`Parameter`
+gültige Anfrage eines Masters zum lesen von Input Registern erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
 Register.
 
@@ -1896,7 +1896,7 @@ request within the master request timeout period as set by
 Dieser Callback wird im Modbus-Master Modus aufgerufen, wenn der Master eine
 gültige Antwort auf eine Read Input Registers-Anfrage zurück bekommt.
 
-Die The :word:`Parameter` sind die Request ID der Anfrage, der Exception Code der
+Die :word:`parameters` sind die Request ID der Anfrage, der Exception Code der
 Antwort und die empfangenen Daten.
 
 Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,

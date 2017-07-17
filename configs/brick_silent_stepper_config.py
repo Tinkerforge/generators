@@ -1318,7 +1318,7 @@ Returns the current driver status.
 * Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode. 
   The returned value is between 0 and 31. It represents a multiplier of 1/32 to 32/32 of the
   ``Motor Run Current`` as set by :func:`Set Basic Configuration`. Example: If a ``Motor Run Current``
-  of 1000mA was set and the returned value is 15, the ``Actual Motor Current` is 16/32*1000mA = 500mA.
+  of 1000mA was set and the returned value is 15, the ``Actual Motor Current`` is 16/32*1000mA = 500mA.
 
 * Stallguard Result: Indicates the load of the motor. A lower value signals a higher load. Per trial and error
   you can find out which value corresponds to a suitable torque for the velocity used in your application.
