@@ -1317,7 +1317,7 @@ int device_set_response_expected_all(DevicePrivate *device_p, bool response_expe
 
 void device_register_callback(DevicePrivate *device_p, int16_t callback_id,
                               void *function, void *user_data) {
-	if (callback_id == 0 || abs(callback_id) >= DEVICE_NUM_FUNCTION_IDS) {
+	if (callback_id <= -DEVICE_NUM_FUNCTION_IDS || callback_id >= DEVICE_NUM_FUNCTION_IDS) {
 		return;
 	}
 
@@ -2316,7 +2316,7 @@ void ipcon_register_callback(IPConnection *ipcon, int16_t callback_id,
                              void *function, void *user_data) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
 
-	if (callback_id < 1 || callback_id >= IPCON_NUM_CALLBACK_IDS) {
+	if (callback_id <= -1 || callback_id >= IPCON_NUM_CALLBACK_IDS) {
 		return;
 	}
 
