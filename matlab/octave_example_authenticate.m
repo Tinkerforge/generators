@@ -7,7 +7,7 @@ function octave_example_authenticate()
     PORT = 4223;
     SECRET = "My Authentication Secret!";
 
-    ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
+    ipcon = javaObject("com.tinkerforge.IPConnection"); % Create IP connection
 
     % Register Connected Callback
     ipcon.addConnectedCallback(@cb_connected);

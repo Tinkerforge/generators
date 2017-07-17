@@ -4,7 +4,7 @@ function octave_example_enumerate()
     HOST = "localhost";
     PORT = 4223;
 
-    ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
+    ipcon = javaObject("com.tinkerforge.IPConnection"); % Create IP connection
 
     ipcon.connect(HOST, PORT); % Connect to brickd
 
