@@ -836,7 +836,7 @@ class IPConnection:
                 for role, llvalue in zip(hlcb[0], llvalues):
                     if role == 'stream_chunk_data':
                         result.append(data)
-                    elif role == None or not role.startswith('stream_'):
+                    elif role == None:
                         result.append(llvalue)
 
                 device.registered_callbacks[-function_id](*tuple(result))

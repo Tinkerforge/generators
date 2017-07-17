@@ -1057,7 +1057,7 @@ module Tinkerforge
               hlcb[0].zip(payload).each do |role, value|
                 if role == 'stream_chunk_data'
                   result << data
-                elsif role == nil or not role.start_with? 'stream_'
+                elsif role == nil
                   result << value
                 end
               end
