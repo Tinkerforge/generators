@@ -101,6 +101,14 @@ Possible return value of the get_code() subroutine.
 
 use constant UNKNOWN_ERROR => 43;
 
+=item STREAM_OUT_OF_SYNC
+
+Possible return value of the get_code() subroutine.
+
+=cut
+
+use constant STREAM_OUT_OF_SYNC => 51;
+
 =back
 =cut
 

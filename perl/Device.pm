@@ -44,6 +44,7 @@ sub _new
 	                                 api_version => shared_clone($api_version),
 	                                 registered_callbacks => shared_clone({}),
 	                                 callback_formats => shared_clone({}),
+	                                 high_level_callbacks => shared_clone({}),
 	                                 expected_response_sequence_number => undef,
 	                                 expected_response_function_id => undef,
 	                                 response_queue => Thread::Queue->new(),
@@ -55,9 +56,11 @@ sub _new
 
 	my $device_lock :shared;
 	my $request_lock :shared;
+	my $stream_lock :shared;
 
 	$self->{device_lock_ref} = \$device_lock;
 	$self->{request_lock_ref} = \$request_lock;
+	$self->{stream_lock_ref} = \$stream_lock;
 
 	$self->{ipcon}->{devices}->{$self->{uid}} = $self;
 

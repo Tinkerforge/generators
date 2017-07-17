@@ -65,6 +65,21 @@ class PerlElement(common.Element):
         'string': 'Z'
     }
 
+    perl_default_item_values = {
+        'int8':   '0',
+        'uint8':  '0',
+        'int16':  '0',
+        'uint16': '0',
+        'int32':  '0',
+        'uint32': '0',
+        'int64':  '0',
+        'uint64': '0',
+        'float':  '0.0',
+        'bool':   '0',
+        'char':   "'\\0'",
+        'string': None
+    }
+
     def get_perl_type(self):
         t = PerlElement.perl_types[self.get_type()]
 
@@ -91,3 +106,11 @@ class PerlElement(common.Element):
             f += str(c)
 
         return f
+
+    def get_perl_default_item_value(self):
+        value = PerlElement.perl_default_item_values[self.get_type()]
+
+        if value == None:
+            common.GeneratorError('Invalid array item type: ' + self.get_type())
+
+        return value

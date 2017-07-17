@@ -59,7 +59,7 @@ class PerlDocDevice(perl_common.PerlDevice):
             if packet.get_doc_type() != typ:
                 continue
             name = packet.get_underscore_name()
-            params = packet.get_perl_parameter_list()
+            params = packet.get_perl_parameters()
             pd = packet.get_perl_parameter_desc('in')
             r = packet.get_perl_return_desc()
             d = packet.get_perl_formatted_doc()
@@ -375,7 +375,7 @@ Konstanten
         return doc
 
 class PerlDocPacket(common.Packet):
-    def get_perl_parameter_list(self):
+    def get_perl_parameters(self):
         params = []
 
         for element in self.get_elements(direction='in'):

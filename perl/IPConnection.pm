@@ -1768,11 +1768,114 @@ sub _dispatch_callback
 		{
 			if(ref($args) eq "ARRAY")
 			{
-				# FIXME: for some unknown reason directly passing the reference
-				#        to an array doesn't work with eval. it only works if
-				#        the reference is created locally by eval
-				my @array = @{$args};
-				eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@array)");
+				if(defined($self->{devices}->{$uid}->{high_level_callbacks}->{-$fid}))
+				{
+					my $hlcb = $self->{devices}->{$uid}->{high_level_callbacks}->{-$fid}; # [roles-by-name, roles-by-index, options, data]
+					my $has_data = 0;
+					my $data = undef;
+					my $length = undef;
+					my $chunk_offset = undef;
+
+					if(defined(@{$hlcb}[2]->{fixed_length}))
+					{
+						$length = @{$hlcb}[2]->{fixed_length};
+					}
+					else
+					{
+						$length = @{$args}[@{$hlcb}[0]->{stream_length}];
+					}
+
+					if(!@{$hlcb}[2]->{single_chunk})
+					{
+						$chunk_offset = @{$args}[@{$hlcb}[0]->{stream_chunk_offset}];
+					}
+					else
+					{
+						$chunk_offset = 0;
+					}
+
+					my $chunk_data = @{$args}[@{$hlcb}[0]->{stream_chunk_data}];
+
+					if(!defined(@{$hlcb}[3])) # no stream in-progress
+					{
+						if($chunk_offset == 0) # stream starts
+						{
+							@{$hlcb}[3] = shared_clone($chunk_data);
+
+							if(scalar(@{@{$hlcb}[3]}) >= $length) # stream complete
+							{
+								$has_data = 1;
+								$data = @{$hlcb}[3];
+
+								# FIXME: splice doesn't support shared arrays, manually drop extra items
+								while(scalar(@{$data}) > $length)
+								{
+									pop(@{$data});
+								}
+
+								@{$hlcb}[3] = undef;
+							}
+						}
+						else # ignore tail of current stream, wait for next stream start
+						{
+						}
+					}
+					else # stream in-progress
+					{
+						if($chunk_offset != scalar(@{@{$hlcb}[3]})) # stream out-of-sync
+						{
+							$has_data = 1;
+							$data = undef;
+							@{$hlcb}[3] = undef;
+						}
+						else # stream in-sync
+						{
+							push(@{@{$hlcb}[3]}, @{$chunk_data});
+
+							if(scalar(@{@{$hlcb}[3]}) >= $length) # stream complete
+							{
+								$has_data = 1;
+								$data = @{$hlcb}[3];
+
+								# FIXME: splice doesn't support shared arrays, manually drop extra items
+								while(scalar(@{$data}) > $length)
+								{
+									pop(@{$data});
+								}
+
+								@{$hlcb}[3] = undef;
+							}
+						}
+					}
+
+					if($has_data && defined($self->{devices}->{$uid}->{high_level_callbacks}->{-$fid}))
+					{
+						my @result = ();
+
+						for(my $i = 0; $i < scalar(@{@{$hlcb}[1]}); ++$i)
+						{
+							if(@{@{$hlcb}[1]}[$i] eq 'stream_chunk_data')
+							{
+								push(@result, $data);
+							}
+							elsif(!defined(@{@{$hlcb}[1]}[$i]))
+							{
+								push(@result, @{$args}[$i]);
+							}
+						}
+
+						eval("$self->{devices}->{$uid}->{registered_callbacks}->{-$fid}(\@result)");
+					}
+				}
+
+				if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
+				{
+					# FIXME: for some unknown reason directly passing the reference
+					#        to an array doesn't work with eval. it only works if the
+					#        reference is created locally by eval
+					my @array = @{$args};
+					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@array)");
+				}
 			}
 			else
 			{
@@ -1791,8 +1894,8 @@ sub _dispatch_callback
 			if(ref($args) eq "ARRAY")
 			{
 				# FIXME: for some unknown reason directly passing the reference
-				#        to an array doesn't work with eval. it only works if
-				#        the reference is created locally by eval
+				#        to an array doesn't work with eval. it only works if the
+				#        reference is created locally by eval
 				my @array = @{$args};
 				eval("$self->{registered_callbacks}->{$fid}(\@array)");
 			}
@@ -1834,7 +1937,8 @@ sub _dispatch_packet
 		return 1;
 	}
 
-	if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
+	if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}) ||
+	   defined($self->{devices}->{$uid}->{high_level_callbacks}->{-$fid}))
 	{
 		$self->_dispatch_response($payload, $self->{devices}->{$uid}->{callback_formats}->{$fid}, $uid, $fid);
 	}
