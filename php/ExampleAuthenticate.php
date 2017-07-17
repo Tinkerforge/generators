@@ -25,7 +25,7 @@ function cb_connected($connectReason, $userData)
 		$ipcon->authenticate(SECRET);
 		echo "Authentication succeeded\n";
 	} catch (TinkerforgeException $e) {
-		echo "Could not authenticate: $e\n";
+		echo "Could not authenticate\n";
 		return;
 	}
 
