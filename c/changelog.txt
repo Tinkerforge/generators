@@ -250,7 +250,7 @@
 - Add support for GPS Bricklet 2.0
 - Don't try to export non-existing register_callback functions
 
-2017-07-17: 2.1.16 (<unknown>)
+2017-07-18: 2.1.16 (<unknown>)
 - Break PTC Bricklet API to fix type for resistance value of get_resistance
   function
 - Fix ipcon_register_callback for IPCON_CALLBACK_CONNECTED
