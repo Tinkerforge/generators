@@ -359,6 +359,10 @@ class {0} extends Device
      */
     public function {headless_camel_case_name}({high_level_parameters})
     {{
+        if (count(${stream_underscore_name}) > {stream_max_length}) {{
+            throw new \\InvalidArgumentException('{stream_name} can be at most {stream_max_length} items long');
+        }}
+
         ${stream_underscore_name}_length = count(${stream_underscore_name});
         ${stream_underscore_name}_chunk_offset = 0;
 
@@ -385,7 +389,7 @@ class {0} extends Device
         ${stream_underscore_name}_chunk_offset = 0;
 
         if (count(${stream_underscore_name}) !== ${stream_underscore_name}_length) {{
-            throw new \\InvalidArgumentException("{stream_name} has to be ${stream_underscore_name}_length items long");
+            throw new \\InvalidArgumentException("{stream_name} has to be exactly ${stream_underscore_name}_length items long");
         }}
 
         while (${stream_underscore_name}_chunk_offset < ${stream_underscore_name}_length) {{
@@ -404,6 +408,10 @@ class {0} extends Device
      */
     public function {headless_camel_case_name}({high_level_parameters})
     {{
+        if (count(${stream_underscore_name}) > {stream_max_length}) {{
+            throw new \\InvalidArgumentException('{stream_name} can be at most {stream_max_length} items long');
+        }}
+
         ${stream_underscore_name}_length = count(${stream_underscore_name});
         ${stream_underscore_name}_chunk_offset = 0;
 
@@ -531,6 +539,13 @@ class {0} extends Device
                 else:
                     template = template_stream_in
 
+                length_element = stream_in.get_length_element()
+
+                if length_element != None:
+                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
+                else:
+                    stream_max_length = stream_in.get_fixed_length()
+
                 if stream_in.has_short_write():
                     if len(packet.get_elements(direction='out')) < 2:
                         chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
@@ -573,6 +588,7 @@ class {0} extends Device
                                            high_level_parameters=packet.get_php_parameters(high_level=True),
                                            stream_name=stream_in.get_name(),
                                            stream_underscore_name=stream_in.get_underscore_name(),
+                                           stream_max_length=stream_max_length,
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                            chunk_padding=stream_in.get_chunk_data_element().get_php_default_item_value(),

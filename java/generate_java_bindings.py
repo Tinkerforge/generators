@@ -910,8 +910,12 @@ public class {0} extends Device {{
 	/**
 	 * {doc}
 	 */
-	public {return_type} {headless_camel_case_name}({high_level_parameters}) throws TimeoutException, NotConnectedException {{{result_variable}
-		{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.length; // FIXME: check overflow
+	public {return_type} {headless_camel_case_name}({high_level_parameters}) throws TimeoutException, NotConnectedException {{
+		if ({stream_headless_camel_case_name}.length > {stream_max_length}) {{
+			throw new IllegalArgumentException("{stream_name} can be at most {stream_max_length} items long");
+		}}
+{result_variable}
+		{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.length;
 		{stream_length_type} {stream_headless_camel_case_name}ChunkOffset = 0;
 		{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
 		{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
@@ -946,7 +950,7 @@ public class {0} extends Device {{
 		{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
 
 		if ({stream_headless_camel_case_name}.length != {stream_headless_camel_case_name}Length) {{
-			throw new IllegalArgumentException("{stream_name} has to be " + {stream_headless_camel_case_name}Length + " items long");
+			throw new IllegalArgumentException("{stream_name} has to be exactly " + {stream_headless_camel_case_name}Length + " items long");
 		}}
 
 		synchronized (streamMutex) {{
@@ -969,8 +973,12 @@ public class {0} extends Device {{
 	/**
 	 * {doc}
 	 */
-	public {return_type} {headless_camel_case_name}({high_level_parameters}) throws TimeoutException, NotConnectedException {{{result_variable}
-		{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.length; // FIXME: check overflow
+	public {return_type} {headless_camel_case_name}({high_level_parameters}) throws TimeoutException, NotConnectedException {{
+		if ({stream_headless_camel_case_name}.length > {stream_max_length}) {{
+			throw new IllegalArgumentException("{stream_name} can be at most {stream_max_length} items long");
+		}}
+{result_variable}
+		{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.length;
 		{stream_length_type} {stream_headless_camel_case_name}ChunkOffset = 0;
 		{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
 		{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
@@ -1015,8 +1023,7 @@ public class {0} extends Device {{
 	 * {doc}
 	 */
 	public {return_type} {headless_camel_case_name}({high_level_parameters}) throws TimeoutException, NotConnectedException {{
-		if ({stream_headless_camel_case_name}.length > {chunk_cardinality})
-		{{
+		if ({stream_headless_camel_case_name}.length > {chunk_cardinality}) {{
 			throw new IllegalArgumentException("{stream_name} can be at most {chunk_cardinality} items long");
 		}}
 
@@ -1121,6 +1128,11 @@ public class {0} extends Device {{
                 elif chunk_offset_element != None:
                     stream_length_type = chunk_offset_element.get_java_type()
 
+                if length_element != None:
+                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
+                else:
+                    stream_max_length = stream_in.get_fixed_length()
+
                 if stream_in.get_fixed_length() != None:
                     template = template_stream_in_fixed_length
                 elif stream_in.has_short_write() and stream_in.has_single_chunk():
@@ -1207,6 +1219,7 @@ public class {0} extends Device {{
                                            stream_name=stream_in.get_name(),
                                            stream_headless_camel_case_name=stream_in.get_headless_camel_case_name(),
                                            stream_length_type=stream_length_type,
+                                           stream_max_length=stream_max_length,
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_data_type=stream_in.get_chunk_data_element().get_java_type(),
                                            chunk_data_new=stream_in.get_chunk_data_element().get_java_new(),

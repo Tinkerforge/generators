@@ -310,7 +310,13 @@ sub {0}
         template_stream_in = """
 sub {underscore_name}
 {{
-    my ($self{high_level_parameters}) = @_;{result_variable}
+    my ($self{high_level_parameters}) = @_;
+
+    if(scalar(@{{${stream_underscore_name}}}) > {stream_max_length})
+    {{
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long'));
+    }}
+{result_variable}
     my ${stream_underscore_name}_length = scalar(@{{${stream_underscore_name}}});
     my ${stream_underscore_name}_chunk_offset = 0;
 
@@ -329,7 +335,7 @@ sub {underscore_name}
             my ${stream_underscore_name}_chunk_data = [];
             my ${stream_underscore_name}_chunk_length = ${stream_underscore_name}_length - ${stream_underscore_name}_chunk_offset;
 
-            if (${stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
+            if(${stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
                 ${stream_underscore_name}_chunk_length = {chunk_cardinality};
             }}
 
@@ -357,7 +363,7 @@ sub {underscore_name}
 
     if(scalar(@{{${stream_underscore_name}}}) != ${stream_underscore_name}_length)
     {{
-        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name} has to be '.${stream_underscore_name}_length.' items long'));
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name} has to be exactly '.${stream_underscore_name}_length.' items long'));
     }}
 
     lock(${{$self->{{stream_lock_ref}}}});
@@ -367,7 +373,7 @@ sub {underscore_name}
         my ${stream_underscore_name}_chunk_data = [];
         my ${stream_underscore_name}_chunk_length = ${stream_underscore_name}_length - ${stream_underscore_name}_chunk_offset;
 
-        if (${stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
+        if(${stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
             ${stream_underscore_name}_chunk_length = {chunk_cardinality};
         }}
 
@@ -388,7 +394,13 @@ sub {underscore_name}
         template_stream_in_short_write = """
 sub {underscore_name}
 {{
-    my ($self{high_level_parameters}) = @_;{result_variable}
+    my ($self{high_level_parameters}) = @_;
+
+    if(scalar(@{{${stream_underscore_name}}}) > {stream_max_length})
+    {{
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long'));
+    }}
+{result_variable}
     my ${stream_underscore_name}_length = scalar(@{{${stream_underscore_name}}});
     my ${stream_underscore_name}_chunk_offset = 0;
     my ${stream_underscore_name}_written = 0;
@@ -409,7 +421,7 @@ sub {underscore_name}
             my ${stream_underscore_name}_chunk_data = [];
             my ${stream_underscore_name}_chunk_length = ${stream_underscore_name}_length - ${stream_underscore_name}_chunk_offset;
 
-            if (${stream_underscore_name}_chunk_length > {chunk_cardinality})
+            if(${stream_underscore_name}_chunk_length > {chunk_cardinality})
             {{
                 ${stream_underscore_name}_chunk_length = {chunk_cardinality};
             }}
@@ -510,7 +522,7 @@ sub {underscore_name}
         template_stream_out_chunk_offset_check = """    my ${stream_underscore_name}_out_of_sync = undef;
     my ${stream_underscore_name}_data = undef;
 
-    if (${stream_underscore_name}_chunk_offset == (1 << {shift_size}) - 1) # maximum chunk offset -> stream has no data
+    if(${stream_underscore_name}_chunk_offset == (1 << {shift_size}) - 1) # maximum chunk offset -> stream has no data
     {{
         ${stream_underscore_name}_length = 0;
         ${stream_underscore_name}_chunk_offset = 0;
@@ -561,6 +573,13 @@ sub {underscore_name}
                     template = template_stream_in_single_chunk
                 else:
                     template = template_stream_in
+
+                length_element = stream_in.get_length_element()
+
+                if length_element != None:
+                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
+                else:
+                    stream_max_length = stream_in.get_fixed_length()
 
                 if stream_in.has_short_write():
                     if len(packet.get_elements(direction='out')) < 2:
@@ -630,6 +649,7 @@ sub {underscore_name}
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_perl_parameters(high_level=True), ''),
                                            stream_name=stream_in.get_name(),
                                            stream_underscore_name=stream_in.get_underscore_name(),
+                                           stream_max_length=stream_max_length,
                                            fixed_length=stream_in.get_fixed_length(default='nil'),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                            chunk_padding=stream_in.get_chunk_data_element().get_perl_default_item_value(),

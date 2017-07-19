@@ -263,6 +263,9 @@ class {0}(Device):
         \"\"\"
         {doc}
         \"\"\"
+        if len({stream_underscore_name}) > {stream_max_length}:
+            raise Error(Error.INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long')
+
         {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
         {stream_underscore_name}_length = len({stream_underscore_name})
         {stream_underscore_name}_chunk_offset = 0
@@ -288,7 +291,7 @@ class {0}(Device):
         {stream_underscore_name}_chunk_offset = 0
 
         if len({stream_underscore_name}) != {stream_underscore_name}_length:
-            raise Error(Error.INVALID_PARAMETER, '{stream_name} has to be {{0}} items long'.format({stream_underscore_name}_length))
+            raise Error(Error.INVALID_PARAMETER, '{stream_name} has to be exactly {{0}} items long'.format({stream_underscore_name}_length))
 
         with self.stream_lock:
             while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_length:
@@ -306,6 +309,9 @@ class {0}(Device):
         \"\"\"
         {doc}
         \"\"\"
+        if len({stream_underscore_name}) > {stream_max_length}:
+            raise Error(Error.INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long')
+
         {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
         {stream_underscore_name}_length = len({stream_underscore_name})
         {stream_underscore_name}_chunk_offset = 0
@@ -425,6 +431,13 @@ class {0}(Device):
                 else:
                     template = template_stream_in
 
+                length_element = stream_in.get_length_element()
+
+                if length_element != None:
+                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
+                else:
+                    stream_max_length = stream_in.get_fixed_length()
+
                 if stream_in.has_short_write():
                     if len(packet.get_elements(direction='out')) < 2:
                         chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
@@ -482,6 +495,7 @@ class {0}(Device):
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
                                            stream_name=stream_in.get_name(),
                                            stream_underscore_name=stream_in.get_underscore_name(),
+                                           stream_max_length=stream_max_length,
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                            chunk_padding=stream_in.get_chunk_data_element().get_python_default_item_value(),

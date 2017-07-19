@@ -193,6 +193,10 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         # high-level
         template_stream_in = """
     def {underscore_name}{high_level_parameters}
+      if {stream_underscore_name}.length > {stream_max_length}
+        raise ArgumentError, '{stream_name} can be at most {stream_max_length} items long'
+      end
+
       {stream_underscore_name}_length = {stream_underscore_name}.length
       {stream_underscore_name}_chunk_offset = 0
 
@@ -226,7 +230,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
       ret = nil # assigned in block
 
       if {stream_underscore_name}.length != {stream_underscore_name}_length
-        raise ArgumentError, "{stream_name} has to be #{{{stream_underscore_name}_length}} items long"
+        raise ArgumentError, "{stream_name} has to be exactly #{{{stream_underscore_name}_length}} items long"
       end
 
       @stream_mutex.synchronize {{
@@ -247,6 +251,10 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 """
         template_stream_in_short_write = """
     def {underscore_name}{high_level_parameters}
+      if {stream_underscore_name}.length > {stream_max_length}
+        raise ArgumentError, '{stream_name} can be at most {stream_max_length} items long'
+      end
+
       {stream_underscore_name}_length = {stream_underscore_name}.length
       {stream_underscore_name}_chunk_offset = 0
 
@@ -380,6 +388,13 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                 else:
                     template = template_stream_in
 
+                length_element = stream_in.get_length_element()
+
+                if length_element != None:
+                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
+                else:
+                    stream_max_length = stream_in.get_fixed_length()
+
                 if stream_in.has_short_write():
                     if len(packet.get_elements(direction='out')) < 2:
                         chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
@@ -433,6 +448,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                                            high_level_parameters=common.wrap_non_empty('(', packet.get_ruby_parameters(high_level=True), ')'),
                                            stream_name=stream_in.get_name(),
                                            stream_underscore_name=stream_in.get_underscore_name(),
+                                           stream_max_length=stream_max_length,
                                            fixed_length=stream_in.get_fixed_length(default='nil'),
                                            chunk_result_predefinition=chunk_result_predefinition,
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),

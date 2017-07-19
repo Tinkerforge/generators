@@ -593,8 +593,13 @@ namespace Tinkerforge
 		///  {doc}
 		/// </summary>
 		public {return_type} {camel_case_name}({high_level_parameters})
-		{{{result_variable}
-			{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.Length; // FIXME: check overflow
+		{{
+			if ({stream_headless_camel_case_name}.Length > {stream_max_length})
+			{{
+				throw new ArgumentException("{stream_name} can be at most {stream_max_length} items long");
+			}}
+{result_variable}
+			{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.Length;
 			{stream_length_type} {stream_headless_camel_case_name}ChunkOffset = 0;
 			{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
 			{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
@@ -635,9 +640,9 @@ namespace Tinkerforge
 			{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
 			{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
 
-			if ({stream_headless_camel_case_name}.Length != {stream_headless_camel_case_name}Length) // FIXME: check overflow
+			if ({stream_headless_camel_case_name}.Length != {stream_headless_camel_case_name}Length)
 			{{
-				throw new ArgumentException("{stream_name} has to be " + {stream_headless_camel_case_name}Length + " items long");
+				throw new ArgumentException("{stream_name} has to be exactly " + {stream_headless_camel_case_name}Length + " items long");
 			}}
 
 			lock (streamLock)
@@ -661,8 +666,13 @@ namespace Tinkerforge
 		///  {doc}
 		/// </summary>
 		public {return_type} {camel_case_name}({high_level_parameters})
-		{{{result_variable}
-			{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.Length; // FIXME: check overflow
+		{{
+			if ({stream_headless_camel_case_name}.Length > {stream_max_length})
+			{{
+				throw new ArgumentException("{stream_name} can be at most {stream_max_length} items long");
+			}}
+{result_variable}
+			{stream_length_type} {stream_headless_camel_case_name}Length = {stream_headless_camel_case_name}.Length;
 			{stream_length_type} {stream_headless_camel_case_name}ChunkOffset = 0;
 			{chunk_data_type} {stream_headless_camel_case_name}ChunkData = {chunk_data_new};
 			{stream_length_type} {stream_headless_camel_case_name}ChunkLength;
@@ -817,6 +827,11 @@ namespace Tinkerforge
                 elif chunk_offset_element != None:
                     stream_length_type = chunk_offset_element.get_csharp_type()
 
+                if length_element != None:
+                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
+                else:
+                    stream_max_length = stream_in.get_fixed_length()
+
                 if stream_in.get_fixed_length() != None:
                     template = template_stream_in_fixed_length
                 elif stream_in.has_short_write() and stream_in.has_single_chunk():
@@ -869,6 +884,7 @@ namespace Tinkerforge
                                            stream_name=stream_in.get_name(),
                                            stream_headless_camel_case_name=stream_in.get_headless_camel_case_name(),
                                            stream_length_type=stream_length_type,
+                                           stream_max_length=stream_max_length,
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_data_type=stream_in.get_chunk_data_element().get_csharp_type(),
                                            chunk_data_new=stream_in.get_chunk_data_element().get_csharp_new(),
