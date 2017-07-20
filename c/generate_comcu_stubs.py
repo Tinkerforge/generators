@@ -40,7 +40,7 @@ class COMCUBindingsDevice(common.Device):
         char_format="'{0}'"
         constants = []
 
-        for i, constant_group in enumerate(self.get_constant_groups()[0:-3]): # Remove last 3 constant groups (bootloader constants)
+        for i, constant_group in enumerate(self.get_constant_groups()):
             if i != 0:
                 constants.append('')
             for constant in constant_group.get_constants():
