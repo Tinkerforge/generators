@@ -54,7 +54,7 @@ try:
 except ImportError:
 	fatal_error('requiring python argparse module', ERROR_ARGPARSE_MISSING)
 
-class Context:
+class Context(object):
 	abort = False
 	async_exception = None
 
@@ -481,7 +481,7 @@ def convert_bool(string):
 
 convert_bool.__name__ = 'bool'
 
-def create_string_converter(ctx, type, length):
+def create_string_converter(ctx, type_, length):
 	def convert_string(string):
 		if not ctx.no_escaped_input:
 			try:
@@ -491,9 +491,9 @@ def create_string_converter(ctx, type, length):
 				raise argparse.ArgumentTypeError(msg)
 
 		try:
-			value = type(string)
+			value = type_(string)
 		except (ValueError, TypeError):
-			name = getattr(type, '__name__', repr(type))
+			name = getattr(type, '__name__', repr(type_))
 			msg = 'invalid %s value: %r' % (name, string)
 			raise argparse.ArgumentTypeError(msg)
 
@@ -507,7 +507,7 @@ def create_string_converter(ctx, type, length):
 
 	return convert_string
 
-def create_symbol_converter(ctx, type, symbols, strict=False):
+def create_symbol_converter(ctx, type_, symbols, strict=False):
 	def convert_symbol(string):
 		if not ctx.no_symbolic_input:
 			try:
@@ -516,31 +516,31 @@ def create_symbol_converter(ctx, type, symbols, strict=False):
 				pass
 
 		try:
-			value = type(string)
+			value = type_(string)
 		except (ValueError, TypeError):
-			name = getattr(type, '__name__', repr(type))
+			name = getattr(type_, '__name__', repr(type_))
 			msg = 'invalid %s value: %r' % (name, string)
 			raise argparse.ArgumentTypeError(msg)
 
 		if strict and value not in symbols.values():
-			name = getattr(type, '__name__', repr(type))
+			name = getattr(type_, '__name__', repr(type_))
 			msg = '%s value is out-of-range: %r' % (name, string)
 			raise argparse.ArgumentTypeError(msg)
 
 		return value
 
-	convert_symbol.__name__ = getattr(type, '__name__', repr(type))
+	convert_symbol.__name__ = getattr(type_, '__name__', repr(type_))
 
 	return convert_symbol
 
 # length_is_fixed = False means length is maximum length
-def create_array_converter(ctx, type, default_item, length, length_is_fixed=True):
+def create_array_converter(ctx, type_, default_item, length, length_is_fixed=True):
 	def convert_array(string):
 		items = string.split(ctx.item_separator)
 
 		if len(ctx.array_ellipsis) > 0 and len(items) > 0 and items[-1] == ctx.array_ellipsis:
 			if default_item == None:
-				name = getattr(type, '__name__', repr(type))
+				name = getattr(type_, '__name__', repr(type_))
 				msg = 'array ellipsis not supported for %s value: %r' % (get_array_type_name(ctx, name, length, length_is_fixed), string)
 				raise argparse.ArgumentTypeError(msg)
 
@@ -550,9 +550,9 @@ def create_array_converter(ctx, type, default_item, length, length_is_fixed=True
 
 		for item in items:
 			try:
-				value = type(item)
+				value = type_(item)
 			except (ValueError, TypeError, argparse.ArgumentTypeError):
-				name = getattr(type, '__name__', repr(type))
+				name = getattr(type_, '__name__', repr(type_))
 				msg = 'invalid %s value: %r' % (get_array_type_name(ctx, name, length, length_is_fixed), string)
 				raise argparse.ArgumentTypeError(msg)
 
@@ -560,13 +560,13 @@ def create_array_converter(ctx, type, default_item, length, length_is_fixed=True
 
 		if (length_is_fixed and len(array) != length) or \
 		   (not length_is_fixed and (len(array) < 1 or len(array) > length)):
-			name = getattr(type, '__name__', repr(type))
+			name = getattr(type_, '__name__', repr(type_))
 			msg = 'invalid %s value: %r' % (get_array_type_name(ctx, name, length, length_is_fixed), string)
 			raise argparse.ArgumentTypeError(msg)
 
 		return array
 
-	name = getattr(type, '__name__', repr(type))
+	name = getattr(type_, '__name__', repr(type_))
 	convert_array.__name__ = get_array_type_name(ctx, name, length, length_is_fixed)
 
 	return convert_array
