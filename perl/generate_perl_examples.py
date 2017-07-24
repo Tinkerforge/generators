@@ -255,17 +255,20 @@ class PerlExampleSetterFunction(common.ExampleSetterFunction):
 
     def get_perl_source(self):
         template = '{comment1}{global_line_prefix}${device_initial_name}->{function_underscore_name}({arguments});{comment2}\n'
+        marker = '->{}('
         arguments = []
 
         for argument in self.get_arguments():
             arguments.append(argument.get_perl_source())
 
-        return template.format(global_line_prefix=global_line_prefix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               arguments=', '.join(arguments),
-                               comment1=self.get_formatted_comment1(global_line_prefix + '# {0}\n', '\r', '\n' + global_line_prefix + '# '),
-                               comment2=self.get_formatted_comment2(' # {0}', ''))
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_initial_name=self.get_device().get_initial_name(),
+                                 function_underscore_name=self.get_underscore_name(),
+                                 arguments=',<BP>'.join(arguments),
+                                 comment1=self.get_formatted_comment1(global_line_prefix + '# {0}\n', '\r', '\n' + global_line_prefix + '# '),
+                                 comment2=self.get_formatted_comment2(' # {0}', ''))
+
+        return common.break_string(result, marker.format(self.get_underscore_name()))
 
 class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_perl_subroutine(self):
