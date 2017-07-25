@@ -1911,7 +1911,8 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['examples'].append({
 'name': 'Loopback',
 'description': 'For this example connect the RX+/- pins to TX+/- pins on the same Bricklet\nand configure the DIP switch on the Bricklet to full-duplex mode',
-'functions': [('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', None, None, None, None)], None, None), # FIXME: wrong message type
+'functions': [('setter', 'Set RS485 Configuration', [('uint32', 115200), ('uint8:constant', 0), ('uint8:constant', 1), ('uint8:constant', 8), ('uint8:constant', 1)], 'Enable full-duplex mode', None),
+              ('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', None, None, None, None)], None, None), # FIXME: wrong message type
               ('setter', 'Enable Read Callback', [], 'Enable read callback', None)],
 'incomplete': True # because of special logic and callback with array parameter
 })
