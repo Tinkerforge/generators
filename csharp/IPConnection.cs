@@ -1598,7 +1598,7 @@ namespace Tinkerforge
 
 		static public short SByteFrom(int position, byte[] array)
 		{
-			return (short)array[position];
+			return (short)((array[position] & 0x7F) - (array[position] & 0x80));
 		}
 
 		static public short[] SByteArrayFrom(int position, byte[] array, int len)
