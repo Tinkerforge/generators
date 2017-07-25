@@ -196,13 +196,13 @@ The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex
 Setzt die Konfiguration für die RS485-Kommunikation.
 Verfügbare Optionen sind:
 
-* Baudrate zwischen 100 und YYY 2000000 Baud.
-* Parität von None, Odd und Even Parity.
+* Baudrate zwischen 100 und 2000000 Baud.
+* Parität von None, Odd und Even.
 * Stop Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
-* Half- oder Full-Duplex.
+* Halb- oder Voll-Duplex.
 
-Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, half duplex.
+Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Halb-Duplex.
 """
 }]
 })

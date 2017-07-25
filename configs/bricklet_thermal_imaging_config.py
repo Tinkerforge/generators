@@ -188,10 +188,10 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Image Transfer Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Data Transfer', [('Manual High Contrast Image', 0),
-                                                             ('Manual Temperature Image', 1),
-                                                             ('Callback High Contrast Image', 2),
-                                                             ('Callback Temperature Image', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', ('Image Transfer', [('Manual High Contrast Image', 0),
+                                                              ('Manual Temperature Image', 1),
+                                                              ('Callback High Contrast Image', 2),
+                                                              ('Callback Temperature Image', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -206,10 +206,10 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Image Transfer Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Data Transfer', [('Manual High Contrast Image', 0),
-                                                              ('Manual Temperature Image', 1),
-                                                              ('Callback High Contrast Image', 2),
-                                                              ('Callback Temperature Image', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', ('Image Transfer', [('Manual High Contrast Image', 0),
+                                                               ('Manual Temperature Image', 1),
+                                                               ('Callback High Contrast Image', 2),
+                                                               ('Callback Temperature Image', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
