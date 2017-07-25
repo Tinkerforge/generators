@@ -93,7 +93,7 @@ var Device = require('./Device');
         for packet in self.get_packets('function'):
             if len(packet.get_elements(direction='out')) > 0:
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() in ['ccf', 'llf']:
+            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
                 flag = 'RESPONSE_EXPECTED_TRUE'
             else:
                 flag = 'RESPONSE_EXPECTED_FALSE'

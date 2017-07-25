@@ -292,7 +292,7 @@ namespace Tinkerforge
 
             if len(packet.get_elements(direction='out')) > 0:
                 flag = 'ResponseExpectedFlag.ALWAYS_TRUE;'
-            elif packet.get_doc_type() in ['ccf', 'llf']:
+            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
                 flag = 'ResponseExpectedFlag.TRUE;'
             else:
                 flag = 'ResponseExpectedFlag.FALSE;'

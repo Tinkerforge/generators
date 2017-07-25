@@ -62,7 +62,7 @@ class {0}(Device):"""
         for packet in self.get_packets('function'):
             if len(packet.get_elements(direction='out')) > 0:
                 flag = 1 #'Device.RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() in ['ccf', 'llf']:
+            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
                 flag = 2 #'Device.RESPONSE_EXPECTED_TRUE'
             else:
                 flag = 3 #'Device.RESPONSE_EXPECTED_FALSE'

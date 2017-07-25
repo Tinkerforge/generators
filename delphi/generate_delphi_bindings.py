@@ -272,7 +272,7 @@ begin
         for packet in self.get_packets('function'):
             if len(packet.get_elements(direction='out')) > 0:
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() in ['ccf', 'llf']:
+            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
                 flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
             else:
                 flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
