@@ -110,7 +110,7 @@ class ShellElement(common.Element):
     def get_shell_type(self, for_doc=False):
         t = ShellElement.shell_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or t == 'string':
+        if self.get_cardinality() == 1 or self.get_type() == 'string':
             return t
 
         if for_doc and self.get_cardinality() > 16:
@@ -141,7 +141,7 @@ class ShellElement(common.Element):
 
         t = ShellElement.shell_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or t == 'string':
+        if self.get_cardinality() == 1 or self.get_type() == 'string':
             help_ = "'{0}{1}'".format(t, symbols_doc)
         else:
             help_ = "get_array_type_name(ctx, '{0}', {1})".format(t, self.get_cardinality())
@@ -162,14 +162,14 @@ class ShellElement(common.Element):
             for constant in constant_group.get_constants():
                 symbols['{0}-{1}'.format(constant_group.get_dash_name(), constant.get_dash_name())] = constant.get_value()
 
-            if self.get_cardinality() > 1 and type_converter != 'string':
+            if self.get_cardinality() != 1 and type_converter != 'string':
                 return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_item, self.get_cardinality())
             elif type_converter == 'string':
                 return 'create_string_converter(ctx, create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, self.get_cardinality())
             else:
                 return 'create_symbol_converter(ctx, {0}, {1})'.format(type_converter, symbols)
         else:
-            if self.get_cardinality() > 1 and type_converter != 'string':
+            if self.get_cardinality() != 1 and type_converter != 'string':
                 return 'create_array_converter(ctx, {0}, {1}, {2})'.format(type_converter, default_item, self.get_cardinality())
             elif type_converter == 'string':
                 return 'create_string_converter(ctx, str, {0})'.format(self.get_cardinality())

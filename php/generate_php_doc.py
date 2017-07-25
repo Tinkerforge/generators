@@ -54,15 +54,17 @@ class PHPDocDevice(php_common.PHPDevice):
         methods = ''
         func_start = '.. php:function:: '
         cls = self.get_php_class_name()
+
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != typ:
                 continue
 
-            ret_type = packet.get_php_return_type()
-            name = packet.get_headless_camel_case_name()
-            params = packet.get_php_parameters(context='doc')
+            skip = -2 if packet.has_high_level() else 0
+            ret_type = packet.get_php_return_type(high_level=True)
+            name = packet.get_headless_camel_case_name(skip=skip)
+            params = packet.get_php_parameters(context='doc', high_level=True)
             desc = packet.get_php_formatted_doc()
-            obj_desc = packet.get_php_object_desc()
+            obj_desc = packet.get_php_object_desc(high_level=True)
             func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
                                                          ret_type,
                                                          cls,
@@ -91,8 +93,10 @@ class PHPDocDevice(php_common.PHPDevice):
         cbs = ''
         func_start = '.. php:member:: int '
         cls = self.get_php_class_name()
+
         for packet in self.get_packets('callback'):
-            params = packet.get_php_parameters(context='doc')
+            skip = -2 if packet.has_high_level() else 0
+            params = packet.get_php_parameters(context='doc', high_level=True)
 
             if len(params) > 0:
                 params += " [, mixed $user_data]"
@@ -103,7 +107,7 @@ class PHPDocDevice(php_common.PHPDevice):
             signature = common.select_lang(signature_str).format(params)
             func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
                                                          cls,
-                                                         packet.get_upper_case_name(),
+                                                         packet.get_upper_case_name(skip=skip),
                                                          signature,
                                                          desc)
             cbs += func + '\n'
@@ -366,8 +370,8 @@ class PHPDocPacket(php_common.PHPPacket):
 
         return common.shift_right(text, 1)
 
-    def get_php_object_desc(self):
-        if len(self.get_elements(direction='out')) < 2:
+    def get_php_object_desc(self, high_level=False):
+        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
             return ''
 
         desc = {
@@ -386,7 +390,7 @@ class PHPDocPacket(php_common.PHPPacket):
 
         var = []
 
-        for element in self.get_elements(direction='out'):
+        for element in self.get_elements(direction='out', high_level=high_level):
             var.append('``{0}``'.format(element.get_underscore_name()))
 
         if len(var) == 1:

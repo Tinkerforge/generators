@@ -50,23 +50,26 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_delphi_methods(self, typ):
+    def get_delphi_methods(self, type_):
         methods = ''
         function = '.. delphi:function:: function {0}.{1}({2}): {3}\n{4}'
         procedure = '.. delphi:function:: procedure {0}.{1}({2})\n{3}'
         cls = self.get_delphi_class_name()
+
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
 
             ret_type = packet.get_delphi_return_type(True)
             name = packet.get_camel_case_name()
             params = packet.get_delphi_parameter_list(True)
             desc = packet.get_delphi_formatted_doc()
+
             if len(ret_type) > 0:
                 method = function.format(cls, name, params, ret_type, desc)
             else:
                 method = procedure.format(cls, name, params, desc)
+
             methods += method + '\n'
 
         return methods

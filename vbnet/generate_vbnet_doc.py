@@ -62,9 +62,10 @@ class VBNETDocDevice(common.Device):
             if packet.get_doc_type() != typ:
                 continue
 
-            ret_type = packet.get_vbnet_return_type()
-            name = packet.get_camel_case_name()
-            params = packet.get_vbnet_parameter_list()
+            skip = -2 if packet.has_high_level() else 0
+            ret_type = packet.get_vbnet_return_type(high_level=True)
+            name = packet.get_camel_case_name(skip=skip)
+            params = packet.get_vbnet_parameter_list(high_level=True)
             desc = packet.get_vbnet_formatted_doc()
 
             if len(ret_type) > 0:
@@ -82,16 +83,18 @@ class VBNETDocDevice(common.Device):
 
 {3}
 """
-
         cbs = ''
+
         for packet in self.get_packets('callback'):
+            skip = -2 if packet.has_high_level() else 0
             desc = packet.get_vbnet_formatted_doc()
-            params = packet.get_vbnet_parameter_list()
+            params = packet.get_vbnet_parameter_list(high_level=True)
+
             if len(params) > 0:
                 params = ', ' + params
 
             cbs += cb.format(self.get_vbnet_class_name(),
-                             packet.get_camel_case_name(),
+                             packet.get_camel_case_name(skip=skip),
                              params,
                              desc)
 
@@ -322,24 +325,24 @@ class VBNETDocPacket(common.Packet):
 
         return common.shift_right(text, 1)
 
-    def get_vbnet_return_type(self):
-        elements = self.get_elements(direction='out')
+    def get_vbnet_return_type(self, high_level=False):
+        elements = self.get_elements(direction='out', high_level=high_level)
 
         if len(elements) == 1:
             vbnet_type = elements[0].get_vbnet_type()
 
-            if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
+            if elements[0].get_cardinality() != 1 and elements[0].get_type() != 'string':
                 vbnet_type += '[]'
 
             return vbnet_type
         else:
             return ''
 
-    def get_vbnet_parameter_list(self):
+    def get_vbnet_parameter_list(self, high_level=False):
         param = []
 
-        if len(self.get_elements(direction='out')) > 1 or self.get_type() == 'callback':
-            for element in self.get_elements():
+        if len(self.get_elements(direction='out', high_level=high_level)) > 1 or self.get_type() == 'callback':
+            for element in self.get_elements(high_level=high_level):
                 vbnet_type = element.get_vbnet_type()
 
                 if element.get_direction() == 'in' or self.get_type() == 'callback':
@@ -349,16 +352,16 @@ class VBNETDocPacket(common.Packet):
 
                 name = element.get_headless_camel_case_name()
 
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if element.get_cardinality() != 1 and element.get_type() != 'string':
                     name += '[]'
 
                 param.append('{0}{1} As {2}'.format(modifier, name, vbnet_type))
         else:
-            for element in self.get_elements(direction='in'):
+            for element in self.get_elements(direction='in', high_level=high_level):
                 vbnet_type = element.get_vbnet_type()
                 name = element.get_headless_camel_case_name()
 
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if element.get_cardinality() != 1 and element.get_type() != 'string':
                     name += '[]'
 
                 param.append('ByVal {0} As {1}'.format(name, vbnet_type))

@@ -75,12 +75,12 @@ class JavaScriptElement(common.Element):
     }
 
     def get_javascript_type(self):
-        t = JavaScriptElement.javascript_types[self.get_type()]
+        javascript_type = JavaScriptElement.javascript_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or t == 'string':
-            return t
+        if self.get_cardinality() == 1 or self.get_type() == 'string':
+            return javascript_type
 
-        return '[' + ', '.join([t]*self.get_cardinality()) + ']'
+        return '[' + ', '.join([javascript_type]*self.get_cardinality()) + ']'
 
     def get_javascript_struct_format(self):
         f = JavaScriptElement.javascript_struct_formats[self.get_type()]

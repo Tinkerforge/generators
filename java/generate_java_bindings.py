@@ -123,7 +123,7 @@ public class {0} extends Device {{
                 type_ = element.get_java_type()
                 name = element.get_headless_camel_case_name()
 
-                if (element.get_cardinality() > 1 and element.get_type() != 'string') or element.get_cardinality() < 0:
+                if element.get_cardinality() != 1 and element.get_type() != 'string':
                     to = '"{0} = " + Arrays.toString({0}) +'.format(name)
                 else:
                     to = '"{0} = " + {0} +'.format(name)
@@ -151,7 +151,7 @@ public class {0} extends Device {{
                 type_ = element.get_java_type()
                 name = element.get_headless_camel_case_name()
 
-                if (element.get_cardinality() > 1 and element.get_type() != 'string') or element.get_cardinality() < 0:
+                if element.get_cardinality() != 1 and element.get_type() != 'string':
                     to = '"{0} = " + Arrays.toString({0}) +'.format(name)
                 else:
                     to = '"{0} = " + {0} +'.format(name)
@@ -203,7 +203,7 @@ public class {0} extends Device {{
                 type_ = element.get_java_type()
                 name = element.get_headless_camel_case_name()
 
-                if (element.get_cardinality() > 1 and element.get_type() != 'string') or element.get_cardinality() < 0:
+                if element.get_cardinality() != 1 and element.get_type() != 'string':
                     new = ' = {0}'.format(element.get_java_new())
                     to = '"{0} = " + Arrays.toString({0}) +'.format(name)
                 else:

@@ -908,7 +908,8 @@ class PHPBindingsPacket(php_common.PHPPacket):
                 continue
 
             php_type = element.get_php_type()
-            if (element.get_cardinality() > 1 and element.get_type() != 'string') or element.get_cardinality() < 1:
+
+            if element.get_cardinality() != 1 and element.get_type() != 'string':
                 param.append('@param {0}[] ${1}'.format(php_type, element.get_underscore_name()))
             else:
                 param.append('@param {0} ${1}'.format(php_type, element.get_underscore_name()))

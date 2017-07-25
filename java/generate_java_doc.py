@@ -50,19 +50,21 @@ class JavaDocDevice(java_common.JavaDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_java_methods(self, typ):
+    def get_java_methods(self, type_):
         methods = ''
         func_start = '.. java:function:: '
         cls = self.get_java_class_name()
+
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
 
-            ret_type = packet.get_java_return_type(True)
-            name = packet.get_headless_camel_case_name()
-            params = packet.get_java_parameters()
+            skip = -2 if packet.has_high_level() else 0
+            ret_type = packet.get_java_return_type(True, high_level=True)
+            name = packet.get_headless_camel_case_name(skip=skip)
+            params = packet.get_java_parameters(high_level=True)
             desc = packet.get_java_formatted_doc(1)
-            obj_desc = packet.get_java_object_desc()
+            obj_desc = packet.get_java_object_desc(high_level=True)
             func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start,
                                                                 ret_type,
                                                                 cls,
@@ -105,11 +107,12 @@ class JavaDocDevice(java_common.JavaDevice):
         cls = self.get_java_class_name()
         for packet in self.get_packets('callback'):
             desc = packet.get_java_formatted_doc(2)
-            params = packet.get_java_parameters()
+            params = packet.get_java_parameters(high_level=True)
+            skip = -2 if packet.has_high_level() else 0
 
             cbs += common.select_lang(cb).format(cls,
-                                                 packet.get_camel_case_name(),
-                                                 packet.get_headless_camel_case_name(),
+                                                 packet.get_camel_case_name(skip=skip),
+                                                 packet.get_headless_camel_case_name(skip=skip),
                                                  params,
                                                  desc)
 
@@ -399,8 +402,8 @@ class JavaDocPacket(java_common.JavaPacket):
 
         return common.shift_right(text, shift_right)
 
-    def get_java_object_desc(self):
-        if len(self.get_elements(direction='out')) < 2:
+    def get_java_object_desc(self, high_level=False):
+        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
             return ''
 
         desc = {
@@ -419,7 +422,7 @@ class JavaDocPacket(java_common.JavaPacket):
 
         var = []
 
-        for element in self.get_elements(direction='out'):
+        for element in self.get_elements(direction='out', high_level=high_level):
             var.append('``{0} {1}``'.format(element.get_java_type(),
                                             element.get_headless_camel_case_name()))
 

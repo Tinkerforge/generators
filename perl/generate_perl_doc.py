@@ -51,19 +51,22 @@ class PerlDocDevice(perl_common.PerlDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_perl_methods(self, typ):
+    def get_perl_methods(self, type_):
         methods = ''
         func_start = '.. perl:function:: '
         cls = self.get_perl_class_name()
+
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
-            name = packet.get_underscore_name()
-            params = packet.get_perl_parameters()
-            pd = packet.get_perl_parameter_desc('in')
-            r = packet.get_perl_return_desc()
+
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_underscore_name(skip=skip)
+            params = packet.get_perl_parameters(high_level=True)
+            pd = packet.get_perl_parameter_desc('in', high_level=True)
+            r = packet.get_perl_return_desc(high_level=True)
             d = packet.get_perl_formatted_doc()
-            obj_desc = packet.get_perl_object_desc()
+            obj_desc = packet.get_perl_object_desc(high_level=True)
             desc = '{0}{1}{2}{3}'.format(pd, r, d, obj_desc)
             func = '{0}{1}->{2}({3})\n{4}'.format(func_start,
                                                   cls,
@@ -78,13 +81,15 @@ class PerlDocDevice(perl_common.PerlDevice):
         cbs = ''
         func_start = '.. perl:attribute:: '
         cls = self.get_perl_class_name()
+
         for packet in self.get_packets('callback'):
-            param_desc = packet.get_perl_parameter_desc('out')
+            skip = -2 if packet.has_high_level() else 0
+            param_desc = packet.get_perl_parameter_desc('out', high_level=True)
             desc = packet.get_perl_formatted_doc()
 
             func = '{0}{1}->CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                            cls,
-                                                           packet.get_upper_case_name(),
+                                                           packet.get_upper_case_name(skip=skip),
                                                            param_desc,
                                                            desc)
             cbs += func + '\n'
@@ -375,10 +380,10 @@ Konstanten
         return doc
 
 class PerlDocPacket(common.Packet):
-    def get_perl_parameters(self):
+    def get_perl_parameters(self, high_level=False):
         params = []
 
-        for element in self.get_elements(direction='in'):
+        for element in self.get_elements(direction='in', high_level=high_level):
             params.append(element.get_perl_doc_name())
 
         return ', '.join(params)
@@ -404,21 +409,21 @@ class PerlDocPacket(common.Packet):
 
         return common.shift_right(text, 1)
 
-    def get_perl_parameter_desc(self, io):
+    def get_perl_parameter_desc(self, direction, high_level=False):
         desc = '\n'
         param = ' :param {0}: {1}\n'
 
-        for element in self.get_elements(direction=io):
+        for element in self.get_elements(direction=direction, high_level=high_level):
             t = element.get_perl_type()
             desc += param.format(element.get_perl_doc_name(), t)
 
         return desc
 
-    def get_perl_return_desc(self):
+    def get_perl_return_desc(self, high_level=False):
         ret = ' :rtype: {0}\n'
         ret_list = []
 
-        for element in self.get_elements(direction='out'):
+        for element in self.get_elements(direction='out', high_level=high_level):
             ret_list.append(element.get_perl_type())
 
         if len(ret_list) == 0:
@@ -428,8 +433,8 @@ class PerlDocPacket(common.Packet):
         else:
             return ret.format('[' + ', '.join(ret_list) + ']')
 
-    def get_perl_object_desc(self):
-        if len(self.get_elements(direction='out')) < 2:
+    def get_perl_object_desc(self, high_level=False):
+        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
             return ''
 
         desc = {
@@ -448,7 +453,7 @@ class PerlDocPacket(common.Packet):
 
         var = []
 
-        for element in self.get_elements(direction='out'):
+        for element in self.get_elements(direction='out', high_level=high_level):
             var.append('``{0}``'.format(element.get_underscore_name()))
 
         if len(var) == 1:

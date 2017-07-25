@@ -36,8 +36,8 @@ class PHPDevice(common.Device):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
 class PHPPacket(common.Packet):
-    def get_php_return_type(self):
-        elements = self.get_elements(direction='out')
+    def get_php_return_type(self, high_level=False):
+        elements = self.get_elements(direction='out', high_level=high_level)
 
         if len(elements) == 0:
             return 'void'
@@ -45,7 +45,7 @@ class PHPPacket(common.Packet):
             return 'array'
 
         for element in elements:
-            if element.get_cardinality() > 1 and element.get_type() != 'string':
+            if element.get_cardinality() != 1 and element.get_type() != 'string':
                 return 'array'
             else:
                 return element.get_php_type()
@@ -62,7 +62,7 @@ class PHPPacket(common.Packet):
             if context == 'doc':
                 php_type = element.get_php_type()
 
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if element.get_cardinality() != 1 and element.get_type() != 'string':
                     php_type = 'array'
 
                 param.append('{0} ${1}'.format(php_type, name))

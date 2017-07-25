@@ -542,9 +542,9 @@ Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
     str_constants = select_lang(str_constants).format(select_lang(constants_name))
 
     for packet in device.get_packets('function'):
-        if len(packet.get_elements(direction='out')) == 0 and packet.get_function_id() >= 0:
+        if len(packet.get_elements(direction='out', high_level=True)) == 0 and packet.get_function_id() >= 0:
             str_constants += str_constant.format(prefix,
-                                                 packet.get_upper_case_name(),
+                                                 packet.get_upper_case_name(skip=-2 if packet.has_high_level() else 0),
                                                  packet.get_function_id())
 
     return str_constants
@@ -1135,6 +1135,10 @@ class Packet(NameMixin):
                        'bool',
                        'char',
                        'string'])
+    valid_doc_types = set(['bf',
+                           'af',
+                           'ccf',
+                           'c'])
 
     def __init__(self, raw_data, device):
         self.raw_data = raw_data
@@ -1143,6 +1147,9 @@ class Packet(NameMixin):
         self.high_level = {}
 
         check_name(raw_data['name'])
+
+        if raw_data['doc'][0] not in Packet.valid_doc_types:
+            raise GeneratorError('Invalid packet doc type: ' + raw_data['doc'][0])
 
         if 'high_level' in raw_data and not raw_data['name'].endswith(' Low Level'):
             raise GeneratorError("Name of packet with high-level features has to end with 'Low Level'")

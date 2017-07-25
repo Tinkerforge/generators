@@ -68,11 +68,12 @@ class MathematicaDocDevice(common.Device):
             if packet.get_doc_type() != type_:
                 continue
 
-            name = packet.get_camel_case_name()
-            params = packet.get_mathematica_parameter_list()
-            param_desc = packet.get_mathematica_parameter_description()
-            ret = packet.get_mathematica_return()
-            ret_desc = packet.get_mathematica_return_description()
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_camel_case_name(skip=skip)
+            params = packet.get_mathematica_parameter_list(high_level=True)
+            param_desc = packet.get_mathematica_parameter_description(high_level=True)
+            ret = packet.get_mathematica_return(high_level=True)
+            ret_desc = packet.get_mathematica_return_description(high_level=True)
             doc = packet.get_mathematica_formatted_doc()
 
             functions.append(function.format(cls, name, params, ret, param_desc, ret_desc, doc))
@@ -88,15 +89,16 @@ class MathematicaDocDevice(common.Device):
         callbacks = []
 
         for packet in self.get_packets('callback'):
-            params = packet.get_mathematica_parameter_list()
-            params_desc = packet.get_mathematica_parameter_description()
+            skip = -2 if packet.has_high_level() else 0
+            params = packet.get_mathematica_parameter_list(high_level=True)
+            params_desc = packet.get_mathematica_parameter_description(high_level=True)
             doc = packet.get_mathematica_formatted_doc()
 
             if len(params) > 0:
                 params = ', ' + params
 
             callbacks.append(callback.format(self.get_mathematica_class_name(),
-                                             packet.get_camel_case_name(),
+                                             packet.get_camel_case_name(skip=skip),
                                              params,
                                              params_desc,
                                              doc))
@@ -392,11 +394,11 @@ class MathematicaDocPacket(common.Packet):
 
         return common.shift_right(text, 1)
 
-    def get_mathematica_parameter_list(self):
+    def get_mathematica_parameter_list(self, high_level=False):
         params = []
 
-        if len(self.get_elements(direction='out')) > 1 or self.get_type() == 'callback':
-            for element in self.get_elements():
+        if len(self.get_elements(direction='out', high_level=high_level)) > 1 or self.get_type() == 'callback':
+            for element in self.get_elements(high_level=high_level):
                 if element.get_direction() == 'in' or self.get_type() == 'callback':
                     modifier = ''
                 else:
@@ -404,16 +406,16 @@ class MathematicaDocPacket(common.Packet):
 
                 params.append(modifier + element.get_mathematica_signature_name())
         else:
-            for element in self.get_elements(direction='in'):
+            for element in self.get_elements(direction='in', high_level=high_level):
                 params.append(element.get_mathematica_signature_name())
 
         return ', '.join(params)
 
-    def get_mathematica_parameter_description(self):
+    def get_mathematica_parameter_description(self, high_level=False):
         descriptions = []
-        normal_return = len(self.get_elements(direction='out')) <= 1
+        normal_return = len(self.get_elements(direction='out', high_level=high_level)) <= 1
 
-        for element in self.get_elements():
+        for element in self.get_elements(high_level=high_level):
             if self.get_type() == 'function' and normal_return and element.get_direction() == 'out':
                 continue
 
@@ -424,8 +426,8 @@ class MathematicaDocPacket(common.Packet):
 
         return '\n' + ''.join(descriptions)
 
-    def get_mathematica_return(self):
-        elements = self.get_elements(direction='out')
+    def get_mathematica_return(self, high_level=False):
+        elements = self.get_elements(direction='out', high_level=high_level)
 
         if len(elements) == 1 and self.get_type() == 'function':
             element = elements[0]
@@ -434,8 +436,8 @@ class MathematicaDocPacket(common.Packet):
         else:
             return 'Null'
 
-    def get_mathematica_return_description(self):
-        elements = self.get_elements(direction='out')
+    def get_mathematica_return_description(self, high_level=False):
+        elements = self.get_elements(direction='out', high_level=high_level)
 
         if len(elements) == 1 and self.get_type() == 'function':
             element = elements[0]
@@ -478,13 +480,15 @@ class MathematicaDocElement(common.Element):
                 items = [items[0]] + [items[1]] + ['...'] + [items[-1]]
 
             name = '{' + ', '.join(items) + '}'
+        elif self.get_cardinality() < 0:
+            name = '{{{0}1, {0}2, ...}}'.format(name)
 
         return name
 
     def get_mathematica_description_name(self):
         name = self.get_headless_camel_case_name()
 
-        if self.get_cardinality() > 1 and self.get_type() != 'string':
+        if self.get_cardinality() != 1 and self.get_type() != 'string':
             name += 'i'
 
         return name

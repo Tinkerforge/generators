@@ -54,15 +54,18 @@ class PythonDocDevice(python_common.PythonDevice):
         methods = []
         func_start = '.. py:function:: '
         cls = self.get_python_class_name()
+
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
                 continue
-            name = packet.get_underscore_name()
-            params = packet.get_python_parameters()
-            pd = packet.get_python_parameter_desc('in')
-            r = packet.get_python_return_desc()
+
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_underscore_name(skip=skip)
+            params = packet.get_python_parameters(high_level=True)
+            pd = packet.get_python_parameter_desc('in', high_level=True)
+            r = packet.get_python_return_desc(high_level=True)
             d = packet.get_python_formatted_doc()
-            obj_desc = packet.get_python_object_desc()
+            obj_desc = packet.get_python_object_desc(high_level=True)
             desc = '{0}{1}{2}{3}'.format(pd, r, d, obj_desc)
             func = '{0}{1}.{2}({3})\n{4}\n'.format(func_start,
                                                    cls,
@@ -77,13 +80,15 @@ class PythonDocDevice(python_common.PythonDevice):
         cbs = ''
         func_start = '.. py:attribute:: '
         cls = self.get_python_class_name()
+
         for packet in self.get_packets('callback'):
-            param_desc = packet.get_python_parameter_desc('out')
+            skip = -2 if packet.has_high_level() else 0
+            param_desc = packet.get_python_parameter_desc('out', high_level=True)
             desc = packet.get_python_formatted_doc()
 
             func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                           cls,
-                                                          packet.get_upper_case_name(),
+                                                          packet.get_upper_case_name(skip=skip),
                                                           param_desc,
                                                           desc)
             cbs += func + '\n'
@@ -230,6 +235,7 @@ Generally, every method of the Python bindings can throw an
 * Error.INVALID_PARAMETER = -9
 * Error.NOT_SUPPORTED = -10
 * Error.UNKNOWN_ERROR_CODE = -11
+* Error.STREAM_OUT_OF_SYNC = -12
 
 All methods listed below are thread-safe.
 
@@ -253,6 +259,7 @@ eine ``description`` Property hat. ``value`` kann verschiende Werte haben:
 * Error.INVALID_PARAMETER = -9
 * Error.NOT_SUPPORTED = -10
 * Error.UNKNOWN_ERROR_CODE = -11
+* Error.STREAM_OUT_OF_SYNC = -12
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
@@ -368,21 +375,23 @@ class PythonDocPacket(python_common.PythonPacket):
 
         return common.shift_right(text, 1)
 
-    def get_python_parameter_desc(self, io):
+    def get_python_parameter_desc(self, direction, high_level=False):
         desc = '\n'
         param = ' :param {0}: {1}\n'
 
-        for element in self.get_elements(direction=io):
+        for element in self.get_elements(direction=direction, high_level=high_level):
             t = element.get_python_type()
             desc += param.format(element.get_underscore_name(), t)
 
         return desc
 
-    def get_python_return_desc(self):
+    def get_python_return_desc(self, high_level=False):
         ret = ' :rtype: {0}\n'
         ret_list = []
-        for element in self.get_elements(direction='out'):
+
+        for element in self.get_elements(direction='out', high_level=high_level):
             ret_list.append(element.get_python_type())
+
         if len(ret_list) == 0:
             return ret.format(None)
         elif len(ret_list) == 1:
@@ -390,8 +399,8 @@ class PythonDocPacket(python_common.PythonPacket):
 
         return ret.format('(' + ', '.join(ret_list) + ')')
 
-    def get_python_object_desc(self):
-        if len(self.get_elements(direction='out')) < 2:
+    def get_python_object_desc(self, high_level=False):
+        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
             return ''
 
         desc = {
@@ -410,7 +419,7 @@ class PythonDocPacket(python_common.PythonPacket):
 
         var = []
 
-        for element in self.get_elements(direction='out'):
+        for element in self.get_elements(direction='out', high_level=high_level):
             var.append('``{0}``'.format(element.get_underscore_name()))
 
         if len(var) == 1:

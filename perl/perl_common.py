@@ -81,12 +81,14 @@ class PerlElement(common.Element):
     }
 
     def get_perl_type(self):
-        t = PerlElement.perl_types[self.get_type()]
+        perl_type = PerlElement.perl_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or t == 'string':
-            return t
-
-        return '[' + ', '.join([t]*self.get_cardinality()) + ']'
+        if self.get_cardinality() == 1 or self.get_type() == 'string':
+            return perl_type
+        elif self.get_cardinality() < 0:
+            return '[{0}, ...]'.format(perl_type)
+        else:
+            return '[' + ', '.join([perl_type]*self.get_cardinality()) + ']'
 
     def get_perl_doc_name(self):
         name = self.get_underscore_name()

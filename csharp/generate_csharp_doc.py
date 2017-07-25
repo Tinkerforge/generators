@@ -50,14 +50,15 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_csharp_methods(self, typ):
+    def get_csharp_methods(self, type_):
         methods = ''
         func_start = '.. csharp:function:: '
+
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
 
-            signature = packet.get_csharp_method_signature(True, True)
+            signature = packet.get_csharp_method_signature(True, True, high_level=True)
             desc = packet.get_csharp_formatted_doc(1)
             func = '{0}{1}\n{2}'.format(func_start, signature, desc)
             methods += func + '\n'
@@ -74,14 +75,15 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
         cbs = ''
 
         for packet in self.get_packets('callback'):
+            skip = -2 if packet.has_high_level() else 0
             desc = packet.get_csharp_formatted_doc(2)
-            params = packet.get_csharp_parameters()
+            params = packet.get_csharp_parameters(high_level=True)
 
             if len(params) > 0:
                 params = ', ' + params
 
             cbs += cb.format(self.get_csharp_class_name(),
-                             packet.get_camel_case_name(),
+                             packet.get_camel_case_name(skip=skip),
                              params,
                              desc)
 

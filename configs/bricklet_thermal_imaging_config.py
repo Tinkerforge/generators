@@ -228,7 +228,7 @@ com['packets'].append({
              ('Image Chunk Data', 'uint8', 62, 'out')],
 'high_level': {'stream_out': {'name': 'Image', 'fixed_length': 80*60}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 """,
@@ -245,7 +245,7 @@ com['packets'].append({
              ('Image Chunk Data', 'uint16', 31, 'out')],
 'high_level': {'stream_out': {'name': 'Image', 'fixed_length': 80*60}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 """,

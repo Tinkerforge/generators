@@ -59,16 +59,17 @@ class RubyDocDevice(ruby_common.RubyDevice):
             if packet.get_doc_type() != typ:
                 continue
 
-            name = packet.get_underscore_name()
-            params = packet.get_ruby_parameters()
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_underscore_name(skip=skip)
+            params = packet.get_ruby_parameters(high_level=True)
 
             if len(params) > 0:
                 params = '(' + params + ')'
 
-            pd = packet.get_ruby_parameter_desc('in')
-            r = packet.get_ruby_return_desc()
+            pd = packet.get_ruby_parameter_desc('in', high_level=True)
+            r = packet.get_ruby_return_desc(high_level=True)
             d = packet.get_ruby_formatted_doc()
-            obj_desc = packet.get_ruby_object_desc()
+            obj_desc = packet.get_ruby_object_desc(high_level=True)
             desc = '{0}{1}{2}'.format(pd, d, obj_desc)
             func = '{0}{1}#{2}{3}{5}\n{4}'.format(func_start,
                                                   cls,
@@ -86,12 +87,13 @@ class RubyDocDevice(ruby_common.RubyDevice):
         cls = self.get_ruby_class_name()
 
         for packet in self.get_packets('callback'):
-            param_desc = packet.get_ruby_parameter_desc('out')
+            skip = -2 if packet.has_high_level() else 0
+            param_desc = packet.get_ruby_parameter_desc('out', high_level=True)
             desc = packet.get_ruby_formatted_doc()
 
             func = '{0}{1}::CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                            cls,
-                                                           packet.get_upper_case_name(),
+                                                           packet.get_upper_case_name(skip=skip),
                                                            param_desc,
                                                            desc)
             cbs += func + '\n'
@@ -347,20 +349,20 @@ class RubyDocPacket(ruby_common.RubyPacket):
 
         return common.shift_right(text, 1)
 
-    def get_ruby_parameter_desc(self, io):
+    def get_ruby_parameter_desc(self, direction, high_level=False):
         desc = '\n'
         param = ' :param {0}: {1}\n'
 
-        for element in self.get_elements(direction=io):
+        for element in self.get_elements(direction=direction, high_level=high_level):
             desc += param.format(element.get_underscore_name(), element.get_ruby_type())
 
         return desc
 
-    def get_ruby_return_desc(self):
+    def get_ruby_return_desc(self, high_level=False):
         ret = ' -> {0}'
         ret_list = []
 
-        for element in self.get_elements(direction='out'):
+        for element in self.get_elements(direction='out', high_level=high_level):
             ret_list.append(element.get_ruby_type())
 
         if len(ret_list) == 0:
@@ -370,8 +372,8 @@ class RubyDocPacket(ruby_common.RubyPacket):
 
         return ret.format('[' + ', '.join(ret_list) + ']')
 
-    def get_ruby_object_desc(self):
-        if len(self.get_elements(direction='out')) < 2:
+    def get_ruby_object_desc(self, high_level=False):
+        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
             return ''
 
         desc = {
@@ -390,7 +392,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
 
         var = []
 
-        for element in self.get_elements(direction='out'):
+        for element in self.get_elements(direction='out', high_level=high_level):
             var.append('``{0}``'.format(element.get_underscore_name()))
 
         if len(var) == 1:

@@ -65,19 +65,21 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         return common.make_rst_examples(title_from_filename, self,
                                         language_from_filename=language_from_filename)
 
-    def get_matlab_methods(self, typ):
+    def get_matlab_methods(self, type_):
         methods = ''
         func_start = '.. matlab:function:: '
         cls = self.get_matlab_class_name()
+
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
 
-            ret_type = packet.get_matlab_return_type(True)
-            name = packet.get_headless_camel_case_name()
-            params = packet.get_matlab_parameter_list()
+            skip = -2 if packet.has_high_level() else 0
+            ret_type = packet.get_matlab_return_type(True, high_level=True)
+            name = packet.get_headless_camel_case_name(skip=skip)
+            params = packet.get_matlab_parameter_list(high_level=True)
             desc = packet.get_matlab_formatted_doc(1)
-            obj_desc = packet.get_matlab_object_desc()
+            obj_desc = packet.get_matlab_object_desc(high_level=True)
             func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start,
                                                                 ret_type,
                                                                 cls,
@@ -127,20 +129,18 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         cls = self.get_matlab_class_name()
 
         for packet in self.get_packets('callback'):
+            skip = -2 if packet.has_high_level() else 0
             desc = packet.get_matlab_formatted_doc(1)
             params = []
 
-            for element in packet.get_elements(direction='out'):
+            for element in packet.get_elements(direction='out', high_level=True):
                 matlab_type = element.get_matlab_type()
                 name = element.get_headless_camel_case_name()
-
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
-                    matlab_type += '[]'
 
                 params.append(' :param {0}: {1}'.format(name, matlab_type))
 
             cbs += common.select_lang(cb).format(cls,
-                                                 packet.get_camel_case_name(),
+                                                 packet.get_camel_case_name(skip=skip),
                                                  '\n'.join(params),
                                                  desc)
 
@@ -431,8 +431,7 @@ Konstanten
         if ccf:
             api_str += common.select_lang(ccf_str).format(ccf)
         if c:
-            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
-                                                        c)
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(), c)
 
         article = 'ein'
         if self.is_brick():
@@ -476,8 +475,8 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
 
         return common.shift_right(text, shift_right)
 
-    def get_matlab_object_desc(self):
-        if len(self.get_elements(direction='out')) < 2:
+    def get_matlab_object_desc(self, high_level=False):
+        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
             return ''
 
         desc = {
@@ -494,13 +493,8 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
         }
         var = []
 
-        for element in self.get_elements(direction='out'):
-            typ = element.get_matlab_type()
-
-            if element.get_cardinality() > 1 and element.get_type() != 'string':
-                typ += '[]'
-
-            var.append('``{0} {1}``'.format(typ,
+        for element in self.get_elements(direction='out', high_level=high_level):
+            var.append('``{0} {1}``'.format(element.get_matlab_type(),
                                             element.get_headless_camel_case_name()))
 
         if len(var) == 1:

@@ -46,7 +46,7 @@ com['packets'].append({
              ('Message Chunk Written', 'uint8', 1, 'out')],
 'high_level': {'stream_in': {'name': 'Message', 'short_write': True}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['bf', {
 'en':
 """
 Writes characters to the RS485 interface. The characters can be binary data,
@@ -79,7 +79,7 @@ com['packets'].append({
              ('Message Chunk Data', 'char', 60, 'out')],
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['bf', {
 'en':
 """
 Returns up to *length* characters from receive buffer.
@@ -674,7 +674,7 @@ com['packets'].append({
              ('Coils Chunk Data', 'bool', 472, 'in')],
 'high_level': {'stream_in': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['af', {
 'en':
 """
 In Modbus slave mode this function can be used to answer a master request to
@@ -756,7 +756,7 @@ com['packets'].append({
              ('Holding Registers Chunk Data', 'uint16', 29, 'in')],
 'high_level': {'stream_in': {'name': 'Holding Registers'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['af', {
 'en':
 """
 In Modbus slave mode this function can be used to answer a master request to
@@ -1017,7 +1017,7 @@ com['packets'].append({
              ('Request ID', 'uint8', 1, 'out')],
 'high_level': {'stream_in': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['af', {
 'en':
 """
 In Modbus master mode this function can be used to write multiple coils of a slave.
@@ -1093,7 +1093,7 @@ com['packets'].append({
              ('Request ID', 'uint8', 1, 'out')],
 'high_level': {'stream_in': {'name': 'Registers'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['af', {
 'en':
 """
 In Modbus master mode this function can be used to write multiple registers of a slave.
@@ -1139,7 +1139,7 @@ com['packets'].append({
              ('Discrete Inputs Chunk Data', 'bool', 472, 'in')],
 'high_level': {'stream_in': {'name': 'Discrete Inputs'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['af', {
 'en':
 """
 In Modbus slave mode this function can be used to answer a master request to
@@ -1218,7 +1218,7 @@ com['packets'].append({
              ('Input Registers Chunk Data', 'uint16', 29, 'in')],
 'high_level': {'stream_in': {'name': 'Input Registers'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['af', {
 'en':
 """
 In Modbus slave mode this function can be used to answer a master request to
@@ -1296,7 +1296,7 @@ com['packets'].append({
              ('Message Chunk Data', 'char', 60, 'out')],
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 This callback is called if new data is available.
@@ -1372,7 +1372,7 @@ com['packets'].append({
              ('Coils Chunk Data', 'bool', 464, 'out')],
 'high_level': {'stream_out': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
@@ -1446,7 +1446,7 @@ com['packets'].append({
              ('Holding Registers Chunk Data', 'uint16', 29, 'out')],
 'high_level': {'stream_out': {'name': 'Holding Registers'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
@@ -1628,7 +1628,7 @@ com['packets'].append({
              ('Coils Chunk Data', 'bool', 440, 'out')],
 'high_level': {'stream_out': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus slave mode when the slave receives a
@@ -1699,7 +1699,7 @@ com['packets'].append({
              ('Registers Chunk Data', 'uint16', 27, 'out')],
 'high_level': {'stream_out': {'name': 'Registers'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus slave mode when the slave receives a
@@ -1800,7 +1800,7 @@ com['packets'].append({
              ('Discrete Inputs Chunk Data', 'bool', 464, 'out')],
 'high_level': {'stream_out': {'name': 'Discrete Inputs'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a
@@ -1874,7 +1874,7 @@ com['packets'].append({
              ('Input Registers Chunk Data', 'uint16', 29, 'out')],
 'high_level': {'stream_out': {'name': 'Input Registers'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 This callback is called only in Modbus master mode when the master receives a

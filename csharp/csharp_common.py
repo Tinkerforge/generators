@@ -70,14 +70,14 @@ class CSharpPacket(common.Packet):
         else:
             return None
 
-    def get_csharp_method_signature(self, print_full_name=False, is_doc=False):
+    def get_csharp_method_signature(self, print_full_name=False, is_doc=False, high_level=False):
         sig_format = "public {4}{0} {1}{2}({3})"
-        ret_count = len(self.get_elements(direction='out'))
-        params = self.get_csharp_parameters()
+        ret_count = len(self.get_elements(direction='out', high_level=high_level))
+        params = self.get_csharp_parameters(high_level=high_level)
         return_type = 'void'
 
         if ret_count == 1:
-            return_type = self.get_elements(direction='out')[0].get_csharp_type()
+            return_type = self.get_elements(direction='out', high_level=high_level)[0].get_csharp_type()
 
         class_prefix = ''
 
@@ -89,7 +89,9 @@ class CSharpPacket(common.Packet):
         if not is_doc and self.has_prototype_in_device():
             override = 'override '
 
-        return sig_format.format(return_type, class_prefix, self.get_camel_case_name(), params, override)
+        skip = -2 if high_level and self.has_high_level() else 0
+
+        return sig_format.format(return_type, class_prefix, self.get_camel_case_name(skip=skip), params, override)
 
 csharp_types = {
     'int8':   'short',
@@ -166,7 +168,7 @@ class CSharpElement(common.Element):
     def get_csharp_le_converter_type(self):
         converter_type = CSharpElement.csharp_le_converter_types[self.get_type()]
 
-        if self.get_cardinality() > 1 and self.get_type() != 'string':
+        if self.get_cardinality() != 1 and self.get_type() != 'string':
             converter_type += '[]'
 
         return converter_type

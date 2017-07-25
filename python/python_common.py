@@ -95,8 +95,10 @@ class PythonElement(common.Element):
     def get_python_type(self):
         python_type = PythonElement.python_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or python_type == 'str':
+        if self.get_cardinality() == 1 or self.get_type() == 'string':
             return python_type
+        elif self.get_cardinality() < 0:
+            return '[{0}, ...]'.format(python_type)
         else:
             return '[' + ', '.join([python_type] * self.get_cardinality()) + ']'
 

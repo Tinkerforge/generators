@@ -90,12 +90,14 @@ class RubyElement(common.Element):
     }
 
     def get_ruby_type(self):
-        t = RubyElement.ruby_types[self.get_type()]
+        ruby_type = RubyElement.ruby_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or t == 'str':
-            return t
-
-        return '[' + ', '.join([t]*self.get_cardinality()) + ']'
+        if self.get_cardinality() == 1 or self.get_type() == 'string':
+            return ruby_type
+        elif self.get_cardinality() < 0:
+            return '[{0}, ...]'.format(ruby_type)
+        else:
+            return '[' + ', '.join([ruby_type]*self.get_cardinality()) + ']'
 
     def get_ruby_pack_format(self):
         return RubyElement.ruby_pack_formats[self.get_type()]

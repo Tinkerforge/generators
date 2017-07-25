@@ -124,8 +124,8 @@ class JavaPacket(common.Packet):
 
         return name
 
-    def get_java_return_type(self, for_doc=False):
-        elements = self.get_elements(direction='out')
+    def get_java_return_type(self, for_doc=False, high_level=False):
+        elements = self.get_elements(direction='out', high_level=high_level)
 
         if len(elements) == 0:
             return 'void'
@@ -202,7 +202,7 @@ def get_java_type(type_, cardinality, legacy=False, octave=False):
     if java_type == 'char' and octave:
         java_type = 'String'
 
-    if (cardinality > 1 and type_ != 'string') or cardinality < 0:
+    if cardinality != 1 and type_ != 'string':
         java_type += '[]'
 
     return java_type
@@ -264,7 +264,7 @@ class JavaElement(common.Element):
     def get_java_byte_buffer_storage_type(self):
         storage_type = JavaElement.java_byte_buffer_storage_type[self.get_type()]
 
-        if (self.get_cardinality() > 1 and storage_type != 'string') or self.get_cardinality() < 0:
+        if self.get_cardinality() != 1 and storage_type != 'string':
             storage_type += '[]'
 
         return storage_type

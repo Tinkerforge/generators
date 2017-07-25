@@ -66,7 +66,7 @@ com['packets'].append({
              ('Frame Chunk Data', 'uint8', 60, 'in')],
 'high_level': {'stream_in': {'name': 'Frame'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['bf', {
 'en':
 """
 """,
@@ -86,7 +86,7 @@ com['packets'].append({
              ('Frame Number', 'uint32', 1, 'out')],
 'high_level': {'stream_out': {'name': 'Frame'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llf', {
+'doc': ['bf', {
 'en':
 """
 """,
@@ -346,7 +346,7 @@ com['packets'].append({
              ('Frame Number', 'uint32', 1, 'out')],
 'high_level': {'stream_out': {'name': 'Frame'}},
 'since_firmware': [1, 0, 0],
-'doc': ['llc', {
+'doc': ['c', {
 'en':
 """
 """,

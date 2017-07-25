@@ -76,20 +76,21 @@ class LabVIEWDocDevice(common.Device):
                                         additional_download_finder=additional_download_finder,
                                         display_name_fixer=display_name_fixer)
 
-    def get_labview_functions(self, type):
+    def get_labview_functions(self, type_):
         function = '.. labview:function:: {0}.{1}({2}){3}\n{4}{5}{6}\n'
         functions = []
         cls = self.get_labview_class_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != type:
+            if packet.get_doc_type() != type_:
                 continue
 
-            name = packet.get_camel_case_name()
-            inputs = packet.get_labview_input_list()
-            input_desc = packet.get_labview_input_description()
-            outputs = packet.get_labview_output_list()
-            output_desc = packet.get_labview_output_description()
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_camel_case_name(skip)
+            inputs = packet.get_labview_input_list(high_level=True)
+            input_desc = packet.get_labview_input_description(high_level=True)
+            outputs = packet.get_labview_output_list(high_level=True)
+            output_desc = packet.get_labview_output_description(high_level=True)
             doc = packet.get_labview_formatted_doc()
 
             if len(outputs) > 0:
@@ -108,15 +109,16 @@ class LabVIEWDocDevice(common.Device):
         callbacks = []
 
         for packet in self.get_packets('callback'):
-            inputs = packet.get_labview_input_list()
-            input_desc = packet.get_labview_input_description()
+            skip = -2 if packet.has_high_level() else 0
+            inputs = packet.get_labview_input_list(high_level=True)
+            input_desc = packet.get_labview_input_description(high_level=True)
             doc = packet.get_labview_formatted_doc()
 
             if len(inputs) > 0:
                 inputs = ', ' + inputs
 
             callbacks.append(callback.format(self.get_labview_class_name(),
-                                             packet.get_camel_case_name(),
+                                             packet.get_camel_case_name(skip),
                                              inputs,
                                              input_desc,
                                              doc))
@@ -336,7 +338,7 @@ class LabVIEWDocPacket(common.Packet):
 
         return common.shift_right(text, 1)
 
-    def get_labview_input_list(self):
+    def get_labview_input_list(self, high_level=False):
         inputs = []
 
         if self.get_type() == 'callback':
@@ -344,12 +346,12 @@ class LabVIEWDocPacket(common.Packet):
         else:
             direction = 'in'
 
-        for element in self.get_elements(direction=direction):
+        for element in self.get_elements(direction=direction, high_level=high_level):
             inputs.append(element.get_headless_camel_case_name())
 
         return ', '.join(inputs)
 
-    def get_labview_input_description(self):
+    def get_labview_input_description(self, high_level=False):
         descriptions = []
 
         if self.get_type() == 'callback':
@@ -357,28 +359,28 @@ class LabVIEWDocPacket(common.Packet):
         else:
             direction = 'in'
 
-        for element in self.get_elements(direction=direction):
+        for element in self.get_elements(direction=direction, high_level=high_level):
             name = element.get_headless_camel_case_name()
-            type = element.get_labview_type()
+            type_ = element.get_labview_type()
 
-            descriptions.append(' :input {0}: {1}\n'.format(name, type))
+            descriptions.append(' :input {0}: {1}\n'.format(name, type_))
 
         return '\n' + ''.join(descriptions)
 
-    def get_labview_output_list(self):
+    def get_labview_output_list(self, high_level=False):
         outputs = []
 
         if self.get_type() == 'function':
-            for element in self.get_elements(direction='out'):
+            for element in self.get_elements(direction='out', high_level=high_level):
                 outputs.append(element.get_headless_camel_case_name())
 
         return ', '.join(outputs)
 
-    def get_labview_output_description(self):
+    def get_labview_output_description(self, high_level=False):
         descriptions = []
 
         if self.get_type() == 'function':
-            for element in self.get_elements(direction='out'):
+            for element in self.get_elements(direction='out', high_level=high_level):
                 name = element.get_headless_camel_case_name()
                 type = element.get_labview_type()
 
@@ -411,6 +413,8 @@ class LabVIEWDocElement(common.Element):
 
         if c > 1 and t != 'String':
             t += '[{0}]'.format(c)
+        elif c < 0:
+            t += '[]'
 
         return t
 

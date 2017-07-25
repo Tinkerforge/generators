@@ -50,15 +50,17 @@ class CDocDevice(common.Device):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_c_methods(self, typ):
+    def get_c_methods(self, type_):
         methods = ''
         func_start = '.. c:function:: int '
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
-            name = '{0}_{1}'.format(self.get_underscore_name(), packet.get_underscore_name())
-            plist = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
+
+            skip = -2 if packet.has_high_level() else 0
+            name = '{0}_{1}'.format(self.get_underscore_name(), packet.get_underscore_name(skip=skip))
+            plist = common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), '')
             params = '{0} *{1}{2}'.format(self.get_camel_case_name(), self.get_underscore_name(), plist)
             desc = packet.get_c_formatted_doc()
             func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
@@ -84,7 +86,7 @@ class CDocDevice(common.Device):
         func_start = '.. c:var:: '
 
         for packet in self.get_packets('callback'):
-            plist = packet.get_c_parameters()
+            plist = packet.get_c_parameters(high_level=True)
 
             if len(plist) == 0:
                 plist = 'void *user_data'
@@ -93,9 +95,10 @@ class CDocDevice(common.Device):
 
             params = common.select_lang(param_format).format(plist)
             desc = packet.get_c_formatted_doc()
+            skip = -2 if packet.has_high_level() else 0
             func = '{0}{1}_CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                           self.get_upper_case_name(),
-                                                          packet.get_upper_case_name(),
+                                                          packet.get_upper_case_name(skip=skip),
                                                           params,
                                                           desc)
             cbs += func + '\n'
@@ -260,6 +263,7 @@ Possible error codes are:
 * E_INVALID_PARAMETER = -9
 * E_NOT_SUPPORTED = -10
 * E_UNKNOWN_ERROR_CODE = -11
+* E_STREAM_OUT_OF_SYNC = -12
 
 as defined in :file:`ip_connection.h`.
 
@@ -294,6 +298,7 @@ Mögliche Fehlercodes sind:
 * E_INVALID_PARAMETER = -9
 * E_NOT_SUPPORTED = -10
 * E_UNKNOWN_ERROR_CODE = -11
+* E_STREAM_OUT_OF_SYNC = -12
 
 wie in :file:`ip_connection.h` definiert.
 

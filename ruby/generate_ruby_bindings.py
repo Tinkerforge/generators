@@ -614,11 +614,11 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
 
         return '\n    # '.join(text.strip().split('\n'))
 
-    def get_ruby_format_list(self, io):
+    def get_ruby_format_list(self, direction):
         forms = []
         total_size = 0
 
-        for element in self.get_elements(direction=io):
+        for element in self.get_elements(direction=direction):
             num_str = ''
             num_int = 1
 
