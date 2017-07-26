@@ -251,8 +251,7 @@
 - Don't try to export non-existing register_callback functions
 
 2017-07-18: 2.1.16 (af0003b)
-- Break PTC Bricklet API to fix type for resistance value of get_resistance
-  function
+- Break PTC Bricklet API to fix type for resistance value
 - Fix ipcon_register_callback for IPCON_CALLBACK_CONNECTED
 
 2017-07-26: 2.1.17 (<unknown>)
