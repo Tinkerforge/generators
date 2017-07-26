@@ -300,7 +300,7 @@ Examples
 --------
 
 The example code below is `Public Domain (CC0 1.0)
-<http://creativecommons.org/publicdomain/zero/1.0/>`__.
+<https://creativecommons.org/publicdomain/zero/1.0/>`__.
 """,
         'de': """
 {0}
@@ -309,7 +309,7 @@ Beispiele
 ---------
 
 Der folgende Beispielcode ist `Public Domain (CC0 1.0)
-<http://creativecommons.org/publicdomain/zero/1.0/deed.de>`__.
+<https://creativecommons.org/publicdomain/zero/1.0/deed.de>`__.
 """
     }
 
@@ -407,10 +407,10 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         downloads = [download.format(display_name, url)] + downloads
 
         if add_html_test_link and include.endswith('.html'):
-            downloads.append('`Test ({0}) <http://www.tinkerforge.com/{1}/doc/Software/Examples/JavaScript/{2}>`__'.format(display_name, lang, include))
+            downloads.append('`Test ({0}) <https://www.tinkerforge.com/{1}/doc/Software/Examples/JavaScript/{2}>`__'.format(display_name, lang, include))
 
         if add_tvpl_test_link and include.endswith('.tvpl'):
-            downloads.append('`Test ({0}) <http://www.tinkerforge.com/{1}/tvpl/editor.html?example={2}/{3}/{4}>`__'
+            downloads.append('`Test ({0}) <https://www.tinkerforge.com/{1}/tvpl/editor.html?example={2}/{3}/{4}>`__'
                              .format(display_name, lang, device.get_underscore_category(), device.get_underscore_name(), f[0]))
 
         examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)

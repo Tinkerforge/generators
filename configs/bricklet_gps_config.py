@@ -53,7 +53,7 @@ for more information. The values are give in hundredths.
 
 EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
 absolute maximum error, it is the error with a specific confidence. See
-`here <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ for more information.
+`here <https://www.nps.gov/gis/gps/WhatisEPE.html>`__ for more information.
 
 This data is only valid if there is currently a fix as indicated by
 :func:`Get Status`.
@@ -75,7 +75,7 @@ es mehr Informationen dazu. Die Werte werden in Hundertstel gegeben.
 EPE ist der "Estimated Position Error". Der EPE wird in cm gegeben.
 Dies ist nicht der absolut maximale Fehler, es ist der Fehler mit einer
 spezifischen Konfidenz. Siehe
-`hier <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ für mehr Informationen.
+`hier <https://www.nps.gov/gis/gps/WhatisEPE.html>`__ für mehr Informationen.
 
 Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status`).
 """
