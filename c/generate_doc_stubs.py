@@ -103,7 +103,6 @@ Weight                            TBDg
 ================================  ============================================================
 
 
-
 Resources
 ---------
 
@@ -111,6 +110,7 @@ Resources
 * Outline and drilling plan (`Download <../../_images/Dimensions/{1}_dimensions.png>`__)
 * Source code and design files (`Download <https://github.com/Tinkerforge/{4}/zipball/master>`__)
 * 3D model (`View online <TBD>`__ | Download: `STEP <http://download.tinkerforge.com/3d/TBD/TBD.step>`__, `FreeCAD <http://download.tinkerforge.com/3d/TBD/TBD.FCStd>`__)
+
 
 .. _{1}_test:
 
@@ -131,6 +131,7 @@ If everything went as expected ... TBD.
    :target: ../../_images/Bricklets/bricklet_{2}_brickv.jpg
 
 |test_pi_ref|
+
 
 .. _{1}_case:
 
@@ -232,14 +233,14 @@ Gewicht                           TBDg
 ================================  ============================================================
 
 
-
-Resources
----------
+Ressourcen
+----------
 
 * Schaltplan (`Download <https://github.com/Tinkerforge/{4}/raw/master/hardware/{5}-schematic.pdf>`__)
 * Umriss und Bohrplan (`Download <../../_images/Dimensions/{1}_dimensions.png>`__)
 * Quelltexte und Platinenlayout (`Download <https://github.com/Tinkerforge/{4}/zipball/master>`__)
 * 3D Modell (`Online ansehen <TBD>`__ | Download: `STEP <http://download.tinkerforge.com/3d/TBD/TBD.step>`__, `FreeCAD <http://download.tinkerforge.com/3d/TBD/TBD.FCStd>`__)
+
 
 .. _{1}_test:
 
@@ -261,10 +262,11 @@ Wenn alles wie erwartet funktioniert ... TBD.
 
 |test_pi_ref|
 
+
 .. _{1}_case:
 
-Case
-----
+Gehäuse
+-------
 
 ..
 	Ein `laser-geschnittenes Gehäuse für das {0} 
@@ -272,7 +274,7 @@ Case
 
 	.. image:: /Images/Cases/bricklet_{2}_case_350.jpg
 	   :scale: 100 %
-	   :alt: Case for {0}
+	   :alt: Gehäuse für {0}
 	   :align: center
 	   :target: ../../_images/Cases/bricklet_{2}_case_1000.jpg
 
@@ -282,7 +284,7 @@ Case
 
 	.. image:: /Images/Exploded/{2}_exploded_350.png
 	   :scale: 100 %
-	   :alt: Exploded assembly drawing for {0}
+	   :alt: Explosionszeichnung für {0}
 	   :align: center
 	   :target: ../../_images/Exploded/{2}_exploded.png
 
@@ -291,10 +293,11 @@ Case
 
 .. _{1}_programming_interface:
 
-Programming Interface
----------------------
+Programmierschnittstelle
+------------------------
 
-See :ref:`Programming Interface <programming_interface>` for a detailed description.
+Siehe :ref:`Programmierschnittstelle <programming_interface>` für eine detaillierte
+Beschreibung.
 
 .. include:: {3}_hlpi.table
 """
