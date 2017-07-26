@@ -228,7 +228,7 @@ com['packets'].append({
 """
 Returns the
 
-* satellite numbers list
+* satellite numbers list (up to 12 items)
 * fix value,
 * PDOP value,
 * HDOP value and
@@ -245,7 +245,7 @@ a valid satellite number and can be ignored in the list.
 """
 Gibt die
 
-* Liste der Satellitennummern,
+* Liste der Satellitennummern (bis zu 12 Elemente),
 * Fix-Wert,
 * PDOP-Wert,
 * HDOP-Wert and
