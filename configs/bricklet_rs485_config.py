@@ -31,8 +31,8 @@ com = {
         'de': 'Kommuniziert mit RS485/Modbus Geräten mit voll- oder halb-duplex'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }
