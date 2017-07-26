@@ -308,6 +308,12 @@ sub {0}
 
         # high-level
         template_stream_in = """
+=item {underscore_name}()
+
+{doc}
+
+=cut
+
 sub {underscore_name}
 {{
     my ($self{high_level_parameters}) = @_;
@@ -355,6 +361,12 @@ sub {underscore_name}
 }}
 """
         template_stream_in_fixed_length = """
+=item {underscore_name}()
+
+{doc}
+
+=cut
+
 sub {underscore_name}
 {{
     my ($self{high_level_parameters}) = @_;{result_variable}
@@ -392,6 +404,12 @@ sub {underscore_name}
 }}
 """
         template_stream_in_short_write = """
+=item {underscore_name}()
+
+{doc}
+
+=cut
+
 sub {underscore_name}
 {{
     my ($self{high_level_parameters}) = @_;
@@ -461,6 +479,12 @@ sub {underscore_name}
         template_stream_in_short_write_array_result = """
     return ({result_fields});"""
         template_stream_in_single_chunk = """
+=item {underscore_name}()
+
+{doc}
+
+=cut
+
 sub {underscore_name}
 {{
     my ($self{high_level_parameters}) = @_;
@@ -483,6 +507,12 @@ sub {underscore_name}
 }}
 """
         template_stream_out = """
+=item {underscore_name}()
+
+{doc}
+
+=cut
+
 sub {underscore_name}
 {{
     my ($self{high_level_parameters}) = @_;{fixed_length}
@@ -533,6 +563,12 @@ sub {underscore_name}
     {{
         """
         template_stream_out_single_chunk = """
+=item {underscore_name}()
+
+{doc}
+
+=cut
+
 sub {underscore_name}
 {{
     my ($self{high_level_parameters}) = @_;
@@ -644,7 +680,8 @@ sub {underscore_name}
                     else:
                         result_return = '\n\n    return @ret;'
 
-                methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                methods += template.format(doc=packet.get_perl_formatted_doc(),
+                                           underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                            parameters=packet.get_perl_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_perl_parameters(high_level=True), ''),
                                            stream_name=stream_in.get_name(),
@@ -729,7 +766,8 @@ sub {underscore_name}
                 else:
                     template = template_stream_out
 
-                methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                methods += template.format(doc=packet.get_perl_formatted_doc(),
+                                           underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                            parameters=packet.get_perl_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_perl_parameters(high_level=True), ''),
                                            stream_name=stream_out.get_name(),
@@ -756,7 +794,7 @@ sub {underscore_name}
         source += self.get_perl_constants()
         source += self.get_perl_new_subroutine()
         source += self.get_perl_subroutines()
-        source += "=back\n=cut\n\n1;\n"
+        source += '\n=back\n=cut\n\n1;\n'
 
         return source
 

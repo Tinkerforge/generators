@@ -192,6 +192,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 
         # high-level
         template_stream_in = """
+    # {doc}
     def {underscore_name}{high_level_parameters}
       if {stream_underscore_name}.length > {stream_max_length}
         raise ArgumentError, '{stream_name} can be at most {stream_max_length} items long'
@@ -224,6 +225,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     end
 """
         template_stream_in_fixed_length = """
+    # {doc}
     def {underscore_name}{high_level_parameters}
       {stream_underscore_name}_length = {fixed_length}
       {stream_underscore_name}_chunk_offset = 0
@@ -250,6 +252,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     end
 """
         template_stream_in_short_write = """
+    # {doc}
     def {underscore_name}{high_level_parameters}
       if {stream_underscore_name}.length > {stream_max_length}
         raise ArgumentError, '{stream_name} can be at most {stream_max_length} items long'
@@ -300,6 +303,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         template_stream_in_short_write_namedtuple_result = """
       [{result_fields}]"""
         template_stream_in_single_chunk = """
+    # {doc}
     def {underscore_name}{high_level_parameters}
       {stream_underscore_name} = {stream_underscore_name}.clone # clone so we can potentially extend it
       {stream_underscore_name}_length = {stream_underscore_name}.length
@@ -317,6 +321,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     end
 """
         template_stream_out = """
+    # {doc}
     def {underscore_name}{high_level_parameters}{chunk_result_predefinition}
       {stream_underscore_name}_length = {fixed_length}
       {stream_underscore_name}_data = nil # assigned in block
@@ -359,6 +364,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         else
           """
         template_stream_out_single_chunk = """
+    # {doc}
     def {underscore_name}{high_level_parameters}
       ret = {underscore_name}_low_level{parameters}
 {result}
@@ -443,7 +449,8 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                     chunk_result_predefinition = ''
                     result = ''
 
-                methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                methods += template.format(doc=packet.get_ruby_formatted_doc(),
+                                           underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                            parameters=common.wrap_non_empty(' ', packet.get_ruby_parameters(), ''),
                                            high_level_parameters=common.wrap_non_empty('(', packet.get_ruby_parameters(high_level=True), ')'),
                                            stream_name=stream_in.get_name(),
@@ -519,7 +526,8 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                 else:
                     template = template_stream_out
 
-                methods += template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                methods += template.format(doc=packet.get_ruby_formatted_doc(),
+                                           underscore_name=packet.get_underscore_name().replace('_low_level', ''),
                                            parameters=common.wrap_non_empty(' ', packet.get_ruby_parameters(), ''),
                                            high_level_parameters=common.wrap_non_empty('(', packet.get_ruby_parameters(high_level=True), ')'),
                                            stream_name=stream_out.get_name(),
