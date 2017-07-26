@@ -246,11 +246,18 @@
   support Bricklets with LIDAR-Lite sensor hardware version 3
 - Add get_send_timeout_count function to all Brick APIs
 
-2017-05-11: 2.1.15 (b0004e6)
+2017-05-11: 2.1.15 (3960b4a)
 - Add support for GPS Bricklet 2.0
 - Don't try to export non-existing register_callback functions
 
-2017-07-18: 2.1.16 (<unknown>)
+2017-07-18: 2.1.16 (af0003b)
 - Break PTC Bricklet API to fix type for resistance value of get_resistance
   function
 - Fix ipcon_register_callback for IPCON_CALLBACK_CONNECTED
+
+2017-07-26: 2.1.17 (<unknown>)
+- Add support for RS485 Bricklet
+- Add general streaming support
+- Add SPITFP configuration and diagnostics functions to all Brick APIs to
+  configure and debug the communication between Bricks and Co-MCU Bricklets
+- Remove unused get_current_consumption function from Slient Stepper Brick API

@@ -118,5 +118,12 @@
 - Use an AppService instead of a socket when connecting to localhost on
   Universal Windows Platform (UWP)
 
-2017-05-11: 2.1.13 (<unknown>)
+2017-05-11: 2.1.13 (3960b4a)
 - Add support for GPS Bricklet 2.0
+
+2017-07-26: 2.1.14 (<unknown>)
+- Add support for RS485 Bricklet
+- Add general streaming support
+- Add SPITFP configuration and diagnostics functions to all Brick APIs to
+  configure and debug the communication between Bricks and Co-MCU Bricklets
+- Remove unused GetCurrentConsumption function from Slient Stepper Brick API

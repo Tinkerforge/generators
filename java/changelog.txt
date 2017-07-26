@@ -210,7 +210,7 @@
 2016-02-09: 2.1.8 (5552d2c)
 - Add support for Real-Time Clock Bricklet
 - Break GPS Bricklet API to fix types of altitude and geoidal separation values
-  (getAltitude function and Altitude listener)
+  (getAltitude method and Altitude listener)
 
 2016-06-29: 2.1.9 (9db7daa)
 - Add support for WIFI Extension 2.0 to Master Brick API
@@ -235,6 +235,13 @@
 - Break API to make connect method return a TinkerforgeException instead of
   three different exception types
 
-2017-05-11: 2.1.13 (<unknown>)
+2017-05-11: 2.1.13 (3960b4a)
 - Add support for GPS Bricklet 2.0
 - Increase minimum JDK version from 1.5 to 1.6
+
+2017-07-26: 2.1.14 (<unknown>)
+- Add support for RS485 Bricklet
+- Add general streaming support
+- Add SPITFP configuration and diagnostics methods to all Brick APIs to
+  configure and debug the communication between Bricks and Co-MCU Bricklets
+- Remove unused getCurrentConsumption method from Slient Stepper Brick API

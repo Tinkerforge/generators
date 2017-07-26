@@ -15,7 +15,7 @@
 
 2015-07-28: 2.0.5 (725ccd3)
 - Add DEVICE_DISPLAY_NAME constant to all Device classes
-- Add functions for all Bricks to turn status LEDs on and off
+- Add methods for all Bricks to turn status LEDs on and off
 - Avoid possible connection state race condition on connect
 - Add missing IP Connection examples to ZIP file
 - Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
@@ -55,7 +55,7 @@
 2017-01-25: 2.0.11 (7aeee37)
 - Add support for WIFI Extension 2.0 Mesh mode to Master Brick API
 - Add get/setStatusLEDConfig methods to Motion Detector Bricklet API
-- Add sensor and fusion mode configuration functions to IMU Brick 2.0 API
+- Add sensor and fusion mode configuration methods to IMU Brick 2.0 API
 
 2017-04-21: 2.0.12 (044bd9b)
 - Add support for Silent Stepper Brick
@@ -63,6 +63,14 @@
   Bricklets with LIDAR-Lite sensor hardware version 3
 - Add getSendTimeoutCount method to all Brick APIs
 
-2017-05-11: 2.0.13 (<unknown>)
+2017-05-11: 2.0.13 (3960b4a)
 - Add support for GPS Bricklet 2.0
 - Increase minimum JDK version from 1.5 to 1.6
+
+2017-07-26: 2.1.14 (<unknown>)
+- Add support for RS485 Bricklet
+- Add general streaming support
+- Add SPITFP configuration and diagnostics methods to all Brick APIs to
+  configure and debug the communication between Bricks and Co-MCU Bricklets
+- Remove unused getCurrentConsumption method from Slient Stepper Brick API
+- Add workaround for the callback problem in Octave >= 3.8
