@@ -103,3 +103,4 @@
 - Add SPITFP configuration and diagnostics functions to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
 - Remove unused get-current-consumption function from Slient Stepper Brick API
+- Increase minimum Python version to 2.6

@@ -75,3 +75,4 @@
 - Add SPITFP configuration and diagnostics functions to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
 - Remove unused GetCurrentConsumption function from Slient Stepper Brick API
+- Fix int8 unpacking
