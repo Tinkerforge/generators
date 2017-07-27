@@ -42,7 +42,7 @@ class JavaBindingsDevice(java_common.JavaDevice):
             else:
                 return '{{@link {0}#{1}({2})}}'.format(packet.get_device().get_java_class_name(),
                                                        packet.get_headless_camel_case_name(skip=-2 if high_level else 0),
-                                                       packet.get_java_parameters(context='link'))
+                                                       packet.get_java_parameters(context='link', high_level=high_level))
 
         return self.specialize_doc_rst_links(text, specializer)
 
