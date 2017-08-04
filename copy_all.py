@@ -176,7 +176,17 @@ if socket.gethostname() == 'tinkerforge.com':
         if not os.path.exists(hardware_dir):
             continue
 
-        models = glob.glob(os.path.join(hardware_dir, '*.step')) + glob.glob(os.path.join(hardware_dir, '*.FCStd'))
+        models = []
+
+        for suffix in ['*.step', '*.FCStd']:
+            for match in glob.glob(os.path.join(hardware_dir, suffix)):
+                models.append(os.path.relpath(match, hardware_dir))
+
+        for root, dirs, _ in os.walk(hardware_dir):
+            for name in dirs:
+                for suffix in ['*.step', '*.FCStd']:
+                    for match in glob.glob(os.path.join(root, name, suffix)):
+                        models.append(os.path.relpath(match, hardware_dir))
 
         if len(models) == 0:
             continue
@@ -200,15 +210,21 @@ if socket.gethostname() == 'tinkerforge.com':
         target_dir = os.path.join('/srv/web/com.tinkerforge.download/downloads/3d', category, device)
 
         if not os.path.exists(target_dir):
-            os.mkdir(target_dir)
+            os.makedirs(target_dir)
 
         for model in models:
-            name = os.path.split(model)[-1]
-            target = os.path.join(target_dir, name)
+            source = os.path.join(hardware_dir, model)
+            base, name = os.path.split(model)
+            target_base = os.path.join(target_dir, base)
+
+            if not os.path.exists(target_base):
+                os.makedirs(target_base)
+
+            target = os.path.join(target_dir, model)
 
             if not os.path.exists(target):
-                os.symlink(model, target)
-                print(' * {0}/{1}/{2}'.format(category, device, name))
+                os.symlink(source, target)
+                print(' * {0}/{1}/{2}'.format(category, device, model))
 
 print('')
 print('>>> Done <<<')
