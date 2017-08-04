@@ -1,7 +1,7 @@
 /* <<<DEVICE_NAME_DASH>>>-bricklet
  * Copyright (C) <<<YEAR>>> <<<NAME>>> <<<<EMAIL>>>>
  *
- * main.c: Initialization for <<<DEVICE_NAME_READABLE>>> Bricklet
+ * config_logging.h: Logging configuration for <<<DEVICE_NAME_READABLE>>> Bricklet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,24 +19,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
-#include <stdbool.h>
+#ifndef CONFIG_LOGGING_H
+#define CONFIG_LOGGING_H
 
-#include "configs/config.h"
+#define LOGGING_UARTBB
+#define LOGGING_LEVEL LOGGING_DEBUG
+//#define LOGGING_LEVEL LOGGING_NONE
 
-#include "bricklib2/bootloader/bootloader.h"
-#include "bricklib2/hal/system_timer/system_timer.h"
-#include "bricklib2/logging/logging.h"
-#include "communication.h"
+#define LOGGING_USE_BASENAME
+#define LOGGING_HAVE_SYSTEM_TIME
+#define LOGGING_TIMESTAMP_FORMAT "%u "
+#define LOGGING_SYSTEM_TIME_HEADER "bricklib2/hal/system_timer/system_timer.h"
+#define LOGGING_SYSTEM_TIME_FUNCTION system_timer_get_ms
 
-int main(void) {
-	logging_init();
-	logd("Start <<<DEVICE_NAME_READABLE>>> Bricklet\n\r");
-
-	communication_init();
-
-	while(true) {
-		bootloader_tick();
-		communication_tick();
-	}
-}
+#endif

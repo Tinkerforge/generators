@@ -38,6 +38,7 @@ SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/bootloader/bootloader.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/bootloader/bootloader_xmc_irq.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/protocols/tfp/tfp.c"
+	"${PROJECT_SOURCE_DIR}/src/bricklib2/logging/logging.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/ringbuffer.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/pearson_hash.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/communication_callback.c"
