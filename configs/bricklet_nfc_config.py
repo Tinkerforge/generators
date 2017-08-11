@@ -170,14 +170,15 @@ TODO
 # TODO: Change 'Reader Get Tag ID' to low level function (with tid dynamic length)
 com['packets'].append({
 'type': 'function',
-'name': 'Reader Get Tag ID',
+'name': 'Reader Get Tag ID Low Level',
 'elements': [('Tag Type', 'uint8', 1, 'out', ('Tag Type', [('Mifare Classic', 0),
                                                            ('Type1', 1),
                                                            ('Type2', 2),
                                                            ('Type3', 3),
                                                            ('Type4', 4)])),
-             ('TID Length', 'uint8', 1, 'out'),
-             ('TID', 'uint8', 10, 'out')],
+             ('Tag ID Length', 'uint8', 1, 'out'),
+             ('Tag ID Data', 'uint8', 32, 'out')],
+'high_level': {'stream_out': {'name': 'Tag ID', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
