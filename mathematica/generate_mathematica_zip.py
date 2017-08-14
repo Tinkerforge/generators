@@ -84,13 +84,18 @@ class MathematicaZipGenerator(common.ZipGenerator):
                                    {'<<BINDINGS>>': 'Mathematica',
                                     '<<VERSION>>': '.'.join(version)})
 
+        dll = os.path.join(self.tmp_dir, 'Tinkerforge.dll')
+        if not os.path.isfile(dll):
+            print("\033[01;31m>>> Could not find Tinkerforge.dll. Skipping generation of Mathematica zip.\033[0m")
+            return
+
         # Make dll
         with common.ChangedDirectory(self.tmp_dir):
             common.execute(['/usr/bin/mcs',
                             '/optimize',
                             '/sdk:2',
                             '/target:library',
-                            '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
+                            '/out:' + dll,
                             os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
 
         # Make zip
