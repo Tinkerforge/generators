@@ -90,3 +90,45 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set RGB Calibration',
+'elements': [('R', 'uint8', 1, 'in'),
+             ('G', 'uint8', 1, 'in'),
+             ('B', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TOOD:
+range 0-100%
+
+Is saved in flash, don't call every time.
+
+default: 100, 100, 56
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get RGB Calibration',
+'elements': [('R', 'uint8', 1, 'out'),
+             ('G', 'uint8', 1, 'out'),
+             ('B', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the *rgb* value calibrationas set by :func:`Set RGB Calibration`.
+""",
+'de':
+"""
+Gibt die *rgb* Wert Kalibrierung zurück, wie von :func:`Set RGB Calibration` gesetzt.
+"""
+}]
+})
