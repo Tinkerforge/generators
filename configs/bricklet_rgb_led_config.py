@@ -34,11 +34,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the *rgb* value for the LED.
+Sets the *rgb* value for the LED. The value can be between 0 and 255.
 """,
 'de':
 """
-Setzt den *rgb* Wert für die LED.
+Setzt den *rgb* Wert für die LED. Der Wert kann zwischen 0 und 255 liegen.
 """
 }]
 })
