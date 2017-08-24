@@ -93,10 +93,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set RGB Calibration',
-'elements': [('R', 'uint8', 1, 'in'),
-             ('G', 'uint8', 1, 'in'),
-             ('B', 'uint8', 1, 'in')],
+'name': 'Set Color Calibration',
+'elements': [('Red', 'uint8', 1, 'in'),
+             ('Green', 'uint8', 1, 'in'),
+             ('Blue', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -106,7 +106,7 @@ range 0-100%
 
 Is saved in flash, don't call every time.
 
-default: 100, 100, 56
+default: 100, 100, 55
 """,
 'de':
 """
@@ -116,10 +116,10 @@ default: 100, 100, 56
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get RGB Calibration',
-'elements': [('R', 'uint8', 1, 'out'),
-             ('G', 'uint8', 1, 'out'),
-             ('B', 'uint8', 1, 'out')],
+'name': 'Get Color Calibration',
+'elements': [('Red', 'uint8', 1, 'out'),
+             ('Green', 'uint8', 1, 'out'),
+             ('Blue', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
