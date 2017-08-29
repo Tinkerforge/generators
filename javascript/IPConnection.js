@@ -959,12 +959,24 @@ function IPConnection() {
         }
     };
     this.handleCallback = function (packetCallback) {
-        if (this.getFunctionIDFromPacket(packetCallback) === IPConnection.CALLBACK_ENUMERATE) {
+        var form = undefined;
+        var device = undefined;
+        var llvalues = undefined;
+        var cbFunction = undefined;
+        var functionID = undefined;
+        var cbUnpackString = undefined;
+        functionID = this.getFunctionIDFromPacket(packetCallback);
+        device = this.devices[this.getUIDFromPacket(packetCallback)];
+        if (functionID === undefined) {
+            return;
+        }
+        if (functionID === IPConnection.CALLBACK_ENUMERATE) {
             if (this.registeredCallbacks[IPConnection.CALLBACK_ENUMERATE] !== undefined) {
                 var args = unpack(this.getPayloadFromPacket(packetCallback), 's8 s8 c B3 B3 H B');
                 var evalCBString = 'this.registeredCallbacks[IPConnection.CALLBACK_ENUMERATE](';
-                for (var i=0; i<args.length;i++) {
+                for (var i = 0; i < args.length; i++) {
                     eval('var cbArg'+i+'=args['+i+'];');
+
                     if (i != args.length-1) {
                         evalCBString += 'cbArg'+i+',';
                     } else {
@@ -975,47 +987,127 @@ function IPConnection() {
                 return;
             }
         }
-        if (this.devices[this.getUIDFromPacket(packetCallback)] === undefined) {
+        if (device === undefined) {
             return;
         }
-        if (this.devices[this.getUIDFromPacket(packetCallback)].
-            registeredCallbacks[this.getFunctionIDFromPacket(packetCallback)] === undefined ||
-            this.devices[this.getUIDFromPacket(packetCallback)].
-            callbackFormats[this.getFunctionIDFromPacket(packetCallback)] === undefined) {
-            return;
+        if ((device.registeredCallbacks[functionID] === undefined &&
+             device.registeredCallbacks[-functionID] === undefined) ||
+            device.callbackFormats[functionID] === undefined) {
+              return;
         }
-        var cbFunction = this.devices[this.getUIDFromPacket(packetCallback)].
-                         registeredCallbacks[this.getFunctionIDFromPacket(packetCallback)];
-        var cbUnpackString = this.devices[this.getUIDFromPacket(packetCallback)].
-                             callbackFormats[this.getFunctionIDFromPacket(packetCallback)];
-        if (cbFunction == undefined) {
-            return;
+        if (device.registeredCallbacks[functionID] !== undefined) {
+            cbFunction = device.registeredCallbacks[functionID];
+            cbUnpackString = device.callbackFormats[functionID];
         }
-        if (cbUnpackString == undefined) {
+        else if (device.registeredCallbacks[-functionID] !== undefined) {
+            cbFunction = device.registeredCallbacks[-functionID];
+            cbUnpackString = device.callbackFormats[functionID];
+        }
+        if (cbFunction === undefined || cbUnpackString === undefined) {
             return;
         }
         if (cbUnpackString === '') {
-            eval('this.devices[this.getUIDFromPacket(packetCallback)].\
-                    registeredCallbacks[this.getFunctionIDFromPacket(packetCallback)]();');
+            eval('device.registeredCallbacks[functionID]();');
             return;
         }
-        var args = unpack(this.getPayloadFromPacket(packetCallback), cbUnpackString);
-        var evalCBString = 'this.devices[this.getUIDFromPacket(packetCallback)].\
-                            registeredCallbacks[this.getFunctionIDFromPacket(packetCallback)](';
-        if (args.length <= 0) {
-            eval(evalCBString+');');
-            return;
+        form = cbUnpackString;
+        // llvalues is an array with unpacked values
+        llvalues = unpack(this.getPayloadFromPacket(packetCallback), form);
+        if (llvalues === undefined) {
+          return;
         }
-        for (var i=0; i<args.length;i++) {
-            eval('var cbArg'+i+'=args['+i+'];');
-            if (i != args.length-1) {
-                evalCBString += 'cbArg'+i+',';
-            } else {
-                evalCBString += 'cbArg'+i+');';
+        // Process high-level callback
+        if (-functionID in device.registeredCallbacks) {
+            var length = 0;
+            var chunkOffset = 0;
+            var chunkData = null;
+            // [roles, options, data]
+            var hlcb = device.high_level_callbacks[-functionID];
+            // FIXME: currently assuming that form is longer than 1
+            data = null;
+            hasData = false;
+            if (hlcb[1]['fixed_length'] !== null) {
+                length = hlcb[1]['fixed_length'];
+            }
+            else {
+                length = llvalues[hlcb[0].indexOf('stream_length')];
+            }
+            if (!hlcb[1]['single_chunk']) {
+                chunkOffset = llvalues[hlcb[0].indexOf('stream_chunk_offset')];
+            }
+            else {
+                chunkOffset = 0;
+            }
+            chunkData = llvalues[hlcb[0].indexOf('stream_chunk_data')];
+            if (hlcb[2] === null) { // No stream in-progress
+                if (chunkOffset === 0) { // Stream starts
+                    hlcb[2] = chunkData;
+                    if (hlcb[2].length >= length) { // Stream complete
+                        hasData = true;
+                        data = hlcb[2].splice(0, length);
+                    }
+                }
+                else {
+                    // Ignore tail of current stream, wait for next stream start
+                }
+            }
+            else { // Stream in-progress
+                if (chunkOffset !== hlcb[2].length) { // Stream out-of-sync
+                    hasData = true;
+                    data = null;
+                }
+                else { // Stream in-sync
+                    hlcb[2] = hlcb[2].concat(chunkData);
+                    if (hlcb[2].length >= length) { // Stream complete
+                        hasData = true;
+                        data = hlcb[2].splice(0, length);
+                    }
+                }
+            }
+            if (hasData && (-functionID.toString() in device.registeredCallbacks)) {
+                var result = [];
+                var rolesMappedData = [];
+                var evalCBString = 'device.registeredCallbacks[-functionID](';
+                for (var i = 0; i < hlcb[0].length; i++) {
+                    rolesMappedData.push({'role': hlcb[0][i], 'llvalue': llvalues[i]});
+                }
+                for (var i = 0; i < rolesMappedData.length; i++) {
+                    if (rolesMappedData[i]['role'] === 'stream_chunk_data') {
+                        result.push(data);
+                    }
+                    else if (rolesMappedData[i]['role'] === null) {
+                        result.push(rolesMappedData[i]['llvalue']);
+                    }
+                }
+                for (var i = 0; i < result.length; i++) {
+                    eval('var cbArg'+i+'=result['+i+'];');
+                    if (i != result.length - 1) {
+                        evalCBString += 'cbArg'+i+',';
+                    } else {
+                        evalCBString += 'cbArg'+i+');';
+                    }
+                }
+                hlcb[2] = null;
+                eval(evalCBString);
             }
         }
-        eval(evalCBString);
-        return;
+        // Process normal or low-level callbacks
+        if (functionID in device.registeredCallbacks) {
+            var evalCBString = 'device.registeredCallbacks[functionID](';
+            if (llvalues.length <= 0) {
+                eval(evalCBString+');');
+                return;
+            }
+            for (var i = 0; i < llvalues.length; i++) {
+                eval('var cbArg'+i+'=llvalues['+i+'];');
+                if (i != llvalues.length-1) {
+                    evalCBString += 'cbArg'+i+',';
+                } else {
+                    evalCBString += 'cbArg'+i+');';
+                }
+            }
+            eval(evalCBString);
+        }
     };
     this.handlePacket = function (packet) {
         if (this.getSequenceNumberFromPacket(packet) === 0) {

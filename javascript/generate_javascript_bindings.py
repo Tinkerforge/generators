@@ -58,6 +58,11 @@ var Device = require('./Device');
             callback_constants += 'BrickletRS232.CALLBACK_READ_CALLBACK = 8; // for backward compatibility\n'
             callback_constants += 'BrickletRS232.CALLBACK_ERROR_CALLBACK = 9; // for backward compatibility\n'
 
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                callback_constants += callback_constant_statement.format(packet.get_upper_case_name(skip=-2),
+                                                                         -packet.get_function_id())
+
         function_constants = ''
         function_constant_statement = self.get_javascript_class_name() + '.FUNCTION_{0} = {1};\n'
 
@@ -114,6 +119,40 @@ var Device = require('./Device');
 
         return callbacks + '\n'
 
+    def get_javascript_high_level_callbacks(self):
+        high_level_callbacks = ''
+        template = "\tthis.high_level_callbacks[{0}.CALLBACK_{1}] = [{4}, {{'fixed_length': {2}, 'single_chunk': {3}}}, null];\n"
+
+        for packet in self.get_packets('callback'):
+            fixed_length = ''
+            single_chunk = 'false'
+            stream = packet.get_high_level('stream_*')
+
+            if high_level_callbacks == '':
+                high_level_callbacks = "\tthis.high_level_callbacks = [];\n"
+
+            if stream != None:
+                roles = []
+
+                for element in packet.get_elements(direction='out'):
+                    roles.append(element.get_role())
+
+                if stream.get_fixed_length() == None:
+                    fixed_length = 'null'
+                else:
+                    fixed_length = stream.get_fixed_length()
+
+                if stream.has_single_chunk():
+                    single_chunk = 'true'
+
+                high_level_callbacks += template.format(self.get_javascript_class_name(),
+                                                        packet.get_upper_case_name(skip=-2),
+                                                        fixed_length,
+                                                        single_chunk,
+                                                        repr(list(roles)).replace('None', 'null'))
+
+        return high_level_callbacks + '\n'
+
     def get_javascript_methods(self):
         methods = ''
 
@@ -160,6 +199,7 @@ module.exports = {0};
         source += self.get_javascript_class_opening()
         source += self.get_javascript_response_expecteds()
         source += self.get_javascript_callback_formats()
+        source += self.get_javascript_high_level_callbacks()
         source += self.get_javascript_methods()
         source += self.get_javascript_class_closing()
 
