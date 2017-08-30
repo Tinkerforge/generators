@@ -167,7 +167,6 @@ TODO
 }]
 })
 
-# TODO: Change 'Reader Get Tag ID' to low level function (with tid dynamic length)
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Get Tag ID Low Level',
