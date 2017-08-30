@@ -124,11 +124,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the *rgb* value calibrationas set by :func:`Set RGB Calibration`.
+Returns the *rgb* value calibrationas set by :func:`Set Color Calibration`.
 """,
 'de':
 """
-Gibt die *rgb* Wert Kalibrierung zurück, wie von :func:`Set RGB Calibration` gesetzt.
+Gibt die *rgb* Wert Kalibrierung zurück, wie von :func:`Set Color Calibration` gesetzt.
 """
 }]
 })
