@@ -70,9 +70,9 @@ com['packets'].append({
 'elements': [('Identifier', 'uint8', 1, 'in'),
              ('Temperature', 'int16', 1, 'out'),   # in °C/10
              ('Humidity', 'uint8', 1, 'out'),      # in %rel
-             ('Wind Speed', 'uint16', 1, 'out'),   # in m/s
-             ('Gust Speed', 'uint16', 1, 'out'),   # in m/s
-             ('Rain', 'uint32', 1, 'out'),         # in mm
+             ('Wind Speed', 'uint32', 1, 'out'),   # in m/10s
+             ('Gust Speed', 'uint32', 1, 'out'),   # in m/10s
+             ('Rain', 'uint32', 1, 'out'),         # in mm/10
              ('Wind Direction', 'uint8', 1, 'out', WIND_DIRECTION),
              ('Battery Low', 'bool', 1, 'out'),    # true = battery low
              ('Last Change', 'uint16', 1, 'out')], # in seconds
@@ -123,9 +123,9 @@ com['packets'].append({
 'elements': [('Identifier', 'uint8', 1, 'out'),
              ('Temperature', 'int16', 1, 'out'),   # in °C/10
              ('Humidity', 'uint8', 1, 'out'),      # in %rel
-             ('Wind Speed', 'uint16', 1, 'out'),   # in m/s
-             ('Gust Speed', 'uint16', 1, 'out'),   # in m/s
-             ('Rain', 'uint32', 1, 'out'),         # in mm
+             ('Wind Speed', 'uint32', 1, 'out'),   # in m/10s
+             ('Gust Speed', 'uint32', 1, 'out'),   # in m/10s
+             ('Rain', 'uint32', 1, 'out'),         # in mm/10
              ('Wind Direction', 'uint8', 1, 'out', WIND_DIRECTION),
              ('Battery Low', 'bool', 1, 'out')],   # true = battery low
 'since_firmware': [1, 0, 0],
