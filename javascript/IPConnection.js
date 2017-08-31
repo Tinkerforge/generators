@@ -959,7 +959,6 @@ function IPConnection() {
         }
     };
     this.handleCallback = function (packetCallback) {
-        var form = undefined;
         var device = undefined;
         var llvalues = undefined;
         var cbFunction = undefined;
@@ -1010,9 +1009,8 @@ function IPConnection() {
             eval('device.registeredCallbacks[functionID]();');
             return;
         }
-        form = cbUnpackString;
         // llvalues is an array with unpacked values
-        llvalues = unpack(this.getPayloadFromPacket(packetCallback), form);
+        llvalues = unpack(this.getPayloadFromPacket(packetCallback), cbUnpackString);
         if (llvalues === undefined) {
           return;
         }
@@ -1023,7 +1021,7 @@ function IPConnection() {
             var chunkData = null;
             // [roles, options, data]
             var hlcb = device.high_level_callbacks[-functionID];
-            // FIXME: currently assuming that form is longer than 1
+            // FIXME: currently assuming that cbUnpackString is longer than 1
             data = null;
             hasData = false;
             if (hlcb[1]['fixed_length'] !== null) {
