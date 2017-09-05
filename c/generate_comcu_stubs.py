@@ -429,6 +429,7 @@ void communication_init(void);
     def copy_templates_to(self, folder_dst):
         folder_src = os.path.join(self.get_bindings_root_directory(), 'comcu_templates')
         shutil.copytree(os.path.join(folder_src, 'software'), os.path.join(folder_dst, 'software'))
+        shutil.copy(os.path.join(folder_src, '.gitignore'), os.path.join(folder_dst))
         if os.path.isdir(os.path.join(folder_src, 'hardware')):
             shutil.copytree(os.path.join(folder_src, 'hardware'),  os.path.join(folder_dst, 'hardware'))
         else:
