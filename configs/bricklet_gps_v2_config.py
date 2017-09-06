@@ -775,6 +775,51 @@ Zeit seit der letzten Auslösung geändert haben.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set SBAS Config',
+'elements': [('SBAS Config', 'uint8', 1, 'in', ('SBAS', [('Enabled', 0),
+                                                         ('Disabled', 1)]))],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+If `SBAS <https://en.wikipedia.org/wiki/GNSS_augmentation#Satellite-based_augmentation_system>`__ is enabled, 
+the position accuracy increases (if SBAS satellites are in view),
+but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.
+
+By default SBAS is enabled and the update rate is 5Hz.
+""",
+'de':
+"""
+Wenn `SBAS <https://de.wikipedia.org/wiki/Satellite_Based_Augmentation_System>`__ aktiviert ist, 
+erhöht sich die Positionsgenauigkeit der GPS Daten falls SBAS Satelliten zu sehen sind.
+Die Aktualisierungsrate der GPS Daten beträgt 5Hz falls SBAS aktiviert ist und 10Hz falls SBAS deaktiviert ist.
+
+Standardmäßig ist SBAS aktiviert und die Aktualisierungsrate 5Hz.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get SBAS Config',
+'elements': [('SBAS Config', 'uint8', 1, 'out', ('SBAS', [('Enabled', 0),
+                                                          ('Disabled', 1)]))],
+
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the SBAS configuration as set by :func:`Set SBAS Config`
+""",
+'de':
+"""
+Gibt die SBAS-Konfiguration zurück, wie von :func:`SetSBAS Config` gesetzt.
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('NS', 'N/S'), 'char', None, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('EW', 'E/W'), 'char', None, None, None, None)], [])],
