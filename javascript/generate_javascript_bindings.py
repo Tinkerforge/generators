@@ -121,7 +121,7 @@ var Device = require('./Device');
 
     def get_javascript_high_level_callbacks(self):
         high_level_callbacks = ''
-        template = "\tthis.high_level_callbacks[{0}.CALLBACK_{1}] = [{4}, {{'fixed_length': {2}, 'single_chunk': {3}}}, null];\n"
+        template = "\tthis.highLevelCallbacks[{0}.CALLBACK_{1}] = [{4}, {{'fixedLength': {2}, 'singleChunk': {3}}}, null];\n"
 
         for packet in self.get_packets('callback'):
             fixed_length = ''
@@ -129,13 +129,22 @@ var Device = require('./Device');
             stream = packet.get_high_level('stream_*')
 
             if high_level_callbacks == '':
-                high_level_callbacks = "\tthis.high_level_callbacks = [];\n"
+                high_level_callbacks = "\tthis.highLevelCallbacks = [];\n"
 
             if stream != None:
                 roles = []
 
                 for element in packet.get_elements(direction='out'):
-                    roles.append(element.get_role())
+                    if not element.get_role():
+                        roles.append(element.get_role())
+                        continue
+
+                    role_split = element.get_role().split('_')
+
+                    for i in range(1, len(role_split)):
+                        role_split[i] = role_split[i].lower().capitalize()
+
+                    roles.append(''.join(role_split))
 
                 if stream.get_fixed_length() == None:
                     fixed_length = 'null'
@@ -153,35 +162,220 @@ var Device = require('./Device');
 
         return high_level_callbacks + '\n'
 
+    def get_javascript_stream_state_objects(self):
+        stream_state_objects = ''
+        template = """	this.streamStateObjects[{0}.FUNCTION_{1}] = {{
+		'dataMapping': {4},
+		'streamProperties': {{
+			'fixedLength': {2},
+			'singleChunk': {3}
+		}},
+		'responseProperties': {{
+			'running': 0,
+			'timeout': null,
+			'data': null,
+			'responseHandler': null,
+			'returnCB': null,
+			'errorCB': null,
+			'callQueue': []
+		}}
+	}};
+"""
+
+        for packet in self.get_packets('function'):
+            if not packet.get_high_level('stream_in') and not packet.get_high_level('stream_out'):
+                continue
+
+            fixed_length = ''
+            single_chunk = 'false'
+            stream_in = packet.get_high_level('stream_in')
+            stream_out = packet.get_high_level('stream_out')
+
+            if stream_state_objects == '':
+                stream_state_objects = "\tthis.streamStateObjects = [];\n"
+
+            if stream_in != None:
+                roles = []
+
+                for element in packet.get_elements(direction='in'):
+                    roles.append(element.get_role())
+
+                if stream_in.get_fixed_length() == None:
+                    fixed_length = 'null'
+                else:
+                    fixed_length = stream_in.get_fixed_length()
+
+                if stream_in.has_single_chunk():
+                    single_chunk = 'true'
+
+                stream_state_objects += template.format(self.get_javascript_class_name(),
+                                                        packet.get_upper_case_name(),
+                                                        fixed_length,
+                                                        single_chunk,
+                                                        repr(list(roles)).replace('None', 'null'))
+
+            elif stream_out != None:
+                roles = []
+
+                for element in packet.get_elements(direction='out'):
+                    roles.append(element.get_role())
+
+                if stream_out.get_fixed_length() == None:
+                    fixed_length = 'null'
+                else:
+                    fixed_length = stream_out.get_fixed_length()
+
+                if stream_out.has_single_chunk():
+                    single_chunk = 'true'
+
+                stream_state_objects += template.format(self.get_javascript_class_name(),
+                                                        packet.get_upper_case_name(),
+                                                        fixed_length,
+                                                        single_chunk,
+                                                        repr(list(roles)).replace('None', 'null'))
+        return stream_state_objects + '\n'
+
     def get_javascript_methods(self):
         methods = ''
 
+        # Normal and low-level
         for packet in self.get_packets('function'):
+            doc = packet.get_javascript_formatted_doc()
             name = packet.get_headless_camel_case_name()
             upper_case_name = packet.get_upper_case_name()
             param_list = packet.get_javascript_parameter_list()
             pack_format = packet.get_javascript_format_list('in')
             unpack_format = packet.get_javascript_format_list('out')
-            doc = packet.get_javascript_formatted_doc()
             no_param_method_code = """	this.{0} = function(returnCallback, errorCallback) {{
 		/*
 		{1}
 		*/
-		this.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback);
+		this.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback, false);
 	}};
 """
             param_method_code = """	this.{0} = function({1}, returnCallback, errorCallback) {{
 		/*
 		{2}
 		*/
-		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback);
+		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback, false);
 	}};
 """
 
             if len(param_list) == 0:
-                methods += no_param_method_code.format(name, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
+                methods += no_param_method_code.format(name,
+                                                       doc,
+                                                       self.get_javascript_class_name(),
+                                                       upper_case_name,
+                                                       param_list,
+                                                       pack_format,
+                                                       unpack_format)
             else:
-                methods += param_method_code.format(name, param_list, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
+                methods += param_method_code.format(name,
+                                                    param_list,
+                                                    doc,
+                                                    self.get_javascript_class_name(),
+                                                    upper_case_name,
+                                                    param_list,
+                                                    pack_format,
+                                                    unpack_format)
+
+        # TODO: Generate high-level functions
+        # High-level
+        no_param_method_code = """	this.{name} = function(returnCallback, errorCallback) {{
+		/*
+		{doc}
+		*/
+		var responseHandler = null;
+		var functionToQueue = null;
+		var streamStateObject = this.streamStateObjects[{device_class}.FUNCTION_{function_name}];
+		if (streamStateObject['responseProperties']['responseHandler'] === null) {{
+			responseHandler = {response_handler_function}
+			streamStateObject['responseProperties']['responseHandler'] = responseHandler;
+		}}
+		if (streamStateObject['responseProperties']['running'] === 0) {{
+			streamStateObject['responseProperties']['running'] = 1;
+			this.ipcon.sendRequest(this,
+			                       {device_class}.FUNCTION_{function_name},
+			                       [{param_list}],
+			                       '{pack_format}',
+			                       '{unpack_format}',
+			                       returnCallback,
+			                       errorCallback,
+			                       true);
+		}}
+		else {{
+			functionToQueue = function () {{
+				this.{name}.call(this, returnCallback, errorCallback);
+			}}
+			streamStateObject['responseProperties']['callQueue'].push(functionToQueue);
+		}}
+	}};
+"""
+        param_method_code = """	this.{name} = function({param_list}, returnCallback, errorCallback) {{
+		/*
+		{doc}
+		*/
+		var responseHandler = null;
+		var functionToQueue = null;
+		var streamStateObject = this.streamStateObjects[{device_class}.FUNCTION_{function_name}];
+		if (streamStateObject['responseProperties']['responseHandler'] === null) {{
+			responseHandler = {response_handler_function}
+			streamStateObject['responseProperties']['responseHandler'] = responseHandler;
+		}}
+		if (streamStateObject['responseProperties']['running'] === 0) {{
+			streamStateObject['responseProperties']['running'] = 1;
+			this.ipcon.sendRequest(this,
+			                       {device_class}.FUNCTION_{function_name},
+			                       [{param_list}],
+			                       '{pack_format}',
+			                       '{unpack_format}',
+			                       returnCallback, errorCallback,
+			                       true);
+		}}
+		else {{
+			functionToQueue = function () {{
+				this.{name}.call(this, {param_list}, returnCallback, errorCallback);
+			}}
+			streamStateObject['responseProperties']['callQueue'].push(functionToQueue);
+		}}
+	}};
+"""
+
+        for packet in self.get_packets('function'):
+            stream_in = packet.get_high_level('stream_in')
+            stream_out = packet.get_high_level('stream_out')
+
+            if stream_in != None:
+                # TODO: Generate high-level functions for streamed setters
+                pass
+            elif stream_out != None:
+                # TODO: Generate high-level functions for streamed getters
+                response_handler_function = 'function () {;}\n' # TODO: Generate response handler functions
+                doc = packet.get_javascript_formatted_doc()
+                upper_case_name = packet.get_upper_case_name()
+                name = packet.get_headless_camel_case_name(skip=-2)
+                param_list = packet.get_javascript_parameter_list()
+                pack_format = packet.get_javascript_format_list('in')
+                unpack_format = packet.get_javascript_format_list('out')
+
+                if len(param_list) == 0:
+                    methods += no_param_method_code.format(name = name,
+                                                           doc = doc,
+                                                           device_class = self.get_javascript_class_name(),
+                                                           function_name = upper_case_name,
+                                                           response_handler_function = response_handler_function,
+                                                           param_list = param_list,
+                                                           pack_format = pack_format,
+                                                           unpack_format = unpack_format)
+                else:
+                    methods += param_method_code.format(name = name,
+                                                        param_list = param_list,
+                                                        doc = doc,
+                                                        device_class = self.get_javascript_class_name(),
+                                                        function_name = upper_case_name,
+                                                        response_handler_function = response_handler_function,
+                                                        pack_format = pack_format,
+                                                        unpack_format = unpack_format)
 
         return methods
 
@@ -200,6 +394,7 @@ module.exports = {0};
         source += self.get_javascript_response_expecteds()
         source += self.get_javascript_callback_formats()
         source += self.get_javascript_high_level_callbacks()
+        source += self.get_javascript_stream_state_objects()
         source += self.get_javascript_methods()
         source += self.get_javascript_class_closing()
 

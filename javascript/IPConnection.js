@@ -42,6 +42,7 @@ IPConnection.ERROR_TIMEOUT = 31;
 IPConnection.ERROR_INVALID_PARAMETER = 41;
 IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42;
 IPConnection.ERROR_UNKNOWN_ERROR = 43;
+IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51;
 
 IPConnection.TASK_KIND_CONNECT = 0;
 IPConnection.TASK_KIND_DISCONNECT = 1;
@@ -850,7 +851,7 @@ function IPConnection() {
      }
     this.sendRequest = function (sendRequestDevice, sendRequestFID, sendRequestData,
                                  sendRequestPackFormat, sendRequestUnpackFormat,
-                                 sendRequestReturnCB, sendRequestErrorCB) {
+                                 sendRequestReturnCB, sendRequestErrorCB, startStreamResponseTimer) {
         if (this.getConnectionState() !== IPConnection.CONNECTION_STATE_CONNECTED) {
             if (sendRequestErrorCB !== undefined) {
                 sendRequestErrorCB(IPConnection.ERROR_NOT_CONNECTED);
@@ -871,14 +872,30 @@ function IPConnection() {
         if (sendRequestDevice.getResponseExpected(sendRequestFID)) {
             // Setting the requesting current device's current request
             var sendRequestDeviceOID = sendRequestDevice.getDeviceOID();
-            sendRequestDevice.expectedResponses.push({DeviceOID:sendRequestDeviceOID,
-                FID:sendRequestFID,
-                SEQ:sendRequestSEQ,
-                unpackFormat:sendRequestUnpackFormat,
-                timeout:setTimeout(this.sendRequestTimeout.bind
-                        (this, sendRequestDevice, sendRequestDeviceOID, sendRequestErrorCB), this.timeout),
-                returnCB:sendRequestReturnCB,
-                errorCB:sendRequestErrorCB});
+            if(!startStreamResponseTimer) {
+                sendRequestDevice.expectedResponses.push({
+                    DeviceOID:sendRequestDeviceOID,
+                    FID:sendRequestFID,
+                    SEQ:sendRequestSEQ,
+                    unpackFormat:sendRequestUnpackFormat,
+                    timeout:setTimeout(this.sendRequestTimeout.bind
+                            (this, sendRequestDevice, sendRequestDeviceOID, sendRequestErrorCB), this.timeout),
+                    returnCB:sendRequestReturnCB,
+                    errorCB:sendRequestErrorCB
+                });
+            }
+            else {
+                // Setup streaming timer
+                if (sendRequestFID in sendRequestDevice.streamStateObjects) {
+                    sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] =
+                        setTimeout(
+                            this.sendRequestTimeoutStreamOut.bind(this,
+                                                                  sendRequestDevice,
+                                                                  sendRequestFID,
+                                                                  sendRequestErrorCB),
+                            this.timeout);
+                }
+            }
         }
         this.socket.write(sendRequestPacket, this.resetDisconnectProbe());
     };
@@ -894,68 +911,110 @@ function IPConnection() {
             }
         }
     };
+    this.sendRequestTimeoutStreamOut = function (timeoutDevice, timeoutFID, timeoutErrorCB) {
+        var streamOutObject = null;
+        if (!(timeoutFID in timeoutDevice.streamStateObjects)) {
+            return;
+        }
+        streamOutObject = timeoutDevice.streamStateObjects[timeoutFID];
+        if (streamOutObject === null) {
+            return;
+        }
+        // Clear timer
+        clearTimeout(streamOutObject['responseProperties']['timeout']);
+        // Call error callback (if any)
+        if (streamOutObject['responseProperties']['errorCB'] !== null) {
+            streamOutObject['responseProperties']['errorCB'](IPConnection.ERROR_TIMEOUT);
+        }
+        // Reset stream state object
+        timeoutDevice.resetStreamStateObject(streamOutObject);
+        // Call next function from call queue (if any)
+        if (streamOutObject['responseProperties']['callQueue'].length > 0) {
+            streamOutObject['responseProperties']['callQueue'].shift()();
+        }
+    };
     this.handleResponse = function (packetResponse) {
-        var handleResponseDevice = this.devices[this.getUIDFromPacket(packetResponse)];
+        var streamStateObject = null;
         var handleResponseFID = this.getFunctionIDFromPacket(packetResponse);
         var handleResponseSEQ = this.getSequenceNumberFromPacket(packetResponse);
-        for (var i=0; i < handleResponseDevice.expectedResponses.length; i++) {
-            if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].returnCB === undefined) {
-                clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-                handleResponseDevice.expectedResponses.splice(i, 1);
-                return;
-            }
-            if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].unpackFormat === '') {
-                clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-                if (handleResponseDevice.expectedResponses[i].returnCB !== undefined) {
-                    eval('handleResponseDevice.expectedResponses[i].returnCB();');
+        var handleResponseDevice = this.devices[this.getUIDFromPacket(packetResponse)];
+        // Handle non-streamed response
+        if (!(handleResponseFID in handleResponseDevice.streamStateObjects)) {
+            for (var i=0; i < handleResponseDevice.expectedResponses.length; i++) {
+                if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].returnCB === undefined) {
+                    clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+                    handleResponseDevice.expectedResponses.splice(i, 1);
+                    return;
                 }
-                handleResponseDevice.expectedResponses.splice(i, 1);
-                return;
-            }
-            if (handleResponseDevice.expectedResponses[i].FID === handleResponseFID &&
+                if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].unpackFormat === '') {
+                    clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+                    if (handleResponseDevice.expectedResponses[i].returnCB !== undefined) {
+                        eval('handleResponseDevice.expectedResponses[i].returnCB();');
+                    }
+                    handleResponseDevice.expectedResponses.splice(i, 1);
+                    return;
+                }
+                if (handleResponseDevice.expectedResponses[i].FID === handleResponseFID &&
                     handleResponseDevice.expectedResponses[i].SEQ === handleResponseSEQ) {
-            	if (this.getEFromPacket(packetResponse) === 1) {
-                    clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-            		if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
-            			eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_INVALID_PARAMETER);');
-            		}
-            		handleResponseDevice.expectedResponses.splice(i, 1);
-            		return;
-            	}
-            	if (this.getEFromPacket(packetResponse) === 2) {
-                    clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-            		if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
-            			eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_FUNCTION_NOT_SUPPORTED);');
-            		}
-            		handleResponseDevice.expectedResponses.splice(i, 1);
-            		return;
-            	}
-            	if (this.getEFromPacket(packetResponse) !== 0) {
-                    clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-            		if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
-            			eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_UNKNOWN_ERROR);');
-            		}
-            		handleResponseDevice.expectedResponses.splice(i, 1);
-            		return;
-            	}
-                clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-                if (handleResponseDevice.expectedResponses[i].returnCB !== undefined) {
-                	var retArgs = unpack(this.getPayloadFromPacket(packetResponse),
-                			handleResponseDevice.expectedResponses[i].unpackFormat);
-                	var evalStr = 'handleResponseDevice.expectedResponses[i].returnCB(';
-                	for (var j=0; j<retArgs.length;j++) {
-                		eval('var retSingleArg'+j+'=retArgs['+j+'];');
-                		if (j != retArgs.length-1) {
-                			evalStr += 'retSingleArg'+j+',';
-                		} else {
-                			evalStr += 'retSingleArg'+j+');';
-                		}
-                	}
-                	eval(evalStr);
+                        if (this.getEFromPacket(packetResponse) === 1) {
+                            clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+                            if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+                                eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_INVALID_PARAMETER);');
+                            }
+                            handleResponseDevice.expectedResponses.splice(i, 1);
+                            return;
+                        }
+                        if (this.getEFromPacket(packetResponse) === 2) {
+                            clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+                            if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+                                eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_FUNCTION_NOT_SUPPORTED);');
+                            }
+                            handleResponseDevice.expectedResponses.splice(i, 1);
+                            return;
+                        }
+                        if (this.getEFromPacket(packetResponse) !== 0) {
+                            clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+                            if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+                                eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_UNKNOWN_ERROR);');
+                            }
+                            handleResponseDevice.expectedResponses.splice(i, 1);
+                            return;
+                        }
+                        clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+                        if (handleResponseDevice.expectedResponses[i].returnCB !== undefined) {
+                            var retArgs = unpack(this.getPayloadFromPacket(packetResponse),
+                            handleResponseDevice.expectedResponses[i].unpackFormat);
+                            var evalStr = 'handleResponseDevice.expectedResponses[i].returnCB(';
+                            for (var j=0; j<retArgs.length;j++) {
+                                eval('var retSingleArg'+j+'=retArgs['+j+'];');
+                                if (j != retArgs.length-1) {
+                                    evalStr += 'retSingleArg'+j+',';
+                                } else {
+                                  evalStr += 'retSingleArg'+j+');';
+                                }
+                            }
+                            eval(evalStr);
+                        }
+                        handleResponseDevice.expectedResponses.splice(i, 1);
+                        return;
                 }
-                handleResponseDevice.expectedResponses.splice(i, 1);
+            }
+        }
+        // Handle streamed response
+        else {
+            streamStateObject = handleResponseDevice.streamStateObjects[handleResponseFID];
+            if (streamStateObject === null) {
                 return;
             }
+            if (streamStateObject['responseProperties']['running'] === 0) {
+                handleResponseDevice.resetStreamStateObject(streamStateObject);
+                return;
+            }
+            if (streamStateObject['responseProperties']['responseHandler'] === null) {
+                handleResponseDevice.resetStreamStateObject(streamStateObject);
+                return;
+            }
+            streamStateObject['responseProperties']['responseHandler'](packetResponse);
         }
     };
     this.handleCallback = function (packetCallback) {
@@ -991,8 +1050,8 @@ function IPConnection() {
         }
         if ((device.registeredCallbacks[functionID] === undefined &&
              device.registeredCallbacks[-functionID] === undefined) ||
-            device.callbackFormats[functionID] === undefined) {
-              return;
+             device.callbackFormats[functionID] === undefined) {
+                return;
         }
         if (device.registeredCallbacks[functionID] !== undefined) {
             cbFunction = device.registeredCallbacks[functionID];
@@ -1010,7 +1069,8 @@ function IPConnection() {
             return;
         }
         // llvalues is an array with unpacked values
-        llvalues = unpack(this.getPayloadFromPacket(packetCallback), cbUnpackString);
+        llvalues = unpack(this.getPayloadFromPacket(packetCallback),
+                          cbUnpackString);
         if (llvalues === undefined) {
           return;
         }
@@ -1019,24 +1079,23 @@ function IPConnection() {
             var length = 0;
             var chunkOffset = 0;
             var chunkData = null;
-            // [roles, options, data]
-            var hlcb = device.high_level_callbacks[-functionID];
+            var hlcb = device.highLevelCallbacks[-functionID];
             // FIXME: currently assuming that cbUnpackString is longer than 1
             data = null;
             hasData = false;
-            if (hlcb[1]['fixed_length'] !== null) {
-                length = hlcb[1]['fixed_length'];
+            if (hlcb[1]['fixedLength'] !== null) {
+                length = hlcb[1]['fixedLength'];
             }
             else {
-                length = llvalues[hlcb[0].indexOf('stream_length')];
+                length = llvalues[hlcb[0].indexOf('streamLength')];
             }
-            if (!hlcb[1]['single_chunk']) {
-                chunkOffset = llvalues[hlcb[0].indexOf('stream_chunk_offset')];
+            if (!hlcb[1]['singleChunk']) {
+                chunkOffset = llvalues[hlcb[0].indexOf('streamChunkOffset')];
             }
             else {
                 chunkOffset = 0;
             }
-            chunkData = llvalues[hlcb[0].indexOf('stream_chunk_data')];
+            chunkData = llvalues[hlcb[0].indexOf('streamChunkData')];
             if (hlcb[2] === null) { // No stream in-progress
                 if (chunkOffset === 0) { // Stream starts
                     hlcb[2] = chunkData;
@@ -1070,7 +1129,7 @@ function IPConnection() {
                     rolesMappedData.push({'role': hlcb[0][i], 'llvalue': llvalues[i]});
                 }
                 for (var i = 0; i < rolesMappedData.length; i++) {
-                    if (rolesMappedData[i]['role'] === 'stream_chunk_data') {
+                    if (rolesMappedData[i]['role'] === 'streamChunkData') {
                         result.push(data);
                     }
                     else if (rolesMappedData[i]['role'] === null) {
