@@ -815,7 +815,7 @@ Returns the SBAS configuration as set by :func:`Set SBAS Config`
 """,
 'de':
 """
-Gibt die SBAS-Konfiguration zurück, wie von :func:`SetSBAS Config` gesetzt.
+Gibt die SBAS-Konfiguration zurück, wie von :func:`Set SBAS Config` gesetzt.
 """
 }]
 })
