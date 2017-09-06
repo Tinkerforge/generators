@@ -109,6 +109,17 @@ function Device(deviceRegistering, uid, ipcon) {
                 }
             }
         };
+
+        this.resetStreamStateObject = function (streamStateObject) {
+            streamStateObject['response_properties']['running'] = 0;
+            if (streamStateObject['response_properties']['timeout'] !== null) {
+              clearTimeout(streamStateObject['response_properties']['timeout']);
+              streamStateObject['response_properties']['timeout'] = null;
+            }
+            streamStateObject['response_properties']['data'] = null;
+            streamStateObject['response_properties']['return_cb'] = null;
+            streamStateObject['response_properties']['error_cb'] = null;
+        };
     }
 }
 

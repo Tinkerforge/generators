@@ -369,7 +369,7 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
-        \"\"\"{fixed_length}
+        \"\"\"
         with self.stream_lock:
             ret = self.{underscore_name}_low_level({parameters}){dynamic_length_3}
             {chunk_offset_check}{stream_underscore_name}_out_of_sync = ret.{stream_underscore_name}_chunk_offset != 0
