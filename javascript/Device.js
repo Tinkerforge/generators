@@ -32,6 +32,8 @@ function Device(deviceRegistering, uid, ipcon) {
         this.uid = base58Decode(uid);
         this.responseExpected = {};
         this.callbackFormats = {};
+        this.highLevelCallbacks = {};
+        this.streamStateObjects = {};
         this.registeredCallbacks = {};
         this.ipcon = ipcon;
         this.deviceOID = 0;
@@ -111,14 +113,17 @@ function Device(deviceRegistering, uid, ipcon) {
         };
 
         this.resetStreamStateObject = function (streamStateObject) {
-            streamStateObject['response_properties']['running'] = 0;
-            if (streamStateObject['response_properties']['timeout'] !== null) {
-              clearTimeout(streamStateObject['response_properties']['timeout']);
-              streamStateObject['response_properties']['timeout'] = null;
+            streamStateObject['responseProperties']['running'] = false;
+            streamStateObject['responseProperties']['runningSubcall'] = false;
+            streamStateObject['responseProperties']['runningSubcallOOS'] = false;
+            streamStateObject['responseProperties']['waitingFirstChunk'] = true;
+            if (streamStateObject['responseProperties']['timeout'] !== null) {
+              clearTimeout(streamStateObject['responseProperties']['timeout']);
+              streamStateObject['responseProperties']['timeout'] = null;
             }
-            streamStateObject['response_properties']['data'] = null;
-            streamStateObject['response_properties']['return_cb'] = null;
-            streamStateObject['response_properties']['error_cb'] = null;
+            streamStateObject['responseProperties']['data'].length = 0;
+            streamStateObject['responseProperties']['returnCB'] = null;
+            streamStateObject['responseProperties']['errorCB'] = null;
         };
     }
 }

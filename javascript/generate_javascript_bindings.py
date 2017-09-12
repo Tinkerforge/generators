@@ -36,6 +36,7 @@ class JavaScriptBindingsDevice(javascript_common.JavaScriptDevice):
     def get_javascript_require(self):
         template = """{0}
 var Device = require('./Device');
+var IPConnection = require('./IPConnection');
 
 {1}.DEVICE_IDENTIFIER = {2};
 {1}.DEVICE_DISPLAY_NAME = '{3}';
@@ -128,9 +129,6 @@ var Device = require('./Device');
             single_chunk = 'false'
             stream = packet.get_high_level('stream_*')
 
-            if high_level_callbacks == '':
-                high_level_callbacks = "\tthis.highLevelCallbacks = [];\n"
-
             if stream != None:
                 roles = []
 
@@ -171,10 +169,15 @@ var Device = require('./Device');
 			'singleChunk': {3}
 		}},
 		'responseProperties': {{
-			'running': 0,
+			'running': false,
+			'runningSubcall': false,
+			'runningSubcallOOS': false,
+			'waitingFirstChunk': true,
 			'timeout': null,
-			'data': null,
+			'data': [],
 			'responseHandler': null,
+			'packFormatString': '{5}',
+			'unpackFormatString': '{6}',
 			'returnCB': null,
 			'errorCB': null,
 			'callQueue': []
@@ -191,14 +194,20 @@ var Device = require('./Device');
             stream_in = packet.get_high_level('stream_in')
             stream_out = packet.get_high_level('stream_out')
 
-            if stream_state_objects == '':
-                stream_state_objects = "\tthis.streamStateObjects = [];\n"
-
             if stream_in != None:
                 roles = []
 
                 for element in packet.get_elements(direction='in'):
-                    roles.append(element.get_role())
+                    if not element.get_role():
+                        roles.append(element.get_role())
+                        continue
+
+                    role_split = element.get_role().split('_')
+
+                    for i in range(1, len(role_split)):
+                        role_split[i] = role_split[i].lower().capitalize()
+
+                    roles.append(''.join(role_split))
 
                 if stream_in.get_fixed_length() == None:
                     fixed_length = 'null'
@@ -212,13 +221,24 @@ var Device = require('./Device');
                                                         packet.get_upper_case_name(),
                                                         fixed_length,
                                                         single_chunk,
-                                                        repr(list(roles)).replace('None', 'null'))
+                                                        repr(list(roles)).replace('None', 'null'),
+                                                        packet.get_javascript_format_list('in'),
+                                                        packet.get_javascript_format_list('out'))
 
             elif stream_out != None:
                 roles = []
 
                 for element in packet.get_elements(direction='out'):
-                    roles.append(element.get_role())
+                    if not element.get_role():
+                        roles.append(element.get_role())
+                        continue
+
+                    role_split = element.get_role().split('_')
+
+                    for i in range(1, len(role_split)):
+                        role_split[i] = role_split[i].lower().capitalize()
+
+                    roles.append(''.join(role_split))
 
                 if stream_out.get_fixed_length() == None:
                     fixed_length = 'null'
@@ -232,7 +252,9 @@ var Device = require('./Device');
                                                         packet.get_upper_case_name(),
                                                         fixed_length,
                                                         single_chunk,
-                                                        repr(list(roles)).replace('None', 'null'))
+                                                        repr(list(roles)).replace('None', 'null'),
+                                                        packet.get_javascript_format_list('in'),
+                                                        packet.get_javascript_format_list('out'))
         return stream_state_objects + '\n'
 
     def get_javascript_methods(self):
@@ -279,7 +301,6 @@ var Device = require('./Device');
                                                     pack_format,
                                                     unpack_format)
 
-        # TODO: Generate high-level functions
         # High-level
         no_param_method_code = """	this.{name} = function(returnCallback, errorCallback) {{
 		/*
@@ -287,13 +308,15 @@ var Device = require('./Device');
 		*/
 		var responseHandler = null;
 		var functionToQueue = null;
-		var streamStateObject = this.streamStateObjects[{device_class}.FUNCTION_{function_name}];
+		var streamStateObject = this.streamStateObjects[{fid}];
 		if (streamStateObject['responseProperties']['responseHandler'] === null) {{
 			responseHandler = {response_handler_function}
 			streamStateObject['responseProperties']['responseHandler'] = responseHandler;
 		}}
-		if (streamStateObject['responseProperties']['running'] === 0) {{
-			streamStateObject['responseProperties']['running'] = 1;
+		if (!streamStateObject['responseProperties']['running']) {{
+			streamStateObject['responseProperties']['running'] = true;
+			streamStateObject['responseProperties']['returnCB'] = returnCallback;
+			streamStateObject['responseProperties']['errorCB'] = errorCallback;
 			this.ipcon.sendRequest(this,
 			                       {device_class}.FUNCTION_{function_name},
 			                       [{param_list}],
@@ -304,8 +327,8 @@ var Device = require('./Device');
 			                       true);
 		}}
 		else {{
-			functionToQueue = function () {{
-				this.{name}.call(this, returnCallback, errorCallback);
+			functionToQueue = function (device) {{
+				device.{name}.call(device, returnCallback, errorCallback);
 			}}
 			streamStateObject['responseProperties']['callQueue'].push(functionToQueue);
 		}}
@@ -317,29 +340,303 @@ var Device = require('./Device');
 		*/
 		var responseHandler = null;
 		var functionToQueue = null;
-		var streamStateObject = this.streamStateObjects[{device_class}.FUNCTION_{function_name}];
+		var streamStateObject = this.streamStateObjects[{fid}];
 		if (streamStateObject['responseProperties']['responseHandler'] === null) {{
 			responseHandler = {response_handler_function}
 			streamStateObject['responseProperties']['responseHandler'] = responseHandler;
 		}}
-		if (streamStateObject['responseProperties']['running'] === 0) {{
-			streamStateObject['responseProperties']['running'] = 1;
+		if (!streamStateObject['responseProperties']['running']) {{
+			streamStateObject['responseProperties']['running'] = true;
+			streamStateObject['responseProperties']['returnCB'] = returnCallback;
+			streamStateObject['responseProperties']['errorCB'] = errorCallback;
 			this.ipcon.sendRequest(this,
 			                       {device_class}.FUNCTION_{function_name},
 			                       [{param_list}],
 			                       '{pack_format}',
 			                       '{unpack_format}',
-			                       returnCallback, errorCallback,
+			                       returnCallback,
+			                       errorCallback,
 			                       true);
 		}}
 		else {{
-			functionToQueue = function () {{
-				this.{name}.call(this, {param_list}, returnCallback, errorCallback);
+			functionToQueue = function (device) {{
+				device.{name}.call(device, {param_list}, returnCallback, errorCallback);
 			}}
 			streamStateObject['responseProperties']['callQueue'].push(functionToQueue);
 		}}
 	}};
 """
+
+        template_response_handler_stream_out = """
+				function (device, fid, packetResponse) {{
+					var result = [];
+					var llvalues = null;
+					var rolesMappedData = [];
+					var {stream_headless_camel_case_name}Length = null;
+					var {stream_headless_camel_case_name}ChunkData = null;
+					var {stream_headless_camel_case_name}OutOfSync = false;
+					var streamStateObject = device.streamStateObjects[fid];
+					var {stream_headless_camel_case_name}ChunkOffset = null;
+					var payload = device.ipcon.getPayloadFromPacket(packetResponse);
+
+					if (payload.length === 0) {{
+						device.resetStreamStateObject(streamStateObject);
+
+						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+							streamStateObject['responseProperties']['callQueue'].shift()(device);
+						}}
+
+						return;
+					}}
+
+					llvalues = device.ipcon.unpack(payload,
+					                               streamStateObject['responseProperties']['unpackFormatString']);
+
+					for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+						if (streamStateObject['dataMapping'][i] === 'streamChunkData') {{
+							{stream_headless_camel_case_name}ChunkData = llvalues[i];
+						}}
+						else if (streamStateObject['dataMapping'][i] === 'streamChunkOffset') {{
+							{stream_headless_camel_case_name}ChunkOffset = llvalues[i];
+						}}
+					}}
+
+					{get_length}
+					{body}
+				}};
+"""
+
+        template_response_handler_stream_out_get_length_fixed = """{stream_headless_camel_case_name}Length = streamStateObject['streamProperties']['fixedLength'];
+"""
+
+        template_response_handler_stream_out_get_length_variable = """for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+						if (streamStateObject['dataMapping'][i] === 'streamLength') {{
+							{stream_headless_camel_case_name}Length = llvalues[i];
+							break;
+						}}
+					}}
+"""
+
+        template_response_handler_stream_out_body_subcall = \
+            """device.ipcon.sendRequest(device, \
+{device_class}.FUNCTION_{function_name}, \
+[{param_list}], \
+'{pack_format}', \
+'{unpack_format}', \
+streamStateObject['responseProperties']['returnCB'], \
+streamStateObject['responseProperties']['errorCB'], \
+true);"""
+
+        template_response_handler_stream_out_body_single_chunk = """{stream_headless_camel_case_name}ChunkOffset = 0;
+
+					if (streamStateObject['responseProperties']['returnCB']) {{
+						for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+							rolesMappedData.push({{'role': streamStateObject['dataMapping'][i], 'llvalue': llvalues[i]}});
+						}}
+
+						for (var i = 0; i < rolesMappedData.length; i++) {{
+							if (rolesMappedData[i]['role'] === 'streamChunkData') {{
+								result.push({stream_headless_camel_case_name}ChunkData.splice(0, {stream_headless_camel_case_name}Length));
+							}}
+							else if (rolesMappedData[i]['role'] === null) {{
+								result.push(rolesMappedData[i]['llvalue']);
+							}}
+						}}
+
+						streamStateObject['responseProperties']['returnCB'].apply(this, result);
+					}}
+
+					device.resetStreamStateObject(streamStateObject);
+
+					if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+						streamStateObject['responseProperties']['callQueue'].shift()(device);
+					}}"""
+
+        template_response_handler_stream_out_body_fixed_stream_length = """function handleOOS() {{
+						if (({stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality}) < {stream_headless_camel_case_name}Length) {{
+							streamStateObject['responseProperties']['runningSubcallOOS'] = true;
+							{subcall}
+
+							return;
+						}}
+
+						if (streamStateObject['responseProperties']['errorCB']) {{
+							streamStateObject['responseProperties']['errorCB'](IPConnection.ERROR_STREAM_OUT_OF_SYNC);
+						}}
+
+						device.resetStreamStateObject(streamStateObject);
+
+						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+							streamStateObject['responseProperties']['callQueue'].shift()(device);
+						}}
+
+						return;
+					}}
+
+					if (streamStateObject['responseProperties']['waitingFirstChunk']) {{
+						streamStateObject['responseProperties']['waitingFirstChunk'] = false;
+
+						if ({stream_headless_camel_case_name}ChunkOffset === ((1 << {shift_size}) - 1)) {{ // maximum chunk offset -> stream has no data
+							{stream_headless_camel_case_name}Length = 0;
+							{stream_headless_camel_case_name}OutOfSync = false;
+							streamStateObject['responseProperties']['data'].length = 0;
+						}}
+						else {{
+								{stream_headless_camel_case_name}OutOfSync = ({stream_headless_camel_case_name}ChunkOffset !== 0);
+								streamStateObject['responseProperties']['data'] = {stream_headless_camel_case_name}ChunkData;
+						}}
+					}}
+
+					if (!streamStateObject['responseProperties']['runningSubcallOOS']) {{
+						if (!streamStateObject['responseProperties']['runningSubcall']) {{
+							if (!{stream_headless_camel_case_name}OutOfSync &&
+								(streamStateObject['responseProperties']['data'].length < {stream_headless_camel_case_name}Length)) {{
+									streamStateObject['responseProperties']['runningSubcall'] = true;
+									{subcall}
+
+									return;
+							}}
+						}}
+						else {{
+							{stream_headless_camel_case_name}OutOfSync =
+								({stream_headless_camel_case_name}ChunkOffset !== streamStateObject['responseProperties']['data'].length);
+
+							if (!{stream_headless_camel_case_name}OutOfSync &&
+								(streamStateObject['responseProperties']['data'].length < {stream_headless_camel_case_name}Length)) {{
+									streamStateObject['responseProperties']['data'] =
+										streamStateObject['responseProperties']['data'].concat({stream_headless_camel_case_name}ChunkData);
+									if (streamStateObject['responseProperties']['data'].length >= {stream_headless_camel_case_name}Length) {{
+										streamStateObject['responseProperties']['data'] =
+											streamStateObject['responseProperties']['data'].splice(0, {stream_headless_camel_case_name}Length);
+									}}
+									else {{
+										{subcall}
+
+										return;
+									}}
+							}}
+						}}
+					}}
+					else {{
+						handleOOS();
+					}}
+
+					if ({stream_headless_camel_case_name}OutOfSync) {{ // Discard remaining stream to bring it back in-sync
+						handleOOS();
+					}}
+
+					if (streamStateObject['responseProperties']['returnCB']) {{
+						for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+							rolesMappedData.push({{'role': streamStateObject['dataMapping'][i], 'llvalue': llvalues[i]}});
+						}}
+
+						for (var i = 0; i < rolesMappedData.length; i++) {{
+							if (rolesMappedData[i]['role'] === 'streamChunkData') {{
+								result.push(streamStateObject['responseProperties']['data'].splice(0, {stream_headless_camel_case_name}Length));
+							}}
+							else if (rolesMappedData[i]['role'] === null) {{
+								result.push(rolesMappedData[i]['llvalue']);
+							}}
+						}}
+
+						streamStateObject['responseProperties']['returnCB'].apply(this, result);
+					}}
+
+					device.resetStreamStateObject(streamStateObject);
+
+					if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+						streamStateObject['responseProperties']['callQueue'].shift()(device);
+					}}"""
+
+        template_response_handler_stream_out_body_variable_stream_length = """function handleOOS() {{
+						if (({stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality}) < {stream_headless_camel_case_name}Length) {{
+							streamStateObject['responseProperties']['runningSubcallOOS'] = true;
+							{subcall}
+
+							return;
+						}}
+
+						if (streamStateObject['responseProperties']['errorCB']) {{
+							streamStateObject['responseProperties']['errorCB'](IPConnection.ERROR_STREAM_OUT_OF_SYNC);
+						}}
+
+						device.resetStreamStateObject(streamStateObject);
+
+						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+							streamStateObject['responseProperties']['callQueue'].shift()(device);
+						}}
+
+						return;
+					}}
+
+					if (streamStateObject['responseProperties']['waitingFirstChunk']) {{
+						streamStateObject['responseProperties']['waitingFirstChunk'] = false;
+						{stream_headless_camel_case_name}OutOfSync = ({stream_headless_camel_case_name}ChunkOffset !== 0);
+						streamStateObject['responseProperties']['data'] = {stream_headless_camel_case_name}ChunkData;
+					}}
+
+					if (!streamStateObject['responseProperties']['runningSubcallOOS']) {{
+						if (!streamStateObject['responseProperties']['runningSubcall']) {{
+							if (!{stream_headless_camel_case_name}OutOfSync &&
+							    (streamStateObject['responseProperties']['data'].length < {stream_headless_camel_case_name}Length)) {{
+							        streamStateObject['responseProperties']['runningSubcall'] = true;
+							        {subcall}
+
+							        return;
+							}}
+						}}
+						else {{
+							{stream_headless_camel_case_name}OutOfSync =
+								({stream_headless_camel_case_name}ChunkOffset !== streamStateObject['responseProperties']['data'].length);
+
+							if (!{stream_headless_camel_case_name}OutOfSync &&
+								(streamStateObject['responseProperties']['data'].length < {stream_headless_camel_case_name}Length)) {{
+									streamStateObject['responseProperties']['data'] =
+										streamStateObject['responseProperties']['data'].concat({stream_headless_camel_case_name}ChunkData);
+
+									if (streamStateObject['responseProperties']['data'].length >= {stream_headless_camel_case_name}Length) {{
+										streamStateObject['responseProperties']['data'] =
+											streamStateObject['responseProperties']['data'].splice(0, {stream_headless_camel_case_name}Length);
+									}}
+									else {{
+										{subcall}
+
+										return;
+									}}
+							}}
+						}}
+					}}
+					else{{
+						handleOOS();
+					}}
+
+					if ({stream_headless_camel_case_name}OutOfSync) {{ // Discard remaining stream to bring it back in-sync
+						handleOOS();
+					}}
+
+					if (streamStateObject['responseProperties']['returnCB']) {{
+						for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+							rolesMappedData.push({{'role': streamStateObject['dataMapping'][i], 'llvalue': llvalues[i]}});
+						}}
+
+						for (var i = 0; i < rolesMappedData.length; i++) {{
+							if (rolesMappedData[i]['role'] === 'streamChunkData') {{
+								result.push(streamStateObject['responseProperties']['data'].splice(0, {stream_headless_camel_case_name}Length));
+							}}
+							else if (rolesMappedData[i]['role'] === null) {{
+								result.push(rolesMappedData[i]['llvalue']);
+							}}
+						}}
+
+						streamStateObject['responseProperties']['returnCB'].apply(this, result);
+					}}
+
+					device.resetStreamStateObject(streamStateObject);
+
+					if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+						streamStateObject['responseProperties']['callQueue'].shift()(device);
+					}}
+					"""
 
         for packet in self.get_packets('function'):
             stream_in = packet.get_high_level('stream_in')
@@ -349,18 +646,75 @@ var Device = require('./Device');
                 # TODO: Generate high-level functions for streamed setters
                 pass
             elif stream_out != None:
-                # TODO: Generate high-level functions for streamed getters
-                response_handler_function = 'function () {;}\n' # TODO: Generate response handler functions
+                fid = packet.get_function_id()
                 doc = packet.get_javascript_formatted_doc()
                 upper_case_name = packet.get_upper_case_name()
                 name = packet.get_headless_camel_case_name(skip=-2)
                 param_list = packet.get_javascript_parameter_list()
                 pack_format = packet.get_javascript_format_list('in')
                 unpack_format = packet.get_javascript_format_list('out')
+                stream_headless_camel_case_name = stream_out.get_headless_camel_case_name()
+
+                if stream_out.has_single_chunk():
+                    # Single chunk stream
+                    get_length = \
+                        template_response_handler_stream_out_get_length_variable.format(stream_headless_camel_case_name = stream_headless_camel_case_name)
+                    body = \
+                        template_response_handler_stream_out_body_single_chunk.format(stream_headless_camel_case_name = stream_headless_camel_case_name)
+
+                    response_handler_function = \
+                        template_response_handler_stream_out.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                    get_length = get_length,
+                                                                    body = body)
+                elif stream_out.get_fixed_length() != None:
+                    # Fixed stream length
+                    shift_size = int(stream_out.get_chunk_offset_element().get_type().replace('uint', ''))
+                    subcall = template_response_handler_stream_out_body_subcall.format(device_class = self.get_javascript_class_name(),
+                                                                                       function_name = upper_case_name,
+                                                                                       param_list = param_list,
+                                                                                       pack_format = pack_format,
+                                                                                       unpack_format = unpack_format)
+                    chunk_cardinality = stream_out.get_chunk_data_element().get_cardinality()
+
+                    get_length = \
+                        template_response_handler_stream_out_get_length_fixed.format(stream_headless_camel_case_name = stream_headless_camel_case_name)
+                    body = \
+                        template_response_handler_stream_out_body_fixed_stream_length.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                             shift_size = shift_size,
+                                                                                             subcall = subcall,
+                                                                                             chunk_cardinality = chunk_cardinality)
+
+                    response_handler_function = \
+                        template_response_handler_stream_out.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                    get_length = get_length,
+                                                                    body = body)
+                else:
+                    # Variable length stream
+                    shift_size = int(stream_out.get_chunk_offset_element().get_type().replace('uint', ''))
+                    subcall = template_response_handler_stream_out_body_subcall.format(device_class = self.get_javascript_class_name(),
+                                                                                       function_name = upper_case_name,
+                                                                                       param_list = param_list,
+                                                                                       pack_format = pack_format,
+                                                                                       unpack_format = unpack_format)
+                    chunk_cardinality = stream_out.get_chunk_data_element().get_cardinality()
+
+                    get_length = \
+                        template_response_handler_stream_out_get_length_variable.format(stream_headless_camel_case_name = stream_headless_camel_case_name)
+                    body = \
+                        template_response_handler_stream_out_body_variable_stream_length.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                                shift_size = shift_size,
+                                                                                                subcall = subcall,
+                                                                                                chunk_cardinality = chunk_cardinality)
+
+                    response_handler_function = \
+                        template_response_handler_stream_out.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                    get_length = get_length,
+                                                                    body = body)
 
                 if len(param_list) == 0:
                     methods += no_param_method_code.format(name = name,
                                                            doc = doc,
+                                                           fid = fid,
                                                            device_class = self.get_javascript_class_name(),
                                                            function_name = upper_case_name,
                                                            response_handler_function = response_handler_function,
@@ -371,6 +725,7 @@ var Device = require('./Device');
                     methods += param_method_code.format(name = name,
                                                         param_list = param_list,
                                                         doc = doc,
+                                                        fid = fid,
                                                         device_class = self.get_javascript_class_name(),
                                                         function_name = upper_case_name,
                                                         response_handler_function = response_handler_function,

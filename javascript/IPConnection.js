@@ -444,7 +444,7 @@ function IPConnection() {
         packetPayload.copy(payloadReturn, 0, 8, packetPayload.length);
         return new Buffer(payloadReturn);
     };
-    function pack(data, format) {
+    this.pack = function (data, format) {
         var formatArray = format.split(' ');
         if (formatArray.length <= 0) {
             return new Buffer(0);
@@ -667,7 +667,7 @@ function IPConnection() {
         }
         return packedBuffer;
     }
-    function unpack(unpackPayload, format) {
+    this.unpack = function (unpackPayload, format) {
         var formatArray = format.split(' ');
         var returnArguments = [];
         var returnSubArray = [];
@@ -849,9 +849,14 @@ function IPConnection() {
         }
         return returnArguments;
      }
-    this.sendRequest = function (sendRequestDevice, sendRequestFID, sendRequestData,
-                                 sendRequestPackFormat, sendRequestUnpackFormat,
-                                 sendRequestReturnCB, sendRequestErrorCB, startStreamResponseTimer) {
+    this.sendRequest = function (sendRequestDevice,
+                                 sendRequestFID,
+                                 sendRequestData,
+                                 sendRequestPackFormat,
+                                 sendRequestUnpackFormat,
+                                 sendRequestReturnCB,
+                                 sendRequestErrorCB,
+                                 startStreamResponseTimer) {
         if (this.getConnectionState() !== IPConnection.CONNECTION_STATE_CONNECTED) {
             if (sendRequestErrorCB !== undefined) {
                 sendRequestErrorCB(IPConnection.ERROR_NOT_CONNECTED);
@@ -859,10 +864,11 @@ function IPConnection() {
             return;
         }
         // Packet creation
-        var sendRequestPayload = pack(sendRequestData, sendRequestPackFormat);
+        var sendRequestPayload = this.pack(sendRequestData, sendRequestPackFormat);
         var sendRequestHeader = this.createPacketHeader(sendRequestDevice,
                                                         8+sendRequestPayload.length,
-                                                        sendRequestFID, sendRequestErrorCB);
+                                                        sendRequestFID,
+                                                        sendRequestErrorCB);
         if (sendRequestHeader === undefined) {
             return;
         }
@@ -878,8 +884,11 @@ function IPConnection() {
                     FID:sendRequestFID,
                     SEQ:sendRequestSEQ,
                     unpackFormat:sendRequestUnpackFormat,
-                    timeout:setTimeout(this.sendRequestTimeout.bind
-                            (this, sendRequestDevice, sendRequestDeviceOID, sendRequestErrorCB), this.timeout),
+                    timeout:setTimeout(this.sendRequestTimeout.bind(this,
+                                                                    sendRequestDevice,
+                                                                    sendRequestDeviceOID,
+                                                                    sendRequestErrorCB),
+                                       this.timeout),
                     returnCB:sendRequestReturnCB,
                     errorCB:sendRequestErrorCB
                 });
@@ -887,13 +896,15 @@ function IPConnection() {
             else {
                 // Setup streaming timer
                 if (sendRequestFID in sendRequestDevice.streamStateObjects) {
-                    sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] =
-                        setTimeout(
-                            this.sendRequestTimeoutStreamOut.bind(this,
-                                                                  sendRequestDevice,
-                                                                  sendRequestFID,
-                                                                  sendRequestErrorCB),
-                            this.timeout);
+                    if (sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] === null) {
+                      sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] =
+                          setTimeout(
+                              this.sendRequestTimeoutStreamOut.bind(this,
+                                                                    sendRequestDevice,
+                                                                    sendRequestFID,
+                                                                    sendRequestErrorCB),
+                              this.timeout);
+                    }
                 }
             }
         }
@@ -930,7 +941,7 @@ function IPConnection() {
         timeoutDevice.resetStreamStateObject(streamOutObject);
         // Call next function from call queue (if any)
         if (streamOutObject['responseProperties']['callQueue'].length > 0) {
-            streamOutObject['responseProperties']['callQueue'].shift()();
+            streamOutObject['responseProperties']['callQueue'].shift()(timeoutDevice);
         }
     };
     this.handleResponse = function (packetResponse) {
@@ -982,7 +993,7 @@ function IPConnection() {
                         }
                         clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
                         if (handleResponseDevice.expectedResponses[i].returnCB !== undefined) {
-                            var retArgs = unpack(this.getPayloadFromPacket(packetResponse),
+                            var retArgs = this.unpack(this.getPayloadFromPacket(packetResponse),
                             handleResponseDevice.expectedResponses[i].unpackFormat);
                             var evalStr = 'handleResponseDevice.expectedResponses[i].returnCB(';
                             for (var j=0; j<retArgs.length;j++) {
@@ -1006,7 +1017,7 @@ function IPConnection() {
             if (streamStateObject === null) {
                 return;
             }
-            if (streamStateObject['responseProperties']['running'] === 0) {
+            if (!streamStateObject['responseProperties']['running']) {
                 handleResponseDevice.resetStreamStateObject(streamStateObject);
                 return;
             }
@@ -1014,7 +1025,9 @@ function IPConnection() {
                 handleResponseDevice.resetStreamStateObject(streamStateObject);
                 return;
             }
-            streamStateObject['responseProperties']['responseHandler'](packetResponse);
+            streamStateObject['responseProperties']['responseHandler'](handleResponseDevice,
+                                                                       handleResponseFID,
+                                                                       packetResponse);
         }
     };
     this.handleCallback = function (packetCallback) {
@@ -1030,7 +1043,7 @@ function IPConnection() {
         }
         if (functionID === IPConnection.CALLBACK_ENUMERATE) {
             if (this.registeredCallbacks[IPConnection.CALLBACK_ENUMERATE] !== undefined) {
-                var args = unpack(this.getPayloadFromPacket(packetCallback), 's8 s8 c B3 B3 H B');
+                var args = this.unpack(this.getPayloadFromPacket(packetCallback), 's8 s8 c B3 B3 H B');
                 var evalCBString = 'this.registeredCallbacks[IPConnection.CALLBACK_ENUMERATE](';
                 for (var i = 0; i < args.length; i++) {
                     eval('var cbArg'+i+'=args['+i+'];');
@@ -1069,7 +1082,7 @@ function IPConnection() {
             return;
         }
         // llvalues is an array with unpacked values
-        llvalues = unpack(this.getPayloadFromPacket(packetCallback),
+        llvalues = this.unpack(this.getPayloadFromPacket(packetCallback),
                           cbUnpackString);
         if (llvalues === undefined) {
           return;
@@ -1244,18 +1257,18 @@ function IPConnection() {
     };
     this.authenticateInternal = function (secret, returnCallback, errorCallback) {
         this.brickd.getAuthenticationNonce(function (serverNonce) {
-            var serverNonceBytes = pack([serverNonce], 'B4');
+            var serverNonceBytes = this.pack([serverNonce], 'B4');
             var clientNonceNumber = this.nextAuthenticationNonce++;
-            var clientNonceBytes = pack([clientNonceNumber], 'I');
-            var clientNonce = unpack(clientNonceBytes, 'B4')[0];
-            var combinedNonceBytes = pack([serverNonce, clientNonce], 'B4 B4');
+            var clientNonceBytes = this.pack([clientNonceNumber], 'I');
+            var clientNonce = this.unpack(clientNonceBytes, 'B4')[0];
+            var combinedNonceBytes = this.pack([serverNonce, clientNonce], 'B4 B4');
             var crypto = require('crypto');
             var hmac = crypto.createHmac('sha1', secret);
 
             hmac.update(combinedNonceBytes);
 
             var digestBytes = hmac.digest();
-            var digest = unpack(digestBytes, 'B20')[0];
+            var digest = this.unpack(digestBytes, 'B20')[0];
 
             this.brickd.authenticate(clientNonce, digest, function () {
                 if (returnCallback !== undefined) {
