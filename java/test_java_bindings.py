@@ -41,7 +41,8 @@ class JavaExamplesTester(common.Tester):
             path = os.path.join('/tmp/tester/java', os.path.split(path)[1])
 
         args = ['/usr/bin/javac',
-                '-Xlint',
+                '-Xlint:all',
+                '-Werror',
                 '-cp',
                 '/tmp/tester/java/Tinkerforge.jar:.',
                 path]
