@@ -122,6 +122,10 @@ function Device(deviceRegistering, uid, ipcon) {
               streamStateObject['responseProperties']['timeout'] = null;
             }
             streamStateObject['responseProperties']['data'].length = 0;
+            streamStateObject['responseProperties']['streamInChunkOffset'] = 0;
+            streamStateObject['responseProperties']['streamInChunkLength'] = 0;
+            streamStateObject['responseProperties']['streamInWritten'] = 0;
+            streamStateObject['responseProperties']['streamInLLParams'] = null;
             streamStateObject['responseProperties']['returnCB'] = null;
             streamStateObject['responseProperties']['errorCB'] = null;
         };

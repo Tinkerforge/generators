@@ -163,10 +163,12 @@ var IPConnection = require('./IPConnection');
     def get_javascript_stream_state_objects(self):
         stream_state_objects = ''
         template = """	this.streamStateObjects[{0}.FUNCTION_{1}] = {{
-		'dataMapping': {4},
+		'dataMapping': {5},
+		'dataMappingStreamIn': {6},
 		'streamProperties': {{
 			'fixedLength': {2},
-			'singleChunk': {3}
+			'singleChunk': {3},
+			'shortWrite': {4}
 		}},
 		'responseProperties': {{
 			'running': false,
@@ -175,9 +177,14 @@ var IPConnection = require('./IPConnection');
 			'waitingFirstChunk': true,
 			'timeout': null,
 			'data': [],
+			'streamInChunkOffset': 0,
+			'streamInChunkLength': 0,
+			'streamInResponseEmpty': {7},
+			'streamInWritten': 0,
+			'streamInLLParams': null,
 			'responseHandler': null,
-			'packFormatString': '{5}',
-			'unpackFormatString': '{6}',
+			'packFormatString': '{8}',
+			'unpackFormatString': '{9}',
 			'returnCB': null,
 			'errorCB': null,
 			'callQueue': []
@@ -190,14 +197,19 @@ var IPConnection = require('./IPConnection');
                 continue
 
             fixed_length = ''
+            short_write = 'false'
             single_chunk = 'false'
+            stream_in_response_empty = 'true'
             stream_in = packet.get_high_level('stream_in')
             stream_out = packet.get_high_level('stream_out')
 
             if stream_in != None:
                 roles = []
+                roles_stream_in = []
 
-                for element in packet.get_elements(direction='in'):
+                for element in packet.get_elements(direction='out'):
+                    stream_in_response_empty = 'false'
+
                     if not element.get_role():
                         roles.append(element.get_role())
                         continue
@@ -209,6 +221,18 @@ var IPConnection = require('./IPConnection');
 
                     roles.append(''.join(role_split))
 
+                for element in packet.get_elements(direction='in'):
+                    if not element.get_role():
+                        roles_stream_in.append(element.get_role())
+                        continue
+
+                    role_split = element.get_role().split('_')
+
+                    for i in range(1, len(role_split)):
+                        role_split[i] = role_split[i].lower().capitalize()
+
+                    roles_stream_in.append(''.join(role_split))
+
                 if stream_in.get_fixed_length() == None:
                     fixed_length = 'null'
                 else:
@@ -217,11 +241,17 @@ var IPConnection = require('./IPConnection');
                 if stream_in.has_single_chunk():
                     single_chunk = 'true'
 
+                if stream_in.has_short_write():
+                    short_write = 'true'
+
                 stream_state_objects += template.format(self.get_javascript_class_name(),
                                                         packet.get_upper_case_name(),
                                                         fixed_length,
                                                         single_chunk,
+                                                        short_write,
                                                         repr(list(roles)).replace('None', 'null'),
+                                                        repr(list(roles_stream_in)).replace('None', 'null'),
+                                                        stream_in_response_empty,
                                                         packet.get_javascript_format_list('in'),
                                                         packet.get_javascript_format_list('out'))
 
@@ -252,7 +282,10 @@ var IPConnection = require('./IPConnection');
                                                         packet.get_upper_case_name(),
                                                         fixed_length,
                                                         single_chunk,
+                                                        short_write,
                                                         repr(list(roles)).replace('None', 'null'),
+                                                        '[]',
+                                                        stream_in_response_empty,
                                                         packet.get_javascript_format_list('in'),
                                                         packet.get_javascript_format_list('out'))
         return stream_state_objects + '\n'
@@ -443,7 +476,7 @@ true);"""
 							}}
 						}}
 
-						streamStateObject['responseProperties']['returnCB'].apply(this, result);
+						streamStateObject['responseProperties']['returnCB'].apply(device, result);
 					}}
 
 					device.resetStreamStateObject(streamStateObject);
@@ -539,7 +572,7 @@ true);"""
 							}}
 						}}
 
-						streamStateObject['responseProperties']['returnCB'].apply(this, result);
+						streamStateObject['responseProperties']['returnCB'].apply(device, result);
 					}}
 
 					device.resetStreamStateObject(streamStateObject);
@@ -628,7 +661,7 @@ true);"""
 							}}
 						}}
 
-						streamStateObject['responseProperties']['returnCB'].apply(this, result);
+						streamStateObject['responseProperties']['returnCB'].apply(device, result);
 					}}
 
 					device.resetStreamStateObject(streamStateObject);
@@ -638,13 +671,348 @@ true);"""
 					}}
 					"""
 
+        param_method_code_stream_in = """	this.{name} = function({param_list_hl}, returnCallback, errorCallback) {{
+		/*
+		{doc}
+		*/
+
+		var {stream_length_param_name_ll} = 0;
+		var {stream_chunk_data_param_name_ll} = [];
+		var {stream_chunk_offset_param_name_ll} = 0;
+		var streamStateObject = this.streamStateObjects[{fid}];
+
+		if ({data_param_name_hl}.length > {stream_max_length}) {{
+			if (errorCallback !== null){{
+				errorCallback(IPConnection.ERROR_INVALID_PARAMETER);
+			}}
+
+			this.resetStreamStateObject(streamStateObject);
+
+			if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+				streamStateObject['responseProperties']['callQueue'].shift()(device);
+			}}
+
+			return;
+		}}
+
+		if (!this.getResponseExpected({fid})) {{
+			if (streamStateObject['streamProperties']['fixedLength']) {{
+				{stream_length_param_name_ll} = streamStateObject['streamProperties']['fixedLength'];
+			}}
+			else {{
+				{stream_length_param_name_ll} = {data_param_name_hl}.length;
+			}}
+
+			if (streamStateObject['streamProperties']['singleChunk']) {{
+				{stream_chunk_data_param_name_ll} =
+					this.ipcon.createChunkData({data_param_name_hl}, 0, {chunk_cardinality}, '\0');
+
+				this.ipcon.sendRequest(this,
+				                       {device_class}.FUNCTION_{function_name},
+				                       [{param_list_ll}],
+				                       '{pack_format}',
+				                       '{unpack_format}',
+				                       returnCallback,
+				                       errorCallback,
+				                       false);
+			}}
+			else {{
+				while ({stream_chunk_offset_param_name_ll} < {data_param_name_hl}.length) {{
+					{stream_chunk_data_param_name_ll} =
+						this.ipcon.createChunkData({data_param_name_hl}, {stream_chunk_offset_param_name_ll}, {chunk_cardinality}, '\0');
+
+					this.ipcon.sendRequest(this,
+					                       {device_class}.FUNCTION_{function_name},
+					                       [{param_list_ll}],
+					                       '{pack_format}',
+					                       '{unpack_format}',
+					                       returnCallback,
+					                       errorCallback,
+					                       false);
+
+					{stream_chunk_offset_param_name_ll} += {chunk_cardinality};
+				}}
+			}}
+
+			if (returnCallback) {{
+				returnCallback();
+			}}
+		}}
+		else {{
+			var responseHandler = null;
+			var functionToQueue = null;
+
+			if (streamStateObject['responseProperties']['responseHandler'] === null) {{
+				responseHandler = {response_handler_function}
+				streamStateObject['responseProperties']['responseHandler'] = responseHandler;
+			}}
+
+			if (!streamStateObject['responseProperties']['running']) {{
+				streamStateObject['responseProperties']['running'] = true;
+				streamStateObject['responseProperties']['returnCB'] = returnCallback;
+				streamStateObject['responseProperties']['errorCB'] = errorCallback;
+				streamStateObject['responseProperties']['data'].length = 0;
+				streamStateObject['responseProperties']['data'].push.apply(streamStateObject['responseProperties']['data'],
+				                                                           {data_param_name_hl});
+
+				if (streamStateObject['streamProperties']['fixedLength']) {{
+					{stream_length_param_name_ll} = streamStateObject['streamProperties']['fixedLength'];
+				}}
+				else {{
+					{stream_length_param_name_ll} = {data_param_name_hl}.length;
+				}}
+
+				{stream_chunk_offset_param_name_ll} = 0;
+				{stream_chunk_data_param_name_ll} =
+					this.ipcon.createChunkData({data_param_name_hl}, 0, {chunk_cardinality}, '\0');
+
+				streamStateObject['responseProperties']['streamInChunkOffset'] = {chunk_cardinality};
+				streamStateObject['responseProperties']['streamInChunkLength'] = {chunk_cardinality};
+				streamStateObject['responseProperties']['streamInLLParams'] = [{param_list_ll}];
+
+				this.ipcon.sendRequest(this,
+				                       {device_class}.FUNCTION_{function_name},
+				                       [{param_list_ll}],
+				                       '{pack_format}',
+				                       '{unpack_format}',
+				                       returnCallback,
+				                       errorCallback,
+				                       true);
+			}}
+			else {{
+				functionToQueue = function (device) {{
+					device.{name}.call(device, {param_list_hl}, returnCallback, errorCallback);
+				}}
+
+				streamStateObject['responseProperties']['callQueue'].push(functionToQueue);
+			}}
+		}}
+	}};
+"""
+
         for packet in self.get_packets('function'):
             stream_in = packet.get_high_level('stream_in')
             stream_out = packet.get_high_level('stream_out')
 
             if stream_in != None:
-                # TODO: Generate high-level functions for streamed setters
-                pass
+                param_list_hl_arr = []
+                param_stream_params_ll = {}
+                fid = packet.get_function_id()
+                doc = packet.get_javascript_formatted_doc()
+                param_stream_params_ll['stream_length'] = None
+                param_stream_params_ll['stream_chunk_data'] = None
+                param_stream_params_ll['stream_chunk_offset'] = None
+
+                template_response_handler_stream_in = """function (device, fid, packetResponse) {{
+					var result = [];
+					var payload = null;
+					var llvalues = null;
+					var rolesMappedData = [];
+					var streamStateObject = device.streamStateObjects[fid];
+					var responseEmpty = streamStateObject['responseProperties']['streamInResponseEmpty'];
+					var {stream_length_param_name_ll} = 0;
+					var {stream_chunk_data_param_name_ll} = [];
+					var {stream_chunk_offset_param_name_ll} = 0;
+
+					function doNextLLCall() {{
+						{stream_length_param_name_ll} = streamStateObject['responseProperties']['data'].length;
+						{stream_chunk_data_param_name_ll} =
+							device.ipcon.createChunkData(streamStateObject['responseProperties']['data'],
+							                             streamStateObject['responseProperties']['streamInChunkOffset'],
+							                             streamStateObject['responseProperties']['streamInChunkLength'],
+							                             '\0');
+						{stream_chunk_offset_param_name_ll} = streamStateObject['responseProperties']['streamInChunkOffset'];
+
+						for (var i = 0; i < streamStateObject['dataMappingStreamIn'].length; i++) {{
+							if (streamStateObject['dataMappingStreamIn'][i] === null) {{
+								continue;
+							}}
+
+							if (streamStateObject['dataMappingStreamIn'][i].endsWith('Length')) {{
+								streamStateObject['responseProperties']['streamInLLParams'][i] = {stream_length_param_name_ll};
+							}}
+							else if (streamStateObject['dataMappingStreamIn'][i].endsWith('Offset')) {{
+								streamStateObject['responseProperties']['streamInLLParams'][i] = {stream_chunk_offset_param_name_ll};
+							}}
+							else if (streamStateObject['dataMappingStreamIn'][i].endsWith('Data')) {{
+								streamStateObject['responseProperties']['streamInLLParams'][i] = {stream_chunk_data_param_name_ll};
+							}}
+						}}
+
+						device.ipcon.sendRequest(device,
+						                         {device_class}.FUNCTION_{function_name},
+						                         streamStateObject['responseProperties']['streamInLLParams'],
+						                         '{pack_format}',
+						                         '{unpack_format}',
+						                         returnCallback,
+						                         errorCallback,
+						                         true);
+
+						streamStateObject['responseProperties']['streamInChunkOffset'] += {chunk_cardinality};
+					}}
+
+					if (!streamStateObject) {{
+						return;
+					}}
+
+					if (responseEmpty) {{
+						if (streamStateObject['streamProperties']['singleChunk']) {{
+							if (streamStateObject['responseProperties']['returnCB']) {{
+								streamStateObject['responseProperties']['returnCB']();
+							}}
+
+							device.resetStreamStateObject(streamStateObject);
+
+							if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+								streamStateObject['responseProperties']['callQueue'].shift()(device);
+							}}
+
+							return;
+						}}
+
+						if (streamStateObject['responseProperties']['streamInChunkOffset'] < streamStateObject['responseProperties']['data'].length) {{
+							doNextLLCall();
+						}}
+						else {{
+							if (streamStateObject['responseProperties']['returnCB']) {{
+								streamStateObject['responseProperties']['returnCB']();
+							}}
+
+							device.resetStreamStateObject(streamStateObject);
+
+							if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+								streamStateObject['responseProperties']['callQueue'].shift()(device);
+							}}
+						}}
+					}}
+					else {{
+						payload = device.ipcon.getPayloadFromPacket(packetResponse);
+						llvalues = device.ipcon.unpack(payload,
+						                               streamStateObject['responseProperties']['unpackFormatString']);
+
+						if (!payload || !llvalues) {{
+							device.resetStreamStateObject(streamStateObject);
+
+							if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+								streamStateObject['responseProperties']['callQueue'].shift()(device);
+							}}
+
+							return;
+						}}
+
+						for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+							result.push(llvalues[i]);
+						}}
+
+						if (streamStateObject['streamProperties']['singleChunk']) {{
+							if (streamStateObject['responseProperties']['returnCB']) {{
+								streamStateObject['responseProperties']['returnCB'].apply(device, result);
+							}}
+
+							device.resetStreamStateObject(streamStateObject);
+
+							if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+								streamStateObject['responseProperties']['callQueue'].shift()(device);
+							}}
+
+							return;
+						}}
+
+						if (streamStateObject['streamProperties']['shortWrite']) {{
+							for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+								if (streamStateObject['dataMapping'][i].endsWith('Written')) {{
+									streamStateObject['responseProperties']['streamInWritten'] += llvalues[i];
+									break;
+								}}
+							}}
+						}}
+
+						if (streamStateObject['responseProperties']['streamInChunkOffset'] < streamStateObject['responseProperties']['data'].length) {{
+							doNextLLCall();
+						}}
+						else {{
+							if (streamStateObject['responseProperties']['returnCB']) {{
+								if (streamStateObject['streamProperties']['shortWrite']) {{
+									for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+										if (streamStateObject['dataMapping'][i].endsWith('Written')) {{
+											result[i] = streamStateObject['responseProperties']['streamInWritten'];
+											break;
+										}}
+									}}
+								}}
+
+								streamStateObject['responseProperties']['returnCB'].apply(device, result);
+							}}
+
+							device.resetStreamStateObject(streamStateObject);
+
+							if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+								streamStateObject['responseProperties']['callQueue'].shift()(device);
+							}}
+						}}
+					}}
+				}};
+"""
+
+                upper_case_name = packet.get_upper_case_name()
+                name = packet.get_headless_camel_case_name(skip=-2)
+                param_list_ll = packet.get_javascript_parameter_list()
+                pack_format = packet.get_javascript_format_list('in')
+                unpack_format = packet.get_javascript_format_list('out')
+                chunk_cardinality = stream_in.get_chunk_data_element().get_cardinality()
+                stream_headless_camel_case_name = stream_in.get_headless_camel_case_name()
+
+                if stream_in.get_length_element() != None:
+                    stream_max_length = (1 << int(stream_in.get_length_element().get_type().replace('uint', ''))) - 1
+                else:
+                    stream_max_length = stream_in.get_fixed_length()
+
+                for element in packet.get_elements(direction='in'):
+                    role = element.get_role()
+
+                    if role:
+                        if role == 'stream_length':
+                            param_stream_params_ll['stream_length'] = element.get_headless_camel_case_name()
+                        elif role == 'stream_chunk_offset':
+                            param_stream_params_ll['stream_chunk_offset'] = element.get_headless_camel_case_name()
+                        elif role == 'stream_chunk_data':
+                            param_stream_params_ll['stream_chunk_data'] = element.get_headless_camel_case_name()
+
+                        continue
+
+                    param_list_hl_arr.append(element.get_headless_camel_case_name())
+
+                data_param_name_hl = stream_in.get_headless_camel_case_name()
+                param_list_hl_arr.append(data_param_name_hl)
+
+                param_list_hl = ', '.join(param_list_hl_arr)
+
+                response_handler_function = template_response_handler_stream_in.format(stream_length_param_name_ll = param_stream_params_ll['stream_length'],
+                                                                                       stream_chunk_data_param_name_ll = param_stream_params_ll['stream_chunk_data'],
+                                                                                       stream_chunk_offset_param_name_ll = param_stream_params_ll['stream_chunk_offset'],device_class = self.get_javascript_class_name(),
+                                                                                       function_name = upper_case_name,
+                                                                                       param_list_ll = param_list_ll,
+                                                                                       pack_format = pack_format,
+                                                                                       unpack_format = unpack_format,
+                                                                                       chunk_cardinality = chunk_cardinality)
+
+                methods += param_method_code_stream_in.format(name = name,
+                                                              param_list_hl = param_list_hl,
+                                                              doc = doc,
+                                                              stream_length_param_name_ll = param_stream_params_ll['stream_length'],
+                                                              stream_chunk_data_param_name_ll = param_stream_params_ll['stream_chunk_data'],
+                                                              stream_chunk_offset_param_name_ll = param_stream_params_ll['stream_chunk_offset'],
+                                                              fid = fid,
+                                                              stream_max_length = stream_max_length,
+                                                              data_param_name_hl = data_param_name_hl,
+                                                              chunk_cardinality = chunk_cardinality,
+                                                              device_class = self.get_javascript_class_name(),
+                                                              function_name = upper_case_name,
+                                                              param_list_ll = param_list_ll,
+                                                              pack_format = pack_format,
+                                                              unpack_format = unpack_format,
+                                                              response_handler_function = response_handler_function)
+
             elif stream_out != None:
                 fid = packet.get_function_id()
                 doc = packet.get_javascript_formatted_doc()

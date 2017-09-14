@@ -43,6 +43,7 @@ IPConnection.ERROR_INVALID_PARAMETER = 41;
 IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42;
 IPConnection.ERROR_UNKNOWN_ERROR = 43;
 IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51;
+IPConnection.ERROR_INVALID_PARAMETER = 52;
 
 IPConnection.TASK_KIND_CONNECT = 0;
 IPConnection.TASK_KIND_DISCONNECT = 1;
@@ -898,12 +899,12 @@ function IPConnection() {
                 if (sendRequestFID in sendRequestDevice.streamStateObjects) {
                     if (sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] === null) {
                       sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] =
-                          setTimeout(
-                              this.sendRequestTimeoutStreamOut.bind(this,
-                                                                    sendRequestDevice,
-                                                                    sendRequestFID,
-                                                                    sendRequestErrorCB),
-                              this.timeout);
+                          setTimeout(this.sendRequestTimeoutStreamOut.bind(this,
+                                                                           sendRequestDevice,
+                                                                           sendRequestFID,
+                                                                           sendRequestErrorCB),
+
+                                     this.timeout);
                     }
                 }
             }
@@ -946,18 +947,22 @@ function IPConnection() {
     };
     this.handleResponse = function (packetResponse) {
         var streamStateObject = null;
+        var handleResponseDevice = null;
         var handleResponseFID = this.getFunctionIDFromPacket(packetResponse);
         var handleResponseSEQ = this.getSequenceNumberFromPacket(packetResponse);
-        var handleResponseDevice = this.devices[this.getUIDFromPacket(packetResponse)];
+        if (!(this.getUIDFromPacket(packetResponse) in this.devices)) {
+          return;
+        }
+        handleResponseDevice = this.devices[this.getUIDFromPacket(packetResponse)];
         // Handle non-streamed response
         if (!(handleResponseFID in handleResponseDevice.streamStateObjects)) {
             for (var i=0; i < handleResponseDevice.expectedResponses.length; i++) {
-                if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].returnCB === undefined) {
+                if (handleResponseDevice.expectedResponses[i].returnCB === undefined) {
                     clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
                     handleResponseDevice.expectedResponses.splice(i, 1);
                     return;
                 }
-                if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].unpackFormat === '') {
+                if (handleResponseDevice.expectedResponses[i].unpackFormat === '') {
                     clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
                     if (handleResponseDevice.expectedResponses[i].returnCB !== undefined) {
                         eval('handleResponseDevice.expectedResponses[i].returnCB();');
@@ -969,7 +974,7 @@ function IPConnection() {
                     handleResponseDevice.expectedResponses[i].SEQ === handleResponseSEQ) {
                         if (this.getEFromPacket(packetResponse) === 1) {
                             clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-                            if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+                            if (handleResponseDevice.expectedResponses[i].errorCB !== undefined) {
                                 eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_INVALID_PARAMETER);');
                             }
                             handleResponseDevice.expectedResponses.splice(i, 1);
@@ -977,7 +982,7 @@ function IPConnection() {
                         }
                         if (this.getEFromPacket(packetResponse) === 2) {
                             clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-                            if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+                            if (handleResponseDevice.expectedResponses[i].errorCB !== undefined) {
                                 eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_FUNCTION_NOT_SUPPORTED);');
                             }
                             handleResponseDevice.expectedResponses.splice(i, 1);
@@ -985,7 +990,7 @@ function IPConnection() {
                         }
                         if (this.getEFromPacket(packetResponse) !== 0) {
                             clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-                            if (this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+                            if (handleResponseDevice.expectedResponses[i].errorCB !== undefined) {
                                 eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_UNKNOWN_ERROR);');
                             }
                             handleResponseDevice.expectedResponses.splice(i, 1);
@@ -1353,6 +1358,18 @@ function IPConnection() {
         returnHeader.writeUInt8(seqResponseOOBits, 6);
         returnHeader.writeUInt8(EFutureUse , 7);
         return returnHeader;
+    };
+    this.createChunkData = function(data, chunkOffset, chunkLength, chunkPadding) {
+        var padding = null;
+        var chunkData = data.slice(chunkOffset, chunkOffset + chunkLength);
+
+        if (chunkData.length < chunkLength) {
+            padding = new Array(chunkLength - chunkData.length);
+            padding.fill(chunkPadding);
+            chunkData = chunkData.concat(padding);
+        }
+
+        return chunkData;
     };
     function bufferConcat(arrayOfBuffers) {
         var newBufferSize = 0;
