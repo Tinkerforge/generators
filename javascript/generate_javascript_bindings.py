@@ -502,8 +502,6 @@ true);"""
 						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
 							streamStateObject['responseProperties']['callQueue'].shift()(device);
 						}}
-
-						return;
 					}}
 
 					if (streamStateObject['responseProperties']['waitingFirstChunk']) {{
@@ -552,10 +550,14 @@ true);"""
 					}}
 					else {{
 						handleOOS();
+
+						return;
 					}}
 
 					if ({stream_headless_camel_case_name}OutOfSync) {{ // Discard remaining stream to bring it back in-sync
 						handleOOS();
+
+						return;
 					}}
 
 					if (streamStateObject['responseProperties']['returnCB']) {{
@@ -598,8 +600,6 @@ true);"""
 						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
 							streamStateObject['responseProperties']['callQueue'].shift()(device);
 						}}
-
-						return;
 					}}
 
 					if (streamStateObject['responseProperties']['waitingFirstChunk']) {{
@@ -641,10 +641,14 @@ true);"""
 					}}
 					else{{
 						handleOOS();
+
+						return;
 					}}
 
 					if ({stream_headless_camel_case_name}OutOfSync) {{ // Discard remaining stream to bring it back in-sync
 						handleOOS();
+
+						return;
 					}}
 
 					if (streamStateObject['responseProperties']['returnCB']) {{
