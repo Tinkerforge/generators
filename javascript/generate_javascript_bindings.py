@@ -494,7 +494,7 @@ true);"""
 						}}
 
 						if (streamStateObject['responseProperties']['errorCB']) {{
-							streamStateObject['responseProperties']['errorCB'](IPConnection.ERROR_STREAM_OUT_OF_SYNC);
+							streamStateObject['responseProperties']['errorCB'].call(device, IPConnection.ERROR_STREAM_OUT_OF_SYNC);
 						}}
 
 						device.resetStreamStateObject(streamStateObject);
@@ -590,7 +590,7 @@ true);"""
 						}}
 
 						if (streamStateObject['responseProperties']['errorCB']) {{
-							streamStateObject['responseProperties']['errorCB'](IPConnection.ERROR_STREAM_OUT_OF_SYNC);
+							streamStateObject['responseProperties']['errorCB'].call(device, IPConnection.ERROR_STREAM_OUT_OF_SYNC);
 						}}
 
 						device.resetStreamStateObject(streamStateObject);
@@ -808,6 +808,7 @@ true);"""
 					var payload = null;
 					var llvalues = null;
 					var rolesMappedData = [];
+					var shortWriteWritten = -1;
 					var streamStateObject = device.streamStateObjects[fid];
 					var responseEmpty = streamStateObject['responseProperties']['streamInResponseEmpty'];
 					var {stream_length_param_name_ll} = 0;
@@ -851,21 +852,39 @@ true);"""
 						streamStateObject['responseProperties']['streamInChunkOffset'] += {chunk_cardinality};
 					}}
 
+					function handleStreamInDone() {{
+						if (streamStateObject['responseProperties']['returnCB']) {{
+							if (streamStateObject['streamProperties']['shortWrite']) {{
+								for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
+									if (streamStateObject['dataMapping'][i].endsWith('Written')) {{
+										result[i] = streamStateObject['responseProperties']['streamInWritten'];
+										break;
+									}}
+								}}
+							}}
+
+							if (!responseEmpty) {{
+								streamStateObject['responseProperties']['returnCB'].apply(device, result);
+							}}
+							else {{
+								streamStateObject['responseProperties']['returnCB'].apply(device);
+							}}
+						}}
+
+						device.resetStreamStateObject(streamStateObject);
+
+						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+							streamStateObject['responseProperties']['callQueue'].shift()(device);
+						}}
+					}}
+
 					if (!streamStateObject) {{
 						return;
 					}}
 
 					if (responseEmpty) {{
 						if (streamStateObject['streamProperties']['singleChunk']) {{
-							if (streamStateObject['responseProperties']['returnCB']) {{
-								streamStateObject['responseProperties']['returnCB']();
-							}}
-
-							device.resetStreamStateObject(streamStateObject);
-
-							if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
-								streamStateObject['responseProperties']['callQueue'].shift()(device);
-							}}
+							handleStreamInDone();
 
 							return;
 						}}
@@ -874,15 +893,7 @@ true);"""
 							doNextLLCall();
 						}}
 						else {{
-							if (streamStateObject['responseProperties']['returnCB']) {{
-								streamStateObject['responseProperties']['returnCB']();
-							}}
-
-							device.resetStreamStateObject(streamStateObject);
-
-							if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
-								streamStateObject['responseProperties']['callQueue'].shift()(device);
-							}}
+							handleStreamInDone();
 						}}
 					}}
 					else {{
@@ -921,9 +932,15 @@ true);"""
 						if (streamStateObject['streamProperties']['shortWrite']) {{
 							for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
 								if (streamStateObject['dataMapping'][i].endsWith('Written')) {{
-									streamStateObject['responseProperties']['streamInWritten'] += llvalues[i];
+									shortWriteWritten = llvalues[i];
+									streamStateObject['responseProperties']['streamInWritten'] += shortWriteWritten;
 									break;
 								}}
+							}}
+							if ((shortWriteWritten !== -1) && (shortWriteWritten < {chunk_cardinality})) {{
+								// Either last chunk or short write
+								handleStreamInDone();
+								return;
 							}}
 						}}
 
@@ -931,24 +948,7 @@ true);"""
 							doNextLLCall();
 						}}
 						else {{
-							if (streamStateObject['responseProperties']['returnCB']) {{
-								if (streamStateObject['streamProperties']['shortWrite']) {{
-									for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
-										if (streamStateObject['dataMapping'][i].endsWith('Written')) {{
-											result[i] = streamStateObject['responseProperties']['streamInWritten'];
-											break;
-										}}
-									}}
-								}}
-
-								streamStateObject['responseProperties']['returnCB'].apply(device, result);
-							}}
-
-							device.resetStreamStateObject(streamStateObject);
-
-							if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
-								streamStateObject['responseProperties']['callQueue'].shift()(device);
-							}}
+							handleStreamInDone();
 						}}
 					}}
 				}};
