@@ -404,6 +404,7 @@ var IPConnection = require('./IPConnection');
 				function (device, fid, packetResponse) {{
 					var result = [];
 					var llvalues = null;
+					var packetErrorFlag = 0;
 					var rolesMappedData = [];
 					var {stream_headless_camel_case_name}Length = null;
 					var {stream_headless_camel_case_name}ChunkData = null;
@@ -413,6 +414,28 @@ var IPConnection = require('./IPConnection');
 					var payload = device.ipcon.getPayloadFromPacket(packetResponse);
 
 					if (payload.length === 0) {{
+						device.resetStreamStateObject(streamStateObject);
+
+						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+							streamStateObject['responseProperties']['callQueue'].shift()(device);
+						}}
+
+						return;
+					}}
+
+					packetErrorFlag = device.ipcon.getEFromPacket(packetResponse);
+
+					if (packetErrorFlag !== 0) {{
+						if ((packetErrorFlag === 1) && (streamStateObject['responseProperties']['errorCB'] !== undefined)) {{
+							streamStateObject['responseProperties']['errorCB'].apply(device, IPConnection.ERROR_INVALID_PARAMETER);
+						}}
+						else if ((packetErrorFlag === 2) && (streamStateObject['responseProperties']['errorCB'] !== undefined)) {{
+							streamStateObject['responseProperties']['errorCB'].apply(device, IPConnection.ERROR_FUNCTION_NOT_SUPPORTED);
+						}}
+						else {{
+							streamStateObject['responseProperties']['errorCB'].apply(device, IPConnection.ERROR_UNKNOWN_ERROR);
+						}}
+
 						device.resetStreamStateObject(streamStateObject);
 
 						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
@@ -811,6 +834,7 @@ true);"""
 					var result = [];
 					var payload = null;
 					var llvalues = null;
+					var packetErrorFlag = 0;
 					var rolesMappedData = [];
 					var shortWriteWritten = -1;
 					var streamStateObject = device.streamStateObjects[fid];
@@ -883,6 +907,28 @@ true);"""
 					}}
 
 					if (!streamStateObject) {{
+						return;
+					}}
+
+					packetErrorFlag = device.ipcon.getEFromPacket(packetResponse);
+
+					if (packetErrorFlag !== 0) {{
+						if ((packetErrorFlag === 1) && (streamStateObject['responseProperties']['errorCB'] !== undefined)) {{
+							streamStateObject['responseProperties']['errorCB'].apply(device, IPConnection.ERROR_INVALID_PARAMETER);
+						}}
+						else if ((packetErrorFlag === 2) && (streamStateObject['responseProperties']['errorCB'] !== undefined)) {{
+							streamStateObject['responseProperties']['errorCB'].apply(device, IPConnection.ERROR_FUNCTION_NOT_SUPPORTED);
+						}}
+						else {{
+							streamStateObject['responseProperties']['errorCB'].apply(device, IPConnection.ERROR_UNKNOWN_ERROR);
+						}}
+
+						device.resetStreamStateObject(streamStateObject);
+
+						if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
+							streamStateObject['responseProperties']['callQueue'].shift()(device);
+						}}
+
 						return;
 					}}
 
