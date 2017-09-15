@@ -897,15 +897,18 @@ function IPConnection() {
             else {
                 // Setup streaming timer
                 if (sendRequestFID in sendRequestDevice.streamStateObjects) {
-                    if (sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] === null) {
-                      sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] =
-                          setTimeout(this.sendRequestTimeoutStreamOut.bind(this,
-                                                                           sendRequestDevice,
-                                                                           sendRequestFID,
-                                                                           sendRequestErrorCB),
-
-                                     this.timeout);
+                    if (sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] !== null) {
+                      clearTimeout(sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout']);
+                      sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] = null;
                     }
+
+                    sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] =
+                        setTimeout(this.sendRequestTimeoutStreamOut.bind(this,
+                                                                         sendRequestDevice,
+                                                                         sendRequestFID,
+                                                                         sendRequestErrorCB),
+
+                                   this.timeout);
                 }
             }
         }
