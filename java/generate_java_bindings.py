@@ -204,7 +204,11 @@ public class {0} extends Device {{
                 name = element.get_headless_camel_case_name()
 
                 if element.get_cardinality() != 1 and element.get_type() != 'string':
-                    new = ' = {0}'.format(element.get_java_new())
+                    if not high_level:
+                        new = ' = {0}'.format(element.get_java_new())
+                    else:
+                        new = ''
+
                     to = '"{0} = " + Arrays.toString({0}) +'.format(name)
                 else:
                     new = ''
@@ -237,13 +241,10 @@ public class {0} extends Device {{
             objects += make_return_object(packet, False)
 
         for packet in self.get_packets('function'):
-            if packet.has_prototype_in_device():
+            if packet.has_prototype_in_device() or not packet.has_high_level():
                 continue
 
-            if len(packet.get_elements(direction='out')) < 2:
-                continue
-
-            if not packet.has_high_level():
+            if len(packet.get_elements(direction='out', high_level=True)) < 2:
                 continue
 
             objects += make_return_object(packet, True)
