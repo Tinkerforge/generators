@@ -472,9 +472,9 @@ begin
             offset = 8
             parameter_names = []
 
-            wrapper_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
-  for i := 0 to {1} do {0}[i] := LEConvertUInt8From({2} + (i * 1), packet);
-  for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
+            wrapper_bool_array_fmt = '''    FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
+    for i := 0 to {1} do {0}[i] := LEConvertUInt8From({2} + (i * 1), packet);
+    for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
 '''
 
             for element in packet.get_elements(direction='out'):
