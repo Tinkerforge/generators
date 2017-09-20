@@ -152,7 +152,7 @@ class JavaPacket(common.Packet):
             elif context == 'call':
                 parameters.append(name)
             elif context == 'listener':
-                if high_level and element.get_level() == 'high' and element.get_cardinality() < 0:
+                if high_level and element.get_level() == 'high' and element.get_role() == 'stream_data':
                     name = '({0})highLevelCallback.data'.format(java_type)
 
                 parameters.append(name)

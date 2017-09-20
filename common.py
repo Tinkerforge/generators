@@ -1054,6 +1054,7 @@ class Stream(NameMixin):
         self.raw_data = raw_data
         self.packet = packet
         self.direction = direction
+        self.data_element = None
 
         check_name(raw_data['name'])
 
@@ -1104,6 +1105,12 @@ class Stream(NameMixin):
 
     def get_chunk_data_element(self):
         return self.chunk_data_element
+
+    def get_data_element(self):
+        if self.data_element == None:
+            self.data_element = self.packet.get_elements(name=self.get_name(), direction=self.direction, high_level=True)[0]
+
+        return self.data_element
 
     def get_fixed_length(self, default=None):
         return self.raw_data.get('fixed_length', default)
@@ -1157,17 +1164,20 @@ class Packet(NameMixin):
         raw_stream_in = raw_data.get('high_level', {}).get('stream_in', None)
         raw_stream_out = raw_data.get('high_level', {}).get('stream_out', None)
         stream_name = None
+        stream_fixed_length = None
 
         if raw_stream_in != None and raw_stream_out != None:
             raise GeneratorError("Cannot combine high-level features 'stream_in' and 'stream_out'")
 
         if raw_stream_in != None:
             stream_name = raw_stream_in['name']
+            stream_fixed_length = raw_stream_in.get('fixed_length', None)
 
         if raw_stream_out != None:
             stream_name = raw_stream_out['name']
+            stream_fixed_length = raw_stream_out.get('fixed_length', None)
 
-        stream_written_type = None
+        stream_size_type = None
         payload_in_size = 0
         payload_out_size = 0
 
@@ -1180,11 +1190,11 @@ class Packet(NameMixin):
                 if raw_element[0].endswith(' Length'):
                     level = 'low'
                     role = 'stream_length'
-                    stream_written_type = raw_element[1]
+                    stream_size_type = raw_element[1]
                 elif raw_element[0].endswith(' Offset'):
                     level = 'low'
                     role = 'stream_chunk_offset'
-                    stream_written_type = raw_element[1]
+                    stream_size_type = raw_element[1]
                 elif raw_element[0].endswith(' Data'):
                     level = 'low'
                     role = 'stream_chunk_data'
@@ -1218,18 +1228,28 @@ class Packet(NameMixin):
 
             if level == 'low':
                 if element.get_name().endswith(' Data'):
+                    if stream_size_type == None:
+                        raise GeneratorError('Missing stream-size-type')
+
+                    if stream_size_type not in ['uint8', 'uint16', 'uint32']:
+                        raise GeneratorError('Unsupported stream-size-type: {0}'.format(stream_size_type))
+
                     raw_element = copy.deepcopy(raw_element)
                     raw_element[0] = stream_name
-                    raw_element[2] = -1
+
+                    if stream_fixed_length != None:
+                        raw_element[2] = stream_fixed_length
+                    else:
+                        raw_element[2] = -((1 << int(stream_size_type.replace('uint', ''))) - 1)
 
                     self.elements.append(device.get_generator().get_element_class()(raw_element, self, 'high', 'stream_data'))
                 elif element.get_name().endswith(' Written'):
-                    if stream_written_type == None:
-                        raise GeneratorError("Missing stream-written-type")
+                    if stream_size_type == None:
+                        raise GeneratorError('Missing stream-size-type')
 
                     raw_element = copy.deepcopy(raw_element)
                     raw_element[0] = stream_name + ' Written'
-                    raw_element[1] = stream_written_type
+                    raw_element[1] = stream_size_type
 
                     self.elements.append(device.get_generator().get_element_class()(raw_element, self, 'high', 'stream_written'))
 

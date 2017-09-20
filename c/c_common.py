@@ -50,16 +50,17 @@ class CPacket(common.Packet):
                 elif role not in ['stream_chunk_data', 'stream_chunk_written']:
                     name = 'ret_{0}'.format(name)
 
-            if element.get_cardinality() < 0 and signature and \
+            if element.get_role() == 'stream_data' and signature and \
                ((element.get_direction() == 'in' and self.get_type() == 'function') or \
                 (element.get_direction() == 'out' and self.get_type() == 'callback')):
                 modifier = '*'
 
-            if element.get_cardinality() > 1:
+            if element.get_role() != 'stream_data' and element.get_cardinality() > 1:
                 modifier = ''
                 array = '[{0}]'.format(element.get_cardinality())
 
-            if high_level and callback_wrapper and element.get_level() == 'high' and element.get_cardinality() < 0:
+            if high_level and callback_wrapper and element.get_level() == 'high' and \
+               element.get_role() == 'stream_data':
                 if single_chunk:
                     parameters.append('{0}_data'.format(name))
                 else:
@@ -74,7 +75,7 @@ class CPacket(common.Packet):
 
             if high_level and \
                element.get_level() == 'high' and \
-               element.get_cardinality() < 0 and \
+               element.get_role() == 'stream_data' and \
                (element.get_direction() == 'out' or \
                 len(length_elements) > 0):
                 if signature:

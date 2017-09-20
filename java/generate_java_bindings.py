@@ -1129,11 +1129,6 @@ public class {0} extends Device {{
                 elif chunk_offset_element != None:
                     stream_length_type = chunk_offset_element.get_java_type()
 
-                if length_element != None:
-                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
-                else:
-                    stream_max_length = stream_in.get_fixed_length()
-
                 if stream_in.get_fixed_length() != None:
                     template = template_stream_in_fixed_length
                 elif stream_in.has_short_write() and stream_in.has_single_chunk():
@@ -1220,7 +1215,7 @@ public class {0} extends Device {{
                                            stream_name=stream_in.get_name(),
                                            stream_headless_camel_case_name=stream_in.get_headless_camel_case_name(),
                                            stream_length_type=stream_length_type,
-                                           stream_max_length=stream_max_length,
+                                           stream_max_length=abs(stream_in.get_data_element().get_cardinality()),
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_data_type=stream_in.get_chunk_data_element().get_java_type(),
                                            chunk_data_new=stream_in.get_chunk_data_element().get_java_new(),

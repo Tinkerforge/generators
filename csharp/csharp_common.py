@@ -53,7 +53,7 @@ class CSharpPacket(common.Packet):
             else: # signature
                 csharp_type = element.get_csharp_type() + ' '
 
-            if high_level and callback_wrapper and element.get_level() == 'high' and element.get_cardinality() < 0:
+            if high_level and callback_wrapper and element.get_level() == 'high' and element.get_role() == 'stream_data':
                 name = '({0})highLevelCallback.data'.format(element.get_csharp_type())
             else:
                 name = element.get_headless_camel_case_name()
@@ -111,7 +111,7 @@ csharp_types = {
 def get_csharp_type(type_, cardinality):
     csharp_type = csharp_types[type_]
 
-    if (cardinality > 1 and type_ != 'string') or cardinality < 0:
+    if cardinality != 1 and type_ != 'string':
         csharp_type += '[]'
 
     return csharp_type

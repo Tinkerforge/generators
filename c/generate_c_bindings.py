@@ -684,7 +684,7 @@ unlock:
 """
         template_stream_out_chunk_offset_check = """
 
-	if ({stream_underscore_name}_chunk_offset == (1U << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
+	if ({stream_underscore_name}_chunk_offset == {chunk_max_offset}) {{ // maximum chunk offset -> stream has no data
 		goto unlock;
 	}}"""
         template_stream_out_single_chunk = """
@@ -750,10 +750,8 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
 
                 if length_element != None:
                     stream_length_type = length_element.get_c_type(False)
-                    shift_size = int(length_element.get_type().replace('uint', ''))
                 elif chunk_offset_element != None:
                     stream_length_type = chunk_offset_element.get_c_type(False)
-                    shift_size = int(chunk_offset_element.get_type().replace('uint', ''))
 
                 if stream_out.has_single_chunk():
                     template = template_stream_out_single_chunk
@@ -762,7 +760,7 @@ int {device_underscore_name}_{underscore_name}({device_camel_case_name} *{device
 
                 if stream_out.get_fixed_length() != None:
                     chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_underscore_name=stream_out.get_underscore_name(),
-                                                                                       shift_size=shift_size)
+                                                                                       chunk_max_offset=abs(stream_out.get_data_element().get_cardinality()))
                 else:
                     chunk_offset_check = ''
 

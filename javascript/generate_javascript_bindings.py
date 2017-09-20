@@ -1016,11 +1016,6 @@ true);"""
                 chunk_cardinality = stream_in.get_chunk_data_element().get_cardinality()
                 stream_headless_camel_case_name = stream_in.get_headless_camel_case_name()
 
-                if stream_in.get_length_element() != None:
-                    stream_max_length = (1 << int(stream_in.get_length_element().get_type().replace('uint', ''))) - 1
-                else:
-                    stream_max_length = stream_in.get_fixed_length()
-
                 for element in packet.get_elements(direction='in'):
                     role = element.get_role()
 
@@ -1057,7 +1052,7 @@ true);"""
                                                               stream_chunk_data_param_name_ll = param_stream_params_ll['stream_chunk_data'],
                                                               stream_chunk_offset_param_name_ll = param_stream_params_ll['stream_chunk_offset'],
                                                               fid = fid,
-                                                              stream_max_length = stream_max_length,
+                                                              stream_max_length = abs(stream_in.get_data_element().get_cardinality()),
                                                               data_param_name_hl = data_param_name_hl,
                                                               chunk_cardinality = chunk_cardinality,
                                                               device_class = self.get_javascript_class_name(),

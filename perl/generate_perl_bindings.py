@@ -610,13 +610,6 @@ sub {underscore_name}
                 else:
                     template = template_stream_in
 
-                length_element = stream_in.get_length_element()
-
-                if length_element != None:
-                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
-                else:
-                    stream_max_length = stream_in.get_fixed_length()
-
                 if stream_in.has_short_write():
                     if len(packet.get_elements(direction='out')) < 2:
                         chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
@@ -686,7 +679,7 @@ sub {underscore_name}
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_perl_parameters(high_level=True), ''),
                                            stream_name=stream_in.get_name(),
                                            stream_underscore_name=stream_in.get_underscore_name(),
-                                           stream_max_length=stream_max_length,
+                                           stream_max_length=abs(stream_in.get_data_element().get_cardinality()),
                                            fixed_length=stream_in.get_fixed_length(default='nil'),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                            chunk_padding=stream_in.get_chunk_data_element().get_perl_default_item_value(),

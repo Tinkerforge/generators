@@ -791,7 +791,7 @@ namespace Tinkerforge
 			}}{result_return}
 		}}
 """
-        template_stream_out_chunk_offset_check = """if ({stream_headless_camel_case_name}ChunkOffset == (1U << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
+        template_stream_out_chunk_offset_check = """if ({stream_headless_camel_case_name}ChunkOffset == {chunk_max_offset}) {{ // maximum chunk offset -> stream has no data
 					{stream_headless_camel_case_name}Length = 0;
 					{stream_headless_camel_case_name}ChunkOffset = 0;
 					{stream_headless_camel_case_name}OutOfSync = false;
@@ -826,11 +826,6 @@ namespace Tinkerforge
                     stream_length_type = length_element.get_csharp_type()
                 elif chunk_offset_element != None:
                     stream_length_type = chunk_offset_element.get_csharp_type()
-
-                if length_element != None:
-                    stream_max_length = (1 << int(length_element.get_type().replace('uint', ''))) - 1
-                else:
-                    stream_max_length = stream_in.get_fixed_length()
 
                 if stream_in.get_fixed_length() != None:
                     template = template_stream_in_fixed_length
@@ -884,7 +879,7 @@ namespace Tinkerforge
                                            stream_name=stream_in.get_name(),
                                            stream_headless_camel_case_name=stream_in.get_headless_camel_case_name(),
                                            stream_length_type=stream_length_type,
-                                           stream_max_length=stream_max_length,
+                                           stream_max_length=abs(stream_in.get_data_element().get_cardinality()),
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_data_type=stream_in.get_chunk_data_element().get_csharp_type(),
                                            chunk_data_new=stream_in.get_chunk_data_element().get_csharp_new(),
@@ -896,10 +891,8 @@ namespace Tinkerforge
 
                 if length_element != None:
                     stream_length_type = length_element.get_csharp_type()
-                    shift_size = int(length_element.get_type().replace('uint', ''))
                 elif chunk_offset_element != None:
                     stream_length_type = chunk_offset_element.get_csharp_type()
-                    shift_size = int(chunk_offset_element.get_type().replace('uint', ''))
 
                 if stream_out.has_single_chunk():
                     template = template_stream_out_single_chunk
@@ -908,7 +901,7 @@ namespace Tinkerforge
 
                 if stream_out.get_fixed_length() != None:
                     chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_headless_camel_case_name=stream_out.get_headless_camel_case_name(),
-                                                                                       shift_size=shift_size)
+                                                                                       chunk_max_offset=abs(stream_out.get_data_element().get_cardinality()))
                     chunk_offset_check_end = '\n\t\t\t\t}'
                 else:
                     chunk_offset_check = ''
