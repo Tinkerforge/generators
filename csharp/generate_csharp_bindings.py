@@ -415,7 +415,7 @@ namespace Tinkerforge
                     convs += conv_bool_array.format(cname,
                                                     element.get_cardinality(),
                                                     cname + 'Bits',
-                                                    str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                    int(math.ceil(element.get_cardinality() / 8.0)),
                                                     pos)
                 else:
                     convs += conv.format(csharp_type,
@@ -515,7 +515,7 @@ namespace Tinkerforge
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'bool':
                         write_convs += write_conv_bool_array.format(wname + 'Bits',
-                                                                    str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                                    int(math.ceil(element.get_cardinality() / 8.0)),
                                                                     element.get_cardinality(),
                                                                     wname,
                                                                     pos)
@@ -566,7 +566,7 @@ namespace Tinkerforge
                 else:
                     if element.get_cardinality() > 1 and element.get_type() == 'bool':
                         read_convs += read_conv_bool_array.format(aname + 'Bits',
-                                                                  str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                                  int(math.ceil(element.get_cardinality() / 8.0)),
                                                                   pos,
                                                                   element.get_cardinality(),
                                                                   aname)
