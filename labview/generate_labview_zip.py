@@ -104,23 +104,22 @@ class LabVIEWZipGenerator(common.ZipGenerator):
         for sdk in [2, 4]:
             os.makedirs(os.path.join(self.tmp_dir, 'net{0}0'.format(sdk)))
 
-            dll = os.path.join(self.tmp_dir, 'net{0}0'.format(sdk), 'Tinkerforge.dll')
-            if not os.path.isfile(dll):
-                print("\033[01;31m>>> Could not find net{0}0 dll. Skipping generation of LabVIEW zip.\033[0m".format(sdk))
-                return
-
             with common.ChangedDirectory(self.tmp_dir):
                 common.execute(['/usr/bin/mcs',
                                 '/optimize',
                                 '/sdk:{0}'.format(sdk),
                                 '/target:library',
-                                '/out:' + dll,
+                                '/out:' + os.path.join(self.tmp_dir, 'net{0}0'.format(sdk), 'Tinkerforge.dll'),
                                 os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
+    if not os.path.isfile(os.path.join('/usr/lib/mono/2.0/Microsoft.Common.tasks')):
+        print('\033[01;31m>>> Could not find Mono SDK 2.0, skipping generation of LabVIEW ZIP\033[0m')
+        return
+
     common.generate(bindings_root_directory, 'en', LabVIEWZipGenerator)
 
 if __name__ == "__main__":

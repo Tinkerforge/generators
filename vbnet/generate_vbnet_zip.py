@@ -85,18 +85,13 @@ class VBNETZipGenerator(common.ZipGenerator):
                                    {'<<BINDINGS>>': 'Visual Basic .NET',
                                     '<<VERSION>>': '.'.join(version)})
 
-        dll = os.path.join(self.tmp_dir, 'Tinkerforge.dll')
-        if not os.path.isfile(dll):
-            print("\033[01;31m>>> Could not find Tinkerforge.dll. Skipping generation of VB.NET zip.\033[0m")
-            return
-
         # Make dll
         with common.ChangedDirectory(self.tmp_dir):
             common.execute(['/usr/bin/mcs',
                             '/optimize',
                             '/sdk:2',
                             '/target:library',
-                            '/out:' + dll,
+                            '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
                             '/doc:' + os.path.join(self.tmp_dir, 'Tinkerforge.xml'),
                             os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
 
@@ -104,6 +99,10 @@ class VBNETZipGenerator(common.ZipGenerator):
         self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
+    if not os.path.isfile(os.path.join('/usr/lib/mono/2.0/Microsoft.Common.tasks')):
+        print('\033[01;31m>>> Could not find Mono SDK 2.0, skipping generation of Visual Basic .NET ZIP\033[0m')
+        return
+
     common.generate(bindings_root_directory, 'en', VBNETZipGenerator)
 
 if __name__ == "__main__":

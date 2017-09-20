@@ -27,7 +27,6 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -62,10 +61,6 @@ class CSharpZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        if 'Mono JIT compiler version 4.6' in subprocess.check_output(['/usr/bin/mono' , '--version']):
-            print("\033[01;31m>>> Mono Version 4.6 currently not supported for .zip generation. Skipping generation of C# zip.\033[0m")
-            return
-
         root_dir = self.get_bindings_root_directory()
 
         # Copy IP Connection examples
@@ -126,6 +121,10 @@ class CSharpZipGenerator(common.ZipGenerator):
         self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
+    if not os.path.isfile(os.path.join('/usr/lib/mono/2.0/Microsoft.Common.tasks')):
+        print('\033[01;31m>>> Could not find Mono SDK 2.0, skipping generation of C# ZIP\033[0m')
+        return
+
     common.generate(bindings_root_directory, 'en', CSharpZipGenerator)
 
 if __name__ == "__main__":
