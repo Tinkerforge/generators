@@ -94,20 +94,23 @@ class PythonElement(common.Element):
 
     def get_python_type(self):
         python_type = PythonElement.python_types[self.get_type()]
+        cardinality = self.get_cardinality()
 
-        if self.get_cardinality() == 1 or self.get_type() == 'string':
+        if cardinality == 1 or self.get_type() == 'string':
             return python_type
-        elif self.get_cardinality() < 0:
-            return '[{0}, ...]'.format(python_type)
+        elif cardinality < 0:
+            return '[{0}, {0}, ...]'.format(python_type)
+        elif cardinality <= 5:
+            return '[' + ', '.join([python_type] * cardinality) + ']'
         else:
-            return '[' + ', '.join([python_type] * self.get_cardinality()) + ']'
+            return '[{0}, {0}, ..{1}x.., {0}]'.format(python_type, cardinality - 3)
 
     def get_python_struct_format(self):
         f = PythonElement.python_struct_formats[self.get_type()]
-        c = self.get_cardinality()
+        cardinality = self.get_cardinality()
 
-        if c > 1:
-            f = str(c) + f
+        if cardinality > 1:
+            f = str(cardinality) + f
 
         return f
 

@@ -82,13 +82,16 @@ class PerlElement(common.Element):
 
     def get_perl_type(self):
         perl_type = PerlElement.perl_types[self.get_type()]
+        cardinality = self.get_cardinality()
 
-        if self.get_cardinality() == 1 or self.get_type() == 'string':
+        if cardinality == 1 or self.get_type() == 'string':
             return perl_type
-        elif self.get_cardinality() < 0:
-            return '[{0}, ...]'.format(perl_type)
+        elif cardinality < 0:
+            return '[{0}, {0}, ...]'.format(perl_type)
+        elif cardinality <= 5:
+            return '[' + ', '.join([perl_type] * cardinality) + ']'
         else:
-            return '[' + ', '.join([perl_type]*self.get_cardinality()) + ']'
+            return '[{0}, {0}, ..{1}x.., {0}]'.format(perl_type, cardinality - 3)
 
     def get_perl_doc_name(self):
         name = self.get_underscore_name()
@@ -102,10 +105,10 @@ class PerlElement(common.Element):
 
     def get_perl_pack_format(self):
         f = PerlElement.perl_pack_formats[self.get_type()]
-        c = self.get_cardinality()
+        cardinality = self.get_cardinality()
 
-        if c > 1:
-            f += str(c)
+        if cardinality > 1:
+            f += str(cardinality)
 
         return f
 

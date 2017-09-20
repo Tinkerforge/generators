@@ -476,7 +476,7 @@ class MathematicaDocElement(common.Element):
             for i in range(self.get_cardinality()):
                 items.append(name + str(i + 1))
 
-            if len(items) > 3:
+            if len(items) > 5:
                 items = [items[0]] + [items[1]] + ['...'] + [items[-1]]
 
             name = '{' + ', '.join(items) + '}'

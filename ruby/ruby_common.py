@@ -91,13 +91,16 @@ class RubyElement(common.Element):
 
     def get_ruby_type(self):
         ruby_type = RubyElement.ruby_types[self.get_type()]
+        cardinality = self.get_cardinality()
 
-        if self.get_cardinality() == 1 or self.get_type() == 'string':
+        if cardinality == 1 or self.get_type() == 'string':
             return ruby_type
-        elif self.get_cardinality() < 0:
-            return '[{0}, ...]'.format(ruby_type)
+        elif cardinality < 0:
+            return '[{0}, {0}, ...]'.format(ruby_type)
+        elif cardinality <= 5:
+            return '[' + ', '.join([ruby_type] * cardinality) + ']'
         else:
-            return '[' + ', '.join([ruby_type]*self.get_cardinality()) + ']'
+            return '[{0}, {0}, ..{1}x.., {0}]'.format(ruby_type, cardinality - 3)
 
     def get_ruby_pack_format(self):
         return RubyElement.ruby_pack_formats[self.get_type()]

@@ -76,17 +76,22 @@ class JavaScriptElement(common.Element):
 
     def get_javascript_type(self):
         javascript_type = JavaScriptElement.javascript_types[self.get_type()]
+        cardinality = self.get_cardinality()
 
-        if self.get_cardinality() == 1 or self.get_type() == 'string':
+        if cardinality == 1 or self.get_type() == 'string':
             return javascript_type
-
-        return '[' + ', '.join([javascript_type]*self.get_cardinality()) + ']'
+        elif cardinality < 0:
+            return '[{0}, {0}, ...]'.format(javascript_type)
+        elif cardinality <= 5:
+            return '[' + ', '.join([javascript_type] * cardinality) + ']'
+        else:
+            return '[{0}, {0}, ..{1}x.., {0}]'.format(javascript_type, cardinality - 3)
 
     def get_javascript_struct_format(self):
         f = JavaScriptElement.javascript_struct_formats[self.get_type()]
-        c = self.get_cardinality()
+        cardinality = self.get_cardinality()
 
-        if c > 1:
-            f = f + str(c)
+        if cardinality > 1:
+            f = f + str(cardinality)
 
         return f
