@@ -734,7 +734,7 @@ true);"""
 
 			if (streamStateObject['streamProperties']['singleChunk']) {{
 				{stream_chunk_data_param_name_ll} =
-					this.ipcon.createChunkData({data_param_name_hl}, 0, {chunk_cardinality}, '\0');
+					this.ipcon.createChunkData({data_param_name_hl}, 0, {chunk_cardinality}, '\\0');
 
 				this.ipcon.sendRequest(this,
 				                       {device_class}.FUNCTION_{function_name},
@@ -748,7 +748,7 @@ true);"""
 			else {{
 				while ({stream_chunk_offset_param_name_ll} < {data_param_name_hl}.length) {{
 					{stream_chunk_data_param_name_ll} =
-						this.ipcon.createChunkData({data_param_name_hl}, {stream_chunk_offset_param_name_ll}, {chunk_cardinality}, '\0');
+						this.ipcon.createChunkData({data_param_name_hl}, {stream_chunk_offset_param_name_ll}, {chunk_cardinality}, '\\0');
 
 					this.ipcon.sendRequest(this,
 					                       {device_class}.FUNCTION_{function_name},
@@ -793,7 +793,7 @@ true);"""
 
 				{stream_chunk_offset_param_name_ll} = 0;
 				{stream_chunk_data_param_name_ll} =
-					this.ipcon.createChunkData({data_param_name_hl}, 0, {chunk_cardinality}, '\0');
+					this.ipcon.createChunkData({data_param_name_hl}, 0, {chunk_cardinality}, '\\0');
 
 				streamStateObject['responseProperties']['streamInChunkOffset'] = {chunk_cardinality};
 				streamStateObject['responseProperties']['streamInChunkLength'] = {chunk_cardinality};
@@ -851,7 +851,7 @@ true);"""
 							device.ipcon.createChunkData(streamStateObject['responseProperties']['data'],
 							                             streamStateObject['responseProperties']['streamInChunkOffset'],
 							                             streamStateObject['responseProperties']['streamInChunkLength'],
-							                             '\0');
+							                             '\\0');
 						{stream_chunk_offset_param_name_ll} = streamStateObject['responseProperties']['streamInChunkOffset'];
 
 						for (var i = 0; i < streamStateObject['dataMappingStreamIn'].length; i++) {{
