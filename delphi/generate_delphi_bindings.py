@@ -556,6 +556,10 @@ begin
 
                 offset += element.get_size()
 
+            if  packet.has_high_level():
+                #TODO: Generate streamed getters
+                print '[+] GENERATE STREAMED GETTERS'
+
             method += 'end;\n\n'
 
             methods += method
@@ -679,7 +683,6 @@ begin
                                                           ', '.join(['self'] + parameter_names))
             wrapper += '    end;'
 
-            # TODO: Generating streamed callback handling code
             if has_high_level_callback:
                 stream_out = packet.get_high_level('stream_out')
 
