@@ -56,7 +56,7 @@ unit {1}{2};
 interface
 
 uses
-  Device, IPConnection, LEConverter, Math;
+  Device, IPConnection, LEConverter, Math, SyncObjs;
 
 """
 
@@ -131,6 +131,45 @@ uses
 
             arrays += '\n'
 
+        has_high_level_callback_states = False
+
+        for packet in self.get_packets('callback'):
+            if not packet.has_high_level():
+                continue
+
+            stream_out = packet.get_high_level('stream_out')
+
+            if not stream_out:
+                continue
+
+            has_high_level_callback_states = True
+            callback_state_data_delphi_type = None
+            callback_state_length_delphi_type = None
+
+            for element in packet.get_elements(direction='out'):
+                role = element.get_role()
+
+                if not role:
+                    continue
+
+                if role.endswith('length'):
+                    callback_state_length_delphi_type = element.get_delphi_type()[0]
+
+                if role.endswith('data'):
+                    callback_state_data_delphi_type = element.get_delphi_type()[0]
+
+                    if stream_out.get_fixed_length():
+                        #FIXME: Deduce length type from fixed size of the stream
+                        callback_state_length_delphi_type = 'word'
+
+            arrays += \
+                '  T{0}HighLevelCallbackState = record data: array of {1}; length: {2}; end;\n'.format(packet.get_camel_case_name(skip=-2),
+                                                                                                       callback_state_data_delphi_type,
+                                                                                                       callback_state_length_delphi_type)
+
+        if has_high_level_callback_states:
+            arrays += '\n'
+
         return arrays
 
     def get_delphi_callback_prototypes(self):
@@ -145,6 +184,34 @@ uses
 
             prototypes += template.format(self.get_delphi_class_name(),
                                           packet.get_camel_case_name(),
+                                          params)
+
+            if not packet.has_high_level():
+                continue
+
+            stream_out = packet.get_high_level('stream_out')
+
+            if not stream_out:
+                continue
+
+            high_level_parameters = []
+
+            for element in packet.get_elements(direction='out'):
+                role = element.get_role()
+
+                if not role:
+                    high_level_parameters.append('const ' + element.get_headless_camel_case_name() + ': ' + element.get_delphi_type()[0])
+                else:
+                    if role.endswith('data'):
+                        high_level_parameters.append('const ' + stream_out.get_headless_camel_case_name() + ': array of ' + element.get_delphi_type()[0])
+
+            params = '; '.join(high_level_parameters)
+
+            if len(params) > 0:
+                params = '; ' + params
+
+            prototypes += template.format(self.get_delphi_class_name(),
+                                          packet.get_camel_case_name(skip=-2),
                                           params)
 
         if len(prototypes) > 0:
@@ -167,6 +234,18 @@ uses
             callbacks += template.format(packet.get_headless_camel_case_name(),
                                          self.get_delphi_class_name(),
                                          packet.get_camel_case_name())
+
+            if not packet.has_high_level():
+                continue
+
+            stream_out = packet.get_high_level('stream_out')
+
+            if not stream_out:
+                continue
+
+            callbacks += template.format(packet.get_headless_camel_case_name(skip=-2),
+                                         self.get_delphi_class_name(),
+                                         packet.get_camel_case_name(skip=-2))
 
         callback_wrappers = ''
         template_wrapper = '    procedure CallbackWrapper{0}(const packet: TByteArray); {1};\n'
@@ -215,12 +294,37 @@ uses
     /// </summary>
     property On{0}: {1}Notify{0} read {2}Callback write {2}Callback;"""
 
+        has_high_level_callback_data = False
+        high_level_callback_data_variables = '\n'
+
         for packet in self.get_packets('callback'):
             doc = packet.get_delphi_formatted_doc()
             props.append(prop.format(packet.get_camel_case_name(),
                                      self.get_delphi_class_name(),
                                      packet.get_headless_camel_case_name(),
                                      doc))
+
+            if not packet.has_high_level():
+                continue
+
+            stream_out = packet.get_high_level('stream_out')
+
+            if not stream_out:
+                continue
+
+            has_high_level_callback_data = True
+
+            high_level_callback_data_variables += \
+                '    {0}HighLevelCallbackState: T{1}HighLevelCallbackState;\n'.format(packet.get_headless_camel_case_name(skip=-2),
+                                                                                      packet.get_camel_case_name(skip=-2))
+
+            props.append(prop.format(packet.get_camel_case_name(skip=-2),
+                                     self.get_delphi_class_name(),
+                                     packet.get_headless_camel_case_name(skip=-2),
+                                     doc))
+
+        if not has_high_level_callback_data:
+            high_level_callback_data_variables = ''
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             props.append("""
@@ -244,6 +348,7 @@ uses
 
         return  cls + \
                 '  private\n' + \
+                '    streamMutex: TCriticalSection;{0}'.format(high_level_callback_data_variables) + \
                 callbacks + \
                 '  protected\n' + \
                 callback_wrappers + \
@@ -286,6 +391,30 @@ begin
         if len(response_expected) > 0:
             response_expected += '\n'
 
+        init_high_level_callback_state = ''
+
+        for packet in self.get_packets('callback'):
+            if not packet.has_high_level():
+                continue
+
+            stream_out = packet.get_high_level('stream_out')
+
+            if not stream_out:
+                continue
+
+            init_high_level_callback_state += \
+                '  SetLength({0}HighLevelCallbackState.data, 0);\n\
+  Finalize({0}HighLevelCallbackState.data);\n\
+  {0}HighLevelCallbackState.data := nil;\n\
+  {0}HighLevelCallbackState.length := 0;\n\n'.format(packet.get_headless_camel_case_name(skip=-2))
+
+        if len(init_high_level_callback_state) > 0:
+            response_expected += init_high_level_callback_state
+        else:
+            response_expected += '\n'
+
+        response_expected += '\n'
+
         return con.format(self.get_delphi_class_name(),
                           *self.get_api_version()) + response_expected
 
@@ -324,9 +453,9 @@ begin
                 method = procedure.format(cls, name, params)
 
             if out_count > 0:
-                method += 'var request, response: TByteArray;'
+                method += '  var request, response: TByteArray;\n'
             else:
-                method += 'var request: TByteArray;'
+                method += '  var request: TByteArray;\n'
 
             has_array = False
 
@@ -336,15 +465,15 @@ begin
                     break
 
             if has_array:
-                method += ' i: longint;'
+                method += '  i: longint;\n'
 
             for element in packet.get_elements():
                 if element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    method += ' ' + \
+                    method += '  ' + \
                               element.get_headless_camel_case_name() + \
-                              'Bits : array[0 .. ' + \
+                              'Bits: array[0 .. ' + \
                               str(int(math.ceil(element.get_cardinality() / 8.0) - 1)) + \
-                              '] of Byte;'
+                              '] of Byte;\n'
 
             method += '\n'
             method += 'begin\n'
@@ -441,7 +570,15 @@ begin
                                                                                              packet.get_camel_case_name())
 
             if len(packet.get_elements(direction='out')) > 0:
-                wrapper += 'var ' + packet.get_delphi_parameter_list(False, False) + ';'
+                param_arr = packet.get_delphi_parameter_list(False, False).split('; ')
+
+                for idx, p in enumerate(param_arr):
+                    if idx == 0:
+                        param_arr[idx] = p + ';'
+                    else:
+                        param_arr[idx] = '  var ' + p + ';'
+
+                wrapper += '  var ' + '\n'.join(param_arr) + '\n'
 
             has_array = False
 
@@ -450,16 +587,38 @@ begin
                     has_array = True
                     break
 
+            if packet.has_high_level():
+                stream_out = packet.get_high_level('stream_out')
+
+                if stream_out and not stream_out.has_single_chunk():
+                    stream_data_type = ''
+
+                    for element in packet.get_elements(direction='out'):
+                        role = element.get_role()
+
+                        if role and role.endswith('length'):
+                            stream_data_type = element.get_delphi_type()[0]
+
+                            break
+
+                    #FIXME: Deduce length type from fixed size of the stream
+                    if not stream_data_type:
+                        wrapper += '  var {0}ChunkLength: {1};\n'.format(stream_out.get_headless_camel_case_name(),
+                                                                         'word')
+                    else:
+                        wrapper += '  var {0}ChunkLength: {1};\n'.format(stream_out.get_headless_camel_case_name(),
+                                                                         stream_data_type)
+
             if has_array:
-                wrapper += ' i: longint;'
+                wrapper += '  i: longint;\n'
 
             for element in packet.get_elements():
                 if element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    wrapper += ' ' + \
+                    wrapper += '  ' + \
                                element.get_headless_camel_case_name() + \
-                               'Bits : array[0 .. ' + \
+                               'Bits: array[0 .. ' + \
                                str(int(math.ceil(element.get_cardinality() / 8.0) - 1)) + \
-                               '] of Byte;'
+                               '] of Byte;\n'
 
             wrapper += '\n'
             wrapper += 'begin\n'
@@ -467,7 +626,22 @@ begin
             if len(packet.get_elements(direction='out')) == 0:
                 wrapper += '  Assert(packet <> nil); { Avoid \'Parameter not used\' warning }\n'
 
-            wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
+            has_high_level_callback = False
+
+            if packet.has_high_level():
+                stream_out = packet.get_high_level('stream_out')
+
+                if stream_out:
+                    has_high_level_callback = True
+                    wrapper += \
+                        '  if (Assigned({0}Callback) Or Assigned({1}Callback)) then begin\n'.format(packet.get_headless_camel_case_name(),
+                                                                                                    packet.get_headless_camel_case_name(skip=-2))
+                else:
+                    wrapper += \
+                        '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
+            else:
+                wrapper += \
+                    '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
 
             offset = 8
             parameter_names = []
@@ -500,8 +674,117 @@ begin
 
                 offset += element.get_size()
 
-            wrapper += '    {0}Callback({1});\n'.format(packet.get_headless_camel_case_name(), ', '.join(['self'] + parameter_names))
-            wrapper += '  end;\n'
+            wrapper += '\n    if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
+            wrapper += '      {0}Callback({1});\n'.format(packet.get_headless_camel_case_name(),
+                                                          ', '.join(['self'] + parameter_names))
+            wrapper += '    end;'
+
+            # TODO: Generating streamed callback handling code
+            if has_high_level_callback:
+                stream_out = packet.get_high_level('stream_out')
+
+                if stream_out:
+                    template_high_level_callback_stream_out = '''      {stream_headless_camel_case_name}ChunkLength := {stream_chunk_length_calc}
+      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then begin
+        {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+      end;
+
+      if ({high_level_callback_name}HighLevelCallbackState.data = nil) then begin {{ no stream in-progress }}
+        if ({stream_headless_camel_case_name}ChunkOffset = 0) then begin {{ stream starts }}
+          SetLength({high_level_callback_name}HighLevelCallbackState.data, {stream_length});
+          Move({stream_headless_camel_case_name}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+          {high_level_callback_name}HighLevelCallbackState.length := {stream_headless_camel_case_name}ChunkLength;
+
+          if ({high_level_callback_name}HighLevelCallbackState.length >= {stream_length}) then begin {{ stream complete }}
+            {high_level_callback_name}Callback({high_level_callback_parameters});
+            SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
+            Finalize({high_level_callback_name}HighLevelCallbackState.data);
+            {high_level_callback_name}HighLevelCallbackState.data := nil;
+            {high_level_callback_name}HighLevelCallbackState.length := 0;
+          end;
+        end;
+      end
+      else begin {{ stream in-progress }}
+        if ({stream_headless_camel_case_name}ChunkOffset <> {high_level_callback_name}HighLevelCallbackState.length) then begin {{ stream out-of-sync }}
+          SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
+          Finalize({high_level_callback_name}HighLevelCallbackState.data);
+          {high_level_callback_name}HighLevelCallbackState.data := nil;
+          {high_level_callback_name}HighLevelCallbackState.length := 0;
+          {high_level_callback_name}Callback({high_level_callback_parameters});
+        end
+        else begin {{ stream in-sync }}
+          Move({stream_headless_camel_case_name}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+          {high_level_callback_name}HighLevelCallbackState.length += {stream_headless_camel_case_name}ChunkLength;
+
+          if ({high_level_callback_name}HighLevelCallbackState.length >= {stream_length}) then begin {{ stream complete }}
+            {high_level_callback_name}Callback({high_level_callback_parameters});
+            SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
+            Finalize({high_level_callback_name}HighLevelCallbackState.data);
+            {high_level_callback_name}HighLevelCallbackState.data := nil;
+            {high_level_callback_name}HighLevelCallbackState.length := 0;
+          end;
+        end;
+      end;
+'''
+
+                    template_high_level_callback_stream_out_single_chunk = '''      SetLength({high_level_callback_name}HighLevelCallbackState.data, {stream_length});
+      Move({stream_headless_camel_case_name}Data[0], {high_level_callback_name}HighLevelCallbackState.data[0], sizeof({chunk_data_type}) * {stream_length});
+      {high_level_callback_name}Callback({high_level_callback_parameters});
+      SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
+      Finalize({high_level_callback_name}HighLevelCallbackState.data);
+      {high_level_callback_name}HighLevelCallbackState.data := nil;
+      {high_level_callback_name}HighLevelCallbackState.length := 0;
+'''
+
+                    high_level_callback_parameters = ['self']
+                    high_level_callback_name = packet.get_headless_camel_case_name(skip=-2)
+
+                    for element in packet.get_elements(direction='out'):
+                        role = element.get_role()
+
+                        if not role:
+                            high_level_callback_parameters.append(element.get_headless_camel_case_name())
+                            continue
+
+                        if role.endswith('data'):
+                            chunk_data_type = element.get_delphi_type()[0]
+                            chunk_cardinality = element.get_cardinality()
+                            stream_headless_camel_case_name = stream_out.get_headless_camel_case_name()
+                            if stream_out.get_fixed_length():
+                                stream_length = '{0}'.format(str(stream_out.get_fixed_length()))
+                            else:
+                                stream_length = '{0}Length'.format(stream_headless_camel_case_name)
+                            high_level_callback_parameters.append('{0}HighLevelCallbackState.data'.format(high_level_callback_name))
+
+                    if not stream_out.has_single_chunk():
+                        if stream_out.get_fixed_length():
+                            stream_chunk_length_calc = str(stream_out.get_fixed_length()) + ' - ' + stream_headless_camel_case_name + 'ChunkOffset;'
+                        else:
+                            stream_chunk_length_calc = stream_headless_camel_case_name + 'Length - ' + stream_headless_camel_case_name + 'ChunkOffset;'
+
+                        wrapper_code = \
+                            template_high_level_callback_stream_out.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                           stream_chunk_length_calc = stream_chunk_length_calc,
+                                                                           chunk_cardinality = chunk_cardinality,
+                                                                           high_level_callback_name = high_level_callback_name,
+                                                                           stream_length = stream_length,
+                                                                           chunk_data_type = chunk_data_type,
+                                                                           high_level_callback_parameters = ', '.join(high_level_callback_parameters))
+                    else:
+                        wrapper_code = \
+                            template_high_level_callback_stream_out_single_chunk.format(high_level_callback_name = high_level_callback_name,
+                                                                                        stream_length = stream_length,
+                                                                                        stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                        chunk_data_type = chunk_data_type,
+                                                                                        high_level_callback_parameters = ', '.join(high_level_callback_parameters))
+
+                    wrapper += '\n\n    if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name(skip=-2))
+                    wrapper += wrapper_code
+                    wrapper += '    end;\n'
+                    wrapper += '  end;\n'
+            else:
+                wrapper += '\n  end;\n'
+
             wrapper += 'end;\n\n'
 
             wrappers += wrapper
