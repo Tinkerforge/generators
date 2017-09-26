@@ -1026,13 +1026,13 @@ true);"""
                             param_stream_params_ll['stream_chunk_offset'] = element.get_headless_camel_case_name()
                         elif role == 'stream_chunk_data':
                             param_stream_params_ll['stream_chunk_data'] = element.get_headless_camel_case_name()
+                            param_list_hl_arr.append(stream_in.get_headless_camel_case_name())
 
                         continue
 
                     param_list_hl_arr.append(element.get_headless_camel_case_name())
 
                 data_param_name_hl = stream_in.get_headless_camel_case_name()
-                param_list_hl_arr.append(data_param_name_hl)
 
                 param_list_hl = ', '.join(param_list_hl_arr)
 
