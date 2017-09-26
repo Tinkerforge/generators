@@ -91,13 +91,12 @@ class Error(Exception):
     STREAM_OUT_OF_SYNC = -12
 
     def __init__(self, value, description):
+        Exception.__init__(self, '{0} ({1})'.format(description, value))
+
         self.value = value
         self.description = description
 
-    def __str__(self):
-        return str(self.description) + ' (' + str(self.value) + ')'
-
-class Device:
+class Device(object):
     RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
     RESPONSE_EXPECTED_ALWAYS_TRUE = 1 # getter
     RESPONSE_EXPECTED_TRUE = 2 # setter
@@ -236,7 +235,7 @@ class BrickDaemon(Device):
     def authenticate(self, client_nonce, digest):
         self.ipcon.send_request(self, BrickDaemon.FUNCTION_AUTHENTICATE, (client_nonce, digest), '4B 20B', '')
 
-class IPConnection:
+class IPConnection(object):
     FUNCTION_ENUMERATE = 254
     FUNCTION_ADC_CALIBRATE = 251
     FUNCTION_GET_ADC_CALIBRATION = 250
@@ -279,7 +278,7 @@ class IPConnection:
 
     DISCONNECT_PROBE_INTERVAL = 5
 
-    class CallbackContext:
+    class CallbackContext(object):
         def __init__(self):
             self.queue = None
             self.thread = None
@@ -526,7 +525,7 @@ class IPConnection:
                 self.callback.lock = threading.Lock()
                 self.callback.thread = threading.Thread(name='Callback-Processor',
                                                         target=self.callback_loop,
-                                                        args=(self.callback, ))
+                                                        args=(self.callback,))
                 self.callback.thread.daemon = True
                 self.callback.thread.start()
             except:
@@ -573,7 +572,7 @@ class IPConnection:
             self.disconnect_probe_queue = queue.Queue()
             self.disconnect_probe_thread = threading.Thread(name='Disconnect-Prober',
                                                             target=self.disconnect_probe_loop,
-                                                            args=(self.disconnect_probe_queue, ))
+                                                            args=(self.disconnect_probe_queue,))
             self.disconnect_probe_thread.daemon = True
             self.disconnect_probe_thread.start()
         except:
@@ -603,11 +602,13 @@ class IPConnection:
             self.receive_flag = True
             self.receive_thread = threading.Thread(name='Brickd-Receiver',
                                                    target=self.receive_loop,
-                                                   args=(self.socket_id, ))
+                                                   args=(self.socket_id,))
             self.receive_thread.daemon = True
             self.receive_thread.start()
         except:
             def cleanup3():
+                self.receive_thread = None
+
                 # close socket
                 self.disconnect_unlocked()
 
@@ -632,8 +633,8 @@ class IPConnection:
             connect_reason = IPConnection.CONNECT_REASON_REQUEST
 
         self.callback.queue.put((IPConnection.QUEUE_META,
-                                (IPConnection.CALLBACK_CONNECTED,
-                                 connect_reason, None)))
+                                 (IPConnection.CALLBACK_CONNECTED,
+                                  connect_reason, None)))
 
     def disconnect_unlocked(self):
         # NOTE: assumes that socket is not None and socket_lock is locked

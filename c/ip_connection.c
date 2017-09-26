@@ -1965,6 +1965,8 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	ipcon_p->callback->packet_dispatch_allowed = true;
 
 	if (thread_create(&ipcon_p->receive_thread, ipcon_receive_loop, ipcon_p) < 0) {
+		ipcon_p->receive_flag = false;
+
 		// destroy socket
 		ipcon_disconnect_unlocked(ipcon_p);
 
