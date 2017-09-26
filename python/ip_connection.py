@@ -525,7 +525,7 @@ class IPConnection(object):
                 self.callback.lock = threading.Lock()
                 self.callback.thread = threading.Thread(name='Callback-Processor',
                                                         target=self.callback_loop,
-                                                        args=(self.callback, ))
+                                                        args=(self.callback,))
                 self.callback.thread.daemon = True
                 self.callback.thread.start()
             except:
@@ -572,7 +572,7 @@ class IPConnection(object):
             self.disconnect_probe_queue = queue.Queue()
             self.disconnect_probe_thread = threading.Thread(name='Disconnect-Prober',
                                                             target=self.disconnect_probe_loop,
-                                                            args=(self.disconnect_probe_queue, ))
+                                                            args=(self.disconnect_probe_queue,))
             self.disconnect_probe_thread.daemon = True
             self.disconnect_probe_thread.start()
         except:
@@ -602,7 +602,7 @@ class IPConnection(object):
             self.receive_flag = True
             self.receive_thread = threading.Thread(name='Brickd-Receiver',
                                                    target=self.receive_loop,
-                                                   args=(self.socket_id, ))
+                                                   args=(self.socket_id,))
             self.receive_thread.daemon = True
             self.receive_thread.start()
         except:
