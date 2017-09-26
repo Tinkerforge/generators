@@ -607,6 +607,8 @@ class IPConnection(object):
             self.receive_thread.start()
         except:
             def cleanup3():
+                self.receive_thread = None
+
                 # close socket
                 self.disconnect_unlocked()
 
