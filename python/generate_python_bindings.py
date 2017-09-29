@@ -38,9 +38,9 @@ class PythonBindingsDevice(python_common.PythonDevice):
 from collections import namedtuple
 
 try:
-    from .ip_connection import Device, IPConnection, Error, create_chunk_data
+    from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except ValueError:
-    from ip_connection import Device, IPConnection, Error, create_chunk_data
+    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 """
 
@@ -210,21 +210,21 @@ class {0}(Device):
     def {0}(self{7}{4}):
         \"\"\"
         {9}
-        \"\"\"
+        \"\"\"{10}
         return {1}(*self.ipcon.send_request(self, {2}.FUNCTION_{3}, ({4}{8}), '{5}', '{6}'))
 """
         m_ret = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
-        \"\"\"
+        \"\"\"{9}
         return self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
         m_nor = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
-        \"\"\"
+        \"\"\"{9}
         self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
         methods = ''
@@ -247,26 +247,26 @@ class {0}(Device):
 
             in_f = packet.get_python_format_list('in')
             out_f = packet.get_python_format_list('out')
+            coercions = common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(), '\n')
 
             elements = len(packet.get_elements(direction='out'))
 
             if elements > 1:
-                methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc)
+                methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc, coercions)
             elif elements == 1:
-                methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
+                methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc, coercions)
             else:
-                methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
+                methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc, coercions)
 
         # high-level
         template_stream_in = """
     def {underscore_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
-        \"\"\"
+        \"\"\"{coercions}
         if len({stream_underscore_name}) > {stream_max_length}:
             raise Error(Error.INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long')
 
-        {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
         {stream_underscore_name}_length = len({stream_underscore_name})
         {stream_underscore_name}_chunk_offset = 0
 
@@ -285,8 +285,7 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
-        \"\"\"
-        {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
+        \"\"\"{coercions}
         {stream_underscore_name}_length = {fixed_length}
         {stream_underscore_name}_chunk_offset = 0
 
@@ -308,11 +307,10 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
-        \"\"\"
+        \"\"\"{coercions}
         if len({stream_underscore_name}) > {stream_max_length}:
             raise Error(Error.INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long')
 
-        {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list
         {stream_underscore_name}_length = len({stream_underscore_name})
         {stream_underscore_name}_chunk_offset = 0
 
@@ -349,8 +347,8 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
-        \"\"\"
-        {stream_underscore_name} = list({stream_underscore_name}) # convert potential tuple to list, also makes a copy so we can potentially extend it
+        \"\"\"{coercions}
+        {stream_underscore_name} = list({stream_underscore_name}) # make a copy so we can potentially extend it
         {stream_underscore_name}_length = len({stream_underscore_name})
         {stream_underscore_name}_data = {stream_underscore_name}
 
@@ -369,7 +367,7 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
-        \"\"\"{fixed_length}
+        \"\"\"{coercions}{fixed_length}
         with self.stream_lock:
             ret = self.{underscore_name}_low_level({parameters}){dynamic_length_3}
             {chunk_offset_check}{stream_underscore_name}_out_of_sync = ret.{stream_underscore_name}_chunk_offset != 0
@@ -403,7 +401,7 @@ class {0}(Device):
     def {underscore_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
-        \"\"\"
+        \"\"\"{coercions}
         ret = self.{underscore_name}_low_level({parameters})
 {result}
 """
@@ -483,6 +481,7 @@ class {0}(Device):
                             result = template_stream_in_namedtuple_result.format(result_camel_case_name=packet.get_camel_case_name(skip=-2))
 
                 methods += template.format(doc=packet.get_python_formatted_doc(),
+                                           coercions=common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(high_level=True), '\n'),
                                            underscore_name=packet.get_underscore_name(skip=-2),
                                            parameters=packet.get_python_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
@@ -537,6 +536,7 @@ class {0}(Device):
                     template = template_stream_out
 
                 methods += template.format(doc=packet.get_python_formatted_doc(),
+                                           coercions=common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(high_level=True), '\n'),
                                            underscore_name=packet.get_underscore_name(skip=-2),
                                            parameters=packet.get_python_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
@@ -612,6 +612,16 @@ class PythonBindingsPacket(python_common.PythonPacket):
             forms.append(element.get_python_struct_format())
 
         return ' '.join(forms)
+
+    def get_python_parameter_coercions(self, high_level=False):
+        coercions = []
+
+        for element in self.get_elements(direction='in', high_level=high_level):
+            underscore_name = element.get_underscore_name()
+
+            coercions.append('{0} = {1}'.format(underscore_name, element.get_python_parameter_coercion().format(underscore_name)))
+
+        return '\n        '.join(coercions)
 
 class PythonBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):

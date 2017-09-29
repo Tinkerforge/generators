@@ -92,6 +92,21 @@ class PythonElement(common.Element):
         'string': None
     }
 
+    python_parameter_coercions = {
+        'int8':   ('int({0})',           'list(map(int, {0}))'),
+        'uint8':  ('int({0})',           'list(map(int, {0}))'),
+        'int16':  ('int({0})',           'list(map(int, {0}))'),
+        'uint16': ('int({0})',           'list(map(int, {0}))'),
+        'int32':  ('int({0})',           'list(map(int, {0}))'),
+        'uint32': ('int({0})',           'list(map(int, {0}))'),
+        'int64':  ('int({0})',           'list(map(int, {0}))'),
+        'uint64': ('int({0})',           'list(map(int, {0}))'),
+        'float':  ('float({0})',         'list(map(float, {0}))'),
+        'bool':   ('bool({0})',          'list(map(bool, {0}))'),
+        'char':   ('create_char({0})',   'create_char_list({0})'),
+        'string': ('create_string({0})', 'create_string({0})')
+    }
+
     def get_python_type(self):
         python_type = PythonElement.python_types[self.get_type()]
         cardinality = self.get_cardinality()
@@ -121,3 +136,11 @@ class PythonElement(common.Element):
             common.GeneratorError('Invalid array item type: ' + self.get_type())
 
         return value
+
+    def get_python_parameter_coercion(self):
+        coercion = PythonElement.python_parameter_coercions[self.get_type()]
+
+        if self.get_cardinality() == 1:
+            return coercion[0]
+        else:
+            return coercion[1]
