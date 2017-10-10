@@ -1050,11 +1050,11 @@ class Element(NameMixin):
             return self.get_item_size() * self.get_cardinality()
 
 class Stream(NameMixin):
-    def __init__(self, raw_data, packet, direction):
+    def __init__(self, raw_data, data_element, packet, direction):
         self.raw_data = raw_data
+        self.data_element = data_element
         self.packet = packet
         self.direction = direction
-        self.data_element = None
 
         check_name(raw_data['name'])
 
@@ -1107,9 +1107,6 @@ class Stream(NameMixin):
         return self.chunk_data_element
 
     def get_data_element(self):
-        if self.data_element == None:
-            self.data_element = self.packet.get_elements(name=self.get_name(), direction=self.direction, high_level=True)[0]
-
         return self.data_element
 
     def get_fixed_length(self, default=None):
@@ -1119,15 +1116,15 @@ class Stream(NameMixin):
         return self.raw_data.get('single_chunk', False)
 
 class StreamIn(Stream):
-    def __init__(self, raw_data, packet):
-        Stream.__init__(self, raw_data, packet, 'in')
+    def __init__(self, raw_data, data_element, packet):
+        Stream.__init__(self, raw_data, data_element, packet, 'in')
 
     def has_short_write(self):
         return self.raw_data.get('short_write', False)
 
 class StreamOut(Stream):
-    def __init__(self, raw_data, packet):
-        Stream.__init__(self, raw_data, packet, 'out')
+    def __init__(self, raw_data, data_element, packet):
+        Stream.__init__(self, raw_data, data_element, packet, 'out')
 
 class Packet(NameMixin):
     valid_types = set(['int8',
@@ -1178,6 +1175,7 @@ class Packet(NameMixin):
             stream_fixed_length = raw_stream_out.get('fixed_length', None)
 
         stream_size_type = None
+        stream_data_element = None
         payload_in_size = 0
         payload_out_size = 0
 
@@ -1242,7 +1240,12 @@ class Packet(NameMixin):
                     else:
                         raw_element[2] = -((1 << int(stream_size_type.replace('uint', ''))) - 1)
 
-                    self.elements.append(device.get_generator().get_element_class()(raw_element, self, 'high', 'stream_data'))
+                    if stream_data_element != None:
+                        raise GeneratorError('Multiple stream-data-elements')
+
+                    stream_data_element = device.get_generator().get_element_class()(raw_element, self, 'high', 'stream_data')
+
+                    self.elements.append(stream_data_element)
                 elif element.get_name().endswith(' Written'):
                     if stream_size_type == None:
                         raise GeneratorError('Missing stream-size-type')
@@ -1254,11 +1257,11 @@ class Packet(NameMixin):
                     self.elements.append(device.get_generator().get_element_class()(raw_element, self, 'high', 'stream_written'))
 
         if raw_stream_in != None:
-            stream_in = StreamIn(raw_stream_in, self)
+            stream_in = StreamIn(raw_stream_in, stream_data_element, self)
             self.high_level['stream_in'] = stream_in
 
         if raw_stream_out != None:
-            stream_out = StreamOut(raw_stream_out, self)
+            stream_out = StreamOut(raw_stream_out, stream_data_element, self)
             self.high_level['stream_out'] = stream_out
 
         self.constant_groups = []
