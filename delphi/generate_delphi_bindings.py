@@ -34,6 +34,16 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class DelphiBindingsDevice(delphi_common.DelphiDevice):
+    def get_fixed_stream_length_type(self, stream_max_length):
+        if stream_max_length < 256:
+            return 'byte'
+        elif stream_max_length > 255 and stream_max_length < 65536:
+            return 'word'
+        elif stream_max_length > 65535 and stream_max_length < 4294967296:
+            return 'word'
+        else:
+            return ''
+
     def specialize_delphi_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
@@ -159,8 +169,7 @@ uses
                     callback_state_data_delphi_type = element.get_delphi_type()[0]
 
                     if stream_out.get_fixed_length():
-                        #FIXME: Deduce length type from fixed size of the stream
-                        callback_state_length_delphi_type = 'word'
+                        callback_state_length_delphi_type = self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality()))
 
             arrays += \
                 '  T{0}HighLevelCallbackState = record data: array of {1}; length: {2}; end;\n'.format(packet.get_camel_case_name(skip=-2),
@@ -571,8 +580,6 @@ begin
             function_id = '{0}_{1}_FUNCTION_{2}'.format(self.get_upper_case_category(),
                                                         self.get_upper_case_name(),
                                                         packet.get_upper_case_name())
-            stream_in = packet.get_high_level('stream_in')
-            stream_out = packet.get_high_level('stream_out')
 
             if len(params) > 0:
                 params = '(' + params + ')'
@@ -691,8 +698,161 @@ begin
             methods += method
 
             if  packet.has_high_level():
-                method = ''
-                name_high_level = packet.get_camel_case_name(skip=-2)
+                template_high_level_stream_in = """{method_signature}  var {stream_headless_camel_case_name}ChunkOffset: {stream_length_type};
+  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
+  {stream_headless_camel_case_name}Length: {stream_length_type};
+  zero: byte;
+
+begin
+  zero := 0;
+  {stream_headless_camel_case_name}Length := 0;
+  {stream_headless_camel_case_name}ChunkOffset := 0;
+
+  if Length({stream_headless_camel_case_name}) > {stream_max_length} then raise EInvalidParameterException.Create('Invalid parameter');
+
+  {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
+
+  if Length({stream_headless_camel_case_name}) = 0 then begin
+    Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {chunk_cardinality});
+    {camel_case_name}LowLevel({parameters_low_level});
+  end
+  else begin
+    streamMutex.Acquire();
+
+    while {stream_headless_camel_case_name}ChunkOffset < Length({stream_headless_camel_case_name}) do begin
+      {stream_headless_camel_case_name}ChunkLength := Length({stream_headless_camel_case_name}) - {stream_headless_camel_case_name}ChunkOffset;
+
+      if {stream_headless_camel_case_name}ChunkLength > {chunk_cardinality} then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+
+      Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+      Move({stream_headless_camel_case_name}[{stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+
+      {camel_case_name}LowLevel({parameters_low_level});
+
+      Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+	end;
+
+    streamMutex.Release();
+  end;
+end;
+
+"""
+
+                template_high_level_stream_in_fixed_length = """{method_signature}  var {stream_headless_camel_case_name}ChunkOffset: word;
+  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  {stream_headless_camel_case_name}ChunkLength: word;
+  {stream_headless_camel_case_name}Length: {stream_length_type};
+  zero: byte;
+
+begin
+  zero := 0;
+  {stream_headless_camel_case_name}ChunkOffset := 0;
+  {stream_headless_camel_case_name}Length := {fixed_length};
+
+  if Length({stream_headless_camel_case_name}) > {stream_max_length} then raise EInvalidParameterException.Create('Invalid parameter');
+
+  streamMutex.Acquire();
+
+  while {stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length do begin
+    {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
+
+    if {stream_headless_camel_case_name}ChunkLength > {chunk_cardinality} then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+
+    Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+    Move({stream_headless_camel_case_name}[{stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+
+    {camel_case_name}LowLevel({parameters_low_level});
+
+    Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+  end;
+
+  streamMutex.Release();
+end;
+
+"""
+
+                template_high_level_stream_in_short_write = """{method_signature}  var {stream_headless_camel_case_name}ChunkOffset: {stream_length_type};
+  {stream_headless_camel_case_name}Length: {stream_length_type};
+  {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
+  {stream_headless_camel_case_name}ChunkWritten: {stream_length_type};
+  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  zero: byte;
+
+begin
+  zero := 0;
+  result := 0;
+  {stream_headless_camel_case_name}Length := 0;
+  {stream_headless_camel_case_name}ChunkOffset := 0;
+
+  if Length({stream_headless_camel_case_name}) > {stream_max_length} then raise EInvalidParameterException.Create('Invalid parameter');
+
+  {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
+
+  if Length({stream_headless_camel_case_name}) = 0 then begin
+    Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {chunk_cardinality});
+    result := {camel_case_name}LowLevel({parameters_low_level});
+  end
+  else begin
+    streamMutex.Acquire();
+
+    while {stream_headless_camel_case_name}ChunkOffset < Length({stream_headless_camel_case_name}) do begin
+      {stream_headless_camel_case_name}ChunkLength := Length({stream_headless_camel_case_name}) - {stream_headless_camel_case_name}ChunkOffset;
+
+      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+
+      Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+      Move({stream_headless_camel_case_name}[{stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+
+      {stream_headless_camel_case_name}ChunkWritten := {camel_case_name}LowLevel({parameters_low_level});
+
+      if {stream_headless_camel_case_name}ChunkWritten <= 0 then Break;
+
+      Inc(result, {stream_headless_camel_case_name}ChunkWritten);
+
+      if ({stream_headless_camel_case_name}ChunkWritten < {chunk_cardinality}) then Break; {{ either last chunk or short write }}
+
+      Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+    end;
+
+    streamMutex.Release();
+  end;
+end;
+
+"""
+
+                template_high_level_stream_in_single_chunk = """{method_signature}  var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  zero: byte;
+
+begin
+  zero := 0;
+
+  if Length({stream_headless_camel_case_name}) > {chunk_cardinality} then raise EInvalidParameterException.Create('Invalid parameter');
+
+  Move(zero, {stream_headless_camel_case_name}Data[0], sizeof({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  Move({stream_headless_camel_case_name}[0], {stream_headless_camel_case_name}Data[0], sizeof({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+
+  {camel_case_name}LowLevel({parameters_low_level});
+end;
+
+"""
+
+                template_high_level_stream_in_short_write_single_chunk = """{method_signature}  var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  zero: byte;
+
+begin
+  result := 0;
+
+  if Length({stream_headless_camel_case_name}) > {chunk_cardinality} then raise EInvalidParameterException.Create('Invalid parameter');
+
+  Move(zero, {stream_headless_camel_case_name}Data[0], sizeof({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  Move({stream_headless_camel_case_name}[0], {stream_headless_camel_case_name}Data[0], sizeof({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+
+  result := {camel_case_name}LowLevel({parameters_low_level});
+end;
+
+"""
+
                 template_stream_out_chunk_offset_check = """
 
   if {stream_headless_camel_case_name}ChunkOffset = {chunk_max_offset} then Goto Unlock; {{ maximum chunk offset -> stream has no data }}"""
@@ -723,7 +883,7 @@ begin
     Move({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}[streamOutCurrentLength], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
     streamOutCurrentLength := {stream_headless_camel_case_name}ChunkLength;
 
-    While (streamOutCurrentLength < {stream_headless_camel_case_name}Length) do begin
+    while streamOutCurrentLength < {stream_headless_camel_case_name}Length do begin
       {camel_case_name}LowLevel({parameters_low_level});
       if {stream_headless_camel_case_name}Length <= 0 then Goto Unlock;
       {stream_headless_camel_case_name}OutOfSync := {stream_headless_camel_case_name}ChunkOffset <> streamOutCurrentLength;
@@ -739,7 +899,7 @@ begin
     {{ discard remaining stream to bring it back in-sync }}
     SetLength({stream_headless_camel_case_name}, 0);
 
-    while ({stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality} < {stream_headless_camel_case_name}Length) do begin
+    while {stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality} < {stream_headless_camel_case_name}Length do begin
       {camel_case_name}LowLevel({parameters_low_level});
       if {stream_headless_camel_case_name}Length <= 0 then Break;
     end;
@@ -771,6 +931,7 @@ end;
 
                 e_params = []
                 chunk_data_type = ''
+                stream_max_length = ''
                 chunk_cardinality = ''
                 stream_length_type = ''
                 chunk_offset_check = ''
@@ -778,35 +939,33 @@ end;
                 chunk_cardinality_minus_1 = ''
                 chunk_data_type_capitalized = ''
                 stream_headless_camel_case_name = ''
+                stream_in = packet.get_high_level('stream_in')
+                stream_out = packet.get_high_level('stream_out')
                 camel_case_name = packet.get_camel_case_name(skip=-2)
+                name_high_level = packet.get_camel_case_name(skip=-2)
 
                 for e in packet.get_elements():
                     e_param = ''
                     role = e.get_role()
-                    parameters_low_level.append(e.get_headless_camel_case_name())
+
+                    if not (stream_in and ret_type != '' and e.get_direction() == 'out'):
+                        parameters_low_level.append(e.get_headless_camel_case_name())
 
                     ret_type, e_param = self.get_high_level_method_parameters(e, ret_type, stream_in, stream_out)
 
                     if e_param != None:
                         e_params.append(e_param)
 
-                    if e.get_direction() == 'out':
-                        if role and role.endswith('data'):
-                            chunk_cardinality = str(e.get_cardinality())
-                            chunk_cardinality_minus_1 = str(e.get_cardinality() - 1)
+                    if role and role.endswith('data'):
+                        chunk_cardinality = str(e.get_cardinality())
+                        chunk_cardinality_minus_1 = str(e.get_cardinality() - 1)
+                        chunk_data_type = e.get_delphi_type()[0]
+                        chunk_data_type_capitalized = e.get_delphi_type()[1]
+
+                        if e.get_direction() == 'out':
                             stream_headless_camel_case_name = stream_out.get_headless_camel_case_name()
-                            chunk_data_type = e.get_delphi_type()[0]
-                            chunk_data_type_capitalized = e.get_delphi_type()[1]
-
-                            if stream_out.get_fixed_length() != None:
-                                chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_headless_camel_case_name = stream_out.get_headless_camel_case_name(),
-                                                                                                   chunk_max_offset = str(abs(e.get_cardinality())))
-                                #FIXME: Deduce length type from fixed size of the stream
-                                stream_length_type = 'word';
-
-
-                        if role and role.endswith('length'):
-                            stream_length_type = e.get_delphi_type()[0]
+                        elif e.get_direction() == 'in':
+                            stream_headless_camel_case_name = stream_in.get_headless_camel_case_name()
 
                 if len(e_params) > 0:
                     params = '(' + '; '.join(e_params) + ')'
@@ -818,13 +977,75 @@ end;
                 else:
                     method_signature = procedure.format(cls, name_high_level, params)
 
+                parameters_low_level = ', '.join(parameters_low_level)
+
                 if stream_in:
-                    #TODO: Generate streamed setter code
-                    method = method_signature + 'begin\n  { Implement streamed setter code here }\nend;\n\n'
+                    fixed_length = str(stream_in.get_fixed_length(default='0'))
+                    stream_max_length = str(abs(stream_in.get_data_element().get_cardinality()))
+                    stream_length_type = self.get_fixed_stream_length_type(int(stream_max_length))
+
+                    if stream_in.get_fixed_length() != None:
+                        method = template_high_level_stream_in_fixed_length.format(method_signature = method_signature,
+                                                                                   stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                   chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
+                                                                                   chunk_data_type_capitalized = chunk_data_type_capitalized,
+                                                                                   stream_length_type = stream_length_type,
+                                                                                   fixed_length = str(stream_in.get_fixed_length()),
+                                                                                   stream_max_length = stream_max_length,
+                                                                                   chunk_cardinality = chunk_cardinality,
+                                                                                   chunk_data_type = chunk_data_type,
+                                                                                   camel_case_name = camel_case_name,
+                                                                                   parameters_low_level = parameters_low_level)
+                    elif stream_in.has_short_write() and stream_in.has_single_chunk():
+                        method = template_high_level_stream_in_short_write_single_chunk.format(method_signature = method_signature,
+                                                                                               stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                               chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
+                                                                                               chunk_data_type_capitalized = chunk_data_type_capitalized,
+                                                                                               chunk_cardinality = chunk_cardinality,
+                                                                                               stream_max_length = stream_max_length,
+                                                                                               chunk_data_type = chunk_data_type,
+                                                                                               camel_case_name = camel_case_name,
+                                                                                               parameters_low_level = parameters_low_level)
+                    elif stream_in.has_short_write():
+                        method = template_high_level_stream_in_short_write.format(method_signature = method_signature,
+                                                                                  stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                  stream_length_type = stream_length_type,
+                                                                                  chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
+                                                                                  chunk_data_type_capitalized = chunk_data_type_capitalized,
+                                                                                  stream_max_length = stream_max_length,
+                                                                                  chunk_cardinality = chunk_cardinality,
+                                                                                  chunk_data_type = chunk_data_type,
+                                                                                  camel_case_name = camel_case_name,
+                                                                                  parameters_low_level = parameters_low_level)
+                    elif stream_in.has_single_chunk():
+                        method = template_high_level_stream_in_single_chunk.format(method_signature = method_signature,
+                                                                                   stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                   chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
+                                                                                   chunk_data_type_capitalized = chunk_data_type_capitalized,
+                                                                                   chunk_cardinality = chunk_cardinality,
+                                                                                   stream_max_length = stream_max_length,
+                                                                                   chunk_data_type = chunk_data_type,
+                                                                                   camel_case_name = camel_case_name,
+                                                                                   parameters_low_level = parameters_low_level)
+                    else:
+                        method = template_high_level_stream_in.format(method_signature = method_signature,
+                                                                      stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                      stream_length_type = stream_length_type,
+                                                                      chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
+                                                                      chunk_data_type_capitalized = chunk_data_type_capitalized,
+                                                                      stream_max_length = stream_max_length,
+                                                                      chunk_cardinality = chunk_cardinality,
+                                                                      chunk_data_type = chunk_data_type,
+                                                                      camel_case_name = camel_case_name,
+                                                                      parameters_low_level = parameters_low_level)
 
                 elif stream_out:
-                    parameters_low_level = ', '.join(parameters_low_level)
                     fixed_length = str(stream_out.get_fixed_length(default='0'))
+                    stream_length_type = self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality()))
+
+                    if stream_out.get_fixed_length() != None:
+                        chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_headless_camel_case_name = stream_out.get_headless_camel_case_name(),
+                                                                                           chunk_max_offset = str(abs(stream_out.get_data_element().get_cardinality())))
 
                     if stream_out.has_single_chunk():
                         method = template_high_level_stream_out_single_chunk.format(method_signature = method_signature,
@@ -881,23 +1102,8 @@ end;
                 stream_out = packet.get_high_level('stream_out')
 
                 if stream_out and not stream_out.has_single_chunk():
-                    stream_data_type = ''
-
-                    for element in packet.get_elements(direction='out'):
-                        role = element.get_role()
-
-                        if role and role.endswith('length'):
-                            stream_data_type = element.get_delphi_type()[0]
-
-                            break
-
-                    #FIXME: Deduce length type from fixed size of the stream
-                    if not stream_data_type:
-                        wrapper += '  var {0}ChunkLength: {1};\n'.format(stream_out.get_headless_camel_case_name(),
-                                                                         'word')
-                    else:
-                        wrapper += '  var {0}ChunkLength: {1};\n'.format(stream_out.get_headless_camel_case_name(),
-                                                                         stream_data_type)
+                    wrapper += '  var {0}ChunkLength: {1};\n'.format(stream_out.get_headless_camel_case_name(),
+                                                                     self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality())))
 
             if has_array:
                 wrapper += '  i: longint;\n'
