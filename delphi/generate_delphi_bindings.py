@@ -905,7 +905,7 @@ begin
     end;
 
     streamMutex.Release();
-    raise EOutOfSyncException.Create('Stream out of sync');
+    raise EStreamOutOfSyncException.Create('Stream out of sync');
   end;
 
 Unlock:

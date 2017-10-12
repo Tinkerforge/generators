@@ -1,5 +1,6 @@
 {
   Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2017 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
   with or without modification, are permitted. See the Creative
@@ -100,8 +101,8 @@ type
   end;
   NotSupportedException = ENotSupportedException; { for backward compatibility }
 
-  { EOutOfSyncException }
-  EOutOfSyncException = class(ETinkerforgeException)
+  { EStreamOutOfSyncException }
+  EStreamOutOfSyncException = class(ETinkerforgeException)
   end;
 
   { EInvalidParameterException }
