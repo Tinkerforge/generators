@@ -756,3 +756,53 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Detection LED Config',
+'elements': [('Config', 'uint8', 1, 'in', ('Detection LED Config', [('Off', 0),
+                                                                    ('On', 1),
+                                                                    ('Show Heartbeat', 2),
+                                                                    ('Show Detection', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the detection LED configuration. By default the LED shows
+if a card/reader is detected.
+
+You can also turn the LED permanently on/off or show a heartbeat.
+
+If the Bricklet is in bootloader mode, the LED is off.
+""",
+'de':
+"""
+Setzt die Konfiguration der Kommunikations-LED. Standardmäßig zeigt
+die LED ob eine Karte/ein Lesegerät detektiert wurde. 
+
+Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+
+Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Detection LED Config',
+'elements': [('Config', 'uint8', 1, 'out', ('Detection LED Config', [('Off', 0),
+                                                                     ('On', 1),
+                                                                     ('Show Heartbeat', 2),
+                                                                     ('Show Detection', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`Set Detection LED Config`
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`Set Detection LED Config` gesetzt.
+"""
+}]
+})
