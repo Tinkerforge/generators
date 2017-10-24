@@ -719,7 +719,7 @@ def generate(bindings_root_directory, language, generator_class):
 
             if device.is_brick():
                 ref_name = device.get_underscore_name() + '_brick'
-                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2') + '_Brick'
+                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3') + '_Brick'
                 software_doc_prefix = device.get_camel_case_name() + '_Brick'
 
                 if device.get_device_identifier() != 17:
@@ -744,7 +744,7 @@ def generate(bindings_root_directory, language, generator_class):
                 brick_infos.append(device_info)
             else:
                 ref_name = device.get_underscore_name() + '_bricklet'
-                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2')
+                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
                 software_doc_prefix = device.get_camel_case_name() + '_Bricklet'
                 firmware_url_part = device.get_underscore_name()
 
@@ -1605,6 +1605,7 @@ class Device(NameMixin):
         for packet in self.all_packets:
             if 'corresponding_getter' in packet.raw_data:
                 return True
+
         return False
 
     def _get_name(self): # for NameMixin
@@ -1614,6 +1615,8 @@ class Device(NameMixin):
         name = self.get_name()
 
         if name.endswith(' V2'):
+            name = name[:-3]
+        elif name.endswith(' V3'):
             name = name[:-3]
         elif name.endswith('mA'):
             name = name[:-2]
@@ -1641,7 +1644,7 @@ class Device(NameMixin):
     def get_long_display_name(self):
         display_name = self.raw_data['display_name']
 
-        if display_name.endswith(' 2.0'):
+        if display_name.endswith(' 2.0') or display_name.endswith(' 3.0'):
             parts = display_name.split(' ')
             parts.insert(-1, self.get_category())
 
