@@ -62,7 +62,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
             ret_type = packet.get_delphi_return_type(True)
             name = packet.get_camel_case_name()
-            params = packet.get_delphi_parameter_list(True)
+            params = '; '.join(packet.get_delphi_parameters(True))
             desc = packet.get_delphi_formatted_doc()
 
             if len(ret_type) > 0:
@@ -98,7 +98,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
         cls = self.get_delphi_class_name()
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
-            params = packet.get_delphi_parameter_list(True)
+            params = '; '.join(packet.get_delphi_parameters(True))
             desc = packet.get_delphi_formatted_doc()
             semi = ''
             if len(params) > 0:

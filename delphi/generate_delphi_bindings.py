@@ -135,8 +135,17 @@ uses
                 right = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
                 types[left] = right
 
+            for element in packet.get_elements(high_level=True):
+                if element.get_cardinality() > 0:
+                    continue
+
+                delphi_type = element.get_delphi_type()
+                left = 'TArrayOf{0}'.format(delphi_type[1])
+                right = 'array of {0}'.format(delphi_type[0])
+                types[left] = right
+
         if len(types) > 0:
-            for left in types:
+            for left in sorted(types):
                 arrays += '  {0} = {1};\n'.format(left, types[left])
 
             arrays += '\n'
@@ -171,16 +180,10 @@ uses
                     if stream_out.get_fixed_length():
                         callback_state_length_delphi_type = self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality()))
 
-            arrays += \
-                '  T{0}HighLevelCallbackState = record data: array of {1}; length: {2}; end;\n'.format(packet.get_camel_case_name(skip=-2),
-                                                                                                       callback_state_data_delphi_type,
-                                                                                                       callback_state_length_delphi_type)
-
-        arrays += '\n'
-
-        for dt in delphi_common.delphi_types:
-            arrays += '  TArray{0} = array of {1};\n'.format(delphi_common.delphi_types[dt][0].capitalize(),
-                                                             delphi_common.delphi_types[dt][0])
+            arrays += '  T{0}HighLevelCallbackState = record data: array of {1}; length: {2}; end;\n' \
+                      .format(packet.get_camel_case_name(skip=-2),
+                              callback_state_data_delphi_type,
+                              callback_state_length_delphi_type)
 
         if has_high_level_callback_states:
             arrays += '\n'
@@ -192,11 +195,7 @@ uses
         template = '  {0}Notify{1} = procedure(sender: {0}{2}) of object;\n'
 
         for packet in self.get_packets('callback'):
-            params = packet.get_delphi_parameter_list(False)
-
-            if len(params) > 0:
-                params = '; ' + params
-
+            params = common.wrap_non_empty('; ', '; '.join(packet.get_delphi_parameters(False)), '')
             prototypes += template.format(self.get_delphi_class_name(),
                                           packet.get_camel_case_name(),
                                           params)
@@ -287,15 +286,13 @@ uses
             ret_type = packet.get_delphi_return_type(False)
             name = packet.get_camel_case_name()
             doc = packet.get_delphi_formatted_doc()
-            params = packet.get_delphi_parameter_list(False)
+            params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters(False)), ')')
 
             if packet.has_prototype_in_device():
                 modifier = 'override'
             else:
                 modifier = 'virtual'
 
-            if len(params) > 0:
-                params = '(' + params + ')'
             if len(ret_type) > 0:
                 method = function.format(name, params, ret_type, doc, modifier)
             else:
@@ -347,8 +344,14 @@ uses
     /// </summary>
     property On{0}: {1}Notify{0} read {2}Callback write {2}Callback;"""
 
-        has_high_level_callback_data = False
-        high_level_callback_data_variables = '\n'
+        has_stream = False
+
+        for packet in self.get_packets():
+            if packet.get_high_level('stream_*') != None:
+                has_stream = True
+                break
+
+        high_level_callback_data_variables = ''
 
         for packet in self.get_packets('callback'):
             doc = packet.get_delphi_formatted_doc()
@@ -357,15 +360,10 @@ uses
                                      packet.get_headless_camel_case_name(),
                                      doc))
 
-            if not packet.has_high_level():
-                continue
-
             stream_out = packet.get_high_level('stream_out')
 
-            if not stream_out:
+            if stream_out == None:
                 continue
-
-            has_high_level_callback_data = True
 
             high_level_callback_data_variables += \
                 '    {0}HighLevelCallbackState: T{1}HighLevelCallbackState;\n'.format(packet.get_headless_camel_case_name(skip=-2),
@@ -375,9 +373,6 @@ uses
                                      self.get_delphi_class_name(),
                                      packet.get_headless_camel_case_name(skip=-2),
                                      doc))
-
-        if not has_high_level_callback_data:
-            high_level_callback_data_variables = ''
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             props.append("""
@@ -401,7 +396,8 @@ uses
 
         return  cls + \
                 '  private\n' + \
-                '    streamMutex: TCriticalSection;{0}'.format(high_level_callback_data_variables) + \
+                ('    streamMutex: TCriticalSection;\n' if has_stream else '') + \
+                high_level_callback_data_variables + \
                 callbacks + \
                 '  protected\n' + \
                 callback_wrappers + \
@@ -424,8 +420,6 @@ begin
   apiVersion[1] := {2};
   apiVersion[2] := {3};
 
-  streamMutex := TCriticalSection.Create();
-
 """
         response_expected = ''
 
@@ -446,7 +440,8 @@ begin
         if len(response_expected) > 0:
             response_expected += '\n'
 
-        init_high_level_callback_state = ''
+        stream_mutex = ''
+        high_level_callback_state = ''
 
         for packet in self.get_packets('callback'):
             if not packet.has_high_level():
@@ -457,21 +452,14 @@ begin
             if not stream_out:
                 continue
 
-            init_high_level_callback_state += \
+            stream_mutex = '  streamMutex := TCriticalSection.Create;\n\n'
+            high_level_callback_state += \
                 '  SetLength({0}HighLevelCallbackState.data, 0);\n\
-  Finalize({0}HighLevelCallbackState.data);\n\
   {0}HighLevelCallbackState.data := nil;\n\
   {0}HighLevelCallbackState.length := 0;\n\n'.format(packet.get_headless_camel_case_name(skip=-2))
 
-        if len(init_high_level_callback_state) > 0:
-            response_expected += init_high_level_callback_state
-        else:
-            response_expected += '\n'
-
-        response_expected += '\n'
-
         return con.format(self.get_delphi_class_name(),
-                          *self.get_api_version()) + response_expected
+                          *self.get_api_version()) + response_expected + stream_mutex + high_level_callback_state
 
     def get_delphi_callback_wrapper_definitions(self):
         callbacks = ''
@@ -542,7 +530,7 @@ begin
 
                 if e.get_direction() == 'in':
                     if e.get_cardinality() > 1:
-                        e_param = 'const ' + e.get_headless_camel_case_name() + ': TArray' + e.get_delphi_type()[0].capitalize()
+                        e_param = 'const ' + e.get_headless_camel_case_name() + ': TArrayOf' + e.get_delphi_type()[1]
                     else:
                         e_param = 'const ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
             else:
@@ -550,17 +538,17 @@ begin
                     if role:
                         if role.endswith('data'):
                             if e.get_cardinality() > 1:
-                                e_param = 'out ' + stream_out.get_headless_camel_case_name() + ': TArray' + e.get_delphi_type()[0].capitalize()
+                                e_param = 'out ' + stream_out.get_headless_camel_case_name() + ': TArrayOf' + e.get_delphi_type()[1]
                             else:
                                 e_param = 'out ' + stream_out.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
                     else:
                         if e.get_cardinality() > 1:
-                            e_param = 'out ' + e.get_headless_camel_case_name() + ': TArray' + e.get_delphi_type()[0].capitalize()
+                            e_param = 'out ' + e.get_headless_camel_case_name() + ': TArrayOf' + e.get_delphi_type()[1]
                         else:
                             e_param = 'out ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
                 elif e.get_direction() == 'in':
                     if e.get_cardinality() > 1:
-                        e_param = 'const ' + e.get_headless_camel_case_name() + ': TArray' + e.get_delphi_type()[0].capitalize()
+                        e_param = 'const ' + e.get_headless_camel_case_name() + ': TArrayOf' + e.get_delphi_type()[1]
                     else:
                         e_param = 'const ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
 
@@ -576,13 +564,10 @@ begin
             ret_type = packet.get_delphi_return_type(False)
             out_count = len(packet.get_elements(direction='out'))
             name = packet.get_camel_case_name()
-            params = packet.get_delphi_parameter_list(False)
+            params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters(False)), ')')
             function_id = '{0}_{1}_FUNCTION_{2}'.format(self.get_upper_case_category(),
                                                         self.get_upper_case_name(),
                                                         packet.get_upper_case_name())
-
-            if len(params) > 0:
-                params = '(' + params + ')'
 
             if len(ret_type) > 0:
                 method = function.format(cls, name, params, ret_type)
@@ -590,9 +575,9 @@ begin
                 method = procedure.format(cls, name, params)
 
             if out_count > 0:
-                method += '  var request, response: TByteArray;\n'
+                method += 'var request, response: TByteArray;'
             else:
-                method += '  var request: TByteArray;\n'
+                method += 'var request: TByteArray;'
 
             has_array = False
 
@@ -602,24 +587,21 @@ begin
                     break
 
             if has_array:
-                method += '  i: longint;\n'
+                method += ' i: longint;'
 
             for element in packet.get_elements():
                 if element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    method += '  ' + \
-                              element.get_headless_camel_case_name() + \
-                              'Bits: array[0 .. ' + \
-                              str(int(math.ceil(element.get_cardinality() / 8.0) - 1)) + \
-                              '] of Byte;\n'
+                    method += ' {0}Bits: array [0..{1}] of byte;'.format(element.get_headless_camel_case_name(),
+                                                                         int(math.ceil(element.get_cardinality() / 8.0) - 1))
 
             method += '\n'
             method += 'begin\n'
             method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_size())
 
-            method_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
+            method_bool_array_fmt = """  FillChar({0}[0], Length({0}) * SizeOf({0}[0]), 0);
   for i := 0 to {1} do if {2}[i] then {0}[Floor(i/8)] := {0}[Floor(i/8)] or (1 shl (i mod 8));
   for i := 0 to {3} do LEConvertUInt8To({0}[i], {4} + (i * 1), request);
-'''
+"""
 
             # Serialize request
             offset = 8
@@ -658,10 +640,10 @@ begin
             # Deserialize response
             offset = 8
 
-            method_bool_array_fmt = '''  FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
+            method_bool_array_fmt = """  FillChar({0}[0], Length({0}) * SizeOf({0}[0]), 0);
   for i := 0 to {1} do {0}[i] := LEConvertUInt8From({2} + (i * 1), packet);
   for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
-'''
+"""
 
             for element in packet.get_elements(direction='out'):
                 if out_count > 1:
@@ -697,156 +679,149 @@ begin
 
             methods += method
 
-            if  packet.has_high_level():
-                template_high_level_stream_in = """{method_signature}  var {stream_headless_camel_case_name}ChunkOffset: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
-  {stream_headless_camel_case_name}Length: {stream_length_type};
-  zero: byte;
-
+            if packet.has_high_level():
+                template_high_level_stream_in = """{method_signature}var {stream_headless_camel_case_name}ChunkOffset: {stream_length_type}; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; {stream_headless_camel_case_name}ChunkLength: {stream_length_type}; {stream_headless_camel_case_name}Length: {stream_length_type}; zero: byte;
 begin
   zero := 0;
-  {stream_headless_camel_case_name}Length := 0;
-  {stream_headless_camel_case_name}ChunkOffset := 0;
 
-  if Length({stream_headless_camel_case_name}) > {stream_max_length} then raise EInvalidParameterException.Create('Invalid parameter');
+  if (Length({stream_headless_camel_case_name}) > {stream_max_length}) then begin
+    raise EInvalidParameterException.Create('{stream_name} can be at most {stream_max_length} items long');
+  end;
 
   {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
+  {stream_headless_camel_case_name}ChunkOffset := 0;
 
-  if Length({stream_headless_camel_case_name}) = 0 then begin
-    Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {chunk_cardinality});
+  if ({stream_headless_camel_case_name}Length = 0) then begin
+    Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality});
     {camel_case_name}LowLevel({parameters_low_level});
   end
   else begin
-    streamMutex.Acquire();
+    streamMutex.Acquire;
+    try
+      while ({stream_headless_camel_case_name}ChunkOffset < Length({stream_headless_camel_case_name})) do begin
+        {stream_headless_camel_case_name}ChunkLength := Length({stream_headless_camel_case_name}) - {stream_headless_camel_case_name}ChunkOffset;
 
-    while {stream_headless_camel_case_name}ChunkOffset < Length({stream_headless_camel_case_name}) do begin
-      {stream_headless_camel_case_name}ChunkLength := Length({stream_headless_camel_case_name}) - {stream_headless_camel_case_name}ChunkOffset;
+        if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
-      if {stream_headless_camel_case_name}ChunkLength > {chunk_cardinality} then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+        Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+        Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
 
-      Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-      Move({stream_headless_camel_case_name}[{stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+        {camel_case_name}LowLevel({parameters_low_level});
+
+        Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+      end;
+    finally
+      streamMutex.Release;
+    end;
+  end;
+end;
+
+"""
+
+                template_high_level_stream_in_fixed_length = """{method_signature}var {stream_headless_camel_case_name}ChunkOffset: word; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; {stream_headless_camel_case_name}ChunkLength: word; {stream_headless_camel_case_name}Length: {stream_length_type}; zero: byte;
+begin
+  zero := 0;
+  {stream_headless_camel_case_name}Length := {fixed_length};
+  {stream_headless_camel_case_name}ChunkOffset := 0;
+
+  if (Length({stream_headless_camel_case_name}) <> {stream_headless_camel_case_name}Length) then begin
+    raise EInvalidParameterException.Create(Format('{stream_name} has to be exactly %d items long', [{stream_headless_camel_case_name}Length]));
+  end;
+
+  streamMutex.Acquire;
+  try
+    while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length) do begin
+      {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
+
+      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then begin
+        {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+      end;
+
+      Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+      Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
 
       {camel_case_name}LowLevel({parameters_low_level});
 
       Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
-	end;
-
-    streamMutex.Release();
+    end;
+  finally
+    streamMutex.Release;
   end;
 end;
 
 """
 
-                template_high_level_stream_in_fixed_length = """{method_signature}  var {stream_headless_camel_case_name}ChunkOffset: word;
-  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  {stream_headless_camel_case_name}ChunkLength: word;
-  {stream_headless_camel_case_name}Length: {stream_length_type};
-  zero: byte;
-
+                template_high_level_stream_in_short_write = """{method_signature}var {stream_headless_camel_case_name}Length: {stream_length_type}; {stream_headless_camel_case_name}ChunkOffset: {stream_length_type}; {stream_headless_camel_case_name}ChunkLength: {stream_length_type}; {stream_headless_camel_case_name}ChunkWritten: {stream_length_type}; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; zero: byte;
 begin
-  zero := 0;
-  {stream_headless_camel_case_name}ChunkOffset := 0;
-  {stream_headless_camel_case_name}Length := {fixed_length};
-
-  if Length({stream_headless_camel_case_name}) > {stream_max_length} then raise EInvalidParameterException.Create('Invalid parameter');
-
-  streamMutex.Acquire();
-
-  while {stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length do begin
-    {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
-
-    if {stream_headless_camel_case_name}ChunkLength > {chunk_cardinality} then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
-
-    Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-    Move({stream_headless_camel_case_name}[{stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-
-    {camel_case_name}LowLevel({parameters_low_level});
-
-    Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
-  end;
-
-  streamMutex.Release();
-end;
-
-"""
-
-                template_high_level_stream_in_short_write = """{method_signature}  var {stream_headless_camel_case_name}ChunkOffset: {stream_length_type};
-  {stream_headless_camel_case_name}Length: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkWritten: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  zero: byte;
-
-begin
-  zero := 0;
   result := 0;
-  {stream_headless_camel_case_name}Length := 0;
-  {stream_headless_camel_case_name}ChunkOffset := 0;
+  zero := 0;
 
-  if Length({stream_headless_camel_case_name}) > {stream_max_length} then raise EInvalidParameterException.Create('Invalid parameter');
+  if (Length({stream_headless_camel_case_name}) > {stream_max_length}) then begin
+    raise EInvalidParameterException.Create('{stream_name} can be at most {stream_max_length} items long');
+  end;
 
   {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
+  {stream_headless_camel_case_name}ChunkOffset := 0;
 
-  if Length({stream_headless_camel_case_name}) = 0 then begin
-    Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {chunk_cardinality});
+  if ({stream_headless_camel_case_name}Length = 0) then begin
+    Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality});
     result := {camel_case_name}LowLevel({parameters_low_level});
   end
   else begin
-    streamMutex.Acquire();
+    streamMutex.Acquire;
+    try
+      while ({stream_headless_camel_case_name}ChunkOffset < Length({stream_headless_camel_case_name})) do begin
+        {stream_headless_camel_case_name}ChunkLength := Length({stream_headless_camel_case_name}) - {stream_headless_camel_case_name}ChunkOffset;
 
-    while {stream_headless_camel_case_name}ChunkOffset < Length({stream_headless_camel_case_name}) do begin
-      {stream_headless_camel_case_name}ChunkLength := Length({stream_headless_camel_case_name}) - {stream_headless_camel_case_name}ChunkOffset;
+        if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
-      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+        Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+        Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}), {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
 
-      Move(zero, {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-      Move({stream_headless_camel_case_name}[{stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+        {stream_headless_camel_case_name}ChunkWritten := {camel_case_name}LowLevel({parameters_low_level});
 
-      {stream_headless_camel_case_name}ChunkWritten := {camel_case_name}LowLevel({parameters_low_level});
+        if ({stream_headless_camel_case_name}ChunkWritten <= 0) then break;
 
-      if {stream_headless_camel_case_name}ChunkWritten <= 0 then Break;
+        Inc(result, {stream_headless_camel_case_name}ChunkWritten);
 
-      Inc(result, {stream_headless_camel_case_name}ChunkWritten);
+        if ({stream_headless_camel_case_name}ChunkWritten < {chunk_cardinality}) then break; {{ either last chunk or short write }}
 
-      if ({stream_headless_camel_case_name}ChunkWritten < {chunk_cardinality}) then Break; {{ either last chunk or short write }}
-
-      Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+        Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+      end;
+    finally
+      streamMutex.Release;
     end;
-
-    streamMutex.Release();
   end;
 end;
 
 """
 
-                template_high_level_stream_in_single_chunk = """{method_signature}  var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  zero: byte;
-
+                template_high_level_stream_in_single_chunk = """{method_signature}var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; zero: byte;
 begin
   zero := 0;
 
-  if Length({stream_headless_camel_case_name}) > {chunk_cardinality} then raise EInvalidParameterException.Create('Invalid parameter');
+  if (Length({stream_headless_camel_case_name}) > {chunk_cardinality}) then begin
+    raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
+  end;
 
-  Move(zero, {stream_headless_camel_case_name}Data[0], sizeof({chunk_data_type}) * Length({stream_headless_camel_case_name}));
-  Move({stream_headless_camel_case_name}[0], {stream_headless_camel_case_name}Data[0], sizeof({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  Move(zero, {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
 
   {camel_case_name}LowLevel({parameters_low_level});
 end;
 
 """
 
-                template_high_level_stream_in_short_write_single_chunk = """{method_signature}  var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  zero: byte;
-
+                template_high_level_stream_in_short_write_single_chunk = """{method_signature}var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; zero: byte;
 begin
   result := 0;
 
-  if Length({stream_headless_camel_case_name}) > {chunk_cardinality} then raise EInvalidParameterException.Create('Invalid parameter');
+  if (Length({stream_headless_camel_case_name}) > {chunk_cardinality}) then begin
+    raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
+  end;
 
-  Move(zero, {stream_headless_camel_case_name}Data[0], sizeof({chunk_data_type}) * Length({stream_headless_camel_case_name}));
-  Move({stream_headless_camel_case_name}[0], {stream_headless_camel_case_name}Data[0], sizeof({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  Move(zero, {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  Move({stream_headless_camel_case_name}[0], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
 
   result := {camel_case_name}LowLevel({parameters_low_level});
 end;
@@ -855,76 +830,65 @@ end;
 
                 template_stream_out_chunk_offset_check = """
 
-  if {stream_headless_camel_case_name}ChunkOffset = {chunk_max_offset} then Goto Unlock; {{ maximum chunk offset -> stream has no data }}"""
+  if ({stream_headless_camel_case_name}ChunkOffset = {chunk_max_offset}) then exit; {{ maximum chunk offset -> stream has no data }}"""
 
-                template_high_level_stream_out = """{method_signature}  var streamOutCurrentLength: integer;
-  {stream_headless_camel_case_name}Length: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkOffset: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  {stream_headless_camel_case_name}OutOfSync: boolean;
-  {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
-
-  label
-    Unlock;
-
+                template_high_level_stream_out = """{method_signature}var streamOutCurrentLength: integer; {stream_headless_camel_case_name}Length: {stream_length_type}; {stream_headless_camel_case_name}ChunkOffset: {stream_length_type}; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; {stream_headless_camel_case_name}OutOfSync: boolean; {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
 begin
-  streamMutex.Acquire();
+  streamMutex.Acquire;
+  try
+    streamOutCurrentLength := 0;
+    {stream_headless_camel_case_name}Length := {fixed_length};
+    {camel_case_name}LowLevel({parameters_low_level});
+    if ({stream_headless_camel_case_name}Length <= 0) then exit;{chunk_offset_check}
+    {stream_headless_camel_case_name}OutOfSync := ({stream_headless_camel_case_name}ChunkOffset <> 0);
 
-  streamOutCurrentLength := 0;
-  {stream_headless_camel_case_name}Length := {fixed_length};
-  {camel_case_name}LowLevel({parameters_low_level});
-  if {stream_headless_camel_case_name}Length <= 0 then Goto Unlock;{chunk_offset_check}
-  {stream_headless_camel_case_name}OutOfSync := ({stream_headless_camel_case_name}ChunkOffset <> 0);
-
-  if not {stream_headless_camel_case_name}OutOfSync then begin
-    SetLength({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Length);
-    {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
-    if {stream_headless_camel_case_name}ChunkLength > {chunk_cardinality} then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
-    Move({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}[streamOutCurrentLength], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-    streamOutCurrentLength := {stream_headless_camel_case_name}ChunkLength;
-
-    while streamOutCurrentLength < {stream_headless_camel_case_name}Length do begin
-      {camel_case_name}LowLevel({parameters_low_level});
-      if {stream_headless_camel_case_name}Length <= 0 then Goto Unlock;
-      {stream_headless_camel_case_name}OutOfSync := {stream_headless_camel_case_name}ChunkOffset <> streamOutCurrentLength;
-      if {stream_headless_camel_case_name}OutOfSync then Break;
+    if not {stream_headless_camel_case_name}OutOfSync then begin
+      SetLength({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Length);
       {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
-      if {stream_headless_camel_case_name}ChunkLength > {chunk_cardinality} then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
-      Move({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}[streamOutCurrentLength], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-      Inc(streamOutCurrentLength, {stream_headless_camel_case_name}ChunkLength);
+      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+      Move({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}[streamOutCurrentLength], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+      streamOutCurrentLength := {stream_headless_camel_case_name}ChunkLength;
+
+      while (streamOutCurrentLength < {stream_headless_camel_case_name}Length) do begin
+        {camel_case_name}LowLevel({parameters_low_level});
+        if ({stream_headless_camel_case_name}Length <= 0) then exit;
+        {stream_headless_camel_case_name}OutOfSync := {stream_headless_camel_case_name}ChunkOffset <> streamOutCurrentLength;
+        if ({stream_headless_camel_case_name}OutOfSync) then break;
+        {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
+        if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+        Move({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}[streamOutCurrentLength], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+        Inc(streamOutCurrentLength, {stream_headless_camel_case_name}ChunkLength);
+      end;
     end;
-  end;
 
-  if {stream_headless_camel_case_name}OutOfSync then begin
-    {{ discard remaining stream to bring it back in-sync }}
-    SetLength({stream_headless_camel_case_name}, 0);
+    if ({stream_headless_camel_case_name}OutOfSync) then begin
+      {{ discard remaining stream to bring it back in-sync }}
+      SetLength({stream_headless_camel_case_name}, 0);
 
-    while {stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality} < {stream_headless_camel_case_name}Length do begin
-      {camel_case_name}LowLevel({parameters_low_level});
-      if {stream_headless_camel_case_name}Length <= 0 then Break;
+      while ({stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality} < {stream_headless_camel_case_name}Length) do begin
+        {camel_case_name}LowLevel({parameters_low_level});
+        if ({stream_headless_camel_case_name}Length <= 0) then break;
+      end;
+
+      raise EStreamOutOfSyncException.Create('Stream out-of-sync');
     end;
-
-    streamMutex.Release();
-    raise EStreamOutOfSyncException.Create('Stream out of sync');
+  finally
+    streamMutex.Release;
   end;
-
-Unlock:
-  streamMutex.Release();
 end;
 
 """
 
-                template_high_level_stream_out_single_chunk = """{method_signature}  var {stream_headless_camel_case_name}Length: {stream_length_type};
-  {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-
+                template_high_level_stream_out_single_chunk = """{method_signature}var {stream_headless_camel_case_name}Length: {stream_length_type}; {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
 begin
-  streamMutex.Acquire();
-
-  {camel_case_name}LowLevel({parameters_low_level});
-  SetLength({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Length);
-  Move({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}[0], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}Length);
-
-  streamMutex.Release();
+  streamMutex.Acquire;
+  try
+    {camel_case_name}LowLevel({parameters_low_level});
+    SetLength({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Length);
+    Move({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}Length);
+  finally
+    streamMutex.Release;
+  end;
 end;
 
 """
@@ -938,6 +902,7 @@ end;
                 parameters_low_level = []
                 chunk_cardinality_minus_1 = ''
                 chunk_data_type_capitalized = ''
+                stream_name = ''
                 stream_headless_camel_case_name = ''
                 stream_in = packet.get_high_level('stream_in')
                 stream_out = packet.get_high_level('stream_out')
@@ -963,8 +928,10 @@ end;
                         chunk_data_type_capitalized = e.get_delphi_type()[1]
 
                         if e.get_direction() == 'out':
+                            stream_name = stream_out.get_name()
                             stream_headless_camel_case_name = stream_out.get_headless_camel_case_name()
                         elif e.get_direction() == 'in':
+                            stream_name = stream_in.get_name()
                             stream_headless_camel_case_name = stream_in.get_headless_camel_case_name()
 
                 if len(e_params) > 0:
@@ -986,6 +953,7 @@ end;
 
                     if stream_in.get_fixed_length() != None:
                         method = template_high_level_stream_in_fixed_length.format(method_signature = method_signature,
+                                                                                   stream_name = stream_name,
                                                                                    stream_headless_camel_case_name = stream_headless_camel_case_name,
                                                                                    chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                                    chunk_data_type_capitalized = chunk_data_type_capitalized,
@@ -998,6 +966,7 @@ end;
                                                                                    parameters_low_level = parameters_low_level)
                     elif stream_in.has_short_write() and stream_in.has_single_chunk():
                         method = template_high_level_stream_in_short_write_single_chunk.format(method_signature = method_signature,
+                                                                                               stream_name = stream_name,
                                                                                                stream_headless_camel_case_name = stream_headless_camel_case_name,
                                                                                                chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                                                chunk_data_type_capitalized = chunk_data_type_capitalized,
@@ -1008,6 +977,7 @@ end;
                                                                                                parameters_low_level = parameters_low_level)
                     elif stream_in.has_short_write():
                         method = template_high_level_stream_in_short_write.format(method_signature = method_signature,
+                                                                                  stream_name = stream_name,
                                                                                   stream_headless_camel_case_name = stream_headless_camel_case_name,
                                                                                   stream_length_type = stream_length_type,
                                                                                   chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
@@ -1019,6 +989,7 @@ end;
                                                                                   parameters_low_level = parameters_low_level)
                     elif stream_in.has_single_chunk():
                         method = template_high_level_stream_in_single_chunk.format(method_signature = method_signature,
+                                                                                   stream_name = stream_name,
                                                                                    stream_headless_camel_case_name = stream_headless_camel_case_name,
                                                                                    chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                                    chunk_data_type_capitalized = chunk_data_type_capitalized,
@@ -1029,6 +1000,7 @@ end;
                                                                                    parameters_low_level = parameters_low_level)
                     else:
                         method = template_high_level_stream_in.format(method_signature = method_signature,
+                                                                      stream_name = stream_name,
                                                                       stream_headless_camel_case_name = stream_headless_camel_case_name,
                                                                       stream_length_type = stream_length_type,
                                                                       chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
@@ -1049,6 +1021,7 @@ end;
 
                     if stream_out.has_single_chunk():
                         method = template_high_level_stream_out_single_chunk.format(method_signature = method_signature,
+                                                                                    stream_name = stream_name,
                                                                                     stream_headless_camel_case_name = stream_headless_camel_case_name,
                                                                                     stream_length_type = stream_length_type,
                                                                                     chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
@@ -1058,6 +1031,7 @@ end;
                                                                                     chunk_data_type = chunk_data_type)
                     else:
                         method = template_high_level_stream_out.format(method_signature = method_signature,
+                                                                       stream_name = stream_name,
                                                                        stream_headless_camel_case_name = stream_headless_camel_case_name,
                                                                        stream_length_type = stream_length_type,
                                                                        chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
@@ -1080,16 +1054,10 @@ end;
             wrapper = 'procedure {0}.CallbackWrapper{1}(const packet: TByteArray);\n'.format(self.get_delphi_class_name(),
                                                                                              packet.get_camel_case_name())
 
+            variables = []
+
             if len(packet.get_elements(direction='out')) > 0:
-                param_arr = packet.get_delphi_parameter_list(False, False).split('; ')
-
-                for idx, p in enumerate(param_arr):
-                    if idx == 0:
-                        param_arr[idx] = p + ';'
-                    else:
-                        param_arr[idx] = '  var ' + p + ';'
-
-                wrapper += '  var ' + '\n'.join(param_arr) + '\n'
+                variables += packet.get_delphi_parameters(False, with_modifiers=False)
 
             has_array = False
 
@@ -1098,25 +1066,21 @@ end;
                     has_array = True
                     break
 
-            if packet.has_high_level():
-                stream_out = packet.get_high_level('stream_out')
+            stream_out = packet.get_high_level('stream_out')
 
-                if stream_out and not stream_out.has_single_chunk():
-                    wrapper += '  var {0}ChunkLength: {1};\n'.format(stream_out.get_headless_camel_case_name(),
-                                                                     self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality())))
+            if stream_out != None and not stream_out.has_single_chunk():
+                variables.append('{0}ChunkLength: {1}'.format(stream_out.get_headless_camel_case_name(),
+                                                              self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality()))))
 
             if has_array:
-                wrapper += '  i: longint;\n'
+                variables.append('i: longint')
 
             for element in packet.get_elements():
                 if element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    wrapper += '  ' + \
-                               element.get_headless_camel_case_name() + \
-                               'Bits: array[0 .. ' + \
-                               str(int(math.ceil(element.get_cardinality() / 8.0) - 1)) + \
-                               '] of Byte;\n'
+                    variables.append('{0}Bits: array [0..{1}] of byte'.format(element.get_headless_camel_case_name(),
+                                                                              int(math.ceil(element.get_cardinality() / 8.0) - 1)))
 
-            wrapper += '\n'
+            wrapper += common.wrap_non_empty('var ', '; '.join(variables), ';\n')
             wrapper += 'begin\n'
 
             if len(packet.get_elements(direction='out')) == 0:
@@ -1129,20 +1093,18 @@ end;
 
                 if stream_out:
                     has_high_level_callback = True
-                    wrapper += \
-                        '  if (Assigned({0}Callback)) Or (Assigned({1}Callback)) then begin\n'.format(packet.get_headless_camel_case_name(),
-                                                                                                    packet.get_headless_camel_case_name(skip=-2))
+                    wrapper += '  if (Assigned({0}Callback) or Assigned({1}Callback)) then begin\n' \
+                               .format(packet.get_headless_camel_case_name(),
+                                       packet.get_headless_camel_case_name(skip=-2))
                 else:
-                    wrapper += \
-                        '  if Assigned({0}Callback) then begin\n'.format(packet.get_headless_camel_case_name())
+                    wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
             else:
-                wrapper += \
-                    '  if Assigned({0}Callback) then begin\n'.format(packet.get_headless_camel_case_name())
+                wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
 
             offset = 8
             parameter_names = []
 
-            wrapper_bool_array_fmt = '''    FillChar({0}[0], Length({0}) * Sizeof({0}[0]), 0);
+            wrapper_bool_array_fmt = '''    FillChar({0}[0], Length({0}) * SizeOf({0}[0]), 0);
     for i := 0 to {1} do {0}[i] := LEConvertUInt8From({2} + (i * 1), packet);
     for i := 0 to {3} do {4}[i] := (({0}[Floor(i / 8)] and (1 shl (i mod 8))) <> 0);
 '''
@@ -1170,51 +1132,52 @@ end;
 
                 offset += element.get_size()
 
-            wrapper += '\n    if Assigned({0}Callback) then begin\n'.format(packet.get_headless_camel_case_name())
-            wrapper += '      {0}Callback({1});\n'.format(packet.get_headless_camel_case_name(),
-                                                          ', '.join(['self'] + parameter_names))
-            wrapper += '    end;'
+            if stream_out != None:
+                wrapper += '\n    if (Assigned({0}Callback)) then begin\n  '.format(packet.get_headless_camel_case_name())
+
+            wrapper += '    {0}Callback({1});'.format(packet.get_headless_camel_case_name(),
+                                                      ', '.join(['self'] + parameter_names))
+
+            if stream_out != None:
+                wrapper += '\n    end;'
 
             if has_high_level_callback:
                 stream_out = packet.get_high_level('stream_out')
 
                 if stream_out:
                     template_high_level_callback_stream_out = '''      {stream_headless_camel_case_name}ChunkLength := {stream_chunk_length_calc}
-      if {stream_headless_camel_case_name}ChunkLength > {chunk_cardinality} then begin
+      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then begin
         {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
       end;
 
-      if {high_level_callback_name}HighLevelCallbackState.data = nil then begin {{ no stream in-progress }}
-        if {stream_headless_camel_case_name}ChunkOffset = 0 then begin {{ stream starts }}
+      if ({high_level_callback_name}HighLevelCallbackState.data = nil) then begin {{ no stream in-progress }}
+        if ({stream_headless_camel_case_name}ChunkOffset = 0) then begin {{ stream starts }}
           SetLength({high_level_callback_name}HighLevelCallbackState.data, {stream_length});
-          Move({stream_headless_camel_case_name}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+          Move({stream_headless_camel_case_name}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
           {high_level_callback_name}HighLevelCallbackState.length := {stream_headless_camel_case_name}ChunkLength;
 
-          if {high_level_callback_name}HighLevelCallbackState.length >= {stream_length} then begin {{ stream complete }}
+          if ({high_level_callback_name}HighLevelCallbackState.length >= {stream_length}) then begin {{ stream complete }}
             {high_level_callback_name}Callback({high_level_callback_parameters});
             SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
-            Finalize({high_level_callback_name}HighLevelCallbackState.data);
             {high_level_callback_name}HighLevelCallbackState.data := nil;
             {high_level_callback_name}HighLevelCallbackState.length := 0;
           end;
         end;
       end
       else begin {{ stream in-progress }}
-        if {stream_headless_camel_case_name}ChunkOffset <> {high_level_callback_name}HighLevelCallbackState.length then begin {{ stream out-of-sync }}
+        if ({stream_headless_camel_case_name}ChunkOffset <> {high_level_callback_name}HighLevelCallbackState.length) then begin {{ stream out-of-sync }}
           SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
-          Finalize({high_level_callback_name}HighLevelCallbackState.data);
           {high_level_callback_name}HighLevelCallbackState.data := nil;
           {high_level_callback_name}HighLevelCallbackState.length := 0;
           {high_level_callback_name}Callback({high_level_callback_parameters});
         end
         else begin {{ stream in-sync }}
-          Move({stream_headless_camel_case_name}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], sizeof({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+          Move({stream_headless_camel_case_name}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
           Inc({high_level_callback_name}HighLevelCallbackState.length, {stream_headless_camel_case_name}ChunkLength);
 
           if {high_level_callback_name}HighLevelCallbackState.length >= {stream_length} then begin {{ stream complete }}
             {high_level_callback_name}Callback({high_level_callback_parameters});
             SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
-            Finalize({high_level_callback_name}HighLevelCallbackState.data);
             {high_level_callback_name}HighLevelCallbackState.data := nil;
             {high_level_callback_name}HighLevelCallbackState.length := 0;
           end;
@@ -1223,10 +1186,9 @@ end;
 '''
 
                     template_high_level_callback_stream_out_single_chunk = '''      SetLength({high_level_callback_name}HighLevelCallbackState.data, {stream_length});
-      Move({stream_headless_camel_case_name}Data[0], {high_level_callback_name}HighLevelCallbackState.data[0], sizeof({chunk_data_type}) * {stream_length});
+      Move({stream_headless_camel_case_name}Data[0], {high_level_callback_name}HighLevelCallbackState.data[0], SizeOf({chunk_data_type}) * {stream_length});
       {high_level_callback_name}Callback({high_level_callback_parameters});
       SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
-      Finalize({high_level_callback_name}HighLevelCallbackState.data);
       {high_level_callback_name}HighLevelCallbackState.data := nil;
       {high_level_callback_name}HighLevelCallbackState.length := 0;
 '''
@@ -1245,10 +1207,12 @@ end;
                             chunk_data_type = element.get_delphi_type()[0]
                             chunk_cardinality = element.get_cardinality()
                             stream_headless_camel_case_name = stream_out.get_headless_camel_case_name()
+
                             if stream_out.get_fixed_length():
                                 stream_length = '{0}'.format(str(stream_out.get_fixed_length()))
                             else:
                                 stream_length = '{0}Length'.format(stream_headless_camel_case_name)
+
                             high_level_callback_parameters.append('{0}HighLevelCallbackState.data'.format(high_level_callback_name))
 
                     if not stream_out.has_single_chunk():
@@ -1273,7 +1237,7 @@ end;
                                                                                         chunk_data_type = chunk_data_type,
                                                                                         high_level_callback_parameters = ', '.join(high_level_callback_parameters))
 
-                    wrapper += '\n\n    if Assigned({0}Callback) then begin\n'.format(packet.get_headless_camel_case_name(skip=-2))
+                    wrapper += '\n\n    if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name(skip=-2))
                     wrapper += wrapper_code
                     wrapper += '    end;\n'
                     wrapper += '  end;\n'

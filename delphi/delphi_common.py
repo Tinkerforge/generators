@@ -54,7 +54,7 @@ class DelphiPacket(common.Packet):
 
         return final_type
 
-    def get_delphi_parameter_list(self, for_doc, with_modifiers=True):
+    def get_delphi_parameters(self, for_doc, with_modifiers=True):
         param = []
 
         if len(self.get_elements(direction='out')) > 1 or self.get_type() == 'callback':
@@ -104,7 +104,8 @@ class DelphiPacket(common.Packet):
                 param.append('{0}{1}: {2}'.format(modifier,
                                                   element.get_headless_camel_case_name(),
                                                   final_type))
-        return '; '.join(param)
+
+        return param
 
 delphi_types = {
     'int8':   ('shortint', 'Int8'),
