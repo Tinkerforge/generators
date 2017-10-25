@@ -64,6 +64,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+0-100
 """,
 'de':
 """
@@ -88,10 +89,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Color',
-'elements': [('Red', 'uint8', 1, 'in'),
-             ('Green', 'uint8', 1, 'in'),
-             ('Blue', 'uint8', 1, 'in')],
+'name': 'Set Indicator',
+'elements': [('Top Left', 'uint8', 1, 'in'),
+             ('Top Right', 'uint8', 1, 'in'),
+             ('Bottom', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -105,10 +106,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Color',
-'elements': [('Red', 'uint8', 1, 'out'),
-             ('Green', 'uint8', 1, 'out'),
-             ('Blue', 'uint8', 1, 'out')],
+'name': 'Get Indicator',
+'elements': [('Top Left', 'uint8', 1, 'out'),
+             ('Top Right', 'uint8', 1, 'out'),
+             ('Bottom', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
