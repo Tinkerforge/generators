@@ -49,7 +49,11 @@ class DelphiExamplesTester(common.Tester):
                 '-l',
                 path]
 
-        self.execute(cookie, args)
+        retcode, output = common.check_output_and_error(args)
+        output = output.strip('\r\n')
+        success = retcode == 0 and 'warning(s) issued' not in output
+
+        self.handle_result(cookie, output, success)
 
 def run(bindings_root_directory):
     extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/delphi/WeatherStation.pas'),
