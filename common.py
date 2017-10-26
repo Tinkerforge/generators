@@ -1171,10 +1171,12 @@ class Packet(NameMixin):
         if raw_stream_in != None:
             stream_name = raw_stream_in['name']
             stream_fixed_length = raw_stream_in.get('fixed_length', None)
+            stream_single_chunk = raw_stream_in.get('single_chunk', False)
 
         if raw_stream_out != None:
             stream_name = raw_stream_out['name']
             stream_fixed_length = raw_stream_out.get('fixed_length', None)
+            stream_single_chunk = raw_stream_out.get('single_chunk', False)
 
         stream_size_type = None
         stream_data_element = None
@@ -1239,6 +1241,8 @@ class Packet(NameMixin):
 
                     if stream_fixed_length != None:
                         raw_element[2] = stream_fixed_length
+                    elif stream_single_chunk:
+                        raw_element[2] = -raw_element[2]
                     else:
                         raw_element[2] = -((1 << int(stream_size_type.replace('uint', ''))) - 1)
 
