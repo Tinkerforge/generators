@@ -48,7 +48,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Weather Station Identifiers Low Level',
+'name': 'Get Station Identifiers Low Level',
 'elements': [('Identifiers Length', 'uint16', 1, 'out'),
              ('Identifiers Chunk Offset', 'uint16', 1, 'out'),
              ('Identifiers Chunk Data', 'uint8', 60, 'out')],
@@ -66,7 +66,25 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Weather Station Data',
+'name': 'Get Sensor Identifiers Low Level',
+'elements': [('Identifiers Length', 'uint16', 1, 'out'),
+             ('Identifiers Chunk Offset', 'uint16', 1, 'out'),
+             ('Identifiers Chunk Data', 'uint8', 60, 'out')],
+'high_level': {'stream_out': {'name': 'Identifiers'}},
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Station Data',
 'elements': [('Identifier', 'uint8', 1, 'in'),
              ('Temperature', 'int16', 1, 'out'),   # in °C/10
              ('Humidity', 'uint8', 1, 'out'),      # in %rel
@@ -89,7 +107,26 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Weather Station Callback Configuration',
+'name': 'Get Sensor Data',
+'elements': [('Identifier', 'uint8', 1, 'in'),
+             ('Temperature', 'int16', 1, 'out'),   # in °C/10
+             ('Humidity', 'uint8', 1, 'out'),      # in %rel
+             ('Last Change', 'uint16', 1, 'out')], # in seconds
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Station Callback Configuration',
 'elements': [('Enable Callback', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -104,7 +141,37 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Weather Station Callback Configuration',
+'name': 'Get Station Callback Configuration',
+'elements': [('Enable Callback', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Sensor Callback Configuration',
+'elements': [('Enable Callback', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Sensor Callback Configuration',
 'elements': [('Enable Callback', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -119,7 +186,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Weather Station Data',
+'name': 'Station Data',
 'elements': [('Identifier', 'uint8', 1, 'out'),
              ('Temperature', 'int16', 1, 'out'),   # in °C/10
              ('Humidity', 'uint8', 1, 'out'),      # in %rel
@@ -128,6 +195,26 @@ com['packets'].append({
              ('Rain', 'uint32', 1, 'out'),         # in mm/10
              ('Wind Direction', 'uint8', 1, 'out', WIND_DIRECTION),
              ('Battery Low', 'bool', 1, 'out')],   # true = battery low
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+Called about every 45 seconds
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Sensor Data',
+'elements': [('Identifier', 'uint8', 1, 'out'),
+             ('Temperature', 'int16', 1, 'out'),   # in °C/10
+             ('Humidity', 'uint8', 1, 'out')],     # in %rel
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
