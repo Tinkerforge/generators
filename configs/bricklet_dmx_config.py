@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# GPS Bricklet communication config
+# DMX Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -34,7 +34,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Calling this sets frame number to 0
+Sets the DMX mode to either Slave or Master.
+
+Calling this function sets frame number to 0.
 """,
 'de':
 """
@@ -51,6 +53,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the DMX mode, as set by func:`Get DMX Mode`.
 """,
 'de':
 """
@@ -69,6 +72,26 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Writes a DMX frame. The maximum frame size is 512 byte. Each byte represents one channel.
+
+The next frame can be written after the :cb:`Frame Started` callback was called. The frame
+is double buffered, so a new frame can be written as soon as the writing of the prior frame
+starts.
+
+The data will be transfered when the next frame duration ends, see :func:`Set Frame Duration`.
+
+Generic approach:
+
+* Set the frame duration to a value that represents the number of frames per second you want to achieve.
+* Set channels for one frame.
+* Wait for the :cb:`Frame Started` callback.
+* Set channels for next frame.
+* Wait for the :cb:`Frame Started` callback.
+* and so on.
+
+This approach ensures that you can set new DMX data with a fixed frame rate.
+
+This function can only be called in Master Mode.
 """,
 'de':
 """
@@ -89,6 +112,25 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the last frame that was written by the DMX Master. The size of the array 
+is equivalent to the number of channels in the frame. Each byte represents one channel.
+
+The next frame is available after the :cb:`Frame Available` callback was called.
+
+Generic approach:
+
+* Call :func:`Read Frame` to get first frame.
+* Wait for the :cb:`Frame Available` callback.
+* Call :func:`Read Frame` to get second frame.
+* Wait for the :cb:`Frame Available` callback.
+* and so on.
+
+Instead of polling this function you can also use the :cb:`Frame` callback.
+You can enable it with :func:`Set Frame Callback Config`.
+
+The frame number starts at 0 and it is increased by one with each received frame.
+
+This function can only be called in Slave Mode.
 """,
 'de':
 """
@@ -105,6 +147,17 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the duration of a frame in ms. 
+
+Example: If you want to achieve 20 frames per second, you should
+set the frame duration to 50ms (50ms * 20 = 1 second).
+
+If you always want to send a frame as fast as possible you can set
+this value to 0.
+
+This setting is only used in Master Mode.
+
+Default value: 100ms (10 frames per second).
 """,
 'de':
 """
@@ -120,22 +173,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-""",
-'de':
-"""
-"""
-}]
-})
-
-
-com['packets'].append({
-'type': 'function',
-'name': 'Draw Frame',
-'elements': [],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
+Returns the frame duration as set by :func:`Set Frame Duration`.
 """,
 'de':
 """
@@ -281,7 +319,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-default: true,true,false
+Enables/Disables the different callbacks. By default the
+:cb:`Frame Started` and :cb:`Frame Available` callbacks are enabled while
+the :cb:`Frame` and :cb:`Frame Error Count` callbacks are disabled.
+
+If you want to use the :cb:`Frame` callback you can enable it and disable
+the cb:`Frame Available` callback at the same time. It becomes redundent in
+this case.
 """,
 'de':
 """
@@ -300,6 +344,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Returns the frame callback config as set by :func:`Set Frame Callback Config`.
 """,
 'de':
 """
@@ -315,6 +360,15 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered as soon as a new frame write is started.
+You should send the data for the next frame directly after this callback
+was triggered.
+
+For an explanation of the general approach see :func:`Write Frame`.
+
+This callback can be enabled via :func:`Set Frame Callback Config`.
+
+This callback can only be triggered in Master Mode.
 """,
 'de':
 """
@@ -330,6 +384,15 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered in slave mode when a new frame was written by the DMX Master
+and it can be read out. You have to read the frame before the Master has written
+the next frame, see :func:`Read Frame` for more details.
+
+The parameter is the frame number, it is increased by one with each received frame.
+
+This callback can be enabled via :func:`Set Frame Callback Config`.
+
+This callback can only be triggered in Slave Mode.
 """,
 'de':
 """
@@ -349,6 +412,15 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is called as soon as a new frame is available
+(written by the DMX Master). 
+
+The size of the array is equivalent to the number of channels in 
+the frame. Each byte represents one channel.
+
+This callback can be enabled via :func:`Set Frame Callback Config`.
+
+This callback can only be triggered in Slave Mode.
 """,
 'de':
 """
