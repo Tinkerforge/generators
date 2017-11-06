@@ -128,7 +128,7 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Sets the firmware pointer for func:`WriteFirmware`. The pointer has
+Sets the firmware pointer for :func:`Write Firmware`. The pointer has
 to be increased by chunks of size 64. The data is written to flash
 every 4 chunks (which equals to one page of size 256).
 
@@ -137,7 +137,7 @@ necessary to call it in a normal user program.
 """,
 'de':
 """
-Setzt den Firmware-Pointer für func:`WriteFirmware`. Der Pointer
+Setzt den Firmware-Pointer für :func:`Write Firmware`. Der Pointer
 muss um je 64 Byte erhöht werden. Die Daten werden alle 4 Datenblöcke
 in den Flash geschrieben (4 Datenblöcke entsprechen einer Page mit 256 Byte).
 
