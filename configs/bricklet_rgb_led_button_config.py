@@ -35,6 +35,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the color of the LED.
+
+By default the LED is off (0, 0, 0).
 """,
 'de':
 """
@@ -52,9 +55,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the LED color as set by :func:`Set Color`.
 """,
 'de':
 """
+Gibt die LED-Farbe zurück, wie von :func:`Set Color` gesetzt.
 """
 }]
 })
@@ -68,6 +73,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the current state of the button (either pressed or released).
 """,
 'de':
 """
@@ -84,6 +90,10 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered every time the button state changes from pressed to released
+or from released to pressed.
+
+The parameter `state` is the current state of the button.
 """,
 'de':
 """
@@ -98,15 +108,18 @@ com['packets'].append({
              ('Green', 'uint8', 1, 'in'),
              ('Blue', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
-TOOD:
-range 0-100%
+Sets a color calibration. Some colors appear brighter then others,
+so a calibration may be necessary for nice uniform colors.
 
-Is saved in flash, don't call every time.
+The values range from 0-100%.
 
-default: 100, 100, 55
+The calibration is saved in flash. You don't need to call this
+function on every startup.
+
+Default values: (100, 100, 55).
 """,
 'de':
 """
@@ -124,11 +137,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the *rgb* value calibrationas set by :func:`Set Color Calibration`.
+Returns the color calibration as set by :func:`Set Color Calibration`.
 """,
 'de':
 """
-Gibt die *rgb* Wert Kalibrierung zurück, wie von :func:`Set Color Calibration` gesetzt.
+Gibt die Farbwert-Kalibrierung zurück, wie von :func:`Set Color Calibration` gesetzt.
 """
 }]
 })

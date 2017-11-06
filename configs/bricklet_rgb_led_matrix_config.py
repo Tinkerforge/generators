@@ -33,6 +33,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the 64 red led values of the matrix.
 """,
 'de':
 """
@@ -48,6 +49,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the red led values as set by :func:`Set Red`.
 """,
 'de':
 """
@@ -63,6 +65,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the 64 green led values of the matrix.
 """,
 'de':
 """
@@ -78,6 +81,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the green led values as set by :func:`Set Green`.
 """,
 'de':
 """
@@ -93,6 +97,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the 64 blue led values of the matrix.
 """,
 'de':
 """
@@ -108,6 +113,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the lbue led values as set by :func:`Set Blue`.
 """,
 'de':
 """
@@ -129,6 +135,19 @@ Example: If you want to achieve 20 frames per second, you should
 set the frame duration to 50ms (50ms * 20 = 1 second). 
 
 Set this value to 0 to turn the automatic frame write mechanism off.
+
+
+Approach:
+
+* Call :func:`Set Frame Duration` with value > 0.
+* Set LED values for first frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
+* Wait for :cb:`Frame Started` callback.
+* Set LED values for second frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
+* Wait for :cb:`Frame Started` callback.
+* and so on.
+
+
+For frame duration of 0 see :func:`Draw Frame`.
 
 Default value: 0 = off.
 """,
@@ -174,6 +193,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+If you set the frame duration to 0 (see :func:`Set Frame Duration`), you can use this
+function to transfer one frame to the matrix.
+
+Approach:
+
+* Call :func:`Set Frame Duration` with 0.
+* Set LED values for first frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
+* Call :func:`Draw Frame`.
+* Wait for :cb:`Frame Started` callback.
+* Set LED values for second frame with :func:`Set Red`, :func:`Set Green`, :func:`Set Blue`.
+* Call :func:`Draw Frame`.
+* Wait for :cb:`Frame Started` callback.
+* and so on.
 """,
 'de':
 """
@@ -208,6 +240,9 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered as soon as a new frame write is started.
+The LED values are double buffered, so you can send the LED values 
+for the next frame directly after this callback is triggered.
 """,
 'de':
 """
