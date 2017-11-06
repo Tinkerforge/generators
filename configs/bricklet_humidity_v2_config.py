@@ -55,9 +55,8 @@ temperature_doc = {
 'en':
 """
 Returns the temperature measured by the sensor. The value
-has a range of -4000 to 16500 and is given in °C/100 (Relative Humidity),
-i.e. a value of 3200 means that a humidity of 32.00 %RH is measured.
-TODO
+has a range of -4000 to 16500 and is given in °C/100,
+i.e. a value of 3200 means that a temperature of 32.00 °C is measured.
 """,
 'de':
 """
@@ -86,12 +85,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Enables/Disables the heater. The heater can be used to dry the sensor in 
+Enables/disables the heater. The heater can be used to dry the sensor in 
 extremely wet conditions.
 """,
 'de':
 """
-Aktiviert/Deaktiviert das Heizelement. Das Heizelement kann genutzt werden
+Aktiviert/deaktiviert das Heizelement. Das Heizelement kann genutzt werden
 um den Sensor bei extremer Feuchtigkeit zu trocknen.
 """
 }]
@@ -151,7 +150,7 @@ Neue Werte werden alle 50ms gemessen. Mit einer Mittelwerts-Länge von 1000 hat 
 resultierende gleitende Fenster eine Zeitspanne von 50s. Bei Langzeitmessungen gibt
 ein langer Mittelwert die saubersten Resultate.
 
-Der Standardwert ist 50.
+Der Standardwert ist 100.
 """
 }]
 })
