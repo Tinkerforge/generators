@@ -62,7 +62,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the position of the potentiometer. The mororized potentiometer will
+immediately start to approach the position. Depending on the choosen drive mode,
+the position will either be reached as fast as possible or in a slow but smooth
+motion.
+
+The position has to be between 0 (slider down) and 100 (slider up).
+
+If you set the hold position parameter to true, the position will automatically
+be retained. If a user changes the position of the potentiometer, it will
+automatically drive back to the original set point.
+
+If the hold position parameter is set to false, the potentiometer can be changed
+again by the user as soon as the set point was reached once.
 """,
 'de':
 """
@@ -83,7 +95,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the last motor position as set by :func:`Set Motor Position`. This is not
+the current position (use :func:`Get Position` to get the current position). This
+is the last used set point and configuration.
+
+The position reached parameter is true if the position has been reached at one point.
+The position may have been changed again in the meantime by the user.
 """,
 'de':
 """
@@ -100,7 +117,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Starts a calibration procedure. The potentiometer will be driven to the extreme 
+points to calibrate the potentiometer.
+
+The calibration is saved in flash, it does not have to be called on every start up.
+
+The Motorized Linear Poti Bricklet is already factory-calibrated during 
+testing at Tinkerforge.
 """,
 'de':
 """
@@ -118,6 +141,9 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Enables/Disables :cb:`Position Reached` callback.
+
+By default the callback is enabled.
 """,
 'de':
 """
@@ -133,6 +159,8 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Returns the position reached callback configuration 
+as set by :func:`Set Position Reached Callback Configuration`.
 """,
 'de':
 """
@@ -149,6 +177,10 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered if a new position as set by
+:func:`Set Motor Position` is reached.
+
+The value is the current position.
 """,
 'de':
 """
