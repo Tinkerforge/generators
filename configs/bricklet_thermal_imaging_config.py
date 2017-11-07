@@ -92,7 +92,11 @@ com['packets'].append({
              ('Temperatures', 'uint16', 4, 'out'), # focal plain array, focal plain array at last ffc, housing, housing at last ffc
              ('Resolution', 'uint8', 1, 'out', ('Resolution', [('0 To 6553 Kelvin', 0),
                                                                ('0 To 655 Kelvin', 1)])),
-             ('Status', 'uint16', 1, 'out') # Lots of status bits # FIXME: convert to bools or add constants
+             ('FFC Status', 'uint8', 1, 'out', ('FFC Status', [('Never Commanded', 0),
+                                                               ('Imminent', 1),
+                                                               ('In Progress', 2),
+                                                               ('Complete', 3)])),
+             ('Temperature Warning', 'bool', 2, 'out') # shutter lockout, overtemp
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -117,12 +121,17 @@ The temperatures are:
 The resolution is either `0 to 6553 Kelvin` or `0 to 655 Kelvin`. If the resolution is the former,
 the temperatures are in Kelvin/10, if it is the latter the temperatures are in Kelvin/100.
 
-The status bits are (TODO: Use bool array?):
-* bit 0: FFC desired
-* bit 1-2: FFC never commanded, FFC imminent, FFC in progress, FFC complete
-* bit 3: AGC State
-* bit 4: Shutter lockout
-* bit 5: Overtemp shut down imminent
+FFC (Flat Field Correction) Status:
+
+* FFC Never Commanded: Only seen on startup before first FFC.
+* FFC Imminent: This state is entered 2 seconds prior to initiating FFC.
+* FFC In Progress: Flat field correction is started (shutter moves in front of lens and back). Takes about 1 second.
+* FFC Complete: Shutter is in waiting position again, FFC done.
+
+Temperature warning bits:
+
+* Index 0: Shutter lockout (if true shutter is locked out, temperature outside -10°C-65°C)
+* Index 1: Overtemp shut down imminent (goes true 10 seconds before shutdown)
 """,
 'de':
 """
