@@ -55,7 +55,7 @@ independent of the value.
 
 It is furthermore possible to constrain the callback with thresholds.
 
-The option-`parameter` together with min/max sets a thresholds for the :cb:`{0}` callback.
+The `option`-parameter together with min/max sets a threshold for the :cb:`{0}` callback.
 
 The following options are possible:
 
@@ -70,13 +70,42 @@ The following options are possible:
  "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
 
-If the option is set to 'x' (threshold turned off) the callback is triggered with the period.
+If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
 
 The default value is (0, false, 'x', 0, 0).
 """.format(name),
 'de':
 """
-TODO
+Die Periode in ms ist die Periode mit der der :cb:`{0}` Callback ausgelöst wird. Ein Wert von 0
+schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der Callback nur ausgelöst,
+wenn der Wert sich im Vergleich zum letzten mal geändert hat. Ändert der Wert sich nicht innerhalb
+der Periode, so wird der Callback sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der festen Periode ausgelöst
+unabhängig von den Änderungen des Werts.
+
+Desweiteren ist es möglich den Callback mittels Thresholds einzuschränken.
+
+Der `option`-Parameter`zusammen mit min/max setzt einen Threshold für den :cb:`{0}` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+
+ "'x'",    "Threshold ist abgeschaltet"
+ "'o'",    "Threshold wird ausgelöst, wenn der Wert *außerhalb* der Min und Max Werte sind"
+ "'i'",    "Threshold wird ausgelöst, wenn der Wert *innerhalb* der Min und Max Werte sind"
+ "'<'",    "Threshold wird ausgelöst, wenn der Wert kleiner ist wie der Min Wert (Max wird ignoriert)"
+ "'>'",    "Threshold wird ausgelöst, wenn der Wert größer ist wie der Max Wert (Min wird ignoriert)"
+
+Wird die Option auf 'x' gesetzt (Threshold abgeschaltet), so wird der Callback mit der festen Periode
+ausgelöst.
+
+Der Standardwert ist (0, false, 'x', 0, 0).
 """
 }]
 }
@@ -98,7 +127,7 @@ Returns the callback configuration as set by :func:`{0} Callback Configuration`.
 """.format(name_set),
 'de':
 """
-Gibt die Callback-Konfiguration zurück, wie von :func:`{0} Callback Configuration` gesetzt.
+Gibt die Callback-Konfiguration zurück, wie mittels :func:`{0} Callback Configuration` gesetzt.
 """.format(name_set)
 }]
 }
@@ -119,7 +148,10 @@ The `parameter` is the same as :func:`{1}`.
 """.format(name_set, name_get),
 'de':
 """
-TODO
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`{0} Callback Configuration` gesetzten Konfiguration
+
+Der `parameter` ist der gleiche wie :func:`{1}`.
 """
 }]
 }
