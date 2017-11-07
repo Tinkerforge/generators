@@ -118,7 +118,7 @@ Genereller Ansatz:
 * Warte auf :cb:`Frame Rendered` Callback.
 * Und so weiter.
 
-Dieser Ansatz garantiert das die LED Farben mit einer
+Dieser Ansatz garantiert, dass die LED Farben mit einer
 festen Framerate angezeigt werden.
 
 Die effektive Anzahl steuerbarer LEDs ist abhängig von der Anzahl
