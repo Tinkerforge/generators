@@ -106,7 +106,7 @@ Wird die Option auf 'x' gesetzt (Threshold abgeschaltet), so wird der Callback m
 ausgelöst.
 
 Der Standardwert ist (0, false, 'x', 0, 0).
-"""
+""".format(name)
 }]
 }
 
@@ -152,7 +152,7 @@ Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`{0} Callback Configuration` gesetzten Konfiguration
 
 Der `parameter` ist der gleiche wie :func:`{1}`.
-"""
+""".format(name_set, name_get)
 }]
 }
 
