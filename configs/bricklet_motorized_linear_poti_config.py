@@ -18,8 +18,8 @@ com = {
     'display_name': 'Motorized Linear Poti',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TODO',
-        'de': 'TODO'
+        'en': 'Motorized Linear Potentiometer',
+        'de': 'Motorisiertes Linearpotentiometer'
     },
     'comcu': True,
     'released': False,
@@ -62,7 +62,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the position of the potentiometer. The mororized potentiometer will
+Sets the position of the potentiometer. The motorized potentiometer will
 immediately start to approach the position. Depending on the choosen drive mode,
 the position will either be reached as fast as possible or in a slow but smooth
 motion.
@@ -78,7 +78,18 @@ again by the user as soon as the set point was reached once.
 """,
 'de':
 """
-TODO
+Setzt die Position des Potentiometers. Nach Aufruf der Funktion wird das Potentiometer
+sofort diese Position anfahren. Abhängig von dem gewählten *driver mode* wird die Positon
+entweder so schnell wie möglich angefahren oder langsam dafür aber gleichmäßig (smooth).
+
+Die Position kann zwischen 0 (Regler unten) und 100 (Regler oben) festgelegt werden.
+
+Wenn der *hold position* Parameter auf True gesetzt wird, wird die Position automatisch 
+gehalten. Wenn ein Nutzer die Position ändert, fährt das Potentiometer die alte Position
+anschließend wieder an.
+
+Wenn der *hold position* Parameter auf False gesetzt wird, kann die Position vom Nutzer
+geändert werden, nachdem die Sollposition erreicht wurde.
 """
 }]
 })
@@ -104,7 +115,12 @@ The position may have been changed again in the meantime by the user.
 """,
 'de':
 """
-TODO
+Gibt die letzte Motor Position, die mittels :func:`Set Motor Position` gesetzt wurde
+zurück. Dies ist nicht die aktuelle Position des Potentiometers (dafür ist
+:func:`Get Position` gedacht). Zusätzlich wird die letzte Konfiguration zurückgegeben.
+
+Der *position reached* Parameter ist True, wenn der letzte Sollwert (Motor Positon) 
+erreicht wurde. Die reale Position könnte sich seitdem geändert haben.
 """
 }]
 })
@@ -127,7 +143,13 @@ testing at Tinkerforge.
 """,
 'de':
 """
-TODO
+Startet die Kalibrierung. Das Potentiometer fährt dabei die Extrempunkte an.
+
+Die Kalibrierung wird in dem internen Flash gespeichert und muss nicht bei jedem
+Start neu durchgeführt werden.
+
+Das Motorized Linear Poti Bricklet wird von Tinkerforge während des Funktionstests
+kalibriert.
 """
 }]
 })
@@ -147,6 +169,9 @@ By default the callback is enabled.
 """,
 'de':
 """
+Aktiviert/Deaktiviert den :cb:`Position Reached` Callback.
+
+Standardmäßig ist der Callback aktiviert.
 """
 }]
 })
@@ -164,6 +189,8 @@ as set by :func:`Set Position Reached Callback Configuration`.
 """,
 'de':
 """
+Gibt die *position reached callback* Konfiguration zurück, wie sie
+mittels :func:`Set Position Reached Callback Configuration` gesetzt wurde.
 """
 }]
 })
@@ -184,6 +211,10 @@ The value is the current position.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst, wenn die mittels
+:func:`Set Motor Position` gesetzte Position erreicht wird.
+
+Der *value* ist die aktuelle Position.
 """
 }]
 })
