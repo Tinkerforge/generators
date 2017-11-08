@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# GPS Bricklet communication config
+# Thermal Imaging Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -35,7 +35,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current high contrast image. See TODO for the difference between 
+Returns the current high contrast image. See TODO ADD Link
+for the difference between 
 High Contrast and Temperature Image. If you don't know what to use
 the High Contrast Image is probably right for you.
 
@@ -51,6 +52,21 @@ Before you can use this function you have to enable it with
 """,
 'de':
 """
+Gibt das aktuelle *High Contrast Image* zurück. Siehe
+TODO ADD Link für eine Beschreibung des Unterschieds zwischen
+*High Contrast Image* und einem *Temperature Image*. Wenn unbekannt ist
+welche Darstellungsform genutzt werden soll, ist vermutlich das
+*High Contrast Image* die richtige form.
+
+Die Daten der 80x60 Pixel-Matrix werden als ein eindimensionales
+Array bestehend aus 8-bit Werten dargestellt. Die Daten sind Zeile für Zeile
+von oben links bis unten rechts angeordnet.
+
+Jeder 8-Bit Wert stellt ein Pixel aus dem grauwert Bild dar und kann als
+solcher direkt dargestellt werden.
+
+Bevor die Funktion genutzt werden kann muss diese mittels
+:func:`Set Image Transfer Config` aktiviert werden.
 """
 }]
 })
@@ -65,9 +81,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current temperature image. See TODO for the difference between 
-High Contrast and Temperature Image. If you don't know what to use
-the High Contrast Image is probably right for you.
+Returns the current temperature image. See TODO ADD Link
+for the difference between High Contrast and Temperature Image. 
+If you don't know what to use the High Contrast Image is probably right for you.
 
 The data is organized as a 16-bit value 80x60 pixel matrix linearized in
 a one-dimensional array. The data is arranged line by line from top left to
@@ -81,6 +97,22 @@ Before you can use this function you have to enable it with
 """,
 'de':
 """
+Gibt das aktuelle *Temperature Image* zurück. See TODO ADD Link
+für eine Beschreibung des Unterschieds zwischen *High Contrast*
+und *Temperature Image*. Wenn unbekannt ist
+welche Darstellungsform genutzt werden soll, ist vermutlich das
+*High Contrast Image* die richtige form.
+
+Die Daten der 80x60 Pixel-Matrix werden als ein eindimensionales
+Array bestehend aus 16-bit Werten dargestellt. Die Daten sind Zeile für Zeile
+von oben links bis unten rechts angeordnet.
+
+Jeder 16-Bit Wert stellt eine Temperaturmessung in entweder Kelvin/10 oder 
+Kelvin/100 dar (abhängig von der Auflösung die mittels func:`Set Resolution`
+eingestellt wurde).
+
+Bevor die Funktion genutzt werden kann muss diese mittels
+:func:`Set Image Transfer Config` aktiviert werden.
 """
 }]
 })
@@ -135,6 +167,36 @@ Temperature warning bits:
 """,
 'de':
 """
+Git die Spotmeter Statistiken, verschiedene Temperaturen, die aktuelle Auflösung und Status-Bits zurück.
+
+Die Spotmeter Statistiken bestehen aus:
+
+* Index 0: Durchschnittstemperatur.
+* Index 1: Maximal Temperatur.
+* Index 2: Minimal Temperatur.
+* Index 3: Pixel Anzahl der Spotmeterregion (spotmeter regeion of interest).
+
+Die Temperaturen sind:
+
+* Index 0: Sensorflächen Temperatur (focal plain array temperature).
+* Index 1: Sensorflächen Temperatur bei der letzten FFC (Flat Field Correction).
+* Index 2: Gehäusetemperatur.
+* Index 3: Gehäusetemperatur bei der letzten FFC.
+
+Die Auflösung ist entweder `0 bis 6553 Kelvin` oder `0 bis 655 Kelvin`. Ist die Auflösung
+ersteres, so ist die Auflösung Kelvin/10. Ansonsten ist sie Kelvin/100.
+
+FFC (Flat Field Correction) Status:
+
+* FFC Never Commanded: FFC wurde niemals ausgeführt. Dies ist nur nach dem Start vor dem ersten FFC der Fall.
+* FFC Imminent: Dieser Zustand wird zwei Sekunden vor einem FFC angenommen.
+* FFC In Progress: FFC wird ausgeführt (Der Shutter bewegt sich vor die Linse und wieder zurück). Dies benötigt ca. 1 Sekunde.
+* FFC Complete: FFC ist ausgeführt worden. Der Shutter ist wieder in der Warteposition.
+
+*Temperature warning bits*:
+
+* Index 0: Shutter-Sperre (shutter lockout). Wenn True, ist der Shutter gesperrt, da die Temperatur außerhalb des Bereichs -10°C-65°C liegt.
+* Index 1: Übertemperaturabschaltung steht bevor, wenn dieses Bit True ist. Bit wird 10 Sekunden vor der Abschaltung gesetzt.
 """
 }]
 })
@@ -157,6 +219,14 @@ The default value is 0 to 655 Kelvin.
 """,
 'de':
 """
+Setzt die Auflösung. Das Thermal Imaging Bricklet kann entweder
+
+* von 0 bis 6553 Kelvin (-273.15° bis 6279.85°C) mit 0.1°C Auflösung oder
+* von 0 bis 655 Kelvin (-273.15° bis 381.85°C) mit 0.01°C Auflösung 
+
+messen.
+
+Der Standardwert ist 0 bis 655 Kelvin.
 """
 }]
 })
@@ -174,6 +244,7 @@ Returns the resolution as set by :func:`Set Resolution`.
 """,
 'de':
 """
+Gibt die Auflösung zurück, wie sie mit :func:`Set Resolution` gesetzt wurde.
 """
 }]
 })
@@ -200,6 +271,16 @@ The default region of interest is (39, 29, 40, 30).
 """,
 'de':
 """
+Setzt die Spotmeter Region (*Spotmeter Region of Interest*). Die 4 Werte sind
+
+* Index 0: Spaltenstart (muss kleiner sein wie Spaltenende).
+* Index 1: Zeilenstart (muss kleine sein wie Zeilenende).
+* Index 2: Spaltenende (muss kleiner sein wie 80).
+* Index 3: Zeilenende (muss kleiner sein wie 60).
+
+Die Spotmeter Statistiken können mittels :func:`Get Statistics` ausgelesen werden.
+
+Der Standardwert für die Spotmeter Region ist (39, 29, 40, 30).
 """
 }]
 })
@@ -216,6 +297,8 @@ Returns the spotmeter config as set by :func:`Set Spotmeter Config`.
 """,
 'de':
 """
+Gibt die Spotmeter Konfiguration zurück, die mittels :func:`Set Spotmeter Config`
+gesetzt wurde.
 """
 }]
 })
@@ -231,7 +314,6 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
 Sets the high contrast region of interest, dampening factor, clip limit and empty counts.
 This config is only used in high contrast mode (see :func:`Set Image Transfer Config`).
 
@@ -252,14 +334,14 @@ influence the previous HEQ transformation function has on the current function. 
 lower the value of N the higher the influence of the current video frame whereas
 the higher the value of N the more influence the previous damped transfer function has.
 
-Clip Limit Index 0: This parameter defines an artificial population that is added to 
+Clip Limit Index 0 (AGC HEQ Clip Limit Low): This parameter defines an artificial population that is added to 
 every non-empty histogram bin. In other words, if the Clip Limit Low is set to L, a bin 
-with an actual population of X will have an effective population of L + X. y empty bin 
+with an actual population of X will have an effective population of L + X. Any empty bin 
 that is nearby a populated bin will be given an artificial population of L. The effect of
 higher values is to provide a more linear transfer function; lower values provide a more
 non-linear (equalized) transfer function.
 
-Clip Limit Index 1: This parameter defines the maximum number of pixels allowed 
+Clip Limit Index 1 (AGC HEQ Clip Limit High): This parameter defines the maximum number of pixels allowed 
 to accumulate in any given histogram bin. Any additional pixels in a given bin are clipped.
 The effect of this parameter is to limit the influence of highly-populated bins on the 
 resulting HEQ transformation function.
@@ -277,6 +359,50 @@ The default values are
 """,
 'de':
 """
+Setzt die *Region of Interest* für das High Contrast Image, den *Dampening Faktor*, das 
+*Clip Limit* und die *Empty Counts. Diese Konfiguration kann nur im *High Contrast Modus* 
+genutzt werden (siehe :func:`Set Image Transfer Config`).
+
+Die *High Contrast Region of Interest* besteht aus vier Werten:
+
+* Index 0: Spaltenstart (muss kleiner sein wie Spaltenende).
+* Index 1: Zeilenstart (muss kleiner sein wie Zeilenende).
+* Index 2: Spaltenende (muss kleiner sein wie 80).
+* Index 3: Zeilenende (muss kleiner sein wie 60).
+
+Der Algorithmus zum Erzeugen eines High Contrast Images wird auf diese Region angewandt.
+
+*Dampening Factor*: Dieser Parameter ist die Stärke der zeitlichen Dämpfung, die auf der
+HEQ (history equalization) Transformationsfunktion angewendet wird. Ein IIR-Filter der
+Form (N/256) * transformation_zuvor + ((256-N)/256) * transformation_aktuell wird dort 
+angewendet. Der HEQ Dämpfungsfaktor stellt dabei den Wert N in der Gleichung dar. 
+Der Faktor stellt also ein, wie stark der Einfluss der vorherigen HEQ Transformation
+auf die aktuelle ist. Umso niedriger der Wert von N um so größer ist der Einfluss des 
+aktuellen Bildes. Umso größer der Wert von N umso kleiner ist der Einfluss der vorherigen
+Dämpfungs-Transferfunktion.
+
+*Clip Limit Index 0 (AGC HEQ Clip Limit Low)*: Dieser Parameter definiert einen künstliche Menge, 
+die jeder nicht leeren Histogrammklasse hinzugefügt wird. Wenn *Clip Limit Low* mit L dargestellt 
+wird, so erhält jede Klasse mit der aktuellen Menge X die effektive Menge L + X. Jede Klasse, die 
+nahe einer gefüllten Klasse ist erhält die Menge L. Der Effekt von höheren Werten ist eine stärkere
+lineare Transferfunktion bereitzustellen. Niedrigere Werte führen zu einer nichtlinearen
+Transferfunktion.
+
+*Clip Limit Index 1 (AGC HEQ Clip Limit High)*: Dieser Parameter definiert die maximale Anzahl
+von Pixeln, die sich in jeder Histogrammklasse sammeln dürfen. Jedes weitere Pixel wird verworfen.
+Der Effekt dieses Parameters ist den Einfluss von stark gefüllten Klassen in der HEQ Transformation
+zu beschränken.
+
+*Empty Counts*: Dieser Parameter spezifiziert die maximale Anzahl von Pixeln in einer Klasse, damit 
+die Klasse als leere Klasse interpretiert wird. Jede Histogrammklasse mit dieser Anzahl an Pixeln oder
+weniger wird als leere Klasse behandelt.
+
+Die Standardwerte sind:
+
+* Region Of Interest = (0, 0, 79, 59),
+* Dampening Factor = 64,
+* Clip Limit = (4800, 512) and
+* Empty Counts = 2.
 """
 }]
 })
@@ -296,6 +422,8 @@ Returns the high contrast config as set by :func:`Set High Contrast Config`.
 """,
 'de':
 """
+Gibt die High Contrast Konfiguration zurück, die mittels :func:`Set High Contrast Config` 
+gesetzt werden kann.
 """
 }]
 })
@@ -327,6 +455,20 @@ The default is Manual High Contrast Image (0).
 """,
 'de':
 """
+Die notwendige Bandbreite für dieses Bricklet ist zu groß um Getter/Callbacks
+oder High Contrast/Temperature Images gleichzeitig zu nutzen. Daher muss konfiguriert 
+werden was genutzt werden soll. Das Bricklet optimiert seine interne Konfiguration 
+anschließend dahingehend.
+
+Zugehörige Funktionen:
+
+* Manual High Contrast Image: :func:`Get High Contrast Image`.
+* Manual Temperature Image: :func:`Get Temperature Image`.
+* Callback High Contrast Image: :cb:`High Contrast Image`.
+* Callback Temperature Image: :cb:`Temperature Image`.
+
+Der Standardwert ist Manual High Contrast Image (0).
+
 """
 }]
 })
@@ -346,6 +488,7 @@ Returns the image trasfer config, as set by :func:`Set Image Transfer Config`.
 """,
 'de':
 """
+Gibt die Image Transfer Konfiguration, wie mittels :func:`Set Image Transfer Config` gesetzt werden kann, zurück.
 """
 }]
 })
@@ -372,6 +515,16 @@ shown to a user on a display.
 """,
 'de':
 """
+Dieser Callback wird für jedes neue High Contrast Image ausgelöst, wenn die *Transfer
+Image Config* für diesen Callback konfiguriert wurde (siehe 
+:func:`Set Image Transfer Config`).
+
+Die Daten der 80x60 Pixel-Matrix werden als ein eindimensionales
+Array bestehend aus 8-Bit Werten dargestellt. Die Daten sind Zeile für Zeile
+von oben links bis unten rechts angeordnet.
+
+Jeder 8-Bit Wert stellt ein Pixel aus dem grauwert Bild dar und kann als
+solcher direkt dargestellt werden.
 """
 }]
 })
@@ -398,6 +551,16 @@ Kelvin/10 or Kelvin/100 (depending on the resolution set with :func:`Set Resolut
 """,
 'de':
 """
+Dieser Callback wird für jedes neue Temperature Image ausgelöst, wenn die *Transfer
+Image Config* für diesen Callback konfiguriert wurde (siehe 
+:func:`Set Image Transfer Config`).
+
+Die Daten der 80x60 Pixel-Matrix werden als ein eindimensionales
+Array bestehend aus 16-Bit Werten dargestellt. Die Daten sind Zeile für Zeile
+von oben links bis unten rechts angeordnet.
+
+Jeder 16-Bit Wert stellt ein Pixel aus dem Temperatur Bild dar und kann als
+solcher direkt dargestellt werden.
 """
 }]
 })
