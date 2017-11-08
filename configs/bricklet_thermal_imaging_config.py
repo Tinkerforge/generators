@@ -372,7 +372,7 @@ Die *High Contrast Region of Interest* besteht aus vier Werten:
 
 Der Algorithmus zum Erzeugen eines High Contrast Images wird auf diese Region angewandt.
 
-*Dampening Factor*: Dieser Parameter ist die Stärke der zeitlichen Dämpfung, die auf der
+*Dampening Factor*: Dieser Parameter stellt die Stärke der zeitlichen Dämpfung dar, die auf der
 HEQ (history equalization) Transformationsfunktion angewendet wird. Ein IIR-Filter der
 Form (N/256) * transformation_zuvor + ((256-N)/256) * transformation_aktuell wird dort 
 angewendet. Der HEQ Dämpfungsfaktor stellt dabei den Wert N in der Gleichung dar. 
