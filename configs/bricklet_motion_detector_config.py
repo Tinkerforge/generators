@@ -116,7 +116,7 @@ Setzt die Konfiguration der Status-LED.
 Standardmäßig geht die LED an, wenn eine Bewegung erkannt wird und
 aus wenn keine Bewegung erkannt wird.
 
-Die LED kann auch permanaent an/aus gestellt werden.
+Die LED kann auch permanent an/aus gestellt werden.
 """
 }]
 })

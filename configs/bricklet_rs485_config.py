@@ -355,7 +355,7 @@ Setzt die Konfiguration der Kommunikations-LED. Standardmäßig zeigt
 die LED die Kommunikationsdatenmenge an. Sie blinkt einmal auf pro 10 empfangenen
 Datenpaketen zwischen Brick und Bricklet.
 
-Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 """
@@ -411,7 +411,7 @@ Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :cb:`Error Count
 Callback). Wenn diese Funktion danach nochmal mit der "SHOW ERROR"-Option
 aufgerufen wird, geht die LED wieder aus bis der nächste Error auftritt.
 
-Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag
+Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag
 anzeigen.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.

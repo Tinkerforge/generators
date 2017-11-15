@@ -131,7 +131,7 @@ averaging, there is more noise on the data.
 The range for the averaging is 1-1000.
 
 New data is gathered every 50ms. With a moving average of length 1000 the resulting
-averaging window has a length of 50s. If you want to do long term measurments the longest
+averaging window has a length of 50s. If you want to do long term measurements the longest
 moving average will give the cleanest results.
 
 The default value is 100.

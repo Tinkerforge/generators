@@ -56,11 +56,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the DMX mode, as set by func:`Get DMX Mode`.
+Returns the DMX mode, as set by func:`Set DMX Mode`.
 """,
 'de':
 """
-Gibt den DMX Modus zurück, so wie er mittels func:`Get DMX Mode` gesetzt wurde.
+Gibt den DMX Modus zurück, wie von :func:`Set DMX Mode` gesetzt.
 """
 }]
 })
@@ -185,7 +185,6 @@ Diese Funktion kann nur im Slave Modus aufgerufen werden.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Duration',
@@ -283,7 +282,7 @@ Setzt die Konfiguration der Kommunikations-LED. Standardmäßig zeigt
 die LED die Kommunikationsdatenmenge an. Sie blinkt einmal auf pro 10 empfangenen
 Datenpaketen zwischen Brick und Bricklet.
 
-Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 """
@@ -339,7 +338,7 @@ Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :cb:`Frame Error
 Callback). Wenn diese Funktion danach nochmal mit der Show-Error-Option
 aufgerufen wird, geht die LED wieder aus bis der nächste Error auftritt.
 
-Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag
+Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag
 anzeigen.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.

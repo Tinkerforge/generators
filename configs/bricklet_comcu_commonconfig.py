@@ -209,7 +209,7 @@ Setzt die Konfiguration der Status-LED. Standardmäßig zeigt
 die LED die Kommunikationsdatenmenge an. Sie blinkt einmal auf pro 10 empfangenen
 Datenpaketen zwischen Brick und Bricklet.
 
-Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 """

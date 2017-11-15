@@ -780,7 +780,7 @@ If the Bricklet is in bootloader mode, the LED is off.
 Setzt die Konfiguration der Kommunikations-LED. Standardmäßig zeigt
 die LED ob eine Karte/ein Lesegerät detektiert wurde. 
 
-Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 """

@@ -333,7 +333,7 @@ Setzt die Konfiguration der Fix-LED. Standardmäßig zeigt
 die LED an ob ein GPS-Fix besteht. Wenn ein Fix da ist, geht die LED an. Wenn
 kein Fix da ist, geht die LED aus.
 
-Die LED kann auch permanaent an/aus gestellt werden, einen Herzschlag anzeigen
+Die LED kann auch permanent an/aus gestellt werden, einen Herzschlag anzeigen
 oder im Rythmus des PPS (Puls pro Sekunde) Ausgangs des GPS Moduls blinken.
 
 Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
