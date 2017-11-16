@@ -1349,7 +1349,7 @@ namespace Tinkerforge
 	internal class HighLevelCallback
 	{
 		internal object data = null;
-		internal long length = 0;
+		internal int length = 0;
 	}
 
 	internal class BrickDaemon : Device
