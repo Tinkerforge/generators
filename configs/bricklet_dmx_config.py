@@ -34,13 +34,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the DMX mode to either Slave or Master.
+Sets the DMX mode to either master or slave.
 
 Calling this function sets frame number to 0.
 """,
 'de':
 """
-Setzt den DMX Modus entweder auf Slave oder Master.
+Setzt den DMX Modus entweder auf Master oder Slave.
 
 Ein Aufruf dieser Funktion setzt die Frame-Nummer auf 0.
 """
@@ -87,7 +87,7 @@ The data will be transfered when the next frame duration ends, see :func:`Set Fr
 Generic approach:
 
 * Set the frame duration to a value that represents the number of frames per second you want to achieve.
-* Set channels for one frame.
+* Set channels for first frame.
 * Wait for the :cb:`Frame Started` callback.
 * Set channels for next frame.
 * Wait for the :cb:`Frame Started` callback.
@@ -95,24 +95,24 @@ Generic approach:
 
 This approach ensures that you can set new DMX data with a fixed frame rate.
 
-This function can only be called in Master Mode.
+This function can only be called in master mode.
 """,
 'de':
 """
 Schreibt ein DMX Frame. Die maximale Framegröße ist 512 Byte. Jedes Byte stellt dabei einen Channel dar.
 
 Das nächste Frame kann geschrieben werden nachdem der :cb:`Frame Started` Callback aufgerufen wurde.
-Das Frame verfügt über einen Doublebuffer, so dass ein neues Frame geschrieben werden kann, sobald das 
+Das Frame verfügt über einen Doublebuffer, so dass ein neues Frame geschrieben werden kann, sobald das
 vorherige Frame geschrieben wurde.
 
-Die Daten werden transferiert, wenn die nächste *frame duration* abgelaufen ist, siehe
+Die Daten werden transferiert, wenn die nächste *Frame Duration* abgelaufen ist, siehe
 see :func:`Set Frame Duration`.
 
 Genereller Ansatz:
 
-* Setze *frame duration* auf einen Wert welcher der Anzahl der
+* Setze *Frame Duration* auf einen Wert welcher der Anzahl der
   Bilder pro Sekunde entspricht die erreicht werden sollen.
-* Setze alle Channels für einen Frame.
+* Setze alle Channels für den ersten Frame.
 * Warte auf :cb:`Frame Started` Callback.
 * Setze alle Channels für den nächsten Frame.
 * Warte auf :cb:`Frame Started` Callback.
@@ -138,7 +138,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the last frame that was written by the DMX Master. The size of the array 
+Returns the last frame that was written by the DMX master. The size of the array
 is equivalent to the number of channels in the frame. Each byte represents one channel.
 
 The next frame is available after the :cb:`Frame Available` callback was called.
@@ -156,7 +156,7 @@ You can enable it with :func:`Set Frame Callback Config`.
 
 The frame number starts at 0 and it is increased by one with each received frame.
 
-This function can only be called in Slave Mode.
+This function can only be called in slave mode.
 """,
 'de':
 """
@@ -193,7 +193,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the duration of a frame in ms. 
+Sets the duration of a frame in ms.
 
 Example: If you want to achieve 20 frames per second, you should
 set the frame duration to 50ms (50ms * 20 = 1 second).
@@ -201,7 +201,7 @@ set the frame duration to 50ms (50ms * 20 = 1 second).
 If you always want to send a frame as fast as possible you can set
 this value to 0.
 
-This setting is only used in Master Mode.
+This setting is only used in master mode.
 
 Default value: 100ms (10 frames per second).
 """,
@@ -379,15 +379,22 @@ com['packets'].append({
 'en':
 """
 Enables/Disables the different callbacks. By default the
-:cb:`Frame Started` and :cb:`Frame Available` callbacks are enabled while
-the :cb:`Frame` and :cb:`Frame Error Count` callbacks are disabled.
+:cb:`Frame Started` callback and :cb:`Frame Available` callback are enabled while
+the :cb:`Frame` callback and :cb:`Frame Error Count` callback are disabled.
 
 If you want to use the :cb:`Frame` callback you can enable it and disable
-the cb:`Frame Available` callback at the same time. It becomes redundent in
+the cb:`Frame Available` callback at the same time. It becomes redundant in
 this case.
 """,
 'de':
 """
+Aktiviert/Deaktiviert die verschiedenen Callback. Standardmäßig sind der
+:cb:`Frame Started` Callback und der :cb:`Frame Available` Callback aktiviert,
+während der :cb:`Frame` Callback und der :cb:`Frame Error Count` Callback
+deaktiviert sind.
+
+Wenn der :cb:`Frame` Callback aktiviert wird dann kann der :cb:`Frame Available`
+Callback deaktiviert werden, da dieser dann redundant ist.
 """
 }]
 })
@@ -407,6 +414,7 @@ Returns the frame callback config as set by :func:`Set Frame Callback Config`.
 """,
 'de':
 """
+Gibt die Frame Callback Konfiguration zurück, wie von :func:`Set Frame Callback Config` gesetzt.
 """
 }]
 })
@@ -427,7 +435,7 @@ For an explanation of the general approach see :func:`Write Frame`.
 
 This callback can be enabled via :func:`Set Frame Callback Config`.
 
-This callback can only be triggered in Master Mode.
+This callback can only be triggered in master mode.
 """,
 'de':
 """
@@ -452,27 +460,28 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered in slave mode when a new frame was received from the DMX Master
-and it can be read out. You have to read the frame before the Master has written
+This callback is triggered in slave mode when a new frame was received from the DMX master
+and it can be read out. You have to read the frame before the master has written
 the next frame, see :func:`Read Frame` for more details.
 
 The parameter is the frame number, it is increased by one with each received frame.
 
 This callback can be enabled via :func:`Set Frame Callback Config`.
 
-This callback can only be triggered in Slave Mode.
+This callback can only be triggered in slave mode.
 """,
 'de':
 """
-Dieser Callback wird im Slave Modus ausgelöst, wenn ein neuer Frame vom DMX Master 
+Dieser Callback wird im Slave Modus ausgelöst, wenn ein neuer Frame vom DMX Master
 empfangen wurde und nun ausgelesen werden kann. Der Frame muss ausgelesen werden, bevor
 der Master ein neues Frame schreibt. Siehe :func:`Read Frame` für weitere Details.
 
+Der Parameter ist die Frame-Nummer, diese wird für jeden empfangenen Frame um
+eins erhöht.
 
 Der Callback kann mittels :func:`Set Frame Callback Config` aktiviert werden.
 
 Dieser Callback kann nur im Slave Modus ausgelöst werden.
-
 """
 }]
 })
@@ -490,14 +499,14 @@ com['packets'].append({
 'en':
 """
 This callback is called as soon as a new frame is available
-(written by the DMX Master). 
+(written by the DMX master).
 
-The size of the array is equivalent to the number of channels in 
+The size of the array is equivalent to the number of channels in
 the frame. Each byte represents one channel.
 
 This callback can be enabled via :func:`Set Frame Callback Config`.
 
-This callback can only be triggered in Slave Mode.
+This callback can only be triggered in slave mode.
 """,
 'de':
 """
@@ -529,7 +538,7 @@ the current overrun and framing error count.
 'de':
 """
 Dieser Callback wird aufgerufen wenn ein neuer Fehler auftritt.
-Er gibt die Anzahl der aufgetreten Overrun and Framing Fehler zurück.
+Er gibt die Anzahl der aufgetreten Overrun und Framing Fehler zurück.
 """
 }]
 })

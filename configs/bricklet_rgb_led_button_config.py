@@ -41,6 +41,9 @@ By default the LED is off (0, 0, 0).
 """,
 'de':
 """
+Setzt die LED-Farbe.
+
+Standardmäßig ist die LED aus (0, 0, 0).
 """
 }]
 })
@@ -77,6 +80,7 @@ Returns the current state of the button (either pressed or released).
 """,
 'de':
 """
+Gibt den aktuellen Zustand des Knopfes zurück (entweder gedrückt oder nicht gedrückt).
 """
 }]
 })
@@ -90,13 +94,17 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered every time the button state changes from pressed to released
-or from released to pressed.
+This callback is triggered every time the button state changes from pressed to
+released or from released to pressed.
 
-The parameter `state` is the current state of the button.
+The :word:`parameter` is the current state of the button.
 """,
 'de':
 """
+Dieser Callback wird jedes mal ausgelöst wenn sich der Zustand es Knopfes ändert
+von gedrückt zu nicht gedrückt oder anders herum
+
+Das :word:`parameter` ist der aktuelle Zustand des Knopfes.
 """
 }]
 })
@@ -114,15 +122,24 @@ com['packets'].append({
 Sets a color calibration. Some colors appear brighter then others,
 so a calibration may be necessary for nice uniform colors.
 
-The values range from 0-100%.
+The values range from 0% to 100%.
 
 The calibration is saved in flash. You don't need to call this
 function on every startup.
 
-Default values: (100, 100, 55).
+Default value is (100, 100, 55).
 """,
 'de':
 """
+Setzt die Farbwert-Kalibrierung. Einige Farben erscheinen heller als andere,
+daher kann eine Kalibrierung nötig sein um gleichmäßige Farben zu erzielen.
+
+Der Wertebereich ist 0% bis 100%
+
+Die Kalibrierung wird im Flash des Bricklets gespeichert und muss daher nicht
+bei jedem Start erneut vorgenommen werden.
+
+Standardwert ist (100, 100, 55).
 """
 }]
 })

@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# Humidity Bricklet communication config
+# Humidity Bricklet 2.0 communication config
 
 from commonconstants import THRESHOLD_OPTION_CONSTANTS
 from commonconstants import add_callback_value_function
@@ -44,8 +44,8 @@ ein Wert von 4223 eine gemessene Luftfeuchtigkeit von 42,23 %RH.
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Humidity', 
+    packets   = com['packets'],
+    name      = 'Get Humidity',
     data_name = 'Humidity',
     data_type = 'uint16',
     doc       = humidity_doc
@@ -67,16 +67,16 @@ ein Wert von 3200 eine gemessene Temperatur von 32,00 °C.
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Temperature', 
+    packets   = com['packets'],
+    name      = 'Get Temperature',
     data_name = 'Temperature',
     data_type = 'int16',
     doc       = temperature_doc
 )
 
-
 HEATER_CONFIG_CONSTANT = ('Heater Config', [('Disabled', 0),
                                             ('Enabled',  1)])
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Heater Configuration',
@@ -85,13 +85,17 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Enables/disables the heater. The heater can be used to dry the sensor in 
+Enables/disables the heater. The heater can be used to dry the sensor in
 extremely wet conditions.
+
+By default the heater is disabled.
 """,
 'de':
 """
 Aktiviert/deaktiviert das Heizelement. Das Heizelement kann genutzt werden
 um den Sensor bei extremer Feuchtigkeit zu trocknen.
+
+Standardmäßig ist das Heizelement deaktiviert.
 """
 }]
 })
@@ -141,12 +145,12 @@ The default value is 100.
 Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
 für die Luftfeuchtigkeit und Temperatur.
 
-Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
-die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
+Wenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert.
+Desto kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
 Der Wertebereich liegt bei 1-1000.
 
-Neue Werte werden alle 50ms gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
+Einer neue Wert wird alle 50ms gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
 resultierende gleitende Fenster eine Zeitspanne von 50s. Bei Langzeitmessungen gibt
 ein langer Mittelwert die saubersten Resultate.
 

@@ -42,14 +42,12 @@ ist von 0 (Schieberegler unten) und 100 (Schieberegler oben).
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Position', 
+    packets   = com['packets'],
+    name      = 'Get Position',
     data_name = 'Position',
     data_type = 'uint16',
     doc       = position_doc
 )
-
-
 
 com['packets'].append({
 'type': 'function',
@@ -63,7 +61,7 @@ com['packets'].append({
 'en':
 """
 Sets the position of the potentiometer. The motorized potentiometer will
-immediately start to approach the position. Depending on the choosen drive mode,
+immediately start to approach the position. Depending on the chosen drive mode,
 the position will either be reached as fast as possible or in a slow but smooth
 motion.
 
@@ -79,16 +77,16 @@ again by the user as soon as the set point was reached once.
 'de':
 """
 Setzt die Position des Potentiometers. Nach Aufruf der Funktion wird das Potentiometer
-sofort diese Position anfahren. Abhängig von dem gewählten *driver mode* wird die Positon
+sofort diese Position anfahren. Abhängig von dem gewählten *Driver Mode* wird die Position
 entweder so schnell wie möglich angefahren oder langsam dafür aber gleichmäßig (smooth).
 
 Die Position kann zwischen 0 (Regler unten) und 100 (Regler oben) festgelegt werden.
 
-Wenn der *hold position* Parameter auf True gesetzt wird, wird die Position automatisch 
+Wenn der *Hold Position* Parameter auf True gesetzt wird, wird die Position automatisch
 gehalten. Wenn ein Nutzer die Position ändert, fährt das Potentiometer die alte Position
 anschließend wieder an.
 
-Wenn der *hold position* Parameter auf False gesetzt wird, kann die Position vom Nutzer
+Wenn der *Hold Position* Parameter auf False gesetzt wird, kann die Position vom Nutzer
 geändert werden, nachdem die Sollposition erreicht wurde.
 """
 }]
@@ -119,8 +117,8 @@ Gibt die letzte Motor Position, die mittels :func:`Set Motor Position` gesetzt w
 zurück. Dies ist nicht die aktuelle Position des Potentiometers (dafür ist
 :func:`Get Position` gedacht). Zusätzlich wird die letzte Konfiguration zurückgegeben.
 
-Der *position reached* Parameter ist True, wenn der letzte Sollwert (Motor Positon) 
-erreicht wurde. Die reale Position könnte sich seitdem geändert haben.
+Der *Position Reached* Parameter ist True, wenn der letzte Sollwert (Motor Position)
+erreicht wurde. Die reale Position könnte sich seitdem jedoch geändert haben.
 """
 }]
 })
@@ -133,19 +131,19 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Starts a calibration procedure. The potentiometer will be driven to the extreme 
+Starts a calibration procedure. The potentiometer will be driven to the extreme
 points to calibrate the potentiometer.
 
 The calibration is saved in flash, it does not have to be called on every start up.
 
-The Motorized Linear Poti Bricklet is already factory-calibrated during 
+The Motorized Linear Poti Bricklet is already factory-calibrated during
 testing at Tinkerforge.
 """,
 'de':
 """
 Startet die Kalibrierung. Das Potentiometer fährt dabei die Extrempunkte an.
 
-Die Kalibrierung wird in dem internen Flash gespeichert und muss nicht bei jedem
+Die Kalibrierung wird im internen Flash gespeichert und muss nicht bei jedem
 Start neu durchgeführt werden.
 
 Das Motorized Linear Poti Bricklet wird von Tinkerforge während des Funktionstests
@@ -153,7 +151,6 @@ kalibriert.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -184,17 +181,16 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the position reached callback configuration 
+Returns the :cb:`Position Reached` callback configuration
 as set by :func:`Set Position Reached Callback Configuration`.
 """,
 'de':
 """
-Gibt die *position reached callback* Konfiguration zurück, wie sie
-mittels :func:`Set Position Reached Callback Configuration` gesetzt wurde.
+Gibt die :cb:`Position Reached` Callback Konfiguration zurück, wie von
+:func:`Set Position Reached Callback Configuration` gesetzt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',
@@ -207,18 +203,17 @@ com['packets'].append({
 This callback is triggered if a new position as set by
 :func:`Set Motor Position` is reached.
 
-The value is the current position.
+The :word:`parameter` is the current position.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst, wenn die mittels
 :func:`Set Motor Position` gesetzte Position erreicht wird.
 
-Der *value* ist die aktuelle Position.
+Der :word:`parameter` ist die aktuelle Position.
 """
 }]
 })
-
 
 com['examples'].append({
 'name': 'Simple',
@@ -230,4 +225,3 @@ com['examples'].append({
 'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint16', None, None, None, (0, 100))], None, None),
               ('callback_period', ('Position', 'position'), [], 50)]
 })
-
