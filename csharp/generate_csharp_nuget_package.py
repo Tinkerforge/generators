@@ -51,16 +51,17 @@ def generate(bindings_root_directory):
 
     shutil.copytree(tmp_unzipped_20_dir, tmp_unzipped_40_dir)
 
-    # Make Tinkerforge.csproj for NET 4.0
-    common.specialize_template(os.path.join(tmp_unzipped_40_source_tinkerforge_dir, 'Tinkerforge.csproj'),
-                               os.path.join(tmp_unzipped_40_source_tinkerforge_dir, 'Tinkerforge.csproj'),
-                               {'ToolsVersion="2.0"': 'ToolsVersion="4.0"'})
-
     # Make dll for NET 4.0
-    with common.ChangedDirectory(tmp_unzipped_40_source_tinkerforge_dir):
-        common.execute(['xbuild',
-                        '/p:Configuration=Release',
-                        os.path.join(tmp_unzipped_40_source_tinkerforge_dir, 'Tinkerforge.csproj')])
+    with common.ChangedDirectory(tmp_unzipped_40_dir):
+        common.execute(['/usr/bin/mcs',
+                        '/debug:full',
+                        '/optimize+',
+                        '/warn:4',
+                        '/sdk:4',
+                        '/target:library',
+                        '/doc:' + os.path.join(tmp_unzipped_40_dir, 'Tinkerforge.xml'),
+                        '/out:' + os.path.join(tmp_unzipped_40_dir, 'Tinkerforge.dll'),
+                        os.path.join(tmp_unzipped_40_source_tinkerforge_dir, '*.cs')])
 
     # Download nuget.exe
     with common.ChangedDirectory(tmp_dir):

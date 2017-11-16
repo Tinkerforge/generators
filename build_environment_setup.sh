@@ -18,7 +18,7 @@ sudo apt-get -y install python git
 # Packages for "generators/generate_all.py"
 sudo apt-get -y install php5 # in older Ubuntu there was a package named php5
 sudo apt-get -y install php # in newer Ubuntu there is a meta package named php that depends on php7.0
-sudo apt-get -y install build-essential mono-complete python3 perl default-jre default-jdk nodejs npm php-pear ruby zip
+sudo apt-get -y install build-essential mono-complete mono-reference-assemblies-2.0 python3 perl default-jre default-jdk nodejs npm php-pear ruby zip
 sudo npm install -g browserify
 sudo ln -s /usr/bin/nodejs /usr/local/bin/node
 

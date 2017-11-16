@@ -33,9 +33,10 @@ import common
 from csharp_released_files import released_files
 
 class CSharpZipGenerator(common.ZipGenerator):
-    tmp_dir                    = '/tmp/generator/csharp'
-    tmp_source_tinkerforge_dir = os.path.join(tmp_dir, 'source', 'Tinkerforge')
-    tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
+    tmp_dir                        = '/tmp/generator/csharp'
+    tmp_source_tinkerforge_dir     = os.path.join(tmp_dir, 'source', 'Tinkerforge')
+    tmp_source_tinkerforge_uwp_dir = os.path.join(tmp_dir, 'source', 'TinkerforgeUWP')
+    tmp_examples_dir               = os.path.join(tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'csharp'
@@ -43,6 +44,7 @@ class CSharpZipGenerator(common.ZipGenerator):
     def prepare(self):
         common.recreate_directory(self.tmp_dir)
         os.makedirs(self.tmp_source_tinkerforge_dir)
+        os.makedirs(self.tmp_source_tinkerforge_uwp_dir)
         os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
@@ -70,11 +72,13 @@ class CSharpZipGenerator(common.ZipGenerator):
         # Copy bindings and readme
         for filename in released_files:
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_uwp_dir)
 
         shutil.copy(os.path.join(root_dir, 'IPConnection.cs'),              self.tmp_source_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'project.json'),                 self.tmp_source_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'project.lock.json'),            self.tmp_source_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'TinkerforgeUWP.rd.xml'),        self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.cs'),              self.tmp_source_tinkerforge_uwp_dir)
+        shutil.copy(os.path.join(root_dir, 'project.json'),                 self.tmp_source_tinkerforge_uwp_dir)
+        shutil.copy(os.path.join(root_dir, 'project.lock.json'),            self.tmp_source_tinkerforge_uwp_dir)
+        shutil.copy(os.path.join(root_dir, 'TinkerforgeUWP.rd.xml'),        self.tmp_source_tinkerforge_uwp_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
@@ -82,10 +86,11 @@ class CSharpZipGenerator(common.ZipGenerator):
         # Make AssemblyInfo.cs
         version = common.get_changelog_version(root_dir)
 
-        common.specialize_template(os.path.join(root_dir, 'AssemblyInfo.cs.template'),
-                                   os.path.join(self.tmp_source_tinkerforge_dir, 'AssemblyInfo.cs'),
-                                   {'<<BINDINGS>>': 'C#',
-                                    '<<VERSION>>': '.'.join(version)})
+        for target_dir in [self.tmp_source_tinkerforge_dir, self.tmp_source_tinkerforge_uwp_dir]:
+            common.specialize_template(os.path.join(root_dir, 'AssemblyInfo.cs.template'),
+                                       os.path.join(target_dir, 'AssemblyInfo.cs'),
+                                       {'<<BINDINGS>>': 'C#',
+                                        '<<VERSION>>': '.'.join(version)})
 
         # Make Tinkerforge(UWP).csproj
         project_items = []
@@ -95,36 +100,28 @@ class CSharpZipGenerator(common.ZipGenerator):
 
         common.specialize_template(os.path.join(root_dir, 'Tinkerforge.csproj.template'),
                                    os.path.join(self.tmp_source_tinkerforge_dir, 'Tinkerforge.csproj'),
-                                   {'{{TOOLS_VERSION}}': '2.0',
-                                    '{{ITEMS}}': '\n    '.join(project_items)})
+                                   {'{{ITEMS}}': '\n    '.join(project_items)})
 
         common.specialize_template(os.path.join(root_dir, 'TinkerforgeUWP.csproj.template'),
-                                   os.path.join(self.tmp_source_tinkerforge_dir, 'TinkerforgeUWP.csproj'),
+                                   os.path.join(self.tmp_source_tinkerforge_uwp_dir, 'TinkerforgeUWP.csproj'),
                                    {'{{ITEMS}}': '\n    '.join(project_items)})
 
         # Make dll
-        with common.ChangedDirectory(self.tmp_source_tinkerforge_dir):
-            common.execute(['xbuild',
-                            '/p:Configuration=Release',
-                            os.path.join(self.tmp_source_tinkerforge_dir, 'Tinkerforge.csproj')])
-
-        release_dir = os.path.join(self.tmp_source_tinkerforge_dir, 'bin', 'Release')
-
-        shutil.copy(os.path.join(release_dir, 'Tinkerforge.dll'),     self.tmp_dir)
-        shutil.copy(os.path.join(release_dir, 'Tinkerforge.dll.mdb'), self.tmp_dir)
-        shutil.copy(os.path.join(release_dir, 'Tinkerforge.xml'),     self.tmp_dir)
-
-        shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'bin'))
-        shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'obj'))
+        with common.ChangedDirectory(self.tmp_dir):
+            common.execute(['/usr/bin/mcs',
+                            '/debug:full',
+                            '/optimize+',
+                            '/warn:4',
+                            '/sdk:2',
+                            '/target:library',
+                            '/doc:' + os.path.join(self.tmp_dir, 'Tinkerforge.xml'),
+                            '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
+                            os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
-    if not os.path.isfile(os.path.join('/usr/lib/mono/2.0/Microsoft.Common.tasks')):
-        print('\033[01;31m>>> Could not find Mono SDK 2.0, skipping generation of C# ZIP\033[0m')
-        return
-
     common.generate(bindings_root_directory, 'en', CSharpZipGenerator)
 
 if __name__ == "__main__":
