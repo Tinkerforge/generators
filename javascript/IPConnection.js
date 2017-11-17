@@ -855,8 +855,8 @@ function IPConnection() {
                                  sendRequestPackFormat,
                                  sendRequestUnpackFormat,
                                  sendRequestReturnCB,
-                                 sendRequestErrorCB,
-                                 startStreamResponseTimer) {
+                                 sendRequestErrorCB) {
+        var startStreamResponseTimer = false;
         if (this.getConnectionState() !== IPConnection.CONNECTION_STATE_CONNECTED) {
             if (sendRequestErrorCB !== undefined) {
                 sendRequestErrorCB(IPConnection.ERROR_NOT_CONNECTED);
