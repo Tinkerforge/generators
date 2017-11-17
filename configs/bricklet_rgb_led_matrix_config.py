@@ -19,8 +19,8 @@ com = {
         'de': 'RGB LED Matrix mit 8x8 Pixel'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

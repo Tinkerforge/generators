@@ -19,8 +19,8 @@ com = {
         'de': 'RGB LED Button'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

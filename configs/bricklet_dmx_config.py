@@ -19,8 +19,8 @@ com = {
         'de': 'DMX Master und Slave'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

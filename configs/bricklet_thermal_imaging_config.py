@@ -19,8 +19,8 @@ com = {
         'de': '80x60 Pixel Wärmebildkamera'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }
