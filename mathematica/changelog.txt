@@ -69,10 +69,15 @@
 2017-05-11: 2.1.13 (3960b4a)
 - Add support for GPS Bricklet 2.0
 
-2017-07-26: 2.1.14 (<unknown>)
+2017-07-26: 2.1.14 (fb903dc)
 - Add support for RS485 Bricklet
 - Add general streaming support
 - Add SPITFP configuration and diagnostics functions to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
 - Remove unused GetCurrentConsumption function from Slient Stepper Brick API
 - Fix int8 unpacking
+
+2017-11-20: 2.1.15 (<unknown>)
+- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
+  LED Matrix and Thermal Imaging Bricklet
+- Add Get/SetSBASConfig functions to GPS Bricklet 2.0 API

@@ -254,9 +254,14 @@
 - Break PTC Bricklet API to fix type for resistance value
 - Fix ipcon_register_callback for IPCON_CALLBACK_CONNECTED
 
-2017-07-26: 2.1.17 (<unknown>)
+2017-07-26: 2.1.17 (fb903dc)
 - Add support for RS485 Bricklet
 - Add general streaming support
 - Add SPITFP configuration and diagnostics functions to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
 - Remove unused get_current_consumption function from Slient Stepper Brick API
+
+2017-11-20: 2.1.18 (<unknown>)
+- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
+  LED Matrix and Thermal Imaging Bricklet
+- Add get/set_sbas_config functions to GPS Bricklet 2.0 API

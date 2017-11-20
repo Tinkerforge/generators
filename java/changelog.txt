@@ -239,9 +239,14 @@
 - Add support for GPS Bricklet 2.0
 - Increase minimum JDK version from 1.5 to 1.6
 
-2017-07-26: 2.1.14 (<unknown>)
+2017-07-26: 2.1.14 (fb903dc)
 - Add support for RS485 Bricklet
 - Add general streaming support
 - Add SPITFP configuration and diagnostics methods to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
 - Remove unused getCurrentConsumption method from Slient Stepper Brick API
+
+2017-11-20: 2.1.15 (<unknown>)
+- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
+  LED Matrix and Thermal Imaging Bricklet
+- Add get/setSBASConfig functions to GPS Bricklet 2.0 API
