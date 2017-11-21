@@ -153,7 +153,7 @@ uses
         has_high_level_callback_states = False
 
         for packet in self.get_packets('callback'):
-            if True:#not packet.has_high_level():
+            if not packet.has_high_level():
                 continue
 
             stream_out = packet.get_high_level('stream_out')
@@ -200,7 +200,7 @@ uses
                                           packet.get_camel_case_name(),
                                           params)
 
-            if True:#not packet.has_high_level():
+            if not packet.has_high_level():
                 continue
 
             stream_out = packet.get_high_level('stream_out')
@@ -254,7 +254,7 @@ uses
 
             stream_out = packet.get_high_level('stream_out')
 
-            if True:#not stream_out:
+            if not stream_out:
                 continue
 
             callbacks += template.format(packet.get_headless_camel_case_name(skip=-2),
@@ -300,7 +300,7 @@ uses
 
             methods.append(method)
 
-            if False:#packet.has_high_level():
+            if packet.has_high_level():
                 e_params = []
                 name = packet.get_camel_case_name(skip=-2)
                 stream_in = packet.get_high_level('stream_in')
@@ -348,7 +348,7 @@ uses
 
         for packet in self.get_packets():
             if packet.get_high_level('stream_*') != None:
-                #has_stream = True
+                has_stream = True
                 break
 
         high_level_callback_data_variables = ''
@@ -362,7 +362,7 @@ uses
 
             stream_out = packet.get_high_level('stream_out')
 
-            if True:#stream_out == None:
+            if stream_out == None:
                 continue
 
             high_level_callback_data_variables += \
@@ -449,7 +449,7 @@ begin
 
             stream_out = packet.get_high_level('stream_out')
 
-            if True:#not stream_out:
+            if not stream_out:
                 continue
 
             stream_mutex = '  streamMutex := TCriticalSection.Create;\n\n'
@@ -679,7 +679,7 @@ begin
 
             methods += method
 
-            if False:#packet.has_high_level():
+            if packet.has_high_level():
                 template_high_level_stream_in = """{method_signature}var {stream_headless_camel_case_name}ChunkOffset: {stream_length_type}; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; {stream_headless_camel_case_name}ChunkLength: {stream_length_type}; {stream_headless_camel_case_name}Length: {stream_length_type}; zero: byte;
 begin
   zero := 0;
@@ -1066,7 +1066,7 @@ end;
                     has_array = True
                     break
 
-            stream_out = None#packet.get_high_level('stream_out')
+            stream_out = packet.get_high_level('stream_out')
 
             if stream_out != None and not stream_out.has_single_chunk():
                 variables.append('{0}ChunkLength: {1}'.format(stream_out.get_headless_camel_case_name(),
@@ -1088,7 +1088,7 @@ end;
 
             has_high_level_callback = False
 
-            if False:#packet.has_high_level():
+            if packet.has_high_level():
                 stream_out = packet.get_high_level('stream_out')
 
                 if stream_out:
