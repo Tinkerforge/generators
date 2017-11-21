@@ -680,10 +680,8 @@ begin
             methods += method
 
             if packet.has_high_level():
-                template_high_level_stream_in = """{method_signature}var {stream_headless_camel_case_name}ChunkOffset: {stream_length_type}; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; {stream_headless_camel_case_name}ChunkLength: {stream_length_type}; {stream_headless_camel_case_name}Length: {stream_length_type}; zero: byte;
+                template_high_level_stream_in = """{method_signature}var {stream_headless_camel_case_name}ChunkOffset: {stream_length_type}; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; {stream_headless_camel_case_name}ChunkLength: {stream_length_type}; {stream_headless_camel_case_name}Length: {stream_length_type};
 begin
-  zero := 0;
-
   if (Length({stream_headless_camel_case_name}) > {stream_max_length}) then begin
     raise EInvalidParameterException.Create('{stream_name} can be at most {stream_max_length} items long');
   end;
@@ -692,7 +690,7 @@ begin
   {stream_headless_camel_case_name}ChunkOffset := 0;
 
   if ({stream_headless_camel_case_name}Length = 0) then begin
-    Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality});
+    FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
     {camel_case_name}LowLevel({parameters_low_level});
   end
   else begin
@@ -703,7 +701,7 @@ begin
 
         if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
-        Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+        FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength, 0);
         Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
 
         {camel_case_name}LowLevel({parameters_low_level});
@@ -718,9 +716,8 @@ end;
 
 """
 
-                template_high_level_stream_in_fixed_length = """{method_signature}var {stream_headless_camel_case_name}ChunkOffset: word; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; {stream_headless_camel_case_name}ChunkLength: word; {stream_headless_camel_case_name}Length: {stream_length_type}; zero: byte;
+                template_high_level_stream_in_fixed_length = """{method_signature}var {stream_headless_camel_case_name}ChunkOffset: word; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; {stream_headless_camel_case_name}ChunkLength: word; {stream_headless_camel_case_name}Length: {stream_length_type};
 begin
-  zero := 0;
   {stream_headless_camel_case_name}Length := {fixed_length};
   {stream_headless_camel_case_name}ChunkOffset := 0;
 
@@ -737,7 +734,7 @@ begin
         {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
       end;
 
-      Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+      FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength, 0);
       Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
 
       {camel_case_name}LowLevel({parameters_low_level});
@@ -751,10 +748,9 @@ end;
 
 """
 
-                template_high_level_stream_in_short_write = """{method_signature}var {stream_headless_camel_case_name}Length: {stream_length_type}; {stream_headless_camel_case_name}ChunkOffset: {stream_length_type}; {stream_headless_camel_case_name}ChunkLength: {stream_length_type}; {stream_headless_camel_case_name}ChunkWritten: {stream_length_type}; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; zero: byte;
+                template_high_level_stream_in_short_write = """{method_signature}var {stream_headless_camel_case_name}Length: {stream_length_type}; {stream_headless_camel_case_name}ChunkOffset: {stream_length_type}; {stream_headless_camel_case_name}ChunkLength: {stream_length_type}; {stream_headless_camel_case_name}ChunkWritten: {stream_length_type}; {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
 begin
   result := 0;
-  zero := 0;
 
   if (Length({stream_headless_camel_case_name}) > {stream_max_length}) then begin
     raise EInvalidParameterException.Create('{stream_name} can be at most {stream_max_length} items long');
@@ -764,7 +760,7 @@ begin
   {stream_headless_camel_case_name}ChunkOffset := 0;
 
   if ({stream_headless_camel_case_name}Length = 0) then begin
-    Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality});
+    FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
     result := {camel_case_name}LowLevel({parameters_low_level});
   end
   else begin
@@ -775,7 +771,7 @@ begin
 
         if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
-        Move(zero, {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+        FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength, 0);
         Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}), {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
 
         {stream_headless_camel_case_name}ChunkWritten := {camel_case_name}LowLevel({parameters_low_level});
@@ -796,15 +792,14 @@ end;
 
 """
 
-                template_high_level_stream_in_single_chunk = """{method_signature}var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; zero: byte;
+                template_high_level_stream_in_single_chunk = """{method_signature}var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
 begin
-  zero := 0;
 
   if (Length({stream_headless_camel_case_name}) > {chunk_cardinality}) then begin
     raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
   end;
 
-  Move(zero, {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}), 0);
   Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
 
   {camel_case_name}LowLevel({parameters_low_level});
@@ -812,7 +807,7 @@ end;
 
 """
 
-                template_high_level_stream_in_short_write_single_chunk = """{method_signature}var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized}; zero: byte;
+                template_high_level_stream_in_short_write_single_chunk = """{method_signature}var {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
 begin
   result := 0;
 
@@ -820,7 +815,7 @@ begin
     raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
   end;
 
-  Move(zero, {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}), 0);
   Move({stream_headless_camel_case_name}[0], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
 
   result := {camel_case_name}LowLevel({parameters_low_level});
