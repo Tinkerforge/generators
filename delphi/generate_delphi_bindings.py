@@ -816,7 +816,7 @@ begin
   end;
 
   FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}), 0);
-  Move({stream_headless_camel_case_name}[0], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
+  Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));
 
   result := {camel_case_name}LowLevel({parameters_low_level});
 end;
