@@ -411,14 +411,14 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
 
     def get_python_source(self):
         templateA = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-    {device_initial_name}.set_{function_underscore_name}_callback_threshold({arguments}{period_msec}, False)
+    {device_initial_name}.set_{function_underscore_name}_callback_configuration({arguments}{period_msec}, False)
 """
         templateB = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
-    {device_initial_name}.set_{function_underscore_name}_callback_threshold({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
+    {device_initial_name}.set_{function_underscore_name}_callback_configuration({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
 """
         templateC = r"""    # Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
     # with a debounce period of {period_sec_short} ({period_msec}ms)
-    {device_initial_name}.set_{function_underscore_name}_callback_threshold({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
+    {device_initial_name}.set_{function_underscore_name}_callback_configuration({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
 """
 
         if self.get_option_char() == None:
