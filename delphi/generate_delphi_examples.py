@@ -516,18 +516,23 @@ class DelphiExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         return []
 
     def get_delphi_source(self):
-        templateA = r"""  {{ Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold }}
+        templateA = r"""  {{ Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) }}
+  {device_initial_name}.Set{function_camel_case_name}CallbackConfiguation({arguments}{period_msec}, false);
+"""
+        templateB = r"""  {{ Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold }}
   {device_initial_name}.Set{function_camel_case_name}CallbackConfiguation({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
 """
-        templateB = r"""  {{ Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""  {{ Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
     with a debounce period of {period_sec_short} ({period_msec}ms) }}
   {device_initial_name}.Set{function_camel_case_name}CallbackConfiguation({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
 """
 
-        if self.get_option_char() == 'x':
+        if self.get_option_char() == None:
             template = templateA
-        else:
+        elif self.get_option_char() == 'x':
             template = templateB
+        else:
+            template = templateC
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 

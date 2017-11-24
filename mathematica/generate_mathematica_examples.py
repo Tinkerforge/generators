@@ -434,20 +434,25 @@ option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOL
 
 class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
-        templateA = r"""(*Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold*)
+        templateA = r"""(*Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)*)
+{device_initial_name}@Set{function_camel_case_name}CallbackConfiguration[{arguments}{period_msec},False]
+"""
+        templateB = r"""(*Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold*)
 option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOLDUOPTIONU{option_upper_case_name}
 {device_initial_name}@Set{function_camel_case_name}CallbackConfiguration[{arguments}{period_msec},False,option,{mininum_maximums}]
 """
-        templateB = r"""(*Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}*)
+        templateC = r"""(*Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}*)
 (*with a debounce period of {period_sec_short} ({period_msec}ms)*)
 option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOLDUOPTIONU{option_upper_case_name}
 {device_initial_name}@Set{function_camel_case_name}CallbackConfiguration[{arguments}{period_msec},False,option,{mininum_maximums}]
 """
 
-        if self.get_option_char() == 'x':
+        if self.get_option_char() == None:
             template = templateA
-        else:
+        elif self.get_option_char() == 'x':
             template = templateB
+        else:
+            template = templateC
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
@@ -461,7 +466,7 @@ option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOL
         if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
             mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
-        option_upper_case_names = {'x': 'OFF', 'o' : 'OUTSIDE', '<': 'SMALLER', '>': 'GREATER'}
+        option_upper_case_names = {None: '', 'x': 'OFF', 'o' : 'OUTSIDE', '<': 'SMALLER', '>': 'GREATER'}
 
         return template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),

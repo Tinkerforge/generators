@@ -541,18 +541,23 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         return None
 
     def get_c_source(self):
-        templateA = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
+        templateA = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+	{device_underscore_name}_set_{function_underscore_name}_callback_configuation(&{device_initial_name}{arguments}, {period_msec}, false);
+"""
+        templateB = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
 	{device_underscore_name}_set_{function_underscore_name}_callback_configuation(&{device_initial_name}{arguments}, {period_msec}, false, '{option_char}', {mininum_maximums});
 """
-        templateB = r"""	// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""	// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 	// with a debounce period of {period_sec_short} ({period_msec}ms)
 	{device_underscore_name}_set_{function_underscore_name}_callback_configuation(&{device_initial_name}{arguments}, {period_msec}, false, '{option_char}', {mininum_maximums});
 """
 
-        if self.get_option_char() == 'x':
+        if self.get_option_char() == None:
             template = templateA
-        else:
+        elif self.get_option_char() == 'x':
             template = templateB
+        else:
+            template = templateC
 
         mininum_maximums = []
         mininum_maximum_unit_comments = []

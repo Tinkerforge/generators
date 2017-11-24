@@ -2398,8 +2398,8 @@ class ExampleCallbackConfigurationFunction(ExampleItem, NameMixin):
             minimums_with_unit.append(str(minimum_maximum.get_minimum()) + unit_final_name)
             maximums_with_unit.append(str(minimum_maximum.get_maximum()) + unit_final_name)
 
-        if option_char == 'x':
-            return 'FIXME'
+        if option_char in [None, 'x']:
+            return 'FIXME' # this should never be actually outputted into an example
         elif option_char == '>':
             return 'greater than {0}'.format(', '.join(minimums_with_unit))
         elif option_char == '<':

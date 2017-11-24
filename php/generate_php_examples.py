@@ -418,18 +418,23 @@ class PHPExampleCallbackConfigurationFunction(common.ExampleCallbackConfiguratio
         return None
 
     def get_php_source(self):
-        templateA = r"""// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
+        templateA = r"""// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+${device_initial_name}->set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, FALSE);
+"""
+        templateB = r"""// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
 ${device_initial_name}->set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, FALSE, '{option_char}', {mininum_maximums});
 """
-        templateB = r"""// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 // with a debounce period of {period_sec_short} ({period_msec}ms)
 ${device_initial_name}->set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, FALSE, '{option_char}', {mininum_maximums});
 """
 
-        if self.get_option_char() == 'x':
+        if self.get_option_char() == None:
             template = templateA
-        else:
+        elif self.get_option_char() == 'x':
             template = templateB
+        else:
+            template = templateC
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 

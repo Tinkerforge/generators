@@ -566,18 +566,23 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
         return None
 
     def get_javascript_source(self):
-        templateA = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
+        templateA = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false);
+"""
+        templateB = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
 {global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
 """
-        templateB = r"""{global_line_prefix}        // Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""{global_line_prefix}        // Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 {global_line_prefix}        // with a debounce period of {period_sec_short} ({period_msec}ms)
 {global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
 """
 
-        if self.get_option_char() == 'x':
+        if self.get_option_char() == None:
             template = templateA
-        else:
+        elif self.get_option_char() == 'x':
             template = templateB
+        else:
+            template = templateC
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
