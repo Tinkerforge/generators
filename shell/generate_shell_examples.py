@@ -301,6 +301,53 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
                                mininum_maximums=' '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
+class ShellExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+    def get_shell_source(self):
+        templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
+tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-callback-configuration {arguments}{period_msec} false {option_dash_name} {mininum_maximums}
+"""
+        templateB = r"""# Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+# with a debounce period of {period_sec_short} ({period_msec}ms)
+tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-callback-configuration {arguments}{period_msec} false {option_dash_name} {mininum_maximums}
+"""
+
+        if self.get_option_char() == 'x':
+            template = templateA
+        else:
+            template = templateB
+
+        arguments = []
+
+        for argument in self.get_arguments():
+            arguments.append(argument.get_shell_source())
+
+        period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
+
+        mininum_maximums = []
+        mininum_maximum_unit_comments = []
+
+        for mininum_maximum in self.get_minimum_maximums():
+            mininum_maximums.append(mininum_maximum.get_shell_source())
+            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
+
+        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
+            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
+
+        option_dash_names = {'x' : 'threshold-option-off', 'o' : 'threshold-option-outside', '<': 'threshold-option-smaller', '>': 'threshold-option-greater'}
+
+        return template.format(device_dash_name=self.get_device().get_dash_name(),
+                               device_dash_category=self.get_device().get_dash_category(),
+                               function_dash_name=self.get_dash_name(),
+                               function_comment_name=self.get_comment_name(),
+                               arguments=common.wrap_non_empty('', ' '.join(arguments), ' '),
+                               period_msec=period_msec,
+                               period_sec_short=period_sec_short,
+                               period_sec_long=period_sec_long,
+                               option_dash_name=option_dash_names[self.get_option_char()],
+                               option_comment=self.get_option_comment(),
+                               mininum_maximums=' '.join(mininum_maximums),
+                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+
 class ShellExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_shell_defines(self):
         if self.get_type() == 'sleep':
@@ -387,6 +434,9 @@ class ShellExamplesGenerator(common.ExamplesGenerator):
 
     def get_example_callback_threshold_function_class(self):
         return ShellExampleCallbackThresholdFunction
+
+    def get_example_callback_configuration_function_class(self):
+        return ShellExampleCallbackConfigurationFunction
 
     def get_example_special_function_class(self):
         return ShellExampleSpecialFunction

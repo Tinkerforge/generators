@@ -409,6 +409,50 @@ class RubyExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
+class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+    def get_ruby_source(self):
+        templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
+{device_initial_name}.set_{function_underscore_name}_callback_configuration {arguments}{period_msec}, false, '{option_char}', {mininum_maximums}
+"""
+        templateB = r"""# Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+# with a debounce period of {period_sec_short} ({period_msec}ms)
+{device_initial_name}.set_{function_underscore_name}_callback_configuration {arguments}{period_msec}, false, '{option_char}', {mininum_maximums}
+"""
+
+        if self.get_option_char() == 'x':
+            template = templateA
+        else:
+            template = templateB
+
+        arguments = []
+
+        for argument in self.get_arguments():
+            arguments.append(argument.get_ruby_source())
+
+        period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
+
+        mininum_maximums = []
+        mininum_maximum_unit_comments = []
+
+        for mininum_maximum in self.get_minimum_maximums():
+            mininum_maximums.append(mininum_maximum.get_ruby_source())
+            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
+
+        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
+            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
+
+        return template.format(device_initial_name=self.get_device().get_initial_name(),
+                               function_underscore_name=self.get_underscore_name(),
+                               function_comment_name=self.get_comment_name(),
+                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               period_msec=period_msec,
+                               period_sec_short=period_sec_short,
+                               period_sec_long=period_sec_long,
+                               option_char=self.get_option_char(),
+                               option_comment=self.get_option_comment(),
+                               mininum_maximums=', '.join(mininum_maximums),
+                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+
 class RubyExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_ruby_source(self):
         global global_line_prefix
@@ -488,6 +532,9 @@ class RubyExamplesGenerator(common.ExamplesGenerator):
 
     def get_example_callback_threshold_function_class(self):
         return RubyExampleCallbackThresholdFunction
+
+    def get_example_callback_configuration_function_class(self):
+        return RubyExampleCallbackConfigurationFunction
 
     def get_example_special_function_class(self):
         return RubyExampleSpecialFunction

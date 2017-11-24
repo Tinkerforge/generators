@@ -1785,6 +1785,8 @@ class Example(NameMixin):
                     self.functions.append(self.get_generator().get_example_callback_period_function_class()(raw_function[1:], index, self))
                 elif raw_function[0] == 'callback_threshold':
                     self.functions.append(self.get_generator().get_example_callback_threshold_function_class()(raw_function[1:], index, self))
+                elif raw_function[0] == 'callback_configuration':
+                    self.functions.append(self.get_generator().get_example_callback_configuration_function_class()(raw_function[1:], index, self))
                 else:
                     self.functions.append(self.get_generator().get_example_special_function_class()(raw_function, index, self))
 
@@ -2214,8 +2216,12 @@ class ExampleCallbackThresholdMinimumMaximum(ExampleItem):
 
         for other in reversed(example.get_functions()):
             if isinstance(other, ExampleCallbackFunction):
-                if other.get_name() == function.get_name() + ' Reached':
+                if not example.get_device().has_comcu() and other.get_name() == function.get_name() + ' Reached':
                     self.corresponding_callback = other
+                    break
+                elif example.get_device().has_comcu() and other.get_name() == function.get_name():
+                    self.corresponding_callback = other
+                    break
 
         if self.corresponding_callback == None:
             raise GeneratorError('ExampleThresholdMinimumMaximum without corresponding callback: ' + repr(raw_data))
@@ -2315,6 +2321,86 @@ class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
             maximums_with_unit.append(str(minimum_maximum.get_maximum()) + unit_final_name)
 
         if option_char == '>':
+            return 'greater than {0}'.format(', '.join(minimums_with_unit))
+        elif option_char == '<':
+            return 'smaller than {0}'.format(', '.join(minimums_with_unit))
+        elif option_char == 'o':
+            return 'outside of {0} to {1}'.format(', '.join(minimums),
+                                                  ', '.join(maximums_with_unit))
+        else:
+            raise GeneratorError('Unhandled option: ' + option_char)
+
+    def get_minimum_maximums(self):
+        return self.minimum_maximums
+
+class ExampleCallbackConfigurationFunction(ExampleItem, NameMixin):
+    def __init__(self, raw_data, index, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        if len(raw_data) != 5:
+            raise GeneratorError('Invalid ExampleCallbackConfigurationFunction: ' + repr(raw_data))
+
+        if len(raw_data[0]) != 2:
+            raise GeneratorError('Invalid ExampleCallbackConfigurationFunction: ' + repr(raw_data))
+
+        check_name(raw_data[0][0])
+
+        self.arguments = []
+
+        for index, raw_argument in enumerate(raw_data[1]):
+            self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
+
+        self.minimum_maximums = []
+
+        for index, raw_minimum_maximum in enumerate(raw_data[4]):
+            self.minimum_maximums.append(self.get_generator().get_example_callback_threshold_minimum_maximum_class()(raw_minimum_maximum, index, self, example))
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0][0]
+
+    def get_comment_name(self):
+        return self.raw_data[0][1]
+
+    def get_arguments(self):
+        return self.arguments
+
+    def get_period(self): # msec
+        return self.raw_data[2]
+
+    def get_formatted_period(self):
+        period_msec = self.get_period()
+
+        if period_msec == None:
+            return None, None, None
+
+        period_sec = round(period_msec / 1000.0, 3)
+        period_sec_short = str(period_sec).rstrip('0').rstrip('.') + 's'
+        period_sec_long = str(period_sec).rstrip('0').rstrip('.') + ' seconds'
+
+        if period_sec_long == '1 seconds':
+            period_sec_long = 'second'
+
+        return period_msec, period_sec_short, period_sec_long
+
+    def get_option_char(self):
+        return self.raw_data[3]
+
+    def get_option_comment(self):
+        option_char = self.get_option_char()
+        minimums = []
+        minimums_with_unit = []
+        maximums_with_unit = []
+
+        for minimum_maximum in self.get_minimum_maximums():
+            unit_final_name = minimum_maximum.get_corresponding_parameter().get_unit_formatted_final_name(' {0}')
+
+            minimums.append(str(minimum_maximum.get_minimum()))
+            minimums_with_unit.append(str(minimum_maximum.get_minimum()) + unit_final_name)
+            maximums_with_unit.append(str(minimum_maximum.get_maximum()) + unit_final_name)
+
+        if option_char == 'x':
+            return 'FIXME'
+        elif option_char == '>':
             return 'greater than {0}'.format(', '.join(minimums_with_unit))
         elif option_char == '<':
             return 'smaller than {0}'.format(', '.join(minimums_with_unit))
@@ -2452,6 +2538,9 @@ class Generator:
 
     def get_example_callback_threshold_function_class(self):
         return ExampleCallbackThresholdFunction
+
+    def get_example_callback_configuration_function_class(self):
+        return ExampleCallbackConfigurationFunction
 
     def get_example_special_function_class(self):
         return ExampleSpecialFunction

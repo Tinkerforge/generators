@@ -182,3 +182,15 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Humidity', 'humidity'), [(('Humidity', 'Humidity'), 'uint16', 100.0, '%RH/100', '%RH', None)], [])]
 })
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Humidity', 'humidity'), [(('Humidity', 'Humidity'), 'uint16', 100.0, '%RH/100', '%RH', None)], None, None),
+              ('callback_configuration', ('Humidity', 'humidity'), [], 1000, 'x', [(0, 0)])]
+})
+
+com['examples'].append({
+'name': 'Threshold',
+'functions': [('callback', ('Humidity', 'humidity'), [(('Humidity', 'Humidity'), 'uint16', 100.0, '%RH/100', '%RH', None)], None, 'Recommended humiditiy for human comfort is 30 to 60 %RH.'),
+              ('callback_configuration', ('Humidity', 'humidity'), [], 10000, 'o', [(30, 60)])]
+})
