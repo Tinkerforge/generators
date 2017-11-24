@@ -201,7 +201,7 @@
 - Remove unused GetCurrentConsumption function from Slient Stepper Brick API
 - Break PTC Bricklet API to fix type for resistance value
 
-2017-11-20: 2.1.17 (<unknown>)
+2017-11-20: 2.1.17 (f235e3f)
 - Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
   LED Matrix and Thermal Imaging Bricklet
 - Add Get/SetSBASConfig functions to GPS Bricklet 2.0 API
