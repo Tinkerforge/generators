@@ -1071,7 +1071,7 @@ public class {0} extends Device {{
 						break;
 					}}
 
-					{stream_headless_camel_case_name}ChunkLength = Math.min({stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+					{stream_headless_camel_case_name}ChunkLength = Math.min({stream_headless_camel_case_name}Length - ret.{stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
 
 					System.arraycopy(ret.{stream_headless_camel_case_name}ChunkData, 0, {stream_headless_camel_case_name}, {stream_headless_camel_case_name}CurrentLength, {stream_headless_camel_case_name}ChunkLength);
 
