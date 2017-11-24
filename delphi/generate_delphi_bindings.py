@@ -772,7 +772,7 @@ begin
         if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
         FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength, 0);
-        Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}), {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
+        Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
 
         {stream_headless_camel_case_name}ChunkWritten := {camel_case_name}LowLevel({parameters_low_level});
 
