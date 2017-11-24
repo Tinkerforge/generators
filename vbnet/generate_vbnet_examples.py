@@ -158,6 +158,10 @@ class VBNETExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class VBNETExampleArgumentsMixin(object):
+    def get_vbnet_arguments(self):
+        return [argument.get_vbnet_source() for argument in self.get_arguments()]
+
 class VBNETExampleParameter(common.ExampleParameter):
     def get_vbnet_source(self):
         template = 'ByVal {headless_camel_case_name} As {type}'
@@ -251,7 +255,7 @@ class VBNETExampleResult(common.ExampleResult):
                                divisor=divisor,
                                unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'))
 
-class VBNETExampleGetterFunction(common.ExampleGetterFunction):
+class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
         return []
 
@@ -294,10 +298,7 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction):
         if len(write_lines) > 1:
             write_lines.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_vbnet_source())
+        arguments = self.get_vbnet_arguments()
 
         if len(variable_references) > 1:
             arguments += variable_references
@@ -313,7 +314,7 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction):
 
         return common.break_string(result, '.{}('.format(self.get_camel_case_name()), continuation=' _')
 
-class VBNETExampleSetterFunction(common.ExampleSetterFunction):
+class VBNETExampleSetterFunction(common.ExampleSetterFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
         return []
 
@@ -322,15 +323,11 @@ class VBNETExampleSetterFunction(common.ExampleSetterFunction):
 
     def get_vbnet_source(self):
         template = '{comment1}{global_line_prefix}        {device_initial_name}.{function_camel_case_name}({arguments}){comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_vbnet_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_camel_case_name=self.get_camel_case_name(),
-                                 arguments=',<BP>'.join(arguments),
+                                 arguments=',<BP>'.join(self.get_vbnet_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + "        ' {0}\n", '\r', "\n" + global_line_prefix + "        ' "),
                                  comment2=self.get_formatted_comment2(" ' {0}", ''))
 
@@ -405,7 +402,7 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result1, "' ", extra="' ") + \
                common.break_string(result2, 'AddHandler ', continuation=' _')
 
-class VBNETExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class VBNETExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
         return []
 
@@ -427,17 +424,12 @@ class VBNETExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_vbnet_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -449,7 +441,7 @@ class VBNETExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshol
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
         return []
 
@@ -460,11 +452,6 @@ class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunct
         template = r"""        ' Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
         {device_initial_name}.Set{function_camel_case_name}CallbackThreshold({arguments}"{option_char}"C, {mininum_maximums})
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_vbnet_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -478,13 +465,13 @@ class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunct
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_underscore_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
         return []
 
@@ -505,11 +492,6 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_vbnet_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -525,7 +507,7 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_underscore_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

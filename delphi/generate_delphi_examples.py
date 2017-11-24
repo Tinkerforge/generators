@@ -195,6 +195,10 @@ class DelphiExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class DelphiExampleArgumentsMixin(object):
+    def get_delphi_arguments(self):
+        return [argument.get_delphi_source() for argument in self.get_arguments()]
+
 class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
     def get_delphi_source(self):
         template = 'const {headless_camel_case_name}: {type_}'
@@ -263,7 +267,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
                                printf_format=self.get_delphi_printf_format(),
                                unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'))
 
-class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfFormatMixin):
+class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfFormatMixin, DelphiExampleArgumentsMixin):
     def get_delphi_prototype(self):
         return None
 
@@ -310,11 +314,6 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
         if len(write_lns) > 1:
             write_lns.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_delphi_source())
-
         if len(variable_names) > 1:
             arguments += variable_names
             variable_names = []
@@ -326,9 +325,9 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
                                comments=''.join(comments),
                                variable_names=''.join(variable_names),
                                write_lns='\n'.join(write_lns),
-                               arguments=common.wrap_non_empty('(', ', '.join(arguments), ')'))
+                               arguments=common.wrap_non_empty('(', ', '.join(self.get_delphi_arguments()), ')'))
 
-class DelphiExampleSetterFunction(common.ExampleSetterFunction):
+class DelphiExampleSetterFunction(common.ExampleSetterFunction, DelphiExampleArgumentsMixin):
     def get_delphi_prototype(self):
         return None
 
@@ -340,15 +339,11 @@ class DelphiExampleSetterFunction(common.ExampleSetterFunction):
 
     def get_delphi_source(self):
         template = '{comment1}{global_line_prefix}  {device_initial_name}.{function_camel_case_name}{arguments};{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_delphi_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_camel_case_name=self.get_camel_case_name(),
-                                 arguments=common.wrap_non_empty('(', ',<BP>'.join(arguments), ')'),
+                                 arguments=common.wrap_non_empty('(', ',<BP>'.join(self.get_delphi_arguments()), ')'),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '  {{ {0} }}\n', '\r', '\n' + global_line_prefix + '    '),
                                  comment2=self.get_formatted_comment2(' {{ {0} }}', ''))
 
@@ -435,7 +430,7 @@ end;
 
         return common.break_string(result, '{ ')
 
-class DelphiExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class DelphiExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, DelphiExampleArgumentsMixin):
     def get_delphi_prototype(self):
         return None
 
@@ -460,17 +455,12 @@ class DelphiExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_delphi_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_delphi_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -482,7 +472,7 @@ class DelphiExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresho
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class DelphiExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, DelphiPrintfFormatMixin):
+class DelphiExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, DelphiPrintfFormatMixin, DelphiExampleArgumentsMixin):
     def get_delphi_prototype(self):
         return None
 
@@ -496,11 +486,6 @@ class DelphiExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         template = r"""  {{ Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments} }}
   {device_initial_name}.Set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_delphi_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -514,13 +499,13 @@ class DelphiExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_delphi_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class DelphiExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, DelphiPrintfFormatMixin):
+class DelphiExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, DelphiPrintfFormatMixin, DelphiExampleArgumentsMixin):
     def get_delphi_prototype(self):
         return None
 
@@ -544,11 +529,6 @@ class DelphiExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_delphi_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -564,7 +544,7 @@ class DelphiExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_delphi_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

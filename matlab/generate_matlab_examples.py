@@ -255,6 +255,10 @@ class MATLABExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class MATLABExampleArgumentsMixin(object):
+    def get_matlab_arguments(self):
+        return [argument.get_matlab_source() for argument in self.get_arguments()]
+
 class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
     def needs_octave_java2int(self):
         if global_is_octave:
@@ -364,7 +368,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                to_binary_prefix=to_binary_prefix,
                                to_binary_suffix=to_binary_suffix)
 
-class MATLABExampleGetterFunction(common.ExampleGetterFunction):
+class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):
         if phase == 1 and global_is_octave:
             for result in self.get_results():
@@ -401,34 +405,25 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction):
         if len(fprintfs) > 1:
             fprintfs.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_matlab_source())
-
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
                                comments=''.join(comments),
                                variable=variable,
                                fprintfs='\n'.join(fprintfs),
-                               arguments=', '.join(arguments))
+                               arguments=', '.join(self.get_matlab_arguments()))
 
-class MATLABExampleSetterFunction(common.ExampleSetterFunction):
+class MATLABExampleSetterFunction(common.ExampleSetterFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):
         return []
 
     def get_matlab_source(self):
         template = '{comment1}{global_line_prefix}    {device_initial_name}.{function_headless_camel_case_name}({arguments});{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_matlab_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                 arguments=',<BP>'.join(arguments),
+                                 arguments=',<BP>'.join(self.get_matlab_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '    % {0}\n', '\r', '\n' + global_line_prefix + '    % '),
                                  comment2=self.get_formatted_comment2(' % {0}', ''))
 
@@ -511,7 +506,7 @@ end
         return common.break_string(result1, '% ', extra='% ') + \
                common.break_string(result2, 'set(',)
 
-class MATLABExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class MATLABExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):
         return []
 
@@ -530,17 +525,12 @@ class MATLABExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_matlab_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_matlab_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -552,7 +542,7 @@ class MATLABExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresho
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class MATLABExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class MATLABExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):
         return []
 
@@ -560,11 +550,6 @@ class MATLABExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         template = r"""    % Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
     {device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}{global_quote}{option_char}{global_quote}, {mininum_maximums});
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_matlab_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -579,13 +564,13 @@ class MATLABExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
                                device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_matlab_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class MATLABExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class MATLABExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):
         return []
 
@@ -603,11 +588,6 @@ class MATLABExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_matlab_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -624,7 +604,7 @@ class MATLABExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
                                device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_matlab_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

@@ -120,6 +120,15 @@ class ShellExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class ShellExampleArgumentsMixin(object):
+    def get_shell_arguments(self):
+        arguments = []
+
+        for argument in self.get_arguments():
+            arguments.append(argument.get_shell_source())
+
+        return arguments
+
 class ShellExampleParameter(common.ExampleParameter):
     def get_shell_source(self):
         template = '{label_name}: {{{{{underscore_name}}}}}{unit_final_name}'
@@ -134,7 +143,7 @@ class ShellExampleParameter(common.ExampleParameter):
 class ShellExampleResult(common.ExampleResult):
     pass
 
-class ShellExampleGetterFunction(common.ExampleGetterFunction):
+class ShellExampleGetterFunction(common.ExampleGetterFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
         template = r"""# Get current {function_comment_name}{comments}
 tinkerforge call {device_dash_name}-{device_dash_category} $uid {function_dash_name}{arguments}
@@ -147,27 +156,20 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid {function_dash_n
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_shell_source())
-
         return template.format(device_dash_name=self.get_device().get_dash_name(),
                                device_dash_category=self.get_device().get_dash_category(),
                                function_comment_name=self.get_comment_name(),
                                function_dash_name=self.get_dash_name(),
                                comments=''.join(comments),
-                               arguments=common.wrap_non_empty(' ', ' '.join(arguments), ''))
+                               arguments=common.wrap_non_empty(' ', ' '.join(self.get_shell_arguments()), ''))
 
-class ShellExampleSetterFunction(common.ExampleSetterFunction):
+class ShellExampleSetterFunction(common.ExampleSetterFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
         template = '{comment1}{global_line_prefix}tinkerforge call {device_dash_name}-{device_dash_category} $uid {function_dash_name}{arguments}{comment2}\n'
         bitmask_comments = []
-        arguments = []
 
         for argument in self.get_arguments():
             bitmask_comments.append(argument.get_shell_bitmask_comment())
-            arguments.append(argument.get_shell_source())
 
         while None in bitmask_comments:
             bitmask_comments.remove(None)
@@ -188,7 +190,7 @@ class ShellExampleSetterFunction(common.ExampleSetterFunction):
                                device_dash_name=self.get_device().get_dash_name(),
                                device_dash_category=self.get_device().get_dash_category(),
                                function_dash_name=self.get_dash_name(),
-                               arguments=common.wrap_non_empty(' ', ' '.join(arguments), ''),
+                               arguments=common.wrap_non_empty(' ', ' '.join(self.get_shell_arguments()), ''),
                                comment1=comment1,
                                comment2=comment2)
 
@@ -230,7 +232,7 @@ class ShellExampleCallbackFunction(common.ExampleCallbackFunction):
                                 function_dash_name=self.get_dash_name(),
                                 extra_message=extra_message)
 
-class ShellExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class ShellExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
         templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
 tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-period {arguments}{period_msec}
@@ -246,18 +248,13 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_shell_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_dash_name=self.get_device().get_dash_name(),
                                device_dash_category=self.get_device().get_dash_category(),
                                function_dash_name=self.get_dash_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ' '.join(arguments), ' '),
+                               arguments=common.wrap_non_empty('', ' '.join(self.get_shell_arguments()), ' '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -269,16 +266,11 @@ class ShellExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshol
         return template.format(minimum=self.get_formatted_minimum(template='{result}'),
                                maximum=self.get_formatted_maximum(template='{result}'))
 
-class ShellExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class ShellExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
         template = r"""# Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-callback-threshold {arguments}{option_dash_name} {mininum_maximums}
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_shell_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -295,13 +287,13 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
                                device_dash_category=self.get_device().get_dash_category(),
                                function_dash_name=self.get_dash_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ' '.join(arguments), ' '),
+                               arguments=common.wrap_non_empty('', ' '.join(self.get_shell_arguments()), ' '),
                                option_dash_name=option_dash_names[self.get_option_char()],
                                option_comment=self.get_option_comment(),
                                mininum_maximums=' '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class ShellExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class ShellExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
         templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
 tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-callback-configuration {arguments}{period_msec} false {option_dash_name} {mininum_maximums}
@@ -315,11 +307,6 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
             template = templateA
         else:
             template = templateB
-
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_shell_source())
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
@@ -339,7 +326,7 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
                                device_dash_category=self.get_device().get_dash_category(),
                                function_dash_name=self.get_dash_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ' '.join(arguments), ' '),
+                               arguments=common.wrap_non_empty('', ' '.join(self.get_shell_arguments()), ' '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

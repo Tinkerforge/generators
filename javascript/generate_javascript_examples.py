@@ -304,6 +304,10 @@ class JavaScriptExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class JavaScriptExampleArgumentsMixin(object):
+    def get_javascript_arguments(self):
+        return [argument.get_javascript_source() for argument in self.get_arguments()]
+
 class JavaScriptExampleParameter(common.ExampleParameter):
     def get_javascript_source(self):
         return self.get_headless_camel_case_name()
@@ -373,7 +377,7 @@ class JavaScriptExampleResult(common.ExampleResult):
                                to_binary_prefix=to_binary_prefix,
                                to_binary_suffix=to_binary_suffix)
 
-class JavaScriptExampleGetterFunction(common.ExampleGetterFunction):
+class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptExampleArgumentsMixin):
     def get_javascript_function(self):
         return None
 
@@ -403,11 +407,6 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction):
         while None in outputs:
             outputs.remove(None)
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_javascript_source())
-
         return template.format(global_line_prefix=global_line_prefix,
                                global_output_prefix=global_output_prefix,
                                global_output_suffix=global_output_suffix,
@@ -417,23 +416,19 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction):
                                comments=''.join(comments),
                                variables=', '.join(variables),
                                outputs='\n'.join(outputs),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ','))
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ','))
 
-class JavaScriptExampleSetterFunction(common.ExampleSetterFunction):
+class JavaScriptExampleSetterFunction(common.ExampleSetterFunction, JavaScriptExampleArgumentsMixin):
     def get_javascript_function(self):
         return None
 
     def get_javascript_source(self):
         template = '{comment1}{global_line_prefix}        {device_initial_name}.{function_headless_camel_case_name}({arguments});{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_javascript_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                 arguments=',<BP>'.join(arguments),
+                                 arguments=',<BP>'.join(self.get_javascript_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '        // {0}\n', '\r', '\n' + global_line_prefix + '        // '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
@@ -501,7 +496,7 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_javascript_source(self):
         return None
 
-class JavaScriptExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class JavaScriptExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, JavaScriptExampleArgumentsMixin):
     def get_javascript_function(self):
         return None
 
@@ -520,18 +515,13 @@ class JavaScriptExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFuncti
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_javascript_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(global_line_prefix=global_line_prefix,
                                device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -543,7 +533,7 @@ class JavaScriptExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThr
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class JavaScriptExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class JavaScriptExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, JavaScriptExampleArgumentsMixin):
     def get_javascript_function(self):
         return None
 
@@ -551,11 +541,6 @@ class JavaScriptExampleCallbackThresholdFunction(common.ExampleCallbackThreshold
         template = r"""{global_line_prefix}        // Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 {global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_javascript_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -570,13 +555,13 @@ class JavaScriptExampleCallbackThresholdFunction(common.ExampleCallbackThreshold
                                device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, JavaScriptExampleArgumentsMixin):
     def get_javascript_function(self):
         return None
 
@@ -594,11 +579,6 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_javascript_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -615,7 +595,7 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
                                device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

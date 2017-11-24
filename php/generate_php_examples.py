@@ -139,6 +139,10 @@ class PHPExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class PHPExampleArgumentsMixin(object):
+    def get_php_arguments(self):
+        return [argument.get_php_source() for argument in self.get_arguments()]
+
 class PHPExampleParameter(common.ExampleParameter):
     def get_php_source(self):
         template = '${underscore_name}'
@@ -222,7 +226,7 @@ class PHPExampleResult(common.ExampleResult):
                                sprintf_prefix=sprintf_prefix,
                                sprintf_suffix=sprintf_suffix)
 
-class PHPExampleGetterFunction(common.ExampleGetterFunction):
+class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):
         return None
 
@@ -254,18 +258,13 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction):
         if len(echos) > 1:
             echos.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_php_source())
-
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
                                comments=''.join(comments),
                                variables=variables,
                                echos='\n'.join(echos),
-                               arguments=', '.join(arguments))
+                               arguments=', '.join(self.get_php_arguments()))
 
 class PHPExampleSetterFunction(common.ExampleSetterFunction):
     def get_php_subroutine(self):
@@ -273,15 +272,11 @@ class PHPExampleSetterFunction(common.ExampleSetterFunction):
 
     def get_php_source(self):
         template = '{comment1}{global_line_prefix}${device_initial_name}->{function_headless_camel_case_name}({arguments});{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_php_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                 arguments=',<BP>'.join(arguments),
+                                 arguments=',<BP>'.join(self.get_php_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '// {0}\n', '\r', '\n' + global_line_prefix + '// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
@@ -355,7 +350,7 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result1, '// ', extra='// ') + \
                common.break_string(result2, '->registerCallback(')
 
-class PHPExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class PHPExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):
         return None
 
@@ -374,17 +369,12 @@ ${device_initial_name}->set{function_camel_case_name}CallbackPeriod({arguments}{
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_php_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_php_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -396,7 +386,7 @@ class PHPExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresholdM
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class PHPExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class PHPExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):
         return None
 
@@ -404,11 +394,6 @@ class PHPExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunctio
         template = r"""// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 ${device_initial_name}->set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_php_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -422,13 +407,13 @@ ${device_initial_name}->set{function_camel_case_name}CallbackThreshold({argument
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_php_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class PHPExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class PHPExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):
         return None
 
@@ -446,11 +431,6 @@ ${device_initial_name}->set{function_camel_case_name}CallbackConfiguration({argu
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_php_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -466,7 +446,7 @@ ${device_initial_name}->set{function_camel_case_name}CallbackConfiguration({argu
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_php_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

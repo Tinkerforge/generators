@@ -140,6 +140,10 @@ class MathematicaExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class MathematicaExampleArgumentsMixin(object):
+    def get_mathematica_arguments(self):
+        return [argument.get_mathematica_source() for argument in self.get_arguments()]
+
 class MathematicaExampleParameter(common.ExampleParameter):
     def get_mathematica_source(self):
         template = '{headless_camel_case_name}_'
@@ -231,7 +235,7 @@ class MathematicaExampleResult(common.ExampleResult):
                                divisor=divisor,
                                bitmask_length=bitmask_length)
 
-class MathematicaExampleGetterFunction(common.ExampleGetterFunction):
+class MathematicaExampleGetterFunction(common.ExampleGetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
         template = '{device_initial_name}@{function_camel_case_name}[{arguments}]'
         templateA = r"""(*Get current {function_comment_name}{comments}*)
@@ -243,10 +247,7 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction):
 {device_initial_name}@{function_camel_case_name}[{arguments}]
 {prints}
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_mathematica_source())
+        arguments = self.get_mathematica_arguments()
 
         if len(self.get_results()) == 1:
             getter_call = template.format(device_initial_name=self.get_device().get_initial_name(),
@@ -293,19 +294,15 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction):
                                prints='\n'.join(prints),
                                arguments=','.join(arguments))
 
-class MathematicaExampleSetterFunction(common.ExampleSetterFunction):
+class MathematicaExampleSetterFunction(common.ExampleSetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
         template = '{comment1}{global_line_prefix}{device_initial_name}@{function_camel_case_name}[{arguments}]{global_line_suffix}{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_mathematica_source())
 
         return template.format(global_line_prefix=global_line_prefix,
                                global_line_suffix=global_line_suffix,
                                device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
-                               arguments=','.join(arguments),
+                               arguments=','.join(self.get_mathematica_arguments()),
                                comment1=re.sub('\\(\\*[ ]*\\*\\)\n', '', self.get_formatted_comment1(global_line_prefix + '(*{0}*)\n', '\r', '*)\n' + global_line_prefix + '(*')),
                                comment2=self.get_formatted_comment2('(*{0}*)', ''))
 
@@ -372,7 +369,7 @@ AddEventHandler[{device_initial_name}@{function_camel_case_name}Callback,{functi
                                 prints='\n'.join(prints).replace('\n', ';\n'),
                                 extra_message=extra_message)
 
-class MathematicaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class MathematicaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
         templateA = r"""(*Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)*)
 {device_initial_name}@Set{function_camel_case_name}Period[{arguments}{period_msec}]
@@ -388,17 +385,12 @@ class MathematicaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunct
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_mathematica_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ','.join(arguments), ','),
+                               arguments=common.wrap_non_empty('', ','.join(self.get_mathematica_arguments()), ','),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -410,17 +402,12 @@ class MathematicaExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackTh
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class MathematicaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class MathematicaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
         template = r"""(*Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}*)
 option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOLDUOPTIONU{option_upper_case_name}
 {device_initial_name}@Set{function_camel_case_name}CallbackThreshold[{arguments}option,{mininum_maximums}]
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_mathematica_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -441,11 +428,11 @@ option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOL
                                function_comment_name=self.get_comment_name(),
                                option_upper_case_name=option_upper_case_names[self.get_option_char()],
                                option_comment=self.get_option_comment(),
-                               arguments=common.wrap_non_empty('', ','.join(arguments), ','),
+                               arguments=common.wrap_non_empty('', ','.join(self.get_mathematica_arguments()), ','),
                                mininum_maximums=','.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
         templateA = r"""(*Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold*)
 option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOLDUOPTIONU{option_upper_case_name}
@@ -461,11 +448,6 @@ option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOL
             template = templateA
         else:
             template = templateB
-
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_mathematica_source())
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
@@ -489,7 +471,7 @@ option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOL
                                function_comment_name=self.get_comment_name(),
                                option_upper_case_name=option_upper_case_names[self.get_option_char()],
                                option_comment=self.get_option_comment(),
-                               arguments=common.wrap_non_empty('', ','.join(arguments), ','),
+                               arguments=common.wrap_non_empty('', ','.join(self.get_mathematica_arguments()), ','),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

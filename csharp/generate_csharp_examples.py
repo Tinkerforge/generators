@@ -148,6 +148,10 @@ class CSharpExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class CSharpExampleArgumentsMixin(object):
+    def get_csharp_arguments(self):
+        return [argument.get_csharp_source() for argument in self.get_arguments()]
+
 class CSharpExampleParameter(common.ExampleParameter):
     def get_csharp_source(self):
         template = '{type} {headless_camel_case_name}'
@@ -222,7 +226,7 @@ class CSharpExampleResult(common.ExampleResult):
                                to_binary_prefix=to_binary_prefix,
                                to_binary_suffix=to_binary_suffix)
 
-class CSharpExampleGetterFunction(common.ExampleGetterFunction):
+class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArgumentsMixin):
     def get_csharp_imports(self):
         return []
 
@@ -275,11 +279,6 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction):
         if len(write_lines) > 1:
             write_lines.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_csharp_source())
-
         if len(variable_references) > 1:
             arguments += variable_references
 
@@ -290,11 +289,11 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction):
                                  comments=''.join(comments),
                                  variable_declarations=''.join(merged_variable_declarations),
                                  write_lines='\n'.join(write_lines),
-                                 arguments=',<BP>'.join(arguments))
+                                 arguments=',<BP>'.join(self.get_csharp_arguments()))
 
         return common.break_string(result, '{}('.format(self.get_camel_case_name()))
 
-class CSharpExampleSetterFunction(common.ExampleSetterFunction):
+class CSharpExampleSetterFunction(common.ExampleSetterFunction, CSharpExampleArgumentsMixin):
     def get_csharp_imports(self):
         return []
 
@@ -303,15 +302,11 @@ class CSharpExampleSetterFunction(common.ExampleSetterFunction):
 
     def get_csharp_source(self):
         template = '{comment1}{global_line_prefix}\t\t{device_initial_name}.{function_camel_case_name}({arguments});{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_csharp_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_camel_case_name=self.get_camel_case_name(),
-                                 arguments=',<BP>'.join(arguments),
+                                 arguments=',<BP>'.join(self.get_csharp_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
@@ -384,7 +379,7 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
 
         return common.break_string(result, '// ', extra='// ')
 
-class CSharpExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class CSharpExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, CSharpExampleArgumentsMixin):
     def get_csharp_imports(self):
         return []
 
@@ -406,17 +401,12 @@ class CSharpExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_csharp_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_csharp_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -431,7 +421,7 @@ class CSharpExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresho
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class CSharpExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class CSharpExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, CSharpExampleArgumentsMixin):
     def get_csharp_imports(self):
         return []
 
@@ -442,11 +432,6 @@ class CSharpExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         template = r"""		// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 		{device_initial_name}.Set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_csharp_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -460,13 +445,13 @@ class CSharpExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_csharp_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, CSharpExampleArgumentsMixin):
     def get_csharp_imports(self):
         return []
 
@@ -487,11 +472,6 @@ class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_csharp_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -507,7 +487,7 @@ class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_csharp_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                option_char=self.get_option_char(),

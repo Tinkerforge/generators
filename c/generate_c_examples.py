@@ -198,6 +198,10 @@ class CExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class CExampleArgumentsMixin(object):
+    def get_c_arguments(self):
+        return [argument.get_c_source() for argument in self.get_arguments()]
+
 class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin):
     def get_c_source(self):
         template = '{type_} {underscore_name}'
@@ -274,7 +278,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
                                printf_format=self.get_c_printf_format(),
                                unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'))
 
-class CExampleGetterFunction(common.ExampleGetterFunction):
+class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixin):
     def get_c_includes(self):
         includes = []
 
@@ -327,11 +331,6 @@ class CExampleGetterFunction(common.ExampleGetterFunction):
         while None in printfs:
             printfs.remove(None)
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_c_source())
-
         result = template.format(device_underscore_name=self.get_device().get_underscore_name(),
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_comment_name=self.get_comment_name(),
@@ -340,11 +339,11 @@ class CExampleGetterFunction(common.ExampleGetterFunction):
                                  variable_declarations=''.join(merged_variable_declarations),
                                  variable_references=',<BP>' + ',<BP>'.join(variable_references),
                                  printfs='\n'.join(printfs),
-                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''))
+                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''))
 
         return common.break_string(result, '_{}('.format(self.get_underscore_name()))
 
-class CExampleSetterFunction(common.ExampleSetterFunction):
+class CExampleSetterFunction(common.ExampleSetterFunction, CExampleArgumentsMixin):
     def get_c_includes(self):
         return []
 
@@ -356,16 +355,12 @@ class CExampleSetterFunction(common.ExampleSetterFunction):
 
     def get_c_source(self):
         template = '{comment1}{global_line_prefix}\t{device_underscore_name}_{function_underscore_name}(&{device_initial_name}{arguments});{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_c_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_underscore_name=self.get_device().get_underscore_name(),
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_underscore_name=self.get_underscore_name(),
-                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''),
+                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t// {0}\n', '\r', '\n' + global_line_prefix + '\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
@@ -458,7 +453,7 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
 
         return common.break_string(result, '// ', extra='// ')
 
-class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, CExampleArgumentsMixin):
     def get_c_includes(self):
         return []
 
@@ -483,18 +478,13 @@ class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_c_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_underscore_name=self.get_device().get_underscore_name(),
                                device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
+                               arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -506,7 +496,7 @@ class CExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresholdMin
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, CExampleArgumentsMixin):
     def get_c_includes(self):
         return []
 
@@ -520,11 +510,6 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction)
         template = r"""	// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 	{device_underscore_name}_set_{function_underscore_name}_callback_threshold(&{device_initial_name}{arguments}, '{option_char}', {mininum_maximums});
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_c_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -539,13 +524,13 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction)
                                device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
+                               arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, CExampleArgumentsMixin):
     def get_c_includes(self):
         return []
 
@@ -569,11 +554,6 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_c_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -590,7 +570,7 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
                                device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
+                               arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                option_char=self.get_option_char(),

@@ -126,6 +126,10 @@ class RubyExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class RubyExampleArgumentsMixin(object):
+    def get_ruby_arguments(self):
+        return [argument.get_ruby_source() for argument in self.get_arguments()]
+
 class RubyExampleParameter(common.ExampleParameter):
     def get_ruby_source(self):
         underscore_name = self.get_underscore_name()
@@ -211,7 +215,7 @@ class RubyExampleResult(common.ExampleResult):
                                printf_prefix=printf_prefix,
                                printf_suffix=printf_suffix)
 
-class RubyExampleGetterFunction(common.ExampleGetterFunction):
+class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
         template = r"""# Get current {function_comment_name}{comments}
 {variables} = {device_initial_name}.{function_underscore_name}{arguments}
@@ -239,15 +243,7 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction):
         if len(puts) > 1:
             puts.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_ruby_source())
-
-        if len(arguments) > 0:
-            arguments = ' ' + ', '.join(arguments)
-        else:
-            arguments = ''
+        arguments = common.wrap_non_empty(' ', ', '.join(self.get_ruby_arguments()), '')
 
         if arguments.strip().startswith('('):
             arguments = '({0})'.format(arguments.strip())
@@ -260,20 +256,11 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction):
                                puts='\n'.join(puts),
                                arguments=arguments)
 
-class RubyExampleSetterFunction(common.ExampleSetterFunction):
+class RubyExampleSetterFunction(common.ExampleSetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
         template = '{comment1}{global_line_prefix}{device_initial_name}.{function_underscore_name}{arguments}{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_ruby_source())
-
+        arguments = common.wrap_non_empty(' ', ',<BP>'.join(self.get_ruby_arguments()), '')
         marker = '.{} '
-
-        if len(arguments) > 0:
-            arguments = ' ' + ',<BP>'.join(arguments)
-        else:
-            arguments = ''
 
         if arguments.strip().startswith('('):
             arguments = '({0})'.format(arguments.strip())
@@ -342,7 +329,7 @@ end
 
         return common.break_string(result, '', continuation=' \\')
 
-class RubyExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class RubyExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
         templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
 {device_initial_name}.set_{function_underscore_name}_period {arguments}{period_msec}
@@ -358,17 +345,12 @@ class RubyExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_ruby_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_ruby_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -380,16 +362,11 @@ class RubyExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshold
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class RubyExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class RubyExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
         template = r"""# Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 {device_initial_name}.set_{function_underscore_name}_callback_threshold {arguments}'{option_char}', {mininum_maximums}
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_ruby_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -403,13 +380,13 @@ class RubyExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_ruby_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
         templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
 {device_initial_name}.set_{function_underscore_name}_callback_configuration {arguments}{period_msec}, false, '{option_char}', {mininum_maximums}
@@ -424,11 +401,6 @@ class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_ruby_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -444,7 +416,7 @@ class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_ruby_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

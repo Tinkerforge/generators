@@ -127,6 +127,10 @@ class PerlExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class PerlExampleArgumentsMixin(object):
+    def get_perl_arguments(self):
+        return [argument.get_perl_source() for argument in self.get_arguments()]
+
 class PerlExampleParameter(common.ExampleParameter):
     def get_perl_source(self):
         template = '${underscore_name}'
@@ -204,7 +208,7 @@ class PerlExampleResult(common.ExampleResult):
                                sprintf_prefix=sprintf_prefix,
                                sprintf_suffix=sprintf_suffix)
 
-class PerlExampleGetterFunction(common.ExampleGetterFunction):
+class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumentsMixin):
     def get_perl_subroutine(self):
         return None
 
@@ -236,35 +240,26 @@ my {variables} = ${device_initial_name}->{function_underscore_name}({arguments})
         if len(prints) > 1:
             prints.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_perl_source())
-
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
                                comments=''.join(comments),
                                variables=variables,
                                prints='\n'.join(prints),
-                               arguments=', '.join(arguments))
+                               arguments=', '.join(self.get_perl_arguments()))
 
-class PerlExampleSetterFunction(common.ExampleSetterFunction):
+class PerlExampleSetterFunction(common.ExampleSetterFunction, PerlExampleArgumentsMixin):
     def get_perl_subroutine(self):
         return None
 
     def get_perl_source(self):
         template = '{comment1}{global_line_prefix}${device_initial_name}->{function_underscore_name}({arguments});{comment2}\n'
         marker = '->{}('
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_perl_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_underscore_name=self.get_underscore_name(),
-                                 arguments=',<BP>'.join(arguments),
+                                 arguments=',<BP>'.join(self.get_perl_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '# {0}\n', '\r', '\n' + global_line_prefix + '# '),
                                  comment2=self.get_formatted_comment2(' # {0}', ''))
 
@@ -334,7 +329,7 @@ class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result1, '# ', extra='# ') + \
                common.break_string(result2, 'register_callback(')
 
-class PerlExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class PerlExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, PerlExampleArgumentsMixin):
     def get_perl_subroutine(self):
         return None
 
@@ -353,17 +348,12 @@ ${device_initial_name}->set_{function_underscore_name}_callback_period({argument
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_perl_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_perl_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -375,7 +365,7 @@ class PerlExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshold
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class PerlExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class PerlExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, PerlExampleArgumentsMixin):
     def get_perl_subroutine(self):
         return None
 
@@ -383,11 +373,6 @@ class PerlExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         template = r"""# Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 ${device_initial_name}->set_{function_underscore_name}_callback_threshold({arguments}'{option_char}', {mininum_maximums});
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_perl_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -401,13 +386,13 @@ ${device_initial_name}->set_{function_underscore_name}_callback_threshold({argum
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_perl_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class PerlExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class PerlExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, PerlExampleArgumentsMixin):
     def get_perl_subroutine(self):
         return None
 
@@ -425,11 +410,6 @@ ${device_initial_name}->set_{function_underscore_name}_callback_configuration({a
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_perl_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -445,7 +425,7 @@ ${device_initial_name}->set_{function_underscore_name}_callback_configuration({a
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_perl_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

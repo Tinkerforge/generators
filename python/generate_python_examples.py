@@ -138,6 +138,10 @@ class PythonExampleArgument(common.ExampleArgument):
         else:
             return str(value)
 
+class PythonExampleArgumentsMixin(object):
+    def get_python_arguments(self):
+        return [argument.get_python_source() for argument in self.get_arguments()]
+
 class PythonExampleParameter(common.ExampleParameter):
     def get_python_source(self):
         return self.get_underscore_name()
@@ -206,7 +210,7 @@ class PythonExampleResult(common.ExampleResult):
                                format_prefix=format_prefix,
                                format_suffix=format_suffix)
 
-class PythonExampleGetterFunction(common.ExampleGetterFunction):
+class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):
         return []
 
@@ -236,20 +240,15 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction):
         if len(prints) > 1:
             prints.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_python_source())
-
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
                                comments=''.join(comments),
                                variables=', '.join(variables),
                                prints='\n'.join(prints),
-                               arguments=', '.join(arguments))
+                               arguments=', '.join(self.get_python_arguments()))
 
-class PythonExampleSetterFunction(common.ExampleSetterFunction):
+class PythonExampleSetterFunction(common.ExampleSetterFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):
         return []
 
@@ -259,15 +258,11 @@ class PythonExampleSetterFunction(common.ExampleSetterFunction):
     def get_python_source(self):
         template = '{comment1}{global_line_prefix}    {device_initial_name}.{function_underscore_name}({arguments}){comment2}\n'
         marker = '.{}('
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_python_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_underscore_name=self.get_underscore_name(),
-                                 arguments=',<BP>'.join(arguments),
+                                 arguments=',<BP>'.join(self.get_python_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '    # {0}\n', '\r', '\n' + global_line_prefix + '    # '),
                                  comment2=self.get_formatted_comment2(' # {0}', ''))
 
@@ -338,7 +333,7 @@ class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result1, '# ', extra='# ') + \
                common.break_string(result2, 'register_callback(')
 
-class PythonExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class PythonExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):
         return []
 
@@ -360,17 +355,12 @@ class PythonExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_python_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_python_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -382,7 +372,7 @@ class PythonExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresho
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
-class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):
         return []
 
@@ -393,11 +383,6 @@ class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         template = r"""    # Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
     {device_initial_name}.set_{function_underscore_name}_callback_threshold({arguments}"{option_char}", {mininum_maximums})
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_python_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -411,13 +396,13 @@ class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_python_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
-class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):
         return []
 
@@ -438,11 +423,6 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_python_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -458,7 +438,7 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_python_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,

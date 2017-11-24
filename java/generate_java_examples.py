@@ -157,6 +157,10 @@ class JavaExampleArgument(common.ExampleArgument):
 
             return cast + str(value)
 
+class JavaExampleArgumentsMixin(object):
+    def get_java_arguments(self):
+        return [argument.get_java_source() for argument in self.get_arguments()]
+
 class JavaExampleParameter(common.ExampleParameter):
     def get_java_source(self):
         template = '{type_} {headless_camel_case_name}'
@@ -230,7 +234,7 @@ class JavaExampleResult(common.ExampleResult):
                                to_binary_prefix=to_binary_prefix,
                                to_binary_suffix=to_binary_suffix)
 
-class JavaExampleGetterFunction(common.ExampleGetterFunction):
+class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):
         template = 'import com.tinkerforge.{device_camel_case_category}{device_camel_case_name}.{object_camel_case_name};'
 
@@ -269,34 +273,25 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction):
         if len(printlns) > 1:
             printlns.insert(0, '')
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_java_source())
-
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
                                comments=''.join(comments),
                                variable=variable,
                                printlns='\n'.join(printlns),
-                               arguments=', '.join(arguments))
+                               arguments=', '.join(self.get_java_arguments()))
 
-class JavaExampleSetterFunction(common.ExampleSetterFunction):
+class JavaExampleSetterFunction(common.ExampleSetterFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):
         return []
 
     def get_java_source(self):
         template = '{comment1}{global_line_prefix}\t\t{device_initial_name}.{function_headless_camel_case_name}({arguments});{comment2}\n'
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_java_source())
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                 arguments=',<BP>'.join(arguments),
+                                 arguments=',<BP>'.join(self.get_java_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
@@ -361,7 +356,7 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
 
         return common.break_string(result, '{}('.format(self.get_headless_camel_case_name()))
 
-class JavaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
+class JavaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):
         return []
 
@@ -380,17 +375,12 @@ class JavaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_java_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ', '.join(self.get_java_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -418,7 +408,7 @@ class JavaExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshold
         return template.format(minimum=minimum,
                                maximum=maximum)
 
-class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
+class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):
         return []
 
@@ -426,11 +416,6 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         template = r"""		// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
 		{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
 """
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_java_source())
-
         mininum_maximums = []
         mininum_maximum_unit_comments = []
 
@@ -444,7 +429,7 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         result = template.format(device_initial_name=self.get_device().get_initial_name(),
                                  function_camel_case_name=self.get_camel_case_name(),
                                  function_comment_name=self.get_comment_name(),
-                                 arguments=common.wrap_non_empty('', ',<BP>'.join(arguments), ',<BP>'),
+                                 arguments=common.wrap_non_empty('', ',<BP>'.join(self.get_java_arguments()), ',<BP>'),
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
                                  mininum_maximums=',<BP>'.join(mininum_maximums),
@@ -452,7 +437,7 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
 
         return common.break_string(result, 'CallbackThreshold(')
 
-class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction):
+class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):
         return []
 
@@ -470,11 +455,6 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         else:
             template = templateB
 
-        arguments = []
-
-        for argument in self.get_arguments():
-            arguments.append(argument.get_java_source())
-
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
@@ -490,7 +470,7 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         result = template.format(device_initial_name=self.get_device().get_initial_name(),
                                  function_camel_case_name=self.get_camel_case_name(),
                                  function_comment_name=self.get_comment_name(),
-                                 arguments=common.wrap_non_empty('', ',<BP>'.join(arguments), ',<BP>'),
+                                 arguments=common.wrap_non_empty('', ',<BP>'.join(self.get_java_arguments()), ',<BP>'),
                                  period_msec=period_msec,
                                  period_sec_short=period_sec_short,
                                  period_sec_long=period_sec_long,
