@@ -266,7 +266,7 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
                                echos='\n'.join(echos),
                                arguments=', '.join(self.get_php_arguments()))
 
-class PHPExampleSetterFunction(common.ExampleSetterFunction):
+class PHPExampleSetterFunction(common.ExampleSetterFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):
         return None
 
