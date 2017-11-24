@@ -49,6 +49,7 @@ class VBNETExamplesTester(common.Tester):
                 '/target:exe',
                 '/out:' + output,
                 '/reference:System.Drawing.dll',
+                '/reference:System.Windows.Forms.dll',
                 '/reference:/tmp/tester/vbnet/Tinkerforge.dll',
                 path]
 

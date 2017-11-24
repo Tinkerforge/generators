@@ -48,6 +48,7 @@ class CSharpExamplesTester(common.Tester):
                 '/sdk:2',
                 '/out:' + output,
                 '/reference:System.Drawing.dll',
+                '/reference:System.Windows.Forms.dll',
                 '/reference:/tmp/tester/csharp/Tinkerforge.dll',
                 path]
 
