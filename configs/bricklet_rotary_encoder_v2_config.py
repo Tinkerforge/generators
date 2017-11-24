@@ -122,7 +122,6 @@ Dieser Callback wird ausgelöst wenn der Taster losgelassen wird.
 }]
 })
 
-
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Count', 'count without reset'), [(('Count', 'Count'), 'int32', None, None, None, None)], [('bool', False)])]

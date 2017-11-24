@@ -15,7 +15,7 @@ com = {
     'display_name': 'DMX',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'DMX Master and Slave',
+        'en': 'DMX master and slave',
         'de': 'DMX Master und Slave'
     },
     'comcu': True,

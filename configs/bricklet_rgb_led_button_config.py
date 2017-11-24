@@ -15,8 +15,8 @@ com = {
     'display_name': 'RGB LED Button',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'RGB LED Button',
-        'de': 'RGB LED Button'
+        'en': 'Push button with built-in RGB LED',
+        'de': 'Taster mit eingebauter RGB LED'
     },
     'comcu': True,
     'released': True,
