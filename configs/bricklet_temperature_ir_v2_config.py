@@ -171,7 +171,6 @@ Gibt den Emissionsgrad zurück, wie von :func:`Set Emissivity` gesetzt.
 }]
 })
 
-
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Ambient Temperature', 'ambient temperature'), [(('Ambient Temperature', 'Ambient Temperature'), 'int16', 10.0, '°C/10', '°C', None)], []),

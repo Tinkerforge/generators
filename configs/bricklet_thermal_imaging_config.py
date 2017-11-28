@@ -570,3 +570,10 @@ solcher direkt dargestellt werden.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('High Contrast Image', 'high contrast image'), [(('Image', 'Image'), 'uint8', None, None, None, None)], None, None),
+              ('setter', 'Set Image Transfer Config', [('uint8:constant', 2)], 'Enable high contrast image transfer for callback', None)],
+'incomplete': True # because of array parameters
+})
