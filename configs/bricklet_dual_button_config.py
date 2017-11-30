@@ -207,6 +207,6 @@ Die andere LED bleibt unangetastet.
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('State Changed', 'state changed'), [(('Button L', 'Left Button'), 'uint8', None, None, None, None), (('Button R', 'Right Button'), 'uint8', None, None, None, None), (('LED L', None), 'uint8', None, None, None, None), (('LED R', None), 'uint8', None, None, None, None)], None, None)],
+'functions': [('callback', ('State Changed', 'state changed'), [(('Button L', 'Left Button'), 'uint8', 1, None, None, None, None), (('Button R', 'Right Button'), 'uint8', 1, None, None, None, None), (('LED L', None), 'uint8', 1, None, None, None, None), (('LED R', None), 'uint8', 1, None, None, None, None)], None, None)],
 'incomplete': True # because of special print logic in callback
 })

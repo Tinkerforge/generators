@@ -163,7 +163,7 @@ class PHPExampleParameter(common.ExampleParameter):
 
         if ':bitmask:' in type_:
             template = templateA
-            sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type.split(':')[2]))
+            sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type_.split(':')[2]))
             sprintf_suffix = ')'
         elif len(divisor) > 0:
             template = templateA
@@ -334,7 +334,7 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, 'cb_{}('.format(self.get_headless_camel_case_name()))
 
     def get_php_source(self):
-        template1 = r"""// Register {function_comment_name} callback to<BP>function cb_{function_headless_camel_case_name}
+        template1 = r"""// Register {function_comment_name}<BP>callback<BP>to<BP>function<BP>cb_{function_headless_camel_case_name}
 """
         template2 = r"""${device_initial_name}->registerCallback({device_camel_case_category}{device_camel_case_name}::CALLBACK_{function_upper_case_name},<BP>'cb_{function_headless_camel_case_name}');
 """

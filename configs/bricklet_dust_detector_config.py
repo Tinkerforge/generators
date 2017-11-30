@@ -325,18 +325,18 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Dust Density', 'dust density'), [(('Dust Density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', None)], [])]
+'functions': [('getter', ('Get Dust Density', 'dust density'), [(('Dust Density', 'Dust Density'), 'uint16', 1, None, 'µg/m³', 'µg/m³', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Dust Density', 'dust density'), [(('Dust Density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', None)], None, None),
+'functions': [('callback', ('Dust Density', 'dust density'), [(('Dust Density', 'Dust Density'), 'uint16', 1, None, 'µg/m³', 'µg/m³', None)], None, None),
               ('callback_period', ('Dust Density', 'dust density'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Dust Density Reached', 'dust density reached'), [(('Dust Density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', None)], None, None),
+              ('callback', ('Dust Density Reached', 'dust density reached'), [(('Dust Density', 'Dust Density'), 'uint16', 1, None, 'µg/m³', 'µg/m³', None)], None, None),
               ('callback_threshold', ('Dust Density', 'dust density'), [], '>', [(10, 0)])]
 })

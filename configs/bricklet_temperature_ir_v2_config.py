@@ -173,19 +173,19 @@ Gibt den Emissionsgrad zurück, wie von :func:`Set Emissivity` gesetzt.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Ambient Temperature', 'ambient temperature'), [(('Ambient Temperature', 'Ambient Temperature'), 'int16', 10.0, '°C/10', '°C', None)], []),
-              ('getter', ('Get Object Temperature', 'object temperature'), [(('Object Temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None)], [])]
+'functions': [('getter', ('Get Ambient Temperature', 'ambient temperature'), [(('Ambient Temperature', 'Ambient Temperature'), 'int16', 1, 10.0, '°C/10', '°C', None)], []),
+              ('getter', ('Get Object Temperature', 'object temperature'), [(('Object Temperature', 'Object Temperature'), 'int16', 1, 10.0, '°C/10', '°C', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Object Temperature', 'object temperature'), [(('Temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None)], None, None),
+'functions': [('callback', ('Object Temperature', 'object temperature'), [(('Temperature', 'Object Temperature'), 'int16', 1, 10.0, '°C/10', '°C', None)], None, None),
               ('callback_configuration', ('Object Temperature', 'object temperature'), [], 1000, 'x', [(0, 0)])]
 })
 
 com['examples'].append({
 'name': 'Water Boiling',
 'functions': [('setter', 'Set Emissivity', [('uint16', 64224)], 'Set emissivity to 0.98 (emissivity of water, 65535 * 0.98 = 64224.299)', None),
-              ('callback', ('Object Temperature', 'object temperature reached'), [(('Temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None)], None, 'The water is boiling!'),
+              ('callback', ('Object Temperature', 'object temperature reached'), [(('Temperature', 'Object Temperature'), 'int16', 1, 10.0, '°C/10', '°C', None)], None, 'The water is boiling!'),
               ('callback_configuration', ('Object Temperature', 'object temperature'), [], 10000, '>', [(100, 0)])]
 })

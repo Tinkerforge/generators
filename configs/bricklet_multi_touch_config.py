@@ -242,12 +242,12 @@ Gibt die aktuelle Empfindlichkeit zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Touch State', 'touch state'), [(('State', 'Touch State'), 'uint16', None, None, None, None)], [])],
+'functions': [('getter', ('Get Touch State', 'touch state'), [(('State', 'Touch State'), 'uint16', 1, None, None, None, None)], [])],
 'incomplete': True # because of special print logic
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Touch State', 'touch state'), [(('State', 'Touch State'), 'uint16', None, None, None, None)], None, None)],
+'functions': [('callback', ('Touch State', 'touch state'), [(('State', 'Touch State'), 'uint16', 1, None, None, None, None)], None, None)],
 'incomplete': True # because of special print logic in callback
 })

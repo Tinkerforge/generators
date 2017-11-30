@@ -452,18 +452,18 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Acceleration', 'acceleration'), [(('X', 'Acceleration[X]'), 'int16', 1000.0, 'g/1000', 'g', None), (('Y', 'Acceleration[Y]'), 'int16', 1000.0, 'g/1000', 'g', None), (('Z', 'Acceleration[Z]'), 'int16', 1000.0, 'g/1000', 'g', None)], [])]
+'functions': [('getter', ('Get Acceleration', 'acceleration'), [(('X', 'Acceleration[X]'), 'int16', 1, 1000.0, 'g/1000', 'g', None), (('Y', 'Acceleration[Y]'), 'int16', 1, 1000.0, 'g/1000', 'g', None), (('Z', 'Acceleration[Z]'), 'int16', 1, 1000.0, 'g/1000', 'g', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Acceleration', 'acceleration'), [(('X', 'Acceleration[X]'), 'int16', 1000.0, 'g/1000', 'g', None), (('Y', 'Acceleration[Y]'), 'int16', 1000.0, 'g/1000', 'g', None), (('Z', 'Acceleration[Z]'), 'int16', 1000.0, 'g/1000', 'g', None)], None, None),
+'functions': [('callback', ('Acceleration', 'acceleration'), [(('X', 'Acceleration[X]'), 'int16', 1, 1000.0, 'g/1000', 'g', None), (('Y', 'Acceleration[Y]'), 'int16', 1, 1000.0, 'g/1000', 'g', None), (('Z', 'Acceleration[Z]'), 'int16', 1, 1000.0, 'g/1000', 'g', None)], None, None),
               ('callback_period', ('Acceleration', 'acceleration'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Acceleration Reached', 'acceleration reached'), [(('X', 'Acceleration[X]'), 'int16', 1000.0, 'g/1000', 'g', None), (('Y', 'Acceleration[Y]'), 'int16', 1000.0, 'g/1000', 'g', None), (('Z', 'Acceleration[Z]'), 'int16', 1000.0, 'g/1000', 'g', None)], None, None),
+              ('callback', ('Acceleration Reached', 'acceleration reached'), [(('X', 'Acceleration[X]'), 'int16', 1, 1000.0, 'g/1000', 'g', None), (('Y', 'Acceleration[Y]'), 'int16', 1, 1000.0, 'g/1000', 'g', None), (('Z', 'Acceleration[Z]'), 'int16', 1, 1000.0, 'g/1000', 'g', None)], None, None),
               ('callback_threshold', ('Acceleration', 'acceleration'), [], '>', [(2, 0), (2, 0), (2, 0)])]
 })

@@ -151,7 +151,7 @@ class PerlExampleParameter(common.ExampleParameter):
 
         if ':bitmask:' in type_:
             template = templateA
-            sprintf_prefix = "sprintf('%0{0}b', ".format(int(type.split(':')[2]))
+            sprintf_prefix = "sprintf('%0{0}b', ".format(int(type_.split(':')[2]))
             sprintf_suffix = ')'
         elif len(divisor) > 0:
             template = templateA
@@ -306,16 +306,18 @@ class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(prints) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template2.format(function_underscore_name=self.get_underscore_name(),
-                                parameters=common.wrap_non_empty('    my (', ', '.join(parameters), ') = @_;\n\n'),
-                                prints='\n'.join(prints),
-                                extra_message=extra_message)
+        result = template1.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(function_underscore_name=self.get_underscore_name(),
+                                  parameters=common.wrap_non_empty('    my (', ',<BP>'.join(parameters), ') = @_;\n\n'),
+                                  prints='\n'.join(prints),
+                                  extra_message=extra_message)
+
+        return common.break_string(result, 'my (')
 
     def get_perl_source(self):
-        template1 = r"""# Register {function_comment_name} callback to<BP>subroutine cb_{function_underscore_name}
+        template1 = r"""# Register {function_comment_name}<BP>callback<BP>to<BP>subroutine<BP>cb_{function_underscore_name}
 """
         template2 = r"""${device_initial_name}->register_callback(${device_initial_name}->CALLBACK_{function_upper_case_name},<BP>'cb_{function_underscore_name}');
 """

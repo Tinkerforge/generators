@@ -56,7 +56,7 @@ class CPrintfFormatMixin(object):
             return '%s'
         elif type_ != 'float' and self.get_divisor() == None:
             if type_ == 'int64':
-                return '%"PRId64"'
+                return '%" PRId64 "'
             else:
                 return '%d'
         else:
@@ -204,14 +204,27 @@ class CExampleArgumentsMixin(object):
 
 class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin):
     def get_c_source(self):
-        template = '{type_} {underscore_name}'
+        templateA = '{type_} {underscore_name}'
+        templateB = '{type_} {underscore_name}[{cardinality}]'
+        templateC = '{type_} *{underscore_name}, uint16_t {underscore_name}_length' # FIXME: don't hardcode length as uint16_t
+
+        if self.get_cardinality() == 1:
+            template = templateA
+        elif self.get_cardinality() > 1:
+            template = templateB
+        else: # cardinality < 0
+            template = templateC
 
         return template.format(type_=self.get_c_type(),
-                               underscore_name=self.get_underscore_name())
+                               underscore_name=self.get_underscore_name(),
+                               cardinality=self.get_cardinality())
 
     def get_c_unused(self):
         if self.get_label_name() == None:
-            return '\t(void){0}; // avoid unused parameter warning'.format(self.get_underscore_name())
+            if self.get_cardinality() < 0:
+                return '\t(void){0}; // avoid unused parameter warning\n\t(void){0}_length; // avoid unused parameter warning'.format(self.get_underscore_name())
+            else:
+                return '\t(void){0}; // avoid unused parameter warning'.format(self.get_underscore_name())
         else:
             return None
 
@@ -436,7 +449,7 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, 'cb_{}('.format(self.get_underscore_name()))
 
     def get_c_source(self):
-        template = r"""	// Register {function_comment_name} callback<BP>to function cb_{function_underscore_name}
+        template = r"""	// Register {function_comment_name}<BP>callback<BP>to<BP>function<BP>cb_{function_underscore_name}
 	{device_underscore_name}_register_callback(&{device_initial_name},
 	{spaces}                   {device_upper_case_name}_CALLBACK_{function_upper_case_name},
 	{spaces}                   (void *)cb_{function_underscore_name},

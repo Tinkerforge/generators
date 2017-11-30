@@ -280,18 +280,18 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get CO2 Concentration', 'CO2 concentration'), [(('CO2 Concentration', 'CO2 Concentration'), 'uint16', None, 'ppm', 'ppm', None)], [])]
+'functions': [('getter', ('Get CO2 Concentration', 'CO2 concentration'), [(('CO2 Concentration', 'CO2 Concentration'), 'uint16', 1, None, 'ppm', 'ppm', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('CO2 Concentration', 'CO2 concentration'), [(('CO2 Concentration', 'CO2 Concentration'), 'uint16', None, 'ppm', 'ppm', None)], None, None),
+'functions': [('callback', ('CO2 Concentration', 'CO2 concentration'), [(('CO2 Concentration', 'CO2 Concentration'), 'uint16', 1, None, 'ppm', 'ppm', None)], None, None),
               ('callback_period', ('CO2 Concentration', 'CO2 concentration'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('CO2 Concentration Reached', 'CO2 concentration reached'), [(('CO2 Concentration', 'CO2 Concentration'), 'uint16', None, 'ppm', 'ppm', None)], None, None),
+              ('callback', ('CO2 Concentration Reached', 'CO2 concentration reached'), [(('CO2 Concentration', 'CO2 Concentration'), 'uint16', 1, None, 'ppm', 'ppm', None)], None, None),
               ('callback_threshold', ('CO2 Concentration', 'CO2 concentration'), [], '>', [(750, 0)])]
 })

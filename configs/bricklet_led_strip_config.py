@@ -765,6 +765,6 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('setter', 'Set Frame Duration', [('uint16', 50)], 'Set frame duration to 50ms (20 frames per second)', None),
-              ('callback', ('Frame Rendered', 'frame rendered'), [(('Length', 'Length'), 'uint16', None, None, None, None)], 'Use frame rendered callback to move the active LED every frame', None)],
+              ('callback', ('Frame Rendered', 'frame rendered'), [(('Length', 'Length'), 'uint16', 1, None, None, None, None)], 'Use frame rendered callback to move the active LED every frame', None)],
 'incomplete': True # because of array parameters and special logic in callback
 })

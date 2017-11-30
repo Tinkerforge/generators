@@ -489,11 +489,11 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'int16', None, None, None, (-150, 150))], [])]
+'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'int16', 1, None, None, None, (-150, 150))], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'int16', None, None, None, (-150, 150))], None, None),
+'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'int16', 1, None, None, None, (-150, 150))], None, None),
               ('callback_period', ('Position', 'position'), [], 50)]
 })

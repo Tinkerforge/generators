@@ -164,7 +164,13 @@ class VBNETExampleArgumentsMixin(object):
 
 class VBNETExampleParameter(common.ExampleParameter):
     def get_vbnet_source(self):
-        template = 'ByVal {headless_camel_case_name} As {type}'
+        templateA = 'ByVal {headless_camel_case_name} As {type}'
+        templateB = 'ByVal {headless_camel_case_name} As {type}()'
+
+        if self.get_cardinality() == 1:
+            template = templateA
+        else:
+            template = templateB
 
         return template.format(type=get_vbnet_type(self.get_type().split(':')[0]),
                                headless_camel_case_name=self.get_headless_camel_case_name())
@@ -389,7 +395,7 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, '{}CB('.format(self.get_camel_case_name()), continuation=' _')
 
     def get_vbnet_source(self):
-        template1 = r"""        ' Register {function_comment_name} callback to<BP>subroutine {function_camel_case_name}CB
+        template1 = r"""        ' Register {function_comment_name}<BP>callback<BP>to<BP>subroutine<BP>{function_camel_case_name}CB
 """
         template2 = r"""        AddHandler {device_initial_name}.{function_camel_case_name}Callback,<BP>AddressOf {function_camel_case_name}CB
 """

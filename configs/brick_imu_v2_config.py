@@ -1191,20 +1191,20 @@ Gibt den aktuellen Sensor-Fusion-Modus zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('W', 'Quaternion[W]'), 'int16', 16383.0, None, None, None), (('X', 'Quaternion[X]'), 'int16', 16383.0, None, None, None), (('Y', 'Quaternion[Y]'), 'int16', 16383.0, None, None, None), (('Z', 'Quaternion[Z]'), 'int16', 16383.0, None, None, None)], [])],
+'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('W', 'Quaternion[W]'), 'int16', 1, 16383.0, None, None, None), (('X', 'Quaternion[X]'), 'int16', 1, 16383.0, None, None, None), (('Y', 'Quaternion[Y]'), 'int16', 1, 16383.0, None, None, None), (('Z', 'Quaternion[Z]'), 'int16', 1, 16383.0, None, None, None)], [])],
 'incomplete': True # because of %.02f formatting
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Quaternion', 'quaternion'), [(('W', 'Quaternion[W]'), 'int16', 16383.0, None, None, None), (('X', 'Quaternion[X]'), 'int16', 16383.0, None, None, None), (('Y', 'Quaternion[Y]'), 'int16', 16383.0, None, None, None), (('Z', 'Quaternion[Z]'), 'int16', 16383.0, None, None, None)], None, None),
+'functions': [('callback', ('Quaternion', 'quaternion'), [(('W', 'Quaternion[W]'), 'int16', 1, 16383.0, None, None, None), (('X', 'Quaternion[X]'), 'int16', 1, 16383.0, None, None, None), (('Y', 'Quaternion[Y]'), 'int16', 1, 16383.0, None, None, None), (('Z', 'Quaternion[Z]'), 'int16', 1, 16383.0, None, None, None)], None, None),
               ('callback_period', ('Quaternion', 'quaternion'), [], 100)],
 'incomplete': True # because of %.02f formatting
 })
 
 com['examples'].append({
 'name': 'All Data',
-'functions': [('callback', ('All Data', 'all data'), [(('Acceleration', 'Acceleration'), 'int16', 100.0, '1/100 m/s²', 'm/s²', None), (('Magnetic Field', 'Magnetic Field'), 'int16', 16.0, '1/16 µT', 'µT', None), (('Angular Velocity', 'Angular Velocity'), 'int16', 16.0, '1/16 °/s', '°/s', None), (('Euler Angle', 'Euler Angle'), 'int16', 16.0, '°/16', '°', None), (('Quaternion', 'Quaternion'), 'int16', 16383.0, None, None, None), (('Linear Acceleration', 'Linear Acceleration'), 'int16', 100.0, '1/100 m/s²', 'm/s²', None), (('Gravity Vector', 'Gravity Vector'), 'int16', 100.0, '1/100 m/s²', 'm/s²', None), (('Temperature', 'Temperature'), 'int8', None, '°C', '°C', None), (('Calibration Status', 'Calibration Status'), 'uint8:bitmask:8', None, None, None, None)], None, None),
+'functions': [('callback', ('All Data', 'all data'), [(('Acceleration', 'Acceleration'), 'int16', 3, 100.0, '1/100 m/s²', 'm/s²', None), (('Magnetic Field', 'Magnetic Field'), 'int16', 3, 16.0, '1/16 µT', 'µT', None), (('Angular Velocity', 'Angular Velocity'), 'int16', 3, 16.0, '1/16 °/s', '°/s', None), (('Euler Angle', 'Euler Angle'), 'int16', 3, 16.0, '°/16', '°', None), (('Quaternion', 'Quaternion'), 'int16', 4, 16383.0, None, None, None), (('Linear Acceleration', 'Linear Acceleration'), 'int16', 3, 100.0, '1/100 m/s²', 'm/s²', None), (('Gravity Vector', 'Gravity Vector'), 'int16', 3, 100.0, '1/100 m/s²', 'm/s²', None), (('Temperature', 'Temperature'), 'int8', 1, None, '°C', '°C', None), (('Calibration Status', 'Calibration Status'), 'uint8:bitmask:8', 1, None, None, None, None)], None, None),
               ('callback_period', ('All Data', 'all data'), [], 100)],
 'incomplete': True # because of %.02f formatting and parameters with array type
 })

@@ -691,18 +691,18 @@ Farbtemperatur seit der letzten Auslösung geändert hat.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Color', 'color'), [(('R', 'Color[R]'), 'uint16', None, None, None, None), (('G', 'Color[G]'), 'uint16', None, None, None, None), (('B', 'Color[B]'), 'uint16', None, None, None, None), (('C', 'Color[C]'), 'uint16', None, None, None, None)], [])]
+'functions': [('getter', ('Get Color', 'color'), [(('R', 'Color[R]'), 'uint16', 1, None, None, None, None), (('G', 'Color[G]'), 'uint16', 1, None, None, None, None), (('B', 'Color[B]'), 'uint16', 1, None, None, None, None), (('C', 'Color[C]'), 'uint16', 1, None, None, None, None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Color', 'color'), [(('R', 'Color[R]'), 'uint16', None, None, None, None), (('G', 'Color[G]'), 'uint16', None, None, None, None), (('B', 'Color[B]'), 'uint16', None, None, None, None), (('C', 'Color[C]'), 'uint16', None, None, None, None)], None, None),
+'functions': [('callback', ('Color', 'color'), [(('R', 'Color[R]'), 'uint16', 1, None, None, None, None), (('G', 'Color[G]'), 'uint16', 1, None, None, None, None), (('B', 'Color[B]'), 'uint16', 1, None, None, None, None), (('C', 'Color[C]'), 'uint16', 1, None, None, None, None)], None, None),
               ('callback_period', ('Color', 'color'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Color Reached', 'color reached'), [(('R', 'Color[R]'), 'uint16', None, None, None, None), (('G', 'Color[G]'), 'uint16', None, None, None, None), (('B', 'Color[B]'), 'uint16', None, None, None, None), (('C', 'Color[C]'), 'uint16', None, None, None, None)], None, None),
+              ('callback', ('Color Reached', 'color reached'), [(('R', 'Color[R]'), 'uint16', 1, None, None, None, None), (('G', 'Color[G]'), 'uint16', 1, None, None, None, None), (('B', 'Color[B]'), 'uint16', 1, None, None, None, None), (('C', 'Color[C]'), 'uint16', 1, None, None, None, None)], None, None),
               ('callback_threshold', ('Color', 'color'), [], '>', [(100, 0), (200, 0), (300, 0), (400, 0)])]
 })

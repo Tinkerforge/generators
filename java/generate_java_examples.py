@@ -163,7 +163,13 @@ class JavaExampleArgumentsMixin(object):
 
 class JavaExampleParameter(common.ExampleParameter):
     def get_java_source(self):
-        template = '{type_} {headless_camel_case_name}'
+        templateA = '{type_} {headless_camel_case_name}'
+        templateB = '{type_}[] {headless_camel_case_name}'
+
+        if self.get_cardinality() == 1:
+            template = templateA
+        else:
+            template = templateB
 
         return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
                                headless_camel_case_name=self.get_headless_camel_case_name())

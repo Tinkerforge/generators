@@ -842,8 +842,8 @@ def check_name(name, display_name=None, is_constant=False):
             raise GeneratorError("Name '{0}' and display name '{1}' ({2}) mismatch" \
                                  .format(name, display_name, display_name_to_check))
 
-def break_string(string, marker, continuation='', extra='', max_length=90):
-    result = string.replace('<BP>', ' ')
+def break_string(string, marker, space=' ', continuation='', extra='', max_length=90):
+    result = string.replace('<BP>', space)
 
     if len(result) > max_length:
         if len(marker) > 0:
@@ -864,12 +864,12 @@ def break_string(string, marker, continuation='', extra='', max_length=90):
         result = parts[0]
 
         for part in parts[1:]:
-            line = (result.split('\n')[-1] + ' ' + part.split('\n')[0]).replace('\t', '    ') + continuation
+            line = (result.split('\n')[-1] + space + part.split('\n')[0]).replace('\t', '    ') + continuation
 
             if len(line) > max_length:
                 result += continuation + '\n' + indent + extra + part
             else:
-                result += ' ' + part
+                result += space + part
 
     return result
 
@@ -1891,7 +1891,7 @@ class ExampleParameter(ExampleItem, NameMixin):
 
         self.function = function
 
-        if len(raw_data) != 6:
+        if len(raw_data) != 7:
             raise GeneratorError('Invalid ExampleParameter: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
@@ -1911,8 +1911,11 @@ class ExampleParameter(ExampleItem, NameMixin):
     def get_type(self):
         return self.raw_data[1]
 
-    def get_divisor(self):
+    def get_cardinality(self):
         return self.raw_data[2]
+
+    def get_divisor(self):
+        return self.raw_data[3]
 
     def get_formatted_divisor(self, template, cast=float):
         divisor = self.get_divisor()
@@ -1923,7 +1926,7 @@ class ExampleParameter(ExampleItem, NameMixin):
             return template.format(cast(divisor))
 
     def get_unit_raw_name(self):
-        return self.raw_data[3]
+        return self.raw_data[4]
 
     def get_unit_formatted_raw_name(self, template):
         raw_name = self.get_unit_raw_name()
@@ -1934,7 +1937,7 @@ class ExampleParameter(ExampleItem, NameMixin):
             return template.format(raw_name)
 
     def get_unit_final_name(self):
-        return self.raw_data[4]
+        return self.raw_data[5]
 
     def get_unit_formatted_final_name(self, template):
         final_name = self.get_unit_final_name()
@@ -1945,7 +1948,7 @@ class ExampleParameter(ExampleItem, NameMixin):
             return template.format(final_name)
 
     def get_range(self):
-        return self.raw_data[5]
+        return self.raw_data[6]
 
     def get_formatted_range(self, template):
         range_ = self.get_range()
@@ -1967,7 +1970,7 @@ class ExampleResult(ExampleItem, NameMixin):
 
         self.function = function
 
-        if len(raw_data) != 6:
+        if len(raw_data) != 7:
             raise GeneratorError('Invalid ExampleResult: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
@@ -1987,8 +1990,11 @@ class ExampleResult(ExampleItem, NameMixin):
     def get_type(self):
         return self.raw_data[1]
 
-    def get_divisor(self):
+    def get_cardinality(self):
         return self.raw_data[2]
+
+    def get_divisor(self):
+        return self.raw_data[3]
 
     def get_formatted_divisor(self, template, cast=float):
         divisor = self.get_divisor()
@@ -1999,7 +2005,7 @@ class ExampleResult(ExampleItem, NameMixin):
             return template.format(cast(divisor))
 
     def get_unit_raw_name(self):
-        return self.raw_data[3]
+        return self.raw_data[4]
 
     def get_unit_formatted_raw_name(self, template):
         raw_name = self.get_unit_raw_name()
@@ -2010,7 +2016,7 @@ class ExampleResult(ExampleItem, NameMixin):
             return template.format(raw_name)
 
     def get_unit_final_name(self):
-        return self.raw_data[4]
+        return self.raw_data[5]
 
     def get_unit_formatted_final_name(self, template):
         final_name = self.get_unit_final_name()
@@ -2021,7 +2027,7 @@ class ExampleResult(ExampleItem, NameMixin):
             return template.format(final_name)
 
     def get_range(self):
-        return self.raw_data[5]
+        return self.raw_data[6]
 
     def get_formatted_range(self, template):
         range_ = self.get_range()

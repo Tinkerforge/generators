@@ -68,7 +68,7 @@ ReleaseNETObject[ipcon]
             incomplete = ''
 
         if self.get_description() != None:
-            description = '\n\n(*{0}*)'.format(self.get_description())
+            description = '\n\n(*{0}*)'.format(self.get_description().replace('\n', '*)\n(*'))
         else:
             description = ''
 
@@ -146,9 +146,19 @@ class MathematicaExampleArgumentsMixin(object):
 
 class MathematicaExampleParameter(common.ExampleParameter):
     def get_mathematica_source(self):
-        template = '{headless_camel_case_name}_'
+        if self.get_cardinality() == 1:
+            template = '{headless_camel_case_name}_'
 
-        return template.format(headless_camel_case_name=self.get_headless_camel_case_name())
+            return template.format(headless_camel_case_name=self.get_headless_camel_case_name())
+        elif self.get_cardinality() > 0:
+            result = []
+
+            for i in range(self.get_cardinality()):
+                result.append('{}{}_'.format(self.get_headless_camel_case_name(), i + 1))
+
+            return '{{{}}}'.format(','.join(result))
+        else:
+            return 'FIXME_'
 
     def get_mathematica_print(self):
         templateA = ' Print["{label_name}: "<>ToString[N[Quantity[{headless_camel_case_name},"{quantity_name}"]]]]'
@@ -173,7 +183,7 @@ class MathematicaExampleParameter(common.ExampleParameter):
             template = templateC
         elif ':bitmask:' in type_:
             template = templateD
-            bitmask_length = int(type.split(':')[2])
+            bitmask_length = int(type_.split(':')[2])
         else:
             template = templateE
 
@@ -298,13 +308,15 @@ class MathematicaExampleSetterFunction(common.ExampleSetterFunction, Mathematica
     def get_mathematica_source(self):
         template = '{comment1}{global_line_prefix}{device_initial_name}@{function_camel_case_name}[{arguments}]{global_line_suffix}{comment2}\n'
 
-        return template.format(global_line_prefix=global_line_prefix,
-                               global_line_suffix=global_line_suffix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               arguments=','.join(self.get_mathematica_arguments()),
-                               comment1=re.sub('\\(\\*[ ]*\\*\\)\n', '', self.get_formatted_comment1(global_line_prefix + '(*{0}*)\n', '\r', '*)\n' + global_line_prefix + '(*')),
-                               comment2=self.get_formatted_comment2('(*{0}*)', ''))
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 global_line_suffix=global_line_suffix,
+                                 device_initial_name=self.get_device().get_initial_name(),
+                                 function_camel_case_name=self.get_camel_case_name(),
+                                 arguments=',<BP>'.join(self.get_mathematica_arguments()),
+                                 comment1=re.sub('\\(\\*[ ]*\\*\\)\n', '', self.get_formatted_comment1(global_line_prefix + '(*{0}*)\n', '\r', '*)\n' + global_line_prefix + '(*')),
+                                 comment2=self.get_formatted_comment2('(*{0}*)', ''))
+
+        return common.break_string(result, '@{}['.format(self.get_camel_case_name()), space='')
 
 class MathematicaExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_mathematica_source(self):
@@ -360,14 +372,16 @@ AddEventHandler[{device_initial_name}@{function_camel_case_name}Callback,{functi
         if len(extra_message) > 0 and len(prints) > 0:
             extra_message = ';\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template2.format(device_initial_name=self.get_device().get_initial_name(),
-                                function_camel_case_name=self.get_camel_case_name(),
-                                parameters=common.wrap_non_empty(',', ','.join(parameters), ''),
-                                prints='\n'.join(prints).replace('\n', ';\n'),
-                                extra_message=extra_message)
+        result = template1.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(device_initial_name=self.get_device().get_initial_name(),
+                                  function_camel_case_name=self.get_camel_case_name(),
+                                  parameters=common.wrap_non_empty(',<BP>', ',<BP>'.join(parameters), ''),
+                                  prints='\n'.join(prints).replace('\n', ';\n'),
+                                  extra_message=extra_message)
+
+        return common.break_string(result, '{}CB['.format(self.get_camel_case_name()), space='')
 
 class MathematicaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):

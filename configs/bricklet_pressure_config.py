@@ -576,18 +576,18 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Pressure', 'pressure'), [(('Pressure', 'Pressure'), 'int32', 1000.0, 'Pa', 'kPa', None)], [])]
+'functions': [('getter', ('Get Pressure', 'pressure'), [(('Pressure', 'Pressure'), 'int32', 1, 1000.0, 'Pa', 'kPa', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Pressure', 'pressure'), [(('Pressure', 'Pressure'), 'int32', 1000.0, 'Pa', 'kPa', None)], None, None),
+'functions': [('callback', ('Pressure', 'pressure'), [(('Pressure', 'Pressure'), 'int32', 1, 1000.0, 'Pa', 'kPa', None)], None, None),
               ('callback_period', ('Pressure', 'pressure'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Pressure Reached', 'pressure reached'), [(('Pressure', 'Pressure'), 'int32', 1000.0, 'Pa', 'kPa', None)], None, None),
+              ('callback', ('Pressure Reached', 'pressure reached'), [(('Pressure', 'Pressure'), 'int32', 1, 1000.0, 'Pa', 'kPa', None)], None, None),
               ('callback_threshold', ('Pressure', 'pressure'), [], '>', [(10, 0)])]
 })

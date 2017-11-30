@@ -201,13 +201,25 @@ class DelphiExampleArgumentsMixin(object):
 
 class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
     def get_delphi_source(self):
-        template = 'const {headless_camel_case_name}: {type_}'
+        templateA = 'const {headless_camel_case_name}: {type0}'
+        templateB = 'const {headless_camel_case_name}: TArray0To{array_end}Of{type1}'
+        templateC = 'const {headless_camel_case_name}: array of {type0}'
+
+        if self.get_cardinality() == 1:
+            template = templateA
+        elif self.get_cardinality() > 1:
+            template = templateB
+        else: # cardinality < 0
+            template = templateC
+
         headless_camel_case_name = self.get_headless_camel_case_name()
 
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return template.format(type_=delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
+        return template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
+                               type1=delphi_common.get_delphi_type(self.get_type().split(':')[0])[1],
+                               array_end=self.get_cardinality() - 1,
                                headless_camel_case_name=headless_camel_case_name)
 
     def get_delphi_write_ln(self):
@@ -314,6 +326,8 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
         if len(write_lns) > 1:
             write_lns.insert(0, '')
 
+        arguments = self.get_delphi_arguments()
+
         if len(variable_names) > 1:
             arguments += variable_names
             variable_names = []
@@ -325,7 +339,7 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
                                comments=''.join(comments),
                                variable_names=''.join(variable_names),
                                write_lns='\n'.join(write_lns),
-                               arguments=common.wrap_non_empty('(', ', '.join(self.get_delphi_arguments()), ')'))
+                               arguments=common.wrap_non_empty('(', ', '.join(arguments), ')'))
 
 class DelphiExampleSetterFunction(common.ExampleSetterFunction, DelphiExampleArgumentsMixin):
     def get_delphi_prototype(self):
@@ -420,7 +434,7 @@ end;
         return []
 
     def get_delphi_source(self):
-        template = r"""  {{ Register {function_comment_name} callback<BP>to procedure {function_camel_case_name}CB }}
+        template = r"""  {{ Register {function_comment_name}<BP>callback<BP>to<BP>procedure<BP>{function_camel_case_name}CB }}
   {device_initial_name}.On{function_camel_case_name} := {{$ifdef FPC}}@{{$endif}}{function_camel_case_name}CB;
 """
 

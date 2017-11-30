@@ -384,18 +384,18 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Current', 'current from sensor 1'), [(('Current', 'Current (Sensor 1)'), 'int32', 1000000.0, 'nA', 'mA', None)], [('uint8', 1)])]
+'functions': [('getter', ('Get Current', 'current from sensor 1'), [(('Current', 'Current (Sensor 1)'), 'int32', 1, 1000000.0, 'nA', 'mA', None)], [('uint8', 1)])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Current', 'current'), [(('Sensor', 'Sensor'), 'uint8', None, None, None, None), (('Current', 'Current'), 'int32', 1000000.0, 'nA', 'mA', None)], None, None),
+'functions': [('callback', ('Current', 'current'), [(('Sensor', 'Sensor'), 'uint8', 1, None, None, None, None), (('Current', 'Current'), 'int32', 1, 1000000.0, 'nA', 'mA', None)], None, None),
               ('callback_period', ('Current', 'current (sensor 1)'), [('uint8', 1)], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Current Reached', 'current reached'), [(('Sensor', 'Sensor'), 'uint8', None, None, None, None), (('Current', 'Current'), 'int32', 1000000.0, 'nA', 'mA', None)], None, None),
+              ('callback', ('Current Reached', 'current reached'), [(('Sensor', 'Sensor'), 'uint8', 1, None, None, None, None), (('Current', 'Current'), 'int32', 1, 1000000.0, 'nA', 'mA', None)], None, None),
               ('callback_threshold', ('Current', 'current (sensor 1)'), [('uint8', 1)], '>', [(10, 0)])]
 })

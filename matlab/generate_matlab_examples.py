@@ -485,7 +485,7 @@ end
         return functions
 
     def get_matlab_source(self):
-        template1 = r"""    % Register {function_comment_name} callback to<BP>function cb_{function_underscore_name}
+        template1 = r"""    % Register {function_comment_name}<BP>callback<BP>to<BP>function<BP>cb_{function_underscore_name}
 """
         templateA2 = r"""    set({device_initial_name}, '{function_camel_case_name}Callback',<BP>@(h, e) cb_{function_underscore_name}(e));
 """

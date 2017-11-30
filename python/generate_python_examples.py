@@ -156,7 +156,7 @@ class PythonExampleParameter(common.ExampleParameter):
 
         if ':bitmask:' in type_:
             format_prefix = 'format('
-            format_suffix = ', "0{0}b")'.format(int(type.split(':')[2]))
+            format_suffix = ', "0{0}b")'.format(int(type_.split(':')[2]))
         elif type_ in ['char', 'string']:
             format_prefix = ''
             format_suffix = ''
@@ -310,16 +310,18 @@ class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(prints) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template2.format(function_underscore_name=self.get_underscore_name(),
-                                parameters=', '.join(parameters),
-                                prints='\n'.join(prints),
-                                extra_message=extra_message)
+        result = template1.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(function_underscore_name=self.get_underscore_name(),
+                                  parameters=',<BP>'.join(parameters),
+                                  prints='\n'.join(prints),
+                                  extra_message=extra_message)
+
+        return common.break_string(result, 'cb_{}('.format(self.get_underscore_name()))
 
     def get_python_source(self):
-        template1 = r"""    # Register {function_comment_name} callback to<BP>function cb_{function_underscore_name}
+        template1 = r"""    # Register {function_comment_name}<BP>callback<BP>to<BP>function<BP>cb_{function_underscore_name}
 """
         template2 = r"""    {device_initial_name}.register_callback({device_initial_name}.CALLBACK_{function_upper_case_name},<BP>cb_{function_underscore_name})
 """

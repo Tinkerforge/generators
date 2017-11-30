@@ -480,18 +480,20 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(outputs) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                device_camel_case_name=self.get_device().get_camel_case_name(),
-                                device_initial_name=self.get_device().get_initial_name(),
-                                function_upper_case_name=self.get_upper_case_name(),
-                                function_comment_name=self.get_comment_name()) + \
-               template2.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template3.format(global_callback_output_suffix=global_callback_output_suffix,
-                                parameters=', '.join(parameters),
-                                outputs='\n'.join(outputs),
-                                extra_message=extra_message)
+        result = template1.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                  device_camel_case_name=self.get_device().get_camel_case_name(),
+                                  device_initial_name=self.get_device().get_initial_name(),
+                                  function_upper_case_name=self.get_upper_case_name(),
+                                  function_comment_name=self.get_comment_name()) + \
+                 template2.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template3.format(global_callback_output_suffix=global_callback_output_suffix,
+                                  parameters=',<BP>'.join(parameters),
+                                  outputs='\n'.join(outputs),
+                                  extra_message=extra_message)
+
+        return common.break_string(result, 'function (')
 
     def get_javascript_source(self):
         return None

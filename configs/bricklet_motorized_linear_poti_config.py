@@ -217,17 +217,17 @@ Der :word:`parameter` ist die aktuelle Position.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'uint16', None, None, None, (0, 100))], [])]
+'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'uint16', 1, None, None, None, (0, 100))], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint16', None, None, None, (0, 100))], None, None),
+'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint16', 1, None, None, None, (0, 100))], None, None),
               ('callback_configuration', ('Position', 'position'), [], 50, 'x', [(0, 0)])]
 })
 
 com['examples'].append({
 'name': 'Motor',
-'functions': [('callback', ('Position Reached', 'position reached'), [(('Position', 'Position'), 'uint16', None, None, None, (0, 100))], None, None),
+'functions': [('callback', ('Position Reached', 'position reached'), [(('Position', 'Position'), 'uint16', 1, None, None, None, (0, 100))], None, None),
               ('setter', 'Set Motor Position', [('uint16', 50), ('uint8:constant', 1), ('bool', False)], 'Move slider smooth to the middle', None)]
 })

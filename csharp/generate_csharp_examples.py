@@ -154,9 +154,15 @@ class CSharpExampleArgumentsMixin(object):
 
 class CSharpExampleParameter(common.ExampleParameter):
     def get_csharp_source(self):
-        template = '{type} {headless_camel_case_name}'
+        templateA = '{type_} {headless_camel_case_name}'
+        templateB = '{type_}[] {headless_camel_case_name}'
 
-        return template.format(type=csharp_common.get_csharp_type(self.get_type().split(':')[0], 1),
+        if self.get_cardinality() == 1:
+            template = templateA
+        else:
+            template = templateB
+
+        return template.format(type_=csharp_common.get_csharp_type(self.get_type().split(':')[0], 1),
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
     def get_csharp_write_line(self):
@@ -279,6 +285,8 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
         if len(write_lines) > 1:
             write_lines.insert(0, '')
 
+        arguments = self.get_csharp_arguments()
+
         if len(variable_references) > 1:
             arguments += variable_references
 
@@ -289,7 +297,7 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
                                  comments=''.join(comments),
                                  variable_declarations=''.join(merged_variable_declarations),
                                  write_lines='\n'.join(write_lines),
-                                 arguments=',<BP>'.join(self.get_csharp_arguments()))
+                                 arguments=',<BP>'.join(arguments))
 
         return common.break_string(result, '{}('.format(self.get_camel_case_name()))
 
@@ -369,7 +377,7 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, '{}CB('.format(self.get_camel_case_name()))
 
     def get_csharp_source(self):
-        template = r"""		// Register {function_comment_name} callback<BP>to function {function_camel_case_name}CB
+        template = r"""		// Register {function_comment_name}<BP>callback<BP>to<BP>function<BP>{function_camel_case_name}CB
 		{device_initial_name}.{function_camel_case_name}Callback += {function_camel_case_name}CB;
 """
 
