@@ -30,6 +30,27 @@ import functools
 
 parsers = []
 
+def escape_string(raw):
+    escaped = ''
+
+    if sys.hexversion < 0x03000000:
+        chars = unicode(raw, 'utf-8')
+    else:
+        chars = raw
+
+    for c in chars:
+        cp = ord(c)
+
+        if cp < 32 or cp > 126:
+            if cp < 256:
+                escaped += '\\.{0:02x}'.format(cp)
+            else:
+                escaped += '\\:{0:04x}'.format(cp)
+        else:
+            escaped += c
+
+    return escaped
+
 def parse_newline(line):
     if line.startswith('\t'):
         return ['"\\n"', '"\\[IndentingNewLine]"'], line[1:]
@@ -54,7 +75,15 @@ def parse_call(line):
     return None, line
 
 def parse_identifier(line):
-    m = re.match('^([A-Za-z0-9]+_?)(.*)', line)
+    m = re.match('^([A-Za-z][A-Za-z0-9`]*_?)(.*)', line)
+
+    if m != None:
+        return '"{0}"'.format(m.group(1)), m.group(2)
+
+    return None, line
+
+def parse_number(line):
+    m = re.match('^([0-9]+(?:\.[0-9]+)?)(.*)', line)
 
     if m != None:
         return '"{0}"'.format(m.group(1)), m.group(2)
@@ -62,7 +91,7 @@ def parse_identifier(line):
     return None, line
 
 def parse_operator(line):
-    m = re.match('^(==|=|,|<>|@|:=|;|\+)(.*)', line)
+    m = re.match('^(<=|>=|!=|==|=|:=|\+=|\+\+|\+|-=|--|-|\*|/|<>|<|>|,|@|;;|;)(.*)', line)
 
     if m != None:
         if m.group(1) == '=':
@@ -81,8 +110,26 @@ def parse_comment(line):
     if line.startswith('(*'):
         i = line.find('*)')
         tail = line[i + 2:]
+        parts = line[2:i].split('"')
+        comment = ''
 
-        return ('"(*"', '"{0}"'.format(line[2:i]), '"*)"'), tail
+        if len(parts) == 1:
+            comment = parts[0]
+        else:
+            for i, part in enumerate(parts[:-1]):
+                comment += part
+
+                if i % 2 == 0:
+                    comment += '", "\\"\\<'
+                else:
+                    comment += '\\>\\"", "'
+
+            comment += parts[-1]
+
+            if len(parts) % 2 == 0:
+                comment += '\\>'
+
+        return ('"(*"', '"{0}"'.format(escape_string(comment)), '"*)"'), tail
 
     return None, line
 
@@ -91,7 +138,7 @@ def parse_string(line):
         i = line.find('"', 1)
         tail = line[i + 1:]
 
-        return '"\\"\\<{0}\\>\\""'.format(line[1:i]), tail
+        return '"\\"\\<{0}\\>\\""'.format(escape_string(line[1:i])), tail
 
     return None, line
 
@@ -116,7 +163,7 @@ def parse_block(left, right, line):
                 tail = tail[1:]
 
         if not tail.startswith(right):
-            raise Exception('missing {0} in tail: {1}'.format(right, repr(tail)))
+            raise Exception('missing {0} in tail {1} of line {2}'.format(right, repr(tail), repr(line)))
 
         tail = tail[len(right):]
 
@@ -132,6 +179,7 @@ parsers = [
     parse_continuation,
     parse_call,
     parse_identifier,
+    parse_number,
     parse_operator,
     parse_comment,
     parse_string,
@@ -167,6 +215,13 @@ def parse_all(line, until=None):
     if len(result) == 0:
         result = None
 
+    try:
+        i = result.index('"=="')
+    except:
+        pass
+    else:
+        result = [tuple(result[:i]), '"=="', tuple(result[i + 1:])]
+
     return result, new_tail
 
 def flatten(parsed):
@@ -186,12 +241,11 @@ def flatten(parsed):
 
     return ''
 
-def txt2nb():
-    txt_name = sys.argv[1]
-    txt = open(txt_name, 'r')
+def txt2nb(txt_path):
+    txt = open(txt_path, 'r')
 
-    nb_name = os.path.splitext(txt_name)[0] # assuming name ends with .nb.txt
-    nb = open(nb_name, 'w')
+    nb_path = os.path.splitext(txt_path)[0] # assuming name ends with .nb.txt
+    nb = open(nb_path, 'w')
     nb.write('Notebook[{\n Cell[\n  BoxData[{')
 
     boxdata_first = True
@@ -200,9 +254,9 @@ def txt2nb():
     lines2 = []
 
     for line in txt.readlines():
-        line = line.rstrip()
+        line = line.rstrip().replace('\\', '\\\\')
 
-        if line.startswith(' '):
+        if line.startswith(' ') or line.startswith(']'):
             lines1[-1] += '\r' + line.strip()
         else:
             lines1.append(line)
@@ -212,9 +266,6 @@ def txt2nb():
             lines2[-1] += '\t' + line[1:]
         else:
             lines2.append(line)
-
-    from pprint import pprint
-    pprint(lines2)
 
     for line in lines2:
         if len(line) == 0:
@@ -253,4 +304,4 @@ def txt2nb():
     nb.write('\n  }], "Input"\n ]\n}]\n')
 
 if __name__ == '__main__':
-    txt2nb()
+    txt2nb(sys.argv[1])

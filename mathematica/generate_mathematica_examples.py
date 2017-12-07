@@ -29,6 +29,7 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+from txt2nb import txt2nb
 
 global_line_prefix = ''
 global_line_suffix = ''
@@ -626,6 +627,8 @@ class MathematicaExamplesGenerator(common.ExamplesGenerator):
 
             with open(filepath, 'w') as f:
                 f.write(example.get_mathematica_source())
+
+            txt2nb(filepath)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', MathematicaExamplesGenerator)
