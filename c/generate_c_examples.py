@@ -134,7 +134,7 @@ int main(void) {{
             sources.append(function.get_c_source())
 
         for cleanup in self.get_cleanups():
-            includes += function.get_c_includes()
+            includes += cleanup.get_c_includes()
             defines += cleanup.get_c_defines()
             functions.append(cleanup.get_c_function())
             cleanups.append(cleanup.get_c_source())
