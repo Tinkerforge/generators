@@ -514,7 +514,7 @@ begin
             else:
                 if e.get_direction() == 'out':
                     if role and role.endswith('written'):
-                        e_param = 'out ' + e.get_headless_camel_case_name() + ': word'
+                        e_param = 'out ' + stream_in.get_headless_camel_case_name() + 'Written: word'
                     else:
                         if e.get_cardinality() > 1:
                             e_param = 'out ' + e.get_headless_camel_case_name() + ': array of ' + e.get_delphi_type()[0]
@@ -995,7 +995,7 @@ end;
                                e.get_direction() == 'out' and \
                                role and \
                                role.endswith('written'):
-                                    parameters_low_level.append('_' + e.get_headless_camel_case_name())
+                                    parameters_low_level.append(stream_in.get_headless_camel_case_name() + 'ChunkWritten')
                             else:
                                 parameters_low_level.append(e.get_headless_camel_case_name())
                     else:
@@ -1027,23 +1027,23 @@ end;
                         if single_output_stream_in:
                             if written_with_single_output_stream_in:
                                 if role and role.endswith('written'):
-                                    current_written_value_variable = '_result'
+                                    current_written_value_variable = stream_headless_camel_case_name + 'ChunkWritten'
                                     accumulated_written_value_variable = 'result'
                                     ll_function_call_define_current_written_variables += \
-                                        '\n  _result: ' + e.get_delphi_type()[0] + ';'
+                                        '\n  ' + current_written_value_variable + ': ' + e.get_delphi_type()[0] + ';'
                                     ll_function_call_init_written_variables += \
-                                        '\n  _result := 0;\n  result := 0;'
+                                        '\n  ' + current_written_value_variable + ' := 0;\n  result := 0;'
                             else:
                                 current_written_value_variable = 'result'
                         elif multi_output_stream_in:
                             if written_with_multi_output_stream_in:
                                 if role and role.endswith('written'):
-                                    current_written_value_variable = '_' + e.get_headless_camel_case_name()
-                                    accumulated_written_value_variable = e.get_headless_camel_case_name()
+                                    current_written_value_variable = e.get_headless_camel_case_name()
+                                    accumulated_written_value_variable = stream_headless_camel_case_name + 'Written'
                                     ll_function_call_define_current_written_variables += \
-                                        '\n  _' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0] + ';'
+                                        '\n  ' + current_written_value_variable + ': ' + e.get_delphi_type()[0] + ';'
                                     ll_function_call_init_written_variables += \
-                                        '\n  _' + e.get_headless_camel_case_name() + ' := 0;\n  ' + e.get_headless_camel_case_name() + ' := 0;'
+                                        '\n  ' + current_written_value_variable + ' := 0;\n  ' + accumulated_written_value_variable + ' := 0;'
 
                 if len(e_params) > 0:
                     params = '(' + '; '.join(e_params) + ')'
