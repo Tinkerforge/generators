@@ -73,7 +73,7 @@ If you want to get the voltage periodically, it is recommended to use the
 Gibt die gemessenen Spannung zurück. Der Wert ist in mV und im
 Bereich von 0mV bis 36000mV.
 
-Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
+Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Voltage` Callback zu nutzen und die Periode mit
 :func:`Set Voltage Callback Period` vorzugeben.
 """
