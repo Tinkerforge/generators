@@ -1060,6 +1060,11 @@ end;
                 parameters_low_level = ', '.join(parameters_low_level)
 
                 if no_output_stream_in:
+                    ll_function_call_zero = '\n    '
+                    ll_function_call_zero += \
+                        template_ll_function_call_no_or_more_output_stream_in.format(camel_case_name = camel_case_name,
+                                                                                     parameters_low_level = parameters_low_level)
+
                     if stream_in.get_fixed_length():
                         ll_function_call = '\n\n      '
                     elif stream_in.has_single_chunk():
