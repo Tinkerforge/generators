@@ -815,19 +815,23 @@ end;
 """
 
                 template_high_level_stream_in_single_chunk = """{method_signature}var
+  {stream_headless_camel_case_name}Length: byte;
   {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};{ll_function_call_define_current_written_variables}
 begin{ll_function_call_init_written_variables}
   if (Length({stream_headless_camel_case_name}) > {chunk_cardinality}) then begin
     raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
   end;
 
+  {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
+
   FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-  Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));{ll_function_call}{ll_function_written_inc}
+  Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}Length);{ll_function_call}{ll_function_written_inc}
 end;
 
 """
 
                 template_high_level_stream_in_short_write_single_chunk = """{method_signature}var
+  {stream_headless_camel_case_name}Length: byte;
   {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};{ll_function_call_define_current_written_variables}
 begin{ll_function_call_init_written_variables}
 
@@ -835,8 +839,10 @@ begin{ll_function_call_init_written_variables}
     raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
   end;
 
+  {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
+
   FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-  Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));{ll_function_call}{ll_function_written_inc}
+  Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}Length);{ll_function_call}{ll_function_written_inc}
 end;
 
 """
