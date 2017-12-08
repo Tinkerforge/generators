@@ -730,7 +730,7 @@ begin
 
         if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
-        FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength, 0);
+        FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
         Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);{ll_function_call}
         Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
       end;
@@ -764,7 +764,7 @@ begin
         {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
       end;
 
-      FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength, 0);
+      FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
       Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);{ll_function_call}
       Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
     end;
@@ -799,7 +799,7 @@ begin
 
         if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
-        FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength, 0);
+        FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
         Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);{ll_function_call}
 
         if ({current_written_value_variable} <= 0) then break;
@@ -823,7 +823,7 @@ begin{ll_function_call_init_written_variables}
     raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
   end;
 
-  FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}), 0);
+  FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
   Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));{ll_function_call}{ll_function_written_inc}
 end;
 
@@ -837,7 +837,7 @@ begin{ll_function_call_init_written_variables}
     raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
   end;
 
-  FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}), 0);
+  FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
   Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * Length({stream_headless_camel_case_name}));{ll_function_call}{ll_function_written_inc}
 end;
 
