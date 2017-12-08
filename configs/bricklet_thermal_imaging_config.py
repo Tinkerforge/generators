@@ -434,7 +434,6 @@ Gibt die High Contrast Konfiguration zurück, wie von
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Image Transfer Config',
@@ -474,7 +473,6 @@ Zugehörige Funktionen:
 * Callback Temperature Image: :cb:`Temperature Image` callback.
 
 Der Standardwert ist Manual High Contrast Image (0).
-
 """
 }]
 })
