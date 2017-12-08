@@ -1044,7 +1044,11 @@ end;
                         elif multi_output_stream_in:
                             if written_with_multi_output_stream_in:
                                 if role and role.endswith('written'):
-                                    current_written_value_variable = e.get_headless_camel_case_name()
+                                    if stream_in.has_single_chunk():
+                                        current_written_value_variable = stream_headless_camel_case_name + 'ChunkWritten'
+                                    else:
+                                        current_written_value_variable = e.get_headless_camel_case_name()
+
                                     accumulated_written_value_variable = stream_headless_camel_case_name + 'Written'
                                     ll_function_call_define_current_written_variables += \
                                         '\n  ' + current_written_value_variable + ': ' + e.get_delphi_type()[0] + ';'
