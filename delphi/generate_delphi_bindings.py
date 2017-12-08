@@ -725,8 +725,8 @@ begin
   else begin
     streamMutex.Acquire;
     try
-      while ({stream_headless_camel_case_name}ChunkOffset < Length({stream_headless_camel_case_name})) do begin
-        {stream_headless_camel_case_name}ChunkLength := Length({stream_headless_camel_case_name}) - {stream_headless_camel_case_name}ChunkOffset;
+      while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length) do begin
+        {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
 
         if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
@@ -794,8 +794,8 @@ begin
   else begin
     streamMutex.Acquire;
     try
-      while ({stream_headless_camel_case_name}ChunkOffset < Length({stream_headless_camel_case_name})) do begin
-        {stream_headless_camel_case_name}ChunkLength := Length({stream_headless_camel_case_name}) - {stream_headless_camel_case_name}ChunkOffset;
+      while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length) do begin
+        {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
 
         if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
