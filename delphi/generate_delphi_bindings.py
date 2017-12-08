@@ -800,11 +800,13 @@ begin
         if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
 
         FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-        Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);{ll_function_call}{ll_function_written_inc}
+        Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);{ll_function_call}
+
+        if ({current_written_value_variable} <= 0) then break;
 
         if ({current_written_value_variable} < {chunk_cardinality}) then break; {{ Either last chunk or short write }}
 
-        Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+        Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
       end;
     finally
       streamMutex.Release;
@@ -1076,12 +1078,9 @@ end;
 
 
                 elif single_output_stream_in:
-                    # Here we set current_written_value_variable = accumulated_written_value_variable
-                    # so that the return value actually contains whatever the low-level
-                    # function has returned.
                     ll_function_call_zero = '\n    '
                     ll_function_call_zero += \
-                        template_ll_function_call_one_output_written_stream_in.format(current_written_value_variable = accumulated_written_value_variable,
+                        template_ll_function_call_one_output_written_stream_in.format(current_written_value_variable = current_written_value_variable,
                                                                                       camel_case_name = camel_case_name,
                                                                                       parameters_low_level = parameters_low_level)
 
