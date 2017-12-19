@@ -109,6 +109,7 @@ com = {
         'en': 'TODO',
         'de': 'TODO'
     },
+    'comcu': True,
     'released': False,
     'documented': False,
     'packets': [],
