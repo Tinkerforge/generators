@@ -58,7 +58,7 @@ first have to call this function with the expected tag type as parameter.
 It is no problem if you don't know the tag type. You can cycle through
 the available tag types until the tag gives an answer to the request.
 
-Current the following tag types are supported:
+Currently the following tag types are supported:
 
 * Mifare Classic
 * NFC Forum Type 1
@@ -246,7 +246,7 @@ The approach to read or write a Mifare Classic page is as follows:
 2. Wait for state to change to *RequestTagIDReady* (see :func:`Get State`
    or :cb:`State Changed` callback)
 3. If looking for a specific tag then call :func:`Get Tag ID` and check if the
-   expected tag was found, if it was not found got back to step 1
+   expected tag was found, if it was not found go back to step 1
 4. Call :func:`Authenticate Mifare Classic Page` with page and key for the page
 5. Wait for state to change to *AuthenticatingMifareClassicPageReady* (see
    :func:`Get State` or :cb:`State Changed` callback)
