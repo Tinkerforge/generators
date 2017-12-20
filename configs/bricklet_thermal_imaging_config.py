@@ -215,6 +215,9 @@ Sets the resolution. The Thermal Imaging Bricklet can either measure
 * from 0 to 6553 Kelvin (-273.15°C to +6279.85°C) with 0.1°C resolution or
 * from 0 to 655 Kelvin (-273.15°C to +381.85°C) with 0.01°C resolution.
 
+The accuracy is specified for -10°C to 450°C in the
+first range and -10°C and 140°C in the second range.
+
 The default value is 0 to 655 Kelvin.
 """,
 'de':
@@ -222,9 +225,10 @@ The default value is 0 to 655 Kelvin.
 Setzt die Auflösung. Das Thermal Imaging Bricklet kann entweder
 
 * von 0 bis 6553 Kelvin (-273,15°C bis +6279,85°C) mit 0,1°C Auflösung oder
-* von 0 bis 655 Kelvin (-273,15°C bis +381,85°C) mit 0,01°C Auflösung
+* von 0 bis 655 Kelvin (-273,15°C bis +381,85°C) mit 0,01°C Auflösung messen.
 
-messen.
+Die Genauigkeit ist spezifiziert von -10°C bis 450°C im ersten Auflösungsbereich
+und von -10°C bis 140°C im zweiten Bereich.
 
 Der Standardwert ist 0 bis 655 Kelvin.
 """
