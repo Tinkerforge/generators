@@ -263,6 +263,10 @@ Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
 
 
 
+# NOTE: Even though a single NDEF record can contain a payload of 2^32 - 1 bytes
+#       and streaming APIs support data length of 2^16 - 1 bytes, because of limitations
+#       of the NFC API used in the firmware only short NDEF records with maximum
+#       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Write Ndef Low Level',
@@ -299,6 +303,10 @@ com['packets'].append({
 }]
 })
 
+# NOTE: Even though a single NDEF record can contain a payload of 2^32 - 1 bytes
+#       and streaming APIs support data length of 2^16 - 1 bytes, because of limitations
+#       of the NFC API used in the firmware only short NDEF records with maximum
+#       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Read Ndef Low Level',
@@ -347,7 +355,7 @@ Mifare Classic tags use authentication. If you want to read from or write to
 a Mifare Classic page you have to authenticate it beforehand.
 Each page can be authenticated with two keys: A (``key_number`` = 0) and B
 (``key_number`` = 1). A new Mifare Classic
-tag that has not yet been written to can can be accessed with key A
+tag that has not yet been written to can be accessed with key A
 and the default key ``[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]``.
 
 The approach to read or write a Mifare Classic page is as follows:
@@ -411,7 +419,6 @@ depends on the tag type. The page sizes are as follows:
 * NFC Forum Type 1 page size: 8 byte (two pages are written)
 * NFC Forum Type 2 page size: 4 byte (four pages are written)
 * NFC Forum Type 3 page size: 16 byte (one page is written)
-
 * NFC Forum Type 4: no pages, page = file selection (cc or ndef)
 
 The general approach for writing to a tag is as follows:
@@ -598,6 +605,10 @@ TODO
 }]
 })
 
+# NOTE: Even though a single NDEF record can contain a payload of 2^32 - 1 bytes
+#       and streaming APIs support data length of 2^16 - 1 bytes, because of limitations
+#       of the NFC API used in the firmware only short NDEF records with maximum
+#       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
 'name': 'Cardemu Write Ndef Low Level',
@@ -685,6 +696,10 @@ TODO
 }]
 })
 
+# NOTE: Even though a single NDEF record can contain a payload of 2^32 - 1 bytes
+#       and streaming APIs support data length of 2^16 - 1 bytes, because of limitations
+#       of the NFC API used in the firmware only short NDEF records with maximum
+#       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
 'name': 'P2P Write Ndef Low Level',
@@ -720,6 +735,10 @@ com['packets'].append({
 }]
 })
 
+# NOTE: Even though a single NDEF record can contain a payload of 2^32 - 1 bytes
+#       and streaming APIs support data length of 2^16 - 1 bytes, because of limitations
+#       of the NFC API used in the firmware only short NDEF records with maximum
+#       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
 'name': 'P2P Read Ndef Low Level',
