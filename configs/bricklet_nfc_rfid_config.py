@@ -237,7 +237,7 @@ Mifare Classic tags use authentication. If you want to read from or write to
 a Mifare Classic page you have to authenticate it beforehand.
 Each page can be authenticated with two keys: A (``key_number`` = 0) and B
 (``key_number`` = 1). A new Mifare Classic
-tag that has not yet been written to can can be accessed with key A
+tag that has not yet been written to can be accessed with key A
 and the default key ``[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]``.
 
 The approach to read or write a Mifare Classic page is as follows:
