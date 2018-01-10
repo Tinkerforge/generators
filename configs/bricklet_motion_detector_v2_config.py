@@ -159,4 +159,8 @@ eine weitere Bewegung erkannt werden nach ungefähr 2 Sekunden.
 }]
 })
 
-
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Motion Detected', 'motion detected'), [], None, 'Motion Detected'),
+              ('callback', ('Detection Cycle Ended', 'detection cycle ended'), [], None, 'Detection Cycle Ended (next detection possible in ~3 seconds)')]
+})
