@@ -126,3 +126,9 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Count', 'count without reset'), [(('Count', 'Count'), 'int32', 1, None, None, None, None)], [('bool', False)])]
 })
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Count', 'count'), [(('Count', 'Count'), 'int32', 1, None, None, None, None)], None, None),
+              ('callback_configuration', ('Count', 'count'), [], 1000, 'x', [(0, 0)])]
+})
