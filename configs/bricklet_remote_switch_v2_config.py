@@ -263,7 +263,7 @@ com['packets'].append({
 'elements': [('Remote Type', 'uint8', 1, 'in', ('Remote Type', [('A', 0),
                                                                 ('B', 1),
                                                                 ('C', 2)])),
-             ('Minimum Repeats', 'uint8', 1, 'in'),
+             ('Minimum Repeats', 'uint16', 1, 'in'),
              ('Callback Enabled', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -282,7 +282,7 @@ com['packets'].append({
 'elements': [('Remote Type', 'uint8', 1, 'out', ('Remote Type', [('A', 0),
                                                                  ('B', 1),
                                                                  ('C', 2)])),
-             ('Minimum Repeats', 'uint8', 1, 'out'),
+             ('Minimum Repeats', 'uint16', 1, 'out'),
              ('Callback Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
