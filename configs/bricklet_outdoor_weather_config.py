@@ -228,3 +228,28 @@ TODO
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('setter', 'Set Sensor Callback Configuration', [('bool', True)], None, 'Enable sensor data callbacks'),
+              ('setter', 'Set Station Callback Configuration', [('bool', True)], None, 'Enable station data callbacks'),
+              ('callback', ('Sensor Data', 'sensor data'),
+              [
+                (('Identifier', 'Identifier (Sensor)'), 'uint8', 1, None, None, None, None),
+                (('Temperature', 'Temperature (Sensor)'), 'int16', 1, 10, '°C/10', '°C', None),
+                (('Humidity', 'Humidity (Sensor)'), 'uint8', 1, None, None, '%RH', None)
+              ],
+              None, None),
+              ('callback', ('Station Data', 'station data'),
+              [
+                (('Identifier', 'Identifier (Station)'), 'uint8', 1, None, None, None, None),
+                (('Temperature', 'Temperature (Station)'), 'int16', 1, None, None, None, None),
+                (('Humidity', 'Humidity (Station)'), 'uint8', 1, None, None, None, None),
+                (('Wind Speed', 'Wind Speed (Station)'), 'uint32', 1, None, None, None, None),
+                (('Gust Speed', 'Gust Speed (Station)'), 'uint32', 1, None, None, None, None),
+                (('Rain', 'Rain (Station)'), 'uint32', 1, None, None, None, None),
+                (('Wind Direction', 'Wind Direction (Station)'), 'uint8', 1, None, None, None, None),
+                (('Battery Low', 'Battery Low (Station)'), 'bool', 1, None, None, None, None)
+              ],
+              None, None)]
+})
