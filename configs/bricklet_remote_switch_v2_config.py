@@ -419,9 +419,19 @@ com['packets'].append({
 }]
 })
 
-
-
 com['examples'].append({
 'name': 'Switch Socket',
 'functions': [('setter', 'Switch Socket A', [('uint8', 17), ('uint8', 1), ('uint8:constant', 1)], 'Switch on a type A socket with house code 17 and receiver code 1.\nHouse code 17 is 10001 in binary (least-significant bit first)\nand means that the DIP switches 1 and 5 are on and 2-4 are off.\nReceiver code 1 is 10000 in binary (least-significant bit first)\nand means that the DIP switch A is on and B-E are off.', None)]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Remote Status A', 'remote_status_a'),
+              [
+                (('House Code', 'House Code'), 'uint8', 1, None, None, None, None),
+                (('Receiver Code', 'Receiver Code'), 'uint8', 1, None, None, None, None),
+                (('Switch To', 'Switch To'), 'uint8', 1, None, None, None, None),
+                (('Repeats', 'Repeats'), 'uint16', 1, None, None, None, None)
+              ],
+              None, None)]
 })
