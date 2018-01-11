@@ -426,7 +426,7 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Remote Status A', 'remote_status_a'),
+'functions': [('callback', ('Remote Status A', 'remote status a'),
               [
                 (('House Code', 'House Code'), 'uint8', 1, None, None, None, None),
                 (('Receiver Code', 'Receiver Code'), 'uint8', 1, None, None, None, None),
