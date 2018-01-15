@@ -44,11 +44,8 @@ voltage_doc = {
 'en':
 """
 Returns the measured voltage. The value is in mV and
-between 0V and 42V. The resolution is approximately 10mV to 1mV.
-
-
-TODO: oversampling...
-
+between 0V and 42V. The resolution is approximately 10mV to 1mV
+depending on the oversampling configuration (:func:`Set Oversampling`).
 """,
 'de':
 """
@@ -72,14 +69,20 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets the oversampling between 32 and 16384. The Bricklet
+takes one 12bit sample every 17.5us. Thus an oversampling
+of 32 is equivalent to an integration time of 0.56ms and
+a oversampling of 16384 is equivalent to an integration
+time of 286mh.
 
-One 12bit sample taken every 17.5us:
+The oversampling uses the moving average principle. A
+new value is always calculated once per ms.
 
-*32x    -> 0.56ms
-*16384x -> 286ms
+With increased oversampling the noise decreases. With decreased
+oversampling the reaction time increases (changes in voltage will be
+measured faster).
 
-uses moving average principle (new value every 1ms)
-TODO
+The default oversampling value is 4096x.
 """,
 'de':
 """
@@ -95,9 +98,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the oversampling value as set by :func:`Set Oversampling`.
 """,
 'de':
 """
+Gibt den Überabtastungsfaktor zurück, wie von :func:`Set Oversampling` gesetzt.
 """
 }]
 })
@@ -112,10 +117,14 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Calibrated Value = (Value + Offset)*Muliplier/Divisor
+Sets a calibration for the measured voltage value.
+The formula for the calibration is as follows:
 
-Hint: Use Brick Viewer
-TODO
+* Calibrated Value = (Value + Offset)*Muliplier/Divisor
+
+We recommend that you use the Brick Viewer to calibrate
+the Bricklet. The calibration will be saved and only
+has to be done once.
 """,
 'de':
 """
@@ -133,10 +142,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Returns the calibration as set by :func:`Set Calibration`.
 """,
 'de':
 """
+Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
 """
 }]
 })
@@ -144,17 +154,4 @@ TODO
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'mV', 'V', None)], [])]
-})
-
-com['examples'].append({
-'name': 'Callback',
-'functions': [('callback', ('Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'mV', 'V', None)], None, None),
-              ('callback_configuration', ('Voltage', 'voltage'), [], 1000, 'x', [(0, 0)])]
-})
-
-com['examples'].append({
-'name': 'Threshold',
-'functions': [('debounce_period', 10000),
-              ('callback', ('Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'mV', 'V', None)], None, None),
-              ('callback_configuration', ('Voltage', 'voltage'), [], 1000, 'o', [(5, 0)])]
 })
