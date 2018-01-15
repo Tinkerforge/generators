@@ -15,8 +15,8 @@ com = {
     'display_name': 'Motion Detector 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Passive infrared (PIR) motion sensor, 7m range',
-        'de': 'Passiver Infrarot (PIR) Bewegungssensor, 7m Reichweite'
+        'en': 'Passive infrared (PIR) motion sensor, 12m range',
+        'de': 'Passiver Infrarot (PIR) Bewegungssensor, 12m Reichweite'
     },
     'comcu': True,
     'released': False,
@@ -64,7 +64,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-0-100
+Sets the sensitivity of the PIR sensor. The range is 0-100. At full 
+sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.
+
+The range depends on many things in the enivronment (e.g. reflections) and the
+size of the object to be detected. While a big person might be detected in a range
+of 10m a cat may only be detected at 2m distance with the same setting.
+
+So you will have to find a good sensitivty for your application by trial and error.
+
+The default sensitivity value is 50.
 """,
 'de':
 """
@@ -80,6 +89,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the sensitivity as set by :func:`Set Sensitivity`.
 """,
 'de':
 """
@@ -97,6 +107,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the blue backlight of the fresnel lens. The backlight consists of
+three LEDs. The brightness of each LED can be controlled with a 8-bit value
+(0-255). A value of 0 turns the LED off and a value of 255 turns the LED
+to full brightness.
+
+The default value is 0, 0, 0.
 """,
 'de':
 """
@@ -114,6 +130,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the indicator configuration as set by :func:`Set Indicator`.
 """,
 'de':
 """
