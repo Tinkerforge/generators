@@ -18,8 +18,8 @@ com = {
     'display_name': 'Analog In 3.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Measures DC voltage between 0V and 42V',
+        'de': 'Misst Gleichspannung zwischen 0V und 42V'
     },
     'comcu': True,
     'released': False,
