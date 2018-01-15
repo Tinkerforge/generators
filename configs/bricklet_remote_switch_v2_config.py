@@ -269,6 +269,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the configuration for **receiving** data from a remote of type A, B or C.
+
+* Remote Type: Set to A, B or C depending on the type of remote you want to receive.
+* Minimum Repeats: The minimum number of repeated data packets until the callback is called (if enabled).
+* Callback Enabled: Enable or disable callback (see :cb:`Remote Status A`, :cb:`Remote Status B`, :cb:`Remote Status C`).
+
+Default is 'A', 2, false.
 """,
 'de':
 """
@@ -288,9 +295,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the remote configuration as set by :func:`Set Remote Configuration`
 """,
 'de':
 """
+Gibt die Konfiguration zurück wie von :func:`Set Remote Configuration` gesetzt.
 """
 }]
 })
@@ -308,6 +317,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the house code, receiver code, switch state (on/off) and number of repeats for
+remote type A.
+
+If repeats=0 there was no button press. If repeats >= 1 there
+was a button press with the specified house/receiver code. The repeates are the number of received
+identical data packets. The longer the button is pressed, the higher the repeat number.
+
+Use the callback to get this data automatically when a button is pressed, 
+see :func:`Set Remote Configuration` and :cb:`Remote Status A`.
 """,
 'de':
 """
@@ -328,12 +346,17 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-address = unique per remote with 26 bits
-unit =  button num
-switch all => unit = 255
-some b remotes cycle through different protocols and only send data once every ~second, in this case repeats = 1?
+Returns the address (unique per remote), unit (button number), switch state (on/off) and number of repeats for
+remote type B. 
 
-dim value > 1 if dimming, otherwise 0
+If the remote supporst dimming the dim value is used instead of the switch state.
+
+If repeats=0 there was no button press. If repeats >= 1 there
+was a button press with the specified address/unit. The repeates are the number of received
+identical data packets. The longer the button is pressed, the higher the repeat number.
+
+Use the callback to get this data automatically when a button is pressed, 
+see :func:`Set Remote Configuration` and :cb:`Remote Status B`.
 """,
 'de':
 """
@@ -354,6 +377,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the system code, device code, switch state (on/off) and number of repeats for
+remote type C.
+
+If repeats=0 there was no button press. If repeats >= 1 there
+was a button press with the specified system/device code. The repeates are the number of received
+identical data packets. The longer the button is pressed, the higher the repeat number.
+
+Use the callback to get this data automatically when a button is pressed, 
+see :func:`Set Remote Configuration` and :cb:`Remote Status C`.
 """,
 'de':
 """
@@ -373,6 +405,15 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+Returns the house code, receiver code, switch state (on/off) and number of repeats for
+remote type A.
+
+The repeates are the number of received identical data packets. The longer the button is pressed, 
+the higher the repeat number. The callback is called with every repeat.
+
+You have to enable the callback with :func:`Set Remote Configuration`. The number
+of repeats that you can set in the configuration is the minimum number of repeats that have
+to be seen before the callback is triggered.
 """,
 'de':
 """
@@ -393,6 +434,17 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+Returns the address (unique per remote), unit (button number), switch state (on/off) and number of repeats for
+remote type B. 
+
+If the remote supporst dimming the dim value is used instead of the switch state.
+
+The repeates are the number of received identical data packets. The longer the button is pressed, 
+the higher the repeat number. The callback is called with every repeat.
+
+You have to enable the callback with :func:`Set Remote Configuration`. The number
+of repeats that you can set in the configuration is the minimum number of repeats that have
+to be seen before the callback is triggered.
 """,
 'de':
 """
@@ -412,6 +464,15 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+Returns the system code, device code, switch state (on/off) and number of repeats for
+remote type C.
+
+The repeates are the number of received identical data packets. The longer the button is pressed,
+the higher the repeat number. The callback is called with every repeat.
+
+You have to enable the callback with :func:`Set Remote Configuration`. The number
+of repeats that you can set in the configuration is the minimum number of repeats that have
+to be seen before the callback is triggered.
 """,
 'de':
 """
