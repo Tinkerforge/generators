@@ -36,8 +36,8 @@ com = {
     'display_name': 'Outdoor Weather',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TODO',
-        'de': 'TODO'
+        'en': '433MHz receiver for outdoor weather station',
+        'de': '433MHz Empfänger für Außen-Wetterstation'
     },
     'comcu': True,
     'released': False,
@@ -57,6 +57,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the identifiers (number betwen 0 and 255) of all `stations <TBD>`__ that have been seen
+since the startup of the Bricklet.
+
+Each station gives itself a random identifier on first startup.
 """,
 'de':
 """
@@ -75,6 +79,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the Identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
+since the startup of the Bricklet.
+
+Each sensor gives itself a random identifier on first startup.
 """,
 'de':
 """
@@ -98,6 +106,20 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the last measured data for a station with the given identifier.
+Call :func:`Get Station Identifiers` for a list of all available identifiers.
+
+The return values are
+
+* Temperature in °C/10,
+* Humidity in %rel,
+* Wind Speed in m/10s,
+* Gust Speed in m/10s,
+* Rain Fall in mm/10,
+* Wind Direction (N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW),
+* Battery Low (true or false) and
+* Last Change (time in seconds since the last reception of data).
+
 """,
 'de':
 """
@@ -116,6 +138,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the last measured data for a sensor with the given identifier.
+Call :func:`Get Sensor Identifiers` for a list of all available identifiers.
+
+The return values are
+
+* Temperature in °C/10,
+* Humidity in %rel and
+* Last Change (time in seconds since the last reception of data).
+
 """,
 'de':
 """
@@ -132,6 +163,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Turns callback for station data on or off. Default is off.
 """,
 'de':
 """
@@ -147,6 +179,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Returns the configuration as set by :func:`Set Station Callback Configuration`.
 """,
 'de':
 """
@@ -162,6 +195,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Turns callback for sensor data on or off. Default is off.
 """,
 'de':
 """
@@ -177,6 +211,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Returns the configuration as set by :func:`Set Sensor Callback Configuration`.
 """,
 'de':
 """
@@ -199,8 +234,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-Called about every 45 seconds
-TODO
+Returns the station data every time a new data packet is received.
+See :func:`Get Station Data` for information about the data.
+
+For each station the callback will be called about every 45 seconds.
+
+Turn the callback on/off with :func:`Set Station Callback Configuration` (by default it is turned off).
 """,
 'de':
 """
@@ -219,8 +258,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-Called about every 45 seconds
-TODO
+Returns the sensor data every time a new data packet is received.
+See :func:`Get Sensor Data` for information about the data.
+
+For each station the callback will be called about every 45 seconds.
+
+Turn the callback on/off with :func:`Set Sensor Callback Configuration` (by default it is turned off).
 """,
 'de':
 """
