@@ -181,3 +181,9 @@ com['examples'].append({
 'functions': [('callback', ('Motion Detected', 'motion detected'), [], None, 'Motion Detected'),
               ('callback', ('Detection Cycle Ended', 'detection cycle ended'), [], None, 'Detection Cycle Ended (next detection possible in ~2 seconds)')]
 })
+
+com['examples'].append({
+'name': 'Indicator',
+'functions': [('setter', 'Set Indicator', [('uint8', 255), ('uint8', 255), ('uint8', 255)], 'Turn blue backlight LEDs on (maximum brightness)', None)]
+})
+
