@@ -273,7 +273,7 @@ Sets the configuration for **receiving** data from a remote of type A, B or C.
 
 * Remote Type: Set to A, B or C depending on the type of remote you want to receive.
 * Minimum Repeats: The minimum number of repeated data packets until the callback is called (if enabled).
-* Callback Enabled: Enable or disable callback (see :cb:`Remote Status A`, :cb:`Remote Status B`, :cb:`Remote Status C`).
+* Callback Enabled: Enable or disable callback (see :cb:`Remote Status A` callback, :cb:`Remote Status B` callback and :cb:`Remote Status C` callback).
 
 Default is 'A', 2, false.
 """,
@@ -304,7 +304,6 @@ Gibt die Konfiguration zurück wie von :func:`Set Remote Configuration` gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Remote Status A',
@@ -325,7 +324,7 @@ was a button press with the specified house/receiver code. The repeates are the 
 identical data packets. The longer the button is pressed, the higher the repeat number.
 
 Use the callback to get this data automatically when a button is pressed, 
-see :func:`Set Remote Configuration` and :cb:`Remote Status A`.
+see :func:`Set Remote Configuration` and :cb:`Remote Status A` callback.
 """,
 'de':
 """
@@ -356,7 +355,7 @@ was a button press with the specified address/unit. The repeates are the number 
 identical data packets. The longer the button is pressed, the higher the repeat number.
 
 Use the callback to get this data automatically when a button is pressed, 
-see :func:`Set Remote Configuration` and :cb:`Remote Status B`.
+see :func:`Set Remote Configuration` and :cb:`Remote Status B` callback.
 """,
 'de':
 """
@@ -385,7 +384,7 @@ was a button press with the specified system/device code. The repeates are the n
 identical data packets. The longer the button is pressed, the higher the repeat number.
 
 Use the callback to get this data automatically when a button is pressed, 
-see :func:`Set Remote Configuration` and :cb:`Remote Status C`.
+see :func:`Set Remote Configuration` and :cb:`Remote Status C` callback.
 """,
 'de':
 """
