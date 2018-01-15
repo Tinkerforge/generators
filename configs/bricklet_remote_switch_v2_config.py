@@ -487,8 +487,8 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Remote Status A', 'remote status a'),
-              [
+'functions': [('setter', 'Set Remote Configuration', [('uint8:constant', 0), ('uint8', 1), ('bool', 1)], 'Configure to receive from remote type A with minimum repeats set to 1 and enable callback', None),
+              ('callback', ('Remote Status A', 'remote status a'), [
                 (('House Code', 'House Code'), 'uint8', 1, None, None, None, None),
                 (('Receiver Code', 'Receiver Code'), 'uint8', 1, None, None, None, None),
                 (('Switch To', 'Switch To'), 'uint8', 1, None, None, None, None),
