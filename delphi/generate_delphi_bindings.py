@@ -428,9 +428,14 @@ begin
   apiVersion[2] := {3};
 
 """
+        stream_mutex = ''
         response_expected = ''
+        high_level_callback_state = ''
 
         for packet in self.get_packets('function'):
+            if packet.has_high_level():
+                stream_mutex = '  streamMutex := TCriticalSection.Create;\n\n'
+
             if len(packet.get_elements(direction='out')) > 0:
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
@@ -447,19 +452,16 @@ begin
         if len(response_expected) > 0:
             response_expected += '\n'
 
-        stream_mutex = ''
-        high_level_callback_state = ''
-
         for packet in self.get_packets('callback'):
             if not packet.has_high_level():
                 continue
 
+            stream_mutex = '  streamMutex := TCriticalSection.Create;\n\n'
             stream_out = packet.get_high_level('stream_out')
 
             if not stream_out:
                 continue
 
-            stream_mutex = '  streamMutex := TCriticalSection.Create;\n\n'
             high_level_callback_state += \
                 '  SetLength({0}HighLevelCallbackState.data, 0);\n\
   {0}HighLevelCallbackState.data := nil;\n\
