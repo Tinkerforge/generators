@@ -3,7 +3,7 @@
 
 """
 C/C++ Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_c_examples.py: Generator for C/C++ examples
 
@@ -41,8 +41,14 @@ class CTypeMixin(object):
         return type
 
 class CPrintfFormatMixin(object):
+    def get_c_printf_defines(self):
+        if self.get_type().split(':')[0].endswith('int64'):
+            return ['#define __STDC_FORMAT_MACROS // for PRId64/PRIu64 in C++']
+        else:
+            return []
+
     def get_c_printf_includes(self):
-        if self.get_type().split(':')[0] == 'int64':
+        if self.get_type().split(':')[0].endswith('int64'):
             return ['#include <inttypes.h>']
         else:
             return []
@@ -57,6 +63,10 @@ class CPrintfFormatMixin(object):
         elif type_ != 'float' and self.get_divisor() == None:
             if type_ == 'int64':
                 return '%" PRId64 "'
+            elif type_ == 'uint64':
+                return '%" PRIu64 "'
+            elif type_.startswith('uint'):
+                return '%u'
             else:
                 return '%d'
         else:
@@ -78,8 +88,8 @@ class CConstant(common.Constant):
 
 class CExample(common.Example):
     def get_c_source(self):
-        template = r"""#include <stdio.h>{includes}{incomplete}{description}
-{defines}
+        template = r"""{defines}#include <stdio.h>{includes}{incomplete}{description}
+
 #include "ip_connection.h"
 #include "{device_underscore_category}_{device_underscore_name}.h"
 
@@ -121,21 +131,21 @@ int main(void) {{
         else:
             description = ''
 
-        includes = []
         defines = []
+        includes = []
         functions = []
         sources = []
         cleanups = []
 
         for function in self.get_functions():
-            includes += function.get_c_includes()
             defines += function.get_c_defines()
+            includes += function.get_c_includes()
             functions.append(function.get_c_function())
             sources.append(function.get_c_source())
 
         for cleanup in self.get_cleanups():
-            includes += cleanup.get_c_includes()
             defines += cleanup.get_c_defines()
+            includes += cleanup.get_c_includes()
             functions.append(cleanup.get_c_function())
             cleanups.append(cleanup.get_c_source())
 
@@ -163,7 +173,8 @@ int main(void) {{
         while None in cleanups:
             cleanups.remove(None)
 
-        return template.format(includes=common.wrap_non_empty('\n', ''.join(unique_includes), ''),
+        return template.format(defines=common.wrap_non_empty('', '\n'.join(unique_defines), '\n\n'),
+                               includes=common.wrap_non_empty('\n', '\n'.join(unique_includes), ''),
                                incomplete=incomplete,
                                description=description,
                                device_underscore_category=self.get_device().get_underscore_category(),
@@ -172,7 +183,6 @@ int main(void) {{
                                device_initial_name=self.get_device().get_initial_name(),
                                device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
-                               defines=common.wrap_non_empty('\n', ''.join(unique_defines), ''),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
@@ -292,6 +302,14 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
                                unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'))
 
 class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixin):
+    def get_c_defines(self):
+        defines = []
+
+        for result in self.get_results():
+            defines += result.get_c_printf_defines()
+
+        return defines
+
     def get_c_includes(self):
         includes = []
 
@@ -299,9 +317,6 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
             includes += result.get_c_printf_includes()
 
         return includes
-
-    def get_c_defines(self):
-        return []
 
     def get_c_function(self):
         return None
@@ -357,10 +372,10 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         return common.break_string(result, '_{}('.format(self.get_underscore_name()))
 
 class CExampleSetterFunction(common.ExampleSetterFunction, CExampleArgumentsMixin):
-    def get_c_includes(self):
+    def get_c_defines(self):
         return []
 
-    def get_c_defines(self):
+    def get_c_includes(self):
         return []
 
     def get_c_function(self):
@@ -380,6 +395,14 @@ class CExampleSetterFunction(common.ExampleSetterFunction, CExampleArgumentsMixi
         return common.break_string(result, '_{}('.format(self.get_underscore_name()))
 
 class CExampleCallbackFunction(common.ExampleCallbackFunction):
+    def get_c_defines(self):
+        defines = []
+
+        for parameter in self.get_parameters():
+            defines += parameter.get_c_printf_defines()
+
+        return defines
+
     def get_c_includes(self):
         includes = []
 
@@ -387,9 +410,6 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
             includes += parameter.get_c_printf_includes()
 
         return includes
-
-    def get_c_defines(self):
-        return []
 
     def get_c_function(self):
         template1A = r"""// Callback function for {function_comment_name} callback{comments}
@@ -467,10 +487,10 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, '// ', extra='// ')
 
 class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, CExampleArgumentsMixin):
-    def get_c_includes(self):
+    def get_c_defines(self):
         return []
 
-    def get_c_defines(self):
+    def get_c_includes(self):
         return []
 
     def get_c_function(self):
@@ -510,10 +530,10 @@ class CExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresholdMin
                                maximum=self.get_formatted_maximum())
 
 class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, CExampleArgumentsMixin):
-    def get_c_includes(self):
+    def get_c_defines(self):
         return []
 
-    def get_c_defines(self):
+    def get_c_includes(self):
         return []
 
     def get_c_function(self):
@@ -544,10 +564,10 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
 class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, CExampleArgumentsMixin):
-    def get_c_includes(self):
+    def get_c_defines(self):
         return []
 
-    def get_c_defines(self):
+    def get_c_includes(self):
         return []
 
     def get_c_function(self):
@@ -597,14 +617,14 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
 class CExampleSpecialFunction(common.ExampleSpecialFunction):
-    def get_c_includes(self):
-        return []
-
     def get_c_defines(self):
         if self.get_type() == 'sleep':
-            return ['#define IPCON_EXPOSE_MILLISLEEP\n']
+            return ['#define IPCON_EXPOSE_MILLISLEEP']
         else:
             return []
+
+    def get_c_includes(self):
+        return []
 
     def get_c_function(self):
         return None
