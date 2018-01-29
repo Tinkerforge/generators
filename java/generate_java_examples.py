@@ -367,16 +367,16 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                device_camel_case_name=self.get_device().get_camel_case_name(),
-                                device_initial_name=self.get_device().get_initial_name(),
-                                function_camel_case_name=self.get_camel_case_name(),
-                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                parameters=',<BP>'.join(parameters),
-                                printlns='\n'.join(printlns),
-                                extra_message=extra_message)
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                  device_camel_case_name=self.get_device().get_camel_case_name(),
+                                  device_initial_name=self.get_device().get_initial_name(),
+                                  function_camel_case_name=self.get_camel_case_name(),
+                                  function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                  parameters=',<BP>'.join(parameters),
+                                  printlns='\n'.join(printlns),
+                                  extra_message=extra_message)
 
         return common.break_string(result, '{}('.format(self.get_headless_camel_case_name()))
 
