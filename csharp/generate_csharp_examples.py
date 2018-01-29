@@ -293,9 +293,12 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
             type1 = variable_declarations[i + 1][0]
 
             if type0 != type1:
-                merged_variable_declarations.append('; ' + ' '.join(variable_declarations[i + 1]))
+                merged_variable_declarations.append(';<BP>' + ' '.join(variable_declarations[i + 1]))
             else:
-                merged_variable_declarations.append(', ' + variable_declarations[i + 1][1])
+                merged_variable_declarations.append(',<BP>' + variable_declarations[i + 1][1])
+
+        variable_declarations = common.break_string(''.join(merged_variable_declarations),
+                                                    merged_variable_declarations[0].split(' ')[0] + ' ').replace('\n', '\n\t\t')
 
         while None in write_lines:
             write_lines.remove(None)
@@ -313,7 +316,7 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
                                  function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                  function_comment_name=self.get_comment_name(),
                                  comments=''.join(comments),
-                                 variable_declarations=''.join(merged_variable_declarations),
+                                 variable_declarations=variable_declarations,
                                  write_lines='\n'.join(write_lines),
                                  arguments=',<BP>'.join(arguments))
 

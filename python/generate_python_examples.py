@@ -258,13 +258,15 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         if len(prints) > 1:
             prints.insert(0, '')
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
-                               variables=', '.join(variables),
-                               prints='\n'.join(prints),
-                               arguments=', '.join(self.get_python_arguments()))
+        result = template.format(device_initial_name=self.get_device().get_initial_name(),
+                                 function_underscore_name=self.get_underscore_name(),
+                                 function_comment_name=self.get_comment_name(),
+                                 comments=''.join(comments),
+                                 variables=',<BP>'.join(variables),
+                                 prints='\n'.join(prints),
+                                 arguments=', '.join(self.get_python_arguments()))
+
+        return common.break_string(result, '    ', continuation=' \\', indent_suffix='  ')
 
 class PythonExampleSetterFunction(common.ExampleSetterFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):

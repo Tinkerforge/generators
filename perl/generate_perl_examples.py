@@ -242,7 +242,7 @@ class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumen
 
     def get_perl_source(self):
         template = r"""# Get current {function_comment_name}{comments}
-my {variables} = ${device_initial_name}->{function_underscore_name}({arguments});
+{variables} = ${device_initial_name}->{function_underscore_name}({arguments});
 {prints}
 """
         comments = []
@@ -255,9 +255,9 @@ my {variables} = ${device_initial_name}->{function_underscore_name}({arguments})
             prints += result.get_perl_prints()
 
         if len(variables) > 1:
-            variables = '(' + ', '.join(variables) + ')'
+            variables = common.break_string('my (' + ',<BP>'.join(variables) + ')', 'my (')
         else:
-            variables = variables[0]
+            variables = 'my ' + variables[0]
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]

@@ -380,9 +380,12 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
             type1 = variable_declarations[i + 1][0]
 
             if type0 != type1:
-                merged_variable_declarations.append('; ' + ' '.join(variable_declarations[i + 1]))
+                merged_variable_declarations.append(';<BP>' + ' '.join(variable_declarations[i + 1]))
             else:
-                merged_variable_declarations.append(', ' + variable_declarations[i + 1][1])
+                merged_variable_declarations.append(',<BP>' + variable_declarations[i + 1][1])
+
+        variable_declarations = common.break_string(''.join(merged_variable_declarations),
+                                                    merged_variable_declarations[0].split(' ')[0] + ' ').replace('\n', '\n\t')
 
         while None in printfs:
             printfs.remove(None)
@@ -392,7 +395,7 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
                                  function_comment_name=self.get_comment_name(),
                                  function_underscore_name=self.get_underscore_name(),
                                  comments=''.join(comments),
-                                 variable_declarations=''.join(merged_variable_declarations),
+                                 variable_declarations=variable_declarations,
                                  variable_references=',<BP>' + ',<BP>'.join(variable_references),
                                  printfs='\n'.join(printfs),
                                  arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''))

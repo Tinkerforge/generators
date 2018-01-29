@@ -154,11 +154,11 @@ end.
                 type1 = variable_declarations[i - 1][1]
 
                 if type0 != type1:
-                    merged_variable_declarations.insert(0, ': '.join(variable_declarations[i - 1]) + '; ')
+                    merged_variable_declarations.insert(0, ': '.join(variable_declarations[i - 1]) + ';<BP>')
                 else:
-                    merged_variable_declarations.insert(0, variable_declarations[i - 1][0] + ', ')
+                    merged_variable_declarations.insert(0, variable_declarations[i - 1][0] + ',<BP>')
 
-            variable_declarations = ''.join(merged_variable_declarations)
+            variable_declarations = common.break_string('var ' + ''.join(merged_variable_declarations), 'var ')
         else:
             variable_declarations = ''
 
@@ -172,7 +172,7 @@ end.
                                dummy_uid=self.get_dummy_uid(),
                                prototypes=common.wrap_non_empty('\n', '\n'.join(prototypes), ''),
                                procedures=common.wrap_non_empty('\n', '\n'.join(procedures), ''),
-                               variable_declarations=common.wrap_non_empty('\nvar ', variable_declarations, ';'),
+                               variable_declarations=common.wrap_non_empty('\n', variable_declarations, ';'),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
 
@@ -363,14 +363,15 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
             arguments += variable_names
             variable_names = []
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
-                               variable_names=''.join(variable_names),
-                               write_lns='\n'.join(write_lns),
-                               arguments=common.wrap_non_empty('(', ', '.join(arguments), ')'))
+        result = template.format(device_initial_name=self.get_device().get_initial_name(),
+                                 function_camel_case_name=self.get_camel_case_name(),
+                                 function_comment_name=self.get_comment_name(),
+                                 comments=''.join(comments),
+                                 variable_names=''.join(variable_names),
+                                 write_lns='\n'.join(write_lns),
+                                 arguments=common.wrap_non_empty('(', ',<BP>'.join(arguments), ')'))
+
+        return common.break_string(result, '.{0}('.format(self.get_camel_case_name()))
 
 class DelphiExampleSetterFunction(common.ExampleSetterFunction, DelphiExampleArgumentsMixin):
     def get_delphi_prototype(self):
