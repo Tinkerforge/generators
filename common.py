@@ -1905,8 +1905,31 @@ class ExampleParameter(ExampleItem, NameMixin):
     def _get_name(self): # for NameMixin
         return self.raw_data[0][0]
 
-    def get_label_name(self):
-        return self.raw_data[0][1]
+    def get_label_count(self):
+        label = self.raw_data[0][1]
+
+        if label == None:
+            return 0
+        elif isinstance(label, str):
+            return 1
+        elif isinstance(label, list):
+            if self.get_cardinality() != len(label):
+                raise GeneratorError('Invalid label count')
+
+            return len(label)
+        else:
+            raise GeneratorError('Invalid label type: ' + type(label))
+
+    def get_label_name(self, index=0):
+        label = self.raw_data[0][1]
+
+        if label == None or isinstance(label, str):
+            if index != 0:
+                raise GeneratorError('Invalid index: ' + str(index))
+
+            return label
+
+        return label[index]
 
     def get_type(self):
         return self.raw_data[1]
@@ -1984,8 +2007,31 @@ class ExampleResult(ExampleItem, NameMixin):
     def _get_name(self): # for NameMixin
         return self.raw_data[0][0]
 
-    def get_label_name(self):
-        return self.raw_data[0][1]
+    def get_label_count(self):
+        label = self.raw_data[0][1]
+
+        if label == None:
+            return 0
+        elif isinstance(label, str):
+            return 1
+        elif isinstance(label, list):
+            if self.get_cardinality() != len(label):
+                raise GeneratorError('Invalid label count')
+
+            return len(label)
+        else:
+            raise GeneratorError('Invalid label type: ' + type(label))
+
+    def get_label_name(self, index=0):
+        label = self.raw_data[0][1]
+
+        if label == None or isinstance(label, str):
+            if index != 0:
+                raise GeneratorError('Invalid index: ' + str(index))
+
+            return label
+
+        return label[index]
 
     def get_type(self):
         return self.raw_data[1]

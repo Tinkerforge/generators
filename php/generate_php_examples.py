@@ -3,7 +3,7 @@
 
 """
 PHP Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_php_examples.py: Generator for PHP examples
 
@@ -149,12 +149,15 @@ class PHPExampleParameter(common.ExampleParameter):
 
         return template.format(underscore_name=self.get_underscore_name())
 
-    def get_php_echo(self):
-        templateA = '    echo "{label_name}: " . {sprintf_prefix}${underscore_name}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
+    def get_php_echos(self):
+        templateA = '    echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
         templateB = '    echo "{label_name}: ${underscore_name}{unit_final_name}\\n";'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         type_ = self.get_type()
         divisor = self.get_formatted_divisor('/{0}')
@@ -170,12 +173,18 @@ class PHPExampleParameter(common.ExampleParameter):
         else:
             template = templateB
 
-        return template.format(underscore_name=self.get_underscore_name(),
-                               label_name=self.get_label_name(),
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}'),
-                               sprintf_prefix=sprintf_prefix,
-                               sprintf_suffix=sprintf_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=self.get_underscore_name(),
+                                          label_name=self.get_label_name(index=index),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          sprintf_prefix=sprintf_prefix,
+                                          sprintf_suffix=sprintf_suffix))
+
+        return result
 
 class PHPExampleResult(common.ExampleResult):
     def get_php_variable(self):
@@ -187,12 +196,15 @@ class PHPExampleResult(common.ExampleResult):
 
         return template.format(underscore_name=underscore_name)
 
-    def get_php_echo(self):
-        templateA = 'echo "{label_name}: " . {sprintf_prefix}${underscore_name}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
+    def get_php_echos(self):
+        templateA = 'echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
         templateB = 'echo "{label_name}: ${underscore_name}{unit_final_name}\\n";'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         underscore_name = self.get_underscore_name()
         divisor = self.get_formatted_divisor('/{0}')
@@ -210,21 +222,28 @@ class PHPExampleResult(common.ExampleResult):
                 template = templateB
 
         type_ = self.get_type()
+        sprintf_prefix = ''
+        sprintf_suffix = ''
 
         if ':bitmask:' in type_:
             template = templateA
             sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type_.split(':')[2]))
             sprintf_suffix = ')'
-        else:
-            sprintf_prefix = ''
-            sprintf_suffix = ''
+        elif self.get_label_count() > 1:
+            template = templateA
 
-        return template.format(underscore_name=underscore_name,
-                               label_name=self.get_label_name(),
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}'),
-                               sprintf_prefix=sprintf_prefix,
-                               sprintf_suffix=sprintf_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=underscore_name,
+                                          label_name=self.get_label_name(index=index),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          sprintf_prefix=sprintf_prefix,
+                                          sprintf_suffix=sprintf_suffix))
+
+        return result
 
 class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):
@@ -242,7 +261,7 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variables.append(result.get_php_variable())
-            echos.append(result.get_php_echo())
+            echos += result.get_php_echos()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -307,7 +326,7 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_php_source())
-            echos.append(parameter.get_php_echo())
+            echos += parameter.get_php_echos()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

@@ -3,7 +3,7 @@
 
 """
 MATLAB/Octave Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_examples.py: Generator for MATLAB/Octave examples
 
@@ -269,11 +269,14 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
 
         return False
 
-    def get_matlab_fprintf(self):
-        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_final_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{headless_camel_case_name}{java2int_suffix}{divisor}{to_binary_suffix});"
+    def get_matlab_fprintfs(self):
+        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_final_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});"
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         if self.needs_octave_java2int():
             java2int_prefix = 'java2int('
@@ -293,16 +296,22 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
             to_binary_prefix = ''
             to_binary_suffix = ''
 
-        return template.format(global_quote=global_quote,
-                               headless_camel_case_name=self.get_headless_camel_case_name(),
-                               label_name=self.get_label_name().replace('%', '%%'),
-                               fprintf_format=self.get_matlab_fprintf_format(),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'),
-                               java2int_prefix=java2int_prefix,
-                               java2int_suffix=java2int_suffix,
-                               to_binary_prefix=to_binary_prefix,
-                               to_binary_suffix=to_binary_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(global_quote=global_quote,
+                                          headless_camel_case_name=self.get_headless_camel_case_name(),
+                                          label_name=self.get_label_name(index=index).replace('%', '%%'),
+                                          fprintf_format=self.get_matlab_fprintf_format(),
+                                          index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'),
+                                          java2int_prefix=java2int_prefix,
+                                          java2int_suffix=java2int_suffix,
+                                          to_binary_prefix=to_binary_prefix,
+                                          to_binary_suffix=to_binary_suffix))
+
+        return result
 
 class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
     def needs_octave_java2int(self):
@@ -322,11 +331,14 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
 
         return headless_camel_case_name
 
-    def get_matlab_fprintf(self):
-        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_final_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{headless_camel_case_name}{java2int_suffix}{divisor}{to_binary_suffix});"
+    def get_matlab_fprintfs(self):
+        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_final_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});"
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         headless_camel_case_name = self.get_headless_camel_case_name()
 
@@ -356,17 +368,23 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
             to_binary_prefix = ''
             to_binary_suffix = ''
 
-        return template.format(global_quote=global_quote,
-                               headless_camel_case_name=headless_camel_case_name,
-                               label_name=self.get_label_name().replace('%', '%%'),
-                               fprintf_format=self.get_matlab_fprintf_format(),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'),
-                               object_prefix=object_prefix,
-                               java2int_prefix=java2int_prefix,
-                               java2int_suffix=java2int_suffix,
-                               to_binary_prefix=to_binary_prefix,
-                               to_binary_suffix=to_binary_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(global_quote=global_quote,
+                                          headless_camel_case_name=headless_camel_case_name,
+                                          label_name=self.get_label_name(index=index).replace('%', '%%'),
+                                          fprintf_format=self.get_matlab_fprintf_format(),
+                                          index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'),
+                                          object_prefix=object_prefix,
+                                          java2int_prefix=java2int_prefix,
+                                          java2int_suffix=java2int_suffix,
+                                          to_binary_prefix=to_binary_prefix,
+                                          to_binary_suffix=to_binary_suffix))
+
+        return result
 
 class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):
@@ -389,7 +407,7 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variables.append(result.get_matlab_variable())
-            fprintfs.append(result.get_matlab_fprintf())
+            fprintfs += result.get_matlab_fprintfs()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -459,7 +477,7 @@ end
 
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
-            fprintfs.append(parameter.get_matlab_fprintf())
+            fprintfs += parameter.get_matlab_fprintfs()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

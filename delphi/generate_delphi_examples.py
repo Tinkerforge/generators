@@ -3,7 +3,7 @@
 
 """
 Delphi/Lazarus Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_delphi_examples.py: Generator for Delphi/Lazarus examples
 
@@ -222,34 +222,56 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
                                array_end=self.get_cardinality() - 1,
                                headless_camel_case_name=headless_camel_case_name)
 
-    def get_delphi_write_ln(self):
+    def get_delphi_write_lns(self):
         # FIXME: the parameter type can indicate a bitmask, but there is no easy way in Delphi
         #        to format an integer in base-2, that doesn't require open-coding it with several
         #        lines of code. so just print the integer in base-10 the normal way
-        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_final_name}', [{headless_camel_case_name}{divisor}]));"
+        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_final_name}', [{headless_camel_case_name}{index}{divisor}]));"
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         headless_camel_case_name = self.get_headless_camel_case_name()
 
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return template.format(headless_camel_case_name=headless_camel_case_name,
-                               label_name=self.get_label_name().replace('%', '%%'),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               printf_format=self.get_delphi_printf_format(),
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'))
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(headless_camel_case_name=headless_camel_case_name,
+                                          label_name=self.get_label_name(index=index).replace('%', '%%'),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          printf_format=self.get_delphi_printf_format(),
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%')))
+
+        return result
 
 class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
     def get_delphi_variable_declaration(self):
+        templateA = '{type0}'
+        templateB = 'TArray0To{array_end}Of{type1}'
+        templateC = 'array of {type0}'
+
+        if self.get_cardinality() == 1:
+            template = templateA
+        elif self.get_cardinality() > 1:
+            template = templateB
+        else: # cardinality < 0
+            template = templateC
+
         headless_camel_case_name = self.get_headless_camel_case_name()
 
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return headless_camel_case_name, delphi_common.get_delphi_type(self.get_type().split(':')[0])[0]
+        return headless_camel_case_name, template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
+                                                         type1=delphi_common.get_delphi_type(self.get_type().split(':')[0])[1],
+                                                         array_end=self.get_cardinality() - 1)
 
     def get_delphi_variable_name(self):
         headless_camel_case_name = self.get_headless_camel_case_name()
@@ -259,25 +281,34 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
 
         return headless_camel_case_name
 
-    def get_delphi_write_ln(self):
+    def get_delphi_write_lns(self):
         # FIXME: the result type can indicate a bitmask, but there is no easy way in Delphi
         #        to format an integer in base-2, that doesn't require open-coding it with several
         #        lines of code. so just print the integer in base-10 the normal way
-        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_final_name}', [{headless_camel_case_name}{divisor}]));"
+        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_final_name}', [{headless_camel_case_name}{index}{divisor}]));"
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         headless_camel_case_name = self.get_headless_camel_case_name()
 
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return template.format(headless_camel_case_name=headless_camel_case_name,
-                               label_name=self.get_label_name().replace('%', '%%'),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               printf_format=self.get_delphi_printf_format(),
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'))
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(headless_camel_case_name=headless_camel_case_name,
+                                          label_name=self.get_label_name(index=index).replace('%', '%%'),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          printf_format=self.get_delphi_printf_format(),
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%')))
+
+        return result
 
 class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfFormatMixin, DelphiExampleArgumentsMixin):
     def get_delphi_prototype(self):
@@ -310,7 +341,7 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variable_names.append(result.get_delphi_variable_name())
-            write_lns.append(result.get_delphi_write_ln())
+            write_lns += result.get_delphi_write_lns()
 
         if len(variable_names) == 1:
             template = templateA
@@ -402,7 +433,7 @@ end;
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_delphi_source())
-            write_lns.append(parameter.get_delphi_write_ln())
+            write_lns += parameter.get_delphi_write_lns()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

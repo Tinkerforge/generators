@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_vbnet_examples.py: Generator for Visual Basic .NET examples
 
@@ -175,11 +175,14 @@ class VBNETExampleParameter(common.ExampleParameter):
         return template.format(type=get_vbnet_type(self.get_type().split(':')[0]),
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
-    def get_vbnet_write_line(self):
-        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{divisor}{to_string_suffix}{unit_final_name})'
+    def get_vbnet_write_lines(self):
+        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{index}{divisor}{to_string_suffix}{unit_final_name})'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         type_ = self.get_type()
         divisor = self.get_formatted_divisor('/{0}')
@@ -199,12 +202,18 @@ class VBNETExampleParameter(common.ExampleParameter):
             to_string_prefix = ''
             to_string_suffix = '.ToString()'
 
-        return template.format(headless_camel_case_name=self.get_headless_camel_case_name(),
-                               label_name=self.get_label_name(),
-                               to_string_prefix=to_string_prefix,
-                               to_string_suffix=to_string_suffix,
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'))
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(headless_camel_case_name=self.get_headless_camel_case_name(),
+                                          label_name=self.get_label_name(index=index),
+                                          index='({0})'.format(index) if self.get_label_count() > 1 else '',
+                                          to_string_prefix=to_string_prefix,
+                                          to_string_suffix=to_string_suffix,
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"')))
+
+        return result
 
 class VBNETExampleResult(common.ExampleResult):
     def get_vbnet_variable_declaration(self):
@@ -225,11 +234,14 @@ class VBNETExampleResult(common.ExampleResult):
 
         return headless_camel_case_name
 
-    def get_vbnet_write_line(self):
-        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{divisor}{to_string_suffix}{unit_final_name})'
+    def get_vbnet_write_lines(self):
+        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{index}{divisor}{to_string_suffix}{unit_final_name})'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         headless_camel_case_name = self.get_headless_camel_case_name()
 
@@ -254,12 +266,18 @@ class VBNETExampleResult(common.ExampleResult):
             to_string_prefix = ''
             to_string_suffix = '.ToString()'
 
-        return template.format(headless_camel_case_name=headless_camel_case_name,
-                               label_name=self.get_label_name(),
-                               to_string_prefix=to_string_prefix,
-                               to_string_suffix=to_string_suffix,
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'))
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(headless_camel_case_name=headless_camel_case_name,
+                                          label_name=self.get_label_name(index=index),
+                                          index='({0})'.format(index) if self.get_label_count() > 1 else '',
+                                          to_string_prefix=to_string_prefix,
+                                          to_string_suffix=to_string_suffix,
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"')))
+
+        return result
 
 class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
@@ -288,7 +306,7 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
             comments.append(result.get_formatted_comment())
             variable_declarations.append(result.get_vbnet_variable_declaration())
             variable_references.append(result.get_vbnet_variable_reference())
-            write_lines.append(result.get_vbnet_write_line())
+            write_lines += result.get_vbnet_write_lines()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -366,7 +384,7 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_vbnet_source())
-            write_lines.append(parameter.get_vbnet_write_line())
+            write_lines += parameter.get_vbnet_write_lines()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

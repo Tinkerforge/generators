@@ -3,7 +3,7 @@
 
 """
 JavaScript Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_examples.py: Generator for JavaScript examples
 
@@ -312,11 +312,14 @@ class JavaScriptExampleParameter(common.ExampleParameter):
     def get_javascript_source(self):
         return self.get_headless_camel_case_name()
 
-    def get_javascript_output(self):
-        template = "        {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{divisor}{to_binary_suffix}{unit_final_name}{global_output_suffix};"
+    def get_javascript_outputs(self):
+        template = "        {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_final_name}{global_output_suffix};"
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         divisor = self.get_formatted_divisor('/{0}')
 
@@ -333,24 +336,33 @@ class JavaScriptExampleParameter(common.ExampleParameter):
             to_binary_prefix = ''
             to_binary_suffix = ''
 
-        return template.format(global_output_prefix=global_output_prefix,
-                               global_output_suffix=global_output_suffix,
-                               headless_camel_case_name=self.get_headless_camel_case_name(),
-                               label_name=self.get_label_name(),
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(" + ' {0}'"),
-                               to_binary_prefix=to_binary_prefix,
-                               to_binary_suffix=to_binary_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(global_output_prefix=global_output_prefix,
+                                          global_output_suffix=global_output_suffix,
+                                          headless_camel_case_name=self.get_headless_camel_case_name(),
+                                          label_name=self.get_label_name(index=index),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(" + ' {0}'"),
+                                          to_binary_prefix=to_binary_prefix,
+                                          to_binary_suffix=to_binary_suffix))
+
+        return result
 
 class JavaScriptExampleResult(common.ExampleResult):
     def get_javascript_source(self):
         return self.get_headless_camel_case_name()
 
-    def get_javascript_output(self):
-        template = "{global_line_prefix}                {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{divisor}{to_binary_suffix}{unit_final_name}{global_output_suffix};"
+    def get_javascript_outputs(self):
+        template = "{global_line_prefix}                {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_final_name}{global_output_suffix};"
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         divisor = self.get_formatted_divisor('/{0}')
 
@@ -367,15 +379,21 @@ class JavaScriptExampleResult(common.ExampleResult):
             to_binary_prefix = ''
             to_binary_suffix = ''
 
-        return template.format(global_line_prefix=global_line_prefix,
-                               global_output_prefix=global_output_prefix,
-                               global_output_suffix=global_output_suffix,
-                               headless_camel_case_name=self.get_headless_camel_case_name(),
-                               label_name=self.get_label_name(),
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(" + ' {0}'"),
-                               to_binary_prefix=to_binary_prefix,
-                               to_binary_suffix=to_binary_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(global_line_prefix=global_line_prefix,
+                                          global_output_prefix=global_output_prefix,
+                                          global_output_suffix=global_output_suffix,
+                                          headless_camel_case_name=self.get_headless_camel_case_name(),
+                                          label_name=self.get_label_name(index=index),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(" + ' {0}'"),
+                                          to_binary_prefix=to_binary_prefix,
+                                          to_binary_suffix=to_binary_suffix))
+
+        return result
 
 class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptExampleArgumentsMixin):
     def get_javascript_function(self):
@@ -399,7 +417,7 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptEx
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variables.append(result.get_javascript_source())
-            outputs.append(result.get_javascript_output())
+            outputs += result.get_javascript_outputs()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -462,7 +480,7 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_javascript_source())
-            outputs.append(parameter.get_javascript_output())
+            outputs += parameter.get_javascript_outputs()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

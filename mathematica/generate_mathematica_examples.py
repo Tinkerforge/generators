@@ -3,7 +3,7 @@
 
 """
 Mathematica Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_mathematica_examples.py: Generator for Mathematica examples
 
@@ -161,18 +161,21 @@ class MathematicaExampleParameter(common.ExampleParameter):
         else:
             return 'FIXME_'
 
-    def get_mathematica_print(self):
-        templateA = ' Print["{label_name}: "<>ToString[N[Quantity[{headless_camel_case_name},"{quantity_name}"]]]]'
-        templateB = ' Print["{label_name}: "<>ToString[N[{headless_camel_case_name}/{divisor}]]]'
-        templateC = ' Print["{label_name}: "<>FromCharacterCode[{headless_camel_case_name}]]'
-        templateD = ' Print["{label_name}: "<>StringJoin[Map[ToString,IntegerDigits[{headless_camel_case_name},2,{bitmask_length}]]]]'
-        templateE = ' Print["{label_name}: "<>ToString[{headless_camel_case_name}]]'
+    def get_mathematica_prints(self):
+        templateA = ' Print["{label_name}: "<>ToString[N[Quantity[{headless_camel_case_name}{index},"{quantity_name}"]]]]'
+        templateB = ' Print["{label_name}: "<>ToString[N[{headless_camel_case_name}{index}/{divisor}]]]'
+        templateC = ' Print["{label_name}: "<>FromCharacterCode[{headless_camel_case_name}{index}]]'
+        templateD = ' Print["{label_name}: "<>StringJoin[Map[ToString,IntegerDigits[{headless_camel_case_name}{index},2,{bitmask_length}]]]]'
+        templateE = ' Print["{label_name}: "<>ToString[{headless_camel_case_name}{index}]]'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         type_ = self.get_type()
-        quantity_name = self.get_unit_formatted_final_name('{0}' + self.get_formatted_divisor('/{0}', cast=int))
+        quantity_name = self.get_unit_formatted_final_name('{0}' + self.get_formatted_divisor('/{0}', cast=int)) # FIXME: move divisor out of quantity name
         divisor = self.get_formatted_divisor('{0}')
         bitmask_length = 0
 
@@ -188,11 +191,17 @@ class MathematicaExampleParameter(common.ExampleParameter):
         else:
             template = templateE
 
-        return template.format(headless_camel_case_name=self.get_headless_camel_case_name(),
-                               label_name=self.get_label_name(),
-                               quantity_name=quantity_name,
-                               divisor=divisor,
-                               bitmask_length=bitmask_length)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(headless_camel_case_name=self.get_headless_camel_case_name(),
+                                          label_name=self.get_label_name(index=index),
+                                          quantity_name=quantity_name,
+                                          index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          bitmask_length=bitmask_length))
+
+        return result
 
 class MathematicaExampleResult(common.ExampleResult):
     def get_mathematica_variable_name(self):
@@ -203,15 +212,18 @@ class MathematicaExampleResult(common.ExampleResult):
 
         return headless_camel_case_name
 
-    def get_mathematica_print(self, getter_call=None):
-        templateA = 'Print["{label_name}: "<>ToString[N[Quantity[{value},"{quantity_name}"]]]]'
-        templateB = 'Print["{label_name}: "<>ToString[N[{value}/{divisor}]]]'
-        templateC = 'Print["{label_name}: "<>FromCharacterCode[{value}]]'
-        templateD = 'Print["{label_name}: "<>StringJoin[Map[ToString,IntegerDigits[{value},2,{bitmask_length}]]]]'
-        templateE = 'Print["{label_name}: "<>ToString[{value}]]'
+    def get_mathematica_prints(self, getter_call=None):
+        templateA = 'Print["{label_name}: "<>ToString[N[Quantity[{value}{index},"{quantity_name}"]]]]'
+        templateB = 'Print["{label_name}: "<>ToString[N[{value}{index}/{divisor}]]]'
+        templateC = 'Print["{label_name}: "<>FromCharacterCode[{value}{index}]]'
+        templateD = 'Print["{label_name}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]'
+        templateE = 'Print["{label_name}: "<>ToString[{value}{index}]]'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         if getter_call != None:
             value = getter_call
@@ -240,11 +252,17 @@ class MathematicaExampleResult(common.ExampleResult):
         else:
             template = templateE
 
-        return template.format(value=value,
-                               label_name=self.get_label_name(),
-                               quantity_name=quantity_name,
-                               divisor=divisor,
-                               bitmask_length=bitmask_length)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(value=value,
+                                          label_name=self.get_label_name(index=index),
+                                          quantity_name=quantity_name,
+                                          index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          bitmask_length=bitmask_length))
+
+        return result
 
 class MathematicaExampleGetterFunction(common.ExampleGetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
@@ -274,7 +292,7 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variable_names.append(result.get_mathematica_variable_name())
-            prints.append(result.get_mathematica_print(getter_call))
+            prints += result.get_mathematica_prints(getter_call)
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -351,7 +369,7 @@ AddEventHandler[{device_initial_name}@{function_camel_case_name}Callback,{functi
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_mathematica_source())
-            prints.append(parameter.get_mathematica_print())
+            prints += parameter.get_mathematica_prints()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

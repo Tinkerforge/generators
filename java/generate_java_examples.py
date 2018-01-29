@@ -3,7 +3,7 @@
 
 """
 Java Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_java_examples.py: Generator for Java examples
 
@@ -174,11 +174,14 @@ class JavaExampleParameter(common.ExampleParameter):
         return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
-    def get_java_println(self):
-        template = '\t\t\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{divisor}{to_binary_suffix}{unit_final_name});'
+    def get_java_printlns(self):
+        template = '\t\t\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_final_name});'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         # FIXME: Integer.toBinaryString() doesn't support leading zeros. therefore,
         #        the result is not padded to the requested number of digits
@@ -189,12 +192,18 @@ class JavaExampleParameter(common.ExampleParameter):
             to_binary_prefix = ''
             to_binary_suffix = ''
 
-        return template.format(headless_camel_case_name=self.get_headless_camel_case_name(),
-                               label_name=self.get_label_name(),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
-                               to_binary_prefix=to_binary_prefix,
-                               to_binary_suffix=to_binary_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(headless_camel_case_name=self.get_headless_camel_case_name(),
+                                          label_name=self.get_label_name(index=index),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                                          to_binary_prefix=to_binary_prefix,
+                                          to_binary_suffix=to_binary_suffix))
+
+        return result
 
 class JavaExampleResult(common.ExampleResult):
     def get_java_variable(self):
@@ -207,11 +216,14 @@ class JavaExampleResult(common.ExampleResult):
         return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
                                headless_camel_case_name=headless_camel_case_name)
 
-    def get_java_println(self):
-        template = '\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{object_prefix}{headless_camel_case_name}{divisor}{to_binary_suffix}{unit_final_name});'
+    def get_java_printlns(self):
+        template = '\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{object_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_final_name});'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         headless_camel_case_name = self.get_headless_camel_case_name()
 
@@ -232,13 +244,19 @@ class JavaExampleResult(common.ExampleResult):
             to_binary_prefix = ''
             to_binary_suffix = ''
 
-        return template.format(headless_camel_case_name=headless_camel_case_name,
-                               label_name=self.get_label_name(),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
-                               object_prefix=object_prefix,
-                               to_binary_prefix=to_binary_prefix,
-                               to_binary_suffix=to_binary_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(headless_camel_case_name=headless_camel_case_name,
+                                          label_name=self.get_label_name(),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                                          object_prefix=object_prefix,
+                                          to_binary_prefix=to_binary_prefix,
+                                          to_binary_suffix=to_binary_suffix))
+
+        return result
 
 class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):
@@ -263,7 +281,7 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variables.append(result.get_java_variable())
-            printlns.append(result.get_java_println())
+            printlns += result.get_java_printlns()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -332,7 +350,7 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_java_source())
-            printlns.append(parameter.get_java_println())
+            printlns += parameter.get_java_printlns()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

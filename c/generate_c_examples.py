@@ -238,22 +238,31 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         else:
             return None
 
-    def get_c_printf(self):
+    def get_c_printfs(self):
         # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
         #        integer in base-2, that doesn't require open-coding it with several lines of code.
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_final_name}\\n", {underscore_name}{divisor});'
+        template = '\tprintf("{label_name}: {printf_format}{unit_final_name}\\n", {underscore_name}{index}{divisor});'
 
         if self.get_label_name() == None:
-            return None
+            return []
 
-        return template.format(underscore_name=self.get_underscore_name(),
-                               label_name=self.get_label_name().replace('%', '%%'),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               printf_format=self.get_c_printf_format(),
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'))
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
+
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=self.get_underscore_name(),
+                                          label_name=self.get_label_name(index=index).replace('%', '%%'),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          printf_format=self.get_c_printf_format(),
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%')))
+
+        return result
 
 class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
     def get_c_variable_declaration(self):
@@ -262,10 +271,20 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         if underscore_name == self.get_device().get_initial_name():
             underscore_name += '_'
 
+        if self.get_cardinality() > 1:
+            underscore_name += '[{0}]'.format(self.get_cardinality())
+
         return self.get_c_type(), underscore_name
 
     def get_c_variable_reference(self):
-        template = '&{underscore_name}'
+        templateA = '{underscore_name}'
+        templateB = '&{underscore_name}'
+
+        if self.get_cardinality() > 1:
+            template = templateA
+        else:
+            template = templateB
+
         underscore_name = self.get_underscore_name()
 
         if underscore_name == self.get_device().get_initial_name():
@@ -279,27 +298,36 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         else:
             return None
 
-    def get_c_printf(self):
+    def get_c_printfs(self):
         # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
         #        integer in base-2, that doesn't require open-coding it with several lines of code.
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_final_name}\\n", {underscore_name}{divisor});'
+        template = '\tprintf("{label_name}: {printf_format}{unit_final_name}\\n", {underscore_name}{index}{divisor});'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
+
+        result = []
 
         underscore_name = self.get_underscore_name()
 
         if underscore_name == self.get_device().get_initial_name():
             underscore_name += '_'
 
-        return template.format(underscore_name=underscore_name,
-                               label_name=self.get_label_name().replace('%', '%%'),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               printf_format=self.get_c_printf_format(),
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'))
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=underscore_name,
+                                          label_name=self.get_label_name(index=index).replace('%', '%%'),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          printf_format=self.get_c_printf_format(),
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%')))
+
+        return result
 
 class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixin):
     def get_c_defines(self):
@@ -340,7 +368,7 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
             comments.append(result.get_formatted_comment())
             variable_declarations.append(result.get_c_variable_declaration())
             variable_references.append(result.get_c_variable_reference())
-            printfs.append(result.get_c_printf())
+            printfs += result.get_c_printfs()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -438,7 +466,7 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_c_source())
             unuseds.append(parameter.get_c_unused())
-            printfs.append(parameter.get_c_printf())
+            printfs += parameter.get_c_printfs()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

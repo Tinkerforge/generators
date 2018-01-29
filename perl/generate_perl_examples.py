@@ -3,7 +3,7 @@
 
 """
 Perl Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_perl_examples.py: Generator for Perl examples
 
@@ -137,33 +137,47 @@ class PerlExampleParameter(common.ExampleParameter):
 
         return template.format(underscore_name=self.get_underscore_name())
 
-    def get_perl_print(self):
-        templateA = '    print "{label_name}: " . {sprintf_prefix}${underscore_name}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
+    def get_perl_prints(self):
+        templateA = '    print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
         templateB = '    print "{label_name}: ${underscore_name}{unit_final_name}\\n";'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         type_ = self.get_type()
         divisor = self.get_formatted_divisor('/{0}')
         sprintf_prefix = ''
         sprintf_suffix = ''
+        index_prefix = ''
 
         if ':bitmask:' in type_:
             template = templateA
             sprintf_prefix = "sprintf('%0{0}b', ".format(int(type_.split(':')[2]))
             sprintf_suffix = ')'
-        elif len(divisor) > 0:
+        elif len(divisor) > 0 or self.get_label_count() > 1:
             template = templateA
+
+            if self.get_label_count() > 1:
+                index_prefix = '@{'
         else:
             template = templateB
 
-        return template.format(underscore_name=self.get_underscore_name(),
-                               label_name=self.get_label_name(),
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}'),
-                               sprintf_prefix=sprintf_prefix,
-                               sprintf_suffix=sprintf_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=self.get_underscore_name(),
+                                          label_name=self.get_label_name(index=index),
+                                          index_prefix=index_prefix,
+                                          index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          sprintf_prefix=sprintf_prefix,
+                                          sprintf_suffix=sprintf_suffix))
+
+        return result
 
 class PerlExampleResult(common.ExampleResult):
     def get_perl_variable(self):
@@ -175,12 +189,15 @@ class PerlExampleResult(common.ExampleResult):
 
         return template.format(underscore_name=underscore_name)
 
-    def get_perl_print(self):
-        templateA = 'print "{label_name}: " . {sprintf_prefix}${underscore_name}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
+    def get_perl_prints(self):
+        templateA = 'print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
         templateB = 'print "{label_name}: ${underscore_name}{unit_final_name}\\n";'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         underscore_name = self.get_underscore_name()
 
@@ -191,22 +208,33 @@ class PerlExampleResult(common.ExampleResult):
         divisor = self.get_formatted_divisor('/{0}')
         sprintf_prefix = ''
         sprintf_suffix = ''
+        index_prefix = ''
 
         if ':bitmask:' in type_:
             template = templateA
             sprintf_prefix = "sprintf('%0{0}b', ".format(int(type_.split(':')[2]))
             sprintf_suffix = ')'
-        elif len(divisor) > 0:
+        elif len(divisor) > 0 or self.get_label_count() > 1:
             template = templateA
+
+            if self.get_label_count() > 1:
+                index_prefix = '@{'
         else:
             template = templateB
 
-        return template.format(underscore_name=underscore_name,
-                               label_name=self.get_label_name(),
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}'),
-                               sprintf_prefix=sprintf_prefix,
-                               sprintf_suffix=sprintf_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=underscore_name,
+                                          label_name=self.get_label_name(index=index),
+                                          index_prefix=index_prefix,
+                                          index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          sprintf_prefix=sprintf_prefix,
+                                          sprintf_suffix=sprintf_suffix))
+
+        return result
 
 class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumentsMixin):
     def get_perl_subroutine(self):
@@ -224,7 +252,7 @@ my {variables} = ${device_initial_name}->{function_underscore_name}({arguments})
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variables.append(result.get_perl_variable())
-            prints.append(result.get_perl_print())
+            prints += result.get_perl_prints()
 
         if len(variables) > 1:
             variables = '(' + ', '.join(variables) + ')'
@@ -290,7 +318,7 @@ class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_perl_source())
-            prints.append(parameter.get_perl_print())
+            prints += parameter.get_perl_prints()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

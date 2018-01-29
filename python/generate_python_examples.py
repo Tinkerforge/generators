@@ -3,7 +3,7 @@
 
 """
 Python Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_python_examples.py: Generator for Python examples
 
@@ -146,11 +146,14 @@ class PythonExampleParameter(common.ExampleParameter):
     def get_python_source(self):
         return self.get_underscore_name()
 
-    def get_python_print(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_final_name})'
+    def get_python_prints(self):
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_final_name})'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         type_ = self.get_type()
 
@@ -164,12 +167,18 @@ class PythonExampleParameter(common.ExampleParameter):
             format_prefix = 'str('
             format_suffix = ')'
 
-        return template.format(underscore_name=self.get_underscore_name(),
-                               label_name=self.get_label_name(),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
-                               format_prefix=format_prefix,
-                               format_suffix=format_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=self.get_underscore_name(),
+                                          label_name=self.get_label_name(index=index),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                                          format_prefix=format_prefix,
+                                          format_suffix=format_suffix))
+
+        return result
 
 class PythonExampleResult(common.ExampleResult):
     def get_python_variable(self):
@@ -180,11 +189,14 @@ class PythonExampleResult(common.ExampleResult):
 
         return underscore_name
 
-    def get_python_print(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_final_name})'
+    def get_python_prints(self):
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_final_name})'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         underscore_name = self.get_underscore_name()
 
@@ -203,12 +215,18 @@ class PythonExampleResult(common.ExampleResult):
             format_prefix = 'str('
             format_suffix = ')'
 
-        return template.format(underscore_name=underscore_name,
-                               label_name=self.get_label_name(),
-                               divisor=self.get_formatted_divisor('/{0}'),
-                               unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
-                               format_prefix=format_prefix,
-                               format_suffix=format_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=underscore_name,
+                                          label_name=self.get_label_name(index=index),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=self.get_formatted_divisor('/{0}'),
+                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                                          format_prefix=format_prefix,
+                                          format_suffix=format_suffix))
+
+        return result
 
 class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):
@@ -229,7 +247,7 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variables.append(result.get_python_variable())
-            prints.append(result.get_python_print())
+            prints += result.get_python_prints()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -294,7 +312,7 @@ class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_python_source())
-            prints.append(parameter.get_python_print())
+            prints += parameter.get_python_prints()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]

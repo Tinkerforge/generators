@@ -3,7 +3,7 @@
 
 """
 Ruby Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_ruby_examples.py: Generator for Ruby examples
 
@@ -140,10 +140,13 @@ class RubyExampleParameter(common.ExampleParameter):
         return underscore_name
 
     def get_ruby_puts(self):
-        template = '  puts "{label_name}: #{{{printf_prefix}{underscore_name}{divisor}{printf_suffix}}}{unit_final_name}"'
+        template = '  puts "{label_name}: #{{{printf_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_final_name}"'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         underscore_name = self.get_underscore_name()
 
@@ -162,12 +165,18 @@ class RubyExampleParameter(common.ExampleParameter):
                 printf_prefix += '('
                 printf_suffix = ')'
 
-        return template.format(underscore_name=underscore_name,
-                               label_name=self.get_label_name(),
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}'),
-                               printf_prefix=printf_prefix,
-                               printf_suffix=printf_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=underscore_name,
+                                          label_name=self.get_label_name(index=index),
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          printf_prefix=printf_prefix,
+                                          printf_suffix=printf_suffix))
+
+        return result
 
 class RubyExampleResult(common.ExampleResult):
     def get_ruby_variable(self):
@@ -179,10 +188,13 @@ class RubyExampleResult(common.ExampleResult):
         return underscore_name
 
     def get_ruby_puts(self):
-        template = 'puts "{label_name}: #{{{printf_prefix}{array_prefix}{underscore_name}{divisor}{printf_suffix}}}{unit_final_name}"'
+        template = 'puts "{label_name}: #{{{printf_prefix}{array_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_final_name}"'
 
         if self.get_label_name() == None:
-            return None
+            return []
+
+        if self.get_cardinality() < 0:
+            return [] # FIXME: streaming
 
         if len(self.get_function().get_results()) > 1:
             underscore_name = '[{0}]'.format(self.get_index())
@@ -207,13 +219,19 @@ class RubyExampleResult(common.ExampleResult):
                 printf_prefix += '('
                 printf_suffix = ')'
 
-        return template.format(underscore_name=underscore_name,
-                               label_name=self.get_label_name(),
-                               array_prefix=array_prefix,
-                               divisor=divisor,
-                               unit_final_name=self.get_unit_formatted_final_name(' {0}'),
-                               printf_prefix=printf_prefix,
-                               printf_suffix=printf_suffix)
+        result = []
+
+        for index in range(self.get_label_count()):
+            result.append(template.format(underscore_name=underscore_name,
+                                          label_name=self.get_label_name(index=index),
+                                          array_prefix=array_prefix,
+                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                          divisor=divisor,
+                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          printf_prefix=printf_prefix,
+                                          printf_suffix=printf_suffix))
+
+        return result
 
 class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
@@ -228,7 +246,7 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
         for result in self.get_results():
             comments.append(result.get_formatted_comment())
             variables.append(result.get_ruby_variable())
-            puts.append(result.get_ruby_puts())
+            puts += result.get_ruby_puts()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = comments[:1]
@@ -299,7 +317,7 @@ end
         for parameter in self.get_parameters():
             comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_ruby_source())
-            puts.append(parameter.get_ruby_puts())
+            puts += parameter.get_ruby_puts()
 
         if len(comments) > 1 and len(set(comments)) == 1:
             comments = [comments[0].replace('parameter has', 'parameters have')]
