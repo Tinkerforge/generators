@@ -521,7 +521,7 @@ end
                                    function_underscore_name=self.get_underscore_name(),
                                    function_camel_case_name=self.get_camel_case_name())
 
-        return common.break_string(result1, '% ', extra='% ') + \
+        return common.break_string(result1, '% ', indent_tail='% ') + \
                common.break_string(result2, 'set(',)
 
 class MATLABExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, MATLABExampleArgumentsMixin):

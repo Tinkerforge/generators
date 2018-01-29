@@ -275,7 +275,6 @@ class PythonExampleSetterFunction(common.ExampleSetterFunction, PythonExampleArg
 
     def get_python_source(self):
         template = '{comment1}{global_line_prefix}    {device_initial_name}.{function_underscore_name}({arguments}){comment2}\n'
-        marker = '.{}('
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
@@ -284,7 +283,7 @@ class PythonExampleSetterFunction(common.ExampleSetterFunction, PythonExampleArg
                                  comment1=self.get_formatted_comment1(global_line_prefix + '    # {0}\n', '\r', '\n' + global_line_prefix + '    # '),
                                  comment2=self.get_formatted_comment2(' # {0}', ''))
 
-        return common.break_string(result, marker.format(self.get_underscore_name()))
+        return common.break_string(result, '.{0}('.format(self.get_underscore_name()))
 
 class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_python_imports(self):
@@ -350,7 +349,7 @@ class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
                                    function_underscore_name=self.get_underscore_name(),
                                    function_upper_case_name=self.get_upper_case_name())
 
-        return common.break_string(result1, '# ', extra='# ') + \
+        return common.break_string(result1, '# ', indent_tail='# ') + \
                common.break_string(result2, 'register_callback(')
 
 class PythonExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, PythonExampleArgumentsMixin):

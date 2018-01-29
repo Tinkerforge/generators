@@ -842,12 +842,13 @@ def check_name(name, display_name=None, is_constant=False):
             raise GeneratorError("Name '{0}' and display name '{1}' ({2}) mismatch" \
                                  .format(name, display_name, display_name_to_check))
 
-def break_string(string, marker, space=' ', continuation='', extra='', max_length=90):
-    result = string.replace('<BP>', space)
+def break_string(string, indent_marker, space=' ', continuation='', indent_tail='',
+                 indent_suffix='', max_length=90, break_point='<BP>'):
+    result = string.replace(break_point, space)
 
     if len(result) > max_length:
-        if len(marker) > 0:
-            prefix = result.split(marker)[0].split('\n')[-1].lstrip('\r')
+        if len(indent_marker) > 0:
+            prefix = result.split(indent_marker)[0].split('\n')[-1].lstrip('\r')
             tabs = 0
 
             for c in prefix:
@@ -859,15 +860,15 @@ def break_string(string, marker, space=' ', continuation='', extra='', max_lengt
             prefix = ''
             tabs = 0
 
-        indent = '\t' * tabs + ' ' * (len(prefix) - tabs + len(marker) - len(extra))
-        parts = string.split('<BP>')
+        indent = '\t' * tabs + ' ' * (len(prefix) - tabs + len(indent_marker) - len(indent_tail)) + indent_tail + indent_suffix
+        parts = string.split(break_point)
         result = parts[0]
 
         for part in parts[1:]:
             line = (result.split('\n')[-1] + space + part.split('\n')[0]).replace('\t', '    ') + continuation
 
             if len(line) > max_length:
-                result += continuation + '\n' + indent + extra + part
+                result += continuation + '\n' + indent + part
             else:
                 result += space + part
 

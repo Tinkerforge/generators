@@ -366,7 +366,7 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
                                    function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                    function_upper_case_name=self.get_upper_case_name())
 
-        return common.break_string(result1, '// ', extra='// ') + \
+        return common.break_string(result1, '// ', indent_tail='// ') + \
                common.break_string(result2, '->registerCallback(')
 
 class PHPExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, PHPExampleArgumentsMixin):

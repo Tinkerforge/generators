@@ -403,7 +403,7 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
                                  function_camel_case_name=self.get_camel_case_name(),
                                  function_comment_name=self.get_comment_name())
 
-        return common.break_string(result, '// ', extra='// ')
+        return common.break_string(result, '// ', indent_tail='// ')
 
 class CSharpExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, CSharpExampleArgumentsMixin):
     def get_csharp_imports(self):

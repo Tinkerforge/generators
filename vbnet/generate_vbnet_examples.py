@@ -423,7 +423,7 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
         result2 = template2.format(device_initial_name=self.get_device().get_initial_name(),
                                    function_camel_case_name=self.get_camel_case_name())
 
-        return common.break_string(result1, "' ", extra="' ") + \
+        return common.break_string(result1, "' ", indent_tail="' ") + \
                common.break_string(result2, 'AddHandler ', continuation=' _')
 
 class VBNETExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, VBNETExampleArgumentsMixin):

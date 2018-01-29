@@ -278,11 +278,11 @@ class RubyExampleSetterFunction(common.ExampleSetterFunction, RubyExampleArgumen
     def get_ruby_source(self):
         template = '{comment1}{global_line_prefix}{device_initial_name}.{function_underscore_name}{arguments}{comment2}\n'
         arguments = common.wrap_non_empty(' ', ',<BP>'.join(self.get_ruby_arguments()), '')
-        marker = '.{} '
+        indent_marker = '.{} '
 
         if arguments.strip().startswith('('):
             arguments = '({0})'.format(arguments.strip())
-            marker = '.{}('
+            indent_marker = '.{}('
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_initial_name=self.get_device().get_initial_name(),
@@ -291,7 +291,7 @@ class RubyExampleSetterFunction(common.ExampleSetterFunction, RubyExampleArgumen
                                  comment1=self.get_formatted_comment1(global_line_prefix + '# {0}\n', '\r', '\n' + global_line_prefix + '# '),
                                  comment2=self.get_formatted_comment2(' # {0}', ''))
 
-        return common.break_string(result, marker.format(self.get_underscore_name()), continuation=' \\')
+        return common.break_string(result, indent_marker.format(self.get_underscore_name()), continuation=' \\')
 
 class RubyExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_ruby_source(self):

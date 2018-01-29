@@ -512,7 +512,7 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
                                  function_comment_name=self.get_comment_name(),
                                  spaces=' ' * len(self.get_device().get_underscore_name()))
 
-        return common.break_string(result, '// ', extra='// ')
+        return common.break_string(result, '// ', indent_tail='// ')
 
 class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, CExampleArgumentsMixin):
     def get_c_defines(self):
