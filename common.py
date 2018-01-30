@@ -844,8 +844,8 @@ def check_name(name, display_name=None, is_constant=False):
             raise GeneratorError("Name '{0}' and display name '{1}' ({2}) mismatch" \
                                  .format(name, display_name, display_name_to_check))
 
-def break_string(string, indent_marker, space=' ', continuation='', indent_tail='',
-                 indent_suffix='', max_length=90, break_point='<BP>'):
+def break_string(string, indent_marker, space=' ', continuation='', indent_head='',
+                 indent_tail='', indent_suffix='', max_length=90, break_point='<BP>'):
     result = string.replace(break_point, space)
 
     if len(result) > max_length:
@@ -862,7 +862,7 @@ def break_string(string, indent_marker, space=' ', continuation='', indent_tail=
             prefix = ''
             tabs = 0
 
-        indent = '\t' * tabs + ' ' * (len(prefix) - tabs + len(indent_marker) - len(indent_tail)) + indent_tail + indent_suffix
+        indent = '\t' * tabs + indent_head + ' ' * (len(prefix) - tabs - len(indent_head) + len(indent_marker) - len(indent_tail)) + indent_tail + indent_suffix
         parts = string.split(break_point)
         result = parts[0]
 
