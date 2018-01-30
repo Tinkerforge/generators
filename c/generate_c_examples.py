@@ -370,20 +370,27 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
             variable_references.append(result.get_c_variable_reference())
             printfs += result.get_c_printfs()
 
+        merged_variable_declarations = []
 
-        merged_variable_declarations = [' '.join(variable_declarations[0])]
+        for variable_declaration in variable_declarations:
+            merged = False
 
-        for i in range(len(variable_declarations) - 1):
-            type0 = variable_declarations[i][0]
-            type1 = variable_declarations[i + 1][0]
+            for merged_variable_declaration in merged_variable_declarations:
+                if merged_variable_declaration[0] == variable_declaration[0]:
+                    merged_variable_declaration[1].append(variable_declaration[1])
+                    merged = True
+                    break
 
-            if type0 != type1:
-                merged_variable_declarations.append(';<BP>' + ' '.join(variable_declarations[i + 1]))
-            else:
-                merged_variable_declarations.append(',<BP>' + variable_declarations[i + 1][1])
+            if not merged:
+                merged_variable_declarations.append([variable_declaration[0], [variable_declaration[1]]])
 
-        variable_declarations = common.break_string(''.join(merged_variable_declarations),
-                                                    merged_variable_declarations[0].split(' ')[0] + ' ').replace('\n', '\n\t')
+        variable_declarations = []
+
+        for merged_variable_declaration in merged_variable_declarations:
+            variable_declarations.append('{0} {1}'.format(merged_variable_declaration[0],
+                                                          ',<BP>'.join(merged_variable_declaration[1])))
+
+        variable_declarations = common.break_string('\t' + ';<BP>'.join(variable_declarations), '\t')
 
         while None in printfs:
             printfs.remove(None)

@@ -224,8 +224,7 @@ class VBNETExampleResult(common.ExampleResult):
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return template.format(type_=get_vbnet_type(self.get_type().split(':')[0]),
-                               headless_camel_case_name=headless_camel_case_name)
+        return get_vbnet_type(self.get_type().split(':')[0]), headless_camel_case_name
 
     def get_vbnet_variable_reference(self):
         headless_camel_case_name = self.get_headless_camel_case_name()
@@ -312,6 +311,26 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
             template = templateA
         else:
             template = templateB
+
+        merged_variable_declarations = []
+
+        for variable_declaration in variable_declarations:
+            merged = False
+
+            for merged_variable_declaration in merged_variable_declarations:
+                if merged_variable_declaration[0] == variable_declaration[0]:
+                    merged_variable_declaration[1].append(variable_declaration[1])
+                    merged = True
+                    break
+
+            if not merged:
+                merged_variable_declarations.append([variable_declaration[0], [variable_declaration[1]]])
+
+        variable_declarations = []
+
+        for merged_variable_declaration in merged_variable_declarations:
+            variable_declarations.append('        Dim {0} As {1}'.format(', '.join(merged_variable_declaration[1]),
+                                                                         merged_variable_declaration[0]))
 
         while None in write_lines:
             write_lines.remove(None)

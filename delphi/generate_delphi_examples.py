@@ -146,21 +146,27 @@ end.
         while None in cleanups:
             cleanups.remove(None)
 
-        if len(variable_declarations) > 0:
-            merged_variable_declarations = [': '.join(variable_declarations[-1])]
+        merged_variable_declarations = []
 
-            for i in reversed(range(1, len(variable_declarations))):
-                type0 = variable_declarations[i][1]
-                type1 = variable_declarations[i - 1][1]
+        for variable_declaration in variable_declarations:
+            merged = False
 
-                if type0 != type1:
-                    merged_variable_declarations.insert(0, ': '.join(variable_declarations[i - 1]) + ';<BP>')
-                else:
-                    merged_variable_declarations.insert(0, variable_declarations[i - 1][0] + ',<BP>')
+            for merged_variable_declaration in merged_variable_declarations:
+                if merged_variable_declaration[0] == variable_declaration[0]:
+                    merged_variable_declaration[1].append(variable_declaration[1])
+                    merged = True
+                    break
 
-            variable_declarations = common.break_string('var ' + ''.join(merged_variable_declarations), 'var ')
-        else:
-            variable_declarations = ''
+            if not merged:
+                merged_variable_declarations.append([variable_declaration[0], [variable_declaration[1]]])
+
+        variable_declarations = []
+
+        for merged_variable_declaration in merged_variable_declarations:
+            variable_declarations.append('{0}: {1}'.format(',<BP>'.join(merged_variable_declaration[1]),
+                                                           merged_variable_declaration[0]))
+
+        variable_declarations = common.break_string('var ' + ';<BP>'.join(variable_declarations), 'var ')
 
         return template.format(incomplete=incomplete,
                                description=description,
@@ -270,9 +276,9 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
         if headless_camel_case_name == self.get_device().get_initial_name():
             headless_camel_case_name += '_'
 
-        return headless_camel_case_name, template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
-                                                         type1=delphi_common.get_delphi_type(self.get_type().split(':')[0])[1],
-                                                         array_end=self.get_cardinality() - 1)
+        return template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
+                               type1=delphi_common.get_delphi_type(self.get_type().split(':')[0])[1],
+                               array_end=self.get_cardinality() - 1), headless_camel_case_name
 
     def get_delphi_variable_name(self):
         headless_camel_case_name = self.get_headless_camel_case_name()
