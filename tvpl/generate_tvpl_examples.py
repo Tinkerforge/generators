@@ -700,7 +700,8 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
                 f.write(example.get_tvpl_source().encode('utf-8'))
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', TVPLExamplesGenerator)
+    print('### disabled')
+    #common.generate(bindings_root_directory, 'en', TVPLExamplesGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())
