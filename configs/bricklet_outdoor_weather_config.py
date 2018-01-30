@@ -95,7 +95,7 @@ com['packets'].append({
 'name': 'Get Station Data',
 'elements': [('Identifier', 'uint8', 1, 'in'),
              ('Temperature', 'int16', 1, 'out'),   # in °C/10
-             ('Humidity', 'uint8', 1, 'out'),      # in %rel
+             ('Humidity', 'uint8', 1, 'out'),      # in %RH
              ('Wind Speed', 'uint32', 1, 'out'),   # in m/10s
              ('Gust Speed', 'uint32', 1, 'out'),   # in m/10s
              ('Rain', 'uint32', 1, 'out'),         # in mm/10
@@ -112,7 +112,7 @@ Call :func:`Get Station Identifiers` for a list of all available identifiers.
 The return values are
 
 * Temperature in °C/10,
-* Humidity in %rel,
+* Humidity in %RH,
 * Wind Speed in m/10s,
 * Gust Speed in m/10s,
 * Rain Fall in mm/10,
@@ -132,7 +132,7 @@ com['packets'].append({
 'name': 'Get Sensor Data',
 'elements': [('Identifier', 'uint8', 1, 'in'),
              ('Temperature', 'int16', 1, 'out'),   # in °C/10
-             ('Humidity', 'uint8', 1, 'out'),      # in %rel
+             ('Humidity', 'uint8', 1, 'out'),      # in %RH
              ('Last Change', 'uint16', 1, 'out')], # in seconds
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -144,7 +144,7 @@ Call :func:`Get Sensor Identifiers` for a list of all available identifiers.
 The return values are
 
 * Temperature in °C/10,
-* Humidity in %rel and
+* Humidity in %RH and
 * Last Change (time in seconds since the last reception of data).
 
 """,
