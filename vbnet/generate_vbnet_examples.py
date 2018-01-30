@@ -176,7 +176,7 @@ class VBNETExampleParameter(common.ExampleParameter):
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
     def get_vbnet_write_lines(self):
-        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{index}{divisor}{to_string_suffix}{unit_final_name})'
+        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{index}{divisor}{to_string_suffix}{unit_name})'
 
         if self.get_label_name() == None:
             return []
@@ -211,7 +211,7 @@ class VBNETExampleParameter(common.ExampleParameter):
                                           to_string_prefix=to_string_prefix,
                                           to_string_suffix=to_string_suffix,
                                           divisor=divisor,
-                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"')))
+                                          unit_name=self.get_formatted_unit_name(' + " {0}"')))
 
         return result
 
@@ -235,7 +235,7 @@ class VBNETExampleResult(common.ExampleResult):
         return headless_camel_case_name
 
     def get_vbnet_write_lines(self):
-        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{index}{divisor}{to_string_suffix}{unit_final_name})'
+        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{index}{divisor}{to_string_suffix}{unit_name})'
 
         if self.get_label_name() == None:
             return []
@@ -275,7 +275,7 @@ class VBNETExampleResult(common.ExampleResult):
                                           to_string_prefix=to_string_prefix,
                                           to_string_suffix=to_string_suffix,
                                           divisor=divisor,
-                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"')))
+                                          unit_name=self.get_formatted_unit_name(' + " {0}"')))
 
         return result
 

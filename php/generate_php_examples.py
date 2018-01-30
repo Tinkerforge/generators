@@ -150,8 +150,8 @@ class PHPExampleParameter(common.ExampleParameter):
         return template.format(underscore_name=self.get_underscore_name())
 
     def get_php_echos(self):
-        templateA = '    echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
-        templateB = '    echo "{label_name}: ${underscore_name}{unit_final_name}\\n";'
+        templateA = '    echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_name}\\n";'
+        templateB = '    echo "{label_name}: ${underscore_name}{unit_name}\\n";'
 
         if self.get_label_name() == None:
             return []
@@ -180,7 +180,7 @@ class PHPExampleParameter(common.ExampleParameter):
                                           label_name=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          unit_name=self.get_formatted_unit_name(' {0}'),
                                           sprintf_prefix=sprintf_prefix,
                                           sprintf_suffix=sprintf_suffix))
 
@@ -197,8 +197,8 @@ class PHPExampleResult(common.ExampleResult):
         return template.format(underscore_name=underscore_name)
 
     def get_php_echos(self):
-        templateA = 'echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
-        templateB = 'echo "{label_name}: ${underscore_name}{unit_final_name}\\n";'
+        templateA = 'echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_name}\\n";'
+        templateB = 'echo "{label_name}: ${underscore_name}{unit_name}\\n";'
 
         if self.get_label_name() == None:
             return []
@@ -239,7 +239,7 @@ class PHPExampleResult(common.ExampleResult):
                                           label_name=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          unit_name=self.get_formatted_unit_name(' {0}'),
                                           sprintf_prefix=sprintf_prefix,
                                           sprintf_suffix=sprintf_suffix))
 

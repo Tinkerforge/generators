@@ -131,14 +131,15 @@ class ShellExampleArgumentsMixin(object):
 
 class ShellExampleParameter(common.ExampleParameter):
     def get_shell_source(self):
-        template = '{label_name}: {{{{{underscore_name}}}}}{unit_final_name}'
+        template = '{label_name}: {{{{{underscore_name}}}}}{divisor}{unit_name}'
 
         if self.get_label_name() == None:
             return None
 
         return template.format(underscore_name=self.get_underscore_name(),
                                label_name=self.get_label_name(),
-                               unit_final_name=self.get_unit_formatted_raw_name(' {0}'))
+                               divisor=self.get_formatted_divisor('/{0}', cast=int),
+                               unit_name=self.get_formatted_unit_name(' {0}'))
 
 class ShellExampleResult(common.ExampleResult):
     pass

@@ -495,18 +495,18 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Humidity', 'humidity'), [(('Humidity', 'Humidity'), 'uint16', 1, 10.0, '%RH/10', '%RH', None)], [])]
+'functions': [('getter', ('Get Humidity', 'humidity'), [(('Humidity', 'Humidity'), 'uint16', 1, 10.0, '%RH', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Humidity', 'humidity'), [(('Humidity', 'Humidity'), 'uint16', 1, 10.0, '%RH/10', '%RH', None)], None, None),
+'functions': [('callback', ('Humidity', 'humidity'), [(('Humidity', 'Humidity'), 'uint16', 1, 10.0, '%RH', None)], None, None),
               ('callback_period', ('Humidity', 'humidity'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Humidity Reached', 'humidity reached'), [(('Humidity', 'Humidity'), 'uint16', 1, 10.0, '%RH/10', '%RH', None)], None, 'Recommended humiditiy for human comfort is 30 to 60 %RH.'),
+              ('callback', ('Humidity Reached', 'humidity reached'), [(('Humidity', 'Humidity'), 'uint16', 1, 10.0, '%RH', None)], None, 'Recommended humiditiy for human comfort is 30 to 60 %RH.'),
               ('callback_threshold', ('Humidity', 'humidity'), [], 'o', [(30, 60)])]
 })

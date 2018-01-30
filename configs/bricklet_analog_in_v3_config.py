@@ -153,5 +153,5 @@ Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'mV', 'V', None)], [])]
+'functions': [('getter', ('Get Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], [])]
 })

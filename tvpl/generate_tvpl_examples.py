@@ -241,7 +241,7 @@ class TVPLExampleParameter(common.ExampleParameter):
         return self.get_underscore_name()
 
     def get_tvpl_print_X(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_final_name})'
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_name})'
 
         if self.get_label_name() == None:
             return None
@@ -261,7 +261,7 @@ class TVPLExampleParameter(common.ExampleParameter):
         return template.format(underscore_name=self.get_underscore_name(),
                                label_name=self.get_label_name(),
                                divisor=self.get_formatted_divisor('/{0}'),
-                               unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                               unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                format_prefix=format_prefix,
                                format_suffix=format_suffix)
 
@@ -271,9 +271,9 @@ class TVPLExampleResult(common.ExampleResult):
 
     def add_tvpl_print_block(self, parent, list_variable, list_index):
         print_value, print_next = add_tvpl_print_block(parent)
-        unit_final_name = self.get_unit_formatted_final_name(' {0}')
+        unit_name = self.get_formatted_unit_name(' {0}')
 
-        if len(unit_final_name) > 0:
+        if len(unit_name) > 0:
             join_items = add_tvpl_join_block(print_value, 3)
         else:
             join_items = add_tvpl_join_block(print_value, 2)
@@ -297,13 +297,13 @@ class TVPLExampleResult(common.ExampleResult):
             else:
                 add_tvpl_get_variable_block(join_items[1], self.get_name())
 
-        if len(unit_final_name) > 0:
-            add_tvpl_text_block(join_items[2], unit_final_name.decode('utf-8'))
+        if len(unit_name) > 0:
+            add_tvpl_text_block(join_items[2], unit_name.decode('utf-8'))
 
         return print_next
 
     def get_tvpl_print_X(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_final_name})'
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_name})'
 
         underscore_name = self.get_underscore_name()
 
@@ -325,7 +325,7 @@ class TVPLExampleResult(common.ExampleResult):
         return template.format(underscore_name=underscore_name,
                                label_name=self.get_label_name(),
                                divisor=self.get_formatted_divisor('/{0}'),
-                               unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                               unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                format_prefix=format_prefix,
                                format_suffix=format_suffix)
 

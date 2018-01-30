@@ -438,8 +438,8 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Button Callback',
-'functions': [('callback', ('Button Pressed', 'button pressed'), [(('Button', 'Button Pressed'), 'uint8', 1, None, None, None, None)], None, None),
-              ('callback', ('Button Released', 'button released'), [(('Button', 'Button Released'), 'uint8', 1, None, None, None, None)], None, None)]
+'functions': [('callback', ('Button Pressed', 'button pressed'), [(('Button', 'Button Pressed'), 'uint8', 1, None, None, None)], None, None),
+              ('callback', ('Button Released', 'button released'), [(('Button', 'Button Released'), 'uint8', 1, None, None, None)], None, None)]
 })
 
 com['examples'].append({

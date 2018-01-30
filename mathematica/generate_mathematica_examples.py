@@ -175,7 +175,7 @@ class MathematicaExampleParameter(common.ExampleParameter):
             return [] # FIXME: streaming
 
         type_ = self.get_type()
-        quantity_name = self.get_unit_formatted_final_name('{0}' + self.get_formatted_divisor('/{0}', cast=int)) # FIXME: move divisor out of quantity name
+        quantity_name = self.get_formatted_unit_name('{0}' + self.get_formatted_divisor('/{0}', cast=int)) # FIXME: move divisor out of quantity name
         divisor = self.get_formatted_divisor('{0}')
         bitmask_length = 0
 
@@ -236,7 +236,7 @@ class MathematicaExampleResult(common.ExampleResult):
             value = headless_camel_case_name
 
         type_ = self.get_type()
-        quantity_name = self.get_unit_formatted_final_name('{0}' + self.get_formatted_divisor('/{0}', cast=int))
+        quantity_name = self.get_formatted_unit_name('{0}' + self.get_formatted_divisor('/{0}', cast=int)) # FIXME: move divisor out of quantity name
         divisor = self.get_formatted_divisor('{0}')
         bitmask_length = 0
 

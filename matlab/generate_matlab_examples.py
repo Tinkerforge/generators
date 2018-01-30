@@ -270,7 +270,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
         return False
 
     def get_matlab_fprintfs(self):
-        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_final_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});"
+        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});"
 
         if self.get_label_name() == None:
             return []
@@ -305,7 +305,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
                                           fprintf_format=self.get_matlab_fprintf_format(),
                                           index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'),
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
                                           java2int_prefix=java2int_prefix,
                                           java2int_suffix=java2int_suffix,
                                           to_binary_prefix=to_binary_prefix,
@@ -332,7 +332,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
         return headless_camel_case_name
 
     def get_matlab_fprintfs(self):
-        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_final_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});"
+        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});"
 
         if self.get_label_name() == None:
             return []
@@ -377,7 +377,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                           fprintf_format=self.get_matlab_fprintf_format(),
                                           index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%'),
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
                                           object_prefix=object_prefix,
                                           java2int_prefix=java2int_prefix,
                                           java2int_suffix=java2int_suffix,

@@ -165,7 +165,7 @@ Gibt die Farbwert-Kalibrierung zurück, wie von :func:`Set Color Calibration` ge
 
 com['examples'].append({
 'name': 'Simple Button',
-'functions': [('getter', ('Get Button State', 'button state'), [(('State', 'State'), 'uint8', 1, None, None, None, None)], [])],
+'functions': [('getter', ('Get Button State', 'button state'), [(('State', 'State'), 'uint8', 1, None, None, None)], [])],
 'incomplete': True # because of special print logic
 })
 
@@ -176,6 +176,6 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Button State Changed', 'button state changed'), [(('State', 'State'), 'uint8', 1, None, None, None, None)], None, None)],
+'functions': [('callback', ('Button State Changed', 'button state changed'), [(('State', 'State'), 'uint8', 1, None, None, None)], None, None)],
 'incomplete': True # because of special print logic in callback
 })

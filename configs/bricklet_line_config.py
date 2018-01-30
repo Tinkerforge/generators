@@ -283,18 +283,18 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Reflectivity', 'reflectivity'), [(('Reflectivity', 'Reflectivity'), 'uint16', 1, None, None, None, None)], [])]
+'functions': [('getter', ('Get Reflectivity', 'reflectivity'), [(('Reflectivity', 'Reflectivity'), 'uint16', 1, None, None, None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Reflectivity', 'reflectivity'), [(('Reflectivity', 'Reflectivity'), 'uint16', 1, None, None, None, None)], None, None),
+'functions': [('callback', ('Reflectivity', 'reflectivity'), [(('Reflectivity', 'Reflectivity'), 'uint16', 1, None, None, None)], None, None),
               ('callback_period', ('Reflectivity', 'reflectivity'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 1000),
-              ('callback', ('Reflectivity Reached', 'reflectivity reached'), [(('Reflectivity', 'Reflectivity'), 'uint16', 1, None, None, None, None)], None, None),
+              ('callback', ('Reflectivity Reached', 'reflectivity reached'), [(('Reflectivity', 'Reflectivity'), 'uint16', 1, None, None, None)], None, None),
               ('callback_threshold', ('Reflectivity', 'reflectivity'), [], '>', [(2000, 0)])]
 })

@@ -140,7 +140,7 @@ class RubyExampleParameter(common.ExampleParameter):
         return underscore_name
 
     def get_ruby_puts(self):
-        template = '  puts "{label_name}: #{{{printf_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_final_name}"'
+        template = '  puts "{label_name}: #{{{printf_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_name}"'
 
         if self.get_label_name() == None:
             return []
@@ -172,7 +172,7 @@ class RubyExampleParameter(common.ExampleParameter):
                                           label_name=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          unit_name=self.get_formatted_unit_name(' {0}'),
                                           printf_prefix=printf_prefix,
                                           printf_suffix=printf_suffix))
 
@@ -188,7 +188,7 @@ class RubyExampleResult(common.ExampleResult):
         return underscore_name
 
     def get_ruby_puts(self):
-        template = 'puts "{label_name}: #{{{printf_prefix}{array_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_final_name}"'
+        template = 'puts "{label_name}: #{{{printf_prefix}{array_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_name}"'
 
         if self.get_label_name() == None:
             return []
@@ -227,7 +227,7 @@ class RubyExampleResult(common.ExampleResult):
                                           array_prefix=array_prefix,
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          unit_name=self.get_formatted_unit_name(' {0}'),
                                           printf_prefix=printf_prefix,
                                           printf_suffix=printf_suffix))
 

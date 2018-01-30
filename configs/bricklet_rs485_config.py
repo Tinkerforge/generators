@@ -1912,7 +1912,7 @@ com['examples'].append({
 'name': 'Loopback',
 'description': 'For this example connect the RX+/- pins to TX+/- pins on the same Bricklet\nand configure the DIP switch on the Bricklet to full-duplex mode',
 'functions': [('setter', 'Set RS485 Configuration', [('uint32', 115200), ('uint8:constant', 0), ('uint8:constant', 1), ('uint8:constant', 8), ('uint8:constant', 1)], 'Enable full-duplex mode', None),
-              ('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', -65535, None, None, None, None)], None, None), # FIXME: wrong message type
+              ('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', -65535, None, None, None)], None, None), # FIXME: wrong message type
               ('setter', 'Enable Read Callback', [], 'Enable read callback', None)],
 'incomplete': True # because of special logic and callback with array parameter
 })
@@ -1921,7 +1921,7 @@ com['examples'].append({
 'name': 'Modbus Master',
 'functions': [('setter', 'Set Mode', [('uint8:constant', 1)], 'Set operating mode to Modbus RTU master', None),
               ('setter', 'Set Modbus Configuration', [('uint8', 1), ('uint32', 1000)], 'Modbus specific configuration:\n- slave address = 1 (unused in master mode)\n- master request timeout = 1000ms', None),
-              ('callback', ('Modbus Master Write Single Register Response', 'Modbus master write single register response'), [(('Request ID', 'Request ID'), 'uint8', 1, None, None, None, None), (('Exception Code', 'Exception Code'), 'int8', 1, None, None, None, None)], None, None),
+              ('callback', ('Modbus Master Write Single Register Response', 'Modbus master write single register response'), [(('Request ID', 'Request ID'), 'uint8', 1, None, None, None), (('Exception Code', 'Exception Code'), 'int8', 1, None, None, None)], None, None),
               ('setter', 'Modbus Master Write Single Register', [('uint8', 17), ('uint32', 42), ('uint16', 65535)], 'Write 65535 to register 42 of slave 17', None)],
 'incomplete': True # because of special callback logic and missing return value handling of the write call
 })
@@ -1930,6 +1930,6 @@ com['examples'].append({
 'name': 'Modbus Slave',
 'functions': [('setter', 'Set Mode', [('uint8:constant', 2)], 'Set operating mode to Modbus RTU slave', None),
               ('setter', 'Set Modbus Configuration', [('uint8', 17), ('uint32', 0)], 'Modbus specific configuration:\n- slave address = 17\n- master request timeout = 0ms (unused in slave mode)', None),
-              ('callback', ('Modbus Slave Write Single Register Request', 'Modbus slave write single register request'), [(('Request ID', 'Request ID'), 'uint8', 1, None, None, None, None), (('Register Address', 'Register Address'), 'uint32', 1, None, None, None, None), (('Register Value', 'Register Value'), 'uint16', 1, None, None, None, None)], None, None)],
+              ('callback', ('Modbus Slave Write Single Register Request', 'Modbus slave write single register request'), [(('Request ID', 'Request ID'), 'uint8', 1, None, None, None), (('Register Address', 'Register Address'), 'uint32', 1, None, None, None), (('Register Value', 'Register Value'), 'uint16', 1, None, None, None)], None, None)],
 'incomplete': True # because of special callback logic
 })

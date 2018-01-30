@@ -301,11 +301,11 @@ der beiden Werte seit der letzten Auslösung geändert hat.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Edge Count', 'edge count without reset'), [(('Edge Count', 'Edge Count'), 'uint32', 1, None, None, None, None)], [('bool', False)])]
+'functions': [('getter', ('Get Edge Count', 'edge count without reset'), [(('Edge Count', 'Edge Count'), 'uint32', 1, None, None, None)], [('bool', False)])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Edge Count', 'edge count'), [(('Edge Count', 'Edge Count'), 'uint32', 1, None, None, None, None), (('Value', None), 'bool', 1, None, None, None, None)], None, None),
+'functions': [('callback', ('Edge Count', 'edge count'), [(('Edge Count', 'Edge Count'), 'uint32', 1, None, None, None), (('Value', None), 'bool', 1, None, None, None)], None, None),
               ('callback_period', ('Edge Count', 'edge count'), [], 50)]
 })

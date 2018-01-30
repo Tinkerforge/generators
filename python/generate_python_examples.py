@@ -147,7 +147,7 @@ class PythonExampleParameter(common.ExampleParameter):
         return self.get_underscore_name()
 
     def get_python_prints(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_final_name})'
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_name})'
 
         if self.get_label_name() == None:
             return []
@@ -174,7 +174,7 @@ class PythonExampleParameter(common.ExampleParameter):
                                           label_name=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           format_prefix=format_prefix,
                                           format_suffix=format_suffix))
 
@@ -190,7 +190,7 @@ class PythonExampleResult(common.ExampleResult):
         return underscore_name
 
     def get_python_prints(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_final_name})'
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_name})'
 
         if self.get_label_name() == None:
             return []
@@ -222,7 +222,7 @@ class PythonExampleResult(common.ExampleResult):
                                           label_name=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           format_prefix=format_prefix,
                                           format_suffix=format_suffix))
 

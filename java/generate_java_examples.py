@@ -175,7 +175,7 @@ class JavaExampleParameter(common.ExampleParameter):
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
     def get_java_printlns(self):
-        template = '\t\t\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_final_name});'
+        template = '\t\t\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});'
 
         if self.get_label_name() == None:
             return []
@@ -199,7 +199,7 @@ class JavaExampleParameter(common.ExampleParameter):
                                           label_name=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           to_binary_prefix=to_binary_prefix,
                                           to_binary_suffix=to_binary_suffix))
 
@@ -217,7 +217,7 @@ class JavaExampleResult(common.ExampleResult):
                                headless_camel_case_name=headless_camel_case_name)
 
     def get_java_printlns(self):
-        template = '\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{object_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_final_name});'
+        template = '\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{object_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});'
 
         if self.get_label_name() == None:
             return []
@@ -251,7 +251,7 @@ class JavaExampleResult(common.ExampleResult):
                                           label_name=self.get_label_name(),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_final_name=self.get_unit_formatted_final_name(' + " {0}"'),
+                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           object_prefix=object_prefix,
                                           to_binary_prefix=to_binary_prefix,
                                           to_binary_suffix=to_binary_suffix))

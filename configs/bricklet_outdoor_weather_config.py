@@ -274,25 +274,25 @@ TODO
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('setter', 'Set Sensor Callback Configuration', [('bool', True)], None, 'Enable sensor data callbacks'),
-              ('setter', 'Set Station Callback Configuration', [('bool', True)], None, 'Enable station data callbacks'),
+'functions': [('setter', 'Set Sensor Callback Configuration', [('bool', True)], 'Enable sensor data callbacks', None),
+              ('setter', 'Set Station Callback Configuration', [('bool', True)], 'Enable station data callbacks', None),
               ('callback', ('Sensor Data', 'sensor data'),
               [
-                (('Identifier', 'Identifier (Sensor)'), 'uint8', 1, None, None, None, None),
-                (('Temperature', 'Temperature (Sensor)'), 'int16', 1, 10, '°C/10', '°C', None),
-                (('Humidity', 'Humidity (Sensor)'), 'uint8', 1, None, None, '%RH', None)
+                (('Identifier', 'Identifier (Sensor)'), 'uint8', 1, None, None, None),
+                (('Temperature', 'Temperature (Sensor)'), 'int16', 1, 10.0, '°C', None),
+                (('Humidity', 'Humidity (Sensor)'), 'uint8', 1, None, '%RH', None)
               ],
               None, None),
               ('callback', ('Station Data', 'station data'),
               [
-                (('Identifier', 'Identifier (Station)'), 'uint8', 1, None, None, None, None),
-                (('Temperature', 'Temperature (Station)'), 'int16', 1, None, None, None, None),
-                (('Humidity', 'Humidity (Station)'), 'uint8', 1, None, None, None, None),
-                (('Wind Speed', 'Wind Speed (Station)'), 'uint32', 1, None, None, None, None),
-                (('Gust Speed', 'Gust Speed (Station)'), 'uint32', 1, None, None, None, None),
-                (('Rain', 'Rain (Station)'), 'uint32', 1, None, None, None, None),
-                (('Wind Direction', 'Wind Direction (Station)'), 'uint8', 1, None, None, None, None),
-                (('Battery Low', 'Battery Low (Station)'), 'bool', 1, None, None, None, None)
+                (('Identifier', 'Identifier (Station)'), 'uint8', 1, None, None, None),
+                (('Temperature', 'Temperature (Station)'), 'int16', 1, 10.0, '°C', None),
+                (('Humidity', 'Humidity (Station)'), 'uint8', 1, None, '%RH', None),
+                (('Wind Speed', 'Wind Speed (Station)'), 'uint32', 1, 10.0, 'm/s', None),
+                (('Gust Speed', 'Gust Speed (Station)'), 'uint32', 1, 10.0, 'm/s', None),
+                (('Rain', 'Rain (Station)'), 'uint32', 1, 10.0, 'mm', None),
+                (('Wind Direction', 'Wind Direction (Station)'), 'uint8', 1, None, None, None), # FIXME: print as constant
+                (('Battery Low', 'Battery Low (Station)'), 'bool', 1, None, None, None)
               ],
               None, None)]
 })

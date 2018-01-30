@@ -226,7 +226,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
         # FIXME: the parameter type can indicate a bitmask, but there is no easy way in Delphi
         #        to format an integer in base-2, that doesn't require open-coding it with several
         #        lines of code. so just print the integer in base-10 the normal way
-        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_final_name}', [{headless_camel_case_name}{index}{divisor}]));"
+        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_name}', [{headless_camel_case_name}{index}{divisor}]));"
 
         if self.get_label_name() == None:
             return []
@@ -247,7 +247,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_delphi_printf_format(),
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%')))
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%')))
 
         return result
 
@@ -285,7 +285,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
         # FIXME: the result type can indicate a bitmask, but there is no easy way in Delphi
         #        to format an integer in base-2, that doesn't require open-coding it with several
         #        lines of code. so just print the integer in base-10 the normal way
-        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_final_name}', [{headless_camel_case_name}{index}{divisor}]));"
+        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_name}', [{headless_camel_case_name}{index}{divisor}]));"
 
         if self.get_label_name() == None:
             return []
@@ -306,7 +306,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_delphi_printf_format(),
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%')))
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%')))
 
         return result
 

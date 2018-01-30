@@ -565,18 +565,18 @@ Dieser Callback wird ausgelöst wenn ein Überstrom gemessen wurde
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Current', 'current'), [(('Current', 'Current'), 'int16', 1, 1000.0, 'mA', 'A', None)], [])]
+'functions': [('getter', ('Get Current', 'current'), [(('Current', 'Current'), 'int16', 1, 1000.0, 'A', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Current', 'current'), [(('Current', 'Current'), 'int16', 1, 1000.0, 'mA', 'A', None)], None, None),
+'functions': [('callback', ('Current', 'current'), [(('Current', 'Current'), 'int16', 1, 1000.0, 'A', None)], None, None),
               ('callback_period', ('Current', 'current'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Current Reached', 'current reached'), [(('Current', 'Current'), 'int16', 1, 1000.0, 'mA', 'A', None)], None, None),
+              ('callback', ('Current Reached', 'current reached'), [(('Current', 'Current'), 'int16', 1, 1000.0, 'A', None)], None, None),
               ('callback_threshold', ('Current', 'current'), [], '>', [(5, 0)])]
 })

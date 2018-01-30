@@ -3553,6 +3553,6 @@ Gibt den Mesh-AP-Status der WIFI Extension 2.0 zurück.
 
 com['examples'].append({
 'name': 'Stack Status',
-'functions': [('getter', ('Get Stack Voltage', 'stack voltage'), [(('Stack Voltage', 'Stack Voltage'), 'uint16', 1, 1000.0, 'mV', 'V', None)], []),
-              ('getter', ('Get Stack Current', 'stack current'), [(('Stack Current', 'Stack Current'), 'uint16', 1, 1000.0, 'mA', 'A', None)], [])]
+'functions': [('getter', ('Get Stack Voltage', 'stack voltage'), [(('Stack Voltage', 'Stack Voltage'), 'uint16', 1, 1000.0, 'V', None)], []),
+              ('getter', ('Get Stack Current', 'stack current'), [(('Stack Current', 'Stack Current'), 'uint16', 1, 1000.0, 'A', None)], [])]
 })

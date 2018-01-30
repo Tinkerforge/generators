@@ -1075,7 +1075,7 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Position Reached', 'position reached'), [(('Position', 'Position'), 'int32', 1, None, None, None, None)], 'Use position reached callback to program random movement', None),
+'functions': [('callback', ('Position Reached', 'position reached'), [(('Position', 'Position'), 'int32', 1, None, None, None)], 'Use position reached callback to program random movement', None),
               ('empty',),
               ('setter', 'Enable', [], None, 'Enable motor power'),
               ('setter', 'Set Steps', [('int32', 1)], None, 'Drive one step forward to get things going')],

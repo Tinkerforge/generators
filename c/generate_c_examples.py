@@ -244,7 +244,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_final_name}\\n", {underscore_name}{index}{divisor});'
+        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {underscore_name}{index}{divisor});'
 
         if self.get_label_name() == None:
             return []
@@ -260,7 +260,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_c_printf_format(),
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%')))
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%')))
 
         return result
 
@@ -304,7 +304,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_final_name}\\n", {underscore_name}{index}{divisor});'
+        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {underscore_name}{index}{divisor});'
 
         if self.get_label_name() == None:
             return []
@@ -312,12 +312,12 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         if self.get_cardinality() < 0:
             return [] # FIXME: streaming
 
-        result = []
-
         underscore_name = self.get_underscore_name()
 
         if underscore_name == self.get_device().get_initial_name():
             underscore_name += '_'
+
+        result = []
 
         for index in range(self.get_label_count()):
             result.append(template.format(underscore_name=underscore_name,
@@ -325,7 +325,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_c_printf_format(),
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}').replace('%', '%%')))
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%')))
 
         return result
 

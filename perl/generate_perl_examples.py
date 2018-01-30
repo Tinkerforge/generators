@@ -138,8 +138,8 @@ class PerlExampleParameter(common.ExampleParameter):
         return template.format(underscore_name=self.get_underscore_name())
 
     def get_perl_prints(self):
-        templateA = '    print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
-        templateB = '    print "{label_name}: ${underscore_name}{unit_final_name}\\n";'
+        templateA = '    print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_name}\\n";'
+        templateB = '    print "{label_name}: ${underscore_name}{unit_name}\\n";'
 
         if self.get_label_name() == None:
             return []
@@ -173,7 +173,7 @@ class PerlExampleParameter(common.ExampleParameter):
                                           index_prefix=index_prefix,
                                           index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          unit_name=self.get_formatted_unit_name(' {0}'),
                                           sprintf_prefix=sprintf_prefix,
                                           sprintf_suffix=sprintf_suffix))
 
@@ -190,8 +190,8 @@ class PerlExampleResult(common.ExampleResult):
         return template.format(underscore_name=underscore_name)
 
     def get_perl_prints(self):
-        templateA = 'print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_final_name}\\n";'
-        templateB = 'print "{label_name}: ${underscore_name}{unit_final_name}\\n";'
+        templateA = 'print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_name}\\n";'
+        templateB = 'print "{label_name}: ${underscore_name}{unit_name}\\n";'
 
         if self.get_label_name() == None:
             return []
@@ -230,7 +230,7 @@ class PerlExampleResult(common.ExampleResult):
                                           index_prefix=index_prefix,
                                           index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_final_name=self.get_unit_formatted_final_name(' {0}'),
+                                          unit_name=self.get_formatted_unit_name(' {0}'),
                                           sprintf_prefix=sprintf_prefix,
                                           sprintf_suffix=sprintf_suffix))
 
