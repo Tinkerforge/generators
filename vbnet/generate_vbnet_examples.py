@@ -473,18 +473,13 @@ class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunct
         return None
 
     def get_vbnet_source(self):
-        template = r"""        ' Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        template = r"""        ' Configure threshold for {function_comment_name} "{option_comment}"
         {device_initial_name}.Set{function_camel_case_name}CallbackThreshold({arguments}"{option_char}"C, {mininum_maximums})
 """
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_vbnet_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
@@ -492,8 +487,7 @@ class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunct
                                arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=', '.join(mininum_maximums))
 
 class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
@@ -509,7 +503,7 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
         templateB = r"""        ' Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
         {device_initial_name}.Set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, False, "{option_char}"C, {mininum_maximums})
 """
-        templateC = r"""        ' Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""        ' Configure threshold for {function_comment_name} "{option_comment}"
         ' with a debounce period of {period_sec_short} ({period_msec}ms)
         {device_initial_name}.Set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, False, "{option_char}"C, {mininum_maximums})
 """
@@ -524,14 +518,9 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_vbnet_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
@@ -542,8 +531,7 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
                                period_sec_long=period_sec_long,
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=', '.join(mininum_maximums))
 
 class VBNETExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_vbnet_imports(self):

@@ -401,18 +401,13 @@ class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         return None
 
     def get_python_source(self):
-        template = r"""    # Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        template = r"""    # Configure threshold for {function_comment_name} "{option_comment}"
     {device_initial_name}.set_{function_underscore_name}_callback_threshold({arguments}"{option_char}", {mininum_maximums})
 """
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_python_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
@@ -420,8 +415,7 @@ class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
                                arguments=common.wrap_non_empty('', ', '.join(self.get_python_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=', '.join(mininum_maximums))
 
 class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):
@@ -437,7 +431,7 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         templateB = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
     {device_initial_name}.set_{function_underscore_name}_callback_configuration({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
 """
-        templateC = r"""    # Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""    # Configure threshold for {function_comment_name} "{option_comment}"
     # with a debounce period of {period_sec_short} ({period_msec}ms)
     {device_initial_name}.set_{function_underscore_name}_callback_configuration({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
 """
@@ -452,14 +446,9 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_python_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
@@ -470,8 +459,7 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
                                period_sec_long=period_sec_long,
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=', '.join(mininum_maximums))
 
 class PythonExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_python_imports(self):

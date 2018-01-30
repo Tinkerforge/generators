@@ -571,18 +571,13 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
         return None
 
     def get_c_source(self):
-        template = r"""	// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        template = r"""	// Configure threshold for {function_comment_name} "{option_comment}"
 	{device_underscore_name}_set_{function_underscore_name}_callback_threshold(&{device_initial_name}{arguments}, '{option_char}', {mininum_maximums});
 """
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_c_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         return template.format(device_underscore_name=self.get_device().get_underscore_name(),
                                device_initial_name=self.get_device().get_initial_name(),
@@ -591,8 +586,7 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
                                arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=', '.join(mininum_maximums))
 
 class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, CExampleArgumentsMixin):
     def get_c_defines(self):
@@ -611,7 +605,7 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         templateB = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
 	{device_underscore_name}_set_{function_underscore_name}_callback_configuration(&{device_initial_name}{arguments}, {period_msec}, false, '{option_char}', {mininum_maximums});
 """
-        templateC = r"""	// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""	// Configure threshold for {function_comment_name} "{option_comment}"
 	// with a debounce period of {period_sec_short} ({period_msec}ms)
 	{device_underscore_name}_set_{function_underscore_name}_callback_configuration(&{device_initial_name}{arguments}, {period_msec}, false, '{option_char}', {mininum_maximums});
 """
@@ -624,16 +618,11 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
             template = templateC
 
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_c_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         return template.format(device_underscore_name=self.get_device().get_underscore_name(),
                                device_initial_name=self.get_device().get_initial_name(),
@@ -644,8 +633,7 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
                                period_sec_short=period_sec_short,
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=', '.join(mininum_maximums))
 
 class CExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_c_defines(self):

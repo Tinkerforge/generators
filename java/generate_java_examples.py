@@ -437,18 +437,13 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         return []
 
     def get_java_source(self):
-        template = r"""		// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        template = r"""		// Configure threshold for {function_comment_name} "{option_comment}"
 		{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
 """
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_java_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         result = template.format(device_initial_name=self.get_device().get_initial_name(),
                                  function_camel_case_name=self.get_camel_case_name(),
@@ -456,8 +451,7 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
                                  arguments=common.wrap_non_empty('', ',<BP>'.join(self.get_java_arguments()), ',<BP>'),
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
-                                 mininum_maximums=',<BP>'.join(mininum_maximums),
-                                 mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                                 mininum_maximums=',<BP>'.join(mininum_maximums))
 
         return common.break_string(result, 'CallbackThreshold(')
 
@@ -472,7 +466,7 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         templateB = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
 		{device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false,<BP>'{option_char}', {mininum_maximums});
 """
-        templateC = r"""		// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""		// Configure threshold for {function_comment_name} "{option_comment}"
 		// with a debounce period of {period_sec_short} ({period_msec}ms)
 		{device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false,<BP>'{option_char}', {mininum_maximums});
 """
@@ -487,14 +481,9 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_java_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         result = template.format(device_initial_name=self.get_device().get_initial_name(),
                                  function_camel_case_name=self.get_camel_case_name(),
@@ -505,8 +494,7 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
                                  period_sec_long=period_sec_long,
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
-                                 mininum_maximums=',<BP>'.join(mininum_maximums),
-                                 mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                                 mininum_maximums=',<BP>'.join(mininum_maximums))
 
         return common.break_string(result, 'CallbackConfiguration(')
 

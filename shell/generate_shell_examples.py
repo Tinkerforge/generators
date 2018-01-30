@@ -268,18 +268,13 @@ class ShellExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshol
 
 class ShellExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
-        template = r"""# Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        template = r"""# Configure threshold for {function_comment_name} "{option_comment}"
 tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-callback-threshold {arguments}{option_dash_name} {mininum_maximums}
 """
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_shell_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         option_dash_names = {'o' : 'threshold-option-outside', '<': 'threshold-option-smaller', '>': 'threshold-option-greater'}
 
@@ -290,8 +285,7 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
                                arguments=common.wrap_non_empty('', ' '.join(self.get_shell_arguments()), ' '),
                                option_dash_name=option_dash_names[self.get_option_char()],
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=' '.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=' '.join(mininum_maximums))
 
 class ShellExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
@@ -301,7 +295,7 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
         templateB = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
 tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-callback-configuration {arguments}{period_msec} false {option_dash_name} {mininum_maximums}
 """
-        templateC = r"""# Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
+        templateC = r"""# Configure threshold for {function_comment_name} "{option_comment}"
 # with a debounce period of {period_sec_short} ({period_msec}ms)
 tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_dash_name}-callback-configuration {arguments}{period_msec} false {option_dash_name} {mininum_maximums}
 """
@@ -316,14 +310,9 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_shell_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         option_dash_names = {None: '', 'x' : 'threshold-option-off', 'o' : 'threshold-option-outside', '<': 'threshold-option-smaller', '>': 'threshold-option-greater'}
 
@@ -337,8 +326,7 @@ tinkerforge call {device_dash_name}-{device_dash_category} $uid set-{function_da
                                period_sec_long=period_sec_long,
                                option_dash_name=option_dash_names[self.get_option_char()],
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=' '.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=' '.join(mininum_maximums))
 
 class ShellExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_shell_defines(self):

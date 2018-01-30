@@ -437,19 +437,14 @@ class MathematicaExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackTh
 
 class MathematicaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
-        template = r"""(*Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}*)
+        template = r"""(*Configure threshold for {function_comment_name} "{option_comment}"*)
 option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOLDUOPTIONU{option_upper_case_name}
 {device_initial_name}@Set{function_camel_case_name}CallbackThreshold[{arguments}option,{mininum_maximums}]
 """
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_mathematica_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         option_upper_case_names = {'o' : 'OUTSIDE', '<': 'SMALLER', '>': 'GREATER'}
 
@@ -462,8 +457,7 @@ option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOL
                                option_upper_case_name=option_upper_case_names[self.get_option_char()],
                                option_comment=self.get_option_comment(),
                                arguments=common.wrap_non_empty('', ','.join(self.get_mathematica_arguments()), ','),
-                               mininum_maximums=','.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=','.join(mininum_maximums))
 
 class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
@@ -474,7 +468,7 @@ class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConf
 option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOLDUOPTIONU{option_upper_case_name}
 {device_initial_name}@Set{function_camel_case_name}CallbackConfiguration[{arguments}{period_msec},False,option,{mininum_maximums}]
 """
-        templateC = r"""(*Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}*)
+        templateC = r"""(*Configure threshold for {function_comment_name} "{option_comment}"*)
 (*with a debounce period of {period_sec_short} ({period_msec}ms)*)
 option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOLDUOPTIONU{option_upper_case_name}
 {device_initial_name}@Set{function_camel_case_name}CallbackConfiguration[{arguments}{period_msec},False,option,{mininum_maximums}]
@@ -490,14 +484,9 @@ option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOL
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         mininum_maximums = []
-        mininum_maximum_unit_comments = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_mathematica_source())
-            mininum_maximum_unit_comments.append(mininum_maximum.get_unit_comment())
-
-        if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
-            mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
         option_upper_case_names = {None: '', 'x': 'OFF', 'o' : 'OUTSIDE', '<': 'SMALLER', '>': 'GREATER'}
 
@@ -513,8 +502,7 @@ option=Tinkerforge`{device_camel_case_category}{device_camel_case_name}`THRESHOL
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,
-                               mininum_maximums=','.join(mininum_maximums),
-                               mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+                               mininum_maximums=','.join(mininum_maximums))
 
 class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_mathematica_source(self):
