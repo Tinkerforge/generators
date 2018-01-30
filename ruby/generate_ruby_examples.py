@@ -140,7 +140,7 @@ class RubyExampleParameter(common.ExampleParameter):
         return underscore_name
 
     def get_ruby_puts(self):
-        template = '  puts "{label_name}: #{{{printf_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_name}"'
+        template = '  puts "{label_name}: #{{{printf_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_name}"{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -174,7 +174,8 @@ class RubyExampleParameter(common.ExampleParameter):
                                           divisor=divisor,
                                           unit_name=self.get_formatted_unit_name(' {0}'),
                                           printf_prefix=printf_prefix,
-                                          printf_suffix=printf_suffix))
+                                          printf_suffix=printf_suffix,
+                                          comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -188,7 +189,7 @@ class RubyExampleResult(common.ExampleResult):
         return underscore_name
 
     def get_ruby_puts(self):
-        template = 'puts "{label_name}: #{{{printf_prefix}{array_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_name}"'
+        template = 'puts "{label_name}: #{{{printf_prefix}{array_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_name}"{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -229,13 +230,14 @@ class RubyExampleResult(common.ExampleResult):
                                           divisor=divisor,
                                           unit_name=self.get_formatted_unit_name(' {0}'),
                                           printf_prefix=printf_prefix,
-                                          printf_suffix=printf_suffix))
+                                          printf_suffix=printf_suffix,
+                                          comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
 class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
-        template = r"""# Get current {function_comment_name}{comments}
+        template = r"""# Get current {function_comment_name}
 {variables} = {device_initial_name}.{function_underscore_name}{arguments}
 {puts}
 """
@@ -244,12 +246,8 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
         puts = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variables.append(result.get_ruby_variable())
             puts += result.get_ruby_puts()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         if len(variables) > 1:
             comments.insert(0, ' (returned as [{0}])'.format(', '.join([variable.rstrip('_') for variable in variables])))
@@ -269,7 +267,6 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
                                variables=', '.join(variables),
                                puts='\n'.join(puts),
                                arguments=arguments)
@@ -295,7 +292,7 @@ class RubyExampleSetterFunction(common.ExampleSetterFunction, RubyExampleArgumen
 
 class RubyExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_ruby_source(self):
-        template1A = r"""# Register {function_comment_name} callback{comments}
+        template1A = r"""# Register {function_comment_name} callback
 """
         template1B = r"""{override_comment}
 """
@@ -310,17 +307,12 @@ end
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         puts = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_ruby_source())
             puts += parameter.get_ruby_puts()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in puts:
             puts.remove(None)
@@ -334,7 +326,6 @@ end
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
                                   device_camel_case_name=self.get_device().get_camel_case_name(),

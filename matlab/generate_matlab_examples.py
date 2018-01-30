@@ -270,7 +270,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
         return False
 
     def get_matlab_fprintfs(self):
-        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});"
+        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
 
         if self.get_label_name() == None:
             return []
@@ -309,7 +309,8 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
                                           java2int_prefix=java2int_prefix,
                                           java2int_suffix=java2int_suffix,
                                           to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix))
+                                          to_binary_suffix=to_binary_suffix,
+                                          comment=self.get_formatted_comment(' % {0}')))
 
         return result
 
@@ -332,7 +333,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
         return headless_camel_case_name
 
     def get_matlab_fprintfs(self):
-        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});"
+        template = r"    fprintf({global_quote}{label_name}: {fprintf_format}{unit_name}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{headless_camel_case_name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
 
         if self.get_label_name() == None:
             return []
@@ -382,7 +383,8 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                           java2int_prefix=java2int_prefix,
                                           java2int_suffix=java2int_suffix,
                                           to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix))
+                                          to_binary_suffix=to_binary_suffix,
+                                          comment=self.get_formatted_comment(' % {0}')))
 
         return result
 
@@ -396,21 +398,16 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
         return []
 
     def get_matlab_source(self):
-        template = r"""    % Get current {function_comment_name}{comments}
+        template = r"""    % Get current {function_comment_name}
     {variable} = {device_initial_name}.{function_headless_camel_case_name}({arguments});
 {fprintfs}
 """
-        comments = []
         variables = []
         fprintfs = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variables.append(result.get_matlab_variable())
             fprintfs += result.get_matlab_fprintfs()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         if len(variables) > 1:
             variable = self.get_headless_camel_case_name(skip=1)
@@ -426,7 +423,6 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
                                variable=variable,
                                fprintfs='\n'.join(fprintfs),
                                arguments=', '.join(self.get_matlab_arguments()))
@@ -457,7 +453,7 @@ class MATLABExampleCallbackFunction(common.ExampleCallbackFunction):
 
             return []
 
-        template1A = r"""% Callback function for {function_comment_name} callback{comments}
+        template1A = r"""% Callback function for {function_comment_name} callback
 """
         template1B = r"""{override_comment}
 """
@@ -472,15 +468,10 @@ end
         else:
             template1 = template1B
 
-        comments = []
         fprintfs = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             fprintfs += parameter.get_matlab_fprintfs()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in fprintfs:
             fprintfs.remove(None)
@@ -494,7 +485,6 @@ end
             extra_message = '\n' + extra_message
 
         functions = [template1.format(function_comment_name=self.get_comment_name(),
-                                      comments=''.join(comments),
                                       override_comment=override_comment) + \
                      template2.format(function_underscore_name=self.get_underscore_name(),
                                       fprintfs='\n'.join(fprintfs),

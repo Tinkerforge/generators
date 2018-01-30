@@ -147,7 +147,7 @@ class PythonExampleParameter(common.ExampleParameter):
         return self.get_underscore_name()
 
     def get_python_prints(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_name})'
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_name}){comment}'
 
         if self.get_label_name() == None:
             return []
@@ -176,7 +176,8 @@ class PythonExampleParameter(common.ExampleParameter):
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           format_prefix=format_prefix,
-                                          format_suffix=format_suffix))
+                                          format_suffix=format_suffix,
+                                          comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -190,7 +191,7 @@ class PythonExampleResult(common.ExampleResult):
         return underscore_name
 
     def get_python_prints(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_name})'
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_name}){comment}'
 
         if self.get_label_name() == None:
             return []
@@ -224,7 +225,8 @@ class PythonExampleResult(common.ExampleResult):
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           format_prefix=format_prefix,
-                                          format_suffix=format_suffix))
+                                          format_suffix=format_suffix,
+                                          comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -236,21 +238,16 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         return None
 
     def get_python_source(self):
-        template = r"""    # Get current {function_comment_name}{comments}
+        template = r"""    # Get current {function_comment_name}
     {variables} = {device_initial_name}.{function_underscore_name}({arguments})
 {prints}
 """
-        comments = []
         variables = []
         prints = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variables.append(result.get_python_variable())
             prints += result.get_python_prints()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         while None in prints:
             prints.remove(None)
@@ -261,7 +258,6 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         result = template.format(device_initial_name=self.get_device().get_initial_name(),
                                  function_underscore_name=self.get_underscore_name(),
                                  function_comment_name=self.get_comment_name(),
-                                 comments=''.join(comments),
                                  variables=',<BP>'.join(variables),
                                  prints='\n'.join(prints),
                                  arguments=', '.join(self.get_python_arguments()))
@@ -292,7 +288,7 @@ class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
         return []
 
     def get_python_function(self):
-        template1A = r"""# Callback function for {function_comment_name} callback{comments}
+        template1A = r"""# Callback function for {function_comment_name} callback
 """
         template1B = r"""{override_comment}
 """
@@ -306,17 +302,12 @@ class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         prints = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_python_source())
             prints += parameter.get_python_prints()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in prints:
             prints.remove(None)
@@ -330,7 +321,6 @@ class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(function_underscore_name=self.get_underscore_name(),
                                   parameters=',<BP>'.join(parameters),

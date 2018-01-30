@@ -226,7 +226,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
         # FIXME: the parameter type can indicate a bitmask, but there is no easy way in Delphi
         #        to format an integer in base-2, that doesn't require open-coding it with several
         #        lines of code. so just print the integer in base-10 the normal way
-        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_name}', [{headless_camel_case_name}{index}{divisor}]));"
+        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_name}', [{headless_camel_case_name}{index}{divisor}]));{comment}"
 
         if self.get_label_name() == None:
             return []
@@ -247,7 +247,8 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_delphi_printf_format(),
-                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%')))
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                          comment=self.get_formatted_comment(' {{ {0} }}')))
 
         return result
 
@@ -285,7 +286,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
         # FIXME: the result type can indicate a bitmask, but there is no easy way in Delphi
         #        to format an integer in base-2, that doesn't require open-coding it with several
         #        lines of code. so just print the integer in base-10 the normal way
-        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_name}', [{headless_camel_case_name}{index}{divisor}]));"
+        template = "  WriteLn(Format('{label_name}: {printf_format}{unit_name}', [{headless_camel_case_name}{index}{divisor}]));{comment}"
 
         if self.get_label_name() == None:
             return []
@@ -306,7 +307,8 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_delphi_printf_format(),
-                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%')))
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                          comment=self.get_formatted_comment(' {{ {0} }}')))
 
         return result
 
@@ -326,20 +328,18 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
         return variable_declarations
 
     def get_delphi_source(self):
-        templateA = r"""  {{ Get current {function_comment_name}{comments} }}
+        templateA = r"""  {{ Get current {function_comment_name} }}
   {variable_names} := {device_initial_name}.{function_camel_case_name}{arguments};
 {write_lns}
 """
-        templateB = r"""  {{ Get current {function_comment_name}{comments} }}
+        templateB = r"""  {{ Get current {function_comment_name} }}
   {device_initial_name}.{function_camel_case_name}{arguments};
 {write_lns}
 """
-        comments = []
         variable_names = []
         write_lns = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variable_names.append(result.get_delphi_variable_name())
             write_lns += result.get_delphi_write_lns()
 
@@ -347,9 +347,6 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
             template = templateA
         else:
             template = templateB
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         while None in write_lns:
             write_lns.remove(None)
@@ -366,7 +363,6 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
         result = template.format(device_initial_name=self.get_device().get_initial_name(),
                                  function_camel_case_name=self.get_camel_case_name(),
                                  function_comment_name=self.get_comment_name(),
-                                 comments=''.join(comments),
                                  variable_names=''.join(variable_names),
                                  write_lns='\n'.join(write_lns),
                                  arguments=common.wrap_non_empty('(', ',<BP>'.join(arguments), ')'))
@@ -411,7 +407,7 @@ class DelphiExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, '{}CB('.format(self.get_camel_case_name()))
 
     def get_delphi_procedure(self):
-        template1A = r"""{{ Callback procedure for {function_comment_name} callback{comments} }}
+        template1A = r"""{{ Callback procedure for {function_comment_name} callback }}
 """
         template1B = r"""{override_comment}
 """
@@ -427,17 +423,12 @@ end;
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         write_lns = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_delphi_source())
             write_lns += parameter.get_delphi_write_lns()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in write_lns:
             write_lns.remove(None)
@@ -451,7 +442,6 @@ end;
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
                                   device_camel_case_name=self.get_device().get_camel_case_name(),

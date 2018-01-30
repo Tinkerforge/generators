@@ -244,7 +244,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {underscore_name}{index}{divisor});'
+        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {underscore_name}{index}{divisor});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -260,7 +260,8 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_c_printf_format(),
-                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%')))
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -304,7 +305,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {underscore_name}{index}{divisor});'
+        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {underscore_name}{index}{divisor});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -325,7 +326,8 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_c_printf_format(),
-                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%')))
+                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -350,8 +352,8 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         return None
 
     def get_c_source(self):
-        template = r"""	// Get current {function_comment_name}{comments}
-	{variable_declarations};
+        template = r"""	// Get current {function_comment_name}
+{variable_declarations};
 	if({device_underscore_name}_{function_underscore_name}(&{device_initial_name}{arguments}{variable_references}) < 0) {{
 		fprintf(stderr, "Could not get {function_comment_name}, probably timeout\n");
 		return 1;
@@ -359,19 +361,15 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
 
 {printfs}
 """
-        comments = []
         variable_declarations = []
         variable_references = []
         printfs = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variable_declarations.append(result.get_c_variable_declaration())
             variable_references.append(result.get_c_variable_reference())
             printfs += result.get_c_printfs()
 
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         merged_variable_declarations = [' '.join(variable_declarations[0])]
 
@@ -394,7 +392,6 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
                                  device_initial_name=self.get_device().get_initial_name(),
                                  function_comment_name=self.get_comment_name(),
                                  function_underscore_name=self.get_underscore_name(),
-                                 comments=''.join(comments),
                                  variable_declarations=variable_declarations,
                                  variable_references=',<BP>' + ',<BP>'.join(variable_references),
                                  printfs='\n'.join(printfs),
@@ -443,7 +440,7 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         return includes
 
     def get_c_function(self):
-        template1A = r"""// Callback function for {function_comment_name} callback{comments}
+        template1A = r"""// Callback function for {function_comment_name} callback
 """
         template1B = r"""{override_comment}
 """
@@ -460,19 +457,14 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         unuseds = []
         printfs = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_c_source())
             unuseds.append(parameter.get_c_unused())
             printfs += parameter.get_c_printfs()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in unuseds:
             unuseds.remove(None)
@@ -489,7 +481,6 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(function_underscore_name=self.get_underscore_name(),
                                   parameters=common.wrap_non_empty('', ',<BP>'.join(parameters), ',<BP>'),

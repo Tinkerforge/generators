@@ -162,11 +162,11 @@ class MathematicaExampleParameter(common.ExampleParameter):
             return 'FIXME_'
 
     def get_mathematica_prints(self):
-        templateA = ' Print["{label_name}: "<>ToString[N[Quantity[{headless_camel_case_name}{index},"{quantity_name}"]]]]'
-        templateB = ' Print["{label_name}: "<>ToString[N[{headless_camel_case_name}{index}/{divisor}]]]'
-        templateC = ' Print["{label_name}: "<>FromCharacterCode[{headless_camel_case_name}{index}]]'
-        templateD = ' Print["{label_name}: "<>StringJoin[Map[ToString,IntegerDigits[{headless_camel_case_name}{index},2,{bitmask_length}]]]]'
-        templateE = ' Print["{label_name}: "<>ToString[{headless_camel_case_name}{index}]]'
+        templateA = ' Print["{label_name}: "<>ToString[N[Quantity[{headless_camel_case_name}{index},"{quantity_name}"]]]]{comment}'
+        templateB = ' Print["{label_name}: "<>ToString[N[{headless_camel_case_name}{index}/{divisor}]]]{comment}'
+        templateC = ' Print["{label_name}: "<>FromCharacterCode[{headless_camel_case_name}{index}]]{comment}'
+        templateD = ' Print["{label_name}: "<>StringJoin[Map[ToString,IntegerDigits[{headless_camel_case_name}{index},2,{bitmask_length}]]]]{comment}'
+        templateE = ' Print["{label_name}: "<>ToString[{headless_camel_case_name}{index}]]{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -199,7 +199,8 @@ class MathematicaExampleParameter(common.ExampleParameter):
                                           quantity_name=quantity_name,
                                           index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          bitmask_length=bitmask_length))
+                                          bitmask_length=bitmask_length,
+                                          comment=self.get_formatted_comment('(*{0}*)')))
 
         return result
 
@@ -213,11 +214,11 @@ class MathematicaExampleResult(common.ExampleResult):
         return headless_camel_case_name
 
     def get_mathematica_prints(self, getter_call=None):
-        templateA = 'Print["{label_name}: "<>ToString[N[Quantity[{value}{index},"{quantity_name}"]]]]'
-        templateB = 'Print["{label_name}: "<>ToString[N[{value}{index}/{divisor}]]]'
-        templateC = 'Print["{label_name}: "<>FromCharacterCode[{value}{index}]]'
-        templateD = 'Print["{label_name}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]'
-        templateE = 'Print["{label_name}: "<>ToString[{value}{index}]]'
+        templateA = 'Print["{label_name}: "<>ToString[N[Quantity[{value}{index},"{quantity_name}"]]]]{comment}'
+        templateB = 'Print["{label_name}: "<>ToString[N[{value}{index}/{divisor}]]]{comment}'
+        templateC = 'Print["{label_name}: "<>FromCharacterCode[{value}{index}]]{comment}'
+        templateD = 'Print["{label_name}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{comment}'
+        templateE = 'Print["{label_name}: "<>ToString[{value}{index}]]{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -260,19 +261,20 @@ class MathematicaExampleResult(common.ExampleResult):
                                           quantity_name=quantity_name,
                                           index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          bitmask_length=bitmask_length))
+                                          bitmask_length=bitmask_length,
+                                          comment=self.get_formatted_comment('(*{0}*)')))
 
         return result
 
 class MathematicaExampleGetterFunction(common.ExampleGetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
         template = '{device_initial_name}@{function_camel_case_name}[{arguments}]'
-        templateA = r"""(*Get current {function_comment_name}{comments}*)
+        templateA = r"""(*Get current {function_comment_name}*)
 {prints}
 """
         templateB = r"""{variable_declarations}
 
-(*Get current {function_comment_name}{comments}*)
+(*Get current {function_comment_name}*)
 {device_initial_name}@{function_camel_case_name}[{arguments}]
 {prints}
 """
@@ -290,12 +292,8 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
         prints = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variable_names.append(result.get_mathematica_variable_name())
             prints += result.get_mathematica_prints(getter_call)
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         if len(variable_names) == 1:
             template = templateA
@@ -317,7 +315,6 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
                                function_camel_case_name=self.get_camel_case_name(),
                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
                                variable_names=''.join(variable_names),
                                variable_declarations=';'.join(variable_declarations),
                                prints='\n'.join(prints),
@@ -339,7 +336,7 @@ class MathematicaExampleSetterFunction(common.ExampleSetterFunction, Mathematica
 
 class MathematicaExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_mathematica_source(self):
-        template1A = r"""(*Callback function for {function_comment_name} callback{comments}*)
+        template1A = r"""(*Callback function for {function_comment_name} callback*)
 """
         template1B = r"""{override_comment}
 """
@@ -362,17 +359,12 @@ AddEventHandler[{device_initial_name}@{function_camel_case_name}Callback,{functi
             template1 = template1B
             override_comment = re.sub('\\(\\*[ ]+\\*\\)\n', '', override_comment)
 
-        comments = []
         parameters = []
         prints = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_mathematica_source())
             prints += parameter.get_mathematica_prints()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in prints:
             prints.remove(None)
@@ -392,7 +384,6 @@ AddEventHandler[{device_initial_name}@{function_camel_case_name}Callback,{functi
             extra_message = ';\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(device_initial_name=self.get_device().get_initial_name(),
                                   function_camel_case_name=self.get_camel_case_name(),

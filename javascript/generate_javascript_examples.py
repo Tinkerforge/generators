@@ -313,7 +313,7 @@ class JavaScriptExampleParameter(common.ExampleParameter):
         return self.get_headless_camel_case_name()
 
     def get_javascript_outputs(self):
-        template = "        {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name}{global_output_suffix};"
+        template = "        {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name}{global_output_suffix};{comment}"
 
         if self.get_label_name() == None:
             return []
@@ -347,7 +347,8 @@ class JavaScriptExampleParameter(common.ExampleParameter):
                                           divisor=divisor,
                                           unit_name=self.get_formatted_unit_name(" + ' {0}'"),
                                           to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix))
+                                          to_binary_suffix=to_binary_suffix,
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -356,7 +357,7 @@ class JavaScriptExampleResult(common.ExampleResult):
         return self.get_headless_camel_case_name()
 
     def get_javascript_outputs(self):
-        template = "{global_line_prefix}                {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name}{global_output_suffix};"
+        template = "{global_line_prefix}                {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name}{global_output_suffix};{comment}"
 
         if self.get_label_name() == None:
             return []
@@ -391,7 +392,8 @@ class JavaScriptExampleResult(common.ExampleResult):
                                           divisor=divisor,
                                           unit_name=self.get_formatted_unit_name(" + ' {0}'"),
                                           to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix))
+                                          to_binary_suffix=to_binary_suffix,
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -400,7 +402,7 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptEx
         return None
 
     def get_javascript_source(self):
-        template = r"""{global_line_prefix}        // Get current {function_comment_name}{comments}
+        template = r"""{global_line_prefix}        // Get current {function_comment_name}
 {global_line_prefix}        {device_initial_name}.{function_headless_camel_case_name}({arguments}
 {global_line_prefix}            function ({variables}) {{
 {outputs}
@@ -410,17 +412,12 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptEx
 {global_line_prefix}            }}
 {global_line_prefix}        );
 """
-        comments = []
         variables = []
         outputs = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variables.append(result.get_javascript_source())
             outputs += result.get_javascript_outputs()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         while None in outputs:
             outputs.remove(None)
@@ -431,7 +428,6 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptEx
                                device_initial_name=self.get_device().get_initial_name(),
                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
                                variables=', '.join(variables),
                                outputs='\n'.join(outputs),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ','))
@@ -457,7 +453,7 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
         template1 = r"""// Register {function_comment_name} callback
 {device_initial_name}.on(Tinkerforge.{device_camel_case_category}{device_camel_case_name}.CALLBACK_{function_upper_case_name},
 """
-        template2A = r"""    // Callback function for {function_comment_name} callback{comments}
+        template2A = r"""    // Callback function for {function_comment_name} callback
 """
         template2B = r"""{override_comment}
 """
@@ -473,17 +469,12 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template2 = template2B
 
-        comments = []
         parameters = []
         outputs = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_javascript_source())
             outputs += parameter.get_javascript_outputs()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in outputs:
             outputs.remove(None)
@@ -504,7 +495,6 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
                                   function_upper_case_name=self.get_upper_case_name(),
                                   function_comment_name=self.get_comment_name()) + \
                  template2.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template3.format(global_callback_output_suffix=global_callback_output_suffix,
                                   parameters=',<BP>'.join(parameters),

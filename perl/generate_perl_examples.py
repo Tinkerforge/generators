@@ -138,8 +138,8 @@ class PerlExampleParameter(common.ExampleParameter):
         return template.format(underscore_name=self.get_underscore_name())
 
     def get_perl_prints(self):
-        templateA = '    print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_name}\\n";'
-        templateB = '    print "{label_name}: ${underscore_name}{unit_name}\\n";'
+        templateA = '    print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_name}\\n";{comment}'
+        templateB = '    print "{label_name}: ${underscore_name}{unit_name}\\n";{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -175,7 +175,8 @@ class PerlExampleParameter(common.ExampleParameter):
                                           divisor=divisor,
                                           unit_name=self.get_formatted_unit_name(' {0}'),
                                           sprintf_prefix=sprintf_prefix,
-                                          sprintf_suffix=sprintf_suffix))
+                                          sprintf_suffix=sprintf_suffix,
+                                          comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -190,8 +191,8 @@ class PerlExampleResult(common.ExampleResult):
         return template.format(underscore_name=underscore_name)
 
     def get_perl_prints(self):
-        templateA = 'print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_name}\\n";'
-        templateB = 'print "{label_name}: ${underscore_name}{unit_name}\\n";'
+        templateA = 'print "{label_name}: " . {sprintf_prefix}{index_prefix}${underscore_name}{index_suffix}{divisor}{sprintf_suffix} . "{unit_name}\\n";{comment}'
+        templateB = 'print "{label_name}: ${underscore_name}{unit_name}\\n";{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -232,7 +233,8 @@ class PerlExampleResult(common.ExampleResult):
                                           divisor=divisor,
                                           unit_name=self.get_formatted_unit_name(' {0}'),
                                           sprintf_prefix=sprintf_prefix,
-                                          sprintf_suffix=sprintf_suffix))
+                                          sprintf_suffix=sprintf_suffix,
+                                          comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -241,16 +243,14 @@ class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumen
         return None
 
     def get_perl_source(self):
-        template = r"""# Get current {function_comment_name}{comments}
+        template = r"""# Get current {function_comment_name}
 {variables} = ${device_initial_name}->{function_underscore_name}({arguments});
 {prints}
 """
-        comments = []
         variables = []
         prints = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variables.append(result.get_perl_variable())
             prints += result.get_perl_prints()
 
@@ -258,9 +258,6 @@ class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumen
             variables = common.break_string('my (' + ',<BP>'.join(variables) + ')', 'my (')
         else:
             variables = 'my ' + variables[0]
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         while None in prints:
             prints.remove(None)
@@ -271,7 +268,6 @@ class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumen
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
                                variables=variables,
                                prints='\n'.join(prints),
                                arguments=', '.join(self.get_perl_arguments()))
@@ -295,7 +291,7 @@ class PerlExampleSetterFunction(common.ExampleSetterFunction, PerlExampleArgumen
 
 class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_perl_subroutine(self):
-        template1A = r"""# Callback subroutine for {function_comment_name} callback{comments}
+        template1A = r"""# Callback subroutine for {function_comment_name} callback
 """
         template1B = r"""{override_comment}
 """
@@ -311,17 +307,12 @@ class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         prints = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_perl_source())
             prints += parameter.get_perl_prints()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in prints:
             prints.remove(None)
@@ -335,7 +326,6 @@ class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(function_underscore_name=self.get_underscore_name(),
                                   parameters=common.wrap_non_empty('    my (', ',<BP>'.join(parameters), ') = @_;\n\n'),

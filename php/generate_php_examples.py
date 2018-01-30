@@ -150,8 +150,8 @@ class PHPExampleParameter(common.ExampleParameter):
         return template.format(underscore_name=self.get_underscore_name())
 
     def get_php_echos(self):
-        templateA = '    echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_name}\\n";'
-        templateB = '    echo "{label_name}: ${underscore_name}{unit_name}\\n";'
+        templateA = '    echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_name}\\n";{comment}'
+        templateB = '    echo "{label_name}: ${underscore_name}{unit_name}\\n";{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -182,7 +182,8 @@ class PHPExampleParameter(common.ExampleParameter):
                                           divisor=divisor,
                                           unit_name=self.get_formatted_unit_name(' {0}'),
                                           sprintf_prefix=sprintf_prefix,
-                                          sprintf_suffix=sprintf_suffix))
+                                          sprintf_suffix=sprintf_suffix,
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -197,8 +198,8 @@ class PHPExampleResult(common.ExampleResult):
         return template.format(underscore_name=underscore_name)
 
     def get_php_echos(self):
-        templateA = 'echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_name}\\n";'
-        templateB = 'echo "{label_name}: ${underscore_name}{unit_name}\\n";'
+        templateA = 'echo "{label_name}: " . {sprintf_prefix}${underscore_name}{index}{divisor}{sprintf_suffix} . "{unit_name}\\n";{comment}'
+        templateB = 'echo "{label_name}: ${underscore_name}{unit_name}\\n";{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -241,7 +242,8 @@ class PHPExampleResult(common.ExampleResult):
                                           divisor=divisor,
                                           unit_name=self.get_formatted_unit_name(' {0}'),
                                           sprintf_prefix=sprintf_prefix,
-                                          sprintf_suffix=sprintf_suffix))
+                                          sprintf_suffix=sprintf_suffix,
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -250,21 +252,16 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
         return None
 
     def get_php_source(self):
-        template = r"""// Get current {function_comment_name}{comments}
+        template = r"""// Get current {function_comment_name}
 {variables} = ${device_initial_name}->{function_headless_camel_case_name}({arguments});
 {echos}
 """
-        comments = []
         variables = []
         echos = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variables.append(result.get_php_variable())
             echos += result.get_php_echos()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         if len(variables) > 1:
             variables = '$' + self.get_underscore_name(skip=1)
@@ -280,7 +277,6 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
                                variables=variables,
                                echos='\n'.join(echos),
                                arguments=', '.join(self.get_php_arguments()))
@@ -303,7 +299,7 @@ class PHPExampleSetterFunction(common.ExampleSetterFunction, PHPExampleArguments
 
 class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_php_subroutine(self):
-        template1A = r"""// Callback function for {function_comment_name} callback{comments}
+        template1A = r"""// Callback function for {function_comment_name} callback
 """
         template1B = r"""{override_comment}
 """
@@ -319,17 +315,12 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         echos = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_php_source())
             echos += parameter.get_php_echos()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in echos:
             echos.remove(None)
@@ -343,7 +334,6 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                   parameters=',<BP>'.join(parameters),

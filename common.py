@@ -1892,7 +1892,7 @@ class ExampleParameter(ExampleItem, NameMixin):
 
         self.function = function
 
-        if len(raw_data) != 7:
+        if len(raw_data) != 6:
             raise GeneratorError('Invalid ExampleParameter: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
@@ -1946,47 +1946,38 @@ class ExampleParameter(ExampleItem, NameMixin):
 
         if divisor == None:
             return ''
-        else:
-            return template.format(cast(divisor))
 
-    def get_unit_raw_name(self):
+        return template.format(cast(divisor))
+
+    def get_unit_name(self):
         return self.raw_data[4]
 
-    def get_unit_formatted_raw_name(self, template):
-        raw_name = self.get_unit_raw_name()
+    def get_formatted_unit_name(self, template):
+        unit_name = self.get_unit_name()
 
-        if raw_name == None:
+        if unit_name == None:
             return ''
-        else:
-            return template.format(raw_name)
 
-    def get_unit_final_name(self):
-        return self.raw_data[5]
-
-    def get_unit_formatted_final_name(self, template):
-        final_name = self.get_unit_final_name()
-
-        if final_name == None:
-            return ''
-        else:
-            return template.format(final_name)
+        return template.format(unit_name)
 
     def get_range(self):
-        return self.raw_data[6]
+        return self.raw_data[5]
 
     def get_formatted_range(self, template):
         range_ = self.get_range()
 
         if range_ == None:
             return ''
-        else:
-            return template.format(range_[0], range_[1])
 
-    def get_formatted_comment(self):
-        template = '{unit_raw_name}{range}'
+        return template.format(range_[0], range_[1])
 
-        return template.format(unit_raw_name=self.get_unit_formatted_raw_name(' (parameter has unit {0})'),
-                               range=self.get_formatted_range(' (parameter has range {0} to {1})'))
+    def get_formatted_comment(self, template):
+        formatted_range = self.get_formatted_range('Range: {0} to {1}')
+
+        if len(formatted_range) == 0:
+            return ''
+
+        return template.format(formatted_range)
 
 class ExampleResult(ExampleItem, NameMixin):
     def __init__(self, raw_data, index, function, example):
@@ -1994,7 +1985,7 @@ class ExampleResult(ExampleItem, NameMixin):
 
         self.function = function
 
-        if len(raw_data) != 7:
+        if len(raw_data) != 6:
             raise GeneratorError('Invalid ExampleResult: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
@@ -2048,47 +2039,38 @@ class ExampleResult(ExampleItem, NameMixin):
 
         if divisor == None:
             return ''
-        else:
-            return template.format(cast(divisor))
 
-    def get_unit_raw_name(self):
+        return template.format(cast(divisor))
+
+    def get_unit_name(self):
         return self.raw_data[4]
 
-    def get_unit_formatted_raw_name(self, template):
-        raw_name = self.get_unit_raw_name()
+    def get_formatted_unit_name(self, template):
+        unit_name = self.get_unit_name()
 
-        if raw_name == None:
+        if unit_name == None:
             return ''
-        else:
-            return template.format(raw_name)
 
-    def get_unit_final_name(self):
-        return self.raw_data[5]
-
-    def get_unit_formatted_final_name(self, template):
-        final_name = self.get_unit_final_name()
-
-        if final_name == None:
-            return ''
-        else:
-            return template.format(final_name)
+        return template.format(unit_name)
 
     def get_range(self):
-        return self.raw_data[6]
+        return self.raw_data[5]
 
     def get_formatted_range(self, template):
         range_ = self.get_range()
 
         if range_ == None:
             return ''
-        else:
-            return template.format(range_[0], range_[1])
 
-    def get_formatted_comment(self):
-        template = '{unit_raw_name}{range}'
+        return template.format(range_[0], range_[1])
 
-        return template.format(unit_raw_name=self.get_unit_formatted_raw_name(' (unit is {0})'),
-                               range=self.get_formatted_range(' (range is {0} to {1})'))
+    def get_formatted_comment(self, template):
+        formatted_range = self.get_formatted_range('Range: {0} to {1}')
+
+        if len(formatted_range) == 0:
+            return ''
+
+        return template.format(formatted_range)
 
 class ExampleGetterFunction(ExampleItem, NameMixin):
     def __init__(self, raw_data, index, example):
@@ -2314,17 +2296,10 @@ class ExampleCallbackThresholdMinimumMaximum(ExampleItem):
 
         if maximum == 0 or divisor == None:
             return str(maximum)
-        else:
-            return template.format(maximum=maximum,
-                                   divisor=int(divisor),
-                                   result=maximum * int(divisor))
 
-    def get_unit_comment(self):
-        template = '{unit_raw_name}{range}'
-        parameter = self.get_corresponding_parameter()
-
-        return template.format(unit_raw_name=parameter.get_unit_formatted_raw_name(' (unit is {0})'),
-                               range=parameter.get_formatted_range(' (range is {0} to {1})'))
+        return template.format(maximum=maximum,
+                               divisor=int(divisor),
+                               result=maximum * int(divisor))
 
 class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
     def __init__(self, raw_data, index, example):
@@ -2367,11 +2342,11 @@ class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
         maximums_with_unit = []
 
         for minimum_maximum in self.get_minimum_maximums():
-            unit_final_name = minimum_maximum.get_corresponding_parameter().get_unit_formatted_final_name(' {0}')
+            unit_name = minimum_maximum.get_corresponding_parameter().get_formatted_unit_name(' {0}')
 
             minimums.append(str(minimum_maximum.get_minimum()))
-            minimums_with_unit.append(str(minimum_maximum.get_minimum()) + unit_final_name)
-            maximums_with_unit.append(str(minimum_maximum.get_maximum()) + unit_final_name)
+            minimums_with_unit.append(str(minimum_maximum.get_minimum()) + unit_name)
+            maximums_with_unit.append(str(minimum_maximum.get_maximum()) + unit_name)
 
         if option_char == '>':
             return 'greater than {0}'.format(', '.join(minimums_with_unit))
@@ -2445,11 +2420,11 @@ class ExampleCallbackConfigurationFunction(ExampleItem, NameMixin):
         maximums_with_unit = []
 
         for minimum_maximum in self.get_minimum_maximums():
-            unit_final_name = minimum_maximum.get_corresponding_parameter().get_unit_formatted_final_name(' {0}')
+            unit_name = minimum_maximum.get_corresponding_parameter().get_formatted_unit_name(' {0}')
 
             minimums.append(str(minimum_maximum.get_minimum()))
-            minimums_with_unit.append(str(minimum_maximum.get_minimum()) + unit_final_name)
-            maximums_with_unit.append(str(minimum_maximum.get_maximum()) + unit_final_name)
+            minimums_with_unit.append(str(minimum_maximum.get_minimum()) + unit_name)
+            maximums_with_unit.append(str(minimum_maximum.get_maximum()) + unit_name)
 
         if option_char in [None, 'x']:
             return 'FIXME' # this should never be actually outputted into an example

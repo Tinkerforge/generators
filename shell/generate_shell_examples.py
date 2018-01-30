@@ -146,22 +146,14 @@ class ShellExampleResult(common.ExampleResult):
 
 class ShellExampleGetterFunction(common.ExampleGetterFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
-        template = r"""# Get current {function_comment_name}{comments}
+        template = r"""# Get current {function_comment_name}
 tinkerforge call {device_dash_name}-{device_dash_category} $uid {function_dash_name}{arguments}
 """
-        comments = []
-
-        for result in self.get_results():
-            comments.append(result.get_formatted_comment())
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         return template.format(device_dash_name=self.get_device().get_dash_name(),
                                device_dash_category=self.get_device().get_dash_category(),
                                function_comment_name=self.get_comment_name(),
                                function_dash_name=self.get_dash_name(),
-                               comments=''.join(comments),
                                arguments=common.wrap_non_empty(' ', ' '.join(self.get_shell_arguments()), ''))
 
 class ShellExampleSetterFunction(common.ExampleSetterFunction, ShellExampleArgumentsMixin):
@@ -197,7 +189,7 @@ class ShellExampleSetterFunction(common.ExampleSetterFunction, ShellExampleArgum
 
 class ShellExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_shell_source(self):
-        template1A = r"""# Handle incoming {function_comment_name} callbacks{comments}
+        template1A = r"""# Handle incoming {function_comment_name} callbacks
 """
         template1B = r"""{override_comment}
 """
@@ -210,15 +202,10 @@ class ShellExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_shell_source())
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in parameters:
             parameters.remove(None)
@@ -226,7 +213,6 @@ class ShellExampleCallbackFunction(common.ExampleCallbackFunction):
         extra_message = self.get_formatted_extra_message('\\\n --execute "echo {parameters}{{0}}"'.format(parameters=common.wrap_non_empty('', '. '.join(parameters), '. ')))
 
         return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
                                 override_comment=override_comment) + \
                template2.format(device_dash_name=self.get_device().get_dash_name(),
                                 device_dash_category=self.get_device().get_dash_category(),

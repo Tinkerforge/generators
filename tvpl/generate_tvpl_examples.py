@@ -241,7 +241,7 @@ class TVPLExampleParameter(common.ExampleParameter):
         return self.get_underscore_name()
 
     def get_tvpl_print_X(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_name})'
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_name}){comment}'
 
         if self.get_label_name() == None:
             return None
@@ -263,7 +263,8 @@ class TVPLExampleParameter(common.ExampleParameter):
                                divisor=self.get_formatted_divisor('/{0}'),
                                unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                format_prefix=format_prefix,
-                               format_suffix=format_suffix)
+                               format_suffix=format_suffix,
+                               comment=self.get_formatted_comment(' # {0}'))
 
 class TVPLExampleResult(common.ExampleResult):
     def get_tvpl_variable(self):
@@ -303,7 +304,7 @@ class TVPLExampleResult(common.ExampleResult):
         return print_next
 
     def get_tvpl_print_X(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_name})'
+        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_name}){comment}'
 
         underscore_name = self.get_underscore_name()
 
@@ -327,7 +328,8 @@ class TVPLExampleResult(common.ExampleResult):
                                divisor=self.get_formatted_divisor('/{0}'),
                                unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                format_prefix=format_prefix,
-                               format_suffix=format_suffix)
+                               format_suffix=format_suffix,
+                               comment=self.get_formatted_comment(' # {0}'))
 
 class TVPLExampleGetterFunction(common.ExampleGetterFunction):
     def add_tvpl_subelement(self, parent):
@@ -368,21 +370,16 @@ class TVPLExampleGetterFunction(common.ExampleGetterFunction):
         return result_parent
 
     def get_tvpl_source_X(self):
-        template = r"""    # Get current {function_comment_name}{comments}
+        template = r"""    # Get current {function_comment_name}
     {variables} = {device_initial_name}.{function_underscore_name}({arguments})
 {prints}
 """
-        comments = []
         variables = []
         prints = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variables.append(result.get_tvpl_variable())
             prints.append(result.get_tvpl_print())
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         if len(prints) > 1:
             prints.insert(0, '')
@@ -395,7 +392,6 @@ class TVPLExampleGetterFunction(common.ExampleGetterFunction):
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_underscore_name=self.get_underscore_name(),
                                function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
                                variables=', '.join(variables),
                                prints='\n'.join(prints),
                                arguments=', '.join(arguments))
@@ -436,7 +432,7 @@ class TVPLExampleCallbackFunction(common.ExampleCallbackFunction):
         return []
 
     def get_tvpl_function(self):
-        template1A = r"""# Callback function for {function_comment_name} callback{comments}
+        template1A = r"""# Callback function for {function_comment_name} callback
 """
         template1B = r"""{override_comment}
 """
@@ -450,17 +446,12 @@ class TVPLExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         prints = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_tvpl_source())
             prints.append(parameter.get_tvpl_print())
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in prints:
             prints.remove(None)
@@ -474,7 +465,6 @@ class TVPLExampleCallbackFunction(common.ExampleCallbackFunction):
             extra_message = '\n' + extra_message
 
         return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
                                 override_comment=override_comment) + \
                template2.format(function_underscore_name=self.get_underscore_name(),
                                 parameters=', '.join(parameters),

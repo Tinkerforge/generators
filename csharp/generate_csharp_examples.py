@@ -166,7 +166,7 @@ class CSharpExampleParameter(common.ExampleParameter):
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
     def get_csharp_write_lines(self):
-        template = '\t\tConsole.WriteLine("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});'
+        template = '\t\tConsole.WriteLine("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -192,7 +192,8 @@ class CSharpExampleParameter(common.ExampleParameter):
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix))
+                                          to_binary_suffix=to_binary_suffix,
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -215,7 +216,7 @@ class CSharpExampleResult(common.ExampleResult):
         return template.format(headless_camel_case_name=headless_camel_case_name)
 
     def get_csharp_write_lines(self):
-        template = '\t\tConsole.WriteLine("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});'
+        template = '\t\tConsole.WriteLine("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -246,7 +247,8 @@ class CSharpExampleResult(common.ExampleResult):
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix))
+                                          to_binary_suffix=to_binary_suffix,
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -258,28 +260,23 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
         return None
 
     def get_csharp_source(self):
-        templateA = r"""		// Get current {function_comment_name}{comments}
-		{variable_declarations} = {device_initial_name}.{function_camel_case_name}({arguments});
+        templateA = r"""		// Get current {function_comment_name}
+{variable_declarations} = {device_initial_name}.{function_camel_case_name}({arguments});
 {write_lines}
 """
-        templateB = r"""		// Get current {function_comment_name}{comments}
-		{variable_declarations};
+        templateB = r"""		// Get current {function_comment_name}
+{variable_declarations};
 		{device_initial_name}.{function_camel_case_name}({arguments});
 {write_lines}
 """
-        comments = []
         variable_declarations = []
         variable_references = []
         write_lines = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variable_declarations.append(result.get_csharp_variable_declaration())
             variable_references.append(result.get_csharp_variable_reference())
             write_lines += result.get_csharp_write_lines()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         if len(variable_declarations) == 1:
             template = templateA
@@ -315,7 +312,6 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
                                  function_camel_case_name=self.get_camel_case_name(),
                                  function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                  function_comment_name=self.get_comment_name(),
-                                 comments=''.join(comments),
                                  variable_declarations=variable_declarations,
                                  write_lines='\n'.join(write_lines),
                                  arguments=',<BP>'.join(arguments))
@@ -346,7 +342,7 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
         return []
 
     def get_csharp_function(self):
-        template1A = r"""	// Callback function for {function_comment_name} callback{comments}
+        template1A = r"""	// Callback function for {function_comment_name} callback
 """
         template1B = r"""{override_comment}
 """
@@ -362,17 +358,12 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         write_lines = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_csharp_source())
             write_lines += parameter.get_csharp_write_lines()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in write_lines:
             write_lines.remove(None)
@@ -386,7 +377,6 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
                                   device_camel_case_name=self.get_device().get_camel_case_name(),

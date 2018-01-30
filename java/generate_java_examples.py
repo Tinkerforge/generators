@@ -175,7 +175,7 @@ class JavaExampleParameter(common.ExampleParameter):
                                headless_camel_case_name=self.get_headless_camel_case_name())
 
     def get_java_printlns(self):
-        template = '\t\t\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});'
+        template = '\t\t\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -201,7 +201,8 @@ class JavaExampleParameter(common.ExampleParameter):
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix))
+                                          to_binary_suffix=to_binary_suffix,
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -217,7 +218,7 @@ class JavaExampleResult(common.ExampleResult):
                                headless_camel_case_name=headless_camel_case_name)
 
     def get_java_printlns(self):
-        template = '\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{object_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});'
+        template = '\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{object_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -254,7 +255,8 @@ class JavaExampleResult(common.ExampleResult):
                                           unit_name=self.get_formatted_unit_name(' + " {0}"'),
                                           object_prefix=object_prefix,
                                           to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix))
+                                          to_binary_suffix=to_binary_suffix,
+                                          comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -270,21 +272,16 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
             return []
 
     def get_java_source(self):
-        template = r"""		// Get current {function_comment_name}{comments}
+        template = r"""		// Get current {function_comment_name}
 		{variable} = {device_initial_name}.{function_headless_camel_case_name}({arguments}); // Can throw com.tinkerforge.TimeoutException
 {printlns}
 """
-        comments = []
         variables = []
         printlns = []
 
         for result in self.get_results():
-            comments.append(result.get_formatted_comment())
             variables.append(result.get_java_variable())
             printlns += result.get_java_printlns()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = comments[:1]
 
         if len(variables) > 1:
             variable = '{0} {1}'.format(self.get_camel_case_name(skip=1), self.get_headless_camel_case_name(skip=1))
@@ -300,7 +297,6 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
         return template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_headless_camel_case_name=self.get_headless_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
                                variable=variable,
                                printlns='\n'.join(printlns),
                                arguments=', '.join(self.get_java_arguments()))
@@ -326,7 +322,7 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
         return []
 
     def get_java_source(self):
-        template1A = r"""		// Add {function_comment_name} listener{comments}
+        template1A = r"""		// Add {function_comment_name} listener
 """
         template1B = r"""{override_comment}
 """
@@ -343,17 +339,12 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
         else:
             template1 = template1B
 
-        comments = []
         parameters = []
         printlns = []
 
         for parameter in self.get_parameters():
-            comments.append(parameter.get_formatted_comment())
             parameters.append(parameter.get_java_source())
             printlns += parameter.get_java_printlns()
-
-        if len(comments) > 1 and len(set(comments)) == 1:
-            comments = [comments[0].replace('parameter has', 'parameters have')]
 
         while None in printlns:
             printlns.remove(None)
@@ -367,7 +358,6 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
             extra_message = '\n' + extra_message
 
         result = template1.format(function_comment_name=self.get_comment_name(),
-                                  comments=''.join(comments),
                                   override_comment=override_comment) + \
                  template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
                                   device_camel_case_name=self.get_device().get_camel_case_name(),
