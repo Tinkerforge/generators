@@ -140,10 +140,11 @@ def get_image_size(path):
 def select_lang(d):
     if lang in d:
         return d[lang]
-    elif 'en' in d:
+
+    if 'en' in d:
         return d['en']
-    else:
-        return "Missing '{0}' documentation".format(lang)
+
+    return "Missing '{0}' documentation".format(lang)
 
 def make_rst_header(device, has_device_identifier_constant=True):
     bindings_display_name = device.get_generator().get_bindings_display_name()
@@ -359,8 +360,8 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
     download = '`Download ({0}) <{1}>`__'
     url_format = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'
-
     imp = imp_code
+
     if is_picture:
         imp = imp_picture_scroll
 
@@ -474,15 +475,15 @@ def camel_case_to_space(name):
 def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
 
-    if since is not None and since > [2, 0, 0]:
-        if device.is_brick():
-            suffix = 'Firmware'
-        else:
-            suffix = 'Plugin'
-
-        return '\n.. versionadded:: {1}.{2}.{3}$nbsp;({0})\n'.format(suffix, *since)
-    else:
+    if since == None or since <= [2, 0, 0]:
         return ''
+
+    if device.is_brick():
+        suffix = 'Firmware'
+    else:
+        suffix = 'Plugin'
+
+    return '\n.. versionadded:: {1}.{2}.{3}$nbsp;({0})\n'.format(suffix, *since)
 
 def default_constant_format(prefix, constant_group, constant, value):
     return '* {0}{1}_{2} = {3}\n'.format(prefix, constant_group.get_upper_case_name(),
@@ -519,10 +520,10 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 
             constants.append(constant_format_func(prefix, constant_group, constant, value))
 
-    if len(constants) > 0:
-        return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
-    else:
+    if len(constants) == 0:
         return ''
+
+    return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
 
 def format_function_id_constants(prefix, device, constants_name=None):
     if constants_name == None:
@@ -621,16 +622,17 @@ def make_c_like_bitmask(value, shift='{0} << {1}', combine='({0}) | ({1})'):
 
     if len(parts) == 1:
         return parts[0]
-    elif len(parts) == 2:
+
+    if len(parts) == 2:
         return combine.format(parts[0], parts[1])
-    else:
-        raise GeneratorError('More than to bits ware not supported yet')
+
+    raise GeneratorError('More than to bits ware not supported yet')
 
 def wrap_non_empty(prefix, middle, suffix):
-    if len(middle) > 0:
-        return prefix + middle + suffix
-    else:
+    if len(middle) == 0:
         return ''
+
+    return prefix + middle + suffix
 
 def execute(args, **kwargs):
     if subprocess.call(args, **kwargs) != 0:
@@ -641,10 +643,11 @@ def generate(bindings_root_directory, language, generator_class):
     lang = language
 
     path_config = os.path.join(bindings_root_directory, '..', 'configs')
+
     if path_config not in sys.path:
         sys.path.append(path_config)
-    configs = sorted(os.listdir(path_config))
 
+    configs = sorted(os.listdir(path_config))
     configs.remove('device_commonconfig.py')
     configs.remove('brick_commonconfig.py')
     configs.remove('bricklet_commonconfig.py')
@@ -659,7 +662,6 @@ def generate(bindings_root_directory, language, generator_class):
     device_identifiers = set()
 
     generator = generator_class(bindings_root_directory, language)
-
     generator.prepare()
 
     def prepare_common_packets(com, common_packets):
@@ -887,8 +889,8 @@ class GeneratorError(Exception):
 def skip_words(words, skip):
     if skip < 0:
         return words[:skip]
-    else:
-        return words[skip:]
+
+    return words[skip:]
 
 class NameMixin(object):
     def _get_name(self):
@@ -1049,8 +1051,8 @@ class Element(NameMixin):
     def get_size(self):
         if self.get_type() == 'bool':
             return int(math.ceil(self.get_cardinality() / 8.0))
-        else:
-            return self.get_item_size() * self.get_cardinality()
+
+        return self.get_item_size() * self.get_cardinality()
 
 class Stream(NameMixin):
     def __init__(self, raw_data, data_element, packet, direction):
@@ -1356,12 +1358,13 @@ class Packet(NameMixin):
         if feature == 'stream_*':
             if 'stream_in' in self.high_level:
                 return self.high_level['stream_in']
-            elif 'stream_out' in self.high_level:
+
+            if 'stream_out' in self.high_level:
                 return self.high_level['stream_out']
-            else:
-                return None
-        else:
-            return self.high_level.get(feature, None)
+
+            return None
+
+        return self.high_level.get(feature, None)
 
     def get_since_firmware(self):
         return self.raw_data['since_firmware']
@@ -1638,8 +1641,8 @@ class Device(NameMixin):
         def shorten(word):
             if (len(word) < 3 and word.isupper()) or word.isdigit():
                 return word.lower()
-            else:
-                return word[0].lower()
+
+            return word[0].lower()
 
         return ''.join(map(shorten, words))
 
@@ -1654,8 +1657,8 @@ class Device(NameMixin):
             parts.insert(-1, self.get_category())
 
             return ' '.join(parts)
-        else:
-            return display_name + ' ' + self.get_category()
+
+        return display_name + ' ' + self.get_category()
 
     def get_manufacturer(self):
         return self.raw_data['manufacturer']
@@ -1673,20 +1676,22 @@ class Device(NameMixin):
         return git_directory
 
     def get_packets(self, type_=None):
-        if type_ is None:
+        if type_ == None:
             if self.generator.is_doc():
                 return self.all_packets
-            else:
-                return self.all_packets_without_doc_only
-        elif type_ == 'function':
+
+            return self.all_packets_without_doc_only
+
+        if type_ == 'function':
             if self.generator.is_doc():
                 return self.all_function_packets
-            else:
-                return self.all_function_packets_without_doc_only
-        elif type_ == 'callback':
+
+            return self.all_function_packets_without_doc_only
+
+        if type_ == 'callback':
             return self.callback_packets
-        else:
-            raise GeneratorError('Invalid packet type ' + str(type_))
+
+        raise GeneratorError('Invalid packet type ' + str(type_))
 
     def get_packet_names(self, type_=None):
         return [packet.get_name() for packet in self.get_packets(type_)]
@@ -1825,8 +1830,8 @@ class Example(NameMixin):
     def get_dummy_uid(self):
         if self.get_device().is_brick():
             return 'XXYYZZ'
-        else:
-            return 'XYZ'
+
+        return 'XYZ'
 
 class ExampleItem(object):
     def __init__(self, raw_data, index, example):
@@ -1911,15 +1916,17 @@ class ExampleParameter(ExampleItem, NameMixin):
 
         if label == None:
             return 0
-        elif isinstance(label, str):
+
+        if isinstance(label, str):
             return 1
-        elif isinstance(label, list):
+
+        if isinstance(label, list):
             if self.get_cardinality() != len(label):
                 raise GeneratorError('Invalid label count')
 
             return len(label)
-        else:
-            raise GeneratorError('Invalid label type: ' + type(label))
+
+        raise GeneratorError('Invalid label type: ' + type(label))
 
     def get_label_name(self, index=0):
         label = self.raw_data[0][1]
@@ -2004,15 +2011,17 @@ class ExampleResult(ExampleItem, NameMixin):
 
         if label == None:
             return 0
-        elif isinstance(label, str):
+
+        if isinstance(label, str):
             return 1
-        elif isinstance(label, list):
+
+        if isinstance(label, list):
             if self.get_cardinality() != len(label):
                 raise GeneratorError('Invalid label count')
 
             return len(label)
-        else:
-            raise GeneratorError('Invalid label type: ' + type(label))
+
+        raise GeneratorError('Invalid label type: ' + type(label))
 
     def get_label_name(self, index=0):
         label = self.raw_data[0][1]
@@ -2133,8 +2142,8 @@ class ExampleSetterFunction(ExampleItem, NameMixin):
 
         if comment1 == None:
             return empty
-        else:
-            return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
+
+        return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
 
     def get_comment2(self):
         return self.raw_data[3]
@@ -2144,8 +2153,8 @@ class ExampleSetterFunction(ExampleItem, NameMixin):
 
         if comment2 == None:
             return empty
-        else:
-            return template.format(comment2)
+
+        return template.format(comment2)
 
 class ExampleCallbackFunction(ExampleItem, NameMixin):
     def __init__(self, raw_data, index, example):
@@ -2181,8 +2190,8 @@ class ExampleCallbackFunction(ExampleItem, NameMixin):
 
         if comment1 == None:
             return empty
-        else:
-            return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
+
+        return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
 
     def get_extra_message(self):
         return self.raw_data[3]
@@ -2192,8 +2201,8 @@ class ExampleCallbackFunction(ExampleItem, NameMixin):
 
         if extra_message == None:
             return ''
-        else:
-            return template.format(extra_message)
+
+        return template.format(extra_message)
 
 class ExampleCallbackPeriodFunction(ExampleItem, NameMixin):
     def __init__(self, raw_data, index, example):
@@ -2282,10 +2291,10 @@ class ExampleCallbackThresholdMinimumMaximum(ExampleItem):
 
         if minimum == 0 or divisor == None:
             return str(minimum)
-        else:
-            return template.format(minimum=minimum,
-                                   divisor=int(divisor),
-                                   result=minimum * int(divisor))
+
+        return template.format(minimum=minimum,
+                               divisor=int(divisor),
+                               result=minimum * int(divisor))
 
     def get_maximum(self):
         return self.raw_data[1]
@@ -2350,13 +2359,15 @@ class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
 
         if option_char == '>':
             return 'greater than {0}'.format(', '.join(minimums_with_unit))
-        elif option_char == '<':
+
+        if option_char == '<':
             return 'smaller than {0}'.format(', '.join(minimums_with_unit))
-        elif option_char == 'o':
+
+        if option_char == 'o':
             return 'outside of {0} to {1}'.format(', '.join(minimums),
                                                   ', '.join(maximums_with_unit))
-        else:
-            raise GeneratorError('Unhandled option: ' + option_char)
+
+        raise GeneratorError('Unhandled option: ' + option_char)
 
     def get_minimum_maximums(self):
         return self.minimum_maximums
@@ -2428,15 +2439,18 @@ class ExampleCallbackConfigurationFunction(ExampleItem, NameMixin):
 
         if option_char in [None, 'x']:
             return 'FIXME' # this should never be actually outputted into an example
-        elif option_char == '>':
+
+        if option_char == '>':
             return 'greater than {0}'.format(', '.join(minimums_with_unit))
-        elif option_char == '<':
+
+        if option_char == '<':
             return 'smaller than {0}'.format(', '.join(minimums_with_unit))
-        elif option_char == 'o':
+
+        if option_char == 'o':
             return 'outside of {0} to {1}'.format(', '.join(minimums),
                                                   ', '.join(maximums_with_unit))
-        else:
-            raise GeneratorError('Unhandled option: ' + option_char)
+
+        raise GeneratorError('Unhandled option: ' + option_char)
 
     def get_minimum_maximums(self):
         return self.minimum_maximums
@@ -2474,8 +2488,8 @@ class ExampleSpecialFunction(ExampleItem):
 
         if comment1 == None:
             return empty
-        else:
-            return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
+
+        return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
 
     def get_sleep_comment2(self):
         return self.raw_data[3]
@@ -2485,8 +2499,8 @@ class ExampleSpecialFunction(ExampleItem):
 
         if comment2 == None:
             return empty
-        else:
-            return template.format(comment2)
+
+        return template.format(comment2)
 
     def get_loop_header_limit(self):
         return self.raw_data[1]
@@ -2499,8 +2513,8 @@ class ExampleSpecialFunction(ExampleItem):
 
         if comment == None:
             return empty
-        else:
-            return template.format(re.sub('[ ]+\n', '\n', comment.replace('\n', linebreak)))
+
+        return template.format(re.sub('[ ]+\n', '\n', comment.replace('\n', linebreak)))
 
 class Generator:
     check_bindings_root_directory_name = True
