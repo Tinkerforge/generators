@@ -7,7 +7,7 @@
 # Stream Test Bricklet communication config
 
 com = {
-    'author': 'Matthias <matthias@tinkerforge.com>',
+    'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 21111,
