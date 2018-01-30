@@ -1191,13 +1191,13 @@ Gibt den aktuellen Sensor-Fusion-Modus zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('W', 'Quaternion[W]'), 'int16', 1, 16383.0, None, None, None), (('X', 'Quaternion[X]'), 'int16', 1, 16383.0, None, None, None), (('Y', 'Quaternion[Y]'), 'int16', 1, 16383.0, None, None, None), (('Z', 'Quaternion[Z]'), 'int16', 1, 16383.0, None, None, None)], [])],
+'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('W', 'Quaternion [W]'), 'int16', 1, 16383.0, None, None, None), (('X', 'Quaternion [X]'), 'int16', 1, 16383.0, None, None, None), (('Y', 'Quaternion [Y]'), 'int16', 1, 16383.0, None, None, None), (('Z', 'Quaternion [Z]'), 'int16', 1, 16383.0, None, None, None)], [])],
 'incomplete': True # because of %.02f formatting
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Quaternion', 'quaternion'), [(('W', 'Quaternion[W]'), 'int16', 1, 16383.0, None, None, None), (('X', 'Quaternion[X]'), 'int16', 1, 16383.0, None, None, None), (('Y', 'Quaternion[Y]'), 'int16', 1, 16383.0, None, None, None), (('Z', 'Quaternion[Z]'), 'int16', 1, 16383.0, None, None, None)], None, None),
+'functions': [('callback', ('Quaternion', 'quaternion'), [(('W', 'Quaternion [W]'), 'int16', 1, 16383.0, None, None, None), (('X', 'Quaternion [X]'), 'int16', 1, 16383.0, None, None, None), (('Y', 'Quaternion [Y]'), 'int16', 1, 16383.0, None, None, None), (('Z', 'Quaternion [Z]'), 'int16', 1, 16383.0, None, None, None)], None, None),
               ('callback_period', ('Quaternion', 'quaternion'), [], 100)],
 'incomplete': True # because of %.02f formatting
 })
