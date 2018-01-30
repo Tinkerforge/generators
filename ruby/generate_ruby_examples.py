@@ -237,7 +237,7 @@ class RubyExampleResult(common.ExampleResult):
 
 class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
-        template = r"""# Get current {function_comment_name}
+        template = r"""# Get current {function_comment_name}{array_content}
 {variables} = {device_initial_name}.{function_underscore_name}{arguments}
 {puts}
 """
@@ -250,8 +250,10 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
             puts += result.get_ruby_puts()
 
         if len(variables) > 1:
-            comments.insert(0, ' (returned as [{0}])'.format(', '.join([variable.rstrip('_') for variable in variables])))
+            array_content = ' as [{0}]'.format(',<BP>'.join([variable.rstrip('_') for variable in variables]))
             variables = [self.get_underscore_name(skip=1)]
+        else:
+            array_content = ''
 
         while None in puts:
             puts.remove(None)
@@ -264,12 +266,15 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
         if arguments.strip().startswith('('):
             arguments = '({0})'.format(arguments.strip())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
-                               variables=', '.join(variables),
-                               puts='\n'.join(puts),
-                               arguments=arguments)
+        result = template.format(device_initial_name=self.get_device().get_initial_name(),
+                                 function_underscore_name=self.get_underscore_name(),
+                                 function_comment_name=self.get_comment_name(),
+                                 array_content=array_content,
+                                 variables=', '.join(variables),
+                                 puts='\n'.join(puts),
+                                 arguments=arguments)
+
+        return common.break_string(result, '# Get current {0} as ['.format(self.get_comment_name()), indent_head='#')
 
 class RubyExampleSetterFunction(common.ExampleSetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):

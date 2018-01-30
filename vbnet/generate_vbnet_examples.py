@@ -329,8 +329,8 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
         variable_declarations = []
 
         for merged_variable_declaration in merged_variable_declarations:
-            variable_declarations.append('        Dim {0} As {1}'.format(', '.join(merged_variable_declaration[1]),
-                                                                         merged_variable_declaration[0]))
+            variable_declarations.append(common.break_string('        Dim {0} As {1}'.format(',<BP>'.join(merged_variable_declaration[1]),
+                                                                                             merged_variable_declaration[0]), 'Dim '))
 
         while None in write_lines:
             write_lines.remove(None)

@@ -303,7 +303,8 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
             variable_declarations.append('{0} {1}'.format(merged_variable_declaration[0],
                                                           ',<BP>'.join(merged_variable_declaration[1])))
 
-        variable_declarations = common.break_string('\t\t' + ';<BP>'.join(variable_declarations), '\t\t')
+        variable_declarations = common.break_string('\t\t' + ';<BP>'.join(variable_declarations),
+                                                    merged_variable_declarations[0][0] + ' ')
 
         while None in write_lines:
             write_lines.remove(None)

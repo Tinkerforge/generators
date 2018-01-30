@@ -166,7 +166,10 @@ end.
             variable_declarations.append('{0}: {1}'.format(',<BP>'.join(merged_variable_declaration[1]),
                                                            merged_variable_declaration[0]))
 
-        variable_declarations = common.break_string('var ' + ';<BP>'.join(variable_declarations), 'var ')
+        if len(variable_declarations) > 0:
+            variable_declarations = common.break_string('var ' + ';<BP>'.join(variable_declarations), 'var ')
+        else:
+            variable_declarations = ''
 
         return template.format(incomplete=incomplete,
                                description=description,
