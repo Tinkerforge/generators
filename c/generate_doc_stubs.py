@@ -41,8 +41,8 @@ class DocStubBindingsPacket(c_common.CPacket):
     pass
 
 class DocStubBindingsGenerator(common.BindingsGenerator):
-    template_en = """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../index.html#hardware">Hardware</a> / {0}
-:FIXME_shoplink: ../../../shop/bricklets/{4}.html
+    template_en = """
+:DISABLED_shoplink: ../../../shop/bricklets/{4}.html
 
 .. include:: {3}.substitutions
    :start-after: >>>substitutions
@@ -171,8 +171,8 @@ See :ref:`Programming Interface <programming_interface>` for a detailed descript
 .. include:: {3}_hlpi.table
 """
 
-    template_de = """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../index.html#hardware">Hardware</a> / {0}
-:FIXME_shoplink: ../../../shop/bricklets/{4}.html
+    template_de = """
+:DISABLED_shoplink: ../../../shop/bricklets/{4}.html
 
 .. include:: {3}.substitutions
    :start-after: >>>substitutions

@@ -96,13 +96,6 @@ Konfigurationsfunktionen für Callbacks
 """
 }
 
-breadcrumbs_str = {
-    'en': """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../index.html#software-{0}">Software</a> / {1}
-""",
-    'de': """:breadcrumbs: <a href="../../index.html">Startseite</a> / <a href="../../index.html#software-{0}">Software</a> / {1}
-"""
-}
-
 lang = 'en'
 
 def shift_right(text, n):
@@ -152,7 +145,6 @@ def make_rst_header(device, has_device_identifier_constant=True):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     full_title = '{0} - {1}'.format(bindings_display_name, device.get_long_display_name())
     full_title_underline = '='*len(full_title)
-    breadcrumbs = select_lang(breadcrumbs_str).format(ref_name, full_title)
     device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_{2}_constants>` for the device identifier of this {3}.\n',
                                   'de': '.. |device_identifier_constant| replace:: Es gibt auch eine :ref:`Konstante <{0}_{1}_{2}_constants>` für den Device Identifier dieses {3}.\n'}
 
@@ -171,13 +163,12 @@ def make_rst_header(device, has_device_identifier_constant=True):
 
     ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), device.get_underscore_category(), ref_name)
 
-    return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n{6}\n'.format(gen_text_rst.format(date),
-                                                        orphan,
-                                                        breadcrumbs,
-                                                        device_identifier_constant,
-                                                        ref,
-                                                        full_title,
-                                                        full_title_underline)
+    return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n'.format(gen_text_rst.format(date),
+                                                   orphan,
+                                                   device_identifier_constant,
+                                                   ref,
+                                                   full_title,
+                                                   full_title_underline)
 
 def make_rst_summary(device, is_programming_language=True):
     not_released = {
