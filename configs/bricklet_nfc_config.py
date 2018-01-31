@@ -217,7 +217,7 @@ Aktuell werden die folgenden Tag Typen unterstützt:
 * NFC Forum Type 3
 * NFC Forum Type 4
 
-Beim Aufruf von :func:`ReaderRequest Tag ID` probiert das NFC/RFID Bricklet die Tag ID
+Beim Aufruf von :func:`Reader Request Tag ID` probiert das NFC/RFID Bricklet die Tag ID
 eines Tags auszulesen. Nachdem dieser Prozess beendet ist ändert sich
 der Zustand des Bricklets. Es ist möglich den :cb:`Reader State Changed` Callback zu
 registrieren oder den Zustand über :func:`Reader Get State` zu pollen.
@@ -234,7 +234,7 @@ muss :func:`Reader Request Tag ID` so lange aufgerufen werden bis das korrekte T
 gefunden wurde.
 
 Falls sich das NFC/RFID Bricklet in einem der *ReaderError* Zustände befindet
-ist die Selektion aufgehoben und :func:`ReaderRequest Tag ID` muss erneut
+ist die Selektion aufgehoben und :func:`Reader Request Tag ID` muss erneut
 aufgerufen werden.
 """
 }]
