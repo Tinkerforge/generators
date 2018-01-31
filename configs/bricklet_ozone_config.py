@@ -22,6 +22,7 @@ com = {
     },
     'released': False,
     'documented': False,
+    'discontinued': False,
     'packets': [],
     'examples': []
 }

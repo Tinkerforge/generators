@@ -42,6 +42,7 @@ com = {
     'comcu': True,
     'released': False,
     'documented': False,
+    'discontinued': False,
     'packets': [],
     'examples': []
 }

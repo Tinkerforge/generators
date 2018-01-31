@@ -20,6 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
+    'discontinued': True,
     'packets': [],
     'examples': []
 }

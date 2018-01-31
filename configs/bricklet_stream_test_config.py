@@ -18,8 +18,9 @@ com = {
         'en': '',
         'de': '',
     },
-    'released': False,
+    'released': True,
     'documented': False,
+    'discontinued': False,
     'packets': [],
     'examples': []
 }

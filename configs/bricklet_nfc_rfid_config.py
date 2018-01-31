@@ -39,6 +39,7 @@ com = {
     },
     'released': True,
     'documented': True,
+    'discontinued': False,
     'packets': [],
     'examples': []
 }
