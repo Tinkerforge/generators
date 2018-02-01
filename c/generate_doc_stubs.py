@@ -51,7 +51,7 @@ class DocStubBindingsGenerator(common.BindingsGenerator):
 .. _{1}:
 
 {0}
-========================
+{6}
 
 .. note::
   This Bricklet is currently work-in-progress!
@@ -115,7 +115,7 @@ Resources
 .. _{1}_test:
 
 Test your {0}
-----------------------------------
+----------{7}
 
 |test_intro|
 
@@ -181,7 +181,7 @@ See :ref:`Programming Interface <programming_interface>` for a detailed descript
 .. _{1}:
 
 {0}
-========================
+{6}
 
 .. note::
   Dieses Bricklet befindet sich aktuell noch in der Entwicklung!
@@ -345,10 +345,10 @@ Beschreibung.
 
 
         with open(os.path.join(folder, 'en', filename), 'w') as doc:
-            doc.write(self.template_en.format(format0, format1, format2, format3, format4, format5))
+            doc.write(self.template_en.format(format0, format1, format2, format3, format4, format5, '='*len(format0), '-'*len(format0)))
 
         with open(os.path.join(folder, 'de', filename), 'w') as doc:
-            doc.write(self.template_de.format(format0, format1, format2, format3, format4, format5))
+            doc.write(self.template_de.format(format0, format1, format2, format3, format4, format5, '='*len(format0)))
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', DocStubBindingsGenerator)
