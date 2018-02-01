@@ -151,7 +151,7 @@ def make_rst_header(device, has_device_identifier_constant=True):
     if device.is_released():
         orphan = ''
     else:
-        orphan = ':orphan:'
+        orphan = ':orphan:\n'
 
     if has_device_identifier_constant:
         device_identifier_constant = select_lang(device_identifier_constant).format(device.get_underscore_name(),
