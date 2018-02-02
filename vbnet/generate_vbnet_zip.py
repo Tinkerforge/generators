@@ -31,7 +31,6 @@ import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from vbnet_released_files import released_files
 
 class VBNETZipGenerator(common.ZipGenerator):
     tmp_dir                    = '/tmp/generator/vbnet'
@@ -69,7 +68,7 @@ class VBNETZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
-        for filename in released_files:
+        for filename in self.get_released_files():
             shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, '..', 'csharp', 'IPConnection.cs'), self.tmp_source_tinkerforge_dir)

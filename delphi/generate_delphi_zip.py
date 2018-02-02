@@ -30,7 +30,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from delphi_released_files import released_files
 
 class DelphiZipGenerator(common.ZipGenerator):
     tmp_dir          = '/tmp/generator/delphi'
@@ -68,7 +67,7 @@ class DelphiZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
-        for filename in released_files:
+        for filename in self.get_released_files():
             shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_dir)
 
         shutil.copy(os.path.join(root_dir, 'Base58.pas'),                   self.tmp_source_dir)

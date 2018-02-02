@@ -31,7 +31,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from php_released_files import released_files
 
 class PHPZipGenerator(common.ZipGenerator):
     tmp_dir                    = '/tmp/generator/php'
@@ -73,7 +72,7 @@ class PHPZipGenerator(common.ZipGenerator):
         # Copy bindings and readme
         package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']
 
-        for filename in released_files:
+        for filename in self.get_released_files():
             shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_tinkerforge_dir)
             package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
 

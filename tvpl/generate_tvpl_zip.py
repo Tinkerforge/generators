@@ -30,7 +30,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from tvpl_released_files import released_files
 
 class TVPLZipGenerator(common.ZipGenerator):
     tmp_dir                       = '/tmp/generator/tvpl'

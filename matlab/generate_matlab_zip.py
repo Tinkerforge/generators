@@ -30,7 +30,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from matlab_released_files import released_files
 
 class MATLABZipGenerator(common.ZipGenerator):
     tmp_dir                               = '/tmp/generator/matlab'
@@ -85,7 +84,7 @@ class MATLABZipGenerator(common.ZipGenerator):
                 shutil.copy(example[1], tmp_examples_dir)
 
             # Copy bindings and readme
-            for filename in released_files + ['DeviceFactory.java']:
+            for filename in self.get_released_files() + ['DeviceFactory.java']:
                 shutil.copy(os.path.join(root_dir, 'bindings_' + flavor, filename), tmp_source_com_tinkerforge_dir)
 
             shutil.copy(os.path.join(root_dir, '..', 'java', 'BrickDaemon.java'),               tmp_source_com_tinkerforge_dir)

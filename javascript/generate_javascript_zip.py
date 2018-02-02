@@ -31,7 +31,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from javascript_released_files import released_files
 
 class JavaScriptZipGenerator(common.ZipGenerator):
     tmp_dir                           = '/tmp/generator/javascript'
@@ -93,7 +92,7 @@ class JavaScriptZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], self.tmp_browser_examples_dir)
 
         # Copy bindings and readme
-        for filename in released_files:
+        for filename in self.get_released_files():
             if filename == 'TinkerforgeNPM.js':
                 shutil.copy(os.path.join(self.get_bindings_dir(), filename), os.path.join(self.tmp_nodejs_package_dir, 'Tinkerforge.js'))
             elif filename == 'BrowserAPI.js':

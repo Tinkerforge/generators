@@ -9,8 +9,7 @@
 */tinkerforge_*
 */*_released_files.py
 */bindings/
-*/bindings_matlab/
-*/bindings_octave/
+*/bindings_*/
 */doc/
 */*_package/
 c/comcu_output/

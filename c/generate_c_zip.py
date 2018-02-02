@@ -30,7 +30,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from c_released_files import released_files
 
 class CZipGenerator(common.ZipGenerator):
     tmp_dir          = '/tmp/generator/c'
@@ -71,7 +70,7 @@ class CZipGenerator(common.ZipGenerator):
         with open(os.path.join(root_dir, 'ip_connection.symbols'), 'r') as f:
             symbols = 'EXPORTS\n' + f.read()
 
-        for filename in released_files:
+        for filename in self.get_released_files():
             path = os.path.join(self.get_bindings_dir(), filename)
 
             if path.endswith('.symbols'):

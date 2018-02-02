@@ -30,7 +30,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from python_released_files import released_files
 
 class PythonZipGenerator(common.ZipGenerator):
     tmp_dir                    = '/tmp/generator/python'
@@ -70,7 +69,7 @@ class PythonZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
-        for filename in released_files + ['device_factory.py']:
+        for filename in self.get_released_files() + ['device_factory.py']:
             shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, 'ip_connection.py'),             self.tmp_source_tinkerforge_dir)

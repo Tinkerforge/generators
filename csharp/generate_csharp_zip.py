@@ -30,7 +30,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from csharp_released_files import released_files
 
 class CSharpZipGenerator(common.ZipGenerator):
     tmp_dir                        = '/tmp/generator/csharp'
@@ -95,7 +94,7 @@ class CSharpZipGenerator(common.ZipGenerator):
         # Make Tinkerforge(UWP).csproj
         project_items = []
 
-        for filename in ['AssemblyInfo.cs', 'IPConnection.cs'] + released_files:
+        for filename in ['AssemblyInfo.cs', 'IPConnection.cs'] + self.get_released_files():
             project_items.append('<Compile Include="{0}" />'.format(filename))
 
         common.specialize_template(os.path.join(root_dir, 'Tinkerforge.csproj.template'),

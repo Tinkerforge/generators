@@ -30,7 +30,6 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from java_released_files import released_files
 
 class JavaZipGenerator(common.ZipGenerator):
     tmp_dir                        = '/tmp/generator/java'
@@ -70,7 +69,7 @@ class JavaZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
-        for filename in released_files + ['DeviceFactory.java']:
+        for filename in self.get_released_files() + ['DeviceFactory.java']:
             shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_com_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, 'BrickDaemon.java'),               self.tmp_source_com_tinkerforge_dir)

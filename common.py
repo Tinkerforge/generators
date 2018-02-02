@@ -2700,19 +2700,32 @@ class DocGenerator(Generator):
             copy_examples(copy_files, self.get_root_dir())
 
 class BindingsGenerator(Generator):
+    recreate_bindings_dir = True
+
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
 
         self.released_files = []
 
     def prepare(self):
-        recreate_dir(self.get_bindings_dir())
+        if self.recreate_bindings_dir:
+            recreate_dir(self.get_bindings_dir())
 
     def finish(self):
-        with open(os.path.join(self.get_root_dir(), self.get_bindings_name() + '_released_files.py'), 'w') as f:
-            f.write('released_files = ' + repr(self.released_files))
+        with open(os.path.join(self.get_bindings_dir(), '__released_files__'), 'w') as f:
+            for released_file in self.released_files:
+                f.write(released_file + '\n')
 
 class ZipGenerator(Generator):
+    def get_released_files(self):
+        released_files = []
+
+        with open(os.path.join(self.get_bindings_dir(), '__released_files__'), 'r') as f:
+             for line in f.readlines():
+                 released_files.append(line.strip())
+
+        return released_files
+
     def create_zip_file(self, source_path):
         version = get_changelog_version(self.get_root_dir())
         zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(self.get_bindings_name(), *version)

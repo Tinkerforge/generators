@@ -1508,12 +1508,26 @@ class JavaBindingsGenerator(common.BindingsGenerator):
     def prepare(self):
         self.device_factory_classes = []
 
-        return common.BindingsGenerator.prepare(self)
+        result = common.BindingsGenerator.prepare(self)
+
+        if self.is_matlab():
+            os.makedirs(os.path.join(self.get_bindings_dir(), 'matlab'))
+        elif self.is_octave():
+            os.makedirs(os.path.join(self.get_bindings_dir(), 'octave'))
+
+        return result
 
     def generate(self, device):
         filename = '{0}.java'.format(device.get_java_class_name())
 
-        with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
+        if self.is_matlab():
+            flavor = 'matlab'
+        elif self.is_octave():
+            flavor = 'octave'
+        else:
+            flavor = ''
+
+        with open(os.path.join(self.get_bindings_dir(), flavor, filename), 'w') as f:
             f.write(device.get_java_source())
 
         if device.is_released():
@@ -1551,7 +1565,14 @@ public class DeviceFactory {{
             classes.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.class;'.format(name))
             display_names.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.DEVICE_DISPLAY_NAME;'.format(name))
 
-        with open(os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'), 'w') as f:
+        if self.is_matlab():
+            flavor = 'matlab'
+        elif self.is_octave():
+            flavor = 'octave'
+        else:
+            flavor = ''
+
+        with open(os.path.join(self.get_bindings_dir(), flavor, 'DeviceFactory.java'), 'w') as f:
             f.write(template.format(self.get_header_comment('asterisk'),
                                     '\n'.join(classes),
                                     '\n'.join(display_names)))

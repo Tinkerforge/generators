@@ -31,7 +31,6 @@ import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from perl_released_files import released_files
 
 def generate(root_dir):
     tmp_dir                     = os.path.join(root_dir, 'cpan_package')
@@ -59,7 +58,7 @@ def generate(root_dir):
                'Tinkerforge::Device',
                'Tinkerforge::Error']
 
-    for filename in released_files:
+    for filename in self.get_released_files():
         modules.append('Tinkerforge::' + filename.replace('.pm', ''))
 
     common.execute(['module-starter',
