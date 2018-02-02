@@ -60,6 +60,8 @@ class CPrintfFormatMixin(object):
             return '%c'
         elif type_ == 'string':
             return '%s'
+        elif type_ == 'bool':
+            return '%s'
         elif type_ != 'float' and self.get_divisor() == None:
             if type_ == 'int64':
                 return '%" PRId64 "'
@@ -72,6 +74,14 @@ class CPrintfFormatMixin(object):
         else:
             return '%f'
 
+    def get_c_printf_prefix(self):
+        return ''
+
+    def get_c_printf_suffix(self):
+        type_ = self.get_type().split(':')[0]
+
+        if type_ == 'bool':
+            return' ? "true" : "false"'
         else:
             return ''
 
@@ -245,7 +255,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {underscore_name}{index}{divisor});{comment}'
+        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {printf_prefix}{underscore_name}{index}{divisor}{printf_suffix});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -261,6 +271,8 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_c_printf_format(),
+                                          printf_prefix=self.get_c_printf_prefix(),
+                                          printf_suffix=self.get_c_printf_suffix(),
                                           unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
                                           comment=self.get_formatted_comment(' // {0}')))
 
@@ -300,7 +312,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {underscore_name}{index}{divisor});{comment}'
+        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {printf_prefix}{underscore_name}{index}{divisor}{printf_suffix});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -321,6 +333,8 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_c_printf_format(),
+                                          printf_prefix=self.get_c_printf_prefix(),
+                                          printf_suffix=self.get_c_printf_suffix(),
                                           unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
                                           comment=self.get_formatted_comment(' // {0}')))
 
