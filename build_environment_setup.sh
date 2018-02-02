@@ -110,7 +110,7 @@ python build_all_ui.py
 # Build brickd
 cd ~/tf/brickd/src/
 ln -s ../../daemonlib/ .
-cd ~/tf/brickd/src/brickd
+cd ~/tf/brickd/src/brickd/
 make
 
 # To show how it works we set up one Brick for use with kicad and one
@@ -122,7 +122,7 @@ cd ~/tf/master-brick/software/src/
 ln -s ../../../bricklib/ .
 cd ~/tf/master-brick/software/
 ./generate_makefile
-cd ~/tf/master-brick/software/build
+cd ~/tf/master-brick/software/build/
 make
 
 # Build Temperature Bricklet
@@ -131,7 +131,7 @@ ln -s ../../../bricklib/ .
 ln -s ../../../brickletlib/ .
 cd ~/tf/temperature-bricklet/software/
 ./generate_makefile
-cd ~/tf/temperature-bricklet/software/build
+cd ~/tf/temperature-bricklet/software/build/
 make
 
 # Set up hardware design files for Master Brick
@@ -144,3 +144,4 @@ ln -s ../../kicad-libraries/ .
 # freecad ~/tf/cases/ambient_light/ambient_light.fcstd
 
 cd ~
+echo done
