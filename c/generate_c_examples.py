@@ -226,14 +226,18 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
                                underscore_name=self.get_underscore_name(),
                                cardinality=self.get_cardinality())
 
-    def get_c_unused(self):
+    def get_c_unuseds(self):
+        templateA = '(void){underscore_name};'
+        templateB = '(void){underscore_name}_length;'
+        result = []
+
         if self.get_label_name() == None:
+            result = [templateA.format(underscore_name=self.get_underscore_name())]
+
             if self.get_cardinality() < 0:
-                return '\t(void){0}; // avoid unused parameter warning\n\t(void){0}_length; // avoid unused parameter warning'.format(self.get_underscore_name())
-            else:
-                return '\t(void){0}; // avoid unused parameter warning'.format(self.get_underscore_name())
-        else:
-            return None
+                result.append(templateB.format(underscore_name=self.get_underscore_name()))
+
+        return result
 
     def get_c_printfs(self):
         # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
@@ -289,12 +293,6 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
             underscore_name += '_'
 
         return template.format(underscore_name=underscore_name)
-
-    def get_c_unused(self):
-        if self.get_label_name() == None:
-            return '\t(void){0}; // avoid unused parameter warning'.format(self.get_underscore_name())
-        else:
-            return None
 
     def get_c_printfs(self):
         # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
@@ -450,8 +448,8 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""void cb_{function_underscore_name}({parameters}void *user_data) {{{unuseds}
-	(void)user_data; // avoid unused parameter warning
+        template2 = r"""void cb_{function_underscore_name}({parameters}void *user_data) {{
+	{unuseds}
 
 {printfs}{extra_message}
 }}
@@ -469,11 +467,16 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
 
         for parameter in self.get_parameters():
             parameters.append(parameter.get_c_source())
-            unuseds.append(parameter.get_c_unused())
+            unuseds += parameter.get_c_unuseds()
             printfs += parameter.get_c_printfs()
 
         while None in unuseds:
             unuseds.remove(None)
+
+        unuseds.append('(void)user_data;')
+
+        unuseds = common.wrap_non_empty('', '<BP>'.join(unuseds), ' // avoid unused parameter warning')
+        unuseds = common.break_string(unuseds, '').replace('\n', '\n\t')
 
         while None in printfs:
             printfs.remove(None)
@@ -490,7 +493,7 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
                                   override_comment=override_comment) + \
                  template2.format(function_underscore_name=self.get_underscore_name(),
                                   parameters=common.wrap_non_empty('', ',<BP>'.join(parameters), ',<BP>'),
-                                  unuseds=common.wrap_non_empty('\n', '\n'.join(unuseds), ''),
+                                  unuseds=unuseds,
                                   printfs='\n'.join(printfs),
                                   extra_message=extra_message)
 
