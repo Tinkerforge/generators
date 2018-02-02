@@ -80,7 +80,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the Identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
+Returns the identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
 since the startup of the Bricklet.
 
 Each sensor gives itself a random identifier on first startup.
