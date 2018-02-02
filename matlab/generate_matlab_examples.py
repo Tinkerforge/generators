@@ -711,15 +711,15 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
             print('  \033[01;31m- skipped\033[0m')
             return
 
-        examples_directory = self.get_examples_directory(device)
+        examples_dir = self.get_examples_dir(device)
         examples = device.get_examples()
 
         if len(examples) == 0:
             print('  \033[01;31m- no examples\033[0m')
             return
 
-        if not os.path.exists(examples_directory):
-            os.makedirs(examples_directory)
+        if not os.path.exists(examples_dir):
+            os.makedirs(examples_dir)
 
         blacklist = [
             'lcd-16x2-bricklet/unicode',
@@ -729,7 +729,7 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
         # matlab
         for example in examples:
             filename = 'matlab_example_{0}.m'.format(example.get_underscore_name())
-            filepath = os.path.join(examples_directory, filename)
+            filepath = os.path.join(examples_dir, filename)
 
             if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
                 print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
@@ -744,13 +744,13 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
             else:
                 print('  - ' + filename)
 
-            with open(os.path.join(examples_directory, filename), 'w') as f:
+            with open(os.path.join(examples_dir, filename), 'w') as f:
                 f.write(example.get_matlab_source())
 
         # octave
         for example in examples:
             filename = 'octave_example_{0}.m'.format(example.get_underscore_name())
-            filepath = os.path.join(examples_directory, filename)
+            filepath = os.path.join(examples_dir, filename)
 
             if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
                 print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
@@ -768,8 +768,8 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
             with open(filepath, 'w') as f:
                 f.write(example.get_octave_source())
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', MATLABExamplesGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', MATLABExamplesGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())

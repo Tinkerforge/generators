@@ -3,7 +3,7 @@
 
 """
 Java Bindings Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_bindings.py: Generator for Java bindings
@@ -1512,14 +1512,8 @@ class JavaBindingsGenerator(common.BindingsGenerator):
 
     def generate(self, device):
         filename = '{0}.java'.format(device.get_java_class_name())
-        suffix = ''
 
-        if self.is_matlab():
-            suffix = '_matlab'
-        elif self.is_octave():
-            suffix = '_octave'
-
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, filename), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_java_source())
 
         if device.is_released():
@@ -1557,14 +1551,7 @@ public class DeviceFactory {{
             classes.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.class;'.format(name))
             display_names.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.DEVICE_DISPLAY_NAME;'.format(name))
 
-        if self.is_matlab():
-            suffix = '_matlab'
-        elif self.is_octave():
-            suffix = '_octave'
-        else:
-            suffix = ''
-
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, 'DeviceFactory.java'), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'), 'w') as f:
             f.write(template.format(self.get_header_comment('asterisk'),
                                     '\n'.join(classes),
                                     '\n'.join(display_names)))
@@ -1577,8 +1564,8 @@ public class DeviceFactory {{
     def is_octave(self):
         return False
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', JavaBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', JavaBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

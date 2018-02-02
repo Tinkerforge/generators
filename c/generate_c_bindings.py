@@ -3,7 +3,7 @@
 
 """
 C/C++ Bindings Generator
-Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_c_bindings.py: Generator for C/C++ bindings
@@ -1404,13 +1404,13 @@ class CBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.c'), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename + '.c'), 'w') as f:
             f.write(device.get_c_source())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.h'), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename + '.h'), 'w') as f:
             f.write(device.get_c_header())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.symbols'), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename + '.symbols'), 'w') as f:
             f.write(device.get_c_symbols())
 
         if device.is_released():
@@ -1418,8 +1418,8 @@ class CBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(filename + '.h')
             self.released_files.append(filename + '.symbols')
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', CBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', CBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

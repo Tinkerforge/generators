@@ -3,7 +3,7 @@
 
 """
 Ruby ZIP Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_ruby_zip.py: Generator for Ruby ZIP
@@ -43,7 +43,7 @@ class RubyZipGenerator(common.ZipGenerator):
         return 'ruby'
 
     def prepare(self):
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_dir)
         os.makedirs(self.tmp_source_lib_dir)
         os.makedirs(self.tmp_source_lib_tinkerforge_dir)
@@ -65,7 +65,7 @@ class RubyZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], tmp_examples_device)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
         for example in common.find_examples(root_dir, r'^example_.*\.rb$'):
@@ -73,7 +73,7 @@ class RubyZipGenerator(common.ZipGenerator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_lib_tinkerforge_dir)
+            shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_lib_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, 'ip_connection.rb'),             self.tmp_source_lib_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
@@ -123,8 +123,8 @@ end
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', RubyZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', RubyZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

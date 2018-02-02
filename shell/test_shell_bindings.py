@@ -3,7 +3,7 @@
 
 """
 Shell Bindings Tester
-Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 test_shell_bindings.py: Tests the Shell bindings
 
@@ -30,8 +30,8 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class ShellExamplesTester(common.Tester):
-    def __init__(self, bindings_root_directory):
-        common.Tester.__init__(self, 'shell', '.sh', bindings_root_directory)
+    def __init__(self, root_dir):
+        common.Tester.__init__(self, 'shell', '.sh', root_dir)
 
     def test(self, cookie, path, extra):
         path_check = path.replace('.sh', '-check.sh')
@@ -53,8 +53,8 @@ class ShellExamplesTester(common.Tester):
 
         self.handle_result(cookie, output, success)
 
-def run(bindings_root_directory):
-    return ShellExamplesTester(bindings_root_directory).run()
+def run(root_dir):
+    return ShellExamplesTester(root_dir).run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

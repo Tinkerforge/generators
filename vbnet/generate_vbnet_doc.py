@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Documentation Generator
-Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_vbnet_doc.py: Generator for Visual Basic .NET documentation
@@ -413,10 +413,10 @@ class VBNETDocGenerator(common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_vbnet_doc())
 
-def generate(bindings_root_directory, language):
-    common.generate(bindings_root_directory, language, VBNETDocGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, VBNETDocGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for language in ['en', 'de']:
-        print("=== Generating %s ===" % language)
+        print('=== Generating %s ===' % language)
         generate(os.getcwd(), language)

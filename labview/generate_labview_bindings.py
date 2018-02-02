@@ -3,7 +3,7 @@
 
 """
 LabVIEW Bindings Generator
-Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2014, 2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_labview_bindings.py: Generator for LabVIEW bindings
 
@@ -37,8 +37,8 @@ class LabVIEWBindingsGenerator(CSharpBindingsGenerator):
     def get_bindings_display_name(self):
         return 'LabVIEW'
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', LabVIEWBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', LabVIEWBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

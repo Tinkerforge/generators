@@ -4,7 +4,7 @@
 """
 Perl Documentation Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_perl_doc.py: Generator for Perl documentation
@@ -490,10 +490,10 @@ class PerlDocGenerator(common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_perl_doc())
 
-def generate(bindings_root_directory, language):
-    common.generate(bindings_root_directory, language, PerlDocGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, PerlDocGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for language in ['en', 'de']:
         print("=== Generating %s ===" % language)
         generate(os.getcwd(), language)

@@ -3,7 +3,7 @@
 
 """
 PHP ZIP Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_zip.py: Generator for PHP ZIP
@@ -43,7 +43,7 @@ class PHPZipGenerator(common.ZipGenerator):
         return 'php'
 
     def prepare(self):
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_dir)
         os.makedirs(self.tmp_source_tinkerforge_dir)
         os.makedirs(self.tmp_examples_dir)
@@ -64,7 +64,7 @@ class PHPZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
         for example in common.find_examples(root_dir, r'^Example.*\.php$'):
@@ -72,8 +72,9 @@ class PHPZipGenerator(common.ZipGenerator):
 
         # Copy bindings and readme
         package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']
+
         for filename in released_files:
-            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
+            shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_tinkerforge_dir)
             package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
 
         shutil.copy(os.path.join(root_dir, 'IPConnection.php'),             self.tmp_source_tinkerforge_dir)
@@ -103,8 +104,8 @@ class PHPZipGenerator(common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', PHPZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', PHPZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

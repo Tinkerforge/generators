@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Bindings Generator
-Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013, 2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_vbnet_bindings.py: Generator for Visual Basic .NET bindings
 
@@ -37,8 +37,8 @@ class VBNETBindingsGenerator(CSharpBindingsGenerator):
     def get_bindings_display_name(self):
         return 'Visual Basic .NET'
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', VBNETBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', VBNETBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

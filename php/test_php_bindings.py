@@ -3,7 +3,7 @@
 
 """
 PHP Bindings Tester
-Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 test_php_bindings.py: Tests the PHP bindings
 
@@ -30,8 +30,8 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class PHPTester(common.Tester):
-    def __init__(self, bindings_root_directory, extra_paths):
-        common.Tester.__init__(self, 'php', '.php', bindings_root_directory, subdirs=['examples', 'source'], extra_paths=extra_paths)
+    def __init__(self, root_dir, extra_paths):
+        common.Tester.__init__(self, 'php', '.php', root_dir, subdirs=['examples', 'source'], extra_paths=extra_paths)
 
     def test(self, cookie, path, extra):
         args = ['/usr/bin/php',
@@ -40,13 +40,13 @@ class PHPTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(bindings_root_directory):
-    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/website/php/WeatherStationWebsite.php'),
-                   os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/php/WeatherStation.php'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/php/RemoteSwitch.php'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/php/SmokeDetector.php')]
+def run(root_dir):
+    extra_paths = [os.path.join(root_dir, '../../weather-station/website/php/WeatherStationWebsite.php'),
+                   os.path.join(root_dir, '../../weather-station/write_to_lcd/php/WeatherStation.php'),
+                   os.path.join(root_dir, '../../hardware-hacking/remote_switch/php/RemoteSwitch.php'),
+                   os.path.join(root_dir, '../../hardware-hacking/smoke_detector/php/SmokeDetector.php')]
 
-    return PHPTester(bindings_root_directory, extra_paths).run()
+    return PHPTester(root_dir, extra_paths).run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

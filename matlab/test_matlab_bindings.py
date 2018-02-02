@@ -3,7 +3,7 @@
 
 """
 MATLAB Bindings Tester
-Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 test_matlab_bindings.py: Tests the MATLAB bindings
 
@@ -26,9 +26,9 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 
-def run(bindings_root_directory):
+def run(root_dir):
     print('### no tests available')
     return True
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

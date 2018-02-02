@@ -4,7 +4,7 @@
 """
 Tinkerforge Visual Programming Language (TVPL) ZIP Generator
 Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_tvpl_zip.py: Generator for TVPL ZIP
 
@@ -58,10 +58,10 @@ class TVPLZipGenerator(common.ZipGenerator):
         return 'Tinkerforge Visual Programming Language (TVPL)'
 
     def prepare(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         # Create directories
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_examples_dir)
         os.makedirs(self.tmp_source_dir)
         os.makedirs(self.tmp_build_dir)
@@ -96,7 +96,7 @@ class TVPLZipGenerator(common.ZipGenerator):
                     os.path.join(self.tmp_source_dir, 'js', 'Tinkerforge.js'))
 
     def generate(self, device):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         if not device.is_released() or device.get_device_identifier() == 17:
             return
@@ -104,18 +104,18 @@ class TVPLZipGenerator(common.ZipGenerator):
         device_name = device.get_underscore_category() + '_' +  device.get_underscore_name()
 
         # Collect device block definitions
-        with open(os.path.join(root_dir, 'bindings', device_name + '.block'), 'r') as f:
+        with open(os.path.join(self.get_bindings_dir(), device_name + '.block'), 'r') as f:
             self.block_content += f.read()
 
         # Collect device block generators
-        with open(os.path.join(root_dir, 'bindings', device_name + '.generator.javascript'), 'r') as f:
+        with open(os.path.join(self.get_bindings_dir(), device_name + '.generator.javascript'), 'r') as f:
             self.generator_javascript_content += f.read()
 
-        with open(os.path.join(root_dir, 'bindings', device_name + '.generator.python'), 'r') as f:
+        with open(os.path.join(self.get_bindings_dir(), device_name + '.generator.python'), 'r') as f:
             self.generator_python_content += f.read()
 
         # Collect device toolbox code
-        with open(os.path.join(root_dir, 'bindings', device_name + '.toolbox.part'), 'r') as f:
+        with open(os.path.join(self.get_bindings_dir(), device_name + '.toolbox.part'), 'r') as f:
             if device.is_brick():
                 self.brick_toolbox_part[device_name] = f.read()
             else:
@@ -133,7 +133,7 @@ class TVPLZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], tmp_examples_device)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
         block_header = '''{comment}
 \'use strict\';
 goog.provide(\'Blockly.Blocks.tinkerforge\');
@@ -212,8 +212,8 @@ goog.require(\'Blockly.Python\');
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', TVPLZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', TVPLZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

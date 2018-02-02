@@ -3,7 +3,7 @@
 
 """
 Java Bindings Tester
-Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 test_java_bindings.py: Tests the Java bindings
 
@@ -32,8 +32,8 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class JavaExamplesTester(common.Tester):
-    def __init__(self, bindings_root_directory, extra_paths):
-        common.Tester.__init__(self, 'java', '.java', bindings_root_directory, extra_paths=extra_paths)
+    def __init__(self, root_dir, extra_paths):
+        common.Tester.__init__(self, 'java', '.java', root_dir, extra_paths=extra_paths)
 
     def test(self, cookie, path, extra):
         if extra:
@@ -50,8 +50,8 @@ class JavaExamplesTester(common.Tester):
         self.execute(cookie, args)
 
 class JavaDocTester(common.Tester):
-    def __init__(self, bindings_root_directory):
-        common.Tester.__init__(self, 'java', '.html', bindings_root_directory, subdirs=['javadoc/com/tinkerforge'])
+    def __init__(self, root_dir):
+        common.Tester.__init__(self, 'java', '.html', root_dir, subdirs=['javadoc/com/tinkerforge'])
 
     def after_unzip(self):
         print('>>> generating javadoc')
@@ -82,16 +82,16 @@ class JavaDocTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(bindings_root_directory):
-    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/examples/GuitarStation.java'),
-                   os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/java/WeatherStation.java'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/java/RemoteSwitch.java'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/java/SmokeDetector.java')]
+def run(root_dir):
+    extra_paths = [os.path.join(root_dir, '../../weather-station/examples/GuitarStation.java'),
+                   os.path.join(root_dir, '../../weather-station/write_to_lcd/java/WeatherStation.java'),
+                   os.path.join(root_dir, '../../hardware-hacking/remote_switch/java/RemoteSwitch.java'),
+                   os.path.join(root_dir, '../../hardware-hacking/smoke_detector/java/SmokeDetector.java')]
 
-    if not JavaExamplesTester(bindings_root_directory, extra_paths).run():
+    if not JavaExamplesTester(root_dir, extra_paths).run():
         return False
 
-    return JavaDocTester(bindings_root_directory).run()
+    return JavaDocTester(root_dir).run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

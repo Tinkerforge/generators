@@ -31,8 +31,8 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class VBNETExamplesTester(common.Tester):
-    def __init__(self, bindings_root_directory, extra_paths):
-        common.Tester.__init__(self, 'vbnet', '.vb', bindings_root_directory, extra_paths=extra_paths)
+    def __init__(self, root_dir, extra_paths):
+        common.Tester.__init__(self, 'vbnet', '.vb', root_dir, extra_paths=extra_paths)
 
     def test(self, cookie, path, extra):
         if extra:
@@ -55,12 +55,12 @@ class VBNETExamplesTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(bindings_root_directory):
-    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/vbnet/WeatherStation.vb'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/vbnet/RemoteSwitch.vb'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/vbnet/SmokeDetector.vb')]
+def run(root_dir):
+    extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/vbnet/WeatherStation.vb'),
+                   os.path.join(root_dir, '../../hardware-hacking/remote_switch/vbnet/RemoteSwitch.vb'),
+                   os.path.join(root_dir, '../../hardware-hacking/smoke_detector/vbnet/SmokeDetector.vb')]
 
-    return VBNETExamplesTester(bindings_root_directory, extra_paths).run()
+    return VBNETExamplesTester(root_dir, extra_paths).run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

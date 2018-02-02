@@ -427,19 +427,21 @@ void communication_init(void);
         return c_common.CElement
 
     def copy_templates_to(self, folder_dst):
-        folder_src = os.path.join(self.get_bindings_root_directory(), 'comcu_templates')
+        folder_src = os.path.join(self.get_root_dir(), 'comcu_templates')
         shutil.copytree(os.path.join(folder_src, 'software'), os.path.join(folder_dst, 'software'))
         shutil.copy(os.path.join(folder_src, '.gitignore'), os.path.join(folder_dst))
+
         if os.path.isdir(os.path.join(folder_src, 'hardware')):
             shutil.copytree(os.path.join(folder_src, 'hardware'),  os.path.join(folder_dst, 'hardware'))
         else:
             os.mkdir(os.path.join(folder_dst, 'hardware'))
+
         if os.path.isdir(os.path.join(folder_src, 'datasheets')):
             shutil.copytree(os.path.join(folder_src, 'datasheets'),  os.path.join(folder_dst, 'datasheets'))
         else:
             os.mkdir(os.path.join(folder_dst, 'datasheets'))
 
-
+    # FIXME: use specialize_template instead
     def fill_templates(self, folder, device_name_dash, device_name, device_identifier, year, name, email, callback_value):
         for dname, dirs, files in os.walk(folder):
             for fname in files:
@@ -457,7 +459,8 @@ void communication_init(void);
                     f.write(s)
 
     def generate(self, device):
-        folder = os.path.join(self.get_bindings_root_directory(), 'comcu_output', '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name()))
+        folder = os.path.join(self.get_root_dir(), 'comcu_output', '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name()))
+
         try:
             shutil.rmtree(folder) # first we delete the comcu output if it already exists for this device
         except:
@@ -470,6 +473,7 @@ void communication_init(void);
         name = device.get_author().split("<")[0].rstrip()             #author syntax: Firstname Lastname <email>
         email = device.get_author().split("<")[1].replace(">","")
         callback_value = ''
+
         if device.has_callback_value():
             callback_value = """\t"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/callback_value.c"\n"""
 
@@ -504,8 +508,8 @@ void communication_init(void);
         with open(os.path.join(folder, 'software', 'src', 'communication.h'), 'w') as h:
             h.write(self.h_file.format(device_name_dash, year, name, email, h_constants_string, h_defines_string, h_structs_string, h_function_prototypes_string, h_callback_prototypes_string, h_callback_list_string))
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', COMCUBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', COMCUBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

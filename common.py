@@ -109,11 +109,11 @@ def strip_trailing_whitespace(text):
 
     return '\n'.join(lines)
 
-def get_changelog_version(bindings_root_directory):
+def get_changelog_version(root_dir):
     r = re.compile(r'^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
     last = None
 
-    with open(os.path.join(bindings_root_directory, 'changelog.txt'), 'r') as f:
+    with open(os.path.join(root_dir, 'changelog.txt'), 'r') as f:
         for line in f.readlines():
             m = r.match(line)
 
@@ -121,7 +121,7 @@ def get_changelog_version(bindings_root_directory):
                 last = (m.group(1), m.group(2), m.group(3))
 
     if last == None:
-        raise GeneratorError('no version found in changelog: ' + bindings_root_directory)
+        raise GeneratorError('no version found in changelog: ' + root_dir)
 
     return last
 
@@ -407,20 +407,21 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
         examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)
 
-    copy_examples(copy_files, device.get_generator().get_bindings_root_directory())
+    copy_examples(copy_files, device.get_generator().get_root_dir())
+
     return examples
 
 def default_example_sort_key(example):
     return example[2], example[0] # lines, filename
 
-def find_examples(examples_directory, filename_regex, sort_key=default_example_sort_key):
+def find_examples(examples_dir, filename_regex, sort_key=default_example_sort_key):
     compiled_filename_regex = re.compile(filename_regex)
     examples = []
 
-    if os.path.isdir(examples_directory):
-        for example_filename in sorted(os.listdir(examples_directory)):
+    if os.path.isdir(examples_dir):
+        for example_filename in sorted(os.listdir(examples_dir)):
             if compiled_filename_regex.match(example_filename) is not None:
-                example_path = os.path.join(examples_directory, example_filename)
+                example_path = os.path.join(examples_dir, example_filename)
                 lines = 0
 
                 if example_path.endswith('.vi.png'):
@@ -440,9 +441,9 @@ def find_examples(examples_directory, filename_regex, sort_key=default_example_s
 
 def find_device_examples(device, filename_regex):
     bindings_name = device.get_generator().get_bindings_name()
-    examples_directory = os.path.join(device.get_git_directory(), 'software', 'examples', bindings_name)
+    examples_dir = os.path.join(device.get_git_dir(), 'software', 'examples', bindings_name)
 
-    return find_examples(examples_directory, filename_regex, sort_key=device.get_generator().get_example_sort_key)
+    return find_examples(examples_dir, filename_regex, sort_key=device.get_generator().get_example_sort_key)
 
 def copy_examples(copy_files, path):
     doc_path = os.path.join(path, 'doc', lang)
@@ -574,10 +575,11 @@ def handle_rst_substitutions(text, packet):
 def underscore_to_space(name):
     return ' '.join([part.capitalize() for part in name.split('_')])
 
-def recreate_directory(directory):
-    if os.path.exists(directory):
-        shutil.rmtree(directory)
-    os.makedirs(directory)
+def recreate_dir(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+
+    os.makedirs(path)
 
 def specialize_template(template_filename, destination_filename, replacements):
     lines = []
@@ -1665,11 +1667,10 @@ class Device(NameMixin):
     def get_git_name(self):
         return self.get_dash_name() + '-' + self.get_dash_category()
 
-    def get_git_directory(self):
-        global_root_directory = os.path.normpath(os.path.join(self.get_generator().get_bindings_root_directory(), '..', '..'))
-        git_directory = os.path.join(global_root_directory, self.get_git_name())
+    def get_git_dir(self):
+        global_root_dir = os.path.normpath(os.path.join(self.get_generator().get_root_dir(), '..', '..'))
 
-        return git_directory
+        return os.path.join(global_root_dir, self.get_git_name())
 
     def get_packets(self, type_=None):
         if type_ == None:
@@ -1725,7 +1726,7 @@ class Device(NameMixin):
                                             self.get_camel_case_category(),
                                             self.get_generator().get_doc_rst_filename_part())
 
-        return os.path.join(self.get_generator().get_bindings_root_directory(),
+        return os.path.join(self.get_generator().get_root_dir(),
                             'doc',
                             self.get_generator().get_language(),
                             filename)
@@ -2513,18 +2514,19 @@ class ExampleSpecialFunction(ExampleItem):
         return template.format(re.sub('[ ]+\n', '\n', comment.replace('\n', linebreak)))
 
 class Generator:
-    check_bindings_root_directory_name = True
+    check_root_dir_name = True
+    bindings_dir_name = 'bindings'
 
-    def __init__(self, bindings_root_directory, language):
-        self.bindings_root_directory = bindings_root_directory
+    def __init__(self, root_dir, language):
+        self.root_dir = root_dir
         self.language = language # en or de
         self.date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-        if self.check_bindings_root_directory_name:
-            directory_name = os.path.split(self.get_bindings_root_directory())[1]
+        if self.check_root_dir_name:
+            root_dir_name = os.path.split(self.get_root_dir())[1]
 
-            if self.get_bindings_name() != directory_name:
-                raise GeneratorError("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory_name, self.get_bindings_name()))
+            if self.get_bindings_name() != root_dir_name:
+                raise GeneratorError("root directory '{0}' and bindings name '{1}' do not match".format(root_dir_name, self.get_bindings_name()))
 
     def get_bindings_name(self):
         raise GeneratorError("get_bindings_name() not implemented")
@@ -2586,11 +2588,14 @@ class Generator:
     def get_example_sort_key(self, example):
         return example[2], example[0] # lines, filename
 
-    def get_bindings_root_directory(self):
-        return self.bindings_root_directory
+    def get_root_dir(self):
+        return self.root_dir
 
     def get_language(self):
         return self.language # en or de
+
+    def get_bindings_dir(self):
+        return os.path.join(self.get_root_dir(), self.bindings_dir_name)
 
     def get_header_comment(self, kind):
         comment = {
@@ -2636,7 +2641,7 @@ class Generator:
 """
         }
 
-        version = get_changelog_version(self.get_bindings_root_directory())
+        version = get_changelog_version(self.get_root_dir())
         display_name = self.get_bindings_display_name()
         delta = 38 - len(display_name) - len(''.join(map(str, version)))
 
@@ -2676,7 +2681,7 @@ class DocGenerator(Generator):
         return True
 
     def prepare(self):
-        recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+        recreate_dir(os.path.join(self.get_root_dir(), 'doc', self.get_language()))
 
     def finish(self):
         # Copy IPConnection examples
@@ -2685,38 +2690,36 @@ class DocGenerator(Generator):
         if example_regex != None:
             print(' * ip_connection')
 
-            examples = find_examples(self.get_bindings_root_directory(), example_regex, sort_key=self.get_example_sort_key)
+            examples = find_examples(self.get_root_dir(), example_regex, sort_key=self.get_example_sort_key)
             copy_files = []
 
             for example in examples:
                 include = 'IPConnection_{0}_{1}'.format(self.get_doc_rst_filename_part(), example[0].replace(' ', '_'))
                 copy_files.append((example[1], include))
 
-            copy_examples(copy_files, self.get_bindings_root_directory())
+            copy_examples(copy_files, self.get_root_dir())
 
 class BindingsGenerator(Generator):
-    bindings_subdirectory_name = 'bindings'
-
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
 
         self.released_files = []
 
     def prepare(self):
-        recreate_directory(os.path.join(self.get_bindings_root_directory(), self.bindings_subdirectory_name))
+        recreate_dir(self.get_bindings_dir())
 
     def finish(self):
-        with open(os.path.join(self.get_bindings_root_directory(), self.get_bindings_name() + '_released_files.py'), 'w') as f:
+        with open(os.path.join(self.get_root_dir(), self.get_bindings_name() + '_released_files.py'), 'w') as f:
             f.write('released_files = ' + repr(self.released_files))
 
 class ZipGenerator(Generator):
     def create_zip_file(self, source_path):
-        version = get_changelog_version(self.get_bindings_root_directory())
+        version = get_changelog_version(self.get_root_dir())
         zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(self.get_bindings_name(), *version)
 
         with ChangedDirectory(source_path):
             execute(['/usr/bin/zip', '-q', '-r', zipname, '.'])
-            shutil.copy(zipname, self.get_bindings_root_directory())
+            shutil.copy(zipname, self.get_root_dir())
 
 class ExamplesGenerator(Generator):
     skip_existing_incomplete_example = False
@@ -2728,8 +2731,8 @@ class ExamplesGenerator(Generator):
         if self.forbid_execution:
             raise GeneratorError('ExamplesGenerator execution is forbidden')
 
-    def get_examples_directory(self, device):
-        return os.path.join(device.get_git_directory(), 'software', 'examples', self.get_bindings_name())
+    def get_examples_dir(self, device):
+        return os.path.join(device.get_git_dir(), 'software', 'examples', self.get_bindings_name())
 
 def tester_worker(cookie, args, env):
     try:
@@ -2745,12 +2748,12 @@ def tester_worker(cookie, args, env):
 class Tester(object):
     PROCESSES = 4
 
-    def __init__(self, name, extension, bindings_root_directory, subdirs=None, comment=None, extra_paths=None):
-        version = get_changelog_version(bindings_root_directory)
+    def __init__(self, name, extension, root_dir, subdirs=None, comment=None, extra_paths=None):
+        version = get_changelog_version(root_dir)
 
         self.name = name
         self.extension = extension
-        self.bindings_root_directory = bindings_root_directory
+        self.root_dir = root_dir
         self.subdirs = subdirs if subdirs != None else ['examples']
         self.comment = comment
         self.extra_paths = extra_paths if extra_paths != None else []
@@ -2806,7 +2809,7 @@ class Tester(object):
         os.makedirs(tmp_dir)
 
         with ChangedDirectory(tmp_dir):
-            shutil.copy(os.path.join(self.bindings_root_directory, self.zipname), tmp_dir)
+            shutil.copy(os.path.join(self.root_dir, self.zipname), tmp_dir)
 
             # unzip
             print('>>> unpacking {0} to {1}'.format(self.zipname, tmp_dir))
@@ -2853,13 +2856,13 @@ class Tester(object):
 
 # use "with ChangedDirectory('/path/to/abc')" instead of "os.chdir('/path/to/abc')"
 class ChangedDirectory(object):
-    def __init__(self, directory):
-        self.directory = directory
-        self.previous_directory = None
+    def __init__(self, path):
+        self.path = path
+        self.previous_path = None
 
     def __enter__(self):
-        self.previous_directory = os.getcwd()
-        os.chdir(self.directory)
+        self.previous_path = os.getcwd()
+        os.chdir(self.path)
 
     def __exit__(self, type_, value, traceback):
-        os.chdir(self.previous_directory)
+        os.chdir(self.previous_path)

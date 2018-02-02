@@ -3,7 +3,7 @@
 
 """
 Mathematica Documentation Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_mathematica_doc.py: Generator for Mathematica documentation
@@ -519,10 +519,10 @@ class MathematicaDocGenerator(common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_mathematica_doc())
 
-def generate(bindings_root_directory, language):
-    common.generate(bindings_root_directory, language, MathematicaDocGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, MathematicaDocGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for language in ['en', 'de']:
-        print("=== Generating %s ===" % language)
+        print('=== Generating %s ===' % language)
         generate(os.getcwd(), language)

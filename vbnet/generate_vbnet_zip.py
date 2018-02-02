@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET ZIP Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_vbnet_zip.py: Generator for Visual Basic .NET ZIP
@@ -42,7 +42,7 @@ class VBNETZipGenerator(common.ZipGenerator):
         return 'vbnet'
 
     def prepare(self):
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_tinkerforge_dir)
         os.makedirs(self.tmp_examples_dir)
 
@@ -62,7 +62,7 @@ class VBNETZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
         for example in common.find_examples(root_dir, '^Example.*\.vb$'):
@@ -70,7 +70,7 @@ class VBNETZipGenerator(common.ZipGenerator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
+            shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, '..', 'csharp', 'IPConnection.cs'), self.tmp_source_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                   self.tmp_dir)
@@ -99,8 +99,8 @@ class VBNETZipGenerator(common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', VBNETZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', VBNETZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

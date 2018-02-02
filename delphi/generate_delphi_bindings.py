@@ -3,7 +3,7 @@
 
 """
 Delphi/Lazarus Bindings Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_delphi_bindings.py: Generator for Delphi/Lazarus bindings
@@ -1588,14 +1588,14 @@ class DelphiBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}{1}.pas'.format(device.get_camel_case_category(), device.get_camel_case_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_delphi_source())
 
         if device.is_released():
             self.released_files.append(filename)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', DelphiBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', DelphiBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

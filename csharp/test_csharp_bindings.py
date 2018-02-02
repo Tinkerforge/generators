@@ -3,7 +3,7 @@
 
 """
 C# Bindings Tester
-Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 test_csharp_bindings.py: Tests the C# bindings
 
@@ -31,8 +31,8 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class CSharpExamplesTester(common.Tester):
-    def __init__(self, bindings_root_directory, extra_paths):
-        common.Tester.__init__(self, 'csharp', '.cs', bindings_root_directory, extra_paths=extra_paths)
+    def __init__(self, root_dir, extra_paths):
+        common.Tester.__init__(self, 'csharp', '.cs', root_dir, extra_paths=extra_paths)
 
     def test(self, cookie, path, extra):
         if extra:
@@ -54,13 +54,13 @@ class CSharpExamplesTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(bindings_root_directory):
-    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),
-                   os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/csharp/WeatherStation.cs'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/csharp/RemoteSwitch.cs'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/csharp/SmokeDetector.cs')]
+def run(root_dir):
+    extra_paths = [os.path.join(root_dir, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),
+                   os.path.join(root_dir, '../../weather-station/write_to_lcd/csharp/WeatherStation.cs'),
+                   os.path.join(root_dir, '../../hardware-hacking/remote_switch/csharp/RemoteSwitch.cs'),
+                   os.path.join(root_dir, '../../hardware-hacking/smoke_detector/csharp/SmokeDetector.cs')]
 
-    return CSharpExamplesTester(bindings_root_directory, extra_paths).run()
+    return CSharpExamplesTester(root_dir, extra_paths).run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

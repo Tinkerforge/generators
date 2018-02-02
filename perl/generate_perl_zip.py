@@ -3,7 +3,7 @@
 
 """
 Perl ZIP Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_perl_zip.py: Generator for Perl ZIP
@@ -43,7 +43,7 @@ class PerlZipGenerator(common.ZipGenerator):
         return 'perl'
 
     def prepare(self):
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_dir)
         os.makedirs(self.tmp_source_lib_tinkerforge_dir)
         os.makedirs(self.tmp_examples_dir)
@@ -64,7 +64,7 @@ class PerlZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], tmp_examples_device)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
         for example in common.find_examples(root_dir, r'^example_.*\.pl$'):
@@ -72,7 +72,7 @@ class PerlZipGenerator(common.ZipGenerator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_lib_tinkerforge_dir)
+            shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_lib_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, 'IPConnection.pm'),              self.tmp_source_lib_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'Device.pm'),                    self.tmp_source_lib_tinkerforge_dir)
@@ -94,8 +94,8 @@ class PerlZipGenerator(common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', PerlZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', PerlZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

@@ -3,7 +3,7 @@
 
 """
 Delphi Bindings Tester
-Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 test_delphi_bindings.py: Tests the Delphi bindings
 
@@ -35,8 +35,8 @@ class DelphiExamplesTester(common.Tester):
     # output directory and the way FPC works
     PROCESSES = 1
 
-    def __init__(self, bindings_root_directory, extra_paths):
-        common.Tester.__init__(self, 'delphi', '.pas', bindings_root_directory, extra_paths=extra_paths)
+    def __init__(self, root_dir, extra_paths):
+        common.Tester.__init__(self, 'delphi', '.pas', root_dir, extra_paths=extra_paths)
 
     def test(self, cookie, path, extra):
         if extra:
@@ -55,12 +55,12 @@ class DelphiExamplesTester(common.Tester):
 
         self.handle_result(cookie, output, success)
 
-def run(bindings_root_directory):
-    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/delphi/WeatherStation.pas'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/delphi/RemoteSwitch.pas'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/delphi/SmokeDetector.pas')]
+def run(root_dir):
+    extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/delphi/WeatherStation.pas'),
+                   os.path.join(root_dir, '../../hardware-hacking/remote_switch/delphi/RemoteSwitch.pas'),
+                   os.path.join(root_dir, '../../hardware-hacking/smoke_detector/delphi/SmokeDetector.pas')]
 
-    return DelphiExamplesTester(bindings_root_directory, extra_paths).run()
+    return DelphiExamplesTester(root_dir, extra_paths).run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

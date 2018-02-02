@@ -4,7 +4,7 @@
 """
 Tinkerforge Visual Programming Language (TVPL) Documentation Generator
 Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_tvpl_doc.py: Generator for TVPL documentation
 
@@ -316,10 +316,10 @@ class TVPLDocGenerator(common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_tvpl_doc())
 
-def generate(bindings_root_directory, language):
-    common.generate(bindings_root_directory, language, TVPLDocGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, TVPLDocGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for language in ['en', 'de']:
-        print("=== Generating %s ===" % language)
+        print('=== Generating %s ===' % language)
         generate(os.getcwd(), language)

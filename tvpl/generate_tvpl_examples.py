@@ -3,7 +3,7 @@
 
 """
 Tinkerforge Visual Programming Language (TVPL) Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_tvpl_examples.py: Generator for TVPL examples
 
@@ -654,15 +654,15 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
             print('  \033[01;31m- skipped\033[0m')
             return
 
-        examples_directory = self.get_examples_directory(device)
+        examples_dir = self.get_examples_dir(device)
         examples = device.get_examples()
 
         if len(examples) == 0:
             print('  \033[01;31m- no examples\033[0m')
             return
 
-        if not os.path.exists(examples_directory):
-            os.makedirs(examples_directory)
+        if not os.path.exists(examples_dir):
+            os.makedirs(examples_dir)
 
         blacklist = [
             'lcd-16x2-bricklet/unicode',
@@ -671,7 +671,7 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
 
         for example in examples:
             filename = 'example_{0}.tvpl'.format(example.get_underscore_name())
-            filepath = os.path.join(examples_directory, filename)
+            filepath = os.path.join(examples_dir, filename)
 
             if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
                 print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
@@ -699,9 +699,9 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
             with open(filepath, 'w') as f:
                 f.write(example.get_tvpl_source().encode('utf-8'))
 
-def generate(bindings_root_directory):
+def generate(root_dir):
     print('### disabled')
-    #common.generate(bindings_root_directory, 'en', TVPLExamplesGenerator)
+    #common.generate(root_dir, 'en', TVPLExamplesGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())

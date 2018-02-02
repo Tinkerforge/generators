@@ -3,7 +3,7 @@
 
 """
 C# Bindings Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings
@@ -1054,14 +1054,14 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}.cs'.format(device.get_csharp_class_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_csharp_source())
 
         if device.is_released():
             self.released_files.append(filename)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', CSharpBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', CSharpBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

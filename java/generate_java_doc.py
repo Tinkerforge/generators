@@ -3,7 +3,7 @@
 
 """
 Java Documentation Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_doc.py: Generator for Java documentation
@@ -465,10 +465,10 @@ class JavaDocGenerator(common.DocGenerator):
     def is_octave(self):
         return False
 
-def generate(bindings_root_directory, language):
-    common.generate(bindings_root_directory, language, JavaDocGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, JavaDocGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for language in ['en', 'de']:
-        print("=== Generating %s ===" % language)
+        print('=== Generating %s ===' % language)
         generate(os.getcwd(), language)

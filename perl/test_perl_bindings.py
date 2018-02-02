@@ -3,7 +3,7 @@
 
 """
 Perl Bindings Tester
-Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 test_perl_bindings.py: Tests the Perl bindings
 
@@ -30,8 +30,8 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class PerlCheckExamplesTester(common.Tester):
-    def __init__(self, bindings_root_directory):
-        common.Tester.__init__(self, 'perl', '.pl', bindings_root_directory, comment='check')
+    def __init__(self, root_dir):
+        common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='check')
 
     def test(self, cookie, path, extra):
         path_check = path.replace('.pl', '_check.pl')
@@ -56,8 +56,8 @@ class PerlCheckExamplesTester(common.Tester):
         self.handle_result(cookie, output, success)
 
 class PerlLintExamplesTester(common.Tester):
-    def __init__(self, bindings_root_directory):
-        common.Tester.__init__(self, 'perl', '.pl', bindings_root_directory, comment='lint')
+    def __init__(self, root_dir):
+        common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='lint')
 
     def test(self, cookie, path, extra):
         path_lint = path.replace('.pl', '_lint.pl')
@@ -74,11 +74,11 @@ class PerlLintExamplesTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(bindings_root_directory):
-    if not PerlCheckExamplesTester(bindings_root_directory).run():
+def run(root_dir):
+    if not PerlCheckExamplesTester(root_dir).run():
         return False
 
-    return PerlLintExamplesTester(bindings_root_directory).run()
+    return PerlLintExamplesTester(root_dir).run()
 
 if __name__ == "__main__":
     run(os.getcwd())

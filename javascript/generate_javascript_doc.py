@@ -4,7 +4,7 @@
 """
 JavaScript Documentation Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_doc.py: Generator for JavaScript documentation
 
@@ -470,10 +470,10 @@ class JavaScriptDocGenerator(common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_javascript_doc())
 
-def generate(bindings_root_directory, language):
-    common.generate(bindings_root_directory, language, JavaScriptDocGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, JavaScriptDocGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for language in ['en', 'de']:
         print("=== Generating %s ===" % language)
         generate(os.getcwd(), language)

@@ -5,7 +5,7 @@
 JavaScript ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_zip.py: Generator for JavaScript ZIP
 
@@ -48,7 +48,7 @@ class JavaScriptZipGenerator(common.ZipGenerator):
         return 'javascript'
 
     def prepare(self):
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_nodejs_dir)
         os.makedirs(self.tmp_nodejs_source_dir)
         os.makedirs(self.tmp_nodejs_source_tinkerforge_dir)
@@ -83,7 +83,7 @@ class JavaScriptZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], tmp_browser_examples_device)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
         for example in common.find_examples(root_dir, r'^Example.*\.js'):
@@ -95,14 +95,14 @@ class JavaScriptZipGenerator(common.ZipGenerator):
         # Copy bindings and readme
         for filename in released_files:
             if filename == 'TinkerforgeNPM.js':
-                shutil.copy(os.path.join(root_dir, 'bindings', filename), os.path.join(self.tmp_nodejs_package_dir, 'Tinkerforge.js'))
+                shutil.copy(os.path.join(self.get_bindings_dir(), filename), os.path.join(self.tmp_nodejs_package_dir, 'Tinkerforge.js'))
             elif filename == 'BrowserAPI.js':
-                shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_nodejs_source_tinkerforge_dir)
+                shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_nodejs_source_tinkerforge_dir)
             elif filename == 'TinkerforgeSource.js':
-                shutil.copy(os.path.join(root_dir, 'bindings', filename), os.path.join(self.tmp_nodejs_source_dir, 'Tinkerforge.js'))
+                shutil.copy(os.path.join(self.get_bindings_dir(), filename), os.path.join(self.tmp_nodejs_source_dir, 'Tinkerforge.js'))
             else:
-                shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_nodejs_source_tinkerforge_dir)
-                shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_nodejs_package_lib_dir)
+                shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_nodejs_source_tinkerforge_dir)
+                shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_nodejs_package_lib_dir)
 
         # Make package.json
         version = common.get_changelog_version(root_dir)
@@ -169,8 +169,8 @@ class JavaScriptZipGenerator(common.ZipGenerator):
         # copy Tinkerforge.js to bindings root dir so copy_all.py can pick it up
         shutil.copy(os.path.join(self.tmp_browser_source_dir, 'Tinkerforge.js'), root_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', JavaScriptZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', JavaScriptZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

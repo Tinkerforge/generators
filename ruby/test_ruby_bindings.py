@@ -3,7 +3,7 @@
 
 """
 Ruby Bindings Tester
-Copyright (C) 2012-2014, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 test_ruby_bindings.py: Tests the Ruby bindings
 
@@ -30,8 +30,8 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class RubyTester(common.Tester):
-    def __init__(self, bindings_root_directory, extra_paths):
-        common.Tester.__init__(self, 'ruby', '.rb', bindings_root_directory, subdirs=['examples', 'source'], extra_paths=extra_paths)
+    def __init__(self, root_dir, extra_paths):
+        common.Tester.__init__(self, 'ruby', '.rb', root_dir, subdirs=['examples', 'source'], extra_paths=extra_paths)
 
     def test(self, cookie, path, extra):
         args = ['/usr/bin/ruby',
@@ -44,12 +44,12 @@ class RubyTester(common.Tester):
 
         self.handle_result(cookie, output, success)
 
-def run(bindings_root_directory):
-    extra_paths = [os.path.join(bindings_root_directory, '../../weather-station/write_to_lcd/ruby/weather_station.rb'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/remote_switch/ruby/remote_switch.rb'),
-                   os.path.join(bindings_root_directory, '../../hardware-hacking/smoke_detector/ruby/smoke_detector.rb')]
+def run(root_dir):
+    extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/ruby/weather_station.rb'),
+                   os.path.join(root_dir, '../../hardware-hacking/remote_switch/ruby/remote_switch.rb'),
+                   os.path.join(root_dir, '../../hardware-hacking/smoke_detector/ruby/smoke_detector.rb')]
 
-    return RubyTester(bindings_root_directory, extra_paths).run()
+    return RubyTester(root_dir, extra_paths).run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

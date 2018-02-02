@@ -3,7 +3,7 @@
 
 """
 Python Bindings Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_bindings.py: Generator for Python bindings
@@ -647,7 +647,7 @@ class PythonBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}_{1}.py'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_python_source())
 
         if device.is_released():
@@ -684,15 +684,15 @@ def create_device(device_identifier, uid, ipcon):
             imports.append(template_import.format(import_name, class_name))
             classes.append('{0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', 'device_factory.py'), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), 'device_factory.py'), 'w') as f:
             f.write(template.format(self.get_header_comment('hash'),
                                     '\n'.join(imports),
                                     '\n'.join(classes)))
 
         return common.BindingsGenerator.finish(self)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', PythonBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', PythonBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

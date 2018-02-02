@@ -3,7 +3,7 @@
 
 """
 PHP Documentation Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_doc.py: Generator for PHP documentation
@@ -426,10 +426,10 @@ class PHPDocGenerator(common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_php_doc())
 
-def generate(bindings_root_directory, language):
-    common.generate(bindings_root_directory, language, PHPDocGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, PHPDocGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for language in ['en', 'de']:
-        print("=== Generating %s ===" % language)
+        print('=== Generating %s ===' % language)
         generate(os.getcwd(), language)

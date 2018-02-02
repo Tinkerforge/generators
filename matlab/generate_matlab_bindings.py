@@ -4,7 +4,7 @@
 """
 MATLAB/Octave Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_bindings.py: Generator for MATLAB/Octave bindings
 
@@ -32,7 +32,7 @@ import common
 from java.generate_java_bindings import JavaBindingsGenerator
 
 class MATLABBindingsGenerator(JavaBindingsGenerator):
-    bindings_subdirectory_name = 'bindings_matlab'
+    bindings_dir_name = 'bindings_matlab'
 
     def get_bindings_name(self):
         return 'matlab'
@@ -44,8 +44,8 @@ class MATLABBindingsGenerator(JavaBindingsGenerator):
         return True
 
 class OcatveBindingsGenerator(JavaBindingsGenerator):
-    check_bindings_root_directory_name = False
-    bindings_subdirectory_name = 'bindings_octave'
+    check_root_dir_name = False
+    bindings_dir_name = 'bindings_octave'
 
     def get_bindings_name(self):
         return 'octave'
@@ -56,9 +56,9 @@ class OcatveBindingsGenerator(JavaBindingsGenerator):
     def is_octave(self):
         return True
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', MATLABBindingsGenerator)
-    common.generate(bindings_root_directory, 'en', OcatveBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', MATLABBindingsGenerator)
+    common.generate(root_dir, 'en', OcatveBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

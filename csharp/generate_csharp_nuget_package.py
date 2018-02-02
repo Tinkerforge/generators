@@ -31,21 +31,21 @@ import subprocess
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def generate(bindings_root_directory):
-    tmp_dir                                = os.path.join(bindings_root_directory, 'nuget_package')
+def generate(root_dir):
+    tmp_dir                                = os.path.join(root_dir, 'nuget_package')
     tmp_unzipped_20_dir                    = os.path.join(tmp_dir, 'unzipped_20')
     tmp_unzipped_40_dir                    = os.path.join(tmp_dir, 'unzipped_40')
     tmp_unzipped_40_source_tinkerforge_dir = os.path.join(tmp_unzipped_40_dir, 'source', 'Tinkerforge')
 
     # Make directories
-    common.recreate_directory(tmp_dir)
+    common.recreate_dir(tmp_dir)
 
     # Unzip
-    version = common.get_changelog_version(bindings_root_directory)
+    version = common.get_changelog_version(root_dir)
 
     common.execute(['/usr/bin/unzip',
                     '-q',
-                    os.path.join(bindings_root_directory, 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)),
+                    os.path.join(root_dir, 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)),
                     '-d',
                     tmp_unzipped_20_dir])
 
@@ -68,7 +68,7 @@ def generate(bindings_root_directory):
         common.execute(['wget', 'http://www.nuget.org/nuget.exe'])
 
     # Make Tinkerforge.nuspec
-    common.specialize_template(os.path.join(bindings_root_directory, 'Tinkerforge.nuspec.template'),
+    common.specialize_template(os.path.join(root_dir, 'Tinkerforge.nuspec.template'),
                                os.path.join(tmp_dir, 'Tinkerforge.nuspec'),
                                {'{{VERSION}}': '.'.join(version)})
 
@@ -80,7 +80,7 @@ def generate(bindings_root_directory):
                         os.path.join(tmp_dir, 'Tinkerforge.nuspec')])
 
     shutil.move(os.path.join(tmp_dir, 'Tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)),
-                os.path.join(bindings_root_directory, 'tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)))
+                os.path.join(root_dir, 'tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)))
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

@@ -3,7 +3,7 @@
 
 """
 Shell Examples Generator
-Copyright (C) 2015-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_shell_examples.py: Generator for Shell examples
 
@@ -413,15 +413,15 @@ class ShellExamplesGenerator(common.ExamplesGenerator):
             print('  \033[01;31m- skipped\033[0m')
             return
 
-        examples_directory = self.get_examples_directory(device)
+        examples_dir = self.get_examples_dir(device)
         examples = device.get_examples()
 
         if len(examples) == 0:
             print('  \033[01;31m- no examples\033[0m')
             return
 
-        if not os.path.exists(examples_directory):
-            os.makedirs(examples_directory)
+        if not os.path.exists(examples_dir):
+            os.makedirs(examples_dir)
 
         blacklist = [
             'led-strip-bricklet/callback',
@@ -430,7 +430,7 @@ class ShellExamplesGenerator(common.ExamplesGenerator):
 
         for example in examples:
             filename = 'example-{0}.sh'.format(example.get_dash_name())
-            filepath = os.path.join(examples_directory, filename)
+            filepath = os.path.join(examples_dir, filename)
 
             if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
                 print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
@@ -450,8 +450,8 @@ class ShellExamplesGenerator(common.ExamplesGenerator):
 
             os.chmod(filepath, 0o755)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', ShellExamplesGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', ShellExamplesGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())

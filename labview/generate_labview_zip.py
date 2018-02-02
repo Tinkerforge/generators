@@ -3,7 +3,7 @@
 
 """
 LabVIEW ZIP Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_labview_zip.py: Generator for LabVIEW ZIP
@@ -43,7 +43,7 @@ class LabVIEWZipGenerator(common.ZipGenerator):
         return 'labview'
 
     def prepare(self):
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_tinkerforge_dir)
         os.makedirs(self.tmp_examples_dir)
         os.makedirs(self.tmp_examples_10_dir)
@@ -74,7 +74,7 @@ class LabVIEWZipGenerator(common.ZipGenerator):
             shutil.copy(os.path.join(parts[0], '10.0', parts[1]), tmp_examples_device_10_dir)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
         for example in common.find_examples(root_dir, '^Example .*\.vi$'):
@@ -85,7 +85,7 @@ class LabVIEWZipGenerator(common.ZipGenerator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
+            shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, '..', 'csharp', 'IPConnection.cs'), self.tmp_source_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                   self.tmp_dir)
@@ -116,8 +116,8 @@ class LabVIEWZipGenerator(common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', LabVIEWZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', LabVIEWZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

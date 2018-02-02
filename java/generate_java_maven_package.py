@@ -3,7 +3,7 @@
 
 """
 Java Maven Package Generator
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_java_maven_package.py: Generator for Java Maven Package
 
@@ -31,21 +31,21 @@ import subprocess
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def generate(bindings_root_directory):
-    tmp_dir               = os.path.join(bindings_root_directory, 'maven_package')
+def generate(root_dir):
+    tmp_dir               = os.path.join(root_dir, 'maven_package')
     tmp_src_main_java_dir = os.path.join(tmp_dir, 'src', 'main', 'java')
     tmp_unzipped_dir      = os.path.join(tmp_dir, 'unzipped')
 
     # Make directories
-    common.recreate_directory(tmp_dir)
+    common.recreate_dir(tmp_dir)
     os.makedirs(tmp_src_main_java_dir)
 
     # Unzip
-    version = common.get_changelog_version(bindings_root_directory)
+    version = common.get_changelog_version(root_dir)
 
     common.execute(['/usr/bin/unzip',
                     '-q',
-                    os.path.join(bindings_root_directory, 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)),
+                    os.path.join(root_dir, 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)),
                     '-d',
                     tmp_unzipped_dir])
 
@@ -54,7 +54,7 @@ def generate(bindings_root_directory):
                     os.path.join(tmp_src_main_java_dir, 'com'))
 
     # Make pom.xml
-    common.specialize_template(os.path.join(bindings_root_directory, 'pom.xml.template'),
+    common.specialize_template(os.path.join(root_dir, 'pom.xml.template'),
                                os.path.join(tmp_dir, 'pom.xml'),
                                {'{{VERSION}}': '.'.join(version)})
 

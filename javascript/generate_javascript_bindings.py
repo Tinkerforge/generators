@@ -5,7 +5,7 @@
 JavaScript Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_bindings.py: Generator for JavaScript bindings
 
@@ -1213,9 +1213,9 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
     def prepare(self):
         ret = common.BindingsGenerator.prepare(self)
 
-        browser_api_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'BrowserAPI.js')
-        npm_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'TinkerforgeNPM.js')
-        source_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'TinkerforgeSource.js')
+        browser_api_filename = os.path.join(self.get_bindings_dir(), 'BrowserAPI.js')
+        npm_main_filename = os.path.join(self.get_bindings_dir(), 'TinkerforgeNPM.js')
+        source_main_filename = os.path.join(self.get_bindings_dir(), 'TinkerforgeSource.js')
 
         self.browser_api_file = open(browser_api_filename, 'w')
         self.npm_main_file = open(npm_main_filename, 'w')
@@ -1267,7 +1267,7 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
 
         filename = '{0}{1}.js'.format(device.get_camel_case_category(), device.get_camel_case_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_javascript_source())
 
         if device.is_released():
@@ -1291,8 +1291,8 @@ module.exports = new Tinkerforge();""")
 
         return common.BindingsGenerator.finish(self)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', JavaScriptBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', JavaScriptBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

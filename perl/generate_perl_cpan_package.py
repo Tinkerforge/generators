@@ -4,7 +4,7 @@
 """
 Perl CPAN Package Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_perl_cpan_package.py: Generator for Perl CPAN Package
 
@@ -33,8 +33,8 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from perl_released_files import released_files
 
-def generate(bindings_root_directory):
-    tmp_dir                     = os.path.join(bindings_root_directory, 'cpan_package')
+def generate(root_dir):
+    tmp_dir                     = os.path.join(root_dir, 'cpan_package')
     tmp_unzipped_dir            = os.path.join(tmp_dir, 'unzipped')
     tmp_unzipped_source_dir     = os.path.join(tmp_unzipped_dir, 'source')
     tmp_unzipped_source_lib_dir = os.path.join(tmp_unzipped_source_dir, 'lib')
@@ -42,14 +42,14 @@ def generate(bindings_root_directory):
     tmp_cpan_lib_dir            = os.path.join(tmp_cpan_dir, 'lib')
 
     # Make directories
-    common.recreate_directory(tmp_dir)
+    common.recreate_dir(tmp_dir)
 
     # Unzip
-    version = common.get_changelog_version(bindings_root_directory)
+    version = common.get_changelog_version(root_dir)
 
     common.execute(['/usr/bin/unzip',
                     '-q',
-                    os.path.join(bindings_root_directory, 'tinkerforge_perl_bindings_{0}_{1}_{2}.zip'.format(*version)),
+                    os.path.join(root_dir, 'tinkerforge_perl_bindings_{0}_{1}_{2}.zip'.format(*version)),
                     '-d',
                     tmp_unzipped_dir])
 
@@ -70,7 +70,7 @@ def generate(bindings_root_directory):
                     '--email=ishraq@tinkerforge.com'])
 
     # Make README
-    common.specialize_template(os.path.join(bindings_root_directory, 'README.template'),
+    common.specialize_template(os.path.join(root_dir, 'README.template'),
                                os.path.join(tmp_cpan_dir, 'README'),
                                {'<<VERSION>>': '.'.join(version)})
 
@@ -90,7 +90,7 @@ def generate(bindings_root_directory):
         common.execute(['/usr/bin/perl', 'Makefile.PL'])
         common.execute(['make', 'dist'])
 
-    shutil.copy(os.path.join(tmp_cpan_dir, 'Tinkerforge-{0}.{1}.{2}.tar.gz'.format(*version)), bindings_root_directory)
+    shutil.copy(os.path.join(tmp_cpan_dir, 'Tinkerforge-{0}.{1}.{2}.tar.gz'.format(*version)), root_dir)
 
 if __name__ == "__main__":
     generate(os.getcwd())

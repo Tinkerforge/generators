@@ -4,7 +4,7 @@
 """
 MATLAB/Octave ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_zip.py: Generator for MATLAB/Octave ZIP
 
@@ -47,7 +47,7 @@ class MATLABZipGenerator(common.ZipGenerator):
         return 'matlab'
 
     def prepare(self):
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
 
         for flavor in ['matlab', 'octave']:
             os.makedirs(self.tmp_flavor_dir[flavor])
@@ -72,7 +72,7 @@ class MATLABZipGenerator(common.ZipGenerator):
                 shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         for flavor in ['matlab', 'octave']:
             tmp_dir = self.tmp_flavor_dir[flavor]
@@ -151,8 +151,8 @@ class MATLABZipGenerator(common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', MATLABZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', MATLABZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

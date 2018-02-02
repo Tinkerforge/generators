@@ -3,7 +3,7 @@
 
 """
 JSON Bindings Generator
-Copyright (C) 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_json_bindings.py: Generator for JSON bindings
 
@@ -116,14 +116,14 @@ class JSONBindingsGenerator(common.BindingsGenerator):
     def generate(self, device):
         filename = '{0}_{1}.json'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_json_source())
 
         if device.is_released():
             self.released_files.append(filename)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', JSONBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', JSONBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

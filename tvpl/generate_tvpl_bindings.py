@@ -3,7 +3,7 @@
 
 """
 Tinkerforge Visual Programming Language (TVPL) Bindings Generator
-Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2015, 2018 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 generate_tvpl_bindings.py: Generator for TVPL bindings
 
@@ -32,7 +32,7 @@ import common
 import tvpl_common
 
 class TVPLBindingsDevice(tvpl_common.TVPLDevice):
-    def get_tvpl_source_block(self, dir_bindings_root):
+    def get_tvpl_source_block(self):
         def get_source_block(packet):
             is_getter = False
             elements_in = packet.get_elements(direction='in')
@@ -316,7 +316,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         filename_tvpl_toolbox_part = '_'.join([self.get_underscore_category(),
                                                self.get_underscore_name()]) + '.toolbox.part'
 
-        with open(os.path.join(dir_bindings_root, 'bindings', filename_tvpl_toolbox_part), 'wb') as f:
+        with open(os.path.join(self.get_generator().get_bindings_dir(), filename_tvpl_toolbox_part), 'wb') as f:
             f.write(etree.tostring(e_device))
 
         return source
@@ -820,13 +820,13 @@ class TVPLBindingsGenerator(common.BindingsGenerator):
         filename_tvpl_code_generator_python = '{devicecategory}_{devicename}.generator.python'.format(devicecategory=device.get_underscore_category(),
                                                                                                       devicename=device.get_underscore_name())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_block), 'w') as f:
-            f.write(device.get_tvpl_source_block(self.get_bindings_root_directory()))
+        with open(os.path.join(self.get_bindings_dir(), filename_tvpl_block), 'w') as f:
+            f.write(device.get_tvpl_source_block())
 
-        with open(os.path.join(self.bindings_root_directory, self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_javascript), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename_tvpl_code_generator_javascript), 'w') as f:
             f.write(device.get_tvpl_source_generator_javascript())
 
-        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_python), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), filename_tvpl_code_generator_python), 'w') as f:
             f.write(device.get_tvpl_source_generator_python())
 
         if device.is_released():
@@ -835,8 +835,8 @@ class TVPLBindingsGenerator(common.BindingsGenerator):
     def finish(self):
         return common.BindingsGenerator.finish(self)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', TVPLBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', TVPLBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

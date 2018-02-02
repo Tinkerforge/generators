@@ -3,7 +3,7 @@
 
 """
 Shell ZIP Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_shell_zip.py: Generator for Shell ZIP
@@ -39,7 +39,7 @@ class ShellZipGenerator(common.ZipGenerator):
         return 'shell'
 
     def prepare(self):
-        common.recreate_directory(self.tmp_dir)
+        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
@@ -58,7 +58,7 @@ class ShellZipGenerator(common.ZipGenerator):
             shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root_dir = self.get_bindings_root_directory()
+        root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
         for example in common.find_examples(root_dir, r'^example-.*\.sh$'):
@@ -74,8 +74,8 @@ class ShellZipGenerator(common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', ShellZipGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', ShellZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

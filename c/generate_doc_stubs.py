@@ -318,7 +318,8 @@ Beschreibung.
         return c_common.CElement
 
     def generate(self, device):
-        folder = os.path.join(self.get_bindings_root_directory(), 'doc_output', '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name()))
+        folder = os.path.join(self.get_root_dir(), 'doc_output', '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name()))
+
         try:
             shutil.rmtree(folder) # first we delete the doc output if it already exists for this device
         except:
@@ -343,15 +344,14 @@ Beschreibung.
         os.makedirs(os.path.join(folder, 'en'))
         os.makedirs(os.path.join(folder, 'de'))
 
-
         with open(os.path.join(folder, 'en', filename), 'w') as doc:
             doc.write(self.template_en.format(format0, format1, format2, format3, format4, format5, '='*len(format0), '-'*len(format0)))
 
         with open(os.path.join(folder, 'de', filename), 'w') as doc:
             doc.write(self.template_de.format(format0, format1, format2, format3, format4, format5, '='*len(format0)))
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', DocStubBindingsGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', DocStubBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

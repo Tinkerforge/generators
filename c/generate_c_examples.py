@@ -747,19 +747,19 @@ class CExamplesGenerator(common.ExamplesGenerator):
             print('  \033[01;31m- skipped\033[0m')
             return
 
-        examples_directory = self.get_examples_directory(device)
+        examples_dir = self.get_examples_dir(device)
         examples = device.get_examples()
 
         if len(examples) == 0:
             print('  \033[01;31m- no examples\033[0m')
             return
 
-        if not os.path.exists(examples_directory):
-            os.makedirs(examples_directory)
+        if not os.path.exists(examples_dir):
+            os.makedirs(examples_dir)
 
         for example in examples:
             filename = 'example_{0}.c'.format(example.get_underscore_name())
-            filepath = os.path.join(examples_directory, filename)
+            filepath = os.path.join(examples_dir, filename)
 
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
@@ -773,8 +773,8 @@ class CExamplesGenerator(common.ExamplesGenerator):
             with open(filepath, 'w') as f:
                 f.write(example.get_c_source())
 
-def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', CExamplesGenerator)
+def generate(root_dir):
+    common.generate(root_dir, 'en', CExamplesGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())
