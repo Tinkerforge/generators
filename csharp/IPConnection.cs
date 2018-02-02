@@ -151,12 +151,20 @@ namespace Tinkerforge
 		BlockingQueue<bool> disconnectProbeQueue = null;
 		Thread disconnectProbeThread = null;
 
+		/// <summary>
+		/// </summary>
 		public event EnumerateEventHandler EnumerateCallback;
+		/// <summary>
+		/// </summary>
 		public delegate void EnumerateEventHandler(IPConnection sender, string uid, string connectedUid,
 		                                           char position, short[] hardwareVersion, short[] firmwareVersion,
 		                                           int deviceIdentifier, short enumerationType);
 
+		/// <summary>
+		/// </summary>
 		public event ConnectedEventHandler ConnectedCallback;
+		/// <summary>
+		/// </summary>
 		public delegate void ConnectedEventHandler(IPConnection sender, short connectReason);
 
 		/// <summary>
@@ -167,7 +175,11 @@ namespace Tinkerforge
 			remove { ConnectedCallback -= value; }
 		}
 
+		/// <summary>
+		/// </summary>
 		public event DisconnectedEventHandler DisconnectedCallback;
+		/// <summary>
+		/// </summary>
 		public delegate void DisconnectedEventHandler(IPConnection sender, short disconnectReason);
 
 		/// <summary>
@@ -997,10 +1009,14 @@ namespace Tinkerforge
 	/// </summary>
 	public class TinkerforgeException : Exception
 	{
+		/// <summary>
+		/// </summary>
 		public TinkerforgeException()
 		{
 		}
 
+		/// <summary>
+		/// </summary>
 		public TinkerforgeException(string message) : base(message)
 		{
 		}
@@ -1011,6 +1027,8 @@ namespace Tinkerforge
 	/// </summary>
 	public class TimeoutException : TinkerforgeException
 	{
+		/// <summary>
+		/// </summary>
 		public TimeoutException(string message) : base(message)
 		{
 		}
@@ -1022,6 +1040,8 @@ namespace Tinkerforge
 	/// </summary>
 	public class AlreadyConnectedException : TinkerforgeException
 	{
+		/// <summary>
+		/// </summary>
 		public AlreadyConnectedException(string message) : base(message)
 		{
 		}
@@ -1033,6 +1053,8 @@ namespace Tinkerforge
 	/// </summary>
 	public class NotConnectedException : TinkerforgeException
 	{
+		/// <summary>
+		/// </summary>
 		public NotConnectedException()
 		{
 		}
@@ -1043,6 +1065,8 @@ namespace Tinkerforge
 	/// </summary>
 	public class StreamOutOfSyncException : TinkerforgeException
 	{
+		/// <summary>
+		/// </summary>
 		public StreamOutOfSyncException(string message) : base(message)
 		{
 		}
@@ -1117,6 +1141,8 @@ namespace Tinkerforge
 		internal UID internalUID;
 		internal object streamLock = new object();
 
+		/// <summary>
+		/// </summary>
 		public string UID
 		{
 			get
