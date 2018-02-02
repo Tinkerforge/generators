@@ -600,7 +600,7 @@ class DelphiExampleSpecialFunction(common.ExampleSpecialFunction):
 
     def get_delphi_variable_declarations(self):
         if self.get_type() == 'loop_header':
-            return [('i', 'integer')]
+            return [('integer', 'i')]
         else:
             return []
 
