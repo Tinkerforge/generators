@@ -55,7 +55,10 @@ class OcatveBindingsGenerator(JavaBindingsGenerator):
         return True
 
 def generate(root_dir):
+    print('=== Generating MATLAB ===')
     common.generate(root_dir, 'en', MATLABBindingsGenerator)
+
+    print('=== Generating Octave ===')
     common.generate(root_dir, 'en', OcatveBindingsGenerator)
 
 if __name__ == '__main__':
