@@ -155,7 +155,6 @@ The return values are
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Station Callback Configuration',
@@ -275,15 +274,8 @@ TODO
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('setter', 'Set Sensor Callback Configuration', [('bool', True)], 'Enable sensor data callbacks', None),
-              ('setter', 'Set Station Callback Configuration', [('bool', True)], 'Enable station data callbacks', None),
-              ('callback', ('Sensor Data', 'sensor data'),
-              [
-                (('Identifier', 'Identifier (Sensor)'), 'uint8', 1, None, None, None),
-                (('Temperature', 'Temperature (Sensor)'), 'int16', 1, 10.0, '°C', None),
-                (('Humidity', 'Humidity (Sensor)'), 'uint8', 1, None, '%RH', None)
-              ],
-              None, None),
+'functions': [('setter', 'Set Station Callback Configuration', [('bool', True)], 'Enable station data callbacks', None),
+              ('setter', 'Set Sensor Callback Configuration', [('bool', True)], 'Enable sensor data callbacks', None),
               ('callback', ('Station Data', 'station data'),
               [
                 (('Identifier', 'Identifier (Station)'), 'uint8', 1, None, None, None),
@@ -294,6 +286,13 @@ com['examples'].append({
                 (('Rain', 'Rain (Station)'), 'uint32', 1, 10.0, 'mm', None),
                 (('Wind Direction', 'Wind Direction (Station)'), 'uint8', 1, None, None, None), # FIXME: print as constant
                 (('Battery Low', 'Battery Low (Station)'), 'bool', 1, None, None, None)
+              ],
+              None, None),
+              ('callback', ('Sensor Data', 'sensor data'),
+              [
+                (('Identifier', 'Identifier (Sensor)'), 'uint8', 1, None, None, None),
+                (('Temperature', 'Temperature (Sensor)'), 'int16', 1, 10.0, '°C', None),
+                (('Humidity', 'Humidity (Sensor)'), 'uint8', 1, None, '%RH', None)
               ],
               None, None)]
 })
