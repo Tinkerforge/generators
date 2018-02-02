@@ -72,9 +72,6 @@ class CPrintfFormatMixin(object):
         else:
             return '%f'
 
-    def get_c_printf_cast_suffix(self):
-        if self.get_type().split(':')[0] == 'int64' and self.get_divisor() != None:
-            return ')'
         else:
             return ''
 
