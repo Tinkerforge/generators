@@ -31,14 +31,14 @@ import common
 
 class TVPLDevice(common.Device):
     def get_tvpl_device_name(self):
-        return '_'.join([self.get_underscore_category(), self.get_underscore_name()])
+        return '_'.join([self.get_category().under, self.get_name().under])
 
 class TVPLPacket(common.Packet):
-    def get_packet_elements_underscore_name_as_list(self, elements):
+    def get_packet_elements_name_as_list(self, elements):
         list_e = []
 
         for e in elements:
-            list_e.append(e.get_underscore_name())
+            list_e.append(e.get_name().under)
 
         return list_e
 

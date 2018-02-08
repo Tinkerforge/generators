@@ -32,17 +32,17 @@ import common
 
 class PythonDevice(common.Device):
     def get_python_import_name(self):
-        return self.get_underscore_category() + '_' + self.get_underscore_name()
+        return self.get_category().under + '_' + self.get_name().under
 
     def get_python_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
 class PythonPacket(common.Packet):
     def get_python_parameters(self, high_level=False):
         parameters = []
 
         for element in self.get_elements(direction='in', high_level=high_level):
-            parameters.append(element.get_underscore_name())
+            parameters.append(element.get_name().under)
 
         return ', '.join(parameters)
 

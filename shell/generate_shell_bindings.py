@@ -94,19 +94,22 @@ def call_{0}_{1}(ctx, argv):
 
 """
 
-        return template.format(self.get_underscore_name(),
-                               self.get_underscore_category(),
+        return template.format(self.get_name().under,
+                               self.get_category().under,
                                self.get_shell_device_name())
 
     def get_shell_call_functions(self):
-        setter = """	def {0}(ctx, argv):
+        functions = []
+        entries = []
+
+        template_setter = """	def {0}(ctx, argv):
 		parser = ParserWithExpectResponse(ctx, prog_prefix + ' {1}')
 {2}
 		args = parser.parse_args(argv)
 
 		device_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [], [])
 """
-        getter = """	def {0}(ctx, argv):
+        template_getter = """	def {0}(ctx, argv):
 		parser = ParserWithExecute(ctx, prog_prefix + ' {1}')
 {2}
 		args = parser.parse_args(argv)
@@ -116,8 +119,6 @@ def call_{0}_{1}(ctx, argv):
         get_identity = """	def get_identity(ctx, argv):
 		common_get_identity(ctx, prog_prefix, {0}, argv)
 """
-        functions = []
-        entries = []
 
         for packet in self.get_packets('function'):
             if packet.get_function_id() == 255:
@@ -127,10 +128,10 @@ def call_{0}_{1}(ctx, argv):
                 request_data = []
 
                 for element in packet.get_elements(direction='in'):
-                    name = element.get_underscore_name()
+                    name = element.get_name().under
                     type_converter = element.get_shell_type_converter()
                     help_ = element.get_shell_help()
-                    metavar = "'<{0}>'".format(element.get_dash_name())
+                    metavar = "'<{0}>'".format(element.get_name().dash)
 
                     params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type_converter, help_, metavar))
                     request_data.append('args.{0}'.format(name))
@@ -147,7 +148,7 @@ def call_{0}_{1}(ctx, argv):
                 output_symbols = []
 
                 for element in packet.get_elements(direction='out'):
-                    output_names.append("'{0}'".format(element.get_dash_name()))
+                    output_names.append("'{0}'".format(element.get_name().dash))
 
                     constant_group = element.get_constant_group()
 
@@ -155,50 +156,48 @@ def call_{0}_{1}(ctx, argv):
                         symbols = {}
 
                         for constant in constant_group.get_constants():
-                            symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_dash_name(), constant.get_dash_name())
+                            symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)
 
                         output_symbols.append(str(symbols))
                     else:
                         output_symbols.append('None')
 
-                underscore_name = packet.get_underscore_name()
-                dash_name = packet.get_dash_name()
+                name_under = packet.get_name().under
+                name_dash = packet.get_name().dash
 
                 if len(output_names) > 0:
-                    if not underscore_name.startswith('get_') and \
-                       not underscore_name.startswith('is_') and \
-                       not underscore_name.startswith('are_'):
-                        getter_patterns.append(dash_name)
+                    if not name_under.startswith('get_') and \
+                       not name_under.startswith('is_') and \
+                       not name_under.startswith('are_'):
+                        getter_patterns.append(name_dash)
 
-                    function = getter.format(underscore_name,
-                                             dash_name,
-                                             '\n'.join(params),
-                                             packet.get_function_id(),
-                                             ', '.join(request_data) + comma,
-                                             packet.get_shell_format_list('in'),
-                                             packet.get_shell_format_list('out'),
-                                             self.get_camel_case_name(),
-                                             self.get_camel_case_category(),
-                                             ', '.join(output_names),
-                                             ', '.join(output_symbols))
+                    function = template_getter.format(name_under,
+                                                      name_dash,
+                                                      '\n'.join(params),
+                                                      packet.get_function_id(),
+                                                      ', '.join(request_data) + comma,
+                                                      packet.get_shell_format_list('in'),
+                                                      packet.get_shell_format_list('out'),
+                                                      self.get_name().camel,
+                                                      self.get_category().camel,
+                                                      ', '.join(output_names),
+                                                      ', '.join(output_symbols))
                 else:
-                    if not underscore_name.startswith('set_'):
-                        setter_patterns.append(dash_name)
+                    if not name_under.startswith('set_'):
+                        setter_patterns.append(name_dash)
 
-                    function = setter.format(underscore_name,
-                                             dash_name,
-                                             '\n'.join(params),
-                                             packet.get_function_id(),
-                                             ', '.join(request_data) + comma,
-                                             packet.get_shell_format_list('in'),
-                                             packet.get_shell_format_list('out'),
-                                             self.get_camel_case_name(),
-                                             self.get_camel_case_category())
+                    function = template_setter.format(name_under,
+                                                      name_dash,
+                                                      '\n'.join(params),
+                                                      packet.get_function_id(),
+                                                      ', '.join(request_data) + comma,
+                                                      packet.get_shell_format_list('in'),
+                                                      packet.get_shell_format_list('out'),
+                                                      self.get_name().camel,
+                                                      self.get_category().camel)
 
             functions.append(function)
-
-            entries.append("'{0}': {1}".format(packet.get_dash_name(),
-                                               packet.get_underscore_name()))
+            entries.append("'{0}': {1}".format(name_dash, name_under))
 
         return '\n'.join(functions) + '\n\tfunctions = {\n\t' + ',\n\t'.join(entries) + '\n\t}'
 
@@ -217,8 +216,8 @@ def dispatch_{0}_{1}(ctx, argv):
 
 """
 
-        return template.format(self.get_underscore_name(),
-                               self.get_underscore_category(),
+        return template.format(self.get_name().under,
+                               self.get_category().under,
                                self.get_shell_device_name())
 
     def get_shell_dispatch_functions(self):
@@ -227,7 +226,7 @@ def dispatch_{0}_{1}(ctx, argv):
 
 		args = parser.parse_args(argv)
 
-		device_callback(ctx, {2}{3}, {4}, args.execute, [{5}], [{6}])
+		device_dispatch(ctx, {2}{3}, {4}, args.execute, [{5}], [{6}])
 """
 
         functions = []
@@ -238,7 +237,7 @@ def dispatch_{0}_{1}(ctx, argv):
             output_symbols = []
 
             for element in packet.get_elements(direction='out'):
-                output_names.append("'{0}'".format(element.get_dash_name()))
+                output_names.append("'{0}'".format(element.get_name().dash))
 
                 constant_group = element.get_constant_group()
 
@@ -246,27 +245,27 @@ def dispatch_{0}_{1}(ctx, argv):
                     symbols = {}
 
                     for constant in constant_group.get_constants():
-                        symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_dash_name(), constant.get_dash_name())
+                        symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)
 
                     output_symbols.append(str(symbols))
                 else:
                     output_symbols.append('None')
 
-            underscore_name = packet.get_underscore_name()
-            dash_name = packet.get_dash_name()
+            name_under = packet.get_name().under
+            name_dash = packet.get_name().dash
 
-            function = template.format(underscore_name,
-                                       dash_name,
-                                       self.get_camel_case_name(),
-                                       self.get_camel_case_category(),
+            function = template.format(name_under,
+                                       name_dash,
+                                       self.get_name().camel,
+                                       self.get_category().camel,
                                        packet.get_function_id(),
                                        ', '.join(output_names),
                                        ', '.join(output_symbols))
 
-            entries.append("'{0}': {1}".format(dash_name,
-                                               underscore_name))
+            entries.append("'{0}': {1}".format(name_dash,
+                                               name_under))
 
-            callback_patterns.append(dash_name)
+            callback_patterns.append(name_dash)
 
             functions.append(function)
 
@@ -330,12 +329,12 @@ class ShellBindingsGenerator(common.BindingsGenerator):
             return
 
         self.call_devices.append("'{0}': call_{1}_{2}".format(device.get_shell_device_name(),
-                                                              device.get_underscore_name(),
-                                                              device.get_underscore_category()))
+                                                              device.get_name().under,
+                                                              device.get_category().under))
 
         self.dispatch_devices.append("'{0}': dispatch_{1}_{2}".format(device.get_shell_device_name(),
-                                                                      device.get_underscore_name(),
-                                                                      device.get_underscore_category()))
+                                                                      device.get_name().under,
+                                                                      device.get_category().under))
 
         self.device_identifier_symbols.append("{0}: '{1}'".format(device.get_device_identifier(),
                                                                   device.get_shell_device_name()))

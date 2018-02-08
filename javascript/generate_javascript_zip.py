@@ -63,11 +63,11 @@ class JavaScriptZipGenerator(common.ZipGenerator):
 
         # Copy device examples
         tmp_nodejs_examples_device = os.path.join(self.tmp_nodejs_examples_dir,
-                                                  device.get_camel_case_category(),
-                                                  device.get_camel_case_name())
+                                                  device.get_category().camel,
+                                                  device.get_name().camel)
         tmp_browser_examples_device = os.path.join(self.tmp_browser_examples_dir,
-                                                   device.get_camel_case_category(),
-                                                   device.get_camel_case_name())
+                                                   device.get_category().camel,
+                                                   device.get_name().camel)
 
         if not os.path.exists(tmp_nodejs_examples_device):
             os.makedirs(tmp_nodejs_examples_device)

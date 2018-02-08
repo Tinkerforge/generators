@@ -32,7 +32,7 @@ import common
 
 class DelphiDevice(common.Device):
     def get_delphi_class_name(self):
-        return 'T' + self.get_camel_case_category() + self.get_camel_case_name()
+        return 'T' + self.get_category().camel + self.get_name().camel
 
 class DelphiPacket(common.Packet):
     def get_delphi_return_type(self, for_doc):
@@ -76,13 +76,13 @@ class DelphiPacket(common.Packet):
                         final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
 
                         # special case for GetIdentity to avoid redefinition of TArray0To2OfUInt8 and signature mismatch
-                        if self.get_camel_case_name() == 'GetIdentity' and final_type == 'TArray0To2OfUInt8':
+                        if self.get_name().camel == 'GetIdentity' and final_type == 'TArray0To2OfUInt8':
                             final_type = 'TVersionNumber'
                 else:
                     final_type = delphi_type[0]
 
                 param.append('{0}{1}: {2}'.format(modifier,
-                                                  element.get_headless_camel_case_name(),
+                                                  element.get_name().headless,
                                                   final_type))
         else:
             for element in self.get_elements(direction='in'):
@@ -102,7 +102,7 @@ class DelphiPacket(common.Packet):
                     final_type = delphi_type[0]
 
                 param.append('{0}{1}: {2}'.format(modifier,
-                                                  element.get_headless_camel_case_name(),
+                                                  element.get_name().headless,
                                                   final_type))
 
         return param

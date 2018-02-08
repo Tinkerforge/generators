@@ -100,7 +100,7 @@ class TVPLZipGenerator(common.ZipGenerator):
         if not device.is_released() or device.get_device_identifier() == 17:
             return
 
-        device_name = device.get_underscore_category() + '_' +  device.get_underscore_name()
+        device_name = device.get_category().under + '_' +  device.get_name().under
 
         # Collect device block definitions
         with open(os.path.join(self.get_bindings_dir(), device_name + '.block'), 'r') as f:
@@ -122,8 +122,8 @@ class TVPLZipGenerator(common.ZipGenerator):
 
         # Copy device examples
         tmp_examples_device = os.path.join(self.tmp_examples_dir,
-                                           device.get_underscore_category(),
-                                           device.get_underscore_name())
+                                           device.get_category().under,
+                                           device.get_name().under)
 
         if not os.path.exists(tmp_examples_device):
             os.makedirs(tmp_examples_device)

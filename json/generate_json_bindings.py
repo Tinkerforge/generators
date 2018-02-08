@@ -36,9 +36,9 @@ class JSONBindingsDevice(common.Device):
 
         members['author'] = self.get_author()
         members['api_version'] = self.get_api_version()
-        members['category'] = self.get_category()
+        members['category'] = self.get_category().space
         members['device_identifier'] = self.get_device_identifier()
-        members['name'] = self.get_name()
+        members['name'] = self.get_name().space
         members['display_name'] = {'short': self.get_short_display_name(), 'long': self.get_long_display_name()}
         members['manufacturer'] = self.get_manufacturer()
         members['description'] = self.get_description()
@@ -58,7 +58,7 @@ class JSONBindingsPacket(common.Packet):
         members = {}
 
         members['type'] = self.get_type()
-        members['name'] = self.get_name()
+        members['name'] = self.get_name().space
         members['function_id'] = self.get_function_id()
         members['since_firmware'] = self.get_since_firmware()
         members['doc'] = {'type': self.get_doc_type(), 'text': self.get_doc_text()}
@@ -73,7 +73,7 @@ class JSONBindingsElement(common.Element):
     def get_json_members(self):
         members = {}
 
-        members['name'] = self.get_name()
+        members['name'] = self.get_name().space
         members['type'] = self.get_type()
         members['cardinality'] = self.get_cardinality()
         members['direction'] = self.get_direction()
@@ -83,12 +83,12 @@ class JSONBindingsElement(common.Element):
         if constant_group != None:
             members['constant_group'] = {}
 
-            members['constant_group']['name'] = constant_group.get_name()
+            members['constant_group']['name'] = constant_group.get_name().space
             members['constant_group']['constants'] = []
 
             for constant in constant_group.get_constants():
                 members['constant_group']['constants'].append({
-                'name': constant.get_name(),
+                'name': constant.get_name().space,
                 'value': constant.get_value()
                 })
 
@@ -114,7 +114,7 @@ class JSONBindingsGenerator(common.BindingsGenerator):
         return JSONBindingsElement
 
     def generate(self, device):
-        filename = '{0}_{1}.json'.format(device.get_underscore_category(), device.get_underscore_name())
+        filename = '{0}_{1}.json'.format(device.get_category().under, device.get_name().under)
 
         with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_json_source())

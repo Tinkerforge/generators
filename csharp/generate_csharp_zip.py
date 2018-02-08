@@ -52,8 +52,8 @@ class CSharpZipGenerator(common.ZipGenerator):
 
         # Copy device examples
         tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
-                                               device.get_camel_case_category(),
-                                               device.get_camel_case_name())
+                                               device.get_category().camel,
+                                               device.get_name().camel)
 
         if not os.path.exists(tmp_examples_device_dir):
             os.makedirs(tmp_examples_device_dir)

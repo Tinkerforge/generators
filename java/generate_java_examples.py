@@ -34,30 +34,30 @@ global_line_prefix = ''
 
 class JavaConstant(common.Constant):
     def get_java_source(self):
-        template = '{device_camel_case_category}{device_camel_case_name}.{constant_group_upper_case_name}_{constant_upper_case_name}'
+        template = '{device_category}{device_name}.{constant_group_name}_{constant_name}'
 
-        return template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               constant_group_upper_case_name=self.get_constant_group().get_upper_case_name(),
-                               constant_upper_case_name=self.get_upper_case_name())
+        return template.format(device_category=self.get_device().get_category().camel,
+                               device_name=self.get_device().get_name().camel,
+                               constant_group_name=self.get_constant_group().get_name().upper,
+                               constant_name=self.get_name().upper)
 
 class JavaExample(common.Example):
     def get_java_source(self):
         template = r"""import com.tinkerforge.IPConnection;
-import com.tinkerforge.{device_camel_case_category}{device_camel_case_name};{imports}{incomplete}{description}
+import com.tinkerforge.{device_category}{device_name_camel};{imports}{incomplete}{description}
 
-public class Example{example_camel_case_name} {{
+public class Example{example_name} {{
 	private static final String HOST = "localhost";
 	private static final int PORT = 4223;
 
-	// Change {dummy_uid} to the UID of your {device_long_display_name}
+	// Change {dummy_uid} to the UID of your {device_name_long_display}
 	private static final String UID = "{dummy_uid}";
 
 	// Note: To make the example code cleaner we do not handle exceptions. Exceptions
 	//       you might normally want to catch are described in the documentation
 	public static void main(String args[]) throws Exception {{
 		IPConnection ipcon = new IPConnection(); // Create IP connection
-		{device_camel_case_category}{device_camel_case_name} {device_initial_name} ={constructor_break}new {device_camel_case_category}{device_camel_case_name}(UID, ipcon); // Create device object
+		{device_category}{device_name_camel} {device_name_initial} ={constructor_break}new {device_category}{device_name_camel}(UID, ipcon); // Create device object
 
 		ipcon.connect(HOST, PORT); // Connect to brickd
 		// Don't use device before ipcon is connected
@@ -105,18 +105,18 @@ public class Example{example_camel_case_name} {{
         while None in cleanups:
             cleanups.remove(None)
 
-        if len(self.get_device().get_camel_case_name()) > 14:
+        if len(self.get_device().get_name().camel) > 14:
             constructor_break = '\n\t\t  '
         else:
             constructor_break = ' '
 
         return template.format(incomplete=incomplete,
                                description=description,
-                               example_camel_case_name=self.get_camel_case_name(),
-                               device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               device_long_display_name=self.get_device().get_long_display_name(),
+                               example_name=self.get_name().camel,
+                               device_category=self.get_device().get_category().camel,
+                               device_name_camel=self.get_device().get_name().camel,
+                               device_name_initial=self.get_device().get_initial_name(),
+                               device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports=common.wrap_non_empty('\n', ''.join(unique_imports), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
@@ -163,8 +163,8 @@ class JavaExampleArgumentsMixin(object):
 
 class JavaExampleParameter(common.ExampleParameter):
     def get_java_source(self):
-        templateA = '{type_} {headless_camel_case_name}'
-        templateB = '{type_}[] {headless_camel_case_name}'
+        templateA = '{type_} {name}'
+        templateB = '{type_}[] {name}'
 
         if self.get_cardinality() == 1:
             template = templateA
@@ -172,10 +172,10 @@ class JavaExampleParameter(common.ExampleParameter):
             template = templateB
 
         return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
-                               headless_camel_case_name=self.get_headless_camel_case_name())
+                               name=self.get_name().headless)
 
     def get_java_printlns(self):
-        template = '\t\t\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});{comment}'
+        template = '\t\t\t\tSystem.out.println("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -195,11 +195,11 @@ class JavaExampleParameter(common.ExampleParameter):
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(headless_camel_case_name=self.get_headless_camel_case_name(),
-                                          label_name=self.get_label_name(index=index),
+            result.append(template.format(name=self.get_name().headless,
+                                          label=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
+                                          unit=self.get_formatted_unit_name(' + " {0}"'),
                                           to_binary_prefix=to_binary_prefix,
                                           to_binary_suffix=to_binary_suffix,
                                           comment=self.get_formatted_comment(' // {0}')))
@@ -208,17 +208,17 @@ class JavaExampleParameter(common.ExampleParameter):
 
 class JavaExampleResult(common.ExampleResult):
     def get_java_variable(self):
-        template = '{type_} {headless_camel_case_name}'
-        headless_camel_case_name = self.get_headless_camel_case_name()
+        template = '{type_} {name}'
+        name = self.get_name().headless
 
-        if headless_camel_case_name == self.get_device().get_initial_name():
-            headless_camel_case_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
         return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
-                               headless_camel_case_name=headless_camel_case_name)
+                               name=name)
 
     def get_java_printlns(self):
-        template = '\t\tSystem.out.println("{label_name}: " + {to_binary_prefix}{object_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name});{comment}'
+        template = '\t\tSystem.out.println("{label}: " + {to_binary_prefix}{object_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -226,13 +226,13 @@ class JavaExampleResult(common.ExampleResult):
         if self.get_cardinality() < 0:
             return [] # FIXME: streaming
 
-        headless_camel_case_name = self.get_headless_camel_case_name()
+        name = self.get_name().headless
 
         if len(self.get_function().get_results()) > 1:
-            object_prefix = self.get_function().get_headless_camel_case_name(skip=1) + '.'
+            object_prefix = self.get_function().get_name(skip=1).headless + '.'
         else:
-            if headless_camel_case_name == self.get_device().get_initial_name():
-                headless_camel_case_name += '_'
+            if name == self.get_device().get_initial_name():
+                name += '_'
 
             object_prefix = ''
 
@@ -248,11 +248,11 @@ class JavaExampleResult(common.ExampleResult):
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(headless_camel_case_name=headless_camel_case_name,
-                                          label_name=self.get_label_name(),
+            result.append(template.format(name=name,
+                                          label=self.get_label_name(),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
+                                          unit=self.get_formatted_unit_name(' + " {0}"'),
                                           object_prefix=object_prefix,
                                           to_binary_prefix=to_binary_prefix,
                                           to_binary_suffix=to_binary_suffix,
@@ -262,18 +262,18 @@ class JavaExampleResult(common.ExampleResult):
 
 class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):
-        template = 'import com.tinkerforge.{device_camel_case_category}{device_camel_case_name}.{object_camel_case_name};'
+        template = 'import com.tinkerforge.{device_category}{device_name}.{object_name};'
 
         if len(self.get_results()) > 1:
-            return [template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                    device_camel_case_name=self.get_device().get_camel_case_name(),
-                                    object_camel_case_name=self.get_camel_case_name(skip=1))]
+            return [template.format(device_category=self.get_device().get_category().camel,
+                                    device_name=self.get_device().get_name().camel,
+                                    object_name=self.get_name(skip=1).camel)]
         else:
             return []
 
     def get_java_source(self):
-        template = r"""		// Get current {function_comment_name}
-		{variable} = {device_initial_name}.{function_headless_camel_case_name}({arguments}); // Can throw com.tinkerforge.TimeoutException
+        template = r"""		// Get current {function_name_comment}
+		{variable} = {device_name}.{function_name_headless}({arguments}); // Can throw com.tinkerforge.TimeoutException
 {printlns}
 """
         variables = []
@@ -284,7 +284,7 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
             printlns += result.get_java_printlns()
 
         if len(variables) > 1:
-            variable = '{0} {1}'.format(self.get_camel_case_name(skip=1), self.get_headless_camel_case_name(skip=1))
+            variable = '{0} {1}'.format(self.get_name(skip=1).camel, self.get_name(skip=1).headless)
         else:
             variable = variables[0]
 
@@ -294,9 +294,9 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
         if len(printlns) > 1:
             printlns.insert(0, '')
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_headless=self.get_name().headless,
+                               function_name_comment=self.get_comment_name(),
                                variable=variable,
                                printlns='\n'.join(printlns),
                                arguments=', '.join(self.get_java_arguments()))
@@ -306,28 +306,28 @@ class JavaExampleSetterFunction(common.ExampleSetterFunction, JavaExampleArgumen
         return []
 
     def get_java_source(self):
-        template = '{comment1}{global_line_prefix}\t\t{device_initial_name}.{function_headless_camel_case_name}({arguments});{comment2}\n'
+        template = '{comment1}{global_line_prefix}\t\t{device_name}.{function_name}({arguments});{comment2}\n'
 
         result = template.format(global_line_prefix=global_line_prefix,
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                 device_name=self.get_device().get_initial_name(),
+                                 function_name=self.get_name().headless,
                                  arguments=',<BP>'.join(self.get_java_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
-        return common.break_string(result, '{}('.format(self.get_headless_camel_case_name()))
+        return common.break_string(result, '{}('.format(self.get_name().headless))
 
 class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_java_imports(self):
         return []
 
     def get_java_source(self):
-        template1A = r"""		// Add {function_comment_name} listener
+        template1A = r"""		// Add {function_name_comment} listener
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""		{device_initial_name}.add{function_camel_case_name}Listener(new {device_camel_case_category}{device_camel_case_name}.{function_camel_case_name}Listener() {{
-			public void {function_headless_camel_case_name}({parameters}) {{
+        template2 = r"""		{device_name_initial}.add{function_name_camel}Listener(new {device_category}{device_name_camel}.{function_name_camel}Listener() {{
+			public void {function_name_headless}({parameters}) {{
 {printlns}{extra_message}
 			}}
 		}});
@@ -357,43 +357,43 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(printlns) > 0:
             extra_message = '\n' + extra_message
 
-        result = template1.format(function_comment_name=self.get_comment_name(),
+        result = template1.format(function_name_comment=self.get_comment_name(),
                                   override_comment=override_comment) + \
-                 template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                  device_camel_case_name=self.get_device().get_camel_case_name(),
-                                  device_initial_name=self.get_device().get_initial_name(),
-                                  function_camel_case_name=self.get_camel_case_name(),
-                                  function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                 template2.format(device_category=self.get_device().get_category().camel,
+                                  device_name_camel=self.get_device().get_name().camel,
+                                  device_name_initial=self.get_device().get_initial_name(),
+                                  function_name_camel=self.get_name().camel,
+                                  function_name_headless=self.get_name().headless,
                                   parameters=',<BP>'.join(parameters),
                                   printlns='\n'.join(printlns),
                                   extra_message=extra_message)
 
-        return common.break_string(result, '{}('.format(self.get_headless_camel_case_name()))
+        return common.break_string(result, '{}('.format(self.get_name().headless))
 
 class JavaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):
         return []
 
     def get_java_source(self):
-        templateA = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-		{device_initial_name}.set{function_camel_case_name}Period({arguments}{period_msec});
+        templateA = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+		{device_name}.set{function_name_camel}Period({arguments}{period_msec});
 """
-        templateB = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-		// Note: The {function_comment_name} callback is only called every {period_sec_long}
-		//       if the {function_comment_name} has changed since the last call!
-		{device_initial_name}.set{function_camel_case_name}CallbackPeriod({arguments}{period_msec});
+        templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+		// Note: The {function_name_comment} callback is only called every {period_sec_long}
+		//       if the {function_name_comment} has changed since the last call!
+		{device_name}.set{function_name_camel}CallbackPeriod({arguments}{period_msec});
 """
 
-        if self.get_device().get_underscore_name().startswith('imu'):
+        if self.get_device().get_name().space.startswith('IMU '):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_camel=self.get_name().camel,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_java_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -427,17 +427,17 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         return []
 
     def get_java_source(self):
-        template = r"""		// Configure threshold for {function_comment_name} "{option_comment}"
-		{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
+        template = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
+		{device_name}.set{function_name_camel}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
 """
         mininum_maximums = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_java_source())
 
-        result = template.format(device_initial_name=self.get_device().get_initial_name(),
-                                 function_camel_case_name=self.get_camel_case_name(),
-                                 function_comment_name=self.get_comment_name(),
+        result = template.format(device_name=self.get_device().get_initial_name(),
+                                 function_name_camel=self.get_name().camel,
+                                 function_name_comment=self.get_comment_name(),
                                  arguments=common.wrap_non_empty('', ',<BP>'.join(self.get_java_arguments()), ',<BP>'),
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
@@ -450,15 +450,15 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         return []
 
     def get_java_source(self):
-        templateA = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-		{device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false);
+        templateA = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false);
 """
-        templateB = r"""		// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
-		{device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false,<BP>'{option_char}', {mininum_maximums});
+        templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false,<BP>'{option_char}', {mininum_maximums});
 """
-        templateC = r"""		// Configure threshold for {function_comment_name} "{option_comment}"
+        templateC = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
 		// with a debounce period of {period_sec_short} ({period_msec}ms)
-		{device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false,<BP>'{option_char}', {mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false,<BP>'{option_char}', {mininum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -475,9 +475,9 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_java_source())
 
-        result = template.format(device_initial_name=self.get_device().get_initial_name(),
-                                 function_camel_case_name=self.get_camel_case_name(),
-                                 function_comment_name=self.get_comment_name(),
+        result = template.format(device_name=self.get_device().get_initial_name(),
+                                 function_name_camel=self.get_name().camel,
+                                 function_name_comment=self.get_comment_name(),
                                  arguments=common.wrap_non_empty('', ',<BP>'.join(self.get_java_arguments()), ',<BP>'),
                                  period_msec=period_msec,
                                  period_sec_short=period_sec_short,
@@ -501,11 +501,11 @@ class JavaExampleSpecialFunction(common.ExampleSpecialFunction):
             return ''
         elif type_ == 'debounce_period':
             template = r"""		// Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-		{device_initial_name}.setDebouncePeriod({period_msec});
+		{device_name_initial}.setDebouncePeriod({period_msec});
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
-            return template.format(device_initial_name=self.get_device().get_initial_name(),
+            return template.format(device_name_initial=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
@@ -575,7 +575,7 @@ class JavaExamplesGenerator(common.ExamplesGenerator):
         return JavaExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')
             return
 
@@ -590,7 +590,7 @@ class JavaExamplesGenerator(common.ExamplesGenerator):
             os.makedirs(examples_dir)
 
         for example in examples:
-            filename = 'Example{0}.java'.format(example.get_camel_case_name())
+            filename = 'Example{0}.java'.format(example.get_name().camel)
             filepath = os.path.join(examples_dir, filename)
 
             if example.is_incomplete():

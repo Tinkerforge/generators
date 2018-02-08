@@ -32,14 +32,14 @@ import common
 
 class JavaScriptDevice(common.Device):
     def get_javascript_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
 class JavaScriptPacket(common.Packet):
     def get_javascript_parameter_list(self):
         params = []
 
         for element in self.get_elements(direction='in'):
-            params.append(element.get_headless_camel_case_name())
+            params.append(element.get_name().headless)
 
         return ', '.join(params)
 

@@ -32,23 +32,23 @@ import common
 
 class VBNETDocDevice(common.Device):
     def get_vbnet_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
     def specialize_vbnet_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':vbnet:func:`{1}Callback <{0}.{1}Callback>`'.format(packet.get_device().get_vbnet_class_name(),
-                                                                            packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                            packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':vbnet:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_vbnet_class_name(),
-                                                              packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                              packet.get_name(skip=-2 if high_level else 0).camel)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='vbnet')
 
     def get_vbnet_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('Example', '').replace('.vb', '')
-            return common.camel_case_to_space(filename)
+            return common.camel_to_space(filename)
 
         return common.make_rst_examples(title_from_filename, self)
 
@@ -64,7 +64,7 @@ class VBNETDocDevice(common.Device):
 
             skip = -2 if packet.has_high_level() else 0
             ret_type = packet.get_vbnet_return_type(high_level=True)
-            name = packet.get_camel_case_name(skip=skip)
+            name = packet.get_name(skip=skip).camel
             params = packet.get_vbnet_parameter_list(high_level=True)
             desc = packet.get_vbnet_formatted_doc()
 
@@ -94,7 +94,7 @@ class VBNETDocDevice(common.Device):
                 params = ', ' + params
 
             cbs += cb.format(self.get_vbnet_class_name(),
-                             packet.get_camel_case_name(skip=skip),
+                             packet.get_name(skip=skip).camel,
                              params,
                              desc)
 
@@ -263,7 +263,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_vbnet_class_name(),
-                                                    self.get_headless_camel_case_name())
+                                                    self.get_name().headless)
 
         bf = self.get_vbnet_methods('bf')
         af = self.get_vbnet_methods('af')
@@ -279,7 +279,7 @@ Konstanten
         if c:
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_vbnet_class_name(),
-                                                        self.get_headless_camel_case_name(),
+                                                        self.get_name().headless,
                                                         c)
 
         article = 'ein'
@@ -316,7 +316,8 @@ class VBNETDocPacket(common.Packet):
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_vbnet_class_name() + '.'
-        if self.get_underscore_name() == 'set_response_expected':
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
             text += common.format_constants(prefix, self, char_format='"{0}"C')
@@ -350,7 +351,7 @@ class VBNETDocPacket(common.Packet):
                 else:
                     modifier = 'ByRef '
 
-                name = element.get_headless_camel_case_name()
+                name = element.get_name().headless
 
                 if element.get_cardinality() != 1 and element.get_type() != 'string':
                     name += '[]'
@@ -359,7 +360,7 @@ class VBNETDocPacket(common.Packet):
         else:
             for element in self.get_elements(direction='in', high_level=high_level):
                 vbnet_type = element.get_vbnet_type()
-                name = element.get_headless_camel_case_name()
+                name = element.get_name().headless
 
                 if element.get_cardinality() != 1 and element.get_type() != 'string':
                     name += '[]'

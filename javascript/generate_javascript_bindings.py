@@ -52,7 +52,7 @@ var IPConnection = require('./IPConnection');
         callback_constant_statement = self.get_javascript_class_name()+'.CALLBACK_{0} = {1};\n'
 
         for packet in self.get_packets('callback'):
-            callback_constants += callback_constant_statement.format(packet.get_upper_case_name(),
+            callback_constants += callback_constant_statement.format(packet.get_name().upper,
                                                                      packet.get_function_id())
 
         if self.get_long_display_name() == 'RS232 Bricklet':
@@ -61,17 +61,17 @@ var IPConnection = require('./IPConnection');
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
-                callback_constants += callback_constant_statement.format(packet.get_upper_case_name(skip=-2),
+                callback_constants += callback_constant_statement.format(packet.get_name(skip=-2).upper,
                                                                          -packet.get_function_id())
 
         function_constants = ''
         function_constant_statement = self.get_javascript_class_name() + '.FUNCTION_{0} = {1};\n'
 
         for packet in self.get_packets('function'):
-            function_constants += function_constant_statement.format(packet.get_upper_case_name(),
+            function_constants += function_constant_statement.format(packet.get_name().upper,
                                                                      packet.get_function_id())
         constant_statement = self.get_javascript_class_name() + \
-                             '.{constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
+                             '.{constant_group_name_upper}_{constant_name_upper} = {constant_value};\n'
         constants = self.get_formatted_constants(constant_statement) + '\n'
 
         return callback_constants+function_constants+constants
@@ -105,7 +105,7 @@ var IPConnection = require('./IPConnection');
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
             response_expected += '\tthis.responseExpected[{0}.FUNCTION_{1}] = Device.{2};\n' \
-                                 .format(self.get_javascript_class_name(), packet.get_upper_case_name(), flag)
+                                 .format(self.get_javascript_class_name(), packet.get_name().upper, flag)
 
         return response_expected
 
@@ -115,7 +115,7 @@ var IPConnection = require('./IPConnection');
 
         for packet in self.get_packets('callback'):
             callbacks += template.format(self.get_javascript_class_name(),
-                                         packet.get_upper_case_name(),
+                                         packet.get_name().upper,
                                          packet.get_javascript_format_list('out'))
 
         return callbacks + '\n'
@@ -153,7 +153,7 @@ var IPConnection = require('./IPConnection');
                     single_chunk = 'true'
 
                 high_level_callbacks += template.format(self.get_javascript_class_name(),
-                                                        packet.get_upper_case_name(skip=-2),
+                                                        packet.get_name(skip=-2).upper,
                                                         fixed_length,
                                                         single_chunk,
                                                         repr(list(roles)).replace('None', 'null'))
@@ -245,7 +245,7 @@ var IPConnection = require('./IPConnection');
                     short_write = 'true'
 
                 stream_state_objects += template.format(self.get_javascript_class_name(),
-                                                        packet.get_upper_case_name(),
+                                                        packet.get_name().upper,
                                                         fixed_length,
                                                         single_chunk,
                                                         short_write,
@@ -279,7 +279,7 @@ var IPConnection = require('./IPConnection');
                     single_chunk = 'true'
 
                 stream_state_objects += template.format(self.get_javascript_class_name(),
-                                                        packet.get_upper_case_name(),
+                                                        packet.get_name().upper,
                                                         fixed_length,
                                                         single_chunk,
                                                         short_write,
@@ -296,8 +296,8 @@ var IPConnection = require('./IPConnection');
         # Normal and low-level
         for packet in self.get_packets('function'):
             doc = packet.get_javascript_formatted_doc()
-            name = packet.get_headless_camel_case_name()
-            upper_case_name = packet.get_upper_case_name()
+            name_headless = packet.get_name().headless
+            name_upper = packet.get_name().upper
             param_list = packet.get_javascript_parameter_list()
             pack_format = packet.get_javascript_format_list('in')
             unpack_format = packet.get_javascript_format_list('out')
@@ -317,19 +317,19 @@ var IPConnection = require('./IPConnection');
 """
 
             if len(param_list) == 0:
-                methods += no_param_method_code.format(name,
+                methods += no_param_method_code.format(name_headless,
                                                        doc,
                                                        self.get_javascript_class_name(),
-                                                       upper_case_name,
+                                                       name_upper,
                                                        param_list,
                                                        pack_format,
                                                        unpack_format)
             else:
-                methods += param_method_code.format(name,
+                methods += param_method_code.format(name_headless,
                                                     param_list,
                                                     doc,
                                                     self.get_javascript_class_name(),
-                                                    upper_case_name,
+                                                    name_upper,
                                                     param_list,
                                                     pack_format,
                                                     unpack_format)
@@ -406,11 +406,11 @@ var IPConnection = require('./IPConnection');
 					var llvalues = null;
 					var packetErrorFlag = 0;
 					var rolesMappedData = [];
-					var {stream_headless_camel_case_name}Length = null;
-					var {stream_headless_camel_case_name}ChunkData = null;
-					var {stream_headless_camel_case_name}OutOfSync = false;
+					var {stream_name_headless}Length = null;
+					var {stream_name_headless}ChunkData = null;
+					var {stream_name_headless}OutOfSync = false;
 					var streamStateObject = device.streamStateObjects[fid];
-					var {stream_headless_camel_case_name}ChunkOffset = null;
+					var {stream_name_headless}ChunkOffset = null;
 					var payload = device.ipcon.getPayloadFromPacket(packetResponse);
 
 					packetErrorFlag = device.ipcon.getEFromPacket(packetResponse);
@@ -452,10 +452,10 @@ var IPConnection = require('./IPConnection');
 
 					for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
 						if (streamStateObject['dataMapping'][i] === 'streamChunkData') {{
-							{stream_headless_camel_case_name}ChunkData = llvalues[i];
+							{stream_name_headless}ChunkData = llvalues[i];
 						}}
 						else if (streamStateObject['dataMapping'][i] === 'streamChunkOffset') {{
-							{stream_headless_camel_case_name}ChunkOffset = llvalues[i];
+							{stream_name_headless}ChunkOffset = llvalues[i];
 						}}
 					}}
 
@@ -464,12 +464,12 @@ var IPConnection = require('./IPConnection');
 				}};
 """
 
-        template_response_handler_stream_out_get_length_fixed = """{stream_headless_camel_case_name}Length = streamStateObject['streamProperties']['fixedLength'];
+        template_response_handler_stream_out_get_length_fixed = """{stream_name_headless}Length = streamStateObject['streamProperties']['fixedLength'];
 """
 
         template_response_handler_stream_out_get_length_variable = """for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
 						if (streamStateObject['dataMapping'][i] === 'streamLength') {{
-							{stream_headless_camel_case_name}Length = llvalues[i];
+							{stream_name_headless}Length = llvalues[i];
 							break;
 						}}
 					}}
@@ -485,7 +485,7 @@ streamStateObject['responseProperties']['returnCB'], \
 streamStateObject['responseProperties']['errorCB'], \
 true);"""
 
-        template_response_handler_stream_out_body_single_chunk = """{stream_headless_camel_case_name}ChunkOffset = 0;
+        template_response_handler_stream_out_body_single_chunk = """{stream_name_headless}ChunkOffset = 0;
 
 					if (streamStateObject['responseProperties']['returnCB']) {{
 						for (var i = 0; i < streamStateObject['dataMapping'].length; i++) {{
@@ -494,7 +494,7 @@ true);"""
 
 						for (var i = 0; i < rolesMappedData.length; i++) {{
 							if (rolesMappedData[i]['role'] === 'streamChunkData') {{
-								result.push({stream_headless_camel_case_name}ChunkData.splice(0, {stream_headless_camel_case_name}Length));
+								result.push({stream_name_headless}ChunkData.splice(0, {stream_name_headless}Length));
 							}}
 							else if (rolesMappedData[i]['role'] === null) {{
 								result.push(rolesMappedData[i]['llvalue']);
@@ -511,7 +511,7 @@ true);"""
 					}}"""
 
         template_response_handler_stream_out_body_fixed_stream_length = """function handleOOS() {{
-						if (({stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality}) < {stream_headless_camel_case_name}Length) {{
+						if (({stream_name_headless}ChunkOffset + {chunk_cardinality}) < {stream_name_headless}Length) {{
 							streamStateObject['responseProperties']['runningSubcallOOS'] = true;
 							{subcall}
 
@@ -532,21 +532,21 @@ true);"""
 					if (streamStateObject['responseProperties']['waitingFirstChunk']) {{
 						streamStateObject['responseProperties']['waitingFirstChunk'] = false;
 
-						if ({stream_headless_camel_case_name}ChunkOffset === ((1 << {shift_size}) - 1)) {{ // maximum chunk offset -> stream has no data
-							{stream_headless_camel_case_name}Length = 0;
-							{stream_headless_camel_case_name}OutOfSync = false;
+						if ({stream_name_headless}ChunkOffset === ((1 << {shift_size}) - 1)) {{ // maximum chunk offset -> stream has no data
+							{stream_name_headless}Length = 0;
+							{stream_name_headless}OutOfSync = false;
 							streamStateObject['responseProperties']['data'].length = 0;
 						}}
 						else {{
-								{stream_headless_camel_case_name}OutOfSync = ({stream_headless_camel_case_name}ChunkOffset !== 0);
-								streamStateObject['responseProperties']['data'] = {stream_headless_camel_case_name}ChunkData;
+								{stream_name_headless}OutOfSync = ({stream_name_headless}ChunkOffset !== 0);
+								streamStateObject['responseProperties']['data'] = {stream_name_headless}ChunkData;
 						}}
 					}}
 
 					if (!streamStateObject['responseProperties']['runningSubcallOOS']) {{
 						if (!streamStateObject['responseProperties']['runningSubcall']) {{
-							if (!{stream_headless_camel_case_name}OutOfSync &&
-								(streamStateObject['responseProperties']['data'].length < {stream_headless_camel_case_name}Length)) {{
+							if (!{stream_name_headless}OutOfSync &&
+								(streamStateObject['responseProperties']['data'].length < {stream_name_headless}Length)) {{
 									streamStateObject['responseProperties']['runningSubcall'] = true;
 									{subcall}
 
@@ -554,16 +554,16 @@ true);"""
 							}}
 						}}
 						else {{
-							{stream_headless_camel_case_name}OutOfSync =
-								({stream_headless_camel_case_name}ChunkOffset !== streamStateObject['responseProperties']['data'].length);
+							{stream_name_headless}OutOfSync =
+								({stream_name_headless}ChunkOffset !== streamStateObject['responseProperties']['data'].length);
 
-							if (!{stream_headless_camel_case_name}OutOfSync &&
-								(streamStateObject['responseProperties']['data'].length < {stream_headless_camel_case_name}Length)) {{
+							if (!{stream_name_headless}OutOfSync &&
+								(streamStateObject['responseProperties']['data'].length < {stream_name_headless}Length)) {{
 									streamStateObject['responseProperties']['data'] =
-										streamStateObject['responseProperties']['data'].concat({stream_headless_camel_case_name}ChunkData);
-									if (streamStateObject['responseProperties']['data'].length >= {stream_headless_camel_case_name}Length) {{
+										streamStateObject['responseProperties']['data'].concat({stream_name_headless}ChunkData);
+									if (streamStateObject['responseProperties']['data'].length >= {stream_name_headless}Length) {{
 										streamStateObject['responseProperties']['data'] =
-											streamStateObject['responseProperties']['data'].splice(0, {stream_headless_camel_case_name}Length);
+											streamStateObject['responseProperties']['data'].splice(0, {stream_name_headless}Length);
 									}}
 									else {{
 										{subcall}
@@ -579,7 +579,7 @@ true);"""
 						return;
 					}}
 
-					if ({stream_headless_camel_case_name}OutOfSync) {{ // Discard remaining stream to bring it back in-sync
+					if ({stream_name_headless}OutOfSync) {{ // Discard remaining stream to bring it back in-sync
 						handleOOS();
 
 						return;
@@ -592,7 +592,7 @@ true);"""
 
 						for (var i = 0; i < rolesMappedData.length; i++) {{
 							if (rolesMappedData[i]['role'] === 'streamChunkData') {{
-								result.push(streamStateObject['responseProperties']['data'].splice(0, {stream_headless_camel_case_name}Length));
+								result.push(streamStateObject['responseProperties']['data'].splice(0, {stream_name_headless}Length));
 							}}
 							else if (rolesMappedData[i]['role'] === null) {{
 								result.push(rolesMappedData[i]['llvalue']);
@@ -609,7 +609,7 @@ true);"""
 					}}"""
 
         template_response_handler_stream_out_body_variable_stream_length = """function handleOOS() {{
-						if (({stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality}) < {stream_headless_camel_case_name}Length) {{
+						if (({stream_name_headless}ChunkOffset + {chunk_cardinality}) < {stream_name_headless}Length) {{
 							streamStateObject['responseProperties']['runningSubcallOOS'] = true;
 							{subcall}
 
@@ -629,14 +629,14 @@ true);"""
 
 					if (streamStateObject['responseProperties']['waitingFirstChunk']) {{
 						streamStateObject['responseProperties']['waitingFirstChunk'] = false;
-						{stream_headless_camel_case_name}OutOfSync = ({stream_headless_camel_case_name}ChunkOffset !== 0);
-						streamStateObject['responseProperties']['data'] = {stream_headless_camel_case_name}ChunkData;
+						{stream_name_headless}OutOfSync = ({stream_name_headless}ChunkOffset !== 0);
+						streamStateObject['responseProperties']['data'] = {stream_name_headless}ChunkData;
 					}}
 
 					if (!streamStateObject['responseProperties']['runningSubcallOOS']) {{
 						if (!streamStateObject['responseProperties']['runningSubcall']) {{
-							if (!{stream_headless_camel_case_name}OutOfSync &&
-							    (streamStateObject['responseProperties']['data'].length < {stream_headless_camel_case_name}Length)) {{
+							if (!{stream_name_headless}OutOfSync &&
+							    (streamStateObject['responseProperties']['data'].length < {stream_name_headless}Length)) {{
 							        streamStateObject['responseProperties']['runningSubcall'] = true;
 							        {subcall}
 
@@ -644,17 +644,17 @@ true);"""
 							}}
 						}}
 						else {{
-							{stream_headless_camel_case_name}OutOfSync =
-								({stream_headless_camel_case_name}ChunkOffset !== streamStateObject['responseProperties']['data'].length);
+							{stream_name_headless}OutOfSync =
+								({stream_name_headless}ChunkOffset !== streamStateObject['responseProperties']['data'].length);
 
-							if (!{stream_headless_camel_case_name}OutOfSync &&
-								(streamStateObject['responseProperties']['data'].length < {stream_headless_camel_case_name}Length)) {{
+							if (!{stream_name_headless}OutOfSync &&
+								(streamStateObject['responseProperties']['data'].length < {stream_name_headless}Length)) {{
 									streamStateObject['responseProperties']['data'] =
-										streamStateObject['responseProperties']['data'].concat({stream_headless_camel_case_name}ChunkData);
+										streamStateObject['responseProperties']['data'].concat({stream_name_headless}ChunkData);
 
-									if (streamStateObject['responseProperties']['data'].length >= {stream_headless_camel_case_name}Length) {{
+									if (streamStateObject['responseProperties']['data'].length >= {stream_name_headless}Length) {{
 										streamStateObject['responseProperties']['data'] =
-											streamStateObject['responseProperties']['data'].splice(0, {stream_headless_camel_case_name}Length);
+											streamStateObject['responseProperties']['data'].splice(0, {stream_name_headless}Length);
 									}}
 									else {{
 										{subcall}
@@ -670,7 +670,7 @@ true);"""
 						return;
 					}}
 
-					if ({stream_headless_camel_case_name}OutOfSync) {{ // Discard remaining stream to bring it back in-sync
+					if ({stream_name_headless}OutOfSync) {{ // Discard remaining stream to bring it back in-sync
 						handleOOS();
 
 						return;
@@ -683,7 +683,7 @@ true);"""
 
 						for (var i = 0; i < rolesMappedData.length; i++) {{
 							if (rolesMappedData[i]['role'] === 'streamChunkData') {{
-								result.push(streamStateObject['responseProperties']['data'].splice(0, {stream_headless_camel_case_name}Length));
+								result.push(streamStateObject['responseProperties']['data'].splice(0, {stream_name_headless}Length));
 							}}
 							else if (rolesMappedData[i]['role'] === null) {{
 								result.push(rolesMappedData[i]['llvalue']);
@@ -1008,44 +1008,44 @@ true);"""
 				}};
 """
 
-                upper_case_name = packet.get_upper_case_name()
-                name = packet.get_headless_camel_case_name(skip=-2)
+                name_upper = packet.get_name().upper
+                name_headless = packet.get_name(skip=-2).headless
                 param_list_ll = packet.get_javascript_parameter_list()
                 pack_format = packet.get_javascript_format_list('in')
                 unpack_format = packet.get_javascript_format_list('out')
                 chunk_cardinality = stream_in.get_chunk_data_element().get_cardinality()
-                stream_headless_camel_case_name = stream_in.get_headless_camel_case_name()
+                stream_name_headless = stream_in.get_name().headless
 
                 for element in packet.get_elements(direction='in'):
                     role = element.get_role()
 
                     if role:
                         if role == 'stream_length':
-                            param_stream_params_ll['stream_length'] = element.get_headless_camel_case_name()
+                            param_stream_params_ll['stream_length'] = element.get_name().headless
                         elif role == 'stream_chunk_offset':
-                            param_stream_params_ll['stream_chunk_offset'] = element.get_headless_camel_case_name()
+                            param_stream_params_ll['stream_chunk_offset'] = element.get_name().headless
                         elif role == 'stream_chunk_data':
-                            param_stream_params_ll['stream_chunk_data'] = element.get_headless_camel_case_name()
-                            param_list_hl_arr.append(stream_in.get_headless_camel_case_name())
+                            param_stream_params_ll['stream_chunk_data'] = element.get_name().headless
+                            param_list_hl_arr.append(stream_in.get_name().headless)
 
                         continue
 
-                    param_list_hl_arr.append(element.get_headless_camel_case_name())
+                    param_list_hl_arr.append(element.get_name().headless)
 
-                data_param_name_hl = stream_in.get_headless_camel_case_name()
+                data_param_name_hl = stream_in.get_name().headless
 
                 param_list_hl = ', '.join(param_list_hl_arr)
 
                 response_handler_function = template_response_handler_stream_in.format(stream_length_param_name_ll = param_stream_params_ll['stream_length'],
                                                                                        stream_chunk_data_param_name_ll = param_stream_params_ll['stream_chunk_data'],
                                                                                        stream_chunk_offset_param_name_ll = param_stream_params_ll['stream_chunk_offset'],device_class = self.get_javascript_class_name(),
-                                                                                       function_name = upper_case_name,
+                                                                                       function_name = name_upper,
                                                                                        param_list_ll = param_list_ll,
                                                                                        pack_format = pack_format,
                                                                                        unpack_format = unpack_format,
                                                                                        chunk_cardinality = chunk_cardinality)
 
-                methods += param_method_code_stream_in.format(name = name,
+                methods += param_method_code_stream_in.format(name = name_headless,
                                                               param_list_hl = param_list_hl,
                                                               doc = doc,
                                                               stream_length_param_name_ll = param_stream_params_ll['stream_length'],
@@ -1056,7 +1056,7 @@ true);"""
                                                               data_param_name_hl = data_param_name_hl,
                                                               chunk_cardinality = chunk_cardinality,
                                                               device_class = self.get_javascript_class_name(),
-                                                              function_name = upper_case_name,
+                                                              function_name = name_upper,
                                                               param_list_ll = param_list_ll,
                                                               pack_format = pack_format,
                                                               unpack_format = unpack_format,
@@ -1065,86 +1065,86 @@ true);"""
             elif stream_out != None:
                 fid = packet.get_function_id()
                 doc = packet.get_javascript_formatted_doc()
-                upper_case_name = packet.get_upper_case_name()
-                name = packet.get_headless_camel_case_name(skip=-2)
+                name_upper = packet.get_name().upper
+                name_headless = packet.get_name(skip=-2).headless
                 param_list = packet.get_javascript_parameter_list()
                 pack_format = packet.get_javascript_format_list('in')
                 unpack_format = packet.get_javascript_format_list('out')
-                stream_headless_camel_case_name = stream_out.get_headless_camel_case_name()
+                stream_name_headless = stream_out.get_name().headless
 
                 if stream_out.has_single_chunk():
                     # Single chunk stream
                     get_length = \
-                        template_response_handler_stream_out_get_length_variable.format(stream_headless_camel_case_name = stream_headless_camel_case_name)
+                        template_response_handler_stream_out_get_length_variable.format(stream_name_headless = stream_name_headless)
                     body = \
-                        template_response_handler_stream_out_body_single_chunk.format(stream_headless_camel_case_name = stream_headless_camel_case_name)
+                        template_response_handler_stream_out_body_single_chunk.format(stream_name_headless = stream_name_headless)
 
                     response_handler_function = \
-                        template_response_handler_stream_out.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                        template_response_handler_stream_out.format(stream_name_headless = stream_name_headless,
                                                                     get_length = get_length,
                                                                     body = body)
                 elif stream_out.get_fixed_length() != None:
                     # Fixed stream length
                     shift_size = int(stream_out.get_chunk_offset_element().get_type().replace('uint', ''))
                     subcall = template_response_handler_stream_out_body_subcall.format(device_class = self.get_javascript_class_name(),
-                                                                                       function_name = upper_case_name,
+                                                                                       function_name = name_upper,
                                                                                        param_list = param_list,
                                                                                        pack_format = pack_format,
                                                                                        unpack_format = unpack_format)
                     chunk_cardinality = stream_out.get_chunk_data_element().get_cardinality()
 
                     get_length = \
-                        template_response_handler_stream_out_get_length_fixed.format(stream_headless_camel_case_name = stream_headless_camel_case_name)
+                        template_response_handler_stream_out_get_length_fixed.format(stream_name_headless = stream_name_headless)
                     body = \
-                        template_response_handler_stream_out_body_fixed_stream_length.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                        template_response_handler_stream_out_body_fixed_stream_length.format(stream_name_headless = stream_name_headless,
                                                                                              shift_size = shift_size,
                                                                                              subcall = subcall,
                                                                                              chunk_cardinality = chunk_cardinality)
 
                     response_handler_function = \
-                        template_response_handler_stream_out.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                        template_response_handler_stream_out.format(stream_name_headless = stream_name_headless,
                                                                     get_length = get_length,
                                                                     body = body)
                 else:
                     # Variable length stream
                     shift_size = int(stream_out.get_chunk_offset_element().get_type().replace('uint', ''))
                     subcall = template_response_handler_stream_out_body_subcall.format(device_class = self.get_javascript_class_name(),
-                                                                                       function_name = upper_case_name,
+                                                                                       function_name = name_upper,
                                                                                        param_list = param_list,
                                                                                        pack_format = pack_format,
                                                                                        unpack_format = unpack_format)
                     chunk_cardinality = stream_out.get_chunk_data_element().get_cardinality()
 
                     get_length = \
-                        template_response_handler_stream_out_get_length_variable.format(stream_headless_camel_case_name = stream_headless_camel_case_name)
+                        template_response_handler_stream_out_get_length_variable.format(stream_name_headless = stream_name_headless)
                     body = \
-                        template_response_handler_stream_out_body_variable_stream_length.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                        template_response_handler_stream_out_body_variable_stream_length.format(stream_name_headless = stream_name_headless,
                                                                                                 shift_size = shift_size,
                                                                                                 subcall = subcall,
                                                                                                 chunk_cardinality = chunk_cardinality)
 
                     response_handler_function = \
-                        template_response_handler_stream_out.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                        template_response_handler_stream_out.format(stream_name_headless = stream_name_headless,
                                                                     get_length = get_length,
                                                                     body = body)
 
                 if len(param_list) == 0:
-                    methods += no_param_method_code.format(name = name,
+                    methods += no_param_method_code.format(name = name_headless,
                                                            doc = doc,
                                                            fid = fid,
                                                            device_class = self.get_javascript_class_name(),
-                                                           function_name = upper_case_name,
+                                                           function_name = name_upper,
                                                            response_handler_function = response_handler_function,
                                                            param_list = param_list,
                                                            pack_format = pack_format,
                                                            unpack_format = unpack_format)
                 else:
-                    methods += param_method_code.format(name = name,
+                    methods += param_method_code.format(name = name_headless,
                                                         param_list = param_list,
                                                         doc = doc,
                                                         fid = fid,
                                                         device_class = self.get_javascript_class_name(),
-                                                        function_name = upper_case_name,
+                                                        function_name = name_upper,
                                                         response_handler_function = response_handler_function,
                                                         pack_format = pack_format,
                                                         unpack_format = unpack_format)
@@ -1243,21 +1243,21 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         if device.is_released():
             api = """	this.{0}{1} = require('./{0}{1}');
 """
-            api_format = api.format(device.get_camel_case_category(), device.get_camel_case_name())
+            api_format = api.format(device.get_category().camel, device.get_name().camel)
             self.browser_api_file.write(api_format)
 
     def add_npm_main_function(self, device):
         if device.is_released():
             npm_main = """	this.{0}{1} = require('./lib/{0}{1}');
 """
-            npm_main_format = npm_main.format(device.get_camel_case_category(), device.get_camel_case_name())
+            npm_main_format = npm_main.format(device.get_category().camel, device.get_name().camel)
             self.npm_main_file.write(npm_main_format)
 
     def add_source_main_function(self, device):
         if device.is_released():
             source_main = """	this.{0}{1} = require('./Tinkerforge/{0}{1}');
 """
-            source_main_format = source_main.format(device.get_camel_case_category(), device.get_camel_case_name())
+            source_main_format = source_main.format(device.get_category().camel, device.get_name().camel)
             self.source_main_file.write(source_main_format)
 
     def generate(self, device):
@@ -1265,7 +1265,7 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         self.add_npm_main_function(device)
         self.add_source_main_function(device)
 
-        filename = '{0}{1}.js'.format(device.get_camel_case_category(), device.get_camel_case_name())
+        filename = '{0}{1}.js'.format(device.get_category().camel, device.get_name().camel)
 
         with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_javascript_source())

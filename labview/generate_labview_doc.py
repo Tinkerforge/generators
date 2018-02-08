@@ -36,16 +36,16 @@ import common
 
 class LabVIEWDocDevice(common.Device):
     def get_labview_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
     def specialize_labview_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':labview:func:`{1}Callback <{0}.{1}Callback>`'.format(packet.get_device().get_labview_class_name(),
-                                                                              packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                              packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':labview:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_labview_class_name(),
-                                                                packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                packet.get_name(skip=-2 if high_level else 0).camel)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='labview')
 
@@ -86,7 +86,7 @@ class LabVIEWDocDevice(common.Device):
                 continue
 
             skip = -2 if packet.has_high_level() else 0
-            name = packet.get_camel_case_name(skip)
+            name = packet.get_name(skip=skip).camel
             inputs = packet.get_labview_input_list(high_level=True)
             input_desc = packet.get_labview_input_description(high_level=True)
             outputs = packet.get_labview_output_list(high_level=True)
@@ -118,7 +118,7 @@ class LabVIEWDocDevice(common.Device):
                 inputs = ', ' + inputs
 
             callbacks.append(callback.format(self.get_labview_class_name(),
-                                             packet.get_camel_case_name(skip),
+                                             packet.get_name(skip=skip).camel,
                                              inputs,
                                              input_desc,
                                              doc))
@@ -279,7 +279,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_labview_class_name(),
-                                                    self.get_headless_camel_case_name())
+                                                    self.get_name().headless)
 
         bf = self.get_labview_functions('bf')
         af = self.get_labview_functions('af')
@@ -329,7 +329,8 @@ class LabVIEWDocPacket(common.Packet):
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_labview_class_name() + '.'
-        if self.get_underscore_name() == 'set_response_expected':
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
             text += common.format_constants(prefix, self)
@@ -347,7 +348,7 @@ class LabVIEWDocPacket(common.Packet):
             direction = 'in'
 
         for element in self.get_elements(direction=direction, high_level=high_level):
-            inputs.append(element.get_headless_camel_case_name())
+            inputs.append(element.get_name().headless)
 
         return ', '.join(inputs)
 
@@ -360,7 +361,7 @@ class LabVIEWDocPacket(common.Packet):
             direction = 'in'
 
         for element in self.get_elements(direction=direction, high_level=high_level):
-            name = element.get_headless_camel_case_name()
+            name = element.get_name().headless
             type_ = element.get_labview_type()
 
             descriptions.append(' :input {0}: {1}\n'.format(name, type_))
@@ -372,7 +373,7 @@ class LabVIEWDocPacket(common.Packet):
 
         if self.get_type() == 'function':
             for element in self.get_elements(direction='out', high_level=high_level):
-                outputs.append(element.get_headless_camel_case_name())
+                outputs.append(element.get_name().headless)
 
         return ', '.join(outputs)
 
@@ -381,7 +382,7 @@ class LabVIEWDocPacket(common.Packet):
 
         if self.get_type() == 'function':
             for element in self.get_elements(direction='out', high_level=high_level):
-                name = element.get_headless_camel_case_name()
+                name = element.get_name().headless
                 type = element.get_labview_type()
 
                 descriptions.append(' :output {0}: {1}\n'.format(name, type))

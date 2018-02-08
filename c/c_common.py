@@ -37,7 +37,7 @@ class CPacket(common.Packet):
         for element in self.get_elements(high_level=high_level):
             c_type = element.get_c_type(True)
             modifier = ''
-            name = element.get_underscore_name()
+            name = element.get_name().under
             role = element.get_role()
             array = ''
 

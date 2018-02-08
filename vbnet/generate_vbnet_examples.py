@@ -51,26 +51,26 @@ def get_vbnet_type(type_):
 
 class VBNETConstant(common.Constant):
     def get_vbnet_source(self):
-        template = '{device_camel_case_category}{device_camel_case_name}.{constant_group_upper_case_name}_{constant_upper_case_name}'
+        template = '{device_category}{device_name}.{constant_group_name}_{constant_name}'
 
-        return template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               constant_group_upper_case_name=self.get_constant_group().get_upper_case_name(),
-                               constant_upper_case_name=self.get_upper_case_name())
+        return template.format(device_category=self.get_device().get_category().camel,
+                               device_name=self.get_device().get_name().camel,
+                               constant_group_name=self.get_constant_group().get_name().upper,
+                               constant_name=self.get_name().upper)
 
 class VBNETExample(common.Example):
     def get_vbnet_source(self):
         template = r"""Imports System
 {imports}Imports Tinkerforge{incomplete}{description}
 
-Module Example{example_camel_case_name}
+Module Example{example_name}
     Const HOST As String = "localhost"
     Const PORT As Integer = 4223
-    Const UID As String = "{dummy_uid}" ' Change {dummy_uid} to the UID of your {device_long_display_name}
+    Const UID As String = "{dummy_uid}" ' Change {dummy_uid} to the UID of your {device_name_long_display}
 {subroutines}
     Sub Main()
         Dim ipcon As New IPConnection() ' Create IP connection
-        Dim {device_initial_name} As New {device_camel_case_category}{device_camel_case_name}(UID, ipcon) ' Create device object
+        Dim {device_name_initial} As New {device_category}{device_name_camel}(UID, ipcon) ' Create device object
 
         ipcon.Connect(HOST, PORT) ' Connect to brickd
         ' Don't use device before ipcon is connected
@@ -126,11 +126,11 @@ End Module
 
         return template.format(incomplete=incomplete,
                                description=description,
-                               example_camel_case_name=self.get_camel_case_name(),
-                               device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               device_long_display_name=self.get_device().get_long_display_name(),
+                               example_name=self.get_name().camel,
+                               device_category=self.get_device().get_category().camel,
+                               device_name_camel=self.get_device().get_name().camel,
+                               device_name_initial=self.get_device().get_initial_name(),
+                               device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports=''.join(unique_imports),
                                subroutines=common.wrap_non_empty('\n', '\n'.join(subroutines), ''),
@@ -164,19 +164,19 @@ class VBNETExampleArgumentsMixin(object):
 
 class VBNETExampleParameter(common.ExampleParameter):
     def get_vbnet_source(self):
-        templateA = 'ByVal {headless_camel_case_name} As {type}'
-        templateB = 'ByVal {headless_camel_case_name} As {type}()'
+        templateA = 'ByVal {name} As {type_}'
+        templateB = 'ByVal {name} As {type_}()'
 
         if self.get_cardinality() == 1:
             template = templateA
         else:
             template = templateB
 
-        return template.format(type=get_vbnet_type(self.get_type().split(':')[0]),
-                               headless_camel_case_name=self.get_headless_camel_case_name())
+        return template.format(type_=get_vbnet_type(self.get_type().split(':')[0]),
+                               name=self.get_name().headless)
 
     def get_vbnet_write_lines(self):
-        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{index}{divisor}{to_string_suffix}{unit_name}){comment}'
+        template = '        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
 
         if self.get_label_name() == None:
             return []
@@ -205,37 +205,37 @@ class VBNETExampleParameter(common.ExampleParameter):
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(headless_camel_case_name=self.get_headless_camel_case_name(),
-                                          label_name=self.get_label_name(index=index),
+            result.append(template.format(name=self.get_name().headless,
+                                          label=self.get_label_name(index=index),
                                           index='({0})'.format(index) if self.get_label_count() > 1 else '',
                                           to_string_prefix=to_string_prefix,
                                           to_string_suffix=to_string_suffix,
                                           divisor=divisor,
-                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
+                                          unit=self.get_formatted_unit_name(' + " {0}"'),
                                           comment=self.get_formatted_comment(" ' {0}")))
 
         return result
 
 class VBNETExampleResult(common.ExampleResult):
     def get_vbnet_variable_declaration(self):
-        template = '        Dim {headless_camel_case_name} As {type_}'
-        headless_camel_case_name = self.get_headless_camel_case_name()
+        template = '        Dim {name_headless} As {type_}'
+        name = self.get_name().headless
 
-        if headless_camel_case_name == self.get_device().get_initial_name():
-            headless_camel_case_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
-        return get_vbnet_type(self.get_type().split(':')[0]), headless_camel_case_name
+        return get_vbnet_type(self.get_type().split(':')[0]), name
 
     def get_vbnet_variable_reference(self):
-        headless_camel_case_name = self.get_headless_camel_case_name()
+        name = self.get_name().headless
 
-        if headless_camel_case_name == self.get_device().get_initial_name():
-            headless_camel_case_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
-        return headless_camel_case_name
+        return name
 
     def get_vbnet_write_lines(self):
-        template = '        Console.WriteLine("{label_name}: " + {to_string_prefix}{headless_camel_case_name}{index}{divisor}{to_string_suffix}{unit_name}){comment}'
+        template = '        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
 
         if self.get_label_name() == None:
             return []
@@ -243,10 +243,10 @@ class VBNETExampleResult(common.ExampleResult):
         if self.get_cardinality() < 0:
             return [] # FIXME: streaming
 
-        headless_camel_case_name = self.get_headless_camel_case_name()
+        name = self.get_name().headless
 
-        if headless_camel_case_name == self.get_device().get_initial_name():
-            headless_camel_case_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
         type_ = self.get_type()
         divisor = self.get_formatted_divisor('/{0}')
@@ -269,13 +269,13 @@ class VBNETExampleResult(common.ExampleResult):
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(headless_camel_case_name=headless_camel_case_name,
-                                          label_name=self.get_label_name(index=index),
+            result.append(template.format(name=name,
+                                          label=self.get_label_name(index=index),
                                           index='({0})'.format(index) if self.get_label_count() > 1 else '',
                                           to_string_prefix=to_string_prefix,
                                           to_string_suffix=to_string_suffix,
                                           divisor=divisor,
-                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
+                                          unit=self.get_formatted_unit_name(' + " {0}"'),
                                           comment=self.get_formatted_comment(" ' {0}")))
 
         return result
@@ -288,14 +288,14 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
         return None
 
     def get_vbnet_source(self):
-        templateA = r"""        ' Get current {function_comment_name}
-{variable_declarations} = {device_initial_name}.{function_camel_case_name}({arguments})
+        templateA = r"""        ' Get current {function_name_comment}
+{variable_declarations} = {device_name}.{function_name_camel}({arguments})
 {write_lines}
 """
-        templateB = r"""        ' Get current {function_comment_name}
+        templateB = r"""        ' Get current {function_name_comment}
 {variable_declarations}
 
-        {device_initial_name}.{function_camel_case_name}({arguments})
+        {device_name}.{function_name_camel}({arguments})
 {write_lines}
 """
         variable_declarations = []
@@ -343,15 +343,15 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
         if len(variable_references) > 1:
             arguments += variable_references
 
-        result = template.format(device_initial_name=self.get_device().get_initial_name(),
-                                 function_camel_case_name=self.get_camel_case_name(),
-                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                 function_comment_name=self.get_comment_name(),
+        result = template.format(device_name=self.get_device().get_initial_name(),
+                                 function_name_camel=self.get_name().camel,
+                                 function_name_headless=self.get_name().headless,
+                                 function_name_comment=self.get_comment_name(),
                                  variable_declarations='\n'.join(variable_declarations),
                                  write_lines='\n'.join(write_lines),
                                  arguments=',<BP>'.join(arguments))
 
-        return common.break_string(result, '.{}('.format(self.get_camel_case_name()), continuation=' _')
+        return common.break_string(result, '.{}('.format(self.get_name().camel), continuation=' _')
 
 class VBNETExampleSetterFunction(common.ExampleSetterFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
@@ -361,27 +361,27 @@ class VBNETExampleSetterFunction(common.ExampleSetterFunction, VBNETExampleArgum
         return None
 
     def get_vbnet_source(self):
-        template = '{comment1}{global_line_prefix}        {device_initial_name}.{function_camel_case_name}({arguments}){comment2}\n'
+        template = '{comment1}{global_line_prefix}        {device_name}.{function_name}({arguments}){comment2}\n'
 
         result = template.format(global_line_prefix=global_line_prefix,
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_camel_case_name=self.get_camel_case_name(),
+                                 device_name=self.get_device().get_initial_name(),
+                                 function_name=self.get_name().camel,
                                  arguments=',<BP>'.join(self.get_vbnet_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + "        ' {0}\n", '\r', "\n" + global_line_prefix + "        ' "),
                                  comment2=self.get_formatted_comment2(" ' {0}", ''))
 
-        return common.break_string(result, '.{}('.format(self.get_camel_case_name()), continuation=' _')
+        return common.break_string(result, '.{}('.format(self.get_name().camel), continuation=' _')
 
 class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_vbnet_imports(self):
         return []
 
     def get_vbnet_subroutine(self):
-        template1A = r"""    ' Callback subroutine for {function_comment_name} callback
+        template1A = r"""    ' Callback subroutine for {function_name_comment} callback
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""    Sub {function_camel_case_name}CB(ByVal sender As {device_camel_case_category}{device_camel_case_name}{parameters})
+        template2 = r"""    Sub {function_name_camel}CB(ByVal sender As {device_category}{device_name}{parameters})
 {write_lines}{extra_message}
     End Sub
 """
@@ -410,27 +410,27 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(write_lines) > 0:
             extra_message = '\n' + extra_message
 
-        result = template1.format(function_comment_name=self.get_comment_name(),
+        result = template1.format(function_name_comment=self.get_comment_name(),
                                   override_comment=override_comment) + \
-                 template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                  device_camel_case_name=self.get_device().get_camel_case_name(),
-                                  function_camel_case_name=self.get_camel_case_name(),
+                 template2.format(device_category=self.get_device().get_category().camel,
+                                  device_name=self.get_device().get_name().camel,
+                                  function_name_camel=self.get_name().camel,
                                   parameters=common.wrap_non_empty(',<BP>', ',<BP>'.join(parameters), ''),
                                   write_lines='\n'.join(write_lines),
                                   extra_message=extra_message)
 
-        return common.break_string(result, '{}CB('.format(self.get_camel_case_name()), continuation=' _')
+        return common.break_string(result, '{}CB('.format(self.get_name().camel), continuation=' _')
 
     def get_vbnet_source(self):
-        template1 = r"""        ' Register {function_comment_name}<BP>callback<BP>to<BP>subroutine<BP>{function_camel_case_name}CB
+        template1 = r"""        ' Register {function_name_comment}<BP>callback<BP>to<BP>subroutine<BP>{function_name_camel}CB
 """
-        template2 = r"""        AddHandler {device_initial_name}.{function_camel_case_name}Callback,<BP>AddressOf {function_camel_case_name}CB
+        template2 = r"""        AddHandler {device_name}.{function_name_camel}Callback,<BP>AddressOf {function_name_camel}CB
 """
 
-        result1 = template1.format(function_camel_case_name=self.get_camel_case_name(),
-                                   function_comment_name=self.get_comment_name())
-        result2 = template2.format(device_initial_name=self.get_device().get_initial_name(),
-                                   function_camel_case_name=self.get_camel_case_name())
+        result1 = template1.format(function_name_camel=self.get_name().camel,
+                                   function_name_comment=self.get_comment_name())
+        result2 = template2.format(device_name=self.get_device().get_initial_name(),
+                                   function_name_camel=self.get_name().camel)
 
         return common.break_string(result1, "' ", indent_tail="' ") + \
                common.break_string(result2, 'AddHandler ', continuation=' _')
@@ -443,25 +443,25 @@ class VBNETExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, V
         return None
 
     def get_vbnet_source(self):
-        templateA = r"""        ' Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-        {device_initial_name}.Set{function_camel_case_name}Period({arguments}{period_msec})
+        templateA = r"""        ' Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+        {device_name}.Set{function_name_camel}Period({arguments}{period_msec})
 """
-        templateB = r"""        ' Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-        ' Note: The {function_comment_name} callback is only called every {period_sec_long}
-        '       if the {function_comment_name} has changed since the last call!
-        {device_initial_name}.Set{function_camel_case_name}CallbackPeriod({arguments}{period_msec})
+        templateB = r"""        ' Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+        ' Note: The {function_name_comment} callback is only called every {period_sec_long}
+        '       if the {function_name_comment} has changed since the last call!
+        {device_name}.Set{function_name_camel}CallbackPeriod({arguments}{period_msec})
 """
 
-        if self.get_device().get_underscore_name().startswith('imu'):
+        if self.get_device().get_name().space.startswith('IMU '):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_camel=self.get_name().camel,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -482,17 +482,17 @@ class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunct
         return None
 
     def get_vbnet_source(self):
-        template = r"""        ' Configure threshold for {function_comment_name} "{option_comment}"
-        {device_initial_name}.Set{function_camel_case_name}CallbackThreshold({arguments}"{option_char}"C, {mininum_maximums})
+        template = r"""        ' Configure threshold for {function_name_comment} "{option_comment}"
+        {device_name}.Set{function_name_camel}CallbackThreshold({arguments}"{option_char}"C, {mininum_maximums})
 """
         mininum_maximums = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_vbnet_source())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_underscore_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_camel=self.get_name().camel,
+                               function_name_comment=self.get_name().under,
                                arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
@@ -506,15 +506,15 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
         return None
 
     def get_vbnet_source(self):
-        templateA = r"""        ' Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-        {device_initial_name}.Set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, False)
+        templateA = r"""        ' Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+        {device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, False)
 """
-        templateB = r"""        ' Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
-        {device_initial_name}.Set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, False, "{option_char}"C, {mininum_maximums})
+        templateB = r"""        ' Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
+        {device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, False, "{option_char}"C, {mininum_maximums})
 """
-        templateC = r"""        ' Configure threshold for {function_comment_name} "{option_comment}"
+        templateC = r"""        ' Configure threshold for {function_name_comment} "{option_comment}"
         ' with a debounce period of {period_sec_short} ({period_msec}ms)
-        {device_initial_name}.Set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, False, "{option_char}"C, {mininum_maximums})
+        {device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, False, "{option_char}"C, {mininum_maximums})
 """
 
         if self.get_option_char() == None:
@@ -531,9 +531,9 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_vbnet_source())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_underscore_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_camel=self.get_name().camel,
+                               function_name_comment=self.get_name().under,
                                arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -561,11 +561,11 @@ class VBNETExampleSpecialFunction(common.ExampleSpecialFunction):
             return ''
         elif type_ == 'debounce_period':
             template = r"""        ' Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-        {device_initial_name}.SetDebouncePeriod({period_msec})
+        {device_name_initial}.SetDebouncePeriod({period_msec})
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
-            return template.format(device_initial_name=self.get_device().get_initial_name(),
+            return template.format(device_name_initial=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
@@ -630,7 +630,7 @@ class VBNETExamplesGenerator(common.ExamplesGenerator):
         return VBNETExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')
             return
 
@@ -645,7 +645,7 @@ class VBNETExamplesGenerator(common.ExamplesGenerator):
             os.makedirs(examples_dir)
 
         for example in examples:
-            filename = 'Example{0}.vb'.format(example.get_camel_case_name())
+            filename = 'Example{0}.vb'.format(example.get_name().camel)
             filepath = os.path.join(examples_dir, filename)
 
             if example.is_incomplete():

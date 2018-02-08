@@ -37,10 +37,10 @@ class PHPBindingsDevice(php_common.PHPDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return '{0}::CALLBACK_{1}'.format(packet.get_device().get_php_class_name(),
-                                                  packet.get_upper_case_name(skip=-2 if high_level else 0))
+                                                  packet.get_name(skip=-2 if high_level else 0).upper)
             else:
                 return '{0}::{1}()'.format(packet.get_device().get_php_class_name(),
-                                           packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
+                                           packet.get_name(skip=-2 if high_level else 0).headless)
 
         return self.specialize_doc_rst_links(text, specializer)
 
@@ -70,8 +70,8 @@ class {0} extends Device
         $this->callback_wrappers[self::CALLBACK_{0}] = 'callbackWrapper{1}';"""
 
         for packet in self.get_packets('callback'):
-            callbacks += template.format(packet.get_upper_case_name(),
-                                         packet.get_camel_case_name())
+            callbacks += template.format(packet.get_name().upper,
+                                         packet.get_name().camel)
 
         return callbacks
 
@@ -84,7 +84,7 @@ class {0} extends Device
             if not packet.has_high_level():
                 continue
 
-            callbacks += template.format(packet.get_upper_case_name(skip=-2))
+            callbacks += template.format(packet.get_name(skip=-2).upper)
 
         return common.wrap_non_empty('\n', callbacks, '') + '\n    }\n'
 
@@ -99,12 +99,12 @@ class {0} extends Device
 
         for packet in self.get_packets('callback'):
             doc = packet.get_php_formatted_doc([])
-            callbacks += template.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
+            callbacks += template.format(packet.get_name().upper, packet.get_function_id(), doc)
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
                 doc = packet.get_php_formatted_doc([])
-                callbacks += template.format(packet.get_upper_case_name(skip=-2), -packet.get_function_id(), doc)
+                callbacks += template.format(packet.get_name(skip=-2).upper, -packet.get_function_id(), doc)
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             callbacks += """
@@ -138,12 +138,12 @@ class {0} extends Device
 """
 
         for packet in self.get_packets('function'):
-            function_ids += template.format(packet.get_upper_case_name(), packet.get_function_id())
+            function_ids += template.format(packet.get_name().upper, packet.get_function_id())
 
         return function_ids
 
     def get_php_constants(self):
-        constant_format = '    const {constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
+        constant_format = '    const {constant_group_name_upper}_{constant_name_upper} = {constant_value};\n'
 
         return '\n' + self.get_formatted_constants(constant_format)
 
@@ -186,7 +186,7 @@ class {0} extends Device
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
             response_expected += '        $this->response_expected[self::FUNCTION_{0}] = self::{1};\n' \
-                                 .format(packet.get_upper_case_name(), flag)
+                                 .format(packet.get_name().upper, flag)
 
         return template.format(*self.get_api_version()) + common.wrap_non_empty('\n', response_expected, '')
 
@@ -232,69 +232,69 @@ class {0} extends Device
 """
 
         for packet in self.get_packets('function'):
-            name_lower = packet.get_headless_camel_case_name()
+            name_headless = packet.get_name().headless
             parameter = packet.get_php_parameters()
             pack = []
 
             for element in packet.get_elements(direction='in'):
-                underscore_name = element.get_underscore_name()
+                name_under = element.get_name().under
                 cardinality = element.get_cardinality()
                 pack_format = element.get_php_pack_format()
 
                 if element.get_type() == 'bool':
                     if cardinality > 1:
-                        pack.append('        ${0} = array_fill(0, {1}, 0);'.format(underscore_name + '_bits', str(int(math.ceil(cardinality/8.0)))))
+                        pack.append('        ${0} = array_fill(0, {1}, 0);'.format(name_under + '_bits', str(int(math.ceil(cardinality/8.0)))))
                         pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(cardinality))
-                        pack.append('            if((bool)${1}[$i]) {{'.format(pack_format, underscore_name))
-                        pack.append('              ${0}[$i / 8] |= 1 << ($i % 8);'.format(underscore_name + '_bits'))
+                        pack.append('            if((bool)${1}[$i]) {{'.format(pack_format, name_under))
+                        pack.append('              ${0}[$i / 8] |= 1 << ($i % 8);'.format(name_under + '_bits'))
                         pack.append('            }')
                         pack.append('        }')
                         pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(str(int(math.ceil(cardinality/8.0)))))
-                        pack.append('          $payload .= pack(\'C\', intval(${0}[$i]));'.format(underscore_name + '_bits'))
+                        pack.append('          $payload .= pack(\'C\', intval(${0}[$i]));'.format(name_under + '_bits'))
                         pack.append('        }')
                     else:
-                        pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(pack_format, underscore_name))
+                        pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(pack_format, name_under))
                 elif element.get_type() == 'string':
                     if cardinality > 1:
-                        pack.append('        for ($i = 0; $i < strlen(${0}) && $i < {1}; $i++) {{'.format(underscore_name, cardinality))
-                        pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(pack_format, underscore_name))
-                        pack.append('        for ($i = strlen(${0}); $i < {1}; $i++) {{'.format(underscore_name, cardinality))
+                        pack.append('        for ($i = 0; $i < strlen(${0}) && $i < {1}; $i++) {{'.format(name_under, cardinality))
+                        pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(pack_format, name_under))
+                        pack.append('        for ($i = strlen(${0}); $i < {1}; $i++) {{'.format(name_under, cardinality))
                         pack.append('            $payload .= pack(\'{0}\', 0);\n        }}'.format(pack_format))
                     else:
-                        pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(pack_format, underscore_name))
+                        pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(pack_format, name_under))
                 elif element.get_type() == 'char':
                     if cardinality > 1:
-                        pack.append('        for ($i = 0; $i < count(${0}) && $i < {1}; $i++) {{'.format(underscore_name, cardinality))
-                        pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(pack_format, underscore_name))
-                        pack.append('        for ($i = count(${0}); $i < {1}; $i++) {{'.format(underscore_name, cardinality))
+                        pack.append('        for ($i = 0; $i < count(${0}) && $i < {1}; $i++) {{'.format(name_under, cardinality))
+                        pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(pack_format, name_under))
+                        pack.append('        for ($i = count(${0}); $i < {1}; $i++) {{'.format(name_under, cardinality))
                         pack.append('            $payload .= pack(\'{0}\', 0);\n        }}'.format(pack_format))
                     else:
-                        pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(pack_format, underscore_name))
+                        pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(pack_format, name_under))
                 elif element.get_type() == 'int64':
                     if cardinality > 1:
                         pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(cardinality))
-                        pack.append('            $payload .= Base256::encodeAndPackInt64(${0}[$i], 8);\n        }}'.format(underscore_name))
+                        pack.append('            $payload .= Base256::encodeAndPackInt64(${0}[$i], 8);\n        }}'.format(name_under))
                     else:
-                        pack.append('        $payload .= Base256::encodeAndPackInt64(${0}, 8);'.format(underscore_name))
+                        pack.append('        $payload .= Base256::encodeAndPackInt64(${0}, 8);'.format(name_under))
                 elif element.get_type() == 'uint64':
                     if cardinality > 1:
                         pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(cardinality))
-                        pack.append('            $payload .= Base256::encodeAndPackUInt64(${0}[$i], 8);\n        }}'.format(underscore_name))
+                        pack.append('            $payload .= Base256::encodeAndPackUInt64(${0}[$i], 8);\n        }}'.format(name_under))
                     else:
-                        pack.append('        $payload .= Base256::encodeAndPackUInt64(${0}, 8);'.format(underscore_name))
+                        pack.append('        $payload .= Base256::encodeAndPackUInt64(${0}, 8);'.format(name_under))
                 else:
                     if cardinality > 1:
                         pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(cardinality))
-                        pack.append('            $payload .= pack(\'{0}\', ${1}[$i]);\n        }}'.format(pack_format, underscore_name))
+                        pack.append('            $payload .= pack(\'{0}\', ${1}[$i]);\n        }}'.format(pack_format, name_under))
                     else:
-                        pack.append('        $payload .= pack(\'{0}\', ${1});'.format(pack_format, underscore_name))
+                        pack.append('        $payload .= pack(\'{0}\', ${1});'.format(pack_format, name_under))
 
             has_multi_return_value = len(packet.get_elements(direction='out')) > 1
             unpack_formats = []
             collect = []
 
             for element in packet.get_elements(direction='out'):
-                underscore_name = element.get_underscore_name()
+                name_under = element.get_name().under
                 cardinality = element.get_cardinality()
                 unpack_fix = element.get_php_unpack_fix()
 
@@ -305,19 +305,19 @@ class {0} extends Device
 
                 if has_multi_return_value:
                     if cardinality > 1:
-                        collect.append('        $ret[\'{0}\'] = {2}$payload{4}\'{0}\'{5}, {1}{3};'.format(underscore_name, cardinality, *unpack_fix))
+                        collect.append('        $ret[\'{0}\'] = {2}$payload{4}\'{0}\'{5}, {1}{3};'.format(name_under, cardinality, *unpack_fix))
                     else:
-                        collect.append('        $ret[\'{0}\'] = {1}$payload{3}\'{0}\'{4}{2};'.format(underscore_name, *unpack_fix))
+                        collect.append('        $ret[\'{0}\'] = {1}$payload{3}\'{0}\'{4}{2};'.format(name_under, *unpack_fix))
                 else:
                     if cardinality > 1:
-                        collect.append('        return {2}$payload{4}\'{0}\'{5}, {1}{3};'.format(underscore_name, cardinality, *unpack_fix))
+                        collect.append('        return {2}$payload{4}\'{0}\'{5}, {1}{3};'.format(name_under, cardinality, *unpack_fix))
                     else:
-                        collect.append('        return {1}$payload{3}\'{0}\'{4}{2};'.format(underscore_name, *unpack_fix))
+                        collect.append('        return {1}$payload{3}\'{0}\'{4}{2};'.format(name_under, *unpack_fix))
 
             if len(unpack_formats) > 0:
-                send = '        $data = $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
+                send = '        $data = $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_name().upper)
             else:
-                send = '        $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
+                send = '        $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_name().upper)
 
             final_unpack = ''
 
@@ -327,7 +327,7 @@ class {0} extends Device
             doc = packet.get_php_formatted_doc([''] + packet.get_php_parameter_doc().split('\n'))
 
             if has_multi_return_value:
-                method = method_multi.format(name_lower,
+                method = method_multi.format(name_headless,
                                              parameter,
                                              '\n'.join(pack),
                                              send,
@@ -335,7 +335,7 @@ class {0} extends Device
                                              '\n'.join(collect),
                                              doc)
             else:
-                method = method_single.format(name_lower,
+                method = method_single.format(name_headless,
                                               parameter,
                                               '\n'.join(pack),
                                               send,
@@ -357,23 +357,23 @@ class {0} extends Device
     /**
      * {doc}
      */
-    public function {headless_camel_case_name}({high_level_parameters})
+    public function {name}({high_level_parameters})
     {{
-        if (count(${stream_underscore_name}) > {stream_max_length}) {{
-            throw new \\InvalidArgumentException('{stream_name} can be at most {stream_max_length} items long');
+        if (count(${stream_name_under}) > {stream_max_length}) {{
+            throw new \\InvalidArgumentException('{stream_name_space} can be at most {stream_max_length} items long');
         }}
 
-        ${stream_underscore_name}_length = count(${stream_underscore_name});
-        ${stream_underscore_name}_chunk_offset = 0;
+        ${stream_name_under}_length = count(${stream_name_under});
+        ${stream_name_under}_chunk_offset = 0;
 
-        if (${stream_underscore_name}_length === 0) {{
-            ${stream_underscore_name}_chunk_data = array_fill({chunk_padding}, {chunk_cardinality});
-            $ret = $this->{headless_camel_case_name}LowLevel({parameters});
+        if (${stream_name_under}_length === 0) {{
+            ${stream_name_under}_chunk_data = array_fill({chunk_padding}, {chunk_cardinality});
+            $ret = $this->{name}LowLevel({parameters});
         }} else {{
-            while (${stream_underscore_name}_chunk_offset < ${stream_underscore_name}_length) {{
-                ${stream_underscore_name}_chunk_data = $this->createChunkData(${stream_underscore_name}, ${stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding});
-                $ret = $this->{headless_camel_case_name}LowLevel({parameters});
-                ${stream_underscore_name}_chunk_offset += {chunk_cardinality};
+            while (${stream_name_under}_chunk_offset < ${stream_name_under}_length) {{
+                ${stream_name_under}_chunk_data = $this->createChunkData(${stream_name_under}, ${stream_name_under}_chunk_offset, {chunk_cardinality}, {chunk_padding});
+                $ret = $this->{name}LowLevel({parameters});
+                ${stream_name_under}_chunk_offset += {chunk_cardinality};
             }}
         }}
 {result}
@@ -383,19 +383,19 @@ class {0} extends Device
     /**
      * {doc}
      */
-    public function {headless_camel_case_name}({high_level_parameters})
+    public function {name}({high_level_parameters})
     {{
-        ${stream_underscore_name}_length = {fixed_length};
-        ${stream_underscore_name}_chunk_offset = 0;
+        ${stream_name_under}_length = {fixed_length};
+        ${stream_name_under}_chunk_offset = 0;
 
-        if (count(${stream_underscore_name}) !== ${stream_underscore_name}_length) {{
-            throw new \\InvalidArgumentException("{stream_name} has to be exactly ${stream_underscore_name}_length items long");
+        if (count(${stream_name_under}) !== ${stream_name_under}_length) {{
+            throw new \\InvalidArgumentException("{stream_name_space} has to be exactly ${stream_name_under}_length items long");
         }}
 
-        while (${stream_underscore_name}_chunk_offset < ${stream_underscore_name}_length) {{
-            ${stream_underscore_name}_chunk_data = $this->createChunkData(${stream_underscore_name}, ${stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding});
-            $ret = $this->{headless_camel_case_name}LowLevel({parameters});
-            ${stream_underscore_name}_chunk_offset += {chunk_cardinality};
+        while (${stream_name_under}_chunk_offset < ${stream_name_under}_length) {{
+            ${stream_name_under}_chunk_data = $this->createChunkData(${stream_name_under}, ${stream_name_under}_chunk_offset, {chunk_cardinality}, {chunk_padding});
+            $ret = $this->{name}LowLevel({parameters});
+            ${stream_name_under}_chunk_offset += {chunk_cardinality};
         }}
 {result}
     }}
@@ -406,119 +406,119 @@ class {0} extends Device
     /**
      * {doc}
      */
-    public function {headless_camel_case_name}({high_level_parameters})
+    public function {name}({high_level_parameters})
     {{
-        if (count(${stream_underscore_name}) > {stream_max_length}) {{
-            throw new \\InvalidArgumentException('{stream_name} can be at most {stream_max_length} items long');
+        if (count(${stream_name_under}) > {stream_max_length}) {{
+            throw new \\InvalidArgumentException('{stream_name_space} can be at most {stream_max_length} items long');
         }}
 
-        ${stream_underscore_name}_length = count(${stream_underscore_name});
-        ${stream_underscore_name}_chunk_offset = 0;
+        ${stream_name_under}_length = count(${stream_name_under});
+        ${stream_name_under}_chunk_offset = 0;
 
-        if (${stream_underscore_name}_length === 0) {{
-            ${stream_underscore_name}_chunk_data = array_fill({chunk_padding}, {chunk_cardinality});
-            $ret = $this->{headless_camel_case_name}LowLevel({parameters});
+        if (${stream_name_under}_length === 0) {{
+            ${stream_name_under}_chunk_data = array_fill({chunk_padding}, {chunk_cardinality});
+            $ret = $this->{name}LowLevel({parameters});
             {chunk_written_0}
         }} else {{
-            ${stream_underscore_name}_written = 0;
+            ${stream_name_under}_written = 0;
 
-            while (${stream_underscore_name}_chunk_offset < ${stream_underscore_name}_length) {{
-                ${stream_underscore_name}_chunk_data = $this->createChunkData(${stream_underscore_name}, ${stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding});
-                $ret = $this->{headless_camel_case_name}LowLevel({parameters});
+            while (${stream_name_under}_chunk_offset < ${stream_name_under}_length) {{
+                ${stream_name_under}_chunk_data = $this->createChunkData(${stream_name_under}, ${stream_name_under}_chunk_offset, {chunk_cardinality}, {chunk_padding});
+                $ret = $this->{name}LowLevel({parameters});
                 {chunk_written_n}
 
                 if ({chunk_written_test} < {chunk_cardinality}) {{
                     break; # either last chunk or short write
                 }}
 
-                ${stream_underscore_name}_chunk_offset += {chunk_cardinality};
+                ${stream_name_under}_chunk_offset += {chunk_cardinality};
             }}
         }}
 {result}
     }}
 """
-        template_stream_in_short_write_chunk_written = ['${stream_underscore_name}_written = $ret;',
-                                                        '${stream_underscore_name}_written += $ret;',
+        template_stream_in_short_write_chunk_written = ['${stream_name_under}_written = $ret;',
+                                                        '${stream_name_under}_written += $ret;',
                                                         '$ret']
-        template_stream_in_short_write_namedtuple_chunk_written = ["${stream_underscore_name}_written = $ret['{stream_underscore_name}_chunk_written'];",
-                                                                   "${stream_underscore_name}_written += $ret['{stream_underscore_name}_chunk_written'];",
-                                                                   '$ret["{stream_underscore_name}_chunk_written"]']
+        template_stream_in_short_write_namedtuple_chunk_written = ["${stream_name_under}_written = $ret['{stream_name_under}_chunk_written'];",
+                                                                   "${stream_name_under}_written += $ret['{stream_name_under}_chunk_written'];",
+                                                                   '$ret["{stream_name_under}_chunk_written"]']
         template_stream_in_short_write_result = """
-        return ${stream_underscore_name}_written;"""
+        return ${stream_name_under}_written;"""
         template_stream_in_short_write_namedtuple_result = """
         return array({result_fields});"""
         template_stream_in_single_chunk = """
     /**
      * {doc}
      */
-    public function {headless_camel_case_name}({high_level_parameters})
+    public function {name}({high_level_parameters})
     {{
-        ${stream_underscore_name}_length = count(${stream_underscore_name});
-        ${stream_underscore_name}_data = ${stream_underscore_name};
+        ${stream_name_under}_length = count(${stream_name_under});
+        ${stream_name_under}_data = ${stream_name_under};
 
-        if (${stream_underscore_name}_length > {chunk_cardinality}) {{
-            throw new \\InvalidArgumentException('{stream_name} can be at most {chunk_cardinality} items long');
+        if (${stream_name_under}_length > {chunk_cardinality}) {{
+            throw new \\InvalidArgumentException('{stream_name_space} can be at most {chunk_cardinality} items long');
         }}
 
-        if (${stream_underscore_name}_length < {chunk_cardinality}) {{
-            ${stream_underscore_name}_data = array_pad(${stream_underscore_name}_data, {chunk_cardinality}, {chunk_padding});
+        if (${stream_name_under}_length < {chunk_cardinality}) {{
+            ${stream_name_under}_data = array_pad(${stream_name_under}_data, {chunk_cardinality}, {chunk_padding});
         }}
 {result}
     }}
 """
         template_stream_in_single_chunk_result = """
-        return $this->{headless_camel_case_name}LowLevel({parameters});"""
+        return $this->{name}LowLevel({parameters});"""
         template_stream_out = """
     /**
      * {doc}
      */
-    public function {headless_camel_case_name}({high_level_parameters})
+    public function {name}({high_level_parameters})
     {{{fixed_length}
-        $ret = $this->{headless_camel_case_name}LowLevel({parameters});{dynamic_length_2}
-        {chunk_offset_check}${stream_underscore_name}_out_of_sync = $ret['{stream_underscore_name}_chunk_offset'] != 0;
-        {chunk_offset_check_indent}${stream_underscore_name}_data = $ret['{stream_underscore_name}_chunk_data'];{chunk_offset_check_end}
+        $ret = $this->{name}LowLevel({parameters});{dynamic_length_2}
+        {chunk_offset_check}${stream_name_under}_out_of_sync = $ret['{stream_name_under}_chunk_offset'] != 0;
+        {chunk_offset_check_indent}${stream_name_under}_data = $ret['{stream_name_under}_chunk_data'];{chunk_offset_check_end}
 
-        while (!${stream_underscore_name}_out_of_sync && count(${stream_underscore_name}_data) < ${stream_underscore_name}_length) {{
-            $ret = $this->{headless_camel_case_name}LowLevel({parameters});{dynamic_length_3}
-            ${stream_underscore_name}_out_of_sync = $ret['{stream_underscore_name}_chunk_offset'] != count(${stream_underscore_name}_data);
-            ${stream_underscore_name}_data = array_merge(${stream_underscore_name}_data, $ret['{stream_underscore_name}_chunk_data']);
+        while (!${stream_name_under}_out_of_sync && count(${stream_name_under}_data) < ${stream_name_under}_length) {{
+            $ret = $this->{name}LowLevel({parameters});{dynamic_length_3}
+            ${stream_name_under}_out_of_sync = $ret['{stream_name_under}_chunk_offset'] != count(${stream_name_under}_data);
+            ${stream_name_under}_data = array_merge(${stream_name_under}_data, $ret['{stream_name_under}_chunk_data']);
         }}
 
-        if (${stream_underscore_name}_out_of_sync) {{ // discard remaining stream to bring it back in-sync
-            while ($ret['{stream_underscore_name}_chunk_offset'] + {chunk_cardinality} < ${stream_underscore_name}_length) {{
-                $ret = $this->{headless_camel_case_name}LowLevel({parameters});{dynamic_length_4}
+        if (${stream_name_under}_out_of_sync) {{ // discard remaining stream to bring it back in-sync
+            while ($ret['{stream_name_under}_chunk_offset'] + {chunk_cardinality} < ${stream_name_under}_length) {{
+                $ret = $this->{name}LowLevel({parameters});{dynamic_length_4}
             }}
 
-            throw new StreamOutOfSyncException('{stream_name} stream is out-of-sync');
+            throw new StreamOutOfSyncException('{stream_name_space} stream is out-of-sync');
         }}
 {result}
     }}
 """
         template_stream_out_fixed_length = """
-        ${stream_underscore_name}_length = {fixed_length};"""
+        ${stream_name_under}_length = {fixed_length};"""
         template_stream_out_dynamic_length = """
-{{indent}}${stream_underscore_name}_length = $ret['{stream_underscore_name}_length'];"""
+{{indent}}${stream_name_under}_length = $ret['{stream_name_under}_length'];"""
         template_stream_out_chunk_offset_check = """
-        if ($ret['{stream_underscore_name}_chunk_offset'] === (1 << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
-            ${stream_underscore_name}_length = 0;
-            ${stream_underscore_name}_out_of_sync = false;
-            ${stream_underscore_name}_data = array();
+        if ($ret['{stream_name_under}_chunk_offset'] === (1 << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
+            ${stream_name_under}_length = 0;
+            ${stream_name_under}_out_of_sync = false;
+            ${stream_name_under}_data = array();
         }} else {{
             """
         template_stream_out_single_chunk = """
     /**
      * {doc}
      */
-    public function {headless_camel_case_name}({high_level_parameters})
+    public function {name}({high_level_parameters})
     {{
-        $ret = $this->{headless_camel_case_name}LowLevel({parameters});
+        $ret = $this->{name}LowLevel({parameters});
 {result}
     }}
 """
         template_stream_out_result = """
-        return array_slice(${stream_underscore_name}_data, 0, ${stream_underscore_name}_length);"""
+        return array_slice(${stream_name_under}_data, 0, ${stream_name_under}_length);"""
         template_stream_out_single_chunk_result = """
-        return array_slice($ret["{stream_underscore_name}_data"], 0, $ret["{stream_underscore_name}_length"]);"""
+        return array_slice($ret["{stream_name_under}_data"], 0, $ret["{stream_name_under}_length"]);"""
         template_stream_out_namedtuple_result = """
         return array({result_fields});"""
 
@@ -541,27 +541,27 @@ class {0} extends Device
 
                 if stream_in.has_short_write():
                     if len(packet.get_elements(direction='out')) < 2:
-                        chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_n = template_stream_in_short_write_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_test = template_stream_in_short_write_chunk_written[2].format(stream_underscore_name=stream_in.get_underscore_name())
+                        chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_n = template_stream_in_short_write_chunk_written[1].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_test = template_stream_in_short_write_chunk_written[2].format(stream_name_under=stream_in.get_name().under)
                     else:
-                        chunk_written_0 = template_stream_in_short_write_namedtuple_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_n = template_stream_in_short_write_namedtuple_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_test = template_stream_in_short_write_namedtuple_chunk_written[2].format(stream_underscore_name=stream_in.get_underscore_name())
+                        chunk_written_0 = template_stream_in_short_write_namedtuple_chunk_written[0].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_n = template_stream_in_short_write_namedtuple_chunk_written[1].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_test = template_stream_in_short_write_namedtuple_chunk_written[2].format(stream_name_under=stream_in.get_name().under)
 
                     if stream_in.has_single_chunk():
-                        result = template_stream_in_single_chunk_result.format(headless_camel_case_name=packet.get_headless_camel_case_name(skip=-2),
+                        result = template_stream_in_single_chunk_result.format(name=packet.get_name(skip=-2).headless,
                                                                                parameters=packet.get_php_parameters())
                     elif len(packet.get_elements(direction='out', high_level=True)) < 2:
-                        result = template_stream_in_short_write_result.format(stream_underscore_name=stream_in.get_underscore_name())
+                        result = template_stream_in_short_write_result.format(stream_name_under=stream_in.get_name().under)
                     else:
                         fields = []
 
                         for element in packet.get_elements(direction='out', high_level=True):
                             if element.get_role() == 'stream_written':
-                                fields.append("'{0}_written' => ${0}_written".format(stream_in.get_underscore_name()))
+                                fields.append("'{0}_written' => ${0}_written".format(stream_in.get_name().under))
                             else:
-                                fields.append("'{0}' => $ret['{0}']".format(element.get_underscore_name()))
+                                fields.append("'{0}' => $ret['{0}']".format(element.get_name().under))
 
                         result = template_stream_in_short_write_namedtuple_result.format(result_fields=', '.join(fields))
                 else:
@@ -570,17 +570,17 @@ class {0} extends Device
                     chunk_written_test = ''
 
                     if stream_in.has_single_chunk():
-                        result = template_stream_in_single_chunk_result.format(headless_camel_case_name=packet.get_headless_camel_case_name(skip=-2),
+                        result = template_stream_in_single_chunk_result.format(name=packet.get_name(skip=-2).headless,
                                                                                parameters=packet.get_php_parameters())
                     else:
                         result = template_stream_in_result
 
                 methods += template.format(doc=packet.get_php_formatted_doc([''] + packet.get_php_parameter_doc(high_level=True).split('\n')),
-                                           headless_camel_case_name=packet.get_headless_camel_case_name(skip=-2),
+                                           name=packet.get_name(skip=-2).headless,
                                            parameters=packet.get_php_parameters(),
                                            high_level_parameters=packet.get_php_parameters(high_level=True),
-                                           stream_name=stream_in.get_name(),
-                                           stream_underscore_name=stream_in.get_underscore_name(),
+                                           stream_name_space=stream_in.get_name().space,
+                                           stream_name_under=stream_in.get_name().under,
                                            stream_max_length=abs(stream_in.get_data_element().get_cardinality()),
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
@@ -591,37 +591,37 @@ class {0} extends Device
                                            result=result)
             elif stream_out != None:
                 if stream_out.get_fixed_length() != None:
-                    fixed_length = template_stream_out_fixed_length.format(stream_underscore_name=stream_out.get_underscore_name(),
+                    fixed_length = template_stream_out_fixed_length.format(stream_name_under=stream_out.get_name().under,
                                                                            fixed_length=stream_out.get_fixed_length())
                     dynamic_length = ''
                     shift_size = int(stream_out.get_chunk_offset_element().get_type().replace('uint', ''))
-                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_underscore_name=stream_out.get_underscore_name(),
+                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_name_under=stream_out.get_name().under,
                                                                                        shift_size=shift_size)
                     chunk_offset_check_indent = '    '
                     chunk_offset_check_end = '\n        }'
                 else:
                     fixed_length = ''
-                    dynamic_length = template_stream_out_dynamic_length.format(stream_underscore_name=stream_out.get_underscore_name())
+                    dynamic_length = template_stream_out_dynamic_length.format(stream_name_under=stream_out.get_name().under)
                     chunk_offset_check = ''
                     chunk_offset_check_indent = ''
                     chunk_offset_check_end = ''
 
                 if len(packet.get_elements(direction='out', high_level=True)) < 2:
                     if stream_out.has_single_chunk():
-                        result = template_stream_out_single_chunk_result.format(stream_underscore_name=stream_out.get_underscore_name())
+                        result = template_stream_out_single_chunk_result.format(stream_name_under=stream_out.get_name().under)
                     else:
-                        result = template_stream_out_result.format(stream_underscore_name=stream_out.get_underscore_name())
+                        result = template_stream_out_result.format(stream_name_under=stream_out.get_name().under)
                 else:
                     fields = []
 
                     for element in packet.get_elements(direction='out', high_level=True):
                         if element.get_role() == 'stream_data':
                             if stream_out.has_single_chunk():
-                                fields.append("'{0}' => array_slice($ret['{0}_data'], 0, $ret['{0}_length'])".format(stream_out.get_underscore_name()))
+                                fields.append("'{0}' => array_slice($ret['{0}_data'], 0, $ret['{0}_length'])".format(stream_out.get_name().under))
                             else:
-                                fields.append("'{0}' => array_slice(${0}_data, 0, ${0}_length)".format(stream_out.get_underscore_name()))
+                                fields.append("'{0}' => array_slice(${0}_data, 0, ${0}_length)".format(stream_out.get_name().under))
                         else:
-                            fields.append("'{0}' => $ret['{0}']".format(element.get_underscore_name()))
+                            fields.append("'{0}' => $ret['{0}']".format(element.get_name().under))
 
                     result = template_stream_out_namedtuple_result.format(result_fields=', '.join(fields))
 
@@ -631,11 +631,11 @@ class {0} extends Device
                     template = template_stream_out
 
                 methods += template.format(doc=packet.get_php_formatted_doc([''] + packet.get_php_parameter_doc(high_level=True).split('\n')),
-                                           headless_camel_case_name=packet.get_headless_camel_case_name(skip=-2),
+                                           name=packet.get_name(skip=-2).headless,
                                            parameters=packet.get_php_parameters(),
                                            high_level_parameters=packet.get_php_parameters(high_level=True),
-                                           stream_name=stream_out.get_name(),
-                                           stream_underscore_name=stream_out.get_underscore_name(),
+                                           stream_name_space=stream_out.get_name().space,
+                                           stream_name_under=stream_out.get_name().under,
                                            fixed_length=fixed_length,
                                            dynamic_length_2=dynamic_length.format(indent='    ' * 2),
                                            dynamic_length_3=dynamic_length.format(indent='    ' * 3),
@@ -701,18 +701,18 @@ class {0} extends Device
 """
 
         template_stream_out = """
-        $high_level_callback = &$this->high_level_callbacks[self::CALLBACK_{upper_case_name}];
-        ${stream_underscore_name}_chunk_length = min({stream_length} - $payload['{stream_underscore_name}_chunk_offset'], {chunk_cardinality});
+        $high_level_callback = &$this->high_level_callbacks[self::CALLBACK_{name_upper}];
+        ${stream_name_under}_chunk_length = min({stream_length} - $payload['{stream_name_under}_chunk_offset'], {chunk_cardinality});
 
         if ($high_level_callback['data'] === NULL) {{ // no stream in-progress
-            if ($payload['{stream_underscore_name}_chunk_offset'] === 0) {{ // stream starts
-                $high_level_callback['data'] = array_slice($payload['{stream_underscore_name}_chunk_data'], 0, ${stream_underscore_name}_chunk_length);
+            if ($payload['{stream_name_under}_chunk_offset'] === 0) {{ // stream starts
+                $high_level_callback['data'] = array_slice($payload['{stream_name_under}_chunk_data'], 0, ${stream_name_under}_chunk_length);
 
                 if (count($high_level_callback['data']) >= {stream_length}) {{ // stream complete
-                    if (array_key_exists(self::CALLBACK_{upper_case_name}, $this->registered_callbacks)) {{
-                        $function = $this->registered_callbacks[self::CALLBACK_{upper_case_name}];
-                        $user_data = $this->registered_callback_user_data[self::CALLBACK_{upper_case_name}];
-                        $payload['{stream_underscore_name}'] = $high_level_callback['data'];
+                    if (array_key_exists(self::CALLBACK_{name_upper}, $this->registered_callbacks)) {{
+                        $function = $this->registered_callbacks[self::CALLBACK_{name_upper}];
+                        $user_data = $this->registered_callback_user_data[self::CALLBACK_{name_upper}];
+                        $payload['{stream_name_under}'] = $high_level_callback['data'];
 
                         call_user_func($function, {high_level_parameters}$user_data);
                     }}
@@ -722,24 +722,24 @@ class {0} extends Device
             }} else {{ // ignore tail of current stream, wait for next stream start
             }}
         }} else {{ // stream in-progress
-            if ($payload['{stream_underscore_name}_chunk_offset'] !== count($high_level_callback['data'])) {{ // stream out-of-sync
+            if ($payload['{stream_name_under}_chunk_offset'] !== count($high_level_callback['data'])) {{ // stream out-of-sync
                 $high_level_callback['data'] = NULL;
 
-                if (array_key_exists(self::CALLBACK_{upper_case_name}, $this->registered_callbacks)) {{
-                    $function = $this->registered_callbacks[self::CALLBACK_{upper_case_name}];
-                    $user_data = $this->registered_callback_user_data[self::CALLBACK_{upper_case_name}];
-                    $payload['{stream_underscore_name}'] = $high_level_callback['data'];
+                if (array_key_exists(self::CALLBACK_{name_upper}, $this->registered_callbacks)) {{
+                    $function = $this->registered_callbacks[self::CALLBACK_{name_upper}];
+                    $user_data = $this->registered_callback_user_data[self::CALLBACK_{name_upper}];
+                    $payload['{stream_name_under}'] = $high_level_callback['data'];
 
                     call_user_func($function, {high_level_parameters}$user_data);
                 }}
             }} else {{ // stream in-sync
-                $high_level_callback['data'] = array_merge($high_level_callback['data'], array_slice($payload['{stream_underscore_name}_chunk_data'], 0, ${stream_underscore_name}_chunk_length));
+                $high_level_callback['data'] = array_merge($high_level_callback['data'], array_slice($payload['{stream_name_under}_chunk_data'], 0, ${stream_name_under}_chunk_length));
 
                 if (count($high_level_callback['data']) >= {stream_length}) {{ // stream complete
-                    if (array_key_exists(self::CALLBACK_{upper_case_name}, $this->registered_callbacks)) {{
-                        $function = $this->registered_callbacks[self::CALLBACK_{upper_case_name}];
-                        $user_data = $this->registered_callback_user_data[self::CALLBACK_{upper_case_name}];
-                        $payload['{stream_underscore_name}'] = $high_level_callback['data'];
+                    if (array_key_exists(self::CALLBACK_{name_upper}, $this->registered_callbacks)) {{
+                        $function = $this->registered_callbacks[self::CALLBACK_{name_upper}];
+                        $user_data = $this->registered_callback_user_data[self::CALLBACK_{name_upper}];
+                        $payload['{stream_name_under}'] = $high_level_callback['data'];
 
                         call_user_func($function, {high_level_parameters}$user_data);
                     }}
@@ -750,23 +750,23 @@ class {0} extends Device
         }}
 """
         template_stream_out_single_chunk = """
-        if (array_key_exists(self::CALLBACK_{upper_case_name}, $this->registered_callbacks)) {{
-            $payload['${stream_underscore_name}'] = array_slice($payload['{stream_underscore_name}_data'], 0, $payload['{stream_underscore_name}_length']);
-            $function = $this->registered_callbacks[self::CALLBACK_{upper_case_name}];
-            $user_data = $this->registered_callback_user_data[self::CALLBACK_{upper_case_name}];
+        if (array_key_exists(self::CALLBACK_{name_upper}, $this->registered_callbacks)) {{
+            $payload['${stream_name_under}'] = array_slice($payload['{stream_name_under}_data'], 0, $payload['{stream_name_under}_length']);
+            $function = $this->registered_callbacks[self::CALLBACK_{name_upper}];
+            $user_data = $this->registered_callback_user_data[self::CALLBACK_{name_upper}];
 
             call_user_func($function, {high_level_parameters}$user_data);
         }}
 """
 
         for packet in self.get_packets('callback'):
-            name = packet.get_camel_case_name()
+            name = packet.get_name().camel
             unpack_formats = []
             unpack_fixes = []
             result = []
 
             for element in packet.get_elements(direction='out'):
-                underscore_name = element.get_underscore_name()
+                name_under = element.get_name().under
                 cardinality = element.get_cardinality()
 
                 unpack_formats.append(element.get_php_unpack_format())
@@ -775,11 +775,11 @@ class {0} extends Device
 
                 if unpack_fix != None:
                     if cardinality > 1:
-                        unpack_fixes.append("        $payload['{0}'] = {2}$payload{4}'{0}'{5}, {1}{3};".format(underscore_name, cardinality, *unpack_fix))
+                        unpack_fixes.append("        $payload['{0}'] = {2}$payload{4}'{0}'{5}, {1}{3};".format(name_under, cardinality, *unpack_fix))
                     else:
-                        unpack_fixes.append("        $payload['{0}'] = {1}$payload{3}'{0}'{4}{2};".format(underscore_name, *unpack_fix))
+                        unpack_fixes.append("        $payload['{0}'] = {1}$payload{3}'{0}'{4}{2};".format(name_under, *unpack_fix))
 
-                result.append("$payload['{0}']".format(underscore_name))
+                result.append("$payload['{0}']".format(name_under))
 
             final_unpack = ''
 
@@ -794,11 +794,11 @@ class {0} extends Device
                 else:
                     template = template_stream_out
 
-                high_level_handling = template.format(camel_case_name=packet.get_camel_case_name(skip=-2),
-                                                      upper_case_name=packet.get_upper_case_name(skip=-2),
+                high_level_handling = template.format(name_camel=packet.get_name(skip=-2).camel,
+                                                      name_upper=packet.get_name(skip=-2).upper,
                                                       high_level_parameters=common.wrap_non_empty('', packet.get_php_parameters(context='callback_wrapper', high_level=True), ', '),
-                                                      stream_underscore_name=stream_out.get_underscore_name(),
-                                                      stream_length=stream_out.get_fixed_length(default="$payload['{0}_length']".format(stream_out.get_underscore_name())),
+                                                      stream_name_under=stream_out.get_name().under,
+                                                      stream_length=stream_out.get_fixed_length(default="$payload['{0}_length']".format(stream_out.get_name().under)),
                                                       chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
             else:
                 high_level_handling = ''
@@ -806,7 +806,7 @@ class {0} extends Device
             wrappers += wrapper.format(name,
                                        final_unpack,
                                        common.wrap_non_empty('', packet.get_php_parameters(context='callback_wrapper'), ', '),
-                                       packet.get_upper_case_name(),
+                                       packet.get_name().upper,
                                        common.wrap_non_empty('', '\n'.join(unpack_fixes), '\n'),
                                        high_level_handling)
 
@@ -903,9 +903,9 @@ class PHPBindingsPacket(php_common.PHPPacket):
             php_type = element.get_php_type()
 
             if element.get_cardinality() != 1 and element.get_type() != 'string':
-                param.append('@param {0}[] ${1}'.format(php_type, element.get_underscore_name()))
+                param.append('@param {0}[] ${1}'.format(php_type, element.get_name().under))
             else:
-                param.append('@param {0} ${1}'.format(php_type, element.get_underscore_name()))
+                param.append('@param {0} ${1}'.format(php_type, element.get_name().under))
 
         param.append('\n@return ' + self.get_php_return_type())
 

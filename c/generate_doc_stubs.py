@@ -318,7 +318,7 @@ Beschreibung.
         return c_common.CElement
 
     def generate(self, device):
-        folder = os.path.join(self.get_root_dir(), 'doc_output', '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name()))
+        folder = os.path.join(self.get_root_dir(), 'doc_output', '{0}_{1}'.format(device.get_category().under, device.get_name().under))
 
         try:
             shutil.rmtree(folder) # first we delete the doc output if it already exists for this device
@@ -334,11 +334,11 @@ Beschreibung.
         # {5} = thermal-imaging
 
         format0 = device.get_long_display_name()
-        format1 = device.get_underscore_name() + '_' + device.get_underscore_category()
-        format2 = device.get_underscore_name()
-        format3 = device.get_name().replace(' ', '_')
-        format4 = device.get_dash_name() + '-' + device.get_underscore_category()
-        format5 = device.get_dash_name()
+        format1 = device.get_name().under + '_' + device.get_category().under
+        format2 = device.get_name().under
+        format3 = device.get_name().space.replace(' ', '_')
+        format4 = device.get_name().dash + '-' + device.get_category().dash
+        format5 = device.get_name().dash
         filename = format3 + '.rst'
 
         os.makedirs(os.path.join(folder, 'en'))

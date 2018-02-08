@@ -32,7 +32,7 @@ import common
 
 class CSharpDevice(common.Device):
     def get_csharp_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
 class CSharpPacket(common.Packet):
     def get_csharp_parameters(self, context='signature', high_level=False, callback_wrapper=False):
@@ -56,7 +56,7 @@ class CSharpPacket(common.Packet):
             if high_level and callback_wrapper and element.get_level() == 'high' and element.get_role() == 'stream_data':
                 name = '({0})highLevelCallback.data'.format(element.get_csharp_type())
             else:
-                name = element.get_headless_camel_case_name()
+                name = element.get_name().headless
 
             parameters.append(''.join([out, csharp_type, name]))
 
@@ -91,7 +91,7 @@ class CSharpPacket(common.Packet):
 
         skip = -2 if high_level and self.has_high_level() else 0
 
-        return sig_format.format(return_type, class_prefix, self.get_camel_case_name(skip=skip), params, override)
+        return sig_format.format(return_type, class_prefix, self.get_name(skip=skip).camel, params, override)
 
 csharp_types = {
     'int8':   'short',

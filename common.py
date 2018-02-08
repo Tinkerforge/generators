@@ -32,6 +32,7 @@ import sys
 import copy
 import math
 import multiprocessing.dummy
+from collections import namedtuple
 
 gen_text_rst = """..
  #############################################################
@@ -154,14 +155,14 @@ def make_rst_header(device, has_device_identifier_constant=True):
         orphan = ':orphan:\n'
 
     if has_device_identifier_constant:
-        device_identifier_constant = select_lang(device_identifier_constant).format(device.get_underscore_name(),
-                                                                                    device.get_underscore_category(),
+        device_identifier_constant = select_lang(device_identifier_constant).format(device.get_name().under,
+                                                                                    device.get_category().under,
                                                                                     ref_name,
-                                                                                    device.get_camel_case_category())
+                                                                                    device.get_category().camel)
     else:
         device_identifier_constant = '.. |device_identifier_constant| unicode:: 0xA0\n   :trim:\n'
 
-    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), device.get_underscore_category(), ref_name)
+    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_name().under, device.get_category().under, ref_name)
 
     return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n'.format(gen_text_rst.format(date),
                                                    orphan,
@@ -256,12 +257,12 @@ Bindings ist Teil deren allgemeine Beschreibung.
         device_name = select_lang(bricklet_name)
 
     device_name = device_name.format(device.get_long_display_name(),
-                                     device.get_underscore_name())
+                                     device.get_name().under)
 
     s = select_lang(summary).format(bindings_name_link,
                                     device_name,
                                     device.get_long_display_name(),
-                                    device.get_underscore_name() + '_' + device.get_underscore_category())
+                                    device.get_name().under + '_' + device.get_category().under)
 
     if is_programming_language:
         s += select_lang(summary_install).format(device.get_generator().get_bindings_name(),
@@ -356,8 +357,8 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     if is_picture:
         imp = imp_picture_scroll
 
-    ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_underscore_name(),
-                                               device.get_underscore_category(),
+    ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_name().under,
+                                               device.get_category().under,
                                                bindings_name)
     examples = select_lang(ex).format(ref)
     files = find_device_examples(device, filename_regex)
@@ -376,7 +377,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         else:
             language = language_from_filename(f[0])
 
-        include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_camel_case_category(), include_name, f[0].replace(' ', '_'))
+        include = '{0}_{1}_{2}_{3}'.format(device.get_name().camel, device.get_category().camel, include_name, f[0].replace(' ', '_'))
         copy_files.append((f[1], include))
         title = title_from_filename(f[0])
         url = url_format.format(device.get_git_name(), bindings_name, f[0].replace(' ', '%20'))
@@ -403,7 +404,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
         if add_tvpl_test_link and include.endswith('.tvpl'):
             downloads.append('`Test ({0}) <https://www.tinkerforge.com/{1}/tvpl/editor.html?example={2}/{3}/{4}>`__'
-                             .format(display_name, lang, device.get_underscore_category(), device.get_underscore_name(), f[0]))
+                             .format(display_name, lang, device.get_category().under, device.get_name().under, f[0]))
 
         examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)
 
@@ -459,10 +460,10 @@ def copy_examples(copy_files, path):
     if len(copy_files) == 0:
         print('   \033[01;31m! No examples\033[0m')
 
-re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])|([a-zA-Z][0-9])')
+re_camel_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])|([a-zA-Z][0-9])')
 
-def camel_case_to_space(name):
-    return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
+def camel_to_space(name):
+    return re_camel_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
 def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
@@ -478,8 +479,8 @@ def format_since_firmware(device, packet):
     return '\n.. versionadded:: {1}.{2}.{3}$nbsp;({0})\n'.format(suffix, *since)
 
 def default_constant_format(prefix, constant_group, constant, value):
-    return '* {0}{1}_{2} = {3}\n'.format(prefix, constant_group.get_upper_case_name(),
-                                         constant.get_upper_case_name(), value)
+    return '* {0}{1}_{2} = {3}\n'.format(prefix, constant_group.get_name().upper,
+                                         constant.get_name().upper, value)
 
 def format_constants(prefix, packet,
                      constants_name=None,
@@ -537,7 +538,7 @@ Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
     for packet in device.get_packets('function'):
         if len(packet.get_elements(direction='out', high_level=True)) == 0 and packet.get_function_id() >= 0:
             str_constants += str_constant.format(prefix,
-                                                 packet.get_upper_case_name(skip=-2 if packet.has_high_level() else 0),
+                                                 packet.get_name(skip=-2 if packet.has_high_level() else 0).upper,
                                                  packet.get_function_id())
 
     return str_constants
@@ -572,7 +573,7 @@ def handle_rst_substitutions(text, packet):
 
     return text
 
-def underscore_to_space(name):
+def under_to_space(name):
     return ' '.join([part.capitalize() for part in name.split('_')])
 
 def recreate_dir(path):
@@ -581,7 +582,7 @@ def recreate_dir(path):
 
     os.makedirs(path)
 
-def specialize_template(template_filename, destination_filename, replacements):
+def specialize_template(template_filename, destination_filename, replacements, check_completeness=True):
     lines = []
     replaced = set()
 
@@ -597,7 +598,7 @@ def specialize_template(template_filename, destination_filename, replacements):
 
             lines.append(line)
 
-    if replaced != set(replacements.keys()):
+    if check_completeness and replaced != set(replacements.keys()):
         raise GeneratorError('Not all replacements for {0} have been applied'.format(template_filename))
 
     with open(destination_filename, 'w') as f:
@@ -713,12 +714,12 @@ def generate(bindings_root_directory, language, generator_class):
             device_identifiers.add(device_identifier)
 
             if device.is_brick():
-                ref_name = device.get_underscore_name() + '_brick'
+                ref_name = device.get_name().under + '_brick'
                 hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3') + '_Brick'
-                software_doc_prefix = device.get_camel_case_name() + '_Brick'
+                software_doc_prefix = device.get_name().camel + '_Brick'
 
                 if device.get_device_identifier() != 17:
-                    firmware_url_part = device.get_underscore_name()
+                    firmware_url_part = device.get_name().under
                 else:
                     firmware_url_part = None
 
@@ -739,10 +740,10 @@ def generate(bindings_root_directory, language, generator_class):
 
                 brick_infos.append(device_info)
             else:
-                ref_name = device.get_underscore_name() + '_bricklet'
+                ref_name = device.get_name().under + '_bricklet'
                 hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
-                software_doc_prefix = device.get_camel_case_name() + '_Bricklet'
-                firmware_url_part = device.get_underscore_name()
+                software_doc_prefix = device.get_name().camel + '_Bricklet'
+                firmware_url_part = device.get_name().under
 
                 device_info = (device.get_device_identifier(),
                                device.get_long_display_name(),
@@ -881,42 +882,37 @@ def check_output_and_error(*popenargs, **kwargs):
 class GeneratorError(Exception):
     pass
 
-def skip_words(words, skip):
-    if skip < 0:
-        return words[:skip]
+NameFlavors = namedtuple('NameFlavors', 'space lower camel headless under upper dash')
 
-    return words[skip:]
+class FlavoredName(object):
+    def __init__(self, name):
+        self.words = name.split(' ')
+        self.cache = {}
 
-class NameMixin(object):
-    def _get_name(self):
-        raise NotImplementedError()
+    def get(self, skip=0, suffix=''):
+        key = str(skip) + ',' + suffix
 
-    def get_name(self, skip=0, remove=None):
-        words = skip_words(self._get_name().split(' '), skip)
+        try:
+            return self.cache[key]
+        except KeyError:
+            if skip < 0:
+                words = self.words[:skip]
+            else:
+                words = self.words[skip:]
 
-        if remove in words:
-            words.remove(remove)
+            words[-1] += suffix
 
-        return ' '.join(words)
+            self.cache[key] = NameFlavors(' '.join(words), # space
+                                          ' '.join(words).lower(), # lower
+                                          ''.join(words), # camel
+                                          ''.join([words[0].lower()] + words[1:]), # headless
+                                          '_'.join(words).lower(), # under
+                                          '_'.join(words).upper(), # upper
+                                          '-'.join(words).lower()) # dash
 
-    def get_camel_case_name(self, skip=0):
-        return ''.join(skip_words(self._get_name().split(' '), skip))
+            return self.cache[key]
 
-    def get_headless_camel_case_name(self, skip=0):
-        words = skip_words(self._get_name().split(' '), skip)
-
-        return ''.join([words[0].lower()] + words[1:])
-
-    def get_underscore_name(self, skip=0):
-        return '_'.join(skip_words(self._get_name().split(' '), skip)).lower()
-
-    def get_upper_case_name(self, skip=0):
-        return '_'.join(skip_words(self._get_name().split(' '), skip)).upper()
-
-    def get_dash_name(self, skip=0):
-        return '-'.join(skip_words(self._get_name().split(' '), skip)).lower()
-
-class Constant(NameMixin):
+class Constant(object):
     def __init__(self, raw_data, constant_group):
         self.raw_data = raw_data
         self.constant_group = constant_group
@@ -925,6 +921,8 @@ class Constant(NameMixin):
             raise GeneratorError('Invalid Constant: ' + repr(raw_data))
 
         check_name(raw_data[0], is_constant=True)
+
+        self.name = FlavoredName(raw_data[0])
 
     def get_constant_group(self): # parent
         return self.constant_group
@@ -935,13 +933,13 @@ class Constant(NameMixin):
     def get_generator(self):
         return self.get_constant_group().get_generator()
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_value(self):
         return self.raw_data[1]
 
-class ConstantGroup(NameMixin):
+class ConstantGroup(object):
     def __init__(self, type_, raw_data, device):
         self.type_ = type_
         self.raw_data = raw_data
@@ -953,6 +951,8 @@ class ConstantGroup(NameMixin):
             raise GeneratorError('Invalid ConstantGroup: ' + repr(raw_data))
 
         check_name(raw_data[0])
+
+        self.name = FlavoredName(raw_data[0])
 
         for raw_constant in raw_data[1]:
             self.constants.append(self.get_generator().get_constant_class()(raw_constant, self))
@@ -966,8 +966,8 @@ class ConstantGroup(NameMixin):
     def get_generator(self):
         return self.get_device().get_generator()
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_type(self):
         return self.type_
@@ -978,7 +978,7 @@ class ConstantGroup(NameMixin):
     def add_elements(self, elements):
         self.elements += elements
 
-class Element(NameMixin):
+class Element(object):
     def __init__(self, raw_data, packet, level, role):
         self.raw_data = raw_data
         self.packet = packet
@@ -987,6 +987,8 @@ class Element(NameMixin):
         self.constant_group = None
 
         check_name(raw_data[0])
+
+        self.name = FlavoredName(raw_data[0])
 
         if len(raw_data) != 4 and len(raw_data) != 5:
             raise GeneratorError('Invalid Element: ' + repr(raw_data))
@@ -1004,8 +1006,8 @@ class Element(NameMixin):
     def get_generator(self):
         return self.packet.get_generator()
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_type(self):
         return self.raw_data[1]
@@ -1049,7 +1051,7 @@ class Element(NameMixin):
 
         return self.get_item_size() * self.get_cardinality()
 
-class Stream(NameMixin):
+class Stream(object):
     def __init__(self, raw_data, data_element, packet, direction):
         self.raw_data = raw_data
         self.data_element = data_element
@@ -1058,21 +1060,23 @@ class Stream(NameMixin):
 
         check_name(raw_data['name'])
 
+        self.name = FlavoredName(raw_data['name'])
+
         if raw_data.get('single_chunk', False):
             if 'fixed_length' in raw_data:
                 raise GeneratorError("Cannot mix fixed-length and single-chunk for high-level feature 'stream_{0}'".format(direction))
 
-            self.length_element = packet.get_elements(name=self.get_name() + ' Length', direction=direction)[0]
+            self.length_element = packet.get_elements(name=self.get_name().space + ' Length', direction=direction)[0]
             self.chunk_offset_element = None
-            self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Data', direction=direction)[0]
+            self.chunk_data_element = packet.get_elements(name=self.get_name().space + ' Data', direction=direction)[0]
         elif 'fixed_length' in raw_data:
             self.length_element = None
-            self.chunk_offset_element = packet.get_elements(name=self.get_name() + ' Chunk Offset', direction=direction)[0]
-            self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Chunk Data', direction=direction)[0]
+            self.chunk_offset_element = packet.get_elements(name=self.get_name().space + ' Chunk Offset', direction=direction)[0]
+            self.chunk_data_element = packet.get_elements(name=self.get_name().space + ' Chunk Data', direction=direction)[0]
         else:
-            self.length_element = packet.get_elements(name=self.get_name() + ' Length', direction=direction)[0]
-            self.chunk_offset_element = packet.get_elements(name=self.get_name() + ' Chunk Offset', direction=direction)[0]
-            self.chunk_data_element = packet.get_elements(name=self.get_name() + ' Chunk Data', direction=direction)[0]
+            self.length_element = packet.get_elements(name=self.get_name().space + ' Length', direction=direction)[0]
+            self.chunk_offset_element = packet.get_elements(name=self.get_name().space + ' Chunk Offset', direction=direction)[0]
+            self.chunk_data_element = packet.get_elements(name=self.get_name().space + ' Chunk Data', direction=direction)[0]
 
         if 'fixed_length' not in raw_data and \
            not raw_data.get('single_chunk', False) \
@@ -1094,8 +1098,8 @@ class Stream(NameMixin):
     def get_packet(self): # parent
         return self.packet
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data['name']
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_length_element(self):
         return self.length_element
@@ -1126,7 +1130,7 @@ class StreamOut(Stream):
     def __init__(self, raw_data, data_element, packet):
         Stream.__init__(self, raw_data, data_element, packet, 'out')
 
-class Packet(NameMixin):
+class Packet(object):
     valid_types = set(['int8',
                        'uint8',
                        'int16',
@@ -1151,6 +1155,8 @@ class Packet(NameMixin):
         self.high_level = {}
 
         check_name(raw_data['name'])
+
+        self.name = FlavoredName(raw_data['name'])
 
         if raw_data['doc'][0] not in Packet.valid_doc_types:
             raise GeneratorError('Invalid packet doc type: ' + raw_data['doc'][0])
@@ -1227,7 +1233,7 @@ class Packet(NameMixin):
             self.elements.append(element)
 
             if level == 'low':
-                if element.get_name().endswith(' Data'):
+                if element.get_name().space.endswith(' Data'):
                     if stream_size_type == None:
                         raise GeneratorError('Missing stream-size-type')
 
@@ -1250,7 +1256,7 @@ class Packet(NameMixin):
                     stream_data_element = device.get_generator().get_element_class()(raw_element, self, 'high', 'stream_data')
 
                     self.elements.append(stream_data_element)
-                elif element.get_name().endswith(' Written'):
+                elif element.get_name().space.endswith(' Written'):
                     if stream_size_type == None:
                         raise GeneratorError('Missing stream-size-type')
 
@@ -1277,27 +1283,27 @@ class Packet(NameMixin):
                 continue
 
             for known_constant_group in self.constant_groups:
-                if constant_group.get_underscore_name() != known_constant_group.get_underscore_name():
+                if constant_group.get_name().under != known_constant_group.get_name().under:
                     continue
 
                 if constant_group.get_type() != known_constant_group.get_type():
                     raise GeneratorError('Multiple instance of constant group {0} with different types' \
-                                         .format(constant_group.get_underscore_name()))
+                                         .format(constant_group.get_name().under))
 
                 for constant, known_constant in zip(constant_group.get_constants(), known_constant_group.get_constants()):
-                    a = known_constant.get_underscore_name()
-                    b = constant.get_underscore_name()
+                    a = known_constant.get_name().under
+                    b = constant.get_name().under
 
                     if a != b:
                         raise GeneratorError('Constant item name ({0} != {1}) mismatch in constant group {2}' \
-                                             .format(a, b, constant_group.get_underscore_name()))
+                                             .format(a, b, constant_group.get_name().under))
 
                     a = known_constant.get_value()
                     b = constant.get_value()
 
                     if a != b:
                         raise GeneratorError('Constant item value ({0} != {1}) mismatch in constant group {2}' \
-                                             .format(a, b, constant_group.get_underscore_name()))
+                                             .format(a, b, constant_group.get_name().under))
 
                 known_constant_group.add_elements(constant_group.get_elements())
 
@@ -1317,8 +1323,8 @@ class Packet(NameMixin):
     def get_type(self):
         return self.raw_data['type']
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data['name']
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_elements(self, name=None, direction=None, high_level=False, role=None):
         if direction not in [None, 'in', 'out']:
@@ -1327,7 +1333,7 @@ class Packet(NameMixin):
         elements = []
 
         for element in self.elements:
-            if name != None and element.get_name() != name:
+            if name != None and element.get_name().space != name:
                 continue
 
             if direction != None and element.get_direction() != direction:
@@ -1415,9 +1421,9 @@ class Packet(NameMixin):
         # If packet is not for configuration and not the getter, it is not part of a callback value
         return False
 
-    def get_callback_value_underscore_name(self):
+    def get_callback_value_name(self):
         try:
-            return self.get_corresponding_callback_value_getter().get_underscore_name().replace('get_', '')
+            return self.get_corresponding_callback_value_getter().get_name().under.replace('get_', '')
         except:
             return None
 
@@ -1453,8 +1459,10 @@ class Packet(NameMixin):
                 else:
                     value = str(constant.get_value())
 
-                constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
-                                                        constant_upper_case_name=constant.get_upper_case_name(),
+                constants.append(constant_format.format(constant_group_name_upper=constant_group.get_name().upper,
+                                                        constant_group_name_camel=constant_group.get_name().camel,
+                                                        constant_name_upper=constant.get_name().upper,
+                                                        constant_name_camel=constant.get_name().camel,
                                                         constant_value=value,
                                                         **extra_value))
 
@@ -1466,7 +1474,7 @@ class Packet(NameMixin):
     def is_virtual(self):
         return self.raw_data.get('is_virtual', False)
 
-class Device(NameMixin):
+class Device(object):
     def __init__(self, raw_data, generator):
         self.raw_data = raw_data
         self.generator = generator
@@ -1478,6 +1486,9 @@ class Device(NameMixin):
         self.examples = []
 
         check_name(raw_data['name'], display_name=raw_data['display_name'])
+
+        self.category = FlavoredName(raw_data['category'])
+        self.name = FlavoredName(raw_data['name'])
 
         next_function_id = 1
         for raw_packet in raw_data['packets']:
@@ -1500,23 +1511,23 @@ class Device(NameMixin):
 
         for packet in self.all_packets:
             if packet.get_type() == 'function':
-                if packet.get_name() in function_names:
-                    raise GeneratorError('Function name is not unique: ' + packet.get_name())
+                if packet.get_name().space in function_names:
+                    raise GeneratorError('Function name is not unique: ' + packet.get_name().space)
                 else:
-                    function_names.add(packet.get_name())
+                    function_names.add(packet.get_name().space)
 
                 self.all_function_packets.append(packet)
 
                 if packet.get_function_id() >= 0:
                     self.all_function_packets_without_doc_only.append(packet)
             elif packet.get_type() == 'callback':
-                if 'Callback' in packet.get_name():
-                    raise GeneratorError("Callback name cannot contain 'Callback': " + packet.get_name())
+                if 'Callback' in packet.get_name().space:
+                    raise GeneratorError("Callback name cannot contain 'Callback': " + packet.get_name().space)
 
-                if packet.get_name() in callback_names:
-                    raise GeneratorError('Callback name is not unique: ' + packet.get_name())
+                if packet.get_name().space in callback_names:
+                    raise GeneratorError('Callback name is not unique: ' + packet.get_name().space)
                 else:
-                    callback_names.add(packet.get_name())
+                    callback_names.add(packet.get_name().space)
 
                 self.callback_packets.append(packet)
             else:
@@ -1527,27 +1538,27 @@ class Device(NameMixin):
         for packet in self.all_packets:
             for constant_group in packet.get_constant_groups():
                 for known_constant_group in self.constant_groups:
-                    if constant_group.get_underscore_name() != known_constant_group.get_underscore_name():
+                    if constant_group.get_name().under != known_constant_group.get_name().under:
                         continue
 
                     if constant_group.get_type() != known_constant_group.get_type():
                         raise GeneratorError('Multiple instance of constant group {0} with different types' \
-                                             .format(constant_group.get_underscore_name()))
+                                             .format(constant_group.get_name().under))
 
                     for constant, known_constant in zip(constant_group.get_constants(), known_constant_group.get_constants()):
-                        a = known_constant.get_underscore_name()
-                        b = constant.get_underscore_name()
+                        a = known_constant.get_name().under
+                        b = constant.get_name().under
 
                         if a != b:
                             raise GeneratorError('Constant name ({0} != {1}) mismatch in constant group {2}' \
-                                                 .format(a, b, constant_group.get_underscore_name()))
+                                                 .format(a, b, constant_group.get_name().under))
 
                         a = known_constant.get_value()
                         b = constant.get_value()
 
                         if a != b:
                             raise GeneratorError('Constant value ({0} != {1}) mismatch in constant group {2}' \
-                                                 .format(a, b, constant_group.get_underscore_name()))
+                                                 .format(a, b, constant_group.get_name().under))
 
                     constant_group = None
                     break
@@ -1582,26 +1593,14 @@ class Device(NameMixin):
     def get_doc(self):
         return self.raw_data.get('doc', {'en': '', 'de': ''})
 
-    def get_category(self):
-        return self.raw_data['category']
-
-    def get_camel_case_category(self):
-        return self.get_category().replace(' ', '')
-
-    def get_underscore_category(self):
-        return self.get_camel_case_category().lower()
-
-    def get_upper_case_category(self):
-        return self.get_underscore_category().upper()
-
-    def get_dash_category(self):
-        return self.get_underscore_category().replace('_', '-')
+    def get_category(self, *args, **kwargs):
+        return self.category.get(*args, **kwargs)
 
     def is_brick(self):
-        return self.get_category() == 'Brick'
+        return self.get_category().space == 'Brick'
 
     def is_bricklet(self):
-        return self.get_category() == 'Bricklet'
+        return self.get_category().space == 'Bricklet'
 
     def get_device_identifier(self):
         return self.raw_data['device_identifier']
@@ -1614,11 +1613,11 @@ class Device(NameMixin):
 
         return False
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data['name']
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_initial_name(self):
-        name = self.get_name()
+        name = self.get_name().space
 
         if name.endswith(' V2'):
             name = name[:-3]
@@ -1652,11 +1651,11 @@ class Device(NameMixin):
 
         if display_name.endswith(' 2.0') or display_name.endswith(' 3.0'):
             parts = display_name.split(' ')
-            parts.insert(-1, self.get_category())
+            parts.insert(-1, self.get_category().space)
 
             return ' '.join(parts)
 
-        return display_name + ' ' + self.get_category()
+        return display_name + ' ' + self.get_category().space
 
     def get_manufacturer(self):
         return self.raw_data['manufacturer']
@@ -1665,7 +1664,7 @@ class Device(NameMixin):
         return self.raw_data['description']
 
     def get_git_name(self):
-        return self.get_dash_name() + '-' + self.get_dash_category()
+        return self.get_name().dash + '-' + self.get_category().dash
 
     def get_git_dir(self):
         global_root_dir = os.path.normpath(os.path.join(self.get_generator().get_root_dir(), '..', '..'))
@@ -1691,7 +1690,7 @@ class Device(NameMixin):
         raise GeneratorError('Invalid packet type ' + str(type_))
 
     def get_packet_names(self, type_=None):
-        return [packet.get_name() for packet in self.get_packets(type_)]
+        return [packet.get_name().space for packet in self.get_packets(type_)]
 
     def get_callback_count(self):
         return len(self.callback_packets)
@@ -1709,10 +1708,10 @@ class Device(NameMixin):
                 else:
                     value = str(constant.get_value())
 
-                constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
-                                                        constant_group_camel_case_name=constant_group.get_camel_case_name(),
-                                                        constant_upper_case_name=constant.get_upper_case_name(),
-                                                        constant_camel_case_name=constant.get_camel_case_name(),
+                constants.append(constant_format.format(constant_group_name_upper=constant_group.get_name().upper,
+                                                        constant_group_name_camel=constant_group.get_name().camel,
+                                                        constant_name_upper=constant.get_name().upper,
+                                                        constant_name_camel=constant.get_name().camel,
                                                         constant_value=value,
                                                         **extra_value))
 
@@ -1722,8 +1721,8 @@ class Device(NameMixin):
         if not self.get_generator().is_doc():
             raise GeneratorError("Invalid call in non-doc generator")
 
-        filename = '{0}_{1}_{2}.rst'.format(self.get_camel_case_name(),
-                                            self.get_camel_case_category(),
+        filename = '{0}_{1}_{2}.rst'.format(self.get_name().camel,
+                                            self.get_category().camel,
                                             self.get_generator().get_doc_rst_filename_part())
 
         return os.path.join(self.get_generator().get_root_dir(),
@@ -1735,15 +1734,15 @@ class Device(NameMixin):
         if not self.get_generator().is_doc():
             raise GeneratorError("Invalid call in non-doc generator")
 
-        return self.get_underscore_name() + '_' + self.get_underscore_category()
+        return self.get_name().under + '_' + self.get_category().under
 
     def specialize_doc_rst_links(self, text, specializer, prefix=None):
         for keyword, type_ in [('func', 'function'), ('cb', 'callback')]:
             for packet in self.get_packets(type_):
-                names = [packet.get_name()]
+                names = [packet.get_name().space]
 
                 if packet.has_high_level():
-                    names.append(packet.get_name().replace(' Low Level', ''))
+                    names.append(packet.get_name(skip=-2).space)
 
                 for name in names:
                     generic_name = ':{0}:`{1}`'.format(keyword, name)
@@ -1766,12 +1765,14 @@ class Device(NameMixin):
     def get_examples(self):
         return self.examples
 
-class Example(NameMixin):
+class Example(object):
     def __init__(self, raw_data, device):
         self.raw_data = raw_data
         self.device = device
 
         check_name(raw_data['name'])
+
+        self.name = FlavoredName(raw_data['name'])
 
         self.functions = []
         self.cleanups = []
@@ -1806,8 +1807,8 @@ class Example(NameMixin):
     def get_generator(self):
         return self.get_device().get_generator()
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data['name']
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_description(self):
         return self.raw_data.get('description', None)
@@ -1861,10 +1862,10 @@ class ExampleArgument(ExampleItem):
         return self.function
 
     def get_element(self):
-        function_name = self.get_function().get_name()
+        function_name = self.get_function().get_name().space
 
         for packet in self.get_device().get_packets('function'):
-            if packet.get_name() == function_name:
+            if packet.get_name().space == function_name:
                 return packet.get_elements(direction='in')[self.get_index()]
 
         return None
@@ -1888,7 +1889,7 @@ class ExampleArgument(ExampleItem):
 
         return None
 
-class ExampleParameter(ExampleItem, NameMixin):
+class ExampleParameter(ExampleItem):
     def __init__(self, raw_data, index, function, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
@@ -1902,11 +1903,13 @@ class ExampleParameter(ExampleItem, NameMixin):
 
         check_name(raw_data[0][0])
 
+        self.name = FlavoredName(raw_data[0][0])
+
     def get_function(self): # parent
         return self.function
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0][0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_label_count(self):
         label = self.raw_data[0][1]
@@ -1983,7 +1986,7 @@ class ExampleParameter(ExampleItem, NameMixin):
 
         return template.format(formatted_range)
 
-class ExampleResult(ExampleItem, NameMixin):
+class ExampleResult(ExampleItem):
     def __init__(self, raw_data, index, function, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
@@ -1997,11 +2000,13 @@ class ExampleResult(ExampleItem, NameMixin):
 
         check_name(raw_data[0][0])
 
+        self.name = FlavoredName(raw_data[0][0])
+
     def get_function(self): # parent
         return self.function
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0][0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_label_count(self):
         label = self.raw_data[0][1]
@@ -2078,7 +2083,7 @@ class ExampleResult(ExampleItem, NameMixin):
 
         return template.format(formatted_range)
 
-class ExampleGetterFunction(ExampleItem, NameMixin):
+class ExampleGetterFunction(ExampleItem):
     def __init__(self, raw_data, index, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
@@ -2093,14 +2098,16 @@ class ExampleGetterFunction(ExampleItem, NameMixin):
 
         check_name(raw_data[0][0])
 
+        self.name = FlavoredName(raw_data[0][0])
+
         for index, raw_result in enumerate(raw_data[1]):
             self.results.append(self.get_generator().get_example_result_class()(raw_result, index, self, example))
 
         for index, raw_argument in enumerate(raw_data[2]):
             self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0][0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_comment_name(self):
         return self.raw_data[0][1]
@@ -2111,7 +2118,7 @@ class ExampleGetterFunction(ExampleItem, NameMixin):
     def get_arguments(self):
         return self.arguments
 
-class ExampleSetterFunction(ExampleItem, NameMixin):
+class ExampleSetterFunction(ExampleItem):
     def __init__(self, raw_data, index, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
@@ -2120,13 +2127,14 @@ class ExampleSetterFunction(ExampleItem, NameMixin):
 
         check_name(raw_data[0])
 
+        self.name = FlavoredName(raw_data[0])
         self.arguments = []
 
         for index, raw_argument in enumerate(raw_data[1]):
             self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_arguments(self):
         return self.arguments
@@ -2153,7 +2161,7 @@ class ExampleSetterFunction(ExampleItem, NameMixin):
 
         return template.format(comment2)
 
-class ExampleCallbackFunction(ExampleItem, NameMixin):
+class ExampleCallbackFunction(ExampleItem):
     def __init__(self, raw_data, index, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
@@ -2165,13 +2173,14 @@ class ExampleCallbackFunction(ExampleItem, NameMixin):
 
         check_name(raw_data[0][0])
 
+        self.name = FlavoredName(raw_data[0][0])
         self.parameters = []
 
         for index, raw_parameter in enumerate(raw_data[1]):
             self.parameters.append(self.get_generator().get_example_parameter_class()(raw_parameter, index, self, example))
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0][0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_comment_name(self):
         return self.raw_data[0][1]
@@ -2201,7 +2210,7 @@ class ExampleCallbackFunction(ExampleItem, NameMixin):
 
         return template.format(extra_message)
 
-class ExampleCallbackPeriodFunction(ExampleItem, NameMixin):
+class ExampleCallbackPeriodFunction(ExampleItem):
     def __init__(self, raw_data, index, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
@@ -2213,13 +2222,14 @@ class ExampleCallbackPeriodFunction(ExampleItem, NameMixin):
 
         check_name(raw_data[0][0])
 
+        self.name = FlavoredName(raw_data[0][0])
         self.arguments = []
 
         for index, raw_argument in enumerate(raw_data[1]):
             self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0][0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_comment_name(self):
         return self.raw_data[0][1]
@@ -2257,10 +2267,10 @@ class ExampleCallbackThresholdMinimumMaximum(ExampleItem):
 
         for other in reversed(example.get_functions()):
             if isinstance(other, ExampleCallbackFunction):
-                if not example.get_device().has_comcu() and other.get_name() == function.get_name() + ' Reached':
+                if not example.get_device().has_comcu() and other.get_name().space == function.get_name().space + ' Reached':
                     self.corresponding_callback = other
                     break
-                elif example.get_device().has_comcu() and other.get_name() == function.get_name():
+                elif example.get_device().has_comcu() and other.get_name().space == function.get_name().space:
                     self.corresponding_callback = other
                     break
 
@@ -2307,7 +2317,7 @@ class ExampleCallbackThresholdMinimumMaximum(ExampleItem):
                                divisor=int(divisor),
                                result=maximum * int(divisor))
 
-class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
+class ExampleCallbackThresholdFunction(ExampleItem):
     def __init__(self, raw_data, index, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
@@ -2319,6 +2329,7 @@ class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
 
         check_name(raw_data[0][0])
 
+        self.name = FlavoredName(raw_data[0][0])
         self.arguments = []
 
         for index, raw_argument in enumerate(raw_data[1]):
@@ -2329,8 +2340,8 @@ class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
         for index, raw_minimum_maximum in enumerate(raw_data[3]):
             self.minimum_maximums.append(self.get_generator().get_example_callback_threshold_minimum_maximum_class()(raw_minimum_maximum, index, self, example))
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0][0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_comment_name(self):
         return self.raw_data[0][1]
@@ -2369,7 +2380,7 @@ class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
     def get_minimum_maximums(self):
         return self.minimum_maximums
 
-class ExampleCallbackConfigurationFunction(ExampleItem, NameMixin):
+class ExampleCallbackConfigurationFunction(ExampleItem):
     def __init__(self, raw_data, index, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
@@ -2381,6 +2392,7 @@ class ExampleCallbackConfigurationFunction(ExampleItem, NameMixin):
 
         check_name(raw_data[0][0])
 
+        self.name = FlavoredName(raw_data[0][0])
         self.arguments = []
 
         for index, raw_argument in enumerate(raw_data[1]):
@@ -2391,8 +2403,8 @@ class ExampleCallbackConfigurationFunction(ExampleItem, NameMixin):
         for index, raw_minimum_maximum in enumerate(raw_data[4]):
             self.minimum_maximums.append(self.get_generator().get_example_callback_threshold_minimum_maximum_class()(raw_minimum_maximum, index, self, example))
 
-    def _get_name(self): # for NameMixin
-        return self.raw_data[0][0]
+    def get_name(self, *args, **kwargs):
+        return self.name.get(*args, **kwargs)
 
     def get_comment_name(self):
         return self.raw_data[0][1]

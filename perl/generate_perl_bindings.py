@@ -48,8 +48,8 @@ package Tinkerforge::{1}{2};
 """
 
         return template.format(self.get_generator().get_header_comment('hash'),
-                               self.get_camel_case_category(),
-                               self.get_camel_case_name(),
+                               self.get_category().camel,
+                               self.get_name().camel,
                                common.select_lang(self.get_description()))
 
     def get_perl_use(self):
@@ -104,11 +104,11 @@ the CALLBACK_{0} callback.
 use constant CALLBACK_{0} => {1};"""
 
         for packet in self.get_packets('callback'):
-            callbacks.append(template.format(packet.get_upper_case_name(), packet.get_function_id()))
+            callbacks.append(template.format(packet.get_name().upper, packet.get_function_id()))
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
-                callbacks.append(template.format(packet.get_upper_case_name(skip=-2), -packet.get_function_id()))
+                callbacks.append(template.format(packet.get_name(skip=-2).upper, -packet.get_function_id()))
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             callbacks.append("""
@@ -144,7 +144,7 @@ and set_response_expected_all() subroutines.
 use constant FUNCTION_{0} => {1};"""
 
         for packet in self.get_packets('function'):
-            function_ids.append(template.format(packet.get_upper_case_name(), packet.get_function_id()))
+            function_ids.append(template.format(packet.get_name().upper, packet.get_function_id()))
 
         constants = '\n'
         template = 'use constant {0}_{1} => {2};\n'
@@ -156,8 +156,8 @@ use constant FUNCTION_{0} => {1};"""
                 else:
                     value = str(constant.get_value())
 
-                constants += template.format(constant_group.get_upper_case_name(),
-                                             constant.get_upper_case_name(),
+                constants += template.format(constant_group.get_name().upper,
+                                             constant.get_name().upper,
                                              value)
 
         return '\n'.join(callbacks) + '\n' + '\n'.join(function_ids) + constants + "\n\n=back\n"
@@ -192,14 +192,14 @@ sub new
                 flag = '_RESPONSE_EXPECTED_FALSE'
 
             response_expecteds.append('\t$self->{{response_expected}}->{{&FUNCTION_{0}}} = Tinkerforge::Device->{1};'
-                                      .format(packet.get_upper_case_name(), flag))
+                                      .format(packet.get_name().upper, flag))
 
         callbacks = []
 
         if len(self.get_packets('callback')) > 0:
             for packet in self.get_packets('callback'):
                 callbacks.append('\t$self->{{callback_formats}}->{{&CALLBACK_{0}}} = \'{1}\';'
-                                 .format(packet.get_upper_case_name(), packet.get_perl_format_list('out')))
+                                 .format(packet.get_name().upper, packet.get_perl_format_list('out')))
 
         high_level_callbacks = []
         template2 = '\t$self->{{high_level_callbacks}}->{{&CALLBACK_{0}}} = shared_clone([shared_clone({{{3}}}), shared_clone([{4}]), shared_clone({{fixed_length => {1}, single_chunk => {2}}}), undef]);'
@@ -218,7 +218,7 @@ sub new
                     else:
                         roles_by_index.append('undef')
 
-                high_level_callbacks.append(template2.format(packet.get_upper_case_name(skip=-2),
+                high_level_callbacks.append(template2.format(packet.get_name(skip=-2).upper,
                                                              stream.get_fixed_length(default='undef'),
                                                              1 if stream.has_single_chunk() else 0,
                                                              ', '.join(roles_by_name),
@@ -284,8 +284,8 @@ sub {0}
 """
 
         for packet in self.get_packets('function'):
-            subroutine_name = packet.get_underscore_name()
-            function_id_constant = subroutine_name.upper()
+            subroutine_name = packet.get_name().under
+            function_id_constant = packet.get_name().upper
             parameters = packet.get_perl_parameters()
 
             if len(parameters) > 0:
@@ -308,153 +308,153 @@ sub {0}
 
         # high-level
         template_stream_in = """
-=item {underscore_name}()
+=item {name}()
 
 {doc}
 
 =cut
 
-sub {underscore_name}
+sub {name}
 {{
     my ($self{high_level_parameters}) = @_;
 
-    if(scalar(@{{${stream_underscore_name}}}) > {stream_max_length})
+    if(scalar(@{{${stream_name_under}}}) > {stream_max_length})
     {{
-        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long'));
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name_space} can be at most {stream_max_length} items long'));
     }}
 {result_variable}
-    my ${stream_underscore_name}_length = scalar(@{{${stream_underscore_name}}});
-    my ${stream_underscore_name}_chunk_offset = 0;
+    my ${stream_name_under}_length = scalar(@{{${stream_name_under}}});
+    my ${stream_name_under}_chunk_offset = 0;
 
-    if(${stream_underscore_name}_length == 0)
+    if(${stream_name_under}_length == 0)
     {{
-        my ${stream_underscore_name}_chunk_data = [{chunk_padding}] x {chunk_cardinality};
+        my ${stream_name_under}_chunk_data = [{chunk_padding}] x {chunk_cardinality};
 
-        {result_assignment}$self->{underscore_name}_low_level({parameters});
+        {result_assignment}$self->{name}_low_level({parameters});
     }}
     else
     {{
         lock(${{$self->{{stream_lock_ref}}}});
 
-        while(${stream_underscore_name}_chunk_offset < ${stream_underscore_name}_length)
+        while(${stream_name_under}_chunk_offset < ${stream_name_under}_length)
         {{
-            my ${stream_underscore_name}_chunk_data = [];
-            my ${stream_underscore_name}_chunk_length = ${stream_underscore_name}_length - ${stream_underscore_name}_chunk_offset;
+            my ${stream_name_under}_chunk_data = [];
+            my ${stream_name_under}_chunk_length = ${stream_name_under}_length - ${stream_name_under}_chunk_offset;
 
-            if(${stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
-                ${stream_underscore_name}_chunk_length = {chunk_cardinality};
+            if(${stream_name_under}_chunk_length > {chunk_cardinality}) {{
+                ${stream_name_under}_chunk_length = {chunk_cardinality};
             }}
 
-            for(my $i = 0; $i < ${stream_underscore_name}_chunk_length; $i++) {{
-                push(@{{${stream_underscore_name}_chunk_data}}, @{{${stream_underscore_name}}}[${stream_underscore_name}_chunk_offset + $i]);
+            for(my $i = 0; $i < ${stream_name_under}_chunk_length; $i++) {{
+                push(@{{${stream_name_under}_chunk_data}}, @{{${stream_name_under}}}[${stream_name_under}_chunk_offset + $i]);
             }}
 
-            if(scalar(@{{${stream_underscore_name}_chunk_data}}) < {chunk_cardinality})
+            if(scalar(@{{${stream_name_under}_chunk_data}}) < {chunk_cardinality})
             {{
-                push(@{{${stream_underscore_name}_chunk_data}}, ({chunk_padding}) x ({chunk_cardinality} - scalar(@{{${stream_underscore_name}_chunk_data}})));
+                push(@{{${stream_name_under}_chunk_data}}, ({chunk_padding}) x ({chunk_cardinality} - scalar(@{{${stream_name_under}_chunk_data}})));
             }}
 
-            {result_assignment}$self->{underscore_name}_low_level({parameters});
-            ${stream_underscore_name}_chunk_offset += {chunk_cardinality};
+            {result_assignment}$self->{name}_low_level({parameters});
+            ${stream_name_under}_chunk_offset += {chunk_cardinality};
         }}
     }}{result_return}
 }}
 """
         template_stream_in_fixed_length = """
-=item {underscore_name}()
+=item {name}()
 
 {doc}
 
 =cut
 
-sub {underscore_name}
+sub {name}
 {{
     my ($self{high_level_parameters}) = @_;{result_variable}
-    my ${stream_underscore_name}_length = {fixed_length};
-    my ${stream_underscore_name}_chunk_offset = 0;
+    my ${stream_name_under}_length = {fixed_length};
+    my ${stream_name_under}_chunk_offset = 0;
 
-    if(scalar(@{{${stream_underscore_name}}}) != ${stream_underscore_name}_length)
+    if(scalar(@{{${stream_name_under}}}) != ${stream_name_under}_length)
     {{
-        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name} has to be exactly '.${stream_underscore_name}_length.' items long'));
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name_space} has to be exactly '.${stream_name_under}_length.' items long'));
     }}
 
     lock(${{$self->{{stream_lock_ref}}}});
 
-    while(${stream_underscore_name}_chunk_offset < ${stream_underscore_name}_length)
+    while(${stream_name_under}_chunk_offset < ${stream_name_under}_length)
     {{
-        my ${stream_underscore_name}_chunk_data = [];
-        my ${stream_underscore_name}_chunk_length = ${stream_underscore_name}_length - ${stream_underscore_name}_chunk_offset;
+        my ${stream_name_under}_chunk_data = [];
+        my ${stream_name_under}_chunk_length = ${stream_name_under}_length - ${stream_name_under}_chunk_offset;
 
-        if(${stream_underscore_name}_chunk_length > {chunk_cardinality}) {{
-            ${stream_underscore_name}_chunk_length = {chunk_cardinality};
+        if(${stream_name_under}_chunk_length > {chunk_cardinality}) {{
+            ${stream_name_under}_chunk_length = {chunk_cardinality};
         }}
 
-        for(my $i = 0; $i < ${stream_underscore_name}_chunk_length; $i++) {{
-            push(@{{${stream_underscore_name}_chunk_data}}, @{{${stream_underscore_name}}}[${stream_underscore_name}_chunk_offset + $i]);
+        for(my $i = 0; $i < ${stream_name_under}_chunk_length; $i++) {{
+            push(@{{${stream_name_under}_chunk_data}}, @{{${stream_name_under}}}[${stream_name_under}_chunk_offset + $i]);
         }}
 
-        if(scalar(@{{${stream_underscore_name}_chunk_data}}) < {chunk_cardinality})
+        if(scalar(@{{${stream_name_under}_chunk_data}}) < {chunk_cardinality})
         {{
-            push(@{{${stream_underscore_name}_chunk_data}}, ({chunk_padding}) x ({chunk_cardinality} - scalar(@{{${stream_underscore_name}_chunk_data}})));
+            push(@{{${stream_name_under}_chunk_data}}, ({chunk_padding}) x ({chunk_cardinality} - scalar(@{{${stream_name_under}_chunk_data}})));
         }}
 
-        {result_assignment}$self->{underscore_name}_low_level({parameters});
-        ${stream_underscore_name}_chunk_offset += {chunk_cardinality};
+        {result_assignment}$self->{name}_low_level({parameters});
+        ${stream_name_under}_chunk_offset += {chunk_cardinality};
     }}{result_return}
 }}
 """
         template_stream_in_short_write = """
-=item {underscore_name}()
+=item {name}()
 
 {doc}
 
 =cut
 
-sub {underscore_name}
+sub {name}
 {{
     my ($self{high_level_parameters}) = @_;
 
-    if(scalar(@{{${stream_underscore_name}}}) > {stream_max_length})
+    if(scalar(@{{${stream_name_under}}}) > {stream_max_length})
     {{
-        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long'));
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name_space} can be at most {stream_max_length} items long'));
     }}
 {result_variable}
-    my ${stream_underscore_name}_length = scalar(@{{${stream_underscore_name}}});
-    my ${stream_underscore_name}_chunk_offset = 0;
-    my ${stream_underscore_name}_written = 0;
+    my ${stream_name_under}_length = scalar(@{{${stream_name_under}}});
+    my ${stream_name_under}_chunk_offset = 0;
+    my ${stream_name_under}_written = 0;
 
-    if(${stream_underscore_name}_length == 0)
+    if(${stream_name_under}_length == 0)
     {{
-        my ${stream_underscore_name}_chunk_data = [{chunk_padding}] x {chunk_cardinality};
+        my ${stream_name_under}_chunk_data = [{chunk_padding}] x {chunk_cardinality};
 
-        {result_assignment}$self->{underscore_name}_low_level({parameters});
+        {result_assignment}$self->{name}_low_level({parameters});
         {chunk_written_0}
     }}
     else
     {{
         lock(${{$self->{{stream_lock_ref}}}});
 
-        while(${stream_underscore_name}_chunk_offset < ${stream_underscore_name}_length)
+        while(${stream_name_under}_chunk_offset < ${stream_name_under}_length)
         {{
-            my ${stream_underscore_name}_chunk_data = [];
-            my ${stream_underscore_name}_chunk_length = ${stream_underscore_name}_length - ${stream_underscore_name}_chunk_offset;
+            my ${stream_name_under}_chunk_data = [];
+            my ${stream_name_under}_chunk_length = ${stream_name_under}_length - ${stream_name_under}_chunk_offset;
 
-            if(${stream_underscore_name}_chunk_length > {chunk_cardinality})
+            if(${stream_name_under}_chunk_length > {chunk_cardinality})
             {{
-                ${stream_underscore_name}_chunk_length = {chunk_cardinality};
+                ${stream_name_under}_chunk_length = {chunk_cardinality};
             }}
 
-            for(my $i = 0; $i < ${stream_underscore_name}_chunk_length; $i++)
+            for(my $i = 0; $i < ${stream_name_under}_chunk_length; $i++)
             {{
-                push(@{{${stream_underscore_name}_chunk_data}}, @{{${stream_underscore_name}}}[${stream_underscore_name}_chunk_offset + $i]);
+                push(@{{${stream_name_under}_chunk_data}}, @{{${stream_name_under}}}[${stream_name_under}_chunk_offset + $i]);
             }}
 
-            if(scalar(@{{${stream_underscore_name}_chunk_data}}) < {chunk_cardinality})
+            if(scalar(@{{${stream_name_under}_chunk_data}}) < {chunk_cardinality})
             {{
-                push(@{{${stream_underscore_name}_chunk_data}}, ({chunk_padding}) x ({chunk_cardinality} - scalar(@{{${stream_underscore_name}_chunk_data}})));
+                push(@{{${stream_name_under}_chunk_data}}, ({chunk_padding}) x ({chunk_cardinality} - scalar(@{{${stream_name_under}_chunk_data}})));
             }}
 
-            {result_assignment}$self->{underscore_name}_low_level({parameters});
+            {result_assignment}$self->{name}_low_level({parameters});
             {chunk_written_n}
 
             if({chunk_written_test} < {chunk_cardinality})
@@ -462,126 +462,126 @@ sub {underscore_name}
                 last; # either last chunk or short write
             }}
 
-            ${stream_underscore_name}_chunk_offset += {chunk_cardinality};
+            ${stream_name_under}_chunk_offset += {chunk_cardinality};
         }}
     }}
 {result_return}
 }}
 """
-        template_stream_in_short_write_chunk_written = ['${stream_underscore_name}_written = $ret;',
-                                                        '${stream_underscore_name}_written += $ret;',
+        template_stream_in_short_write_chunk_written = ['${stream_name_under}_written = $ret;',
+                                                        '${stream_name_under}_written += $ret;',
                                                         '$ret']
-        template_stream_in_short_write_array_chunk_written = ['${stream_underscore_name}_written = $ret[{chunk_written_index}];',
-                                                              '${stream_underscore_name}_written += $ret[{chunk_written_index}];',
+        template_stream_in_short_write_array_chunk_written = ['${stream_name_under}_written = $ret[{chunk_written_index}];',
+                                                              '${stream_name_under}_written += $ret[{chunk_written_index}];',
                                                               '$ret[{chunk_written_index}]']
         template_stream_in_short_write_result = """
-    return ${stream_underscore_name}_written;"""
+    return ${stream_name_under}_written;"""
         template_stream_in_short_write_array_result = """
     return ({result_fields});"""
         template_stream_in_single_chunk = """
-=item {underscore_name}()
+=item {name}()
 
 {doc}
 
 =cut
 
-sub {underscore_name}
+sub {name}
 {{
     my ($self{high_level_parameters}) = @_;
-    my ${stream_underscore_name}_length = scalar(@{{${stream_underscore_name}}});
-    my ${stream_underscore_name}_data = [];
+    my ${stream_name_under}_length = scalar(@{{${stream_name_under}}});
+    my ${stream_name_under}_data = [];
 
-    push(@{{${stream_underscore_name}_data}}, @{{${stream_underscore_name}}}); # copy so we can potentially extend it
+    push(@{{${stream_name_under}_data}}, @{{${stream_name_under}}}); # copy so we can potentially extend it
 
-    if(${stream_underscore_name}_length > {chunk_cardinality})
+    if(${stream_name_under}_length > {chunk_cardinality})
     {{
-        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name} can be at most {chunk_cardinality} items long'));
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, '{stream_name_space} can be at most {chunk_cardinality} items long'));
     }}
 
-    if(${stream_underscore_name}_length < {chunk_cardinality})
+    if(${stream_name_under}_length < {chunk_cardinality})
     {{
-        push(@{{${stream_underscore_name}_data}}, ({chunk_padding}) x ({chunk_cardinality} - ${stream_underscore_name}_length));
+        push(@{{${stream_name_under}_data}}, ({chunk_padding}) x ({chunk_cardinality} - ${stream_name_under}_length));
     }}
 
-    return $self->{underscore_name}_low_level({parameters});
+    return $self->{name}_low_level({parameters});
 }}
 """
         template_stream_out = """
-=item {underscore_name}()
+=item {name}()
 
 {doc}
 
 =cut
 
-sub {underscore_name}
+sub {name}
 {{
     my ($self{high_level_parameters}) = @_;{fixed_length}
 
     lock(${{$self->{{stream_lock_ref}}}});
 
-    my @ret = $self->{underscore_name}_low_level({parameters});{dynamic_length_1}
-    my ${stream_underscore_name}_chunk_offset = $ret[{chunk_offset_index}];
-{chunk_offset_check}{chunk_offset_check_my}${stream_underscore_name}_out_of_sync = ${stream_underscore_name}_chunk_offset != 0;
-    {chunk_offset_check_indent}{chunk_offset_check_my}${stream_underscore_name}_data = $ret[{chunk_data_index}];{chunk_offset_check_end}
+    my @ret = $self->{name}_low_level({parameters});{dynamic_length_1}
+    my ${stream_name_under}_chunk_offset = $ret[{chunk_offset_index}];
+{chunk_offset_check}{chunk_offset_check_my}${stream_name_under}_out_of_sync = ${stream_name_under}_chunk_offset != 0;
+    {chunk_offset_check_indent}{chunk_offset_check_my}${stream_name_under}_data = $ret[{chunk_data_index}];{chunk_offset_check_end}
 
-    while(!${stream_underscore_name}_out_of_sync && scalar(@{{${stream_underscore_name}_data}}) < ${stream_underscore_name}_length)
+    while(!${stream_name_under}_out_of_sync && scalar(@{{${stream_name_under}_data}}) < ${stream_name_under}_length)
     {{
-        @ret = $self->{underscore_name}_low_level({parameters});{dynamic_length_2}
-        ${stream_underscore_name}_chunk_offset = $ret[{chunk_offset_index}];
-        ${stream_underscore_name}_out_of_sync = ${stream_underscore_name}_chunk_offset != scalar(@{{${stream_underscore_name}_data}});
-        push(@{{${stream_underscore_name}_data}}, @{{$ret[{chunk_data_index}]}});
+        @ret = $self->{name}_low_level({parameters});{dynamic_length_2}
+        ${stream_name_under}_chunk_offset = $ret[{chunk_offset_index}];
+        ${stream_name_under}_out_of_sync = ${stream_name_under}_chunk_offset != scalar(@{{${stream_name_under}_data}});
+        push(@{{${stream_name_under}_data}}, @{{$ret[{chunk_data_index}]}});
     }}
 
-    if(${stream_underscore_name}_out_of_sync) # discard remaining stream to bring it back in-sync
+    if(${stream_name_under}_out_of_sync) # discard remaining stream to bring it back in-sync
     {{
-        while(${stream_underscore_name}_chunk_offset + {chunk_cardinality} < ${stream_underscore_name}_length)
+        while(${stream_name_under}_chunk_offset + {chunk_cardinality} < ${stream_name_under}_length)
         {{
-            @ret = $self->{underscore_name}_low_level({parameters});{dynamic_length_3}
-            ${stream_underscore_name}_chunk_offset = $ret[{chunk_offset_index}];
+            @ret = $self->{name}_low_level({parameters});{dynamic_length_3}
+            ${stream_name_under}_chunk_offset = $ret[{chunk_offset_index}];
         }}
 
-        croak(Tinkerforge::Error->_new(Tinkerforge::Error->STREAM_OUT_OF_SYNC, '{stream_name} stream is out-of-sync'));
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->STREAM_OUT_OF_SYNC, '{stream_name_space} stream is out-of-sync'));
     }}
 {result}
 }}
 """
         template_stream_out_fixed_length = """
-    my ${stream_underscore_name}_length = {fixed_length};"""
+    my ${stream_name_under}_length = {fixed_length};"""
         template_stream_out_dynamic_length = """
-{{indent}}${stream_underscore_name}_length = $ret[{length_index}];"""
-        template_stream_out_chunk_offset_check = """    my ${stream_underscore_name}_out_of_sync = undef;
-    my ${stream_underscore_name}_data = undef;
+{{indent}}${stream_name_under}_length = $ret[{length_index}];"""
+        template_stream_out_chunk_offset_check = """    my ${stream_name_under}_out_of_sync = undef;
+    my ${stream_name_under}_data = undef;
 
-    if(${stream_underscore_name}_chunk_offset == (1 << {shift_size}) - 1) # maximum chunk offset -> stream has no data
+    if(${stream_name_under}_chunk_offset == (1 << {shift_size}) - 1) # maximum chunk offset -> stream has no data
     {{
-        ${stream_underscore_name}_length = 0;
-        ${stream_underscore_name}_chunk_offset = 0;
-        ${stream_underscore_name}_out_of_sync = 0;
-        ${stream_underscore_name}_data = [];
+        ${stream_name_under}_length = 0;
+        ${stream_name_under}_chunk_offset = 0;
+        ${stream_name_under}_out_of_sync = 0;
+        ${stream_name_under}_data = [];
     }}
     else
     {{
         """
         template_stream_out_single_chunk = """
-=item {underscore_name}()
+=item {name}()
 
 {doc}
 
 =cut
 
-sub {underscore_name}
+sub {name}
 {{
     my ($self{high_level_parameters}) = @_;
-    my @ret = $self->{underscore_name}_low_level({parameters});
+    my @ret = $self->{name}_low_level({parameters});
 {result}
 }}
 """
         template_stream_out_result = """
-    splice(@{{${stream_underscore_name}_data}}, ${stream_underscore_name}_length);
+    splice(@{{${stream_name_under}_data}}, ${stream_name_under}_length);
 
-    return ${stream_underscore_name}_data;"""
+    return ${stream_name_under}_data;"""
         template_stream_out_array_result = """
-    splice(@{{${stream_underscore_name}_data}}, ${stream_underscore_name}_length);
+    splice(@{{${stream_name_under}_data}}, ${stream_name_under}_length);
 
     return ({result_fields});"""
         template_stream_out_single_chunk_result = """
@@ -612,9 +612,9 @@ sub {underscore_name}
 
                 if stream_in.has_short_write():
                     if len(packet.get_elements(direction='out')) < 2:
-                        chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_n = template_stream_in_short_write_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_test = template_stream_in_short_write_chunk_written[2].format(stream_underscore_name=stream_in.get_underscore_name())
+                        chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_n = template_stream_in_short_write_chunk_written[1].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_test = template_stream_in_short_write_chunk_written[2].format(stream_name_under=stream_in.get_name().under)
                     else:
                         chunk_written_index = None
 
@@ -623,11 +623,11 @@ sub {underscore_name}
                                 chunk_written_index = i
                                 break
 
-                        chunk_written_0 = template_stream_in_short_write_array_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name(),
+                        chunk_written_0 = template_stream_in_short_write_array_chunk_written[0].format(stream_name_under=stream_in.get_name().under,
                                                                                                        chunk_written_index=chunk_written_index)
-                        chunk_written_n = template_stream_in_short_write_array_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name(),
+                        chunk_written_n = template_stream_in_short_write_array_chunk_written[1].format(stream_name_under=stream_in.get_name().under,
                                                                                                        chunk_written_index=chunk_written_index)
-                        chunk_written_test = template_stream_in_short_write_array_chunk_written[2].format(stream_underscore_name=stream_in.get_underscore_name(),
+                        chunk_written_test = template_stream_in_short_write_array_chunk_written[2].format(stream_name_under=stream_in.get_name().under,
                                                                                                           chunk_written_index=chunk_written_index)
 
                 else:
@@ -646,7 +646,7 @@ sub {underscore_name}
                     result_assignment = '$ret = '
 
                     if stream_in.has_short_write():
-                        result_return = template_stream_in_short_write_result.format(stream_underscore_name=stream_in.get_underscore_name())
+                        result_return = template_stream_in_short_write_result.format(stream_name_under=stream_in.get_name().under)
                     else:
                         result_return = '\n\n    return $ret;'
                 else:
@@ -658,12 +658,12 @@ sub {underscore_name}
 
                         for element in packet.get_elements(direction='out', high_level=True):
                             if element.get_role() == 'stream_written':
-                                fields.append('${0}_written'.format(stream_in.get_underscore_name()))
+                                fields.append('${0}_written'.format(stream_in.get_name().under))
                             else:
                                 index = None
 
                                 for i, other in enumerate(packet.get_elements(direction='out')):
-                                    if other.get_name() == element.get_name():
+                                    if other.get_name().space == element.get_name().space:
                                         index = i
                                         break
 
@@ -674,11 +674,11 @@ sub {underscore_name}
                         result_return = '\n\n    return @ret;'
 
                 methods += template.format(doc=packet.get_perl_formatted_doc(),
-                                           underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                           name=packet.get_name(skip=-2).under,
                                            parameters=packet.get_perl_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_perl_parameters(high_level=True), ''),
-                                           stream_name=stream_in.get_name(),
-                                           stream_underscore_name=stream_in.get_underscore_name(),
+                                           stream_name_space=stream_in.get_name().space,
+                                           stream_name_under=stream_in.get_name().under,
                                            stream_max_length=abs(stream_in.get_data_element().get_cardinality()),
                                            fixed_length=stream_in.get_fixed_length(default='nil'),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
@@ -703,18 +703,18 @@ sub {underscore_name}
                         chunk_data_index = i
 
                 if stream_out.get_fixed_length() != None:
-                    fixed_length = template_stream_out_fixed_length.format(stream_underscore_name=stream_out.get_underscore_name(),
+                    fixed_length = template_stream_out_fixed_length.format(stream_name_under=stream_out.get_name().under,
                                                                            fixed_length=stream_out.get_fixed_length())
                     dynamic_length = ''
                     shift_size = int(stream_out.get_chunk_offset_element().get_type().replace('uint', ''))
-                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_underscore_name=stream_out.get_underscore_name(),
+                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_name_under=stream_out.get_name().under,
                                                                                        shift_size=shift_size)
                     chunk_offset_check_indent = '    '
                     chunk_offset_check_my = ''
                     chunk_offset_check_end = '\n    }'
                 else:
                     fixed_length = ''
-                    dynamic_length = template_stream_out_dynamic_length.format(stream_underscore_name=stream_out.get_underscore_name(),
+                    dynamic_length = template_stream_out_dynamic_length.format(stream_name_under=stream_out.get_name().under,
                                                                                length_index=length_index)
                     chunk_offset_check = '    '
                     chunk_offset_check_indent = ''
@@ -726,7 +726,7 @@ sub {underscore_name}
                         result = template_stream_out_single_chunk_result.format(chunk_data_index=chunk_data_index,
                                                                                 length_index=length_index)
                     else:
-                        result = template_stream_out_result.format(stream_underscore_name=stream_out.get_underscore_name())
+                        result = template_stream_out_result.format(stream_name_under=stream_out.get_name().under)
                 else:
                     fields = []
 
@@ -735,12 +735,12 @@ sub {underscore_name}
                             if stream_out.has_single_chunk():
                                 fields.append('$ret[{0}]'.format(chunk_data_index, length_index))
                             else:
-                                fields.append('${0}_data'.format(stream_out.get_underscore_name()))
+                                fields.append('${0}_data'.format(stream_out.get_name().under))
                         else:
                             index = None
 
                             for i, other in enumerate(packet.get_elements(direction='out')):
-                                if other.get_name() == element.get_name():
+                                if other.get_name().space == element.get_name().space:
                                     index = i
                                     break
 
@@ -751,7 +751,7 @@ sub {underscore_name}
                                                                                       length_index=length_index,
                                                                                       result_fields=', '.join(fields))
                     else:
-                        result = template_stream_out_array_result.format(stream_underscore_name=stream_out.get_underscore_name(),
+                        result = template_stream_out_array_result.format(stream_name_under=stream_out.get_name().under,
                                                                          result_fields=', '.join(fields))
 
                 if stream_out.has_single_chunk():
@@ -760,11 +760,11 @@ sub {underscore_name}
                     template = template_stream_out
 
                 methods += template.format(doc=packet.get_perl_formatted_doc(),
-                                           underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                           name=packet.get_name(skip=-2).under,
                                            parameters=packet.get_perl_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_perl_parameters(high_level=True), ''),
-                                           stream_name=stream_out.get_name(),
-                                           stream_underscore_name=stream_out.get_underscore_name(),
+                                           stream_name_space=stream_out.get_name().space,
+                                           stream_name_under=stream_out.get_name().under,
                                            fixed_length=fixed_length,
                                            dynamic_length_1=dynamic_length.format(indent='    ' * 1 + 'my '),
                                            dynamic_length_2=dynamic_length.format(indent='    ' * 2),
@@ -796,7 +796,7 @@ class PerlBindingsPacket(common.Packet):
         params = []
 
         for element in self.get_elements(direction='in', high_level=high_level):
-            params.append('$' + element.get_underscore_name())
+            params.append('$' + element.get_name().under)
 
         return ', '.join(params)
 
@@ -838,7 +838,7 @@ class PerlBindingsGenerator(common.BindingsGenerator):
         return perl_common.PerlElement
 
     def generate(self, device):
-        filename = '{0}{1}.pm'.format(device.get_camel_case_category(), device.get_camel_case_name())
+        filename = '{0}{1}.pm'.format(device.get_category().camel, device.get_name().camel)
 
         with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_perl_source())

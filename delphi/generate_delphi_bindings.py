@@ -49,11 +49,11 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             if packet.get_type() == 'callback':
                 return '<see cref="{0}.{1}.On{2}"/>'.format(packet.get_device().get_delphi_class_name()[1:],
                                                             packet.get_device().get_delphi_class_name(),
-                                                            packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                            packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return '<see cref="{0}.{1}.{2}"/>'.format(packet.get_device().get_delphi_class_name()[1:],
                                                           packet.get_device().get_delphi_class_name(),
-                                                          packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                          packet.get_name(skip=-2 if high_level else 0).camel)
 
         return self.specialize_doc_rst_links(text, specializer)
 
@@ -71,16 +71,16 @@ uses
 """
 
         return template.format(self.get_generator().get_header_comment('curly'),
-                               self.get_camel_case_category(),
-                               self.get_camel_case_name())
+                               self.get_category().camel,
+                               self.get_name().camel)
 
     def get_delphi_device_identifier(self):
         template = """const
   {0}_{1}_DEVICE_IDENTIFIER = {2};
 """
 
-        return template.format(self.get_upper_case_category(),
-                               self.get_upper_case_name(),
+        return template.format(self.get_category().upper,
+                               self.get_name().upper,
                                self.get_device_identifier())
 
     def get_delphi_device_display_name(self):
@@ -88,8 +88,8 @@ uses
 
 """
 
-        return template.format(self.get_upper_case_category(),
-                               self.get_upper_case_name(),
+        return template.format(self.get_category().upper,
+                               self.get_name().upper,
                                self.get_long_display_name())
 
     def get_delphi_function_id_definitions(self):
@@ -97,26 +97,26 @@ uses
         template = '  {0}_{1}_FUNCTION_{2} = {3};\n'
 
         for packet in self.get_packets('function'):
-            function_ids += template.format(self.get_upper_case_category(),
-                                            self.get_upper_case_name(),
-                                            packet.get_upper_case_name(),
+            function_ids += template.format(self.get_category().upper,
+                                            self.get_name().upper,
+                                            packet.get_name().upper,
                                             packet.get_function_id())
 
         return function_ids + '\n'
 
     def get_delphi_constants(self):
-        constant_format = '  {prefix}_{constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
+        constant_format = '  {device_name}_{constant_group_name_upper}_{constant_name_upper} = {constant_value};\n'
 
-        return self.get_formatted_constants(constant_format, prefix=self.get_upper_case_category()+'_'+self.get_upper_case_name()) + '\n'
+        return self.get_formatted_constants(constant_format, device_name=self.get_category().upper + '_' + self.get_name().upper) + '\n'
 
     def get_delphi_callback_id_definitions(self):
         callback_ids = ''
         template = '  {0}_{1}_CALLBACK_{2} = {3};\n'
 
         for packet in self.get_packets('callback'):
-            callback_ids += template.format(self.get_upper_case_category(),
-                                            self.get_upper_case_name(),
-                                            packet.get_upper_case_name(),
+            callback_ids += template.format(self.get_category().upper,
+                                            self.get_name().upper,
+                                            packet.get_name().upper,
                                             packet.get_function_id())
 
         return callback_ids + '\n'
@@ -183,7 +183,7 @@ uses
                         callback_state_length_delphi_type = self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality()))
 
             arrays += '  T{0}HighLevelCallbackState = record data: array of {1}; length: {2}; end;\n' \
-                      .format(packet.get_camel_case_name(skip=-2),
+                      .format(packet.get_name(skip=-2).camel,
                               callback_state_data_delphi_type,
                               callback_state_length_delphi_type)
 
@@ -199,7 +199,7 @@ uses
         for packet in self.get_packets('callback'):
             params = common.wrap_non_empty('; ', '; '.join(packet.get_delphi_parameters(False)), '')
             prototypes += template.format(self.get_delphi_class_name(),
-                                          packet.get_camel_case_name(),
+                                          packet.get_name().camel,
                                           params)
 
             if not packet.has_high_level():
@@ -216,10 +216,10 @@ uses
                 role = element.get_role()
 
                 if not role:
-                    high_level_parameters.append('const ' + element.get_headless_camel_case_name() + ': ' + element.get_delphi_type()[0])
+                    high_level_parameters.append('const ' + element.get_name().headless + ': ' + element.get_delphi_type()[0])
                 else:
                     if role.endswith('data'):
-                        high_level_parameters.append('const ' + stream_out.get_headless_camel_case_name() + ': array of ' + element.get_delphi_type()[0])
+                        high_level_parameters.append('const ' + stream_out.get_name().headless + ': array of ' + element.get_delphi_type()[0])
 
             params = '; '.join(high_level_parameters)
 
@@ -227,7 +227,7 @@ uses
                 params = '; ' + params
 
             prototypes += template.format(self.get_delphi_class_name(),
-                                          packet.get_camel_case_name(skip=-2),
+                                          packet.get_name(skip=-2).camel,
                                           params)
 
         if len(prototypes) > 0:
@@ -247,9 +247,9 @@ uses
         template = '    {0}Callback: {1}Notify{2};\n'
 
         for packet in self.get_packets('callback'):
-            callbacks += template.format(packet.get_headless_camel_case_name(),
+            callbacks += template.format(packet.get_name().headless,
                                          self.get_delphi_class_name(),
-                                         packet.get_camel_case_name())
+                                         packet.get_name().camel)
 
             if not packet.has_high_level():
                 continue
@@ -259,9 +259,9 @@ uses
             if not stream_out:
                 continue
 
-            callbacks += template.format(packet.get_headless_camel_case_name(skip=-2),
+            callbacks += template.format(packet.get_name(skip=-2).headless,
                                          self.get_delphi_class_name(),
-                                         packet.get_camel_case_name(skip=-2))
+                                         packet.get_name(skip=-2).camel)
 
         callback_wrappers = ''
         template_wrapper = '    procedure CallbackWrapper{0}(const packet: TByteArray); {1};\n'
@@ -272,7 +272,7 @@ uses
             else:
                 modifier = 'virtual'
 
-            callback_wrappers += template_wrapper.format(packet.get_camel_case_name(), modifier)
+            callback_wrappers += template_wrapper.format(packet.get_name().camel, modifier)
 
         methods = []
         function = """    /// <summary>
@@ -286,7 +286,7 @@ uses
 
         for packet in self.get_packets('function'):
             output_count = 0
-            name = packet.get_camel_case_name()
+            name = packet.get_name().camel
             doc = packet.get_delphi_formatted_doc()
             ret_type = packet.get_delphi_return_type(False)
             params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters(False)), ')')
@@ -312,7 +312,7 @@ uses
             if packet.has_high_level():
                 e_params = []
                 output_count = 0
-                name = packet.get_camel_case_name(skip=-2)
+                name = packet.get_name(skip=-2).camel
                 stream_in = packet.get_high_level('stream_in')
                 stream_out = packet.get_high_level('stream_out')
 
@@ -362,9 +362,9 @@ uses
 
         for packet in self.get_packets('callback'):
             doc = packet.get_delphi_formatted_doc()
-            props.append(prop.format(packet.get_camel_case_name(),
+            props.append(prop.format(packet.get_name().camel,
                                      self.get_delphi_class_name(),
-                                     packet.get_headless_camel_case_name(),
+                                     packet.get_name().headless,
                                      doc))
 
             stream_out = packet.get_high_level('stream_out')
@@ -373,12 +373,12 @@ uses
                 continue
 
             high_level_callback_data_variables += \
-                '    {0}HighLevelCallbackState: T{1}HighLevelCallbackState;\n'.format(packet.get_headless_camel_case_name(skip=-2),
-                                                                                      packet.get_camel_case_name(skip=-2))
+                '    {0}HighLevelCallbackState: T{1}HighLevelCallbackState;\n'.format(packet.get_name(skip=-2).headless,
+                                                                                      packet.get_name(skip=-2).camel)
 
-            props.append(prop.format(packet.get_camel_case_name(skip=-2),
+            props.append(prop.format(packet.get_name(skip=-2).camel,
                                      self.get_delphi_class_name(),
-                                     packet.get_headless_camel_case_name(skip=-2),
+                                     packet.get_name(skip=-2).headless,
                                      doc))
 
         if self.get_long_display_name() == 'RS232 Bricklet':
@@ -444,9 +444,9 @@ begin
                 flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
             response_expected += '  responseExpected[{0}_{1}_FUNCTION_{2}] := {3};\n' \
-                                 .format(self.get_upper_case_category(),
-                                         self.get_upper_case_name(),
-                                         packet.get_upper_case_name(),
+                                 .format(self.get_category().upper,
+                                         self.get_name().upper,
+                                         packet.get_name().upper,
                                          flag)
 
         if len(response_expected) > 0:
@@ -465,7 +465,7 @@ begin
             high_level_callback_state += \
                 '  SetLength({0}HighLevelCallbackState.data, 0);\n\
   {0}HighLevelCallbackState.data := nil;\n\
-  {0}HighLevelCallbackState.length := 0;\n\n'.format(packet.get_headless_camel_case_name(skip=-2))
+  {0}HighLevelCallbackState.length := 0;\n\n'.format(packet.get_name(skip=-2).headless)
 
         return con.format(self.get_delphi_class_name(),
                           *self.get_api_version()) + response_expected + stream_mutex + high_level_callback_state
@@ -475,10 +475,10 @@ begin
         template = '  callbackWrappers[{0}_{1}_CALLBACK_{2}] := {{$ifdef FPC}}@{{$endif}}CallbackWrapper{3};\n'
 
         for packet in self.get_packets('callback'):
-            callbacks += template.format(self.get_upper_case_category(),
-                                         self.get_upper_case_name(),
-                                         packet.get_upper_case_name(),
-                                         packet.get_camel_case_name())
+            callbacks += template.format(self.get_category().upper,
+                                         self.get_name().upper,
+                                         packet.get_name().upper,
+                                         packet.get_name().camel)
 
         return callbacks + 'end;\n\n'
 
@@ -505,23 +505,23 @@ begin
 
                         if role.endswith('data'):
                             if e.get_cardinality() > 1:
-                                e_param = 'const ' + stream_in.get_headless_camel_case_name() + ': array of ' + e.get_delphi_type()[0]
+                                e_param = 'const ' + stream_in.get_name().headless + ': array of ' + e.get_delphi_type()[0]
                             else:
-                                e_param = 'const ' + stream_in.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                                e_param = 'const ' + stream_in.get_name().headless + ': ' + e.get_delphi_type()[0]
                     else:
                         if e.get_cardinality() > 1:
-                            e_param = 'const ' + e.get_headless_camel_case_name() + ': array of ' + e.get_delphi_type()[0]
+                            e_param = 'const ' + e.get_name().headless + ': array of ' + e.get_delphi_type()[0]
                         else:
-                            e_param = 'const ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                            e_param = 'const ' + e.get_name().headless + ': ' + e.get_delphi_type()[0]
             else:
                 if e.get_direction() == 'out':
                     if role and role.endswith('written'):
-                        e_param = 'out ' + stream_in.get_headless_camel_case_name() + 'Written: word'
+                        e_param = 'out ' + stream_in.get_name().headless + 'Written: word'
                     else:
                         if e.get_cardinality() > 1:
-                            e_param = 'out ' + e.get_headless_camel_case_name() + ': array of ' + e.get_delphi_type()[0]
+                            e_param = 'out ' + e.get_name().headless + ': array of ' + e.get_delphi_type()[0]
                         else:
-                            e_param = 'out ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                            e_param = 'out ' + e.get_name().headless + ': ' + e.get_delphi_type()[0]
                 elif e.get_direction() == 'in':
                     if role:
                         if stream_in.has_short_write() and role.endswith('length'):
@@ -529,14 +529,14 @@ begin
 
                         if role.endswith('data'):
                             if e.get_cardinality() > 1:
-                                e_param = 'const ' + stream_in.get_headless_camel_case_name() + ': array of ' + e.get_delphi_type()[0]
+                                e_param = 'const ' + stream_in.get_name().headless + ': array of ' + e.get_delphi_type()[0]
                             else:
-                                e_param = 'const ' + stream_in.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                                e_param = 'const ' + stream_in.get_name().headless + ': ' + e.get_delphi_type()[0]
                     else:
                         if e.get_cardinality() > 1:
-                            e_param = 'const ' + e.get_headless_camel_case_name() + ': array of ' + e.get_delphi_type()[0]
+                            e_param = 'const ' + e.get_name().headless + ': array of ' + e.get_delphi_type()[0]
                         else:
-                            e_param = 'const ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                            e_param = 'const ' + e.get_name().headless + ': ' + e.get_delphi_type()[0]
 
         elif stream_out:
             if output_count == 1:
@@ -545,27 +545,27 @@ begin
 
                 if e.get_direction() == 'in':
                     if e.get_cardinality() > 1:
-                        e_param = 'const ' + e.get_headless_camel_case_name() + ': TArrayOf' + e.get_delphi_type()[1]
+                        e_param = 'const ' + e.get_name().headless + ': TArrayOf' + e.get_delphi_type()[1]
                     else:
-                        e_param = 'const ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                        e_param = 'const ' + e.get_name().headless + ': ' + e.get_delphi_type()[0]
             else:
                 if e.get_direction() == 'out':
                     if role:
                         if role.endswith('data'):
                             if e.get_cardinality() > 1:
-                                e_param = 'out ' + stream_out.get_headless_camel_case_name() + ': TArrayOf' + e.get_delphi_type()[1]
+                                e_param = 'out ' + stream_out.get_name().headless + ': TArrayOf' + e.get_delphi_type()[1]
                             else:
-                                e_param = 'out ' + stream_out.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                                e_param = 'out ' + stream_out.get_name().headless + ': ' + e.get_delphi_type()[0]
                     else:
                         if e.get_cardinality() > 1:
-                            e_param = 'out ' + e.get_headless_camel_case_name() + ': TArrayOf' + e.get_delphi_type()[1]
+                            e_param = 'out ' + e.get_name().headless + ': TArrayOf' + e.get_delphi_type()[1]
                         else:
-                            e_param = 'out ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                            e_param = 'out ' + e.get_name().headless + ': ' + e.get_delphi_type()[0]
                 elif e.get_direction() == 'in':
                     if e.get_cardinality() > 1:
-                        e_param = 'const ' + e.get_headless_camel_case_name() + ': TArrayOf' + e.get_delphi_type()[1]
+                        e_param = 'const ' + e.get_name().headless + ': TArrayOf' + e.get_delphi_type()[1]
                     else:
-                        e_param = 'const ' + e.get_headless_camel_case_name() + ': ' + e.get_delphi_type()[0]
+                        e_param = 'const ' + e.get_name().headless + ': ' + e.get_delphi_type()[0]
 
         return ret_type, e_param
 
@@ -577,13 +577,13 @@ begin
 
         for packet in self.get_packets('function'):
             output_count = 0
-            name = packet.get_camel_case_name()
+            name = packet.get_name().camel
             ret_type = packet.get_delphi_return_type(False)
             out_count = len(packet.get_elements(direction='out'))
             params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters(False)), ')')
-            function_id = '{0}_{1}_FUNCTION_{2}'.format(self.get_upper_case_category(),
-                                                        self.get_upper_case_name(),
-                                                        packet.get_upper_case_name())
+            function_id = '{0}_{1}_FUNCTION_{2}'.format(self.get_category().upper,
+                                                        self.get_name().upper,
+                                                        packet.get_name().upper)
 
             for e in packet.get_elements():
                 if e.get_direction() != 'out':
@@ -613,7 +613,7 @@ begin
 
             for element in packet.get_elements():
                 if element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    method += ' {0}Bits: array [0..{1}] of byte;'.format(element.get_headless_camel_case_name(),
+                    method += ' {0}Bits: array [0..{1}] of byte;'.format(element.get_name().headless,
                                                                          int(math.ceil(element.get_cardinality() / 8.0) - 1))
 
             method += '\n'
@@ -630,26 +630,26 @@ begin
 
             for element in packet.get_elements(direction='in'):
                 if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_type() != 'bool':
-                    prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_headless_camel_case_name())
+                    prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_name().headless)
                     method += '  {0}LEConvert{1}To({2}[i], {3} + (i * {4}), request);\n'.format(prefix,
                                                                                                 element.get_delphi_le_convert_type(),
-                                                                                                element.get_headless_camel_case_name(),
+                                                                                                element.get_name().headless,
                                                                                                 offset,
                                                                                                 element.get_item_size())
                 elif element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    method += method_bool_array_fmt.format(element.get_headless_camel_case_name() + 'Bits',
+                    method += method_bool_array_fmt.format(element.get_name().headless + 'Bits',
                                                            element.get_cardinality() - 1,
-                                                           element.get_headless_camel_case_name(),
+                                                           element.get_name().headless,
                                                            str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
                                                            offset)
                 elif element.get_type() == 'string':
-                    method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(element.get_headless_camel_case_name(),
+                    method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(element.get_name().headless,
                                                                                       offset,
                                                                                       element.get_cardinality())
 
                 else:
                     method += '  LEConvert{0}To({1}, {2}, request);\n'.format(element.get_delphi_le_convert_type(),
-                                                                              element.get_headless_camel_case_name(),
+                                                                              element.get_name().headless,
                                                                               offset)
 
                 offset += element.get_size()
@@ -669,7 +669,7 @@ begin
 
             for element in packet.get_elements(direction='out'):
                 if out_count > 1:
-                    result = element.get_headless_camel_case_name()
+                    result = element.get_name().headless
                 else:
                     result = 'result'
 
@@ -681,11 +681,11 @@ begin
                                                                                                      offset,
                                                                                                      element.get_item_size())
                 elif element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    method += method_bool_array_fmt.format(element.get_headless_camel_case_name() + 'Bits',
+                    method += method_bool_array_fmt.format(element.get_name().headless + 'Bits',
                                                            str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
                                                            offset,
                                                            element.get_cardinality() - 1,
-                                                           element.get_headless_camel_case_name())
+                                                           element.get_name().headless)
                 elif element.get_type() == 'string':
                     method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
                                                                                            offset,
@@ -704,37 +704,37 @@ begin
             if packet.has_high_level():
                 # Following templates are used to ultimately
                 # get "ll_function_call" and "ll_function_written_inc".
-                template_ll_function_call_no_or_more_output_stream_in = """{camel_case_name}LowLevel({parameters_low_level});"""
-                template_ll_function_call_one_output_written_stream_in = """{current_written_value_variable} := {camel_case_name}LowLevel({parameters_low_level});"""
+                template_ll_function_call_no_or_more_output_stream_in = """{camel_name}LowLevel({parameters_low_level});"""
+                template_ll_function_call_one_output_written_stream_in = """{current_written_value_variable} := {camel_name}LowLevel({parameters_low_level});"""
                 template_ll_function_call_inc_written_stream_in = """Inc({accumulated_written_value_variable}, {current_written_value_variable});"""
 
                 template_high_level_stream_in = """{method_signature}var
-  {stream_headless_camel_case_name}ChunkOffset: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
-  {stream_headless_camel_case_name}Length: {stream_length_type};{ll_function_call_define_current_written_variables}
+  {stream_name_headless}ChunkOffset: {stream_length_type};
+  {stream_name_headless}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  {stream_name_headless}ChunkLength: {stream_length_type};
+  {stream_name_headless}Length: {stream_length_type};{ll_function_call_define_current_written_variables}
 begin
-  if (Length({stream_headless_camel_case_name}) > {stream_max_length}) then begin
-    raise EInvalidParameterException.Create('{stream_name} can be at most {stream_max_length} items long');
+  if (Length({stream_name_headless}) > {stream_max_length}) then begin
+    raise EInvalidParameterException.Create('{stream_name_space} can be at most {stream_max_length} items long');
   end;
 
-  {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
-  {stream_headless_camel_case_name}ChunkOffset := 0;{ll_function_call_init_written_variables}
+  {stream_name_headless}Length := Length({stream_name_headless});
+  {stream_name_headless}ChunkOffset := 0;{ll_function_call_init_written_variables}
 
-  if ({stream_headless_camel_case_name}Length = 0) then begin
-    FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);{ll_function_call_zero}
+  if ({stream_name_headless}Length = 0) then begin
+    FillChar({stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);{ll_function_call_zero}
   end
   else begin
     streamMutex.Acquire;
     try
-      while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length) do begin
-        {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
+      while ({stream_name_headless}ChunkOffset < {stream_name_headless}Length) do begin
+        {stream_name_headless}ChunkLength := {stream_name_headless}Length - {stream_name_headless}ChunkOffset;
 
-        if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+        if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then {stream_name_headless}ChunkLength := {chunk_cardinality};
 
-        FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-        Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);{ll_function_call}
-        Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
+        FillChar({stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
+        Move({stream_name_headless}[Low({stream_name_headless}) + {stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}
+        Inc({stream_name_headless}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
       end;
     finally
       streamMutex.Release;
@@ -745,30 +745,30 @@ end;
 """
 
                 template_high_level_stream_in_fixed_length = """{method_signature}var
-  {stream_headless_camel_case_name}ChunkOffset: word;
-  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  {stream_headless_camel_case_name}ChunkLength: word;
-  {stream_headless_camel_case_name}Length: {stream_length_type};{ll_function_call_define_current_written_variables}
+  {stream_name_headless}ChunkOffset: word;
+  {stream_name_headless}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  {stream_name_headless}ChunkLength: word;
+  {stream_name_headless}Length: {stream_length_type};{ll_function_call_define_current_written_variables}
 begin
-  {stream_headless_camel_case_name}Length := {fixed_length};
-  {stream_headless_camel_case_name}ChunkOffset := 0;{ll_function_call_init_written_variables}
+  {stream_name_headless}Length := {fixed_length};
+  {stream_name_headless}ChunkOffset := 0;{ll_function_call_init_written_variables}
 
-  if (Length({stream_headless_camel_case_name}) <> {stream_headless_camel_case_name}Length) then begin
-    raise EInvalidParameterException.Create(Format('{stream_name} has to be exactly %d items long', [{stream_headless_camel_case_name}Length]));
+  if (Length({stream_name_headless}) <> {stream_name_headless}Length) then begin
+    raise EInvalidParameterException.Create(Format('{stream_name_space} has to be exactly %d items long', [{stream_name_headless}Length]));
   end;
 
   streamMutex.Acquire;
   try
-    while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length) do begin
-      {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
+    while ({stream_name_headless}ChunkOffset < {stream_name_headless}Length) do begin
+      {stream_name_headless}ChunkLength := {stream_name_headless}Length - {stream_name_headless}ChunkOffset;
 
-      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then begin
-        {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+      if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then begin
+        {stream_name_headless}ChunkLength := {chunk_cardinality};
       end;
 
-      FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-      Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);{ll_function_call}
-      Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
+      FillChar({stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
+      Move({stream_name_headless}[Low({stream_name_headless}) + {stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}
+      Inc({stream_name_headless}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
     end;
   finally
     streamMutex.Release;
@@ -778,35 +778,35 @@ end;
 """
 
                 template_high_level_stream_in_short_write = """{method_signature}var
-  {stream_headless_camel_case_name}Length: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkOffset: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};{ll_function_call_define_current_written_variables}
+  {stream_name_headless}Length: {stream_length_type};
+  {stream_name_headless}ChunkOffset: {stream_length_type};
+  {stream_name_headless}ChunkLength: {stream_length_type};
+  {stream_name_headless}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};{ll_function_call_define_current_written_variables}
 begin
-  if (Length({stream_headless_camel_case_name}) > {stream_max_length}) then begin
-    raise EInvalidParameterException.Create('{stream_name} can be at most {stream_max_length} items long');
+  if (Length({stream_name_headless}) > {stream_max_length}) then begin
+    raise EInvalidParameterException.Create('{stream_name_space} can be at most {stream_max_length} items long');
   end;
 
-  {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
-  {stream_headless_camel_case_name}ChunkOffset := 0;{ll_function_call_init_written_variables}
+  {stream_name_headless}Length := Length({stream_name_headless});
+  {stream_name_headless}ChunkOffset := 0;{ll_function_call_init_written_variables}
 
-  if ({stream_headless_camel_case_name}Length = 0) then begin
-    FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);{ll_function_call_zero}
+  if ({stream_name_headless}Length = 0) then begin
+    FillChar({stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);{ll_function_call_zero}
   end
   else begin
     streamMutex.Acquire;
     try
-      while ({stream_headless_camel_case_name}ChunkOffset < {stream_headless_camel_case_name}Length) do begin
-        {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
+      while ({stream_name_headless}ChunkOffset < {stream_name_headless}Length) do begin
+        {stream_name_headless}ChunkLength := {stream_name_headless}Length - {stream_name_headless}ChunkOffset;
 
-        if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+        if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then {stream_name_headless}ChunkLength := {chunk_cardinality};
 
-        FillChar({stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-        Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + {stream_headless_camel_case_name}ChunkOffset], {stream_headless_camel_case_name}ChunkData[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);{ll_function_call}{ll_function_written_inc}
+        FillChar({stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
+        Move({stream_name_headless}[Low({stream_name_headless}) + {stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}{ll_function_written_inc}
 
         if ({current_written_value_variable} < {chunk_cardinality}) then break; {{ Either last chunk or short write }}
 
-        Inc({stream_headless_camel_case_name}ChunkOffset, {chunk_cardinality});
+        Inc({stream_name_headless}ChunkOffset, {chunk_cardinality});
       end;
     finally
       streamMutex.Release;
@@ -817,84 +817,84 @@ end;
 """
 
                 template_high_level_stream_in_single_chunk = """{method_signature}var
-  {stream_headless_camel_case_name}Length: byte;
-  {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};{ll_function_call_define_current_written_variables}
+  {stream_name_headless}Length: byte;
+  {stream_name_headless}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};{ll_function_call_define_current_written_variables}
 begin{ll_function_call_init_written_variables}
-  if (Length({stream_headless_camel_case_name}) > {chunk_cardinality}) then begin
-    raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
+  if (Length({stream_name_headless}) > {chunk_cardinality}) then begin
+    raise EInvalidParameterException.Create('{stream_name_space} can be at most {chunk_cardinality} items long');
   end;
 
-  {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
+  {stream_name_headless}Length := Length({stream_name_headless});
 
-  FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-  Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}Length);{ll_function_call}{ll_function_written_inc}
+  FillChar({stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
+  Move({stream_name_headless}[Low({stream_name_headless})], {stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {stream_name_headless}Length);{ll_function_call}{ll_function_written_inc}
 end;
 
 """
 
                 template_high_level_stream_in_short_write_single_chunk = """{method_signature}var
-  {stream_headless_camel_case_name}Length: byte;
-  {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};{ll_function_call_define_current_written_variables}
+  {stream_name_headless}Length: byte;
+  {stream_name_headless}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};{ll_function_call_define_current_written_variables}
 begin{ll_function_call_init_written_variables}
 
-  if (Length({stream_headless_camel_case_name}) > {chunk_cardinality}) then begin
-    raise EInvalidParameterException.Create('{stream_name} can be at most {chunk_cardinality} items long');
+  if (Length({stream_name_headless}) > {chunk_cardinality}) then begin
+    raise EInvalidParameterException.Create('{stream_name_space} can be at most {chunk_cardinality} items long');
   end;
 
-  {stream_headless_camel_case_name}Length := Length({stream_headless_camel_case_name});
+  {stream_name_headless}Length := Length({stream_name_headless});
 
-  FillChar({stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-  Move({stream_headless_camel_case_name}[Low({stream_headless_camel_case_name})], {stream_headless_camel_case_name}Data[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}Length);{ll_function_call}{ll_function_written_inc}
+  FillChar({stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
+  Move({stream_name_headless}[Low({stream_name_headless})], {stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {stream_name_headless}Length);{ll_function_call}{ll_function_written_inc}
 end;
 
 """
 
                 template_stream_out_chunk_offset_check = """
 
-  if ({stream_headless_camel_case_name}ChunkOffset = {chunk_max_offset}) then exit; {{ Maximum chunk offset -> stream has no data }}"""
+  if ({stream_name_headless}ChunkOffset = {chunk_max_offset}) then exit; {{ Maximum chunk offset -> stream has no data }}"""
 
                 template_high_level_stream_out = """{method_signature}var
   streamOutCurrentLength: integer;
-  {stream_headless_camel_case_name}Length: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkOffset: {stream_length_type};
-  {stream_headless_camel_case_name}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
-  {stream_headless_camel_case_name}OutOfSync: boolean;
-  {stream_headless_camel_case_name}ChunkLength: {stream_length_type};
+  {stream_name_headless}Length: {stream_length_type};
+  {stream_name_headless}ChunkOffset: {stream_length_type};
+  {stream_name_headless}ChunkData: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  {stream_name_headless}OutOfSync: boolean;
+  {stream_name_headless}ChunkLength: {stream_length_type};
 begin
   streamMutex.Acquire;
   try
     streamOutCurrentLength := 0;
-    {stream_headless_camel_case_name}Length := {fixed_length};
-    {camel_case_name}LowLevel({parameters_low_level});
-    if ({stream_headless_camel_case_name}Length <= 0) then exit;{chunk_offset_check}
-    {stream_headless_camel_case_name}OutOfSync := ({stream_headless_camel_case_name}ChunkOffset <> 0);
+    {stream_name_headless}Length := {fixed_length};
+    {camel_name}LowLevel({parameters_low_level});
+    if ({stream_name_headless}Length <= 0) then exit;{chunk_offset_check}
+    {stream_name_headless}OutOfSync := ({stream_name_headless}ChunkOffset <> 0);
 
-    if not {stream_headless_camel_case_name}OutOfSync then begin
-      SetLength({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Length);
-      {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
-      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
-      Move({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + streamOutCurrentLength], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-      streamOutCurrentLength := {stream_headless_camel_case_name}ChunkLength;
+    if not {stream_name_headless}OutOfSync then begin
+      SetLength({stream_name_headless}, {stream_name_headless}Length);
+      {stream_name_headless}ChunkLength := {stream_name_headless}Length - {stream_name_headless}ChunkOffset;
+      if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then {stream_name_headless}ChunkLength := {chunk_cardinality};
+      Move({stream_name_headless}ChunkData, {stream_name_headless}[Low({stream_name_headless}) + streamOutCurrentLength], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);
+      streamOutCurrentLength := {stream_name_headless}ChunkLength;
 
-      while (streamOutCurrentLength < {stream_headless_camel_case_name}Length) do begin
-        {camel_case_name}LowLevel({parameters_low_level});
-        if ({stream_headless_camel_case_name}Length <= 0) then exit;
-        {stream_headless_camel_case_name}OutOfSync := {stream_headless_camel_case_name}ChunkOffset <> streamOutCurrentLength;
-        if ({stream_headless_camel_case_name}OutOfSync) then break;
-        {stream_headless_camel_case_name}ChunkLength := {stream_headless_camel_case_name}Length - {stream_headless_camel_case_name}ChunkOffset;
-        if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
-        Move({stream_headless_camel_case_name}ChunkData, {stream_headless_camel_case_name}[Low({stream_headless_camel_case_name}) + streamOutCurrentLength], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-        Inc(streamOutCurrentLength, {stream_headless_camel_case_name}ChunkLength);
+      while (streamOutCurrentLength < {stream_name_headless}Length) do begin
+        {camel_name}LowLevel({parameters_low_level});
+        if ({stream_name_headless}Length <= 0) then exit;
+        {stream_name_headless}OutOfSync := {stream_name_headless}ChunkOffset <> streamOutCurrentLength;
+        if ({stream_name_headless}OutOfSync) then break;
+        {stream_name_headless}ChunkLength := {stream_name_headless}Length - {stream_name_headless}ChunkOffset;
+        if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then {stream_name_headless}ChunkLength := {chunk_cardinality};
+        Move({stream_name_headless}ChunkData, {stream_name_headless}[Low({stream_name_headless}) + streamOutCurrentLength], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);
+        Inc(streamOutCurrentLength, {stream_name_headless}ChunkLength);
       end;
     end;
 
-    if ({stream_headless_camel_case_name}OutOfSync) then begin
+    if ({stream_name_headless}OutOfSync) then begin
       {{ Discard remaining stream to bring it back in-sync }}
-      SetLength({stream_headless_camel_case_name}, 0);
+      SetLength({stream_name_headless}, 0);
 
-      while ({stream_headless_camel_case_name}ChunkOffset + {chunk_cardinality} < {stream_headless_camel_case_name}Length) do begin
-        {camel_case_name}LowLevel({parameters_low_level});
-        if ({stream_headless_camel_case_name}Length <= 0) then break;
+      while ({stream_name_headless}ChunkOffset + {chunk_cardinality} < {stream_name_headless}Length) do begin
+        {camel_name}LowLevel({parameters_low_level});
+        if ({stream_name_headless}Length <= 0) then break;
       end;
 
       raise EStreamOutOfSyncException.Create('Stream out-of-sync');
@@ -907,14 +907,14 @@ end;
 """
 
                 template_high_level_stream_out_single_chunk = """{method_signature}var
-  {stream_headless_camel_case_name}Length: {stream_length_type};
-  {stream_headless_camel_case_name}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
+  {stream_name_headless}Length: {stream_length_type};
+  {stream_name_headless}Data: TArray0To{chunk_cardinality_minus_1}Of{chunk_data_type_capitalized};
 begin
   streamMutex.Acquire;
   try
-    {camel_case_name}LowLevel({parameters_low_level});
-    SetLength({stream_headless_camel_case_name}, {stream_headless_camel_case_name}Length);
-    Move({stream_headless_camel_case_name}Data, {stream_headless_camel_case_name}[0], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}Length);
+    {camel_name}LowLevel({parameters_low_level});
+    SetLength({stream_name_headless}, {stream_name_headless}Length);
+    Move({stream_name_headless}Data, {stream_name_headless}[0], SizeOf({chunk_data_type}) * {stream_name_headless}Length);
   finally
     streamMutex.Release;
   end;
@@ -941,15 +941,15 @@ end;
                 single_output_stream_in = False
                 chunk_data_type_capitalized = ''
                 current_written_value_variable = ''
-                stream_headless_camel_case_name = ''
+                stream_name_headless = ''
                 accumulated_written_value_variable = ''
                 written_with_multi_output_stream_in = False
                 written_with_single_output_stream_in = False
                 ll_function_call_init_written_variables = ''
                 stream_in = packet.get_high_level('stream_in')
                 stream_out = packet.get_high_level('stream_out')
-                camel_case_name = packet.get_camel_case_name(skip=-2)
-                name_high_level = packet.get_camel_case_name(skip=-2)
+                camel_name = packet.get_name(skip=-2).camel
+                name_high_level = packet.get_name(skip=-2).camel
                 ll_function_call_define_current_written_variables = ''
 
                 for e in packet.get_elements():
@@ -994,20 +994,20 @@ end;
 
                     if stream_in:
                         if no_output_stream_in:
-                            parameters_low_level.append(e.get_headless_camel_case_name())
+                            parameters_low_level.append(e.get_name().headless)
                         elif single_output_stream_in:
                             if e.get_direction() != 'out':
-                                parameters_low_level.append(e.get_headless_camel_case_name())
+                                parameters_low_level.append(e.get_name().headless)
                         elif multi_output_stream_in:
                             if written_with_multi_output_stream_in and \
                                e.get_direction() == 'out' and \
                                role and \
                                role.endswith('written'):
-                                    parameters_low_level.append(stream_in.get_headless_camel_case_name() + 'ChunkWritten')
+                                    parameters_low_level.append(stream_in.get_name().headless + 'ChunkWritten')
                             else:
-                                parameters_low_level.append(e.get_headless_camel_case_name())
+                                parameters_low_level.append(e.get_name().headless)
                     else:
-                        parameters_low_level.append(e.get_headless_camel_case_name())
+                        parameters_low_level.append(e.get_name().headless)
 
                     ret_type, e_param = self.get_high_level_method_parameter(e,
                                                                              ret_type,
@@ -1025,17 +1025,17 @@ end;
                         chunk_data_type_capitalized = e.get_delphi_type()[1]
 
                         if e.get_direction() == 'out':
-                            stream_name = stream_out.get_name()
-                            stream_headless_camel_case_name = stream_out.get_headless_camel_case_name()
+                            stream_name_space = stream_out.get_name().space
+                            stream_name_headless = stream_out.get_name().headless
                         elif e.get_direction() == 'in':
-                            stream_name = stream_in.get_name()
-                            stream_headless_camel_case_name = stream_in.get_headless_camel_case_name()
+                            stream_name_space = stream_in.get_name().space
+                            stream_name_headless = stream_in.get_name().headless
 
                     if stream_in and e.get_direction() == 'out':
                         if single_output_stream_in:
                             if written_with_single_output_stream_in:
                                 if role and role.endswith('written'):
-                                    current_written_value_variable = stream_headless_camel_case_name + 'ChunkWritten'
+                                    current_written_value_variable = stream_name_headless + 'ChunkWritten'
                                     accumulated_written_value_variable = 'result'
                                     ll_function_call_define_current_written_variables += \
                                         '\n  ' + current_written_value_variable + ': ' + e.get_delphi_type()[0] + ';'
@@ -1047,11 +1047,11 @@ end;
                             if written_with_multi_output_stream_in:
                                 if role and role.endswith('written'):
                                     if stream_in.has_single_chunk():
-                                        current_written_value_variable = stream_headless_camel_case_name + 'ChunkWritten'
+                                        current_written_value_variable = stream_name_headless + 'ChunkWritten'
                                     else:
-                                        current_written_value_variable = e.get_headless_camel_case_name()
+                                        current_written_value_variable = e.get_name().headless
 
-                                    accumulated_written_value_variable = stream_headless_camel_case_name + 'Written'
+                                    accumulated_written_value_variable = stream_name_headless + 'Written'
                                     ll_function_call_define_current_written_variables += \
                                         '\n  ' + current_written_value_variable + ': ' + e.get_delphi_type()[0] + ';'
                                     ll_function_call_init_written_variables += \
@@ -1072,7 +1072,7 @@ end;
                 if no_output_stream_in:
                     ll_function_call_zero = '\n    '
                     ll_function_call_zero += \
-                        template_ll_function_call_no_or_more_output_stream_in.format(camel_case_name = camel_case_name,
+                        template_ll_function_call_no_or_more_output_stream_in.format(camel_name = camel_name,
                                                                                      parameters_low_level = parameters_low_level)
 
                     if stream_in.get_fixed_length():
@@ -1083,7 +1083,7 @@ end;
                         ll_function_call = '\n\n        '
 
                     ll_function_call += \
-                        template_ll_function_call_no_or_more_output_stream_in.format(camel_case_name = camel_case_name,
+                        template_ll_function_call_no_or_more_output_stream_in.format(camel_name = camel_name,
                                                                                      parameters_low_level = parameters_low_level)
 
 
@@ -1094,7 +1094,7 @@ end;
                     ll_function_call_zero = '\n    '
                     ll_function_call_zero += \
                         template_ll_function_call_one_output_written_stream_in.format(current_written_value_variable = accumulated_written_value_variable,
-                                                                                      camel_case_name = camel_case_name,
+                                                                                      camel_name = camel_name,
                                                                                       parameters_low_level = parameters_low_level)
 
                     if stream_in.get_fixed_length():
@@ -1106,7 +1106,7 @@ end;
 
                     ll_function_call += \
                         template_ll_function_call_one_output_written_stream_in.format(current_written_value_variable = current_written_value_variable,
-                                                                                      camel_case_name = camel_case_name,
+                                                                                      camel_name = camel_name,
                                                                                       parameters_low_level = parameters_low_level)
 
                     if written_with_single_output_stream_in:
@@ -1121,7 +1121,7 @@ end;
                 elif multi_output_stream_in:
                     ll_function_call_zero = '\n    '
                     ll_function_call_zero += \
-                        template_ll_function_call_no_or_more_output_stream_in.format(camel_case_name = camel_case_name,
+                        template_ll_function_call_no_or_more_output_stream_in.format(camel_name = camel_name,
                                                                                      parameters_low_level = parameters_low_level)
 
                     if stream_in.get_fixed_length():
@@ -1132,7 +1132,7 @@ end;
                         ll_function_call = '\n\n        '
 
                     ll_function_call += \
-                        template_ll_function_call_no_or_more_output_stream_in.format(camel_case_name = camel_case_name,
+                        template_ll_function_call_no_or_more_output_stream_in.format(camel_name = camel_name,
                                                                                      parameters_low_level = parameters_low_level)
 
                     if written_with_multi_output_stream_in:
@@ -1152,8 +1152,8 @@ end;
 
                     if stream_in.get_fixed_length() != None:
                         method = template_high_level_stream_in_fixed_length.format(method_signature = method_signature,
-                                                                                   stream_name = stream_name,
-                                                                                   stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                   stream_name_space = stream_name_space,
+                                                                                   stream_name_headless = stream_name_headless,
                                                                                    chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                                    chunk_data_type_capitalized = chunk_data_type_capitalized,
                                                                                    stream_length_type = stream_length_type,
@@ -1161,7 +1161,7 @@ end;
                                                                                    stream_max_length = stream_max_length,
                                                                                    chunk_cardinality = chunk_cardinality,
                                                                                    chunk_data_type = chunk_data_type,
-                                                                                   camel_case_name = camel_case_name,
+                                                                                   camel_name = camel_name,
                                                                                    parameters_low_level = parameters_low_level,
                                                                                    ll_function_call_define_current_written_variables = ll_function_call_define_current_written_variables,
                                                                                    ll_function_call_init_written_variables = ll_function_call_init_written_variables,
@@ -1169,14 +1169,14 @@ end;
                                                                                    ll_function_written_inc = ll_function_written_inc)
                     elif stream_in.has_short_write() and stream_in.has_single_chunk():
                         method = template_high_level_stream_in_short_write_single_chunk.format(method_signature = method_signature,
-                                                                                               stream_name = stream_name,
-                                                                                               stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                               stream_name_space = stream_name_space,
+                                                                                               stream_name_headless = stream_name_headless,
                                                                                                chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                                                chunk_data_type_capitalized = chunk_data_type_capitalized,
                                                                                                chunk_cardinality = chunk_cardinality,
                                                                                                stream_max_length = stream_max_length,
                                                                                                chunk_data_type = chunk_data_type,
-                                                                                               camel_case_name = camel_case_name,
+                                                                                               camel_name = camel_name,
                                                                                                parameters_low_level = parameters_low_level,
                                                                                                ll_function_call_define_current_written_variables = ll_function_call_define_current_written_variables,
                                                                                                ll_function_call_init_written_variables = ll_function_call_init_written_variables,
@@ -1184,15 +1184,15 @@ end;
                                                                                                ll_function_written_inc = ll_function_written_inc)
                     elif stream_in.has_short_write():
                         method = template_high_level_stream_in_short_write.format(method_signature = method_signature,
-                                                                                  stream_name = stream_name,
-                                                                                  stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                  stream_name_space = stream_name_space,
+                                                                                  stream_name_headless = stream_name_headless,
                                                                                   stream_length_type = stream_length_type,
                                                                                   chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                                   chunk_data_type_capitalized = chunk_data_type_capitalized,
                                                                                   stream_max_length = stream_max_length,
                                                                                   chunk_cardinality = chunk_cardinality,
                                                                                   chunk_data_type = chunk_data_type,
-                                                                                  camel_case_name = camel_case_name,
+                                                                                  camel_name = camel_name,
                                                                                   parameters_low_level = parameters_low_level,
                                                                                   ll_function_call_define_current_written_variables = ll_function_call_define_current_written_variables,
                                                                                   ll_function_call_init_written_variables = ll_function_call_init_written_variables,
@@ -1202,14 +1202,14 @@ end;
                                                                                   ll_function_written_inc = ll_function_written_inc)
                     elif stream_in.has_single_chunk():
                         method = template_high_level_stream_in_single_chunk.format(method_signature = method_signature,
-                                                                                   stream_name = stream_name,
-                                                                                   stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                   stream_name_space = stream_name_space,
+                                                                                   stream_name_headless = stream_name_headless,
                                                                                    chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                                    chunk_data_type_capitalized = chunk_data_type_capitalized,
                                                                                    chunk_cardinality = chunk_cardinality,
                                                                                    stream_max_length = stream_max_length,
                                                                                    chunk_data_type = chunk_data_type,
-                                                                                   camel_case_name = camel_case_name,
+                                                                                   camel_name = camel_name,
                                                                                    parameters_low_level = parameters_low_level,
                                                                                    ll_function_call_define_current_written_variables = ll_function_call_define_current_written_variables,
                                                                                    ll_function_call_init_written_variables = ll_function_call_init_written_variables,
@@ -1217,15 +1217,15 @@ end;
                                                                                    ll_function_written_inc = ll_function_written_inc)
                     else:
                         method = template_high_level_stream_in.format(method_signature = method_signature,
-                                                                      stream_name = stream_name,
-                                                                      stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                      stream_name_space = stream_name_space,
+                                                                      stream_name_headless = stream_name_headless,
                                                                       stream_length_type = stream_length_type,
                                                                       chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                       chunk_data_type_capitalized = chunk_data_type_capitalized,
                                                                       stream_max_length = stream_max_length,
                                                                       chunk_cardinality = chunk_cardinality,
                                                                       chunk_data_type = chunk_data_type,
-                                                                      camel_case_name = camel_case_name,
+                                                                      camel_name = camel_name,
                                                                       parameters_low_level = parameters_low_level,
                                                                       ll_function_call_define_current_written_variables = ll_function_call_define_current_written_variables,
                                                                       ll_function_call_init_written_variables = ll_function_call_init_written_variables,
@@ -1238,29 +1238,29 @@ end;
                     stream_length_type = self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality()))
 
                     if stream_out.get_fixed_length() != None:
-                        chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_headless_camel_case_name = stream_out.get_headless_camel_case_name(),
+                        chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_name_headless = stream_out.get_name().headless,
                                                                                            chunk_max_offset = str(abs(stream_out.get_data_element().get_cardinality())))
 
                     if stream_out.has_single_chunk():
                         method = template_high_level_stream_out_single_chunk.format(method_signature = method_signature,
-                                                                                    stream_name = stream_name,
-                                                                                    stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                    stream_name_space = stream_name_space,
+                                                                                    stream_name_headless = stream_name_headless,
                                                                                     stream_length_type = stream_length_type,
                                                                                     chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                                     chunk_data_type_capitalized = chunk_data_type_capitalized,
-                                                                                    camel_case_name = camel_case_name,
+                                                                                    camel_name = camel_name,
                                                                                     parameters_low_level = parameters_low_level,
                                                                                     chunk_data_type = chunk_data_type)
                     else:
                         method = template_high_level_stream_out.format(method_signature = method_signature,
-                                                                       stream_name = stream_name,
-                                                                       stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                       stream_name_space = stream_name_space,
+                                                                       stream_name_headless = stream_name_headless,
                                                                        stream_length_type = stream_length_type,
                                                                        chunk_cardinality_minus_1 = chunk_cardinality_minus_1,
                                                                        chunk_data_type = chunk_data_type,
                                                                        chunk_data_type_capitalized = chunk_data_type_capitalized,
                                                                        fixed_length = fixed_length,
-                                                                       camel_case_name = camel_case_name,
+                                                                       camel_name = camel_name,
                                                                        parameters_low_level = parameters_low_level,
                                                                        chunk_offset_check = chunk_offset_check,
                                                                        chunk_cardinality = chunk_cardinality)
@@ -1274,7 +1274,7 @@ end;
 
         for packet in self.get_packets('callback'):
             wrapper = 'procedure {0}.CallbackWrapper{1}(const packet: TByteArray);\n'.format(self.get_delphi_class_name(),
-                                                                                             packet.get_camel_case_name())
+                                                                                             packet.get_name().camel)
 
             variables = []
 
@@ -1291,7 +1291,7 @@ end;
             stream_out = packet.get_high_level('stream_out')
 
             if stream_out != None and not stream_out.has_single_chunk():
-                variables.append('{0}ChunkLength: {1}'.format(stream_out.get_headless_camel_case_name(),
+                variables.append('{0}ChunkLength: {1}'.format(stream_out.get_name().headless,
                                                               self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality()))))
 
             if has_array:
@@ -1299,7 +1299,7 @@ end;
 
             for element in packet.get_elements():
                 if element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    variables.append('{0}Bits: array [0..{1}] of byte'.format(element.get_headless_camel_case_name(),
+                    variables.append('{0}Bits: array [0..{1}] of byte'.format(element.get_name().headless,
                                                                               int(math.ceil(element.get_cardinality() / 8.0) - 1)))
 
             wrapper += common.wrap_non_empty('var ', '; '.join(variables), ';\n')
@@ -1316,12 +1316,12 @@ end;
                 if stream_out:
                     has_high_level_callback = True
                     wrapper += '  if (Assigned({0}Callback) or Assigned({1}Callback)) then begin\n' \
-                               .format(packet.get_headless_camel_case_name(),
-                                       packet.get_headless_camel_case_name(skip=-2))
+                               .format(packet.get_name().headless,
+                                       packet.get_name(skip=-2).headless)
                 else:
-                    wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
+                    wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_name().headless)
             else:
-                wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
+                wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_name().headless)
 
             offset = 8
             parameter_names = []
@@ -1332,32 +1332,32 @@ end;
 '''
 
             for element in packet.get_elements(direction='out'):
-                parameter_names.append(element.get_headless_camel_case_name())
+                parameter_names.append(element.get_name().headless)
 
                 if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_type() != 'bool':
                     prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                     wrapper += '    {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), packet);\n'.format(prefix,
-                                                                                                      element.get_headless_camel_case_name(),
+                                                                                                      element.get_name().headless,
                                                                                                       element.get_delphi_le_convert_type(),
                                                                                                       offset,
                                                                                                       element.get_item_size())
                 elif element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    wrapper += wrapper_bool_array_fmt.format(element.get_headless_camel_case_name() + 'Bits',
+                    wrapper += wrapper_bool_array_fmt.format(element.get_name().headless + 'Bits',
                                                              str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
                                                              offset,
                                                              element.get_cardinality() - 1,
-                                                             element.get_headless_camel_case_name())
+                                                             element.get_name().headless)
                 else:
-                    wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_headless_camel_case_name(),
+                    wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_name().headless,
                                                                                     element.get_delphi_le_convert_type(),
                                                                                     offset)
 
                 offset += element.get_size()
 
             if stream_out != None:
-                wrapper += '\n    if (Assigned({0}Callback)) then begin\n  '.format(packet.get_headless_camel_case_name())
+                wrapper += '\n    if (Assigned({0}Callback)) then begin\n  '.format(packet.get_name().headless)
 
-            wrapper += '    {0}Callback({1});'.format(packet.get_headless_camel_case_name(),
+            wrapper += '    {0}Callback({1});'.format(packet.get_name().headless,
                                                       ', '.join(['self'] + parameter_names))
 
             if stream_out != None:
@@ -1367,16 +1367,16 @@ end;
                 stream_out = packet.get_high_level('stream_out')
 
                 if stream_out:
-                    template_high_level_callback_stream_out = '''      {stream_headless_camel_case_name}ChunkLength := {stream_chunk_length_calc}
-      if ({stream_headless_camel_case_name}ChunkLength > {chunk_cardinality}) then begin
-        {stream_headless_camel_case_name}ChunkLength := {chunk_cardinality};
+                    template_high_level_callback_stream_out = '''      {stream_name_headless}ChunkLength := {stream_chunk_length_calc}
+      if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then begin
+        {stream_name_headless}ChunkLength := {chunk_cardinality};
       end;
 
       if ({high_level_callback_name}HighLevelCallbackState.data = nil) then begin {{ No stream in-progress }}
-        if ({stream_headless_camel_case_name}ChunkOffset = 0) then begin {{ Stream starts }}
+        if ({stream_name_headless}ChunkOffset = 0) then begin {{ Stream starts }}
           SetLength({high_level_callback_name}HighLevelCallbackState.data, {stream_length});
-          Move({stream_headless_camel_case_name}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-          {high_level_callback_name}HighLevelCallbackState.length := {stream_headless_camel_case_name}ChunkLength;
+          Move({stream_name_headless}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);
+          {high_level_callback_name}HighLevelCallbackState.length := {stream_name_headless}ChunkLength;
 
           if ({high_level_callback_name}HighLevelCallbackState.length >= {stream_length}) then begin {{ Stream complete }}
             {high_level_callback_name}Callback({high_level_callback_parameters});
@@ -1387,15 +1387,15 @@ end;
         end;
       end
       else begin {{ Stream in-progress }}
-        if ({stream_headless_camel_case_name}ChunkOffset <> {high_level_callback_name}HighLevelCallbackState.length) then begin {{ Stream out-of-sync }}
+        if ({stream_name_headless}ChunkOffset <> {high_level_callback_name}HighLevelCallbackState.length) then begin {{ Stream out-of-sync }}
           SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
           {high_level_callback_name}HighLevelCallbackState.data := nil;
           {high_level_callback_name}HighLevelCallbackState.length := 0;
           {high_level_callback_name}Callback({high_level_callback_parameters});
         end
         else begin {{ Stream in-sync }}
-          Move({stream_headless_camel_case_name}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], SizeOf({chunk_data_type}) * {stream_headless_camel_case_name}ChunkLength);
-          Inc({high_level_callback_name}HighLevelCallbackState.length, {stream_headless_camel_case_name}ChunkLength);
+          Move({stream_name_headless}ChunkData[0], {high_level_callback_name}HighLevelCallbackState.data[{high_level_callback_name}HighLevelCallbackState.length], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);
+          Inc({high_level_callback_name}HighLevelCallbackState.length, {stream_name_headless}ChunkLength);
 
           if {high_level_callback_name}HighLevelCallbackState.length >= {stream_length} then begin {{ Stream complete }}
             {high_level_callback_name}Callback({high_level_callback_parameters});
@@ -1408,7 +1408,7 @@ end;
 '''
 
                     template_high_level_callback_stream_out_single_chunk = '''      SetLength({high_level_callback_name}HighLevelCallbackState.data, {stream_length});
-      Move({stream_headless_camel_case_name}Data[0], {high_level_callback_name}HighLevelCallbackState.data[0], SizeOf({chunk_data_type}) * {stream_length});
+      Move({stream_name_headless}Data[0], {high_level_callback_name}HighLevelCallbackState.data[0], SizeOf({chunk_data_type}) * {stream_length});
       {high_level_callback_name}Callback({high_level_callback_parameters});
       SetLength({high_level_callback_name}HighLevelCallbackState.data, 0);
       {high_level_callback_name}HighLevelCallbackState.data := nil;
@@ -1416,35 +1416,35 @@ end;
 '''
 
                     high_level_callback_parameters = ['self']
-                    high_level_callback_name = packet.get_headless_camel_case_name(skip=-2)
+                    high_level_callback_name = packet.get_name(skip=-2).headless
 
                     for element in packet.get_elements(direction='out'):
                         role = element.get_role()
 
                         if not role:
-                            high_level_callback_parameters.append(element.get_headless_camel_case_name())
+                            high_level_callback_parameters.append(element.get_name().headless)
                             continue
 
                         if role.endswith('data'):
                             chunk_data_type = element.get_delphi_type()[0]
                             chunk_cardinality = element.get_cardinality()
-                            stream_headless_camel_case_name = stream_out.get_headless_camel_case_name()
+                            stream_name_headless = stream_out.get_name().headless
 
                             if stream_out.get_fixed_length():
                                 stream_length = '{0}'.format(str(stream_out.get_fixed_length()))
                             else:
-                                stream_length = '{0}Length'.format(stream_headless_camel_case_name)
+                                stream_length = '{0}Length'.format(stream_name_headless)
 
                             high_level_callback_parameters.append('{0}HighLevelCallbackState.data'.format(high_level_callback_name))
 
                     if not stream_out.has_single_chunk():
                         if stream_out.get_fixed_length():
-                            stream_chunk_length_calc = str(stream_out.get_fixed_length()) + ' - ' + stream_headless_camel_case_name + 'ChunkOffset;'
+                            stream_chunk_length_calc = str(stream_out.get_fixed_length()) + ' - ' + stream_name_headless + 'ChunkOffset;'
                         else:
-                            stream_chunk_length_calc = stream_headless_camel_case_name + 'Length - ' + stream_headless_camel_case_name + 'ChunkOffset;'
+                            stream_chunk_length_calc = stream_name_headless + 'Length - ' + stream_name_headless + 'ChunkOffset;'
 
                         wrapper_code = \
-                            template_high_level_callback_stream_out.format(stream_headless_camel_case_name = stream_headless_camel_case_name,
+                            template_high_level_callback_stream_out.format(stream_name_headless = stream_name_headless,
                                                                            stream_chunk_length_calc = stream_chunk_length_calc,
                                                                            chunk_cardinality = chunk_cardinality,
                                                                            high_level_callback_name = high_level_callback_name,
@@ -1455,11 +1455,11 @@ end;
                         wrapper_code = \
                             template_high_level_callback_stream_out_single_chunk.format(high_level_callback_name = high_level_callback_name,
                                                                                         stream_length = stream_length,
-                                                                                        stream_headless_camel_case_name = stream_headless_camel_case_name,
+                                                                                        stream_name_headless = stream_name_headless,
                                                                                         chunk_data_type = chunk_data_type,
                                                                                         high_level_callback_parameters = ', '.join(high_level_callback_parameters))
 
-                    wrapper += '\n\n    if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name(skip=-2))
+                    wrapper += '\n\n    if (Assigned({0}Callback)) then begin\n'.format(packet.get_name(skip=-2).headless)
                     wrapper += wrapper_code
                     wrapper += '    end;\n'
                     wrapper += '  end;\n'
@@ -1560,12 +1560,12 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         return '\n    ///  '.join(text.strip().split('\n'))
 
 class DelphiBindingsElement(delphi_common.DelphiElement):
-    def _get_name(self): # for NameMixin
-        name = common.Element._get_name(self)
+    def get_name(self, *args, **kwargs):
+        name = common.Element.get_name(self, *args, **kwargs)
 
         # avoid keywords
-        if name.lower() in ['length', 'unit', 'type', 'message']:
-            name += '2'
+        if name.lower in ['length', 'unit', 'type', 'message']:
+            name = common.Element.get_name(self, *args, suffix='2', **kwargs)
 
         return name
 
@@ -1586,7 +1586,7 @@ class DelphiBindingsGenerator(common.BindingsGenerator):
         return DelphiBindingsElement
 
     def generate(self, device):
-        filename = '{0}{1}.pas'.format(device.get_camel_case_category(), device.get_camel_case_name())
+        filename = '{0}{1}.pas'.format(device.get_category().camel, device.get_name().camel)
 
         with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_delphi_source())

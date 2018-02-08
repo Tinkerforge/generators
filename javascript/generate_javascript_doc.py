@@ -36,10 +36,10 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':javascript:attr:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(packet.get_device().get_javascript_class_name(),
-                                                                                   packet.get_upper_case_name(skip=-2 if high_level else 0))
+                                                                                   packet.get_name(skip=-2 if high_level else 0).upper)
             else:
                 return ':javascript:func:`{1}() <{0}.{1}>`'.format(packet.get_device().get_javascript_class_name(),
-                                                                   packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
+                                                                   packet.get_name(skip=-2 if high_level else 0).headless)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='javascript')
 
@@ -47,10 +47,10 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
         def title_from_filename(filename):
             if filename.endswith('.js'):
                 filename = filename.replace('Example', '').replace('.js', '')
-                return common.camel_case_to_space(filename) + ' (Node.js)'
+                return common.camel_to_space(filename) + ' (Node.js)'
             elif filename.endswith('.html'):
                 filename = filename.replace('Example', '').replace('.html', '')
-                return common.camel_case_to_space(filename) + ' (HTML)'
+                return common.camel_to_space(filename) + ' (HTML)'
             else:
                 raise common.GeneratorError('Invalid filename ' + filename)
 
@@ -73,7 +73,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != typ:
                 continue
-            name = packet.get_headless_camel_case_name()
+            name = packet.get_name().headless
             params = packet.get_javascript_parameter_list()
             pd = packet.get_javascript_parameter_desc('in')
             r = packet.get_javascript_return_desc()
@@ -124,7 +124,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
             func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                           cls,
-                                                          packet.get_upper_case_name(),
+                                                          packet.get_name().upper,
                                                           param_desc,
                                                           desc)
             cbs += func + '\n'
@@ -356,7 +356,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_javascript_class_name(),
-                                                    self.get_headless_camel_case_name())
+                                                    self.get_name().headless)
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
                                                       self.get_javascript_class_name())
 
@@ -373,7 +373,7 @@ Konstanten
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_javascript_class_name(),
-                                                        self.get_headless_camel_case_name(),
+                                                        self.get_name().headless,
                                                         c)
 
         article = 'ein'
@@ -409,7 +409,8 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_javascript_class_name() + '.'
-        if self.get_underscore_name() == 'set_response_expected':
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
             text += common.format_constants(prefix, self)
@@ -424,7 +425,7 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
 
         for element in self.get_elements(direction=io):
             t = element.get_javascript_type()
-            desc += param.format(element.get_headless_camel_case_name(), t)
+            desc += param.format(element.get_name().headless, t)
 
         return desc
 
@@ -434,7 +435,7 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
 
         for element in self.get_elements(direction='out'):
             t = element.get_javascript_type()
-            desc.append(param.format(element.get_headless_camel_case_name(), t))
+            desc.append(param.format(element.get_name().headless, t))
 
         if len(desc) == 0:
             return '\n :noreturn: undefined\n'

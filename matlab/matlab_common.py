@@ -110,14 +110,14 @@ LEGACY_TYPE_DEVICES = {
 
 class MATLABDevice(common.Device):
     def get_matlab_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
     def has_matlab_legacy_types(self):
         return self.get_matlab_class_name() in LEGACY_TYPE_DEVICES
 
 class MATLABPacket(common.Packet):
     def get_matlab_object_name(self, high_level=False):
-        name = self.get_camel_case_name(skip=-2 if high_level and self.has_high_level() else 0)
+        name = self.get_name(skip=-2 if high_level and self.has_high_level() else 0).camel
 
         if name.startswith('Get'):
             name = name[3:]
@@ -146,7 +146,7 @@ class MATLABPacket(common.Packet):
                 continue
 
             matlab_type = element.get_matlab_type()
-            name = element.get_headless_camel_case_name()
+            name = element.get_name().headless
 
             if just_types:
                 param.append(matlab_type)

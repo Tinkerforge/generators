@@ -61,7 +61,7 @@ except ValueError:
             if len(packet.get_elements(direction='out')) < 2:
                 continue
 
-            name = packet.get_camel_case_name()
+            name = packet.get_name().camel
             name_tup = name
 
             if name_tup.startswith('Get'):
@@ -70,7 +70,7 @@ except ValueError:
             params = []
 
             for element in packet.get_elements(direction='out'):
-                params.append("'{0}'".format(element.get_underscore_name()))
+                params.append("'{0}'".format(element.get_name().under))
 
             tuples += template.format(name, name_tup, ", ".join(params))
 
@@ -81,7 +81,7 @@ except ValueError:
             if len(packet.get_elements(direction='out', high_level=True)) < 2:
                 continue
 
-            name = packet.get_camel_case_name(skip=-2)
+            name = packet.get_name(skip=-2).camel
             name_tup = name
 
             if name_tup.startswith('Get'):
@@ -90,7 +90,7 @@ except ValueError:
             params = []
 
             for element in packet.get_elements(direction='out', high_level=True):
-                params.append("'{0}'".format(element.get_underscore_name()))
+                params.append("'{0}'".format(element.get_name().under))
 
             tuples += template.format(name, name_tup, ", ".join(params))
 
@@ -118,7 +118,7 @@ class {0}(Device):
         template = '    CALLBACK_{0} = {1}\n'
 
         for packet in self.get_packets('callback'):
-            callback_ids += template.format(packet.get_upper_case_name(), packet.get_function_id())
+            callback_ids += template.format(packet.get_name().upper, packet.get_function_id())
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             callback_ids += '    CALLBACK_READ_CALLBACK = 8 # for backward compatibility\n'
@@ -128,7 +128,7 @@ class {0}(Device):
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
-                callback_ids += template.format(packet.get_upper_case_name(skip=-2), -packet.get_function_id())
+                callback_ids += template.format(packet.get_name(skip=-2).upper, -packet.get_function_id())
 
         return callback_ids
 
@@ -137,12 +137,12 @@ class {0}(Device):
         template = '    FUNCTION_{0} = {1}\n'
 
         for packet in self.get_packets('function'):
-            function_ids += template.format(packet.get_upper_case_name(), packet.get_function_id())
+            function_ids += template.format(packet.get_name().upper, packet.get_function_id())
 
         return function_ids
 
     def get_python_constants(self):
-        constant_format = '    {constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value}\n'
+        constant_format = '    {constant_group_name_upper}_{constant_name_upper} = {constant_value}\n'
 
         return '\n' + self.get_formatted_constants(constant_format)
 
@@ -169,7 +169,7 @@ class {0}(Device):
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
             response_expected += '        self.response_expected[{0}.FUNCTION_{1}] = {0}.{2}\n' \
-                                 .format(self.get_python_class_name(), packet.get_upper_case_name(), flag)
+                                 .format(self.get_python_class_name(), packet.get_name().upper, flag)
 
         return template.format(*self.get_api_version()) + common.wrap_non_empty('', response_expected, '\n')
 
@@ -179,7 +179,7 @@ class {0}(Device):
 
         for packet in self.get_packets('callback'):
             callback_formats += template.format(self.get_python_class_name(),
-                                                packet.get_upper_case_name(),
+                                                packet.get_name().upper,
                                                 packet.get_python_format_list('out'))
 
         return callback_formats + '\n'
@@ -198,7 +198,7 @@ class {0}(Device):
                     roles.append(element.get_role())
 
                 high_level_callbacks += template.format(self.get_python_class_name(),
-                                                        packet.get_upper_case_name(skip=-2),
+                                                        packet.get_name(skip=-2).upper,
                                                         stream.get_fixed_length(),
                                                         stream.has_single_chunk(),
                                                         repr(tuple(roles)))
@@ -232,8 +232,8 @@ class {0}(Device):
 
         # normal and low-level
         for packet in self.get_packets('function'):
-            nb = packet.get_camel_case_name()
-            ns = packet.get_underscore_name()
+            nb = packet.get_name().camel
+            ns = packet.get_name().under
             nh = ns.upper()
             par = packet.get_python_parameters()
             doc = packet.get_python_formatted_doc()
@@ -260,157 +260,157 @@ class {0}(Device):
 
         # high-level
         template_stream_in = """
-    def {underscore_name}(self{high_level_parameters}):
+    def {function_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
         \"\"\"{coercions}
-        if len({stream_underscore_name}) > {stream_max_length}:
-            raise Error(Error.INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long')
+        if len({stream_name_under}) > {stream_max_length}:
+            raise Error(Error.INVALID_PARAMETER, '{stream_name_space} can be at most {stream_max_length} items long')
 
-        {stream_underscore_name}_length = len({stream_underscore_name})
-        {stream_underscore_name}_chunk_offset = 0
+        {stream_name_under}_length = len({stream_name_under})
+        {stream_name_under}_chunk_offset = 0
 
-        if {stream_underscore_name}_length == 0:
-            {stream_underscore_name}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
-            ret = self.{underscore_name}_low_level({parameters})
+        if {stream_name_under}_length == 0:
+            {stream_name_under}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
+            ret = self.{function_name}_low_level({parameters})
         else:
             with self.stream_lock:
-                while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_length:
-                    {stream_underscore_name}_chunk_data = create_chunk_data({stream_underscore_name}, {stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding})
-                    ret = self.{underscore_name}_low_level({parameters})
-                    {stream_underscore_name}_chunk_offset += {chunk_cardinality}
+                while {stream_name_under}_chunk_offset < {stream_name_under}_length:
+                    {stream_name_under}_chunk_data = create_chunk_data({stream_name_under}, {stream_name_under}_chunk_offset, {chunk_cardinality}, {chunk_padding})
+                    ret = self.{function_name}_low_level({parameters})
+                    {stream_name_under}_chunk_offset += {chunk_cardinality}
 {result}
 """
         template_stream_in_fixed_length = """
-    def {underscore_name}(self{high_level_parameters}):
+    def {function_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
         \"\"\"{coercions}
-        {stream_underscore_name}_length = {fixed_length}
-        {stream_underscore_name}_chunk_offset = 0
+        {stream_name_under}_length = {fixed_length}
+        {stream_name_under}_chunk_offset = 0
 
-        if len({stream_underscore_name}) != {stream_underscore_name}_length:
-            raise Error(Error.INVALID_PARAMETER, '{stream_name} has to be exactly {{0}} items long'.format({stream_underscore_name}_length))
+        if len({stream_name_under}) != {stream_name_under}_length:
+            raise Error(Error.INVALID_PARAMETER, '{stream_name_space} has to be exactly {{0}} items long'.format({stream_name_under}_length))
 
         with self.stream_lock:
-            while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_length:
-                {stream_underscore_name}_chunk_data = create_chunk_data({stream_underscore_name}, {stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding})
-                ret = self.{underscore_name}_low_level({parameters})
-                {stream_underscore_name}_chunk_offset += {chunk_cardinality}
+            while {stream_name_under}_chunk_offset < {stream_name_under}_length:
+                {stream_name_under}_chunk_data = create_chunk_data({stream_name_under}, {stream_name_under}_chunk_offset, {chunk_cardinality}, {chunk_padding})
+                ret = self.{function_name}_low_level({parameters})
+                {stream_name_under}_chunk_offset += {chunk_cardinality}
 {result}
 """
         template_stream_in_result = """
         return ret"""
         template_stream_in_namedtuple_result = """
-        return {result_camel_case_name}(*ret)"""
+        return {result_camel_name}(*ret)"""
         template_stream_in_short_write = """
-    def {underscore_name}(self{high_level_parameters}):
+    def {function_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
         \"\"\"{coercions}
-        if len({stream_underscore_name}) > {stream_max_length}:
-            raise Error(Error.INVALID_PARAMETER, '{stream_name} can be at most {stream_max_length} items long')
+        if len({stream_name_under}) > {stream_max_length}:
+            raise Error(Error.INVALID_PARAMETER, '{stream_name_space} can be at most {stream_max_length} items long')
 
-        {stream_underscore_name}_length = len({stream_underscore_name})
-        {stream_underscore_name}_chunk_offset = 0
+        {stream_name_under}_length = len({stream_name_under})
+        {stream_name_under}_chunk_offset = 0
 
-        if {stream_underscore_name}_length == 0:
-            {stream_underscore_name}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
-            ret = self.{underscore_name}_low_level({parameters})
+        if {stream_name_under}_length == 0:
+            {stream_name_under}_chunk_data = [{chunk_padding}] * {chunk_cardinality}
+            ret = self.{function_name}_low_level({parameters})
             {chunk_written_0}
         else:
-            {stream_underscore_name}_written = 0
+            {stream_name_under}_written = 0
 
             with self.stream_lock:
-                while {stream_underscore_name}_chunk_offset < {stream_underscore_name}_length:
-                    {stream_underscore_name}_chunk_data = create_chunk_data({stream_underscore_name}, {stream_underscore_name}_chunk_offset, {chunk_cardinality}, {chunk_padding})
-                    ret = self.{underscore_name}_low_level({parameters})
+                while {stream_name_under}_chunk_offset < {stream_name_under}_length:
+                    {stream_name_under}_chunk_data = create_chunk_data({stream_name_under}, {stream_name_under}_chunk_offset, {chunk_cardinality}, {chunk_padding})
+                    ret = self.{function_name}_low_level({parameters})
                     {chunk_written_n}
 
                     if {chunk_written_test} < {chunk_cardinality}:
                         break # either last chunk or short write
 
-                    {stream_underscore_name}_chunk_offset += {chunk_cardinality}
+                    {stream_name_under}_chunk_offset += {chunk_cardinality}
 {result}
 """
-        template_stream_in_short_write_chunk_written = ['{stream_underscore_name}_written = ret',
-                                                        '{stream_underscore_name}_written += ret',
+        template_stream_in_short_write_chunk_written = ['{stream_name_under}_written = ret',
+                                                        '{stream_name_under}_written += ret',
                                                         'ret']
-        template_stream_in_short_write_namedtuple_chunk_written = ['{stream_underscore_name}_written = ret.{stream_underscore_name}_chunk_written',
-                                                                   '{stream_underscore_name}_written += ret.{stream_underscore_name}_chunk_written',
-                                                                   'ret.{stream_underscore_name}_chunk_written']
+        template_stream_in_short_write_namedtuple_chunk_written = ['{stream_name_under}_written = ret.{stream_name_under}_chunk_written',
+                                                                   '{stream_name_under}_written += ret.{stream_name_under}_chunk_written',
+                                                                   'ret.{stream_name_under}_chunk_written']
         template_stream_in_short_write_result = """
-        return {stream_underscore_name}_written"""
+        return {stream_name_under}_written"""
         template_stream_in_short_write_namedtuple_result = """
-        return {result_camel_case_name}({result_fields})"""
+        return {result_camel_name}({result_fields})"""
         template_stream_in_single_chunk = """
-    def {underscore_name}(self{high_level_parameters}):
+    def {function_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
         \"\"\"{coercions}
-        {stream_underscore_name} = list({stream_underscore_name}) # make a copy so we can potentially extend it
-        {stream_underscore_name}_length = len({stream_underscore_name})
-        {stream_underscore_name}_data = {stream_underscore_name}
+        {stream_name_under} = list({stream_name_under}) # make a copy so we can potentially extend it
+        {stream_name_under}_length = len({stream_name_under})
+        {stream_name_under}_data = {stream_name_under}
 
-        if {stream_underscore_name}_length > {chunk_cardinality}:
-            raise Error(Error.INVALID_PARAMETER, '{stream_name} can be at most {chunk_cardinality} items long')
+        if {stream_name_under}_length > {chunk_cardinality}:
+            raise Error(Error.INVALID_PARAMETER, '{stream_name_space} can be at most {chunk_cardinality} items long')
 
-        if {stream_underscore_name}_length < {chunk_cardinality}:
-            {stream_underscore_name}_data += [{chunk_padding}] * ({chunk_cardinality} - {stream_underscore_name}_length)
+        if {stream_name_under}_length < {chunk_cardinality}:
+            {stream_name_under}_data += [{chunk_padding}] * ({chunk_cardinality} - {stream_name_under}_length)
 {result}
 """
         template_stream_in_single_chunk_result = """
-        return self.{underscore_name}_low_level({parameters})"""
+        return self.{function_name}_low_level({parameters})"""
         template_stream_in_single_chunk_namedtuple_result = """
-        return {result_camel_case_name}(*self.{underscore_name}_low_level({parameters}))"""
+        return {result_camel_name}(*self.{function_name}_low_level({parameters}))"""
         template_stream_out = """
-    def {underscore_name}(self{high_level_parameters}):
+    def {function_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
         \"\"\"{coercions}{fixed_length}
         with self.stream_lock:
-            ret = self.{underscore_name}_low_level({parameters}){dynamic_length_3}
-            {chunk_offset_check}{stream_underscore_name}_out_of_sync = ret.{stream_underscore_name}_chunk_offset != 0
-            {chunk_offset_check_indent}{stream_underscore_name}_data = ret.{stream_underscore_name}_chunk_data
+            ret = self.{function_name}_low_level({parameters}){dynamic_length_3}
+            {chunk_offset_check}{stream_name_under}_out_of_sync = ret.{stream_name_under}_chunk_offset != 0
+            {chunk_offset_check_indent}{stream_name_under}_data = ret.{stream_name_under}_chunk_data
 
-            while not {stream_underscore_name}_out_of_sync and len({stream_underscore_name}_data) < {stream_underscore_name}_length:
-                ret = self.{underscore_name}_low_level({parameters}){dynamic_length_4}
-                {stream_underscore_name}_out_of_sync = ret.{stream_underscore_name}_chunk_offset != len({stream_underscore_name}_data)
-                {stream_underscore_name}_data += ret.{stream_underscore_name}_chunk_data
+            while not {stream_name_under}_out_of_sync and len({stream_name_under}_data) < {stream_name_under}_length:
+                ret = self.{function_name}_low_level({parameters}){dynamic_length_4}
+                {stream_name_under}_out_of_sync = ret.{stream_name_under}_chunk_offset != len({stream_name_under}_data)
+                {stream_name_under}_data += ret.{stream_name_under}_chunk_data
 
-            if {stream_underscore_name}_out_of_sync: # discard remaining stream to bring it back in-sync
-                while ret.{stream_underscore_name}_chunk_offset + {chunk_cardinality} < {stream_underscore_name}_length:
-                    ret = self.{underscore_name}_low_level({parameters}){dynamic_length_5}
+            if {stream_name_under}_out_of_sync: # discard remaining stream to bring it back in-sync
+                while ret.{stream_name_under}_chunk_offset + {chunk_cardinality} < {stream_name_under}_length:
+                    ret = self.{function_name}_low_level({parameters}){dynamic_length_5}
 
-                raise Error(Error.STREAM_OUT_OF_SYNC, '{stream_name} stream is out-of-sync')
+                raise Error(Error.STREAM_OUT_OF_SYNC, '{stream_name_space} stream is out-of-sync')
 {result}
 """
         template_stream_out_fixed_length = """
-        {stream_underscore_name}_length = {fixed_length}
+        {stream_name_under}_length = {fixed_length}
 """
         template_stream_out_dynamic_length = """
-{{indent}}{stream_underscore_name}_length = ret.{stream_underscore_name}_length"""
+{{indent}}{stream_name_under}_length = ret.{stream_name_under}_length"""
         template_stream_out_chunk_offset_check = """
-            if ret.{stream_underscore_name}_chunk_offset == (1 << {shift_size}) - 1: # maximum chunk offset -> stream has no data
-                {stream_underscore_name}_length = 0
-                {stream_underscore_name}_out_of_sync = False
-                {stream_underscore_name}_data = ()
+            if ret.{stream_name_under}_chunk_offset == (1 << {shift_size}) - 1: # maximum chunk offset -> stream has no data
+                {stream_name_under}_length = 0
+                {stream_name_under}_out_of_sync = False
+                {stream_name_under}_data = ()
             else:
                 """
         template_stream_out_single_chunk = """
-    def {underscore_name}(self{high_level_parameters}):
+    def {function_name}(self{high_level_parameters}):
         \"\"\"
         {doc}
         \"\"\"{coercions}
-        ret = self.{underscore_name}_low_level({parameters})
+        ret = self.{function_name}_low_level({parameters})
 {result}
 """
         template_stream_out_result = """
-        return {stream_underscore_name}_data[:{stream_underscore_name}_length]"""
+        return {stream_name_under}_data[:{stream_name_under}_length]"""
         template_stream_out_single_chunk_result = """
-        return ret.{stream_underscore_name}_data[:ret.{stream_underscore_name}_length]"""
+        return ret.{stream_name_under}_data[:ret.{stream_name_under}_length]"""
         template_stream_out_namedtuple_result = """
-        return {result_camel_case_name}({result_fields})"""
+        return {result_name}({result_fields})"""
 
         for packet in self.get_packets('function'):
             stream_in = packet.get_high_level('stream_in')
@@ -431,35 +431,35 @@ class {0}(Device):
 
                 if stream_in.has_short_write():
                     if len(packet.get_elements(direction='out')) < 2:
-                        chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_n = template_stream_in_short_write_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_test = template_stream_in_short_write_chunk_written[2].format(stream_underscore_name=stream_in.get_underscore_name())
+                        chunk_written_0 = template_stream_in_short_write_chunk_written[0].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_n = template_stream_in_short_write_chunk_written[1].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_test = template_stream_in_short_write_chunk_written[2].format(stream_name_under=stream_in.get_name().under)
                     else:
-                        chunk_written_0 = template_stream_in_short_write_namedtuple_chunk_written[0].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_n = template_stream_in_short_write_namedtuple_chunk_written[1].format(stream_underscore_name=stream_in.get_underscore_name())
-                        chunk_written_test = template_stream_in_short_write_namedtuple_chunk_written[2].format(stream_underscore_name=stream_in.get_underscore_name())
+                        chunk_written_0 = template_stream_in_short_write_namedtuple_chunk_written[0].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_n = template_stream_in_short_write_namedtuple_chunk_written[1].format(stream_name_under=stream_in.get_name().under)
+                        chunk_written_test = template_stream_in_short_write_namedtuple_chunk_written[2].format(stream_name_under=stream_in.get_name().under)
 
                     if len(packet.get_elements(direction='out', high_level=True)) < 2:
                         if stream_in.has_single_chunk():
-                            result = template_stream_in_single_chunk_result.format(underscore_name=packet.get_underscore_name(skip=-2),
+                            result = template_stream_in_single_chunk_result.format(function_name=packet.get_name(skip=-2).under,
                                                                                    parameters=packet.get_python_parameters())
                         else:
-                            result = template_stream_in_short_write_result.format(stream_underscore_name=stream_in.get_underscore_name())
+                            result = template_stream_in_short_write_result.format(stream_name_under=stream_in.get_name().under)
                     else:
                         if stream_in.has_single_chunk():
-                            result = template_stream_in_single_chunk_namedtuple_result.format(underscore_name=packet.get_underscore_name(skip=-2),
+                            result = template_stream_in_single_chunk_namedtuple_result.format(function_name=packet.get_name(skip=-2).under,
                                                                                               parameters=packet.get_python_parameters(),
-                                                                                              result_camel_case_name=packet.get_camel_case_name(skip=-2))
+                                                                                              result_camel_name=packet.get_name(skip=-2).camel)
                         else:
                             fields = []
 
                             for element in packet.get_elements(direction='out', high_level=True):
                                 if element.get_role() == 'stream_written':
-                                    fields.append('{0}_written'.format(stream_in.get_underscore_name()))
+                                    fields.append('{0}_written'.format(stream_in.get_name().under))
                                 else:
-                                    fields.append('ret.{0}'.format(element.get_underscore_name()))
+                                    fields.append('ret.{0}'.format(element.get_name().under))
 
-                            result = template_stream_in_short_write_namedtuple_result.format(result_camel_case_name=packet.get_camel_case_name(skip=-2),
+                            result = template_stream_in_short_write_namedtuple_result.format(result_camel_name=packet.get_name(skip=-2).camel,
                                                                                              result_fields=', '.join(fields))
                 else:
                     chunk_written_0 = ''
@@ -468,25 +468,25 @@ class {0}(Device):
 
                     if len(packet.get_elements(direction='out', high_level=True)) < 2:
                         if stream_in.has_single_chunk():
-                            result = template_stream_in_single_chunk_result.format(underscore_name=packet.get_underscore_name(skip=-2),
+                            result = template_stream_in_single_chunk_result.format(function_name=packet.get_name(skip=-2).under,
                                                                                    parameters=packet.get_python_parameters())
                         else:
                             result = template_stream_in_result
                     else:
                         if stream_in.has_single_chunk():
-                            result = template_stream_in_single_chunk_namedtuple_result.format(underscore_name=packet.get_underscore_name(skip=-2),
+                            result = template_stream_in_single_chunk_namedtuple_result.format(function_name=packet.get_name(skip=-2).under,
                                                                                               parameters=packet.get_python_parameters(),
-                                                                                              result_camel_case_name=packet.get_camel_case_name(skip=-2))
+                                                                                              result_camel_name=packet.get_name(skip=-2).camel)
                         else:
-                            result = template_stream_in_namedtuple_result.format(result_camel_case_name=packet.get_camel_case_name(skip=-2))
+                            result = template_stream_in_namedtuple_result.format(result_camel_name=packet.get_name(skip=-2).camel)
 
                 methods += template.format(doc=packet.get_python_formatted_doc(),
                                            coercions=common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(high_level=True), '\n'),
-                                           underscore_name=packet.get_underscore_name(skip=-2),
+                                           function_name=packet.get_name(skip=-2).under,
                                            parameters=packet.get_python_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
-                                           stream_name=stream_in.get_name(),
-                                           stream_underscore_name=stream_in.get_underscore_name(),
+                                           stream_name_space=stream_in.get_name().space,
+                                           stream_name_under=stream_in.get_name().under,
                                            stream_max_length=abs(stream_in.get_data_element().get_cardinality()),
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
@@ -497,37 +497,37 @@ class {0}(Device):
                                            result=result)
             elif stream_out != None:
                 if stream_out.get_fixed_length() != None:
-                    fixed_length = template_stream_out_fixed_length.format(stream_underscore_name=stream_out.get_underscore_name(),
+                    fixed_length = template_stream_out_fixed_length.format(stream_name_under=stream_out.get_name().under,
                                                                            fixed_length=stream_out.get_fixed_length())
                     dynamic_length = ''
                     shift_size = int(stream_out.get_chunk_offset_element().get_type().replace('uint', ''))
-                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_underscore_name=stream_out.get_underscore_name(),
+                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_name_under=stream_out.get_name().under,
                                                                                        shift_size=shift_size)
                     chunk_offset_check_indent = '    '
                 else:
                     fixed_length = ''
-                    dynamic_length = template_stream_out_dynamic_length.format(stream_underscore_name=stream_out.get_underscore_name())
+                    dynamic_length = template_stream_out_dynamic_length.format(stream_name_under=stream_out.get_name().under)
                     chunk_offset_check = ''
                     chunk_offset_check_indent = ''
 
                 if len(packet.get_elements(direction='out', high_level=True)) < 2:
                     if stream_out.has_single_chunk():
-                        result = template_stream_out_single_chunk_result.format(stream_underscore_name=stream_out.get_underscore_name())
+                        result = template_stream_out_single_chunk_result.format(stream_name_under=stream_out.get_name().under)
                     else:
-                        result = template_stream_out_result.format(stream_underscore_name=stream_out.get_underscore_name())
+                        result = template_stream_out_result.format(stream_name_under=stream_out.get_name().under)
                 else:
                     fields = []
 
                     for element in packet.get_elements(direction='out', high_level=True):
                         if element.get_role() == 'stream_data':
                             if stream_out.has_single_chunk():
-                                fields.append('ret.{0}_data[:ret.{0}_length]'.format(stream_out.get_underscore_name()))
+                                fields.append('ret.{0}_data[:ret.{0}_length]'.format(stream_out.get_name().under))
                             else:
-                                fields.append('{0}_data[:{0}_length]'.format(stream_out.get_underscore_name()))
+                                fields.append('{0}_data[:{0}_length]'.format(stream_out.get_name().under))
                         else:
-                            fields.append('ret.{0}'.format(element.get_underscore_name()))
+                            fields.append('ret.{0}'.format(element.get_name().under))
 
-                    result = template_stream_out_namedtuple_result.format(result_camel_case_name=packet.get_camel_case_name(skip=-2),
+                    result = template_stream_out_namedtuple_result.format(result_name=packet.get_name(skip=-2).camel,
                                                                           result_fields=', '.join(fields))
 
                 if stream_out.has_single_chunk():
@@ -537,11 +537,11 @@ class {0}(Device):
 
                 methods += template.format(doc=packet.get_python_formatted_doc(),
                                            coercions=common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(high_level=True), '\n'),
-                                           underscore_name=packet.get_underscore_name(skip=-2),
+                                           function_name=packet.get_name(skip=-2).under,
                                            parameters=packet.get_python_parameters(),
                                            high_level_parameters=common.wrap_non_empty(', ', packet.get_python_parameters(high_level=True), ''),
-                                           stream_name=stream_out.get_name(),
-                                           stream_underscore_name=stream_out.get_underscore_name(),
+                                           stream_name_space=stream_out.get_name().space,
+                                           stream_name_under=stream_out.get_name().under,
                                            fixed_length=fixed_length,
                                            dynamic_length_3=dynamic_length.format(indent='    ' * 3),
                                            dynamic_length_4=dynamic_length.format(indent='    ' * 4),
@@ -573,7 +573,7 @@ class {0}(Device):
 {0} = {1} # for backward compatibility
 """
 
-        return template.format(self.get_camel_case_name(), self.get_python_class_name())
+        return template.format(self.get_name().camel, self.get_python_class_name())
 
     def get_python_source(self):
         source  = self.get_python_import()
@@ -617,9 +617,9 @@ class PythonBindingsPacket(python_common.PythonPacket):
         coercions = []
 
         for element in self.get_elements(direction='in', high_level=high_level):
-            underscore_name = element.get_underscore_name()
+            name = element.get_name().under
 
-            coercions.append('{0} = {1}'.format(underscore_name, element.get_python_parameter_coercion().format(underscore_name)))
+            coercions.append('{0} = {1}'.format(name, element.get_python_parameter_coercion().format(name)))
 
         return '\n        '.join(coercions)
 
@@ -645,7 +645,7 @@ class PythonBindingsGenerator(common.BindingsGenerator):
         return common.BindingsGenerator.prepare(self)
 
     def generate(self, device):
-        filename = '{0}_{1}.py'.format(device.get_underscore_category(), device.get_underscore_name())
+        filename = '{0}_{1}.py'.format(device.get_category().under, device.get_name().under)
 
         with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_python_source())

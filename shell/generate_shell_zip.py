@@ -48,8 +48,8 @@ class ShellZipGenerator(common.ZipGenerator):
 
         # Copy device examples
         tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
-                                               device.get_underscore_category(),
-                                               device.get_underscore_name())
+                                               device.get_category().under,
+                                               device.get_name().under)
 
         if not os.path.exists(tmp_examples_device_dir):
             os.makedirs(tmp_examples_device_dir)

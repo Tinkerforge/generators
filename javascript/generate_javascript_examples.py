@@ -65,12 +65,12 @@ def end_previous_sleep_function(default):
 
 class JavaScriptConstant(common.Constant):
     def get_javascript_source(self):
-        template = 'Tinkerforge.{device_camel_case_category}{device_camel_case_name}.{constant_group_upper_case_name}_{constant_upper_case_name}'
+        template = 'Tinkerforge.{device_category}{device_name}.{constant_group_name}_{constant_name}'
 
-        return template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               constant_group_upper_case_name=self.get_constant_group().get_upper_case_name(),
-                               constant_upper_case_name=self.get_upper_case_name())
+        return template.format(device_category=self.get_device().get_category().camel,
+                               device_name=self.get_device().get_name().camel,
+                               constant_group_name=self.get_constant_group().get_name().upper,
+                               constant_name=self.get_name().upper)
 
 class JavaScriptExample(common.Example):
     def get_nodejs_source(self):
@@ -92,10 +92,10 @@ class JavaScriptExample(common.Example):
 
 var HOST = 'localhost';
 var PORT = 4223;
-var UID = '{dummy_uid}'; // Change {dummy_uid} to the UID of your {device_long_display_name}
+var UID = '{dummy_uid}'; // Change {dummy_uid} to the UID of your {device_name_long_display}
 
 var ipcon = new Tinkerforge.IPConnection(); // Create IP connection
-var {device_initial_name} = new Tinkerforge.{device_camel_case_category}{device_camel_case_name}(UID, ipcon); // Create device object
+var {device_name_initial} = new Tinkerforge.{device_category}{device_name_camel}(UID, ipcon); // Create device object
 
 ipcon.connect(HOST, PORT,
     function (error) {{
@@ -160,10 +160,10 @@ process.stdin.on('data',
 
         return template.format(incomplete=incomplete,
                                description=description,
-                               device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               device_long_display_name=self.get_device().get_long_display_name(),
+                               device_category=self.get_device().get_category().camel,
+                               device_name_camel=self.get_device().get_name().camel,
+                               device_name_initial=self.get_device().get_initial_name(),
+                               device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '')).replace('<<<total_sleep_duration>>>', str(global_total_sleep_duration)).replace("console.log('');", "console.log();")
@@ -191,7 +191,7 @@ process.stdin.on('data',
     </head>
     <body>
         <div style="text-align:center;">
-            <h1>{device_long_display_name} {example_name} Example</h1>
+            <h1>{device_name_long_display} {example_name} Example</h1>
             <p>
                 <input value="localhost" id="host" type="text" size="20">:
                 <input value="4280" id="port" type="text" size="5">,
@@ -216,7 +216,7 @@ process.stdin.on('data',
                     ipcon.disconnect();
                 }}
                 ipcon = new Tinkerforge.IPConnection(); // Create IP connection
-                var {device_initial_name} = new Tinkerforge.{device_camel_case_category}{device_camel_case_name}(UID, ipcon); // Create device object
+                var {device_name_initial} = new Tinkerforge.{device_category}{device_name_camel}(UID, ipcon); // Create device object
                 ipcon.connect(HOST, PORT,
                     function(error) {{
                         textArea.value += 'Error: ' + error + '\n';
@@ -277,11 +277,11 @@ process.stdin.on('data',
 
         return template.format(incomplete=incomplete,
                                description=description,
-                               example_name=self.get_name(),
-                               device_long_display_name=self.get_device().get_long_display_name(),
-                               device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
+                               example_name=self.get_name().space,
+                               device_name_long_display=self.get_device().get_long_display_name(),
+                               device_category=self.get_device().get_category().camel,
+                               device_name_camel=self.get_device().get_name().camel,
+                               device_name_initial=self.get_device().get_initial_name(),
                                functions=common.wrap_non_empty('\n                ', '\n                '.join('\n'.join(functions).split('\n')), '').rstrip().replace('\n                \n', '\n\n'),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '')).replace('<<<total_sleep_duration>>>', str(global_total_sleep_duration)).replace("' + '\\n';", "\\n';")
 
@@ -310,10 +310,10 @@ class JavaScriptExampleArgumentsMixin(object):
 
 class JavaScriptExampleParameter(common.ExampleParameter):
     def get_javascript_source(self):
-        return self.get_headless_camel_case_name()
+        return self.get_name().headless
 
     def get_javascript_outputs(self):
-        template = "        {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name}{global_output_suffix};{comment}"
+        template = "        {global_output_prefix}'{label}: ' + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit}{global_output_suffix};{comment}"
 
         if self.get_label_name() == None:
             return []
@@ -341,11 +341,11 @@ class JavaScriptExampleParameter(common.ExampleParameter):
         for index in range(self.get_label_count()):
             result.append(template.format(global_output_prefix=global_output_prefix,
                                           global_output_suffix=global_output_suffix,
-                                          headless_camel_case_name=self.get_headless_camel_case_name(),
-                                          label_name=self.get_label_name(index=index),
+                                          name=self.get_name().headless,
+                                          label=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_name=self.get_formatted_unit_name(" + ' {0}'"),
+                                          unit=self.get_formatted_unit_name(" + ' {0}'"),
                                           to_binary_prefix=to_binary_prefix,
                                           to_binary_suffix=to_binary_suffix,
                                           comment=self.get_formatted_comment(' // {0}')))
@@ -354,10 +354,10 @@ class JavaScriptExampleParameter(common.ExampleParameter):
 
 class JavaScriptExampleResult(common.ExampleResult):
     def get_javascript_source(self):
-        return self.get_headless_camel_case_name()
+        return self.get_name().headless
 
     def get_javascript_outputs(self):
-        template = "{global_line_prefix}                {global_output_prefix}'{label_name}: ' + {to_binary_prefix}{headless_camel_case_name}{index}{divisor}{to_binary_suffix}{unit_name}{global_output_suffix};{comment}"
+        template = "{global_line_prefix}                {global_output_prefix}'{label}: ' + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit}{global_output_suffix};{comment}"
 
         if self.get_label_name() == None:
             return []
@@ -386,11 +386,11 @@ class JavaScriptExampleResult(common.ExampleResult):
             result.append(template.format(global_line_prefix=global_line_prefix,
                                           global_output_prefix=global_output_prefix,
                                           global_output_suffix=global_output_suffix,
-                                          headless_camel_case_name=self.get_headless_camel_case_name(),
-                                          label_name=self.get_label_name(index=index),
+                                          name=self.get_name().headless,
+                                          label=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_name=self.get_formatted_unit_name(" + ' {0}'"),
+                                          unit=self.get_formatted_unit_name(" + ' {0}'"),
                                           to_binary_prefix=to_binary_prefix,
                                           to_binary_suffix=to_binary_suffix,
                                           comment=self.get_formatted_comment(' // {0}')))
@@ -402,8 +402,8 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptEx
         return None
 
     def get_javascript_source(self):
-        template = r"""{global_line_prefix}        // Get current {function_comment_name}
-{global_line_prefix}        {device_initial_name}.{function_headless_camel_case_name}({arguments}
+        template = r"""{global_line_prefix}        // Get current {function_name_comment}
+{global_line_prefix}        {device_name}.{function_name_headless}({arguments}
 {global_line_prefix}            function ({variables}) {{
 {outputs}
 {global_line_prefix}            }},
@@ -425,9 +425,9 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptEx
         return template.format(global_line_prefix=global_line_prefix,
                                global_output_prefix=global_output_prefix,
                                global_output_suffix=global_output_suffix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
+                               device_name=self.get_device().get_initial_name(),
+                               function_name_headless=self.get_name().headless,
+                               function_name_comment=self.get_comment_name(),
                                variables=', '.join(variables),
                                outputs='\n'.join(outputs),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ','))
@@ -437,23 +437,23 @@ class JavaScriptExampleSetterFunction(common.ExampleSetterFunction, JavaScriptEx
         return None
 
     def get_javascript_source(self):
-        template = '{comment1}{global_line_prefix}        {device_initial_name}.{function_headless_camel_case_name}({arguments});{comment2}\n'
+        template = '{comment1}{global_line_prefix}        {device_name}.{function_name}({arguments});{comment2}\n'
 
         result = template.format(global_line_prefix=global_line_prefix,
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                 device_name=self.get_device().get_initial_name(),
+                                 function_name=self.get_name().headless,
                                  arguments=',<BP>'.join(self.get_javascript_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '        // {0}\n', '\r', '\n' + global_line_prefix + '        // '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
-        return common.break_string(result, '.{}('.format(self.get_headless_camel_case_name()))
+        return common.break_string(result, '.{}('.format(self.get_name().headless))
 
 class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_javascript_function(self):
-        template1 = r"""// Register {function_comment_name} callback
-{device_initial_name}.on(Tinkerforge.{device_camel_case_category}{device_camel_case_name}.CALLBACK_{function_upper_case_name},
+        template1 = r"""// Register {function_name_comment} callback
+{device_name_initial}.on(Tinkerforge.{device_category}{device_name_camel}.CALLBACK_{function_name_upper},
 """
-        template2A = r"""    // Callback function for {function_comment_name} callback
+        template2A = r"""    // Callback function for {function_name_comment} callback
 """
         template2B = r"""{override_comment}
 """
@@ -489,12 +489,12 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(outputs) > 0:
             extra_message = '\n' + extra_message
 
-        result = template1.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                  device_camel_case_name=self.get_device().get_camel_case_name(),
-                                  device_initial_name=self.get_device().get_initial_name(),
-                                  function_upper_case_name=self.get_upper_case_name(),
-                                  function_comment_name=self.get_comment_name()) + \
-                 template2.format(function_comment_name=self.get_comment_name(),
+        result = template1.format(device_category=self.get_device().get_category().camel,
+                                  device_name_camel=self.get_device().get_name().camel,
+                                  device_name_initial=self.get_device().get_initial_name(),
+                                  function_name_upper=self.get_name().upper,
+                                  function_name_comment=self.get_comment_name()) + \
+                 template2.format(function_name_comment=self.get_comment_name(),
                                   override_comment=override_comment) + \
                  template3.format(global_callback_output_suffix=global_callback_output_suffix,
                                   parameters=',<BP>'.join(parameters),
@@ -511,16 +511,16 @@ class JavaScriptExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFuncti
         return None
 
     def get_javascript_source(self):
-        templateA = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}Period({arguments}{period_msec});
+        templateA = r"""{global_line_prefix}        // Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+{global_line_prefix}        {device_name}.set{function_name_camel}Period({arguments}{period_msec});
 """
-        templateB = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-{global_line_prefix}        // Note: The {function_comment_name} callback is only called every {period_sec_long}
-{global_line_prefix}        //       if the {function_comment_name} has changed since the last call!
-{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackPeriod({arguments}{period_msec});
+        templateB = r"""{global_line_prefix}        // Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+{global_line_prefix}        // Note: The {function_name_comment} callback is only called every {period_sec_long}
+{global_line_prefix}        //       if the {function_name_comment} has changed since the last call!
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackPeriod({arguments}{period_msec});
 """
 
-        if self.get_device().get_underscore_name().startswith('imu'):
+        if self.get_device().get_name().space.startswith('IMU '):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
@@ -528,9 +528,9 @@ class JavaScriptExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFuncti
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(global_line_prefix=global_line_prefix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
+                               device_name=self.get_device().get_initial_name(),
+                               function_name_camel=self.get_name().camel,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -548,8 +548,8 @@ class JavaScriptExampleCallbackThresholdFunction(common.ExampleCallbackThreshold
         return None
 
     def get_javascript_source(self):
-        template = r"""{global_line_prefix}        // Configure threshold for {function_comment_name} "{option_comment}"
-{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
+        template = r"""{global_line_prefix}        // Configure threshold for {function_name_comment} "{option_comment}"
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
 """
         mininum_maximums = []
 
@@ -557,9 +557,9 @@ class JavaScriptExampleCallbackThresholdFunction(common.ExampleCallbackThreshold
             mininum_maximums.append(mininum_maximum.get_javascript_source())
 
         return template.format(global_line_prefix=global_line_prefix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
+                               device_name=self.get_device().get_initial_name(),
+                               function_name_camel=self.get_name().camel,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
@@ -570,15 +570,15 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
         return None
 
     def get_javascript_source(self):
-        templateA = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false);
+        templateA = r"""{global_line_prefix}        // Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false);
 """
-        templateB = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
-{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
+        templateB = r"""{global_line_prefix}        // Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
 """
-        templateC = r"""{global_line_prefix}        // Configure threshold for {function_comment_name} "{option_comment}"
+        templateC = r"""{global_line_prefix}        // Configure threshold for {function_name_comment} "{option_comment}"
 {global_line_prefix}        // with a debounce period of {period_sec_short} ({period_msec}ms)
-{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -596,9 +596,9 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
             mininum_maximums.append(mininum_maximum.get_javascript_source())
 
         return template.format(global_line_prefix=global_line_prefix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
+                               device_name=self.get_device().get_initial_name(),
+                               function_name_camel=self.get_name().camel,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -622,12 +622,12 @@ class JavaScriptExampleSpecialFunction(common.ExampleSpecialFunction):
             return ''
         elif type_ == 'debounce_period':
             template = r"""{global_line_prefix}        // Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-{global_line_prefix}        {device_initial_name}.setDebouncePeriod({period_msec});
+{global_line_prefix}        {device_name_initial}.setDebouncePeriod({period_msec});
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
             return template.format(global_line_prefix=global_line_prefix,
-                                   device_initial_name=self.get_device().get_initial_name(),
+                                   device_name_initial=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
@@ -700,7 +700,7 @@ class JavaScriptExamplesGenerator(common.ExamplesGenerator):
         return JavaScriptExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')
             return
 
@@ -721,10 +721,10 @@ class JavaScriptExamplesGenerator(common.ExamplesGenerator):
 
         # nodejs
         for example in examples:
-            filename = 'Example{0}.js'.format(example.get_camel_case_name())
+            filename = 'Example{0}.js'.format(example.get_name().camel)
             filepath = os.path.join(examples_dir, filename)
 
-            if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
+            if device.get_git_name() + '/' + example.get_name().dash in blacklist:
                 print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
                 continue
 
@@ -742,10 +742,10 @@ class JavaScriptExamplesGenerator(common.ExamplesGenerator):
 
         # html
         for example in examples:
-            filename = 'Example{0}.html'.format(example.get_camel_case_name())
+            filename = 'Example{0}.html'.format(example.get_name().camel)
             filepath = os.path.join(examples_dir, filename)
 
-            if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
+            if device.get_git_name() + '/' + example.get_name().dash in blacklist:
                 print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
                 continue
 

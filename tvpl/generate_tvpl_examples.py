@@ -102,11 +102,11 @@ def add_tvpl_arithmetic_block(parent, operator):
 
 class TVPLConstant(common.Constant):
     def get_tvpl_source(self):
-        template = '{device_initial_name}.{constant_group_upper_case_name}_{constant_upper_case_name}'
+        template = '{device_name}.{constant_group_name}_{constant_name}'
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               constant_group_upper_case_name=self.get_constant_group().get_upper_case_name(),
-                               constant_upper_case_name=self.get_upper_case_name())
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               constant_group_name=self.get_constant_group().get_name().upper,
+                               constant_name=self.get_name().upper)
 
 class TVPLExample(common.Example):
     def get_tvpl_source(self):
@@ -133,11 +133,11 @@ PORT = 4223
 UID = "{dummy_uid}" # Change to your UID
 {imports}
 from tinkerforge.ip_connection import IPConnection
-from tinkerforge.{device_underscore_category}_{device_underscore_name} import {device_camel_case_category}{device_camel_case_name}
+from tinkerforge.{device_category_under}_{device_name_under} import {device_category_camel}{device_name_camel}
 {functions}
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
-    {device_initial_name} = {device_camel_case_category}{device_camel_case_name}(UID, ipcon) # Create device object
+    {device_name_initial} = {device_category_camel}{device_name_camel}(UID, ipcon) # Create device object
 
     ipcon.connect(HOST, PORT) # Connect to brickd
     # Don't use device before ipcon is connected
@@ -182,11 +182,11 @@ if __name__ == "__main__":
             sources = ['    # TODO: Add example code here\n']
 
         return template.format(description=description,
-                               device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_underscore_category=self.get_device().get_underscore_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_underscore_name=self.get_device().get_underscore_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
+                               device_category_camel=self.get_device().get_category().camel,
+                               device_category_under=self.get_device().get_category().under,
+                               device_name_camel=self.get_device().get_name().camel,
+                               device_name_under=self.get_device().get_name().under,
+                               device_name_initial=self.get_device().get_initial_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports=common.wrap_non_empty('\n', ''.join(unique_imports), ''),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
@@ -195,20 +195,20 @@ if __name__ == "__main__":
 
 class TVPLExampleArgument(common.ExampleArgument):
     def add_tvpl_subelement(self, parent):
-        upper_case_name = self.get_element().get_upper_case_name()
+        name = self.get_element().get_name().upper
 
         if self.get_value_constant() != None:
-            field = ET.SubElement(parent, 'field', {'name': upper_case_name})
+            field = ET.SubElement(parent, 'field', {'name': name})
             field.text = str(self.get_value())
         elif self.get_type() == 'bool':
-            field = ET.SubElement(parent, 'field', {'name': upper_case_name})
+            field = ET.SubElement(parent, 'field', {'name': name})
 
             if self.get_value():
                 field.text = '1'
             else:
                 field.text = '0'
         else:
-            value = ET.SubElement(parent, 'value', {'name': upper_case_name})
+            value = ET.SubElement(parent, 'value', {'name': name})
             block_type, field_name = self.get_tvpl_type()
             block = ET.SubElement(value, 'block', {'type': block_type})
             field = ET.SubElement(block, 'field', {'name': field_name})
@@ -238,10 +238,10 @@ class TVPLExampleArgument(common.ExampleArgument):
 
 class TVPLExampleParameter(common.ExampleParameter):
     def get_tvpl_source_X(self):
-        return self.get_underscore_name()
+        return self.get_name().under
 
     def get_tvpl_print_X(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_name}){comment}'
+        template = '    print("{label}: " + {format_prefix}{name}{divisor}{format_suffix}{unit}){comment}'
 
         if self.get_label_name() == None:
             return None
@@ -258,10 +258,10 @@ class TVPLExampleParameter(common.ExampleParameter):
             format_prefix = 'str('
             format_suffix = ')'
 
-        return template.format(underscore_name=self.get_underscore_name(),
-                               label_name=self.get_label_name(),
+        return template.format(name=self.get_name().under,
+                               label=self.get_label_name(),
                                divisor=self.get_formatted_divisor('/{0}'),
-                               unit_name=self.get_formatted_unit_name(' + " {0}"'),
+                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                format_prefix=format_prefix,
                                format_suffix=format_suffix,
                                comment=self.get_formatted_comment(' # {0}'))
@@ -289,14 +289,14 @@ class TVPLExampleResult(common.ExampleResult):
             if list_variable != None:
                 add_tvpl_get_list_item_block(divide_op0, list_variable, list_index)
             else:
-                add_tvpl_get_variable_block(divide_op0, self.get_name())
+                add_tvpl_get_variable_block(divide_op0, self.get_name().space)
 
             add_tvpl_number_block(divide_op1, divisor)
         else:
             if list_variable != None:
                 add_tvpl_get_list_item_block(join_items[1], list_variable, list_index)
             else:
-                add_tvpl_get_variable_block(join_items[1], self.get_name())
+                add_tvpl_get_variable_block(join_items[1], self.get_name().space)
 
         if len(unit_name) > 0:
             add_tvpl_text_block(join_items[2], unit_name.decode('utf-8'))
@@ -304,12 +304,12 @@ class TVPLExampleResult(common.ExampleResult):
         return print_next
 
     def get_tvpl_print_X(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{divisor}{format_suffix}{unit_name}){comment}'
+        template = '    print("{label}: " + {format_prefix}{name}{divisor}{format_suffix}{unit}){comment}'
 
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
         type_ = self.get_type()
 
@@ -323,10 +323,10 @@ class TVPLExampleResult(common.ExampleResult):
             format_prefix = 'str('
             format_suffix = ')'
 
-        return template.format(underscore_name=underscore_name,
-                               label_name=self.get_label_name(),
+        return template.format(name=name,
+                               label=self.get_label_name(),
                                divisor=self.get_formatted_divisor('/{0}'),
-                               unit_name=self.get_formatted_unit_name(' + " {0}"'),
+                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                format_prefix=format_prefix,
                                format_suffix=format_suffix,
                                comment=self.get_formatted_comment(' # {0}'))
@@ -339,16 +339,16 @@ class TVPLExampleGetterFunction(common.ExampleGetterFunction):
             variables.append(result.get_tvpl_variable())
 
         if len(variables) > 1:
-            variable = self.get_name(skip=1)
+            variable = self.get_name(skip=1).space
         else:
             variable = variables[0]
 
         set_variable_block, set_variable_next = add_tvpl_set_variable_block(parent, variable)
         device_block = ET.SubElement(set_variable_block, 'block',
-                                     {'type': '{device_underscore_category}_{device_underscore_name}_{function_underscore_name}'
-                                              .format(device_underscore_category=self.get_device().get_underscore_category(),
-                                                      device_underscore_name=self.get_device().get_underscore_name(),
-                                                      function_underscore_name=self.get_underscore_name())})
+                                     {'type': '{device_category}_{device_name}_{function_name}'
+                                              .format(device_category=self.get_device().get_category().under,
+                                                      device_name=self.get_device().get_name().under,
+                                                      function_name=self.get_name().under)})
 
         for argument in self.get_arguments():
             argument.add_tvpl_subelement(device_block)
@@ -358,7 +358,7 @@ class TVPLExampleGetterFunction(common.ExampleGetterFunction):
         add_tvpl_number_value(device_block, '_PORT', 4280)
 
         if len(variables) > 1:
-            variable = self.get_name(skip=1)
+            variable = self.get_name(skip=1).space
         else:
             variable = None
 
@@ -370,8 +370,8 @@ class TVPLExampleGetterFunction(common.ExampleGetterFunction):
         return result_parent
 
     def get_tvpl_source_X(self):
-        template = r"""    # Get current {function_comment_name}
-    {variables} = {device_initial_name}.{function_underscore_name}({arguments})
+        template = r"""    # Get current {function_name_comment}
+    {variables} = {device_name}.{function_name_under}({arguments})
 {prints}
 """
         variables = []
@@ -389,9 +389,9 @@ class TVPLExampleGetterFunction(common.ExampleGetterFunction):
         for argument in self.get_arguments():
             arguments.append(argument.get_tvpl_source())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                variables=', '.join(variables),
                                prints='\n'.join(prints),
                                arguments=', '.join(arguments))
@@ -399,10 +399,10 @@ class TVPLExampleGetterFunction(common.ExampleGetterFunction):
 class TVPLExampleSetterFunction(common.ExampleSetterFunction):
     def add_tvpl_subelement(self, parent):
         device_block = ET.SubElement(parent, 'block',
-                                     {'type': '{device_underscore_category}_{device_underscore_name}_{function_underscore_name}'
-                                              .format(device_underscore_category=self.get_device().get_underscore_category(),
-                                                      device_underscore_name=self.get_device().get_underscore_name(),
-                                                      function_underscore_name=self.get_underscore_name())})
+                                     {'type': '{device_category}_{device_name}_{function_name}'
+                                              .format(device_category=self.get_device().get_category().under,
+                                                      device_name=self.get_device().get_name().under,
+                                                      function_name=self.get_name().under)})
 
         for argument in self.get_arguments():
             argument.add_tvpl_subelement(device_block)
@@ -414,15 +414,15 @@ class TVPLExampleSetterFunction(common.ExampleSetterFunction):
         return ET.SubElement(device_block, 'next')
 
     def get_tvpl_source_X(self):
-        template = '{comment1}{global_line_prefix}    {device_initial_name}.{function_underscore_name}({arguments}){comment2}\n'
+        template = '{comment1}{global_line_prefix}    {device_name}.{function_name}({arguments}){comment2}\n'
         arguments = []
 
         for argument in self.get_arguments():
             arguments.append(argument.get_tvpl_source())
 
         return template.format(global_line_prefix=global_line_prefix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
+                               device_name=self.get_device().get_initial_name(),
+                               function_name=self.get_name().under,
                                arguments=', '.join(arguments),
                                comment1=self.get_formatted_comment1(global_line_prefix + '    # {0}\n', '\r', '\n' + global_line_prefix + '    # '),
                                comment2=self.get_formatted_comment2(' # {0}', ''))
@@ -432,11 +432,11 @@ class TVPLExampleCallbackFunction(common.ExampleCallbackFunction):
         return []
 
     def get_tvpl_function(self):
-        template1A = r"""# Callback function for {function_comment_name} callback
+        template1A = r"""# Callback function for {function_name_comment} callback
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""def cb_{function_underscore_name}({parameters}):
+        template2 = r"""def cb_{function_name_under}({parameters}):
 {prints}{extra_message}
 """
         override_comment = self.get_formatted_override_comment('# {0}', None, '\n# ')
@@ -464,22 +464,22 @@ class TVPLExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(prints) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
+        return template1.format(function_name_comment=self.get_comment_name(),
                                 override_comment=override_comment) + \
-               template2.format(function_underscore_name=self.get_underscore_name(),
+               template2.format(function_name_under=self.get_name().under,
                                 parameters=', '.join(parameters),
                                 prints='\n'.join(prints),
                                 extra_message=extra_message)
 
     def get_tvpl_source(self):
-        template = r"""    # Register {function_comment_name} callback to function cb_{function_underscore_name}
-    {device_initial_name}.register_callback({device_initial_name}.CALLBACK_{function_upper_case_name}, cb_{function_underscore_name})
+        template = r"""    # Register {function_name_comment} callback to function cb_{function_name_under}
+    {device_name}.register_callback({device_name}.CALLBACK_{function_name_upper}, cb_{function_name_under})
 """
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_upper_case_name=self.get_upper_case_name(),
-                               function_comment_name=self.get_comment_name())
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_upper=self.get_name().upper,
+                               function_name_comment=self.get_comment_name())
 
 class TVPLExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_tvpl_imports(self):
@@ -489,16 +489,16 @@ class TVPLExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         return None
 
     def get_tvpl_source(self):
-        templateA = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-    {device_initial_name}.set_{function_underscore_name}{suffix}_period({arguments}{period_msec})
+        templateA = r"""    # Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+    {device_name}.set_{function_name_under}{suffix}_period({arguments}{period_msec})
 """
-        templateB = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-    # Note: The {function_comment_name} callback is only called every {period_sec_long}
-    #       if the {function_comment_name} has changed since the last call!
-    {device_initial_name}.set_{function_underscore_name}{suffix}_period({arguments}{period_msec})
+        templateB = r"""    # Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+    # Note: The {function_name_comment} callback is only called every {period_sec_long}
+    #       if the {function_name_comment} has changed since the last call!
+    {device_name}.set_{function_name_under}{suffix}_period({arguments}{period_msec})
 """
 
-        if self.get_device().get_underscore_name().startswith('imu'):
+        if self.get_device().get_name().space.startswith('IMU '):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior
             suffix = '' # FIXME: special hack for IMU Brick name mismatch
         else:
@@ -512,9 +512,9 @@ class TVPLExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                suffix=suffix,
                                arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
                                period_msec=period_msec,
@@ -536,8 +536,8 @@ class TVPLExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         return None
 
     def get_tvpl_source(self):
-        template = r"""    # Configure threshold for {function_comment_name} "{option_comment}"
-    {device_initial_name}.set_{function_underscore_name}_callback_threshold({arguments}"{option_char}", {mininum_maximums})
+        template = r"""    # Configure threshold for {function_name_comment} "{option_comment}"
+    {device_name}.set_{function_name_under}_callback_threshold({arguments}"{option_char}", {mininum_maximums})
 """
         arguments = []
 
@@ -549,9 +549,9 @@ class TVPLExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_tvpl_source())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
@@ -576,11 +576,11 @@ class TVPLExampleSpecialFunction(common.ExampleSpecialFunction):
             return ''
         elif type_ == 'debounce_period':
             template = r"""    # Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-    {device_initial_name}.set_debounce_period({period_msec})
+    {device_name_initial}.set_debounce_period({period_msec})
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
-            return template.format(device_initial_name=self.get_device().get_initial_name(),
+            return template.format(device_name_initial=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
@@ -650,7 +650,7 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
         return TVPLExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')
             return
 
@@ -670,10 +670,10 @@ class TVPLExamplesGenerator(common.ExamplesGenerator):
         ]
 
         for example in examples:
-            filename = 'example_{0}.tvpl'.format(example.get_underscore_name())
+            filename = 'example_{0}.tvpl'.format(example.get_name().under)
             filepath = os.path.join(examples_dir, filename)
 
-            if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
+            if device.get_git_name() + '/' + example.get_name().dash in blacklist:
                 print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
                 continue
 

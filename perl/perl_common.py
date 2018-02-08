@@ -32,7 +32,7 @@ import common
 
 class PerlDevice(common.Device):
     def get_perl_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
 class PerlElement(common.Element):
     perl_types = {
@@ -94,7 +94,7 @@ class PerlElement(common.Element):
             return '[{0}, {0}, ..{1}x.., {0}]'.format(perl_type, cardinality - 3)
 
     def get_perl_doc_name(self):
-        name = self.get_underscore_name()
+        name = self.get_name().under
 
         if self.get_cardinality() == 1 or self.get_type() == 'string':
             prefix = '$'

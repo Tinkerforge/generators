@@ -32,17 +32,17 @@ import common
 
 class ShellDevice(common.Device):
     def get_shell_class_name(self):
-        return self.get_camel_case_name() + self.get_camel_case_category()
+        return self.get_name().camel + self.get_category().camel
 
     def get_shell_device_name(self):
-        return self.get_dash_name() + '-' + self.get_dash_category()
+        return self.get_name().dash + '-' + self.get_category().dash
 
 class ShellPacket(common.Packet):
     def get_shell_parameter_list(self):
         params = []
 
         for element in self.get_elements(direction='in'):
-            params.append('<{0}>'.format(element.get_dash_name()))
+            params.append('<{0}>'.format(element.get_name().dash))
 
         return ' '.join(params)
 
@@ -135,7 +135,7 @@ class ShellElement(common.Element):
             symbols = []
 
             for constant in constant_group.get_constants():
-                symbols.append('{0}-{1}: {2}'.format(constant_group.get_dash_name(), constant.get_dash_name(), constant.get_value()))
+                symbols.append('{0}-{1}: {2}'.format(constant_group.get_name().dash, constant.get_name().dash, constant.get_value()))
 
             symbols_doc = ' (' + ', '.join(symbols) + ')'
 
@@ -160,7 +160,7 @@ class ShellElement(common.Element):
             symbols = {}
 
             for constant in constant_group.get_constants():
-                symbols['{0}-{1}'.format(constant_group.get_dash_name(), constant.get_dash_name())] = constant.get_value()
+                symbols['{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)] = constant.get_value()
 
             if self.get_cardinality() != 1 and type_converter != 'string':
                 return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_item, self.get_cardinality())

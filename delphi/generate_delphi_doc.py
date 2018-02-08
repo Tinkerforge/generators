@@ -36,17 +36,17 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':delphi:func:`On{1} <{0}.On{1}>`'.format(packet.get_device().get_delphi_class_name(),
-                                                                 packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                 packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':delphi:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_delphi_class_name(),
-                                                             packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                             packet.get_name(skip=-2 if high_level else 0).camel)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='delphi')
 
     def get_delphi_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('Example', '').replace('.pas', '')
-            return common.camel_case_to_space(filename)
+            return common.camel_to_space(filename)
 
         return common.make_rst_examples(title_from_filename, self)
 
@@ -61,7 +61,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
                 continue
 
             ret_type = packet.get_delphi_return_type(True)
-            name = packet.get_camel_case_name()
+            name = packet.get_name().camel
             params = '; '.join(packet.get_delphi_parameters(True))
             desc = packet.get_delphi_formatted_doc()
 
@@ -97,7 +97,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
         cls = self.get_delphi_class_name()
         for packet in self.get_packets('callback'):
-            name = packet.get_camel_case_name()
+            name = packet.get_name().camel
             params = '; '.join(packet.get_delphi_parameters(True))
             desc = packet.get_delphi_formatted_doc()
             semi = ''
@@ -272,7 +272,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_delphi_class_name(),
-                                                    self.get_headless_camel_case_name())
+                                                    self.get_name().headless)
 
         bf = self.get_delphi_methods('bf')
         af = self.get_delphi_methods('af')
@@ -287,15 +287,15 @@ Konstanten
             api_str += common.select_lang(common.ccf_str).format(ccf, '')
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_delphi_class_name(),
-                                                        self.get_headless_camel_case_name(),
+                                                        self.get_name().headless,
                                                         c)
 
         article = 'ein'
         if self.is_brick():
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
-                                                        self.get_upper_case_category(),
-                                                        self.get_upper_case_name(),
+                                                        self.get_category().upper,
+                                                        self.get_name().upper,
                                                         article,
                                                         self.get_long_display_name(),
                                                         self.get_delphi_class_name())
@@ -324,9 +324,10 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = '{0}_{1}_'.format(self.get_device().get_upper_case_category(),
-                                   self.get_device().get_upper_case_name())
-        if self.get_underscore_name() == 'set_response_expected':
+        prefix = '{0}_{1}_'.format(self.get_device().get_category().upper,
+                                   self.get_device().get_name().upper)
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
             text += common.format_constants(prefix, self)

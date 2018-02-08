@@ -36,17 +36,17 @@ class RubyDocDevice(ruby_common.RubyDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':rb:attr:`::CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(packet.get_device().get_ruby_class_name(),
-                                                                              packet.get_upper_case_name(skip=-2 if high_level else 0))
+                                                                              packet.get_name(skip=-2 if high_level else 0).upper)
             else:
                 return ':rb:func:`#{1} <{0}#{1}>`'.format(packet.get_device().get_ruby_class_name(),
-                                                          packet.get_underscore_name(skip=-2 if high_level else 0))
+                                                          packet.get_name(skip=-2 if high_level else 0).under)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='rb')
 
     def get_ruby_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example_', '').replace('.rb', '')
-            return common.underscore_to_space(filename)
+            return common.under_to_space(filename)
 
         return common.make_rst_examples(title_from_filename, self)
 
@@ -60,7 +60,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
                 continue
 
             skip = -2 if packet.has_high_level() else 0
-            name = packet.get_underscore_name(skip=skip)
+            name = packet.get_name(skip=skip).under
             params = packet.get_ruby_parameters(high_level=True)
 
             if len(params) > 0:
@@ -93,7 +93,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
 
             func = '{0}{1}::CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                            cls,
-                                                           packet.get_upper_case_name(skip=skip),
+                                                           packet.get_name(skip=skip).upper,
                                                            param_desc,
                                                            desc)
             cbs += func + '\n'
@@ -287,7 +287,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_ruby_class_name(),
-                                                    self.get_underscore_name())
+                                                    self.get_name().under)
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
                                                       self.get_ruby_class_name())
 
@@ -304,7 +304,7 @@ Konstanten
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_ruby_class_name(),
-                                                        self.get_underscore_name(),
+                                                        self.get_name().under,
                                                         c)
 
         article = 'ein'
@@ -340,7 +340,8 @@ class RubyDocPacket(ruby_common.RubyPacket):
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_ruby_class_name() + '::'
-        if self.get_underscore_name() == 'set_response_expected':
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
             text += common.format_constants(prefix, self)
@@ -354,7 +355,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
         param = ' :param {0}: {1}\n'
 
         for element in self.get_elements(direction=direction, high_level=high_level):
-            desc += param.format(element.get_underscore_name(), element.get_ruby_type())
+            desc += param.format(element.get_name().under, element.get_ruby_type())
 
         return desc
 
@@ -393,7 +394,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
         var = []
 
         for element in self.get_elements(direction='out', high_level=high_level):
-            var.append('``{0}``'.format(element.get_underscore_name()))
+            var.append('``{0}``'.format(element.get_name().under))
 
         if len(var) == 1:
             return common.select_lang(desc).format(var[0])

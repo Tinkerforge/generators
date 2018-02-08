@@ -34,16 +34,16 @@ import common
 
 class TCPIPDocDevice(common.Device):
     def get_tcpip_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
     def specialize_tcpip_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':tcpip:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(packet.get_device().get_tcpip_name(),
-                                                                              packet.get_upper_case_name())
+                                                                              packet.get_name().upper)
             else:
                 return ':tcpip:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_tcpip_name(),
-                                                          packet.get_underscore_name())
+                                                            packet.get_name().under)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='tcpip')
 
@@ -56,7 +56,7 @@ class TCPIPDocDevice(common.Device):
             if packet.get_doc_type() != typ or packet.get_function_id() < 0:
                 continue
 
-            name = packet.get_underscore_name()
+            name = packet.get_name().under
             fid = '\n :functionid: {0}'.format(packet.get_function_id())
             request = packet.get_tcpip_request_desc()
             response = packet.get_tcpip_response_desc()
@@ -79,7 +79,7 @@ class TCPIPDocDevice(common.Device):
 
             func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
                                                                cls,
-                                                               packet.get_upper_case_name(),
+                                                               packet.get_name().upper,
                                                                fid,
                                                                response,
                                                                desc)
@@ -195,7 +195,7 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
         text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant_group, constant, value):
-            c = '* {0}: {1}, '.format(value, constant.get_name().lower())
+            c = '* {0}: {1}, '.format(value, constant.get_name().lower)
 
             for_ = {
             'en': 'for',
@@ -207,7 +207,7 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
             e = []
 
             for element in constant_group.get_elements():
-                name = element.get_underscore_name()
+                name = element.get_name().under
                 e.append(name)
 
             if len(e) > 1:
@@ -240,7 +240,7 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
         param = ' :request {0}: {1}\n'
 
         for element in self.get_elements(direction='in'):
-            desc += param.format(element.get_underscore_name(), element.get_tcpip_type())
+            desc += param.format(element.get_name().under, element.get_tcpip_type())
 
         if desc == '\n':
             desc += ' :emptyrequest: {0}\n'.format(common.select_lang(empty_payload))
@@ -260,7 +260,7 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
         returns = ' :response {0}: {1}\n'
 
         for element in self.get_elements(direction='out'):
-            desc += returns.format(element.get_underscore_name(), element.get_tcpip_type())
+            desc += returns.format(element.get_name().under, element.get_tcpip_type())
 
         if desc == '\n':
             if self.get_type() == 'callback':

@@ -35,18 +35,18 @@ class CDocDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return ':c:data:`{0}_CALLBACK_{1}`'.format(packet.get_device().get_upper_case_name(),
-                                                           packet.get_upper_case_name(skip=-2 if high_level else 0))
+                return ':c:data:`{0}_CALLBACK_{1}`'.format(packet.get_device().get_name().upper,
+                                                           packet.get_name(skip=-2 if high_level else 0).upper)
             else:
-                return ':c:func:`{0}_{1}`'.format(packet.get_device().get_underscore_name(),
-                                                  packet.get_underscore_name(skip=-2 if high_level else 0))
+                return ':c:func:`{0}_{1}`'.format(packet.get_device().get_name().under,
+                                                  packet.get_name(skip=-2 if high_level else 0).under)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='c')
 
     def get_c_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example_', '').replace('.c', '')
-            return common.underscore_to_space(filename).replace('Pwm ', 'PWM ')
+            return common.under_to_space(filename).replace('Pwm ', 'PWM ')
 
         return common.make_rst_examples(title_from_filename, self)
 
@@ -59,9 +59,9 @@ class CDocDevice(common.Device):
                 continue
 
             skip = -2 if packet.has_high_level() else 0
-            name = '{0}_{1}'.format(self.get_underscore_name(), packet.get_underscore_name(skip=skip))
+            name = '{0}_{1}'.format(self.get_name().under, packet.get_name(skip=skip).under)
             plist = common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), '')
-            params = '{0} *{1}{2}'.format(self.get_camel_case_name(), self.get_underscore_name(), plist)
+            params = '{0} *{1}{2}'.format(self.get_name().camel, self.get_name().under, plist)
             desc = packet.get_c_formatted_doc()
             func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
             methods += func + '\n'
@@ -97,8 +97,8 @@ class CDocDevice(common.Device):
             desc = packet.get_c_formatted_doc()
             skip = -2 if packet.has_high_level() else 0
             func = '{0}{1}_CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                          self.get_upper_case_name(),
-                                                          packet.get_upper_case_name(skip=skip),
+                                                          self.get_name().upper,
+                                                          packet.get_name(skip=skip).upper,
                                                           params,
                                                           desc)
             cbs += func + '\n'
@@ -350,13 +350,13 @@ Konstanten
         }
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_underscore_name(),
-                                                    self.get_camel_case_name())
-        des = common.select_lang(destroy_str).format(self.get_underscore_name(),
-                                                     self.get_camel_case_name())
+                                                    self.get_name().under,
+                                                    self.get_name().camel)
+        des = common.select_lang(destroy_str).format(self.get_name().under,
+                                                     self.get_name().camel)
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
-                                                      self.get_underscore_name(),
-                                                      self.get_camel_case_name())
+                                                      self.get_name().under,
+                                                      self.get_name().camel)
         bf = self.get_c_methods('bf')
         af = self.get_c_methods('af')
         ccf = self.get_c_methods('ccf')
@@ -369,16 +369,16 @@ Konstanten
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
-                                                        self.get_underscore_name(),
-                                                        self.get_upper_case_name(),
+                                                        self.get_name().under,
+                                                        self.get_name().upper,
                                                         c)
 
         article = 'ein'
         if self.is_brick():
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
-                                                        self.get_upper_case_name(),
-                                                        self.get_underscore_name(),
+                                                        self.get_name().upper,
+                                                        self.get_name().under,
                                                         article,
                                                         self.get_long_display_name())
 
@@ -408,8 +408,9 @@ class CDocPacket(c_common.CPacket):
         text = common.handle_rst_word(text, constants=constants)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = self.get_device().get_upper_case_name() + '_'
-        if self.get_underscore_name() == 'set_response_expected':
+        prefix = self.get_device().get_name().upper + '_'
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device(), constants)
         else:
             text += common.format_constants(prefix, self, constants)

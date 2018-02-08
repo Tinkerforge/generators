@@ -36,17 +36,17 @@ class JavaDocDevice(java_common.JavaDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':java:func:`{1}Listener <{0}.{1}Listener>`'.format(packet.get_device().get_java_class_name(),
-                                                                           packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                           packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':java:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_java_class_name(),
-                                                              packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
+                                                              packet.get_name(skip=-2 if high_level else 0).headless)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='java')
 
     def get_java_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('Example', '').replace('.java', '')
-            return common.camel_case_to_space(filename)
+            return common.camel_to_space(filename)
 
         return common.make_rst_examples(title_from_filename, self)
 
@@ -61,7 +61,7 @@ class JavaDocDevice(java_common.JavaDevice):
 
             skip = -2 if packet.has_high_level() else 0
             ret_type = packet.get_java_return_type(True, high_level=True)
-            name = packet.get_headless_camel_case_name(skip=skip)
+            name = packet.get_name(skip=skip).headless
             params = packet.get_java_parameters(high_level=True)
             desc = packet.get_java_formatted_doc(1)
             obj_desc = packet.get_java_object_desc(high_level=True)
@@ -111,8 +111,8 @@ class JavaDocDevice(java_common.JavaDevice):
             skip = -2 if packet.has_high_level() else 0
 
             cbs += common.select_lang(cb).format(cls,
-                                                 packet.get_camel_case_name(skip=skip),
-                                                 packet.get_headless_camel_case_name(skip=skip),
+                                                 packet.get_name(skip=skip).camel,
+                                                 packet.get_name(skip=skip).headless,
                                                  params,
                                                  desc)
 
@@ -337,7 +337,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_java_class_name(),
-                                                    self.get_headless_camel_case_name())
+                                                    self.get_name().headless)
 
         bf = self.get_java_methods('bf')
         af = self.get_java_methods('af')
@@ -393,7 +393,8 @@ class JavaDocPacket(java_common.JavaPacket):
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_java_class_name() + '.'
-        if self.get_underscore_name() == 'set_response_expected':
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
             text += common.format_constants(prefix, self)
@@ -424,7 +425,7 @@ class JavaDocPacket(java_common.JavaPacket):
 
         for element in self.get_elements(direction='out', high_level=high_level):
             var.append('``{0} {1}``'.format(element.get_java_type(),
-                                            element.get_headless_camel_case_name()))
+                                            element.get_name().headless))
 
         if len(var) == 1:
             return common.select_lang(desc).format(var[0])

@@ -36,10 +36,10 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':matlab:member:`{1}Callback <{0}.{1}Callback>`'.format(packet.get_device().get_matlab_class_name(),
-                                                                               packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                               packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':matlab:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_matlab_class_name(),
-                                                                packet.get_headless_camel_case_name(skip=-2 if high_level else 0))
+                                                                packet.get_name(skip=-2 if high_level else 0).headless)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='matlab')
 
@@ -48,9 +48,9 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
             title = filename.replace('matlab_example_', '').replace('octave_example_', '').replace('.m', '')
 
             if filename.startswith('matlab_'):
-                return common.underscore_to_space(title) + ' (MATLAB)'
+                return common.under_to_space(title) + ' (MATLAB)'
             elif filename.startswith('octave_'):
-                return common.underscore_to_space(title) + ' (Octave)'
+                return common.under_to_space(title) + ' (Octave)'
             else:
                 raise common.GeneratorError('Invalid filename ' + filename)
 
@@ -76,7 +76,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
             skip = -2 if packet.has_high_level() else 0
             ret_type = packet.get_matlab_return_type(True, high_level=True)
-            name = packet.get_headless_camel_case_name(skip=skip)
+            name = packet.get_name(skip=skip).headless
             params = packet.get_matlab_parameter_list(high_level=True)
             desc = packet.get_matlab_formatted_doc(1)
             obj_desc = packet.get_matlab_object_desc(high_level=True)
@@ -135,12 +135,12 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
             for element in packet.get_elements(direction='out', high_level=True):
                 matlab_type = element.get_matlab_type()
-                name = element.get_headless_camel_case_name()
+                name = element.get_name().headless
 
                 params.append(' :param {0}: {1}'.format(name, matlab_type))
 
             cbs += common.select_lang(cb).format(cls,
-                                                 packet.get_camel_case_name(skip=skip),
+                                                 packet.get_name(skip=skip).camel,
                                                  '\n'.join(params),
                                                  desc)
 
@@ -417,7 +417,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_matlab_class_name(),
-                                                    self.get_headless_camel_case_name())
+                                                    self.get_name().headless)
 
         bf = self.get_matlab_methods('bf')
         af = self.get_matlab_methods('af')
@@ -466,7 +466,8 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_matlab_class_name() + '.'
-        if self.get_underscore_name() == 'set_response_expected':
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
             text += common.format_constants(prefix, self)
@@ -495,7 +496,7 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
 
         for element in self.get_elements(direction='out', high_level=high_level):
             var.append('``{0} {1}``'.format(element.get_matlab_type(),
-                                            element.get_headless_camel_case_name()))
+                                            element.get_name().headless))
 
         if len(var) == 1:
             return common.select_lang(desc).format(var[0])

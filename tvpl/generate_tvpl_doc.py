@@ -53,8 +53,8 @@ class TVPLDocDevice(tvpl_common.TVPLDevice):
 
             for line in block:
                 for other_packet in self.get_packets():
-                    name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-                    name_right = ':tvpl:func:`{0} <{0} of {1}>`'.format(other_packet.get_name(), device_name)
+                    name_false = ':func:`{0}`'.format(other_packet.get_name().camel)
+                    name_right = ':tvpl:func:`{0} <{0} of {1}>`'.format(other_packet.get_name().space, device_name)
                     replaced_line = line.replace(name_false, name_right)
 
                     if line != replaced_line:
@@ -80,7 +80,7 @@ class TVPLDocDevice(tvpl_common.TVPLDevice):
     def get_tvpl_examples(self): # FIXME
         def title_from_filename(filename):
             filename = filename.replace('example_', '').replace('.tvpl', '')
-            return common.underscore_to_space(filename)
+            return common.under_to_space(filename)
 
         def language_from_filename(filename):
             return 'xml'
@@ -100,7 +100,7 @@ class TVPLDocDevice(tvpl_common.TVPLDevice):
             if packet.get_doc_type() != typ:
                 continue
 
-            name = packet.get_name().replace(' ', '_')
+            name = packet.get_name().space.replace(' ', '_')
             params = packet.get_tvpl_parameter_list()
             returns = packet.get_tvpl_return_list()
             pd = packet.get_tvpl_parameter_desc()
@@ -171,7 +171,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant_group, constant, value):
-            c = '* {0} = {1}, '.format(constant.get_name(), value)
+            c = '* {0} = {1}, '.format(constant.get_name().space, value)
 
             for_ = {
                 'en': 'for',
@@ -183,7 +183,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
             e = []
 
             for element in constant_group.get_elements():
-                e.append(element.get_name())
+                e.append(element.get_name().space)
 
             if len(e) > 1:
                 and_ = {
@@ -209,7 +209,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         params = []
 
         for element in self.get_elements(direction='in'):
-            params.append('L{0}'.format(element.get_name().replace(' ', '_')))
+            params.append('L{0}'.format(element.get_name().space.replace(' ', '_')))
 
         if len(params) > 1:
             params.insert(len(params) - 1, 'Aand')
@@ -235,7 +235,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         }
 
         for element in self.get_elements(direction='out'):
-            ret_list.append(element.get_name().replace(' ', '_'))
+            ret_list.append(element.get_name().space.replace(' ', '_'))
 
         if len(ret_list) == 0:
             return ''
@@ -254,7 +254,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
 
         for element in self.get_elements(direction='in'):
             t = element.get_tvpl_doc_type()
-            desc += param.format(element.get_name().replace(' ', '$nbsp;'), t)
+            desc += param.format(element.get_name().space.replace(' ', '$nbsp;'), t)
 
             if element.get_constant_group() is not None:
                 desc += ' ({0})'.format(common.select_lang(has_symbols))
@@ -280,10 +280,10 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         ret = '\n'
         for element in elements:
             t = element.get_tvpl_doc_type()
-            ret += ' :returns {0}: {1}'.format(element.get_name().replace(' ', '$nbsp;'), t)
+            ret += ' :returns {0}: {1}'.format(element.get_name().space.replace(' ', '$nbsp;'), t)
 
             if element.get_constant_group() is not None or \
-               self.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
+               self.get_function_id() == 255 and element.get_name().space == 'Device Identifier':
                 ret += ' ({0})'.format(common.select_lang(has_symbols))
 
             ret += '\n'

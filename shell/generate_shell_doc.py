@@ -36,17 +36,17 @@ class ShellDocDevice(shell_common.ShellDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':sh:cb:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
-                                                       packet.get_dash_name(skip=-2 if high_level else 0))
+                                                       packet.get_name(skip=-2 if high_level else 0).dash)
             else:
                 return ':sh:func:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
-                                                         packet.get_dash_name(skip=-2 if high_level else 0))
+                                                         packet.get_name(skip=-2 if high_level else 0).dash)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='sh')
 
     def get_shell_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example-', '').replace('.sh', '').replace('-', '_')
-            return common.underscore_to_space(filename)
+            return common.under_to_space(filename)
 
         def language_from_filename(filename):
             return 'bash'
@@ -66,7 +66,7 @@ class ShellDocDevice(shell_common.ShellDevice):
             if packet.get_doc_type() != typ:
                 continue
 
-            name = packet.get_dash_name()
+            name = packet.get_name().dash
             params = packet.get_shell_parameter_list()
             pd = packet.get_shell_parameter_desc()
             r = packet.get_shell_return_desc()
@@ -95,7 +95,7 @@ class ShellDocDevice(shell_common.ShellDevice):
 
             func = '{0} tinkerforge dispatch {1} <uid> {2}\n{3}\n{4}'.format(func_start,
                                                                              device_name,
-                                                                             packet.get_dash_name(),
+                                                                             packet.get_name().dash,
                                                                              param_desc,
                                                                              desc)
             cbs += func + '\n'
@@ -393,7 +393,7 @@ class ShellDocPacket(shell_common.ShellPacket):
         text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant_group, constant, value):
-            c = '* ``{0}-{1}`` = {2}, '.format(constant_group.get_dash_name(), constant.get_dash_name(), value)
+            c = '* ``{0}-{1}`` = {2}, '.format(constant_group.get_name().dash, constant.get_name().dash, value)
 
             for_ = {
                 'en': 'for',
@@ -404,7 +404,7 @@ class ShellDocPacket(shell_common.ShellPacket):
 
             e = []
             for element in constant_group.get_elements():
-                name = element.get_dash_name()
+                name = element.get_name().dash
                 if element.get_direction() == 'in':
                     e.append('<{0}>'.format(name))
                 else:
@@ -440,7 +440,7 @@ class ShellDocPacket(shell_common.ShellPacket):
 
         for element in self.get_elements(direction='in'):
             t = element.get_shell_type(True)
-            desc += param.format(element.get_dash_name(), t)
+            desc += param.format(element.get_name().dash, t)
 
             if element.get_constant_group() != None:
                 desc += ' ({0})'.format(common.select_lang(has_symbols))
@@ -467,10 +467,10 @@ class ShellDocPacket(shell_common.ShellPacket):
 
         for element in elements:
             t = element.get_shell_type(True)
-            ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)
+            ret += ' :returns {0}: {1}'.format(element.get_name().dash, t)
 
             if element.get_constant_group() != None or \
-               self.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
+               self.get_function_id() == 255 and element.get_name().under == 'device_identifier':
                 ret += ' ({0})'.format(common.select_lang(has_symbols))
 
             ret += '\n'

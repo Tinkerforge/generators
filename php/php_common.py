@@ -33,7 +33,7 @@ import common
 
 class PHPDevice(common.Device):
     def get_php_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
 class PHPPacket(common.Packet):
     def get_php_return_type(self, high_level=False):
@@ -57,7 +57,7 @@ class PHPPacket(common.Packet):
             if element.get_direction() == 'out' and self.get_type() == 'function':
                 continue
 
-            name = element.get_underscore_name()
+            name = element.get_name().under
 
             if context == 'doc':
                 php_type = element.get_php_type()
@@ -127,23 +127,23 @@ class PHPElement(common.Element):
 
     def get_php_unpack_format(self):
         cardinality = self.get_cardinality()
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
         if self.get_type() in ['int64', 'uint64']:
             if cardinality > 1:
                 unpack_format = []
 
                 for i in range(0, cardinality):
-                    unpack_format.append('C8{0}{1}'.format(underscore_name, chr(ord('A') + i)))
+                    unpack_format.append('C8{0}{1}'.format(name, chr(ord('A') + i)))
 
                 return '/'.join(unpack_format)
             else:
-                return 'C8{0}'.format(underscore_name)
+                return 'C8{0}'.format(name)
         else:
             if cardinality > 1 and self.get_type() == 'bool':
-                return'{0}{1}{2}'.format(PHPElement.php_pack_format[self.get_type()], str(int(math.ceil(cardinality/8.0))), underscore_name)
+                return'{0}{1}{2}'.format(PHPElement.php_pack_format[self.get_type()], str(int(math.ceil(cardinality/8.0))), name)
             else:
-                return'{0}{1}{2}'.format(PHPElement.php_pack_format[self.get_type()], cardinality, underscore_name)
+                return'{0}{1}{2}'.format(PHPElement.php_pack_format[self.get_type()], cardinality, name)
 
     def get_php_unpack_fix(self):
         if self.get_cardinality() > 1:

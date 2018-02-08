@@ -53,11 +53,11 @@ class LabVIEWZipGenerator(common.ZipGenerator):
 
         # Copy device examples
         tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
-                                               device.get_camel_case_category(),
-                                               device.get_camel_case_name())
+                                               device.get_category().camel,
+                                               device.get_name().camel)
         tmp_examples_device_10_dir = os.path.join(self.tmp_examples_dir,
-                                                  device.get_camel_case_category(),
-                                                  device.get_camel_case_name(),
+                                                  device.get_category().camel,
+                                                  device.get_name().camel,
                                                   '10.0')
 
         if not os.path.exists(tmp_examples_device_dir):

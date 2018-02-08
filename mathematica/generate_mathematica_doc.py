@@ -32,23 +32,23 @@ import common
 
 class MathematicaDocDevice(common.Device):
     def get_mathematica_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
     def specialize_mathematica_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':mathematica:func:`{1}Callback <{0}@{1}Callback>`'.format(packet.get_device().get_mathematica_class_name(),
-                                                                                  packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                                  packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':mathematica:func:`{1}[] <{0}@{1}>`'.format(packet.get_device().get_mathematica_class_name(),
-                                                                    packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                    packet.get_name(skip=-2 if high_level else 0).camel)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='mathematica')
 
     def get_mathematica_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('Example', '').replace('.nb.txt', '')
-            return common.camel_case_to_space(filename)
+            return common.camel_to_space(filename)
 
         def url_fixer(url):
             return url.replace('.nb.txt', '.nb')
@@ -69,7 +69,7 @@ class MathematicaDocDevice(common.Device):
                 continue
 
             skip = -2 if packet.has_high_level() else 0
-            name = packet.get_camel_case_name(skip=skip)
+            name = packet.get_name(skip=skip).camel
             params = packet.get_mathematica_parameter_list(high_level=True)
             param_desc = packet.get_mathematica_parameter_description(high_level=True)
             ret = packet.get_mathematica_return(high_level=True)
@@ -98,7 +98,7 @@ class MathematicaDocDevice(common.Device):
                 params = ', ' + params
 
             callbacks.append(callback.format(self.get_mathematica_class_name(),
-                                             packet.get_camel_case_name(skip=skip),
+                                             packet.get_name(skip=skip).camel,
                                              params,
                                              params_desc,
                                              doc))
@@ -329,7 +329,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_mathematica_class_name(),
-                                                    self.get_headless_camel_case_name())
+                                                    self.get_name().headless)
 
         bf = self.get_mathematica_functions('bf')
         af = self.get_mathematica_functions('af')
@@ -344,7 +344,7 @@ Konstanten
             api_str += common.select_lang(common.ccf_str).format('', ccf)
         if c:
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
-                                                        self.get_headless_camel_case_name(),
+                                                        self.get_name().headless,
                                                         c)
 
         article = 'ein'
@@ -380,12 +380,13 @@ class MathematicaDocPacket(common.Packet):
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_mathematica_class_name() + '`'
-        if self.get_underscore_name() == 'set_response_expected':
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device()).replace('_', 'U')
         else:
             def constant_format(prefix, constant_group, constant, value):
-                return '* {0}{1}U{2} = {3}\n'.format(prefix, constant_group.get_upper_case_name().replace('_', 'U'),
-                                                     constant.get_upper_case_name().replace('_', 'U'), value)
+                return '* {0}{1}U{2} = {3}\n'.format(prefix, constant_group.get_name().upper.replace('_', 'U'),
+                                                     constant.get_name().upper.replace('_', 'U'), value)
 
             text += common.format_constants(prefix, self, char_format='``ToCharacterCode["{0}"][[0]]``',
                                             constant_format_func=constant_format)
@@ -468,7 +469,7 @@ class MathematicaDocElement(common.Element):
         return MathematicaDocElement.mathematica_types[self.get_type()]
 
     def get_mathematica_signature_name(self):
-        name = self.get_headless_camel_case_name()
+        name = self.get_name().headless
 
         if self.get_cardinality() > 1 and self.get_type() != 'string':
             items = []
@@ -486,7 +487,7 @@ class MathematicaDocElement(common.Element):
         return name
 
     def get_mathematica_description_name(self):
-        name = self.get_headless_camel_case_name()
+        name = self.get_name().headless
 
         if self.get_cardinality() != 1 and self.get_type() != 'string':
             name += 'i'

@@ -36,25 +36,24 @@ import c_common
 
 class COMCUBindingsDevice(common.Device):
     def get_h_constants(self):
-        constant_format = '#define {prefix}_{constant_group_upper_case_name}_{constant_upper_case_name} {constant_value}'
+        constant_format = '#define {device_name}_{constant_group_name}_{constant_name} {constant_value}'
         char_format="'{0}'"
         constants = []
 
         for i, constant_group in enumerate(self.get_constant_groups()):
             if i != 0:
                 constants.append('')
+
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
                     value = char_format.format(constant.get_value())
                 else:
                     value = str(constant.get_value())
 
-                constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
-                                                        constant_group_camel_case_name=constant_group.get_camel_case_name(),
-                                                        constant_upper_case_name=constant.get_upper_case_name(),
-                                                        constant_camel_case_name=constant.get_camel_case_name(),
-                                                        constant_value=value,
-                                                        prefix=self.get_upper_case_name()))
+                constants.append(constant_format.format(device_name=self.get_name().upper,
+                                                        constant_group_name=constant_group.get_name().upper,
+                                                        constant_name=constant.get_name().upper,
+                                                        constant_value=value))
 
         return constants
 
@@ -65,12 +64,12 @@ class COMCUBindingsDevice(common.Device):
         defines = []
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200:
-                defines.append(define_function.format(packet.get_upper_case_name(), packet.get_function_id()))
+                defines.append(define_function.format(packet.get_name().upper, packet.get_function_id()))
 
         defines.append('')
         for packet in self.get_packets('callback'):
             if packet.get_function_id() < 200:
-                defines.append(define_callback.format(packet.get_upper_case_name(), packet.get_function_id()))
+                defines.append(define_callback.format(packet.get_name().upper, packet.get_function_id()))
 
         return defines
 
@@ -89,12 +88,12 @@ class COMCUBindingsDevice(common.Device):
                         c_type = element.get_c_type(False)
                         if element.get_cardinality() > 1:
                             struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                                      element.get_underscore_name(),
+                                                                      element.get_name().under,
                                                                       element.get_cardinality());
                         else:
-                            struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
+                            struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
 
-                    structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), '_Callback'))
+                    structs.append(struct_temp.format(struct_body, packet.get_name().camel, '_Callback'))
                     continue
 
                 struct_body = ''
@@ -104,12 +103,12 @@ class COMCUBindingsDevice(common.Device):
 
                     if element.get_cardinality() > 1:
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                                  element.get_underscore_name(),
+                                                                  element.get_name().under,
                                                                   element.get_cardinality());
                     else:
-                        struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
+                        struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
 
-                structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), ''))
+                structs.append(struct_temp.format(struct_body, packet.get_name().camel, ''))
 
                 if len(packet.get_elements(direction='out')) == 0:
                     continue
@@ -121,12 +120,12 @@ class COMCUBindingsDevice(common.Device):
 
                     if element.get_cardinality() > 1:
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                                  element.get_underscore_name(),
+                                                                  element.get_name().under,
                                                                   element.get_cardinality());
                     else:
-                        struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
+                        struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
 
-                structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), '_Response'))
+                structs.append(struct_temp.format(struct_body, packet.get_name().camel, '_Response'))
 
         return structs
 
@@ -138,9 +137,9 @@ class COMCUBindingsDevice(common.Device):
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and not packet.is_part_of_callback_value():
                 if len(packet.get_elements(direction='out')) == 0:
-                    prototypes.append(prototype.format(packet.get_underscore_name(), packet.get_camel_case_name()))
+                    prototypes.append(prototype.format(packet.get_name().under, packet.get_name().camel))
                 else:
-                    prototypes.append(prototype_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + '_Response'))
+                    prototypes.append(prototype_with_response.format(packet.get_name().under, packet.get_name().camel, packet.get_name().camel + '_Response'))
 
         return prototypes
 
@@ -150,7 +149,7 @@ class COMCUBindingsDevice(common.Device):
         prototypes = []
         for packet in self.get_packets('callback'):
             if packet.get_function_id() < 200:
-                prototypes.append(prototype.format(packet.get_underscore_name()))
+                prototypes.append(prototype.format(packet.get_name().under))
 
         return prototypes
 
@@ -171,7 +170,7 @@ class COMCUBindingsDevice(common.Device):
 
         for packet in self.get_packets('callback'):
             if packet.get_function_id() < 200:
-                callback_list.append(callback.format(packet.get_underscore_name()))
+                callback_list.append(callback.format(packet.get_name().under))
 
         return callback_list
 
@@ -193,14 +192,14 @@ class COMCUBindingsDevice(common.Device):
                         callback_value_function_name = 'set_callback_value_callback_configuration'
 
                     if len(packet.get_elements(direction='out')) == 0:
-                        cases.append(case_cv.format(packet.get_upper_case_name(), callback_value_function_name, packet.get_callback_value_underscore_name()))
+                        cases.append(case_cv.format(packet.get_name().upper, callback_value_function_name, packet.get_callback_value_name()))
                     else:
-                        cases.append(case_cv_with_response.format(packet.get_upper_case_name(), callback_value_function_name, packet.get_callback_value_underscore_name()))
+                        cases.append(case_cv_with_response.format(packet.get_name().upper, callback_value_function_name, packet.get_callback_value_name()))
                 else:
                     if len(packet.get_elements(direction='out')) == 0:
-                        cases.append(case.format(packet.get_upper_case_name(), packet.get_underscore_name()))
+                        cases.append(case.format(packet.get_name().upper, packet.get_name().under))
                     else:
-                        cases.append(case_with_response.format(packet.get_upper_case_name(), packet.get_underscore_name()))
+                        cases.append(case_with_response.format(packet.get_name().upper, packet.get_name().under))
 
         return cases
 
@@ -222,9 +221,9 @@ class COMCUBindingsDevice(common.Device):
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and not packet.is_part_of_callback_value():
                 if len(packet.get_elements(direction='out')) == 0:
-                    functions.append(function.format(packet.get_underscore_name(), packet.get_camel_case_name()))
+                    functions.append(function.format(packet.get_name().under, packet.get_name().camel))
                 else:
-                    functions.append(function_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + '_Response'))
+                    functions.append(function_with_response.format(packet.get_name().under, packet.get_name().camel, packet.get_name().camel + '_Response'))
 
         return functions
 
@@ -261,9 +260,9 @@ bool handle_{0}_callback(void) {{
         for packet in self.get_packets('callback'):
             if packet.get_function_id() < 200:
                 if packet.is_part_of_callback_value():
-                    callbacks.append(callback_cv.format(packet.get_underscore_name(), packet.get_callback_value_underscore_name(), packet.get_upper_case_name()))
+                    callbacks.append(callback_cv.format(packet.get_name().under, packet.get_callback_value_name(), packet.get_name().upper))
                 else:
-                    callbacks.append(callback.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_upper_case_name()))
+                    callbacks.append(callback.format(packet.get_name().under, packet.get_name().camel, packet.get_name().upper))
 
         return callbacks
 
@@ -271,7 +270,7 @@ bool handle_{0}_callback(void) {{
         callback_values = Set()
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
-                callback_values.add(packet.get_callback_value_underscore_name())
+                callback_values.add(packet.get_callback_value_name())
 
         if len(callback_values) == 0:
             return ''
@@ -290,7 +289,7 @@ bool handle_{0}_callback(void) {{
         callback_values = Set()
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
-                callback_values.add(packet.get_callback_value_underscore_name())
+                callback_values.add(packet.get_callback_value_name())
 
         if len(callback_values) == 0:
             return ''
@@ -459,7 +458,7 @@ void communication_init(void);
                     f.write(s)
 
     def generate(self, device):
-        folder = os.path.join(self.get_root_dir(), 'comcu_output', '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name()))
+        folder = os.path.join(self.get_root_dir(), 'comcu_output', '{0}_{1}'.format(device.get_category().under, device.get_name().under))
 
         try:
             shutil.rmtree(folder) # first we delete the comcu output if it already exists for this device
@@ -468,7 +467,7 @@ void communication_init(void);
 
         os.makedirs(folder)
 
-        device_name_dash = device.get_underscore_name().replace('_', '-')
+        device_name_dash = device.get_name().dash
         year = datetime.datetime.now().year
         name = device.get_author().split("<")[0].rstrip()             #author syntax: Firstname Lastname <email>
         email = device.get_author().split("<")[1].replace(">","")
@@ -478,7 +477,7 @@ void communication_init(void);
             callback_value = """\t"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/callback_value.c"\n"""
 
         self.copy_templates_to(folder)
-        self.fill_templates(folder, device_name_dash, device.get_name(), device.get_device_identifier(), year, name, email, callback_value)
+        self.fill_templates(folder, device_name_dash, device.get_name().space, device.get_device_identifier(), year, name, email, callback_value)
 
         h_constants = device.get_h_constants()
         h_defines = device.get_h_defines()

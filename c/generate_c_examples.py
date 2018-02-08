@@ -87,18 +87,18 @@ class CPrintfFormatMixin(object):
 
 class CConstant(common.Constant):
     def get_c_source(self):
-        template = '{device_upper_case_name}_{constant_group_upper_case_name}_{constant_upper_case_name}'
+        template = '{device_name}_{constant_group_name}_{constant_name}'
 
-        return template.format(device_upper_case_name=self.get_device().get_upper_case_name(),
-                               constant_group_upper_case_name=self.get_constant_group().get_upper_case_name(),
-                               constant_upper_case_name=self.get_upper_case_name())
+        return template.format(device_name=self.get_device().get_name().upper,
+                               constant_group_name=self.get_constant_group().get_name().upper,
+                               constant_name=self.get_name().upper)
 
 class CExample(common.Example):
     def get_c_source(self):
         template = r"""{defines}#include <stdio.h>{includes}{incomplete}{description}
 
 #include "ip_connection.h"
-#include "{device_underscore_category}_{device_underscore_name}.h"
+#include "{device_category}_{device_name_under}.h"
 
 #define HOST "localhost"
 #define PORT 4223
@@ -110,8 +110,8 @@ int main(void) {{
 	ipcon_create(&ipcon);
 
 	// Create device object
-	{device_camel_case_name} {device_initial_name};
-	{device_underscore_name}_create(&{device_initial_name}, UID, &ipcon);
+	{device_name_camel} {device_name_initial};
+	{device_name_under}_create(&{device_name_initial}, UID, &ipcon);
 
 	// Connect to brickd
 	if(ipcon_connect(&ipcon, HOST, PORT) < 0) {{
@@ -122,7 +122,7 @@ int main(void) {{
 {sources}
 	printf("Press key to exit\n");
 	getchar();{cleanups}
-	{device_underscore_name}_destroy(&{device_initial_name});
+	{device_name_under}_destroy(&{device_name_initial});
 	ipcon_destroy(&ipcon); // Calls ipcon_disconnect internally
 	return 0;
 }}
@@ -184,10 +184,10 @@ int main(void) {{
                                includes=common.wrap_non_empty('\n', '\n'.join(unique_includes), ''),
                                incomplete=incomplete,
                                description=description,
-                               device_underscore_category=self.get_device().get_underscore_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_underscore_name=self.get_device().get_underscore_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
+                               device_category=self.get_device().get_category().under,
+                               device_name_camel=self.get_device().get_name().camel,
+                               device_name_under=self.get_device().get_name().under,
+                               device_name_initial=self.get_device().get_initial_name(),
                                device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
@@ -221,9 +221,9 @@ class CExampleArgumentsMixin(object):
 
 class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin):
     def get_c_source(self):
-        templateA = '{type_} {underscore_name}'
-        templateB = '{type_} {underscore_name}[{cardinality}]'
-        templateC = '{type_} *{underscore_name}, uint16_t {underscore_name}_length' # FIXME: don't hardcode length as uint16_t
+        templateA = '{type_} {name}'
+        templateB = '{type_} {name}[{cardinality}]'
+        templateC = '{type_} *{name}, uint16_t {name}_length' # FIXME: don't hardcode length as uint16_t
 
         if self.get_cardinality() == 1:
             template = templateA
@@ -233,19 +233,19 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
             template = templateC
 
         return template.format(type_=self.get_c_type(),
-                               underscore_name=self.get_underscore_name(),
+                               name=self.get_name().under,
                                cardinality=self.get_cardinality())
 
     def get_c_unuseds(self):
-        templateA = '(void){underscore_name};'
-        templateB = '(void){underscore_name}_length;'
+        templateA = '(void){name};'
+        templateB = '(void){name}_length;'
         result = []
 
         if self.get_label_name() == None:
-            result = [templateA.format(underscore_name=self.get_underscore_name())]
+            result = [templateA.format(name=self.get_name().under)]
 
             if self.get_cardinality() < 0:
-                result.append(templateB.format(underscore_name=self.get_underscore_name()))
+                result.append(templateB.format(name=self.get_name().under))
 
         return result
 
@@ -255,7 +255,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {printf_prefix}{underscore_name}{index}{divisor}{printf_suffix});{comment}'
+        template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -266,45 +266,45 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(underscore_name=self.get_underscore_name(),
-                                          label_name=self.get_label_name(index=index).replace('%', '%%'),
+            result.append(template.format(name=self.get_name().under,
+                                          label=self.get_label_name(index=index).replace('%', '%%'),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_c_printf_format(),
                                           printf_prefix=self.get_c_printf_prefix(),
                                           printf_suffix=self.get_c_printf_suffix(),
-                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                          unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
                                           comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
 class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
     def get_c_variable_declaration(self):
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
         if self.get_cardinality() > 1:
-            underscore_name += '[{0}]'.format(self.get_cardinality())
+            name += '[{0}]'.format(self.get_cardinality())
 
-        return self.get_c_type(), underscore_name
+        return self.get_c_type(), name
 
     def get_c_variable_reference(self):
-        templateA = '{underscore_name}'
-        templateB = '&{underscore_name}'
+        templateA = '{name}'
+        templateB = '&{name}'
 
         if self.get_cardinality() > 1:
             template = templateA
         else:
             template = templateB
 
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
-        return template.format(underscore_name=underscore_name)
+        return template.format(name=name)
 
     def get_c_printfs(self):
         # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
@@ -312,7 +312,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
         #        but it's not in the standard C library and it's not reentrant. so just print the
         #        integer in base-10 the normal way
-        template = '\tprintf("{label_name}: {printf_format}{unit_name}\\n", {printf_prefix}{underscore_name}{index}{divisor}{printf_suffix});{comment}'
+        template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -320,22 +320,22 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         if self.get_cardinality() < 0:
             return [] # FIXME: streaming
 
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(underscore_name=underscore_name,
-                                          label_name=self.get_label_name(index=index).replace('%', '%%'),
+            result.append(template.format(name=name,
+                                          label=self.get_label_name(index=index).replace('%', '%%'),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
                                           printf_format=self.get_c_printf_format(),
                                           printf_prefix=self.get_c_printf_prefix(),
                                           printf_suffix=self.get_c_printf_suffix(),
-                                          unit_name=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                          unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
                                           comment=self.get_formatted_comment(' // {0}')))
 
         return result
@@ -361,10 +361,10 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         return None
 
     def get_c_source(self):
-        template = r"""	// Get current {function_comment_name}
+        template = r"""	// Get current {function_name_comment}
 {variable_declarations};
-	if({device_underscore_name}_{function_underscore_name}(&{device_initial_name}{arguments}{variable_references}) < 0) {{
-		fprintf(stderr, "Could not get {function_comment_name}, probably timeout\n");
+	if({device_name_under}_{function_name_under}(&{device_name_initial}{arguments}{variable_references}) < 0) {{
+		fprintf(stderr, "Could not get {function_name_comment}, probably timeout\n");
 		return 1;
 	}}
 
@@ -406,16 +406,16 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         while None in printfs:
             printfs.remove(None)
 
-        result = template.format(device_underscore_name=self.get_device().get_underscore_name(),
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_comment_name=self.get_comment_name(),
-                                 function_underscore_name=self.get_underscore_name(),
+        result = template.format(device_name_under=self.get_device().get_name().under,
+                                 device_name_initial=self.get_device().get_initial_name(),
+                                 function_name_comment=self.get_comment_name(),
+                                 function_name_under=self.get_name().under,
                                  variable_declarations=variable_declarations,
                                  variable_references=',<BP>' + ',<BP>'.join(variable_references),
                                  printfs='\n'.join(printfs),
                                  arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''))
 
-        return common.break_string(result, '_{}('.format(self.get_underscore_name()))
+        return common.break_string(result, '_{}('.format(self.get_name().under))
 
 class CExampleSetterFunction(common.ExampleSetterFunction, CExampleArgumentsMixin):
     def get_c_defines(self):
@@ -428,17 +428,17 @@ class CExampleSetterFunction(common.ExampleSetterFunction, CExampleArgumentsMixi
         return None
 
     def get_c_source(self):
-        template = '{comment1}{global_line_prefix}\t{device_underscore_name}_{function_underscore_name}(&{device_initial_name}{arguments});{comment2}\n'
+        template = '{comment1}{global_line_prefix}\t{device_name_under}_{function_name}(&{device_name_initial}{arguments});{comment2}\n'
 
         result = template.format(global_line_prefix=global_line_prefix,
-                                 device_underscore_name=self.get_device().get_underscore_name(),
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_underscore_name=self.get_underscore_name(),
+                                 device_name_under=self.get_device().get_name().under,
+                                 device_name_initial=self.get_device().get_initial_name(),
+                                 function_name=self.get_name().under,
                                  arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t// {0}\n', '\r', '\n' + global_line_prefix + '\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
-        return common.break_string(result, '_{}('.format(self.get_underscore_name()))
+        return common.break_string(result, '_{}('.format(self.get_name().under))
 
 class CExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_c_defines(self):
@@ -458,11 +458,11 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         return includes
 
     def get_c_function(self):
-        template1A = r"""// Callback function for {function_comment_name} callback
+        template1A = r"""// Callback function for {function_name_comment} callback
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""void cb_{function_underscore_name}({parameters}void *user_data) {{
+        template2 = r"""void cb_{function_name_under}({parameters}void *user_data) {{
 	{unuseds}
 
 {printfs}{extra_message}
@@ -503,31 +503,31 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(printfs) > 0:
             extra_message = '\n' + extra_message
 
-        result = template1.format(function_comment_name=self.get_comment_name(),
+        result = template1.format(function_name_comment=self.get_comment_name(),
                                   override_comment=override_comment) + \
-                 template2.format(function_underscore_name=self.get_underscore_name(),
+                 template2.format(function_name_under=self.get_name().under,
                                   parameters=common.wrap_non_empty('', ',<BP>'.join(parameters), ',<BP>'),
                                   unuseds=unuseds,
                                   printfs='\n'.join(printfs),
                                   extra_message=extra_message)
 
-        return common.break_string(result, 'cb_{}('.format(self.get_underscore_name()))
+        return common.break_string(result, 'cb_{}('.format(self.get_name().under))
 
     def get_c_source(self):
-        template = r"""	// Register {function_comment_name}<BP>callback<BP>to<BP>function<BP>cb_{function_underscore_name}
-	{device_underscore_name}_register_callback(&{device_initial_name},
-	{spaces}                   {device_upper_case_name}_CALLBACK_{function_upper_case_name},
-	{spaces}                   (void *)cb_{function_underscore_name},
+        template = r"""	// Register {function_name_comment}<BP>callback<BP>to<BP>function<BP>cb_{function_name_under}
+	{device_name_under}_register_callback(&{device_name_initial},
+	{spaces}                   {device_name_upper}_CALLBACK_{function_name_upper},
+	{spaces}                   (void *)cb_{function_name_under},
 	{spaces}                   NULL);
 """
 
-        result = template.format(device_underscore_name=self.get_device().get_underscore_name(),
-                                 device_upper_case_name=self.get_device().get_upper_case_name(),
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_underscore_name=self.get_underscore_name(),
-                                 function_upper_case_name=self.get_upper_case_name(),
-                                 function_comment_name=self.get_comment_name(),
-                                 spaces=' ' * len(self.get_device().get_underscore_name()))
+        result = template.format(device_name_under=self.get_device().get_name().under,
+                                 device_name_upper=self.get_device().get_name().upper,
+                                 device_name_initial=self.get_device().get_initial_name(),
+                                 function_name_under=self.get_name().under,
+                                 function_name_upper=self.get_name().upper,
+                                 function_name_comment=self.get_comment_name(),
+                                 spaces=' ' * len(self.get_device().get_name().under))
 
         return common.break_string(result, '// ', indent_tail='// ')
 
@@ -542,26 +542,26 @@ class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, CExam
         return None
 
     def get_c_source(self):
-        templateA = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-	{device_underscore_name}_set_{function_underscore_name}_period(&{device_initial_name}{arguments}, {period_msec});
+        templateA = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+	{device_name_under}_set_{function_name_under}_period(&{device_name_initial}{arguments}, {period_msec});
 """
-        templateB = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-	// Note: The {function_comment_name} callback is only called every {period_sec_long}
-	//       if the {function_comment_name} has changed since the last call!
-	{device_underscore_name}_set_{function_underscore_name}_callback_period(&{device_initial_name}{arguments}, {period_msec});
+        templateB = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+	// Note: The {function_name_comment} callback is only called every {period_sec_long}
+	//       if the {function_name_comment} has changed since the last call!
+	{device_name_under}_set_{function_name_under}_callback_period(&{device_name_initial}{arguments}, {period_msec});
 """
 
-        if self.get_device().get_underscore_name().startswith('imu'):
+        if self.get_device().get_name().space.startswith('IMU '):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        return template.format(device_underscore_name=self.get_device().get_underscore_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name_under=self.get_device().get_name().under,
+                               device_name_initial=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -585,18 +585,18 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
         return None
 
     def get_c_source(self):
-        template = r"""	// Configure threshold for {function_comment_name} "{option_comment}"
-	{device_underscore_name}_set_{function_underscore_name}_callback_threshold(&{device_initial_name}{arguments}, '{option_char}', {mininum_maximums});
+        template = r"""	// Configure threshold for {function_name_comment} "{option_comment}"
+	{device_name_under}_set_{function_name_under}_callback_threshold(&{device_name_initial}{arguments}, '{option_char}', {mininum_maximums});
 """
         mininum_maximums = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_c_source())
 
-        return template.format(device_underscore_name=self.get_device().get_underscore_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name_under=self.get_device().get_name().under,
+                               device_name_initial=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
@@ -613,15 +613,15 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         return None
 
     def get_c_source(self):
-        templateA = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-	{device_underscore_name}_set_{function_underscore_name}_callback_configuration(&{device_initial_name}{arguments}, {period_msec}, false);
+        templateA = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}, false);
 """
-        templateB = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
-	{device_underscore_name}_set_{function_underscore_name}_callback_configuration(&{device_initial_name}{arguments}, {period_msec}, false, '{option_char}', {mininum_maximums});
+        templateB = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
+	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}, false, '{option_char}', {mininum_maximums});
 """
-        templateC = r"""	// Configure threshold for {function_comment_name} "{option_comment}"
+        templateC = r"""	// Configure threshold for {function_name_comment} "{option_comment}"
 	// with a debounce period of {period_sec_short} ({period_msec}ms)
-	{device_underscore_name}_set_{function_underscore_name}_callback_configuration(&{device_initial_name}{arguments}, {period_msec}, false, '{option_char}', {mininum_maximums});
+	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}, false, '{option_char}', {mininum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -638,10 +638,10 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_c_source())
 
-        return template.format(device_underscore_name=self.get_device().get_underscore_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name_under=self.get_device().get_name().under,
+                               device_name_initial=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -671,12 +671,12 @@ class CExampleSpecialFunction(common.ExampleSpecialFunction):
             return ''
         elif type_ == 'debounce_period':
             template = r"""	// Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-	{device_underscore_name}_set_debounce_period(&{device_initial_name}, {period_msec});
+	{device_name_under}_set_debounce_period(&{device_name_initial}, {period_msec});
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
-            return template.format(device_underscore_name=self.get_device().get_underscore_name(),
-                                   device_initial_name=self.get_device().get_initial_name(),
+            return template.format(device_name_under=self.get_device().get_name().under,
+                                   device_name_initial=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
@@ -743,7 +743,7 @@ class CExamplesGenerator(common.ExamplesGenerator):
         return CExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')
             return
 
@@ -758,7 +758,7 @@ class CExamplesGenerator(common.ExamplesGenerator):
             os.makedirs(examples_dir)
 
         for example in examples:
-            filename = 'example_{0}.c'.format(example.get_underscore_name())
+            filename = 'example_{0}.c'.format(example.get_name().under)
             filepath = os.path.join(examples_dir, filename)
 
             if example.is_incomplete():

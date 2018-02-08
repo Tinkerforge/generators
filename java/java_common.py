@@ -110,14 +110,14 @@ LEGACY_TYPE_DEVICES = {
 
 class JavaDevice(common.Device):
     def get_java_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
     def has_java_legacy_types(self):
         return self.get_java_class_name() in LEGACY_TYPE_DEVICES
 
 class JavaPacket(common.Packet):
     def get_java_object_name(self, skip=0):
-        name = self.get_camel_case_name(skip=skip)
+        name = self.get_name(skip=skip).camel
 
         if name.startswith('Get'):
             name = name[3:]
@@ -145,7 +145,7 @@ class JavaPacket(common.Packet):
                 continue
 
             java_type = element.get_java_type()
-            name = element.get_headless_camel_case_name()
+            name = element.get_name().headless
 
             if context == 'signature':
                 parameters.append('{0} {1}'.format(java_type, name))

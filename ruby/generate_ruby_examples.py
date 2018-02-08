@@ -34,12 +34,12 @@ global_line_prefix = ''
 
 class RubyConstant(common.Constant):
     def get_ruby_source(self):
-        template = '{device_camel_case_category}{device_camel_case_name}::{constant_group_upper_case_name}_{constant_upper_case_name}'
+        template = '{device_category}{device_name}::{constant_group_name}_{constant_name}'
 
-        return template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               constant_group_upper_case_name=self.get_constant_group().get_upper_case_name(),
-                               constant_upper_case_name=self.get_upper_case_name())
+        return template.format(device_category=self.get_device().get_category().camel,
+                               device_name=self.get_device().get_name().camel,
+                               constant_group_name=self.get_constant_group().get_name().upper,
+                               constant_name=self.get_name().upper)
 
 class RubyExample(common.Example):
     def get_ruby_source(self):
@@ -47,16 +47,16 @@ class RubyExample(common.Example):
 # -*- ruby encoding: utf-8 -*-{incomplete}{description}
 
 require 'tinkerforge/ip_connection'
-require 'tinkerforge/{device_underscore_category}_{device_underscore_name}'
+require 'tinkerforge/{device_category_under}_{device_name_under}'
 
 include Tinkerforge
 
 HOST = 'localhost'
 PORT = 4223
-UID = '{dummy_uid}' # Change {dummy_uid} to the UID of your {device_long_display_name}
+UID = '{dummy_uid}' # Change {dummy_uid} to the UID of your {device_name_long_display}
 
 ipcon = IPConnection.new # Create IP connection
-{device_initial_name} = {device_camel_case_category}{device_camel_case_name}.new UID, ipcon # Create device object
+{device_name_initial} = {device_category_camel}{device_name_camel}.new UID, ipcon # Create device object
 
 ipcon.connect HOST, PORT # Connect to brickd
 # Don't use device before ipcon is connected
@@ -97,12 +97,12 @@ ipcon.disconnect
 
         return template.format(incomplete=incomplete,
                                description=description,
-                               device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_underscore_category=self.get_device().get_underscore_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_underscore_name=self.get_device().get_underscore_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               device_long_display_name=self.get_device().get_long_display_name(),
+                               device_category_camel=self.get_device().get_category().camel,
+                               device_category_under=self.get_device().get_category().under,
+                               device_name_camel=self.get_device().get_name().camel,
+                               device_name_under=self.get_device().get_name().under,
+                               device_name_initial=self.get_device().get_initial_name(),
+                               device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
@@ -132,15 +132,15 @@ class RubyExampleArgumentsMixin(object):
 
 class RubyExampleParameter(common.ExampleParameter):
     def get_ruby_source(self):
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
-        return underscore_name
+        return name
 
     def get_ruby_puts(self):
-        template = '  puts "{label_name}: #{{{printf_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_name}"{comment}'
+        template = '  puts "{label}: #{{{printf_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -148,10 +148,10 @@ class RubyExampleParameter(common.ExampleParameter):
         if self.get_cardinality() < 0:
             return [] # FIXME: streaming
 
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
         type_ = self.get_type()
         divisor = self.get_formatted_divisor('/{0}')
@@ -168,11 +168,11 @@ class RubyExampleParameter(common.ExampleParameter):
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(underscore_name=underscore_name,
-                                          label_name=self.get_label_name(index=index),
+            result.append(template.format(name=name,
+                                          label=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_name=self.get_formatted_unit_name(' {0}'),
+                                          unit=self.get_formatted_unit_name(' {0}'),
                                           printf_prefix=printf_prefix,
                                           printf_suffix=printf_suffix,
                                           comment=self.get_formatted_comment(' # {0}')))
@@ -181,15 +181,15 @@ class RubyExampleParameter(common.ExampleParameter):
 
 class RubyExampleResult(common.ExampleResult):
     def get_ruby_variable(self):
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
-        return underscore_name
+        return name
 
     def get_ruby_puts(self):
-        template = 'puts "{label_name}: #{{{printf_prefix}{array_prefix}{underscore_name}{index}{divisor}{printf_suffix}}}{unit_name}"{comment}'
+        template = 'puts "{label}: #{{{printf_prefix}{array_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
 
         if self.get_label_name() == None:
             return []
@@ -198,13 +198,13 @@ class RubyExampleResult(common.ExampleResult):
             return [] # FIXME: streaming
 
         if len(self.get_function().get_results()) > 1:
-            underscore_name = '[{0}]'.format(self.get_index())
-            array_prefix = self.get_function().get_underscore_name(skip=1)
+            name = '[{0}]'.format(self.get_index())
+            array_prefix = self.get_function().get_name(skip=1).under
         else:
-            underscore_name = self.get_underscore_name()
+            name = self.get_name().under
 
-            if underscore_name == self.get_device().get_initial_name():
-                underscore_name += '_'
+            if name == self.get_device().get_initial_name():
+                name += '_'
 
             array_prefix = ''
 
@@ -223,12 +223,12 @@ class RubyExampleResult(common.ExampleResult):
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(underscore_name=underscore_name,
-                                          label_name=self.get_label_name(index=index),
+            result.append(template.format(name=name,
+                                          label=self.get_label_name(index=index),
                                           array_prefix=array_prefix,
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=divisor,
-                                          unit_name=self.get_formatted_unit_name(' {0}'),
+                                          unit=self.get_formatted_unit_name(' {0}'),
                                           printf_prefix=printf_prefix,
                                           printf_suffix=printf_suffix,
                                           comment=self.get_formatted_comment(' # {0}')))
@@ -237,8 +237,8 @@ class RubyExampleResult(common.ExampleResult):
 
 class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
-        template = r"""# Get current {function_comment_name}{array_content}
-{variables} = {device_initial_name}.{function_underscore_name}{arguments}
+        template = r"""# Get current {function_name_comment}{array_content}
+{variables} = {device_name}.{function_name_under}{arguments}
 {puts}
 """
         comments = []
@@ -251,7 +251,7 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
 
         if len(variables) > 1:
             array_content = ' as [{0}]'.format(',<BP>'.join([variable.rstrip('_') for variable in variables]))
-            variables = [self.get_underscore_name(skip=1)]
+            variables = [self.get_name(skip=1).under]
         else:
             array_content = ''
 
@@ -266,9 +266,9 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
         if arguments.strip().startswith('('):
             arguments = '({0})'.format(arguments.strip())
 
-        result = template.format(device_initial_name=self.get_device().get_initial_name(),
-                                 function_underscore_name=self.get_underscore_name(),
-                                 function_comment_name=self.get_comment_name(),
+        result = template.format(device_name=self.get_device().get_initial_name(),
+                                 function_name_under=self.get_name().under,
+                                 function_name_comment=self.get_comment_name(),
                                  array_content=array_content,
                                  variables=', '.join(variables),
                                  puts='\n'.join(puts),
@@ -278,7 +278,7 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
 
 class RubyExampleSetterFunction(common.ExampleSetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
-        template = '{comment1}{global_line_prefix}{device_initial_name}.{function_underscore_name}{arguments}{comment2}\n'
+        template = '{comment1}{global_line_prefix}{device_name}.{function_name}{arguments}{comment2}\n'
         arguments = common.wrap_non_empty(' ', ',<BP>'.join(self.get_ruby_arguments()), '')
         indent_marker = '.{} '
 
@@ -287,21 +287,21 @@ class RubyExampleSetterFunction(common.ExampleSetterFunction, RubyExampleArgumen
             indent_marker = '.{}('
 
         result = template.format(global_line_prefix=global_line_prefix,
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_underscore_name=self.get_underscore_name(),
+                                 device_name=self.get_device().get_initial_name(),
+                                 function_name=self.get_name().under,
                                  arguments=arguments,
                                  comment1=self.get_formatted_comment1(global_line_prefix + '# {0}\n', '\r', '\n' + global_line_prefix + '# '),
                                  comment2=self.get_formatted_comment2(' # {0}', ''))
 
-        return common.break_string(result, indent_marker.format(self.get_underscore_name()), continuation=' \\')
+        return common.break_string(result, indent_marker.format(self.get_name().under), continuation=' \\')
 
 class RubyExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_ruby_source(self):
-        template1A = r"""# Register {function_comment_name} callback
+        template1A = r"""# Register {function_name_comment} callback
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""{device_initial_name}.register_callback({device_camel_case_category}{device_camel_case_name}::CALLBACK_{function_upper_case_name}) do{parameters}
+        template2 = r"""{device_name_initial}.register_callback({device_category}{device_name_camel}::CALLBACK_{function_name_upper}) do{parameters}
 {puts}{extra_message}
 end
 """
@@ -330,13 +330,13 @@ end
         if len(extra_message) > 0 and len(puts) > 0:
             extra_message = '\n' + extra_message
 
-        result = template1.format(function_comment_name=self.get_comment_name(),
+        result = template1.format(function_name_comment=self.get_comment_name(),
                                   override_comment=override_comment) + \
-                 template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                  device_camel_case_name=self.get_device().get_camel_case_name(),
-                                  device_initial_name=self.get_device().get_initial_name(),
-                                  function_underscore_name=self.get_underscore_name(),
-                                  function_upper_case_name=self.get_upper_case_name(),
+                 template2.format(device_category=self.get_device().get_category().camel,
+                                  device_name_camel=self.get_device().get_name().camel,
+                                  device_name_initial=self.get_device().get_initial_name(),
+                                  function_name_under=self.get_name().under,
+                                  function_name_upper=self.get_name().upper,
                                   parameters=common.wrap_non_empty(' |', ',<BP>'.join(parameters), '|'),
                                   puts='\n'.join(puts),
                                   extra_message=extra_message)
@@ -345,25 +345,25 @@ end
 
 class RubyExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
-        templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-{device_initial_name}.set_{function_underscore_name}_period {arguments}{period_msec}
+        templateA = r"""# Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+{device_name}.set_{function_name_under}_period {arguments}{period_msec}
 """
-        templateB = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-# Note: The {function_comment_name} callback is only called every {period_sec_long}
-#       if the {function_comment_name} has changed since the last call!
-{device_initial_name}.set_{function_underscore_name}_callback_period {arguments}{period_msec}
+        templateB = r"""# Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+# Note: The {function_name_comment} callback is only called every {period_sec_long}
+#       if the {function_name_comment} has changed since the last call!
+{device_name}.set_{function_name_under}_callback_period {arguments}{period_msec}
 """
 
-        if self.get_device().get_underscore_name().startswith('imu'):
+        if self.get_device().get_name().space.startswith('IMU '):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_ruby_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -378,17 +378,17 @@ class RubyExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshold
 
 class RubyExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
-        template = r"""# Configure threshold for {function_comment_name} "{option_comment}"
-{device_initial_name}.set_{function_underscore_name}_callback_threshold {arguments}'{option_char}', {mininum_maximums}
+        template = r"""# Configure threshold for {function_name_comment} "{option_comment}"
+{device_name}.set_{function_name_under}_callback_threshold {arguments}'{option_char}', {mininum_maximums}
 """
         mininum_maximums = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_ruby_source())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_ruby_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
@@ -396,15 +396,15 @@ class RubyExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
 
 class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
-        templateA = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-{device_initial_name}.set_{function_underscore_name}_callback_configuration {arguments}{period_msec}, false
+        templateA = r"""# Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+{device_name}.set_{function_name_under}_callback_configuration {arguments}{period_msec}, false
 """
-        templateB = r"""# Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
-{device_initial_name}.set_{function_underscore_name}_callback_configuration {arguments}{period_msec}, false, '{option_char}', {mininum_maximums}
+        templateB = r"""# Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
+{device_name}.set_{function_name_under}_callback_configuration {arguments}{period_msec}, false, '{option_char}', {mininum_maximums}
 """
-        templateC = r"""# Configure threshold for {function_comment_name} "{option_comment}"
+        templateC = r"""# Configure threshold for {function_name_comment} "{option_comment}"
 # with a debounce period of {period_sec_short} ({period_msec}ms)
-{device_initial_name}.set_{function_underscore_name}_callback_configuration {arguments}{period_msec}, false, '{option_char}', {mininum_maximums}
+{device_name}.set_{function_name_under}_callback_configuration {arguments}{period_msec}, false, '{option_char}', {mininum_maximums}
 """
 
         if self.get_option_char() == None:
@@ -421,9 +421,9 @@ class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_ruby_source())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_ruby_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -442,11 +442,11 @@ class RubyExampleSpecialFunction(common.ExampleSpecialFunction):
             return ''
         elif type_ == 'debounce_period':
             template = r"""# Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-{device_initial_name}.set_debounce_period {period_msec}
+{device_name_initial}.set_debounce_period {period_msec}
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
-            return template.format(device_initial_name=self.get_device().get_initial_name(),
+            return template.format(device_name_initial=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
@@ -519,7 +519,7 @@ class RubyExamplesGenerator(common.ExamplesGenerator):
         return RubyExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')
             return
 
@@ -534,7 +534,7 @@ class RubyExamplesGenerator(common.ExamplesGenerator):
             os.makedirs(examples_dir)
 
         for example in examples:
-            filename = 'example_{0}.rb'.format(example.get_underscore_name())
+            filename = 'example_{0}.rb'.format(example.get_name().under)
             filepath = os.path.join(examples_dir, filename)
 
             if example.is_incomplete():

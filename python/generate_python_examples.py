@@ -33,11 +33,11 @@ global_line_prefix = ''
 
 class PythonConstant(common.Constant):
     def get_python_source(self):
-        template = '{device_initial_name}.{constant_group_upper_case_name}_{constant_upper_case_name}'
+        template = '{device_name}.{constant_group_name}_{constant_name}'
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               constant_group_upper_case_name=self.get_constant_group().get_upper_case_name(),
-                               constant_upper_case_name=self.get_upper_case_name())
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               constant_group_name=self.get_constant_group().get_name().upper,
+                               constant_name=self.get_name().upper)
 
 class PythonExample(common.Example):
     def get_python_source(self):
@@ -46,14 +46,14 @@ class PythonExample(common.Example):
 
 HOST = "localhost"
 PORT = 4223
-UID = "{dummy_uid}" # Change {dummy_uid} to the UID of your {device_long_display_name}
+UID = "{dummy_uid}" # Change {dummy_uid} to the UID of your {device_name_long_display}
 {imports}
 from tinkerforge.ip_connection import IPConnection
-from tinkerforge.{device_underscore_category}_{device_underscore_name} import {device_camel_case_category}{device_camel_case_name}
+from tinkerforge.{device_category_under}_{device_name_under} import {device_category_camel}{device_name_camel}
 {functions}
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
-    {device_initial_name} = {device_camel_case_category}{device_camel_case_name}(UID, ipcon) # Create device object
+    {device_name_initial} = {device_category_camel}{device_name_camel}(UID, ipcon) # Create device object
 
     ipcon.connect(HOST, PORT) # Connect to brickd
     # Don't use device before ipcon is connected
@@ -107,12 +107,12 @@ if __name__ == "__main__":
 
         return template.format(incomplete=incomplete,
                                description=description,
-                               device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_underscore_category=self.get_device().get_underscore_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_underscore_name=self.get_device().get_underscore_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               device_long_display_name=self.get_device().get_long_display_name(),
+                               device_category_camel=self.get_device().get_category().camel,
+                               device_category_under=self.get_device().get_category().under,
+                               device_name_camel=self.get_device().get_name().camel,
+                               device_name_under=self.get_device().get_name().under,
+                               device_name_initial=self.get_device().get_initial_name(),
+                               device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports=common.wrap_non_empty('\n', ''.join(unique_imports), ''),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
@@ -144,10 +144,10 @@ class PythonExampleArgumentsMixin(object):
 
 class PythonExampleParameter(common.ExampleParameter):
     def get_python_source(self):
-        return self.get_underscore_name()
+        return self.get_name().under
 
     def get_python_prints(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_name}){comment}'
+        template = '    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
 
         if self.get_label_name() == None:
             return []
@@ -170,11 +170,11 @@ class PythonExampleParameter(common.ExampleParameter):
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(underscore_name=self.get_underscore_name(),
-                                          label_name=self.get_label_name(index=index),
+            result.append(template.format(name=self.get_name().under,
+                                          label=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
+                                          unit=self.get_formatted_unit_name(' + " {0}"'),
                                           format_prefix=format_prefix,
                                           format_suffix=format_suffix,
                                           comment=self.get_formatted_comment(' # {0}')))
@@ -183,15 +183,15 @@ class PythonExampleParameter(common.ExampleParameter):
 
 class PythonExampleResult(common.ExampleResult):
     def get_python_variable(self):
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
-        return underscore_name
+        return name
 
     def get_python_prints(self):
-        template = '    print("{label_name}: " + {format_prefix}{underscore_name}{index}{divisor}{format_suffix}{unit_name}){comment}'
+        template = '    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
 
         if self.get_label_name() == None:
             return []
@@ -199,10 +199,10 @@ class PythonExampleResult(common.ExampleResult):
         if self.get_cardinality() < 0:
             return [] # FIXME: streaming
 
-        underscore_name = self.get_underscore_name()
+        name = self.get_name().under
 
-        if underscore_name == self.get_device().get_initial_name():
-            underscore_name += '_'
+        if name == self.get_device().get_initial_name():
+            name += '_'
 
         type_ = self.get_type()
 
@@ -219,11 +219,11 @@ class PythonExampleResult(common.ExampleResult):
         result = []
 
         for index in range(self.get_label_count()):
-            result.append(template.format(underscore_name=underscore_name,
-                                          label_name=self.get_label_name(index=index),
+            result.append(template.format(name=name,
+                                          label=self.get_label_name(index=index),
                                           index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                           divisor=self.get_formatted_divisor('/{0}'),
-                                          unit_name=self.get_formatted_unit_name(' + " {0}"'),
+                                          unit=self.get_formatted_unit_name(' + " {0}"'),
                                           format_prefix=format_prefix,
                                           format_suffix=format_suffix,
                                           comment=self.get_formatted_comment(' # {0}')))
@@ -238,8 +238,8 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         return None
 
     def get_python_source(self):
-        template = r"""    # Get current {function_comment_name}
-    {variables} = {device_initial_name}.{function_underscore_name}({arguments})
+        template = r"""    # Get current {function_name_comment}
+    {variables} = {device_name}.{function_name_under}({arguments})
 {prints}
 """
         variables = []
@@ -255,9 +255,9 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         if len(prints) > 1:
             prints.insert(0, '')
 
-        result = template.format(device_initial_name=self.get_device().get_initial_name(),
-                                 function_underscore_name=self.get_underscore_name(),
-                                 function_comment_name=self.get_comment_name(),
+        result = template.format(device_name=self.get_device().get_initial_name(),
+                                 function_name_under=self.get_name().under,
+                                 function_name_comment=self.get_comment_name(),
                                  variables=',<BP>'.join(variables),
                                  prints='\n'.join(prints),
                                  arguments=', '.join(self.get_python_arguments()))
@@ -272,27 +272,27 @@ class PythonExampleSetterFunction(common.ExampleSetterFunction, PythonExampleArg
         return None
 
     def get_python_source(self):
-        template = '{comment1}{global_line_prefix}    {device_initial_name}.{function_underscore_name}({arguments}){comment2}\n'
+        template = '{comment1}{global_line_prefix}    {device_name}.{function_name}({arguments}){comment2}\n'
 
         result = template.format(global_line_prefix=global_line_prefix,
-                                 device_initial_name=self.get_device().get_initial_name(),
-                                 function_underscore_name=self.get_underscore_name(),
+                                 device_name=self.get_device().get_initial_name(),
+                                 function_name=self.get_name().under,
                                  arguments=',<BP>'.join(self.get_python_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '    # {0}\n', '\r', '\n' + global_line_prefix + '    # '),
                                  comment2=self.get_formatted_comment2(' # {0}', ''))
 
-        return common.break_string(result, '.{0}('.format(self.get_underscore_name()))
+        return common.break_string(result, '.{0}('.format(self.get_name().under))
 
 class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_python_imports(self):
         return []
 
     def get_python_function(self):
-        template1A = r"""# Callback function for {function_comment_name} callback
+        template1A = r"""# Callback function for {function_name_comment} callback
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""def cb_{function_underscore_name}({parameters}):
+        template2 = r"""def cb_{function_name_under}({parameters}):
 {prints}{extra_message}
 """
         override_comment = self.get_formatted_override_comment('# {0}', None, '\n# ')
@@ -320,26 +320,26 @@ class PythonExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(prints) > 0:
             extra_message = '\n' + extra_message
 
-        result = template1.format(function_comment_name=self.get_comment_name(),
+        result = template1.format(function_name_comment=self.get_comment_name(),
                                   override_comment=override_comment) + \
-                 template2.format(function_underscore_name=self.get_underscore_name(),
+                 template2.format(function_name_under=self.get_name().under,
                                   parameters=',<BP>'.join(parameters),
                                   prints='\n'.join(prints),
                                   extra_message=extra_message)
 
-        return common.break_string(result, 'cb_{}('.format(self.get_underscore_name()))
+        return common.break_string(result, 'cb_{}('.format(self.get_name().under))
 
     def get_python_source(self):
-        template1 = r"""    # Register {function_comment_name}<BP>callback<BP>to<BP>function<BP>cb_{function_underscore_name}
+        template1 = r"""    # Register {function_name_comment}<BP>callback<BP>to<BP>function<BP>cb_{function_name_under}
 """
-        template2 = r"""    {device_initial_name}.register_callback({device_initial_name}.CALLBACK_{function_upper_case_name},<BP>cb_{function_underscore_name})
+        template2 = r"""    {device_name}.register_callback({device_name}.CALLBACK_{function_name_upper},<BP>cb_{function_name_under})
 """
 
-        result1 = template1.format(function_underscore_name=self.get_underscore_name(),
-                                   function_comment_name=self.get_comment_name())
-        result2 = template2.format(device_initial_name=self.get_device().get_initial_name(),
-                                   function_underscore_name=self.get_underscore_name(),
-                                   function_upper_case_name=self.get_upper_case_name())
+        result1 = template1.format(function_name_under=self.get_name().under,
+                                   function_name_comment=self.get_comment_name())
+        result2 = template2.format(device_name=self.get_device().get_initial_name(),
+                                   function_name_under=self.get_name().under,
+                                   function_name_upper=self.get_name().upper)
 
         return common.break_string(result1, '# ', indent_tail='# ') + \
                common.break_string(result2, 'register_callback(')
@@ -352,25 +352,25 @@ class PythonExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, 
         return None
 
     def get_python_source(self):
-        templateA = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-    {device_initial_name}.set_{function_underscore_name}_period({arguments}{period_msec})
+        templateA = r"""    # Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+    {device_name}.set_{function_name_under}_period({arguments}{period_msec})
 """
-        templateB = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-    # Note: The {function_comment_name} callback is only called every {period_sec_long}
-    #       if the {function_comment_name} has changed since the last call!
-    {device_initial_name}.set_{function_underscore_name}_callback_period({arguments}{period_msec})
+        templateB = r"""    # Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+    # Note: The {function_name_comment} callback is only called every {period_sec_long}
+    #       if the {function_name_comment} has changed since the last call!
+    {device_name}.set_{function_name_under}_callback_period({arguments}{period_msec})
 """
 
-        if self.get_device().get_underscore_name().startswith('imu'):
+        if self.get_device().get_name().space.startswith('IMU '):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_python_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -391,17 +391,17 @@ class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
         return None
 
     def get_python_source(self):
-        template = r"""    # Configure threshold for {function_comment_name} "{option_comment}"
-    {device_initial_name}.set_{function_underscore_name}_callback_threshold({arguments}"{option_char}", {mininum_maximums})
+        template = r"""    # Configure threshold for {function_name_comment} "{option_comment}"
+    {device_name}.set_{function_name_under}_callback_threshold({arguments}"{option_char}", {mininum_maximums})
 """
         mininum_maximums = []
 
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_python_source())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_python_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
@@ -415,15 +415,15 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         return None
 
     def get_python_source(self):
-        templateA = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
-    {device_initial_name}.set_{function_underscore_name}_callback_configuration({arguments}{period_msec}, False)
+        templateA = r"""    # Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+    {device_name}.set_{function_name_under}_callback_configuration({arguments}{period_msec}, False)
 """
-        templateB = r"""    # Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms) without a threshold
-    {device_initial_name}.set_{function_underscore_name}_callback_configuration({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
+        templateB = r"""    # Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
+    {device_name}.set_{function_name_under}_callback_configuration({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
 """
-        templateC = r"""    # Configure threshold for {function_comment_name} "{option_comment}"
+        templateC = r"""    # Configure threshold for {function_name_comment} "{option_comment}"
     # with a debounce period of {period_sec_short} ({period_msec}ms)
-    {device_initial_name}.set_{function_underscore_name}_callback_configuration({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
+    {device_name}.set_{function_name_under}_callback_configuration({arguments}{period_msec}, False, "{option_char}", {mininum_maximums})
 """
 
         if self.get_option_char() == None:
@@ -440,9 +440,9 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
         for mininum_maximum in self.get_minimum_maximums():
             mininum_maximums.append(mininum_maximum.get_python_source())
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               function_comment_name=self.get_comment_name(),
+        return template.format(device_name=self.get_device().get_initial_name(),
+                               function_name_under=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_python_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -470,11 +470,11 @@ class PythonExampleSpecialFunction(common.ExampleSpecialFunction):
             return ''
         elif type_ == 'debounce_period':
             template = r"""    # Get threshold callbacks with a debounce time of {period_sec} ({period_msec}ms)
-    {device_initial_name}.set_debounce_period({period_msec})
+    {device_name_initial}.set_debounce_period({period_msec})
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
-            return template.format(device_initial_name=self.get_device().get_initial_name(),
+            return template.format(device_name_initial=self.get_device().get_initial_name(),
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
@@ -547,7 +547,7 @@ class PythonExamplesGenerator(common.ExamplesGenerator):
         return PythonExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')
             return
 
@@ -562,7 +562,7 @@ class PythonExamplesGenerator(common.ExamplesGenerator):
             os.makedirs(examples_dir)
 
         for example in examples:
-            filename = 'example_{0}.py'.format(example.get_underscore_name())
+            filename = 'example_{0}.py'.format(example.get_name().under)
             filepath = os.path.join(examples_dir, filename)
 
             if example.is_incomplete():

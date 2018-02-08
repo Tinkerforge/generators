@@ -32,14 +32,14 @@ import common
 
 class RubyDevice(common.Device):
     def get_ruby_class_name(self):
-        return self.get_camel_case_category() + self.get_camel_case_name()
+        return self.get_category().camel + self.get_name().camel
 
 class RubyPacket(common.Packet):
     def get_ruby_parameters(self, high_level=False):
         params = []
 
         for element in self.get_elements(direction='in', high_level=high_level):
-            params.append(element.get_underscore_name())
+            params.append(element.get_name().under)
 
         return ', '.join(params)
 

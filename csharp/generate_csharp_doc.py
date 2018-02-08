@@ -36,17 +36,17 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':csharp:func:`{1}Callback <{0}::{1}Callback>`'.format(packet.get_device().get_csharp_class_name(),
-                                                                              packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                              packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':csharp:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_csharp_class_name(),
-                                                                packet.get_camel_case_name(skip=-2 if high_level else 0))
+                                                                packet.get_name(skip=-2 if high_level else 0).camel)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='csharp')
 
     def get_csharp_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('Example', '').replace('.cs', '')
-            return common.camel_case_to_space(filename)
+            return common.camel_to_space(filename)
 
         return common.make_rst_examples(title_from_filename, self)
 
@@ -83,7 +83,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
                 params = ', ' + params
 
             cbs += cb.format(self.get_csharp_class_name(),
-                             packet.get_camel_case_name(skip=skip),
+                             packet.get_name(skip=skip).camel,
                              params,
                              desc)
 
@@ -274,7 +274,7 @@ Konstanten
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_csharp_class_name(),
-                                                    self.get_headless_camel_case_name())
+                                                    self.get_name().headless)
 
         bf = self.get_csharp_methods('bf')
         af = self.get_csharp_methods('af')
@@ -290,7 +290,7 @@ Konstanten
         if c:
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_csharp_class_name(),
-                                                        self.get_headless_camel_case_name(),
+                                                        self.get_name().headless,
                                                         c)
 
         article = 'ein'
@@ -326,7 +326,8 @@ class CSharpDocPacket(csharp_common.CSharpPacket):
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_csharp_class_name() + '.'
-        if self.get_underscore_name() == 'set_response_expected':
+
+        if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
             text += common.format_constants(prefix, self)
