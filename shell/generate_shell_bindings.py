@@ -352,8 +352,9 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         common.BindingsGenerator.finish(self)
 
         root_dir = self.get_root_dir()
+        bindings_dir = self.get_bindings_dir()
         version = common.get_changelog_version(root_dir)
-        shell = open(os.path.join(root_dir, 'tinkerforge'), 'w')
+        shell = open(os.path.join(bindings_dir, 'tinkerforge'), 'w')
 
         with open(os.path.join(root_dir, 'tinkerforge.header'), 'r') as f:
             header = f.read().replace('<<VERSION>>', '.'.join(version))
@@ -369,8 +370,9 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         shell.write('\n\n\n' + ipcon + '\n\n\n')
 
         for filename in sorted(self.part_files):
-            with open(os.path.join(self.get_bindings_dir(), filename), 'r') as f:
-                shell.write(f.read())
+            if filename.endswith('.part'):
+                with open(os.path.join(bindings_dir, filename), 'r') as f:
+                    shell.write(f.read())
 
         shell.write('\ncall_devices = {\n' + ',\n'.join(self.call_devices) + '\n}\n')
         shell.write('\ndispatch_devices = {\n' + ',\n'.join(self.dispatch_devices) + '\n}\n')
@@ -378,7 +380,7 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         shell.write(footer)
         shell.close()
 
-        os.system('chmod +x {0}/tinkerforge'.format(root_dir))
+        os.system('chmod +x {0}/tinkerforge'.format(bindings_dir))
 
         with open(os.path.join(root_dir, 'tinkerforge-bash-completion.sh.template'), 'r') as f:
             template = f.read()
@@ -400,7 +402,7 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         else:
             template = template.replace('<<CALLBACK>>', '')
 
-        with open(os.path.join(root_dir, 'tinkerforge-bash-completion.sh'), 'w') as f:
+        with open(os.path.join(bindings_dir, 'tinkerforge-bash-completion.sh'), 'w') as f:
             f.write(template)
 
 def generate(root_dir):

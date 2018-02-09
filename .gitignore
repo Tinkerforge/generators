@@ -24,8 +24,6 @@ javascript/Tinkerforge.js
 javascript/tinkerforge-*.tgz
 perl/Tinkerforge-*.tar.gz
 ruby/tinkerforge-*.gem
-shell/tinkerforge
-shell/tinkerforge-bash-completion.sh
 tvpl/build_deploy_tvpl.py
 *.sublime-project
 *.sublime-workspace
