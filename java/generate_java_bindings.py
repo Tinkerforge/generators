@@ -859,7 +859,7 @@ public class {0} extends Device {{
                         bbput_format = plain_loop.format(element.get_cardinality(),
                                                          bbput.format(put_suffix, cast, name + '[i]'))
                 elif self.get_generator().is_octave() and element.get_type() == 'char':
-                    bbput_format = bbput.format(put_suffix, cast, name + '[i].charAt(0)')
+                    bbput_format = bbput.format(put_suffix, cast, name + '.charAt(0)')
                 elif element.get_type() == 'bool':
                     bbput_format = bbput.format(put_suffix, cast, '({0} ? 1 : 0)'.format(name))
                 else:
