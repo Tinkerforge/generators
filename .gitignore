@@ -7,15 +7,13 @@
 *.class
 .settings/*
 */tinkerforge_*
-*/*_released_files.py
 */bindings/
 */bindings_*/
 */doc/
+*/doc_*/
 */*_package/
 c/comcu_output/
 c/doc_output/
-device_descriptions.py
-device_identifiers.py
 device_infos.py
 csharp/tinkerforge.*.nupkg
 delphi/*.o
