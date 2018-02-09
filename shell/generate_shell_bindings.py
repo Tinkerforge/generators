@@ -116,13 +116,16 @@ def call_{0}_{1}(ctx, argv):
 
 		device_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
 """
-        get_identity = """	def get_identity(ctx, argv):
+        template_get_identity = """	def get_identity(ctx, argv):
 		common_get_identity(ctx, prog_prefix, {0}, argv)
 """
 
         for packet in self.get_packets('function'):
+            name_under = packet.get_name().under
+            name_dash = packet.get_name().dash
+
             if packet.get_function_id() == 255:
-                function = get_identity.format(self.get_shell_class_name())
+                function = template_get_identity.format(self.get_shell_class_name())
             else:
                 params = []
                 request_data = []
@@ -161,9 +164,6 @@ def call_{0}_{1}(ctx, argv):
                         output_symbols.append(str(symbols))
                     else:
                         output_symbols.append('None')
-
-                name_under = packet.get_name().under
-                name_dash = packet.get_name().dash
 
                 if len(output_names) > 0:
                     if not name_under.startswith('get_') and \
@@ -226,7 +226,7 @@ def dispatch_{0}_{1}(ctx, argv):
 
 		args = parser.parse_args(argv)
 
-		device_dispatch(ctx, {2}{3}, {4}, args.execute, [{5}], [{6}])
+		device_callback(ctx, {2}{3}, {4}, args.execute, [{5}], [{6}])
 """
 
         functions = []
