@@ -354,7 +354,7 @@ class RubyExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, Ru
 {device_name}.set_{function_name_under}_callback_period {arguments}{period_msec}
 """
 
-        if self.get_device().get_name().space.startswith('IMU '):
+        if self.get_device().get_name().space.startswith('IMU'):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB

@@ -498,7 +498,7 @@ class TVPLExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     {device_name}.set_{function_name_under}{suffix}_period({arguments}{period_msec})
 """
 
-        if self.get_device().get_name().space.startswith('IMU '):
+        if self.get_device().get_name().space.startswith('IMU'):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior
             suffix = '' # FIXME: special hack for IMU Brick name mismatch
         else:

@@ -230,7 +230,7 @@ tinkerforge call {device_name}-{device_category} $uid set-{function_name_dash}-p
 tinkerforge call {device_name}-{device_category} $uid set-{function_name_dash}-callback-period {arguments}{period_msec}
 """
 
-        if self.get_device().get_name().space.startswith('IMU '):
+        if self.get_device().get_name().space.startswith('IMU'):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB

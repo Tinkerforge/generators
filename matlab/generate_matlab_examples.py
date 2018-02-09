@@ -528,7 +528,7 @@ class MATLABExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, 
     {device_name}.set{function_name_camel}CallbackPeriod({arguments}{period_msec});
 """
 
-        if self.get_device().get_name().space.startswith('IMU '):
+        if self.get_device().get_name().space.startswith('IMU'):
             template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior and name mismatch
         else:
             template = templateB
