@@ -791,26 +791,28 @@ public class {0} extends Device {{
 {1}
 		return {2};"""
         template_noresponse = '\t\tsendRequest(bb.array());'
-        loop = """		for (int i = 0; i < {0}; i++) {{
-{1}
+        plain_loop = """		for (int i = 0; i < {0}; i++) {{
+	{1}
 		}}"""
-        string_loop = """		try {{
-		{0}
+        string_loop = """		for (int i = 0; i < {0}; i++) {{
+			try {{
+		{1}
 			}} catch(Exception e) {{
 				bb.put((byte)0);
-			}}"""
+			}}
+		}}"""
 
-        bool_array_loop1 = """		for (int i = 0; i < {0}; i++) {{
+        bool_loop_sub1 = """		for (int i = 0; i < {0}; i++) {{
 			if ({1}[i]) {{
 				{2}[i / 8] |= 1 << (i % 8);
 			}}
 		}}"""
 
-        bool_array_loop2 = """		for (int i = 0; i < {0}; i++) {{
+        bool_loop_sub2 = """		for (int i = 0; i < {0}; i++) {{
 			bb.put({1}[i]);
 		}}"""
 
-        bool_array_main = """\n		byte[] {0} = new byte[{1}];
+        bool_loop = """\n		byte[] {0} = new byte[{1}];
 		Arrays.fill({0}, (byte)0);
 
 {2}
@@ -829,51 +831,41 @@ public class {0} extends Device {{
 
             for element in packet.get_elements(direction='in'):
                 name = element.get_name().headless
-
-                if element.get_type() == 'bool':
-                    if element.get_cardinality() <= 1:
-                        name = '({0} ? 1 : 0)'.format(name)
-                    else:
-                        bbput_bool_array += bool_array_main.format(name + 'Bits',
-                                                                   element.get_cardinality() // 8,
-                                                                   bool_array_loop1.format(element.get_cardinality(),
-                                                                                           name,
-                                                                                           name + 'Bits'),
-                                                                   bool_array_loop2.format(element.get_cardinality() // 8,
-                                                                                           name + 'Bits'))
-
-                cast = ''
                 storage_type = element.get_java_byte_buffer_storage_type()
+                put_suffix = element.get_java_byte_buffer_method_suffix()
 
                 if storage_type != element.get_java_type():
                     cast = '({0})'.format(storage_type.replace('[]', ''))
-
-                if element.get_cardinality() != 1 and element.get_type() == 'bool':
-                    pass
                 else:
-                    bbput_format = bbput.format(element.get_java_byte_buffer_method_suffix(),
-                                                cast,
-                                                name)
+                    cast = ''
 
                 if element.get_cardinality() > 1:
                     if element.get_type() == 'string':
-                        bbput_format = bbput_format.replace(');', '.charAt(i));')
-                        bbput_format = string_loop.format(bbput_format)
+                        bbput_format = string_loop.format(element.get_cardinality(),
+                                                          bbput.format(put_suffix, cast, name + '.charAt(i)'))
+
                     elif self.get_generator().is_octave() and element.get_type() == 'char':
-                        bbput_format = bbput_format.replace(');', '[i].charAt(0));')
+                        bbput_format = plain_loop.format(element.get_cardinality(),
+                                                         bbput.format(put_suffix, cast, name + '[i].charAt(0)'))
                     elif element.get_type() == 'bool':
-                        pass
+                        bbput_format = bool_loop.format(name + 'Bits',
+                                                        element.get_cardinality() // 8,
+                                                        bool_loop_sub1.format(element.get_cardinality(),
+                                                                              name,
+                                                                              name + 'Bits'),
+                                                        bool_loop_sub2.format(element.get_cardinality() // 8,
+                                                                              name + 'Bits'))
                     else:
-                        bbput_format = bbput_format.replace(');', '[i]);')
-
-                    bbput_format = loop.format(element.get_cardinality(), '\t' + bbput_format)
+                        bbput_format = plain_loop.format(element.get_cardinality(),
+                                                         bbput.format(put_suffix, cast, name + '[i]'))
                 elif self.get_generator().is_octave() and element.get_type() == 'char':
-                    bbput_format = bbput_format.replace(');', '.charAt(0));')
-
-                if element.get_cardinality() > 1 and element.get_type() == 'bool':
-                    bbputs += bbput_bool_array + '\n'
+                    bbput_format = bbput.format(put_suffix, cast, name + '[i].charAt(0)')
+                elif element.get_type() == 'bool':
+                    bbput_format = bbput.format(put_suffix, cast, '({0} ? 1 : 0)'.format(name))
                 else:
-                    bbputs += bbput_format + '\n'
+                    bbput_format = bbput.format(put_suffix, cast, name)
+
+                bbputs += bbput_format + '\n'
 
             throws = 'throws TimeoutException, NotConnectedException'
 
