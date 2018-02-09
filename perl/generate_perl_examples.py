@@ -192,7 +192,7 @@ class PerlExampleResult(common.ExampleResult):
 
     def get_perl_prints(self):
         templateA = 'print "{label}: " . {sprintf_prefix}{index_prefix}${name}{index_suffix}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
-        templateB = 'print "{label}: ${name}{name}\\n";{comment}'
+        templateB = 'print "{label}: ${name}{unit}\\n";{comment}'
 
         if self.get_label_name() == None:
             return []
