@@ -75,7 +75,7 @@ com['packets'].append({
 'name': 'Set Monoflop',
 'elements': [('State', 'bool', 1, 'in'),
              ('Time', 'uint32', 1, 'in')],
-'since_firmware': [1, 1, 1],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -117,7 +117,7 @@ com['packets'].append({
 'elements': [('State', 'bool', 1, 'out'),
              ('Time', 'uint32', 1, 'out'),
              ('Time Remaining', 'uint32', 1, 'out')],
-'since_firmware': [1, 1, 1],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -142,7 +142,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
 'elements': [('State', 'bool', 1, 'out')],
-'since_firmware': [1, 1, 1],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
