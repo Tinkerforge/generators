@@ -336,9 +336,6 @@ Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
 }]
 })
 
-
-
-
 # NOTE: Even though a single NDEF record can contain a payload of 2^32 - 1 bytes
 #       and streaming APIs support data length of 2^16 - 1 bytes, because of limitations
 #       of the NFC API used in the firmware only short NDEF records with maximum
@@ -628,7 +625,6 @@ Die Pagegrößen verhalten sich wie folgt:
 * NFC Forum Type 2 Pagegröße: 4 byte
 * NFC Forum Type 3 Pagegröße: 16 byte
 * NFC Forum Type 4: Keine Pages, Page = Dateiwahl (CC oder Ndef, siehe unten)
-
 
 Der generelle Ansatz zum Lesen eines Tags sieht wie folgt aus:
 
@@ -1085,4 +1081,25 @@ Returns the configuration as set by :func:`Set Detection LED Config`
 Gibt die Konfiguration zurück, wie von :func:`Set Detection LED Config` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Scan For Tags',
+'functions': [('callback', ('Reader State Changed', 'reader state changed'), [(('State', 'State'), 'uint8', 1, None, None, None), (('Idle', 'Idle'), 'bool', 1, None, None, None)], None, None),
+              ('setter', 'Set Mode', [('uint8:constant', 3)], 'Enable reader mode', None)],
+'incomplete': True # because of special logic in callback
+})
+
+com['examples'].append({
+'name': 'Emulate NDEF',
+'functions': [('callback', ('Cardemu State Changed', 'cardemu state changed'), [(('State', 'State'), 'uint8', 1, None, None, None), (('Idle', 'Idle'), 'bool', 1, None, None, None)], None, None),
+              ('setter', 'Set Mode', [('uint8:constant', 1)], 'Enable cardemu mode', None)],
+'incomplete': True # because of special logic in callback
+})
+
+com['examples'].append({
+'name': 'Write Read Type2',
+'functions': [('callback', ('Reader State Changed', 'reader state changed'), [(('State', 'State'), 'uint8', 1, None, None, None), (('Idle', 'Idle'), 'bool', 1, None, None, None)], None, None),
+              ('setter', 'Set Mode', [('uint8:constant', 3)], 'Enable reader mode', None)],
+'incomplete': True # because of special logic in callback
 })
