@@ -12,13 +12,15 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This .NET library provides the C# API bindings for Tinkerforge Bricks and Bricklets.</description>
     <summary>Tinkerforge is an open source hardware platform of stackable microcontroller building blocks (Bricks) that can control different modules (Bricklets). The hardware can be controlled by external programs written in different programming languages including C#.</summary>
-    <copyright>Tinkerforge GmbH 2011-2017</copyright>
+    <copyright>Tinkerforge GmbH 2011-2018</copyright>
     <tags>Tinkerforge Open-Source Hardware Brick Bricklet</tags>
   </metadata>
   <files>
-    <file src="unzipped_20/Tinkerforge.dll" target="lib/Net20" />
-    <file src="unzipped_20/Tinkerforge.xml" target="lib/Net20" />
-    <file src="unzipped_40/Tinkerforge.dll" target="lib/Net40" />
-    <file src="unzipped_40/Tinkerforge.xml" target="lib/Net40" />
+    <file src="unzipped_net20/Tinkerforge.dll" target="lib/net20" />
+    <file src="unzipped_net20/Tinkerforge.xml" target="lib/net20" />
+    <file src="unzipped_net40/Tinkerforge.dll" target="lib/net40" />
+    <file src="unzipped_net40/Tinkerforge.xml" target="lib/net40" />
+    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.dll" target="lib/netcoreapp20" />
+    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.xml" target="lib/netcoreapp20" />
   </files>
 </package>
