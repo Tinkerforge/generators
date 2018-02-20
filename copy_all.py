@@ -59,7 +59,7 @@ bindings = []
 
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if not d in ('configs', 'json', '.git', '__pycache__'):
+        if not d in ('configs', 'json', 'stubs', '.git', '__pycache__'):
             bindings.append(d)
 
 bindings = sorted(bindings)

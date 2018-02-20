@@ -1,7 +1,7 @@
 /* <<<DEVICE_NAME_DASH>>>-bricklet
  * Copyright (C) <<<YEAR>>> <<<NAME>>> <<<<EMAIL>>>>
  *
- * config_custom_bootstrapper.h: XMC bootstrapper configurations for 
+ * config_custom_bootstrapper.h: XMC bootstrapper configurations for
  *                               <<<DEVICE_NAME_READABLE>>> Bricklet
  *
  * This library is free software; you can redistribute it and/or

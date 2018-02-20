@@ -7,7 +7,7 @@ SET(CHIP_FAMILY XMC1)
 SET(MCU cortex-m0\ -mthumb)
 PROJECT(${PROJECT_NAME})
 
-# Optimization level, can be [0, 1, 2, 3, s]. 
+# Optimization level, can be [0, 1, 2, 3, s].
 # 0 = turn off optimization. s = optimize for size.
 #SET(OPTIMIZATION_LEVEL 0)
 SET(DEBUG "-g -ggdb")
@@ -29,12 +29,12 @@ INCLUDE_DIRECTORIES(
 SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/main.c"
 	"${PROJECT_SOURCE_DIR}/src/communication.c"
-	
+
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/uartbb/uartbb.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/system_timer/system_timer.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/startup/startup_xmc1.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/startup/startup_xmc1100.S"
-	
+
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/bootloader/bootloader.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/bootloader/bootloader_xmc_irq.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/protocols/tfp/tfp.c"

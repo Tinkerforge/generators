@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-C/C++ Bindings Generator
+Hardware Documentation Stubs Generator
 Copyright (C) 2017 Olaf Lüke <olaf@tinkerforge.com>
 
-generate_doc_stubs.py: Generator for documentstion stubs
-                        
+generate_doc_stubs.py: Generator for hardware documentation stubs
+
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
@@ -31,16 +31,9 @@ from sets import Set
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-import c_common
+import c.c_common as c_common
 
-class DocStubBindingsDevice(common.Device):
-    pass
-
-
-class DocStubBindingsPacket(c_common.CPacket):
-    pass
-
-class DocStubBindingsGenerator(common.BindingsGenerator):
+class DocStubGenerator(common.Generator):
     template_en = """
 :DISABLED_shoplink: ../../../shop/bricklets/{4}.html
 
@@ -269,7 +262,7 @@ Gehäuse
 -------
 
 ..
-	Ein `laser-geschnittenes Gehäuse für das {0} 
+	Ein `laser-geschnittenes Gehäuse für das {0}
 	<https://www.tinkerforge.com/de/shop/cases/case-{4}.html>`__ ist verfügbar.
 
 	.. image:: /Images/Cases/bricklet_{2}_case_350.jpg
@@ -303,28 +296,38 @@ Beschreibung.
 """
 
     def get_bindings_name(self):
-        return 'c'
+        return 'stubs'
 
     def get_bindings_display_name(self):
-        return 'doc'
+        return 'Hardware Documentation Stubs'
 
     def get_device_class(self):
-        return DocStubBindingsDevice
+        return common.Device
 
     def get_packet_class(self):
-        return DocStubBindingsPacket
+        return c_common.CPacket
 
     def get_element_class(self):
         return c_common.CElement
 
-    def generate(self, device):
-        folder = os.path.join(self.get_root_dir(), 'doc_output', '{0}_{1}'.format(device.get_category().under, device.get_name().under))
+    def prepare(self):
+        if self.get_config_name().space == 'Tinkerforge':
+            name = 'doc'
+        else:
+            name = 'doc_' + self.get_config_name().under
 
-        try:
-            shutil.rmtree(folder) # first we delete the doc output if it already exists for this device
-        except:
-            pass # It is OK if the directory does not exist...
-        
+        common.recreate_dir(os.path.join(self.get_root_dir(), name))
+
+        for language in ['en', 'de']:
+            for category in ['Bricks', 'Bricklets']:
+                os.makedirs(os.path.join(self.get_root_dir(), name, language, category))
+
+    def generate(self, device):
+        if self.get_config_name().space == 'Tinkerforge':
+            folder = 'doc'
+        else:
+            folder = 'doc_' + self.get_config_name().under
+
         # Example format:
         # {0} = Thermal Imaging Bricklet
         # {1} = thermal_imaging_bricklet
@@ -341,17 +344,14 @@ Beschreibung.
         format5 = device.get_name().dash
         filename = format3 + '.rst'
 
-        os.makedirs(os.path.join(folder, 'en'))
-        os.makedirs(os.path.join(folder, 'de'))
-
-        with open(os.path.join(folder, 'en', filename), 'w') as doc:
+        with open(os.path.join(folder, 'en', device.get_category().camel + 's', filename), 'w') as doc:
             doc.write(self.template_en.format(format0, format1, format2, format3, format4, format5, '='*len(format0), '-'*len(format0)))
 
-        with open(os.path.join(folder, 'de', filename), 'w') as doc:
+        with open(os.path.join(folder, 'de', device.get_category().camel + 's', filename), 'w') as doc:
             doc.write(self.template_de.format(format0, format1, format2, format3, format4, format5, '='*len(format0)))
 
 def generate(root_dir):
-    common.generate(root_dir, 'en', DocStubBindingsGenerator)
+    common.generate(root_dir, 'en', DocStubGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())

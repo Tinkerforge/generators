@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-C/C++ Bindings Generator
+Co-MCU Firmware Stubs Generator
 Copyright (C) 2016 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_comcu_stubs.py: Generator for communication API stubs
@@ -32,9 +32,9 @@ from sets import Set
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-import c_common
+import c.c_common as c_common
 
-class COMCUBindingsDevice(common.Device):
+class CoMCUStubDevice(common.Device):
     def get_h_constants(self):
         constant_format = '#define {device_name}_{constant_group_name}_{constant_name} {constant_value}'
         char_format="'{0}'"
@@ -303,11 +303,7 @@ bool handle_{0}_callback(void) {{
 
         return cv.format(cv_declaration)
 
-
-class COMCUBindingsPacket(c_common.CPacket):
-    pass
-
-class COMCUBindingsGenerator(common.BindingsGenerator):
+class CoMCUStubGenerator(common.Generator):
     c_file = """/* {0}-bricklet
  * Copyright (C) {1} {2} <{3}>
  *
@@ -411,16 +407,16 @@ void communication_init(void);
 """
 
     def get_bindings_name(self):
-        return 'c'
+        return 'stubs'
 
     def get_bindings_display_name(self):
-        return 'CO MCU'
+        return 'Co-MCU Firmware Stubs'
 
     def get_device_class(self):
-        return COMCUBindingsDevice
+        return CoMCUStubDevice
 
     def get_packet_class(self):
-        return COMCUBindingsPacket
+        return c_common.CPacket
 
     def get_element_class(self):
         return c_common.CElement
@@ -457,16 +453,19 @@ void communication_init(void);
                 with open(fpath, "w") as f:
                     f.write(s)
 
+    def prepare(self):
+        if self.get_config_name().space == 'Tinkerforge':
+            name = 'comcu'
+        else:
+            name = 'comcu_' + self.get_config_name().under
+
+        common.recreate_dir(os.path.join(self.get_root_dir(), name))
+
     def generate(self, device):
-        folder = os.path.join(self.get_root_dir(), 'comcu_output', '{0}_{1}'.format(device.get_category().under, device.get_name().under))
+        if not device.has_comcu():
+            return
 
-        try:
-            shutil.rmtree(folder) # first we delete the comcu output if it already exists for this device
-        except:
-            pass # It is OK if the directory does not exist...
-
-        os.makedirs(folder)
-
+        folder = os.path.join(self.get_root_dir(), 'comcu', '{0}-{1}'.format(device.get_name().dash, device.get_category().dash))
         device_name_dash = device.get_name().dash
         year = datetime.datetime.now().year
         name = device.get_author().split("<")[0].rstrip()             #author syntax: Firstname Lastname <email>
@@ -508,7 +507,7 @@ void communication_init(void);
             h.write(self.h_file.format(device_name_dash, year, name, email, h_constants_string, h_defines_string, h_structs_string, h_function_prototypes_string, h_callback_prototypes_string, h_callback_list_string))
 
 def generate(root_dir):
-    common.generate(root_dir, 'en', COMCUBindingsGenerator)
+    common.generate(root_dir, 'en', CoMCUStubGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())
