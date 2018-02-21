@@ -202,7 +202,7 @@ process.stdin.on('data',
                 <textarea readonly id="text" cols="80" rows="24" style="resize:none;"
                           >Press "Start Example" to begin ...</textarea>
             </p>
-        <div>
+        </div>
         <script src="./Tinkerforge.js" type='text/javascript'></script>
         <script type='text/javascript'>
             var ipcon;
