@@ -105,13 +105,15 @@ class {0}(Device):
 
     DEVICE_IDENTIFIER = {2}
     DEVICE_DISPLAY_NAME = '{3}'
+    DEVICE_URL_PART = '{4}' # internal
 
 """
 
         return template.format(self.get_python_class_name(),
                                common.select_lang(self.get_description()),
                                self.get_device_identifier(),
-                               self.get_long_display_name())
+                               self.get_long_display_name(),
+                               self.get_name().under)
 
     def get_python_callback_id_definitions(self):
         callback_ids = ''
