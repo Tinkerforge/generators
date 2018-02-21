@@ -170,7 +170,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-To read or write a tag that is in proximity of the NFC/RFID Bricklet you
+To read or write a tag that is in proximity of the NFC Bricklet you
 first have to call this function with the expected tag type as parameter.
 It is no problem if you don't know the tag type. You can cycle through
 the available tag types until the tag gives an answer to the request.
@@ -183,7 +183,7 @@ Currently the following tag types are supported:
 * NFC Forum Type 3
 * NFC Forum Type 4
 
-After you call :func:`Reader Request Tag ID` the NFC/RFID Bricklet will try to read
+After you call :func:`Reader Request Tag ID` the NFC Bricklet will try to read
 the tag ID from the tag. After this process is done the state will change.
 You can either register the :cb:`Reader State Changed` callback or you can poll
 :func:`Reader Get State` to find out about the state change.
@@ -194,7 +194,7 @@ changes to *ReaderRequestTagIDReady* it means that a compatible tag was found
 and that the tag ID could be read out. You can now get the tag ID by
 calling :func:`Reader Get Tag ID`.
 
-If two tags are in the proximity of the NFC/RFID Bricklet, this
+If two tags are in the proximity of the NFC Bricklet, this
 function will cycle through the tags. To select a specific tag you have
 to call :func:`Reader Request Tag ID` until the correct tag id is found.
 
@@ -203,7 +203,7 @@ start again by calling :func:`Reader Request Tag ID`.
 """,
 'de':
 """
-Um ein Tag welches sich in der nähe des NFC/RFID Bricklets befindet zu
+Um ein Tag welches sich in der nähe des NFC Bricklets befindet zu
 lesen oder zu schreiben muss zuerst diese Funktion mit dem erwarteten
 Tag Typ aufgerufen werden. Es ist kein Problem wenn der Typ nicht bekannt
 ist. Es ist möglich die verügbaren Tag Typen einfach nacheinander
@@ -217,7 +217,7 @@ Aktuell werden die folgenden Tag Typen unterstützt:
 * NFC Forum Type 3
 * NFC Forum Type 4
 
-Beim Aufruf von :func:`Reader Request Tag ID` probiert das NFC/RFID Bricklet die Tag ID
+Beim Aufruf von :func:`Reader Request Tag ID` probiert das NFC Bricklet die Tag ID
 eines Tags auszulesen. Nachdem dieser Prozess beendet ist ändert sich
 der Zustand des Bricklets. Es ist möglich den :cb:`Reader State Changed` Callback zu
 registrieren oder den Zustand über :func:`Reader Get State` zu pollen.
@@ -228,12 +228,12 @@ werden konnte. Wenn der Zustand auf *Reader RequestTagIDReady* wechselt ist ein
 kompatibles Tag gefunden worden und die Tag ID wurde gespeichert. Die
 Tag ID kann nun über :func:`Reader Get Tag ID` ausgelesen werden.
 
-Wenn sich zwei Tags gleichzeitig in der Nähe des NFC/RFID Bricklets befinden
+Wenn sich zwei Tags gleichzeitig in der Nähe des NFC Bricklets befinden
 werden diese nacheinander ausgelesen. Um ein spezifisches Tag zu selektieren
 muss :func:`Reader Request Tag ID` so lange aufgerufen werden bis das korrekte Tag
 gefunden wurde.
 
-Falls sich das NFC/RFID Bricklet in einem der *ReaderError* Zustände befindet
+Falls sich das NFC Bricklet in einem der *ReaderError* Zustände befindet
 ist die Selektion aufgehoben und :func:`Reader Request Tag ID` muss erneut
 aufgerufen werden.
 """
@@ -255,9 +255,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the tag type, tag ID and the length of the tag ID. 
+Returns the tag type and the tag ID.
 This function can only be called if the
-NFC Bricklet is currently in one of the *Ready* states. The returned ID
+NFC Bricklet is currently in one of the *ReaderReady* states. The returned ID
 is the ID that was saved through the last call of :func:`Reader Request Tag ID`.
 
 To get the tag ID of a tag the approach is as follows:
@@ -269,7 +269,7 @@ To get the tag ID of a tag the approach is as follows:
 """,
 'de':
 """
-Gibt den Tag Typ, die Tag ID und die Länge der Tag ID zurück.
+Gibt den Tag Typ und die Tag ID zurück.
 Diese Funktion kann nur aufgerufen werden wenn
 sich das Bricklet gerade in einem der *ReaderReady*-Zustände befindet. Die
 zurückgegebene ID ist die letzte ID die durch einen Aufruf von
@@ -351,18 +351,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes Ndef formated data with a maximum of 255 bytes.
+Writes NDEF formated data with a maximum of 255 bytes.
 
 This function currently supports NFC Forum Type 2 and 4.
 
-The general approach for writing a Ndef message is as follows:
+The general approach for writing a NDEF message is as follows:
 
 1. Call :func:`Reader Request Tag ID`
 2. Wait for state to change to *ReaderRequestTagIDReady* (see :func:`Reader Get State` or
    :cb:`Reader State Changed` callback)
 3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check if the
    expected tag was found, if it was not found got back to step 1
-4. Call :func:`Reader Write Ndef` with the Ndef message that you want to write
+4. Call :func:`Reader Write Ndef` with the NDEF message that you want to write
 5. Wait for state to change to *ReaderWriteNdefReady* (see :func:`Reader Get State` or
    :cb:`Reader State Changed` callback)
 """,
@@ -381,11 +381,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Reads Ndef formated data from a tag.
+Reads NDEF formated data from a tag.
 
 This function currently supports NFC Forum Type 1, 2, 3 and 4.
 
-The general approach for reading a Ndef message is as follows:
+The general approach for reading a NDEF message is as follows:
 
 1. Call :func:`Reader Request Tag ID`
 2. Wait for state to change to *RequestTagIDReady* (see :func:`Reader Get State`
@@ -395,7 +395,7 @@ The general approach for reading a Ndef message is as follows:
 4. Call :func:`Reader Request Ndef`
 5. Wait for state to change to *ReaderRequestNdefReady* (see :func:`Reader Get State`
    or :cb:`Reader State Changed` callback)
-6. Call :func:`Reader Read Ndef` to retrieve the Ndef message from the buffer
+6. Call :func:`Reader Read Ndef` to retrieve the NDEF message from the buffer
 """,
 'de':
 """
@@ -419,8 +419,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the Ndef data from an internal buffer. To fill the buffer
-with a Ndef message you have to call :func:`Reader Request Ndef` beforehand.
+Returns the NDEF data from an internal buffer. To fill the buffer
+with a NDEF message you have to call :func:`Reader Request Ndef` beforehand.
 
 The buffer can have a size of up to 8192 bytes.
 """,
@@ -515,7 +515,7 @@ depends on the tag type. The page sizes are as follows:
 * NFC Forum Type 1 page size: 8 byte
 * NFC Forum Type 2 page size: 4 byte
 * NFC Forum Type 3 page size: 16 byte
-* NFC Forum Type 4: No pages, page = file selection (CC or Ndef, see below)
+* NFC Forum Type 4: No pages, page = file selection (CC or NDEF, see below)
 
 The general approach for writing to a tag is as follows:
 
@@ -532,9 +532,9 @@ If you use a Mifare Classic tag you have to authenticate a page before you
 can write to it. See :func:`Reader Authenticate Mifare Classic Page`.
 
 NFC Forum Type 4 tags are not organized into pages but different files. We currently
-support two files: Capability Container file (CC) and Ndef file.
+support two files: Capability Container file (CC) and NDEF file.
 
-Choose CC by setting page to 3 or Ndef by setting page to 4.
+Choose CC by setting page to 3 or NDEF by setting page to 4.
 """,
 'de':
 """
@@ -546,7 +546,7 @@ verhalten sich wie folgt:
 * NFC Forum Type 1 Pagegröße: 8 byte
 * NFC Forum Type 2 Pagegröße: 4 byte
 * NFC Forum Type 3 Pagegröße: 16 byte
-* NFC Forum Type 4: Keine Pages, Page = Dateiwahl (CC oder Ndef, siehe unten)
+* NFC Forum Type 4: Keine Pages, Page = Dateiwahl (CC oder NDEF, siehe unten)
 
 Der generelle Ansatz zum Schreiben eines Tags sieht wie folgt aus:
 
@@ -565,9 +565,9 @@ werden bevor sie geschrieben werden kann. Siehe
 :func:`Reader Authenticate Mifare Classic Page`.
 
 NFC Forum Type 4 Tags sind nicht in Pages organisiert sondern Dateien. Wir
-unterstützten aktuell zwei Dateien: Capability Container (CC) und Ndef.
+unterstützten aktuell zwei Dateien: Capability Container (CC) und NDEF.
 
-Setze Page auf 3 um CC zu wählen und auf 4 um Ndef zu wählen.
+Setze Page auf 3 um CC zu wählen und auf 4 um NDEF zu wählen.
 """
 }]
 })
@@ -591,7 +591,7 @@ as follows:
 * NFC Forum Type 1 page size: 8 byte
 * NFC Forum Type 2 page size: 4 byte 
 * NFC Forum Type 3 page size: 16 byte
-* NFC Forum Type 4: No pages, page = file selection (CC or Ndef, see below)
+* NFC Forum Type 4: No pages, page = file selection (CC or NDEF, see below)
 
 The general approach for reading a tag is as follows:
 
@@ -609,9 +609,9 @@ If you use a Mifare Classic tag you have to authenticate a page before you
 can read it. See :func:`Reader Authenticate Mifare Classic Page`.
 
 NFC Forum Type 4 tags are not organized into pages but different files. We currently
-support two files: Capability Container file (CC) and Ndef file.
+support two files: Capability Container file (CC) and NDEF file.
 
-Choose CC by setting page to 3 or Ndef by setting page to 4.
+Choose CC by setting page to 3 or NDEF by setting page to 4.
 """,
 'de':
 """
@@ -624,7 +624,7 @@ Die Pagegrößen verhalten sich wie folgt:
 * NFC Forum Type 1 Pagegröße: 8 byte
 * NFC Forum Type 2 Pagegröße: 4 byte
 * NFC Forum Type 3 Pagegröße: 16 byte
-* NFC Forum Type 4: Keine Pages, Page = Dateiwahl (CC oder Ndef, siehe unten)
+* NFC Forum Type 4: Keine Pages, Page = Dateiwahl (CC oder NDEF, siehe unten)
 
 Der generelle Ansatz zum Lesen eines Tags sieht wie folgt aus:
 
@@ -643,9 +643,9 @@ Wenn ein Mifare Classic Tag verwendet wird muss die Page authentifiziert
 werden bevor sie gelesen werden kann. Siehe :func:`Reader Authenticate Mifare Classic Page`.
 
 NFC Forum Type 4 Tags sind nicht in Pages organisiert sondern Dateien. Wir
-unterstützten aktuell zwei Dateien: Capability Container (CC) und Ndef.
+unterstützten aktuell zwei Dateien: Capability Container (CC) und NDEF.
 
-Setze Page auf 3 um CC zu wählen und auf 4 um Ndef zu wählen.
+Setze Page auf 3 um CC zu wählen und auf 4 um NDEF zu wählen.
 """
 }]
 })
@@ -766,7 +766,7 @@ the state will change to *CardemuDiscoveryError*. In this case you
 have to restart the discovery.
 
 If the state changes to *CardemuDiscoveryReady* you can start the transfer
-of the Ndef message that was written by :func:`Cardemu Write Ndef` by calling
+of the NDEF message that was written by :func:`Cardemu Write Ndef` by calling
 :func:`Cardemu Start Transfer`.
 """,
 'de':
@@ -793,7 +793,7 @@ com['packets'].append({
 """
 Writes the Ndef messages that is to be transferred to the NFC master.
 
-The maximum supported Ndef message size in Cardemu mode is 255 byte.
+The maximum supported NDEF message size in Cardemu mode is 255 byte.
 
 You can call this function at any time in Cardemu mode. The internal buffer
 will not be overwritten until you call this function again or change the
@@ -814,11 +814,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-You can start the transfer of a Ndef message if the state is *CardemuDiscoveryReady*.
+You can start the transfer of a NDEF message if the state is *CardemuDiscoveryReady*.
 
 Use parameter 1 to start the transfer. With parameter 0 you can abort the discovery.
 
-Before you call this function with parameter 1. The Ndef message that is to be
+Before you call this function with parameter 1. The NDEF message that is to be
 transferred is set via :func:`Cardemu Write Ndef`.
 
 After you call this function the state will change to *CardemuTransferNdef*. It will
@@ -918,7 +918,7 @@ If no NFC master in P2P mode can be found or if there is an error during discove
 the state will change to *P2PDiscoveryError*. In this case you
 have to restart the discovery.
 
-If the state changes to *P2PDiscoveryReady* you can start the Ndef message
+If the state changes to *P2PDiscoveryReady* you can start the NDEF message
 transfer or reception with :func:`P2P Start Transfer`.
 """,
 'de':
@@ -943,9 +943,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes the Ndef messages that is to be transferred to the NFC master.
+Writes the NDEF messages that is to be transferred to the NFC master.
 
-The maximum supported Ndef message size for P2P transfer is 255 byte.
+The maximum supported NDEF message size for P2P transfer is 255 byte.
 
 You can call this function at any time in P2P mode. The internal buffer
 will not be overwritten until you call this function again, change the
@@ -967,11 +967,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-You can start the transfer/reception of a Ndef message if the state is *P2PDiscoveryReady*.
+You can start the transfer/reception of a NDEF message if the state is *P2PDiscoveryReady*.
 
 Use parameter 2 to read, parameter 1 to write or parameter 0 to abort the discovery.
 
-Before you call this function with parameter 1. The Ndef message that is to be
+Before you call this function with parameter 1. The NDEF message that is to be
 transferred is set via :func:`P2P Write Ndef`.
 
 After you call this function the state will change to *P2PTransferNdef*. It will
@@ -979,7 +979,7 @@ change to *P2PTransferNdefReady* if the transfer was successfull or
 *P2PTransferNdefError* if it wasn't.
 
 If you started a write transfer you are now done. If you started a read transfer
-you can now use :func:`P2P Read Ndef` to read the Ndef message that was written
+you can now use :func:`P2P Read Ndef` to read the NDEF message that was written
 by the NFC peer.
 """,
 'de':
@@ -999,10 +999,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Call this function to read the Ndef message that was written by a NFC peer in
-NFC P2P mode. The maximum Ndef length is 8192 byte.
+Call this function to read the NDEF message that was written by a NFC peer in
+NFC P2P mode. The maximum NDEF length is 8192 byte.
 
-The Ndef message is ready if you called :func:`P2P Start Transfer` with a 
+The NDEF message is ready if you called :func:`P2P Start Transfer` with a
 read transfer and the state changed to *P2PTransferNdefReady*.
 """,
 'de':
