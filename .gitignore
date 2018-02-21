@@ -12,8 +12,8 @@
 */doc/
 */doc_*/
 */*_package/
-c/comcu_output/
-c/doc_output/
+stubs/comcu/
+stubs/doc/
 device_infos.py
 csharp/tinkerforge.*.nupkg
 delphi/*.o
