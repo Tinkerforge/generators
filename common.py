@@ -2638,7 +2638,7 @@ class Generator:
 
   If you have a bugfix for this file and want to commit it,
   please fix the bug in the generator. You can find a link
-  to the generator git on tinkerforge.com
+  to the generators git on tinkerforge.com
 }}
 """,
             'xml': """<!--
