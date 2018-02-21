@@ -32,10 +32,13 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class CSharpZipGenerator(common.ZipGenerator):
-    tmp_dir                        = '/tmp/generator/csharp'
-    tmp_source_tinkerforge_dir     = os.path.join(tmp_dir, 'source', 'Tinkerforge')
-    tmp_source_tinkerforge_uwp_dir = os.path.join(tmp_dir, 'source', 'TinkerforgeUWP')
-    tmp_examples_dir               = os.path.join(tmp_dir, 'examples')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir                        = self.get_tmp_dir()
+        self.tmp_source_tinkerforge_dir     = os.path.join(self.tmp_dir, 'source', self.get_config_name().camel)
+        self.tmp_source_tinkerforge_uwp_dir = os.path.join(self.tmp_dir, 'source', self.get_config_name().camel + 'UWP')
+        self.tmp_examples_dir               = os.path.join(self.tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'csharp'
@@ -83,7 +86,7 @@ class CSharpZipGenerator(common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make AssemblyInfo.cs
-        version = common.get_changelog_version(root_dir)
+        version = self.get_changelog_version()
 
         for target_dir in [self.tmp_source_tinkerforge_dir, self.tmp_source_tinkerforge_uwp_dir]:
             common.specialize_template(os.path.join(root_dir, 'AssemblyInfo.cs.template'),

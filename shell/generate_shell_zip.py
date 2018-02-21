@@ -32,8 +32,11 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class ShellZipGenerator(common.ZipGenerator):
-    tmp_dir          = '/tmp/generator/shell'
-    tmp_examples_dir = os.path.join(tmp_dir, 'examples')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir          = self.get_tmp_dir()
+        self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'shell'

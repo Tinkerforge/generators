@@ -632,19 +632,49 @@ def execute(args, **kwargs):
     if subprocess.call(args, **kwargs) != 0:
         raise GeneratorError("Command '{0}' failed".format(' '.join(args) if isinstance(args, list) else args))
 
-def generate(bindings_root_directory, language, generator_class):
+def generate(root_dir, language, generator_class):
+    # default config
+    subgenerate(root_dir, language, generator_class, 'tinkerforge')
+
+    # custom configs
+    config_base_path = os.path.join(root_dir, '..', 'configs')
+
+    for config_name in os.listdir(config_base_path):
+        if config_name == '__pycache__':
+            continue
+
+        config_path = os.path.join(config_base_path, config_name)
+
+        if not os.path.isdir(config_path):
+            continue
+
+        if re.match('^[a-z0-9_]+$', config_name) == None:
+            raise GeneratorError('Invalid config name: {0}'.format(config_name))
+
+        subgenerate(root_dir, language, generator_class, config_name)
+
+def subgenerate(root_dir, language, generator_class, config_name):
     global lang
     lang = language
 
-    path_config = os.path.join(bindings_root_directory, '..', 'configs')
+    print '-->', config_name
 
-    if path_config not in sys.path:
-        sys.path.append(path_config)
+    config_path_parts = [root_dir, '..', 'configs']
 
-    configs = sorted(os.listdir(path_config))
-    configs.remove('device_commonconfig.py')
-    configs.remove('brick_commonconfig.py')
-    configs.remove('bricklet_commonconfig.py')
+    if config_name != 'tinkerforge':
+        config_path_parts.append(config_name)
+
+    config_path = os.path.join(*config_path_parts)
+
+    if config_path not in sys.path:
+        sys.path.append(config_path)
+
+    configs = sorted(os.listdir(config_path))
+
+    if config_name == 'tinkerforge':
+        configs.remove('device_commonconfig.py')
+        configs.remove('brick_commonconfig.py')
+        configs.remove('bricklet_commonconfig.py')
 
     common_device_packets = copy.deepcopy(__import__('device_commonconfig').common_packets)
     common_brick_packets = copy.deepcopy(__import__('brick_commonconfig').common_packets)
@@ -655,7 +685,7 @@ def generate(bindings_root_directory, language, generator_class):
     bricklet_infos = []
     device_identifiers = set()
 
-    generator = generator_class(bindings_root_directory, language)
+    generator = generator_class(root_dir, config_name, language)
     generator.prepare()
 
     def prepare_common_packets(com, common_packets):
@@ -713,87 +743,91 @@ def generate(bindings_root_directory, language, generator_class):
 
             device_identifiers.add(device_identifier)
 
-            if device.is_brick():
-                ref_name = device.get_name().under + '_brick'
-                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3') + '_Brick'
-                software_doc_prefix = device.get_name().camel + '_Brick'
+            # only collect device_infos for default config
+            if config_name == 'tinkerforge':
+                if device.is_brick():
+                    ref_name = device.get_name().under + '_brick'
+                    hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3') + '_Brick'
+                    software_doc_prefix = device.get_name().camel + '_Brick'
 
-                if device.get_device_identifier() != 17:
-                    firmware_url_part = device.get_name().under
+                    if device.get_device_identifier() != 17:
+                        firmware_url_part = device.get_name().under
+                    else:
+                        firmware_url_part = None
+
+                    device_info = (device.get_device_identifier(),
+                                   device.get_long_display_name(),
+                                   device.get_short_display_name(),
+                                   ref_name,
+                                   hardware_doc_name,
+                                   software_doc_prefix,
+                                   device.get_git_name(),
+                                   firmware_url_part,
+                                   False,
+                                   device.is_released(),
+                                   device.is_documented(),
+                                   device.is_discontinued(),
+                                   True,
+                                   device.get_description())
+
+                    brick_infos.append(device_info)
                 else:
-                    firmware_url_part = None
+                    ref_name = device.get_name().under + '_bricklet'
+                    hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
+                    software_doc_prefix = device.get_name().camel + '_Bricklet'
+                    firmware_url_part = device.get_name().under
 
-                device_info = (device.get_device_identifier(),
-                               device.get_long_display_name(),
-                               device.get_short_display_name(),
-                               ref_name,
-                               hardware_doc_name,
-                               software_doc_prefix,
-                               device.get_git_name(),
-                               firmware_url_part,
-                               False,
-                               device.is_released(),
-                               device.is_documented(),
-                               device.is_discontinued(),
-                               True,
-                               device.get_description())
+                    device_info = (device.get_device_identifier(),
+                                   device.get_long_display_name(),
+                                   device.get_short_display_name(),
+                                   ref_name,
+                                   hardware_doc_name,
+                                   software_doc_prefix,
+                                   device.get_git_name(),
+                                   firmware_url_part,
+                                   device.has_comcu(),
+                                   device.is_released(),
+                                   device.is_documented(),
+                                   device.is_discontinued(),
+                                   True,
+                                   device.get_description())
 
-                brick_infos.append(device_info)
-            else:
-                ref_name = device.get_name().under + '_bricklet'
-                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
-                software_doc_prefix = device.get_name().camel + '_Bricklet'
-                firmware_url_part = device.get_name().under
-
-                device_info = (device.get_device_identifier(),
-                               device.get_long_display_name(),
-                               device.get_short_display_name(),
-                               ref_name,
-                               hardware_doc_name,
-                               software_doc_prefix,
-                               device.get_git_name(),
-                               firmware_url_part,
-                               device.has_comcu(),
-                               device.is_released(),
-                               device.is_documented(),
-                               device.is_discontinued(),
-                               True,
-                               device.get_description())
-
-                bricklet_infos.append(device_info)
+                    bricklet_infos.append(device_info)
 
             generator.generate(device)
 
     generator.finish()
 
-    brick_infos.append((None, 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, False, True, True, False, False,
-                        {'en': 'For Firmware Developers: JTAG and serial console',
-                         'de': 'Für Firmware Entwickler: JTAG und serielle Konsole'}))
+    # only update device_infos.py for default config
+    if config_name == 'tinkerforge':
+        brick_infos.append((None, 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, False, True, True, False, False,
+                            {'en': 'For Firmware Developers: JTAG and serial console',
+                             'de': 'Für Firmware Entwickler: JTAG und serielle Konsole'}))
 
-    bricklet_infos.append((None, 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, False, True, True, False, False,
-                           {'en': 'Makes all Bricklet signals available',
-                            'de': 'Macht alle Bricklet Signale zugänglich'}))
+        bricklet_infos.append((None, 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, False, True, True, False, False,
+                               {'en': 'Makes all Bricklet signals available',
+                                'de': 'Macht alle Bricklet Signale zugänglich'}))
 
-    with open(os.path.join(bindings_root_directory, '..', 'device_infos.py'), 'w') as f:
-        f.write('from collections import namedtuple\n')
-        f.write('\n')
-        f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part has_comcu is_released is_documented is_discontinued has_bindings description')\n")
-        f.write('\n')
-        f.write('brick_infos = \\\n')
-        f.write('[\n')
+        with open(os.path.join(root_dir, '..', 'device_infos.py'), 'w') as f:
+            f.write('from collections import namedtuple\n')
+            f.write('\n')
+            f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part has_comcu is_released is_documented is_discontinued has_bindings description')\n")
+            f.write('\n')
+            f.write('brick_infos = \\\n')
+            f.write('[\n')
 
-        for brick_info in sorted(brick_infos, key=lambda info: info[2].lower()):
-            f.write('    DeviceInfo{0},\n'.format(brick_info))
+            for brick_info in sorted(brick_infos, key=lambda info: info[2].lower()):
+                f.write('    DeviceInfo{0},\n'.format(brick_info))
 
-        f.write(']\n')
-        f.write('\n')
-        f.write('bricklet_infos = \\\n')
-        f.write('[\n')
+            f.write(']\n')
+            f.write('\n')
+            f.write('bricklet_infos = \\\n')
+            f.write('[\n')
 
-        for bricklet_info in sorted(bricklet_infos, key=lambda info: info[2].lower()):
-            f.write('    DeviceInfo{0},\n'.format(bricklet_info))
+            for bricklet_info in sorted(bricklet_infos, key=lambda info: info[2].lower()):
+                f.write('    DeviceInfo{0},\n'.format(bricklet_info))
 
-        f.write(']\n')
+            f.write(']\n')
 
 check_name_valid_word_head = re.compile('^[A-Z]+[A-Z0-9]*[a-z0-9]*$')
 check_name_valid_word_tail = re.compile('^[A-Z0-9]+[a-z0-9]*$')
@@ -1725,8 +1759,7 @@ class Device(object):
                                             self.get_category().camel,
                                             self.get_generator().get_doc_rst_filename_part())
 
-        return os.path.join(self.get_generator().get_root_dir(),
-                            'doc',
+        return os.path.join(self.get_generator().get_doc_dir(),
                             self.get_generator().get_language(),
                             filename)
 
@@ -2527,10 +2560,10 @@ class ExampleSpecialFunction(ExampleItem):
 
 class Generator:
     check_root_dir_name = True
-    bindings_dir_name = 'bindings'
 
-    def __init__(self, root_dir, language):
+    def __init__(self, root_dir, config_name, language):
         self.root_dir = root_dir
+        self.config_name = FlavoredName(' '.join([word[0].upper() + word[1:] for word in config_name.split('_')]))
         self.language = language # en or de
         self.date = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -2539,6 +2572,13 @@ class Generator:
 
             if self.get_bindings_name() != root_dir_name:
                 raise GeneratorError("root directory '{0}' and bindings name '{1}' do not match".format(root_dir_name, self.get_bindings_name()))
+
+        if self.get_config_name().space == 'Tinkerforge':
+            self.bindings_dir_name = 'bindings'
+            self.doc_dir_name = 'doc'
+        else:
+            self.bindings_dir_name = 'bindings_' + self.get_config_name().under
+            self.doc_dir_name = 'doc_' + self.get_config_name().under
 
     def get_bindings_name(self):
         raise GeneratorError("get_bindings_name() not implemented")
@@ -2603,11 +2643,34 @@ class Generator:
     def get_root_dir(self):
         return self.root_dir
 
+    def get_config_name(self, *args, **kwargs):
+        return self.config_name.get(*args, **kwargs)
+
+    def get_config_dir(self):
+        parts = [self.root_dir, '..', 'configs']
+        name = self.get_config_name().under
+
+        if name != 'tinkerforge':
+            parts.append(name)
+
+        return os.path.join(*parts)
+
     def get_language(self):
         return self.language # en or de
 
     def get_bindings_dir(self):
         return os.path.join(self.get_root_dir(), self.bindings_dir_name)
+
+    def get_doc_dir(self):
+        return os.path.join(self.get_root_dir(), self.doc_dir_name)
+
+    def get_changelog_version(self):
+        if self.get_config_name().space == 'Tinkerforge':
+            root_dir = self.get_root_dir()
+        else:
+            root_dir = self.get_config_dir()
+
+        return get_changelog_version(root_dir)
 
     def get_header_comment(self, kind):
         comment = {
@@ -2693,7 +2756,7 @@ class DocGenerator(Generator):
         return True
 
     def prepare(self):
-        recreate_dir(os.path.join(self.get_root_dir(), 'doc', self.get_language()))
+        recreate_dir(os.path.join(self.get_doc_dir(), self.get_language()))
 
     def finish(self):
         # Copy IPConnection examples
@@ -2729,6 +2792,14 @@ class BindingsGenerator(Generator):
                 f.write(released_file + '\n')
 
 class ZipGenerator(Generator):
+    def get_tmp_dir(self):
+        tmp_dir = os.path.join('/tmp/generators/', self.get_bindings_name())
+
+        if self.get_config_name().space != 'Tinkerforge':
+            tmp_dir += '_' + self.get_config_name().under
+
+        return tmp_dir
+
     def get_released_files(self):
         released_files = []
 
@@ -2739,8 +2810,12 @@ class ZipGenerator(Generator):
         return released_files
 
     def create_zip_file(self, source_path):
-        version = get_changelog_version(self.get_root_dir())
-        zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(self.get_bindings_name(), *version)
+        if self.get_config_name().space == 'Tinkerforge':
+            version = get_changelog_version(self.get_root_dir())
+        else:
+            version = get_changelog_version(self.get_config_dir())
+
+        zipname = '{0}_{1}_bindings_{2}_{3}_{4}.zip'.format(self.get_config_name().under, self.get_bindings_name(), *version)
 
         with ChangedDirectory(source_path):
             execute(['/usr/bin/zip', '-q', '-r', zipname, '.'])

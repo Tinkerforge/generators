@@ -32,9 +32,12 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class MathematicaZipGenerator(common.ZipGenerator):
-    tmp_dir                    = '/tmp/generator/mathematica'
-    tmp_source_tinkerforge_dir = os.path.join(tmp_dir, 'source', 'Tinkerforge')
-    tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir                    = self.get_tmp_dir()
+        self.tmp_source_tinkerforge_dir = os.path.join(self.tmp_dir, 'source', 'Tinkerforge')
+        self.tmp_examples_dir           = os.path.join(self.tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'mathematica'
@@ -76,7 +79,7 @@ class MathematicaZipGenerator(common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),    self.tmp_dir)
 
         # Make AssemblyInfo.cs
-        version = common.get_changelog_version(root_dir)
+        version = self.get_changelog_version()
 
         common.specialize_template(os.path.join(root_dir, '..', 'csharp', 'AssemblyInfo.cs.template'),
                                    os.path.join(self.tmp_source_tinkerforge_dir, 'AssemblyInfo.cs'),

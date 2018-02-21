@@ -32,15 +32,18 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class MATLABZipGenerator(common.ZipGenerator):
-    tmp_dir                               = '/tmp/generator/matlab'
-    tmp_flavor_dir                        = {'matlab': os.path.join(tmp_dir, 'matlab'),
-                                             'octave': os.path.join(tmp_dir, 'octave')}
-    tmp_flavor_source_dir                 = {'matlab': os.path.join(tmp_flavor_dir['matlab'], 'source'),
-                                             'octave': os.path.join(tmp_flavor_dir['octave'], 'source')}
-    tmp_flavor_source_com_tinkerforge_dir = {'matlab': os.path.join(tmp_flavor_source_dir['matlab'], 'com', 'tinkerforge'),
-                                             'octave': os.path.join(tmp_flavor_source_dir['octave'], 'com', 'tinkerforge')}
-    tmp_flavor_examples_dir               = {'matlab': os.path.join(tmp_flavor_dir['matlab'], 'examples'),
-                                             'octave': os.path.join(tmp_flavor_dir['octave'], 'examples')}
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir                               = self.get_tmp_dir()
+        self.tmp_flavor_dir                        = {'matlab': os.path.join(self.tmp_dir, 'matlab'),
+                                                      'octave': os.path.join(self.tmp_dir, 'octave')}
+        self.tmp_flavor_source_dir                 = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'source'),
+                                                      'octave': os.path.join(self.tmp_flavor_dir['octave'], 'source')}
+        self.tmp_flavor_source_com_tinkerforge_dir = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'com', 'tinkerforge'),
+                                                      'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'com', 'tinkerforge')}
+        self.tmp_flavor_examples_dir               = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'examples'),
+                                                      'octave': os.path.join(self.tmp_flavor_dir['octave'], 'examples')}
 
     def get_bindings_name(self):
         return 'matlab'
@@ -112,7 +115,7 @@ class MATLABZipGenerator(common.ZipGenerator):
             shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),                 self.tmp_dir)
 
             # Make manifest
-            version = common.get_changelog_version(root_dir)
+            version = self.get_changelog_version()
 
             with open(os.path.join(tmp_dir, 'manifest.txt'), 'w') as f:
                 f.write('Bindings-Version: {1}.{2}.{3}\nBindings-Flavor: {0}\n'.format(flavor.upper(), *version))

@@ -33,15 +33,18 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class JavaScriptZipGenerator(common.ZipGenerator):
-    tmp_dir                           = '/tmp/generator/javascript'
-    tmp_nodejs_dir                    = os.path.join(tmp_dir, 'nodejs')
-    tmp_nodejs_source_dir             = os.path.join(tmp_nodejs_dir, 'source')
-    tmp_nodejs_source_tinkerforge_dir = os.path.join(tmp_nodejs_source_dir, 'Tinkerforge')
-    tmp_nodejs_examples_dir           = os.path.join(tmp_nodejs_dir, 'examples')
-    tmp_nodejs_package_dir            = os.path.join(tmp_nodejs_dir, 'package')
-    tmp_nodejs_package_lib_dir        = os.path.join(tmp_nodejs_package_dir, 'lib')
-    tmp_browser_source_dir            = os.path.join(tmp_dir, 'browser', 'source')
-    tmp_browser_examples_dir          = os.path.join(tmp_dir, 'browser', 'examples')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir                           = self.get_tmp_dir()
+        self.tmp_nodejs_dir                    = os.path.join(self.tmp_dir, 'nodejs')
+        self.tmp_nodejs_source_dir             = os.path.join(self.tmp_nodejs_dir, 'source')
+        self.tmp_nodejs_source_tinkerforge_dir = os.path.join(self.tmp_nodejs_source_dir, 'Tinkerforge')
+        self.tmp_nodejs_examples_dir           = os.path.join(self.tmp_nodejs_dir, 'examples')
+        self.tmp_nodejs_package_dir            = os.path.join(self.tmp_nodejs_dir, 'package')
+        self.tmp_nodejs_package_lib_dir        = os.path.join(self.tmp_nodejs_package_dir, 'lib')
+        self.tmp_browser_source_dir            = os.path.join(self.tmp_dir, 'browser', 'source')
+        self.tmp_browser_examples_dir          = os.path.join(self.tmp_dir, 'browser', 'examples')
 
     def get_bindings_name(self):
         return 'javascript'
@@ -104,7 +107,7 @@ class JavaScriptZipGenerator(common.ZipGenerator):
                 shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_nodejs_package_lib_dir)
 
         # Make package.json
-        version = common.get_changelog_version(root_dir)
+        version = self.get_changelog_version()
 
         common.specialize_template(os.path.join(root_dir, 'package.json.template'),
                                    os.path.join(self.tmp_nodejs_package_dir, 'package.json'),

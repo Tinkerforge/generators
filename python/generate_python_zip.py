@@ -32,10 +32,13 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class PythonZipGenerator(common.ZipGenerator):
-    tmp_dir                    = '/tmp/generator/python'
-    tmp_source_dir             = os.path.join(tmp_dir, 'source')
-    tmp_source_tinkerforge_dir = os.path.join(tmp_source_dir, 'tinkerforge')
-    tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir                    = self.get_tmp_dir()
+        self.tmp_source_dir             = os.path.join(self.tmp_dir, 'source')
+        self.tmp_source_tinkerforge_dir = os.path.join(self.tmp_source_dir, 'tinkerforge')
+        self.tmp_examples_dir           = os.path.join(self.tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'python'
@@ -82,7 +85,7 @@ class PythonZipGenerator(common.ZipGenerator):
             f.write(' ')
 
         # Make setup.py
-        version = common.get_changelog_version(root_dir)
+        version = self.get_changelog_version()
 
         common.specialize_template(os.path.join(root_dir, 'setup.py.template'),
                                    os.path.join(self.tmp_source_dir, 'setup.py'),

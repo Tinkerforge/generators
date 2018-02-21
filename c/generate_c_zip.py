@@ -32,9 +32,12 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class CZipGenerator(common.ZipGenerator):
-    tmp_dir          = '/tmp/generator/c'
-    tmp_source_dir   = os.path.join(tmp_dir, 'source')
-    tmp_examples_dir = os.path.join(tmp_dir, 'examples')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir          = self.get_tmp_dir()
+        self.tmp_source_dir   = os.path.join(self.tmp_dir, 'source')
+        self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'c'

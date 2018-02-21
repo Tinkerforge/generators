@@ -33,10 +33,13 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class PHPZipGenerator(common.ZipGenerator):
-    tmp_dir                    = '/tmp/generator/php'
-    tmp_source_dir             = os.path.join(tmp_dir, 'source')
-    tmp_source_tinkerforge_dir = os.path.join(tmp_source_dir, 'Tinkerforge')
-    tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir                    = self.get_tmp_dir()
+        self.tmp_source_dir             = os.path.join(self.tmp_dir, 'source')
+        self.tmp_source_tinkerforge_dir = os.path.join(self.tmp_source_dir, 'Tinkerforge')
+        self.tmp_examples_dir           = os.path.join(self.tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'php'
@@ -82,7 +85,7 @@ class PHPZipGenerator(common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make package.xml
-        version = common.get_changelog_version(root_dir)
+        version = self.get_changelog_version()
         date = datetime.datetime.now().strftime("%Y-%m-%d")
 
         common.specialize_template(os.path.join(root_dir, 'package.xml.template'),
