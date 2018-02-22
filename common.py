@@ -689,6 +689,8 @@ def subgenerate(root_dir, language, generator_class, config_name):
     generator.prepare()
 
     def prepare_common_packets(com, common_packets):
+        removed_features = com.get('removed_features', [])
+
         for common_packet in common_packets:
             if common_packet['since_firmware'] is None:
                 continue
@@ -701,6 +703,9 @@ def subgenerate(root_dir, language, generator_class, config_name):
                     common_packet['since_firmware']['*']
 
             if common_packet['since_firmware'] is None:
+                common_packet['to_be_removed'] = True
+
+            if common_packet.get('feature', None) in removed_features:
                 common_packet['to_be_removed'] = True
 
         return filter(lambda x: 'to_be_removed' not in x, common_packets)

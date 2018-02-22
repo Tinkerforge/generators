@@ -9,6 +9,7 @@
 common_packets = []
 
 common_packets.append({
+'feature': 'bricklet_comcu',
 'type': 'function',
 'function_id': 231,
 'name': 'Set SPITFP Baudrate Config',
@@ -79,6 +80,7 @@ Standardmäßig ist die dynamische Baudrate aktiviert und die minimale dynamisch
 })
 
 common_packets.append({
+'feature': 'bricklet_comcu',
 'type': 'function',
 'function_id': 232,
 'name': 'Get SPITFP Baudrate Config',
@@ -106,6 +108,7 @@ Gibt die Baudratenkonfiguration zurück, siehe :func:`Set SPITFP Baudrate Config
 })
 
 common_packets.append({
+'feature': 'send_timeout_count',
 'type': 'function',
 'function_id': 233,
 'name': 'Get Send Timeout Count',
@@ -149,6 +152,7 @@ Im normalen Betrieb sollten alle Zähler fast immer auf 0 stehen bleiben.
 })
 
 common_packets.append({
+'feature': 'bricklet_comcu',
 'type': 'function',
 'function_id': 234,
 'name': 'Set SPITFP Baudrate',
@@ -204,6 +208,7 @@ Die Standardbaudrate für alle Ports ist 1400000.
 })
 
 common_packets.append({
+'feature': 'bricklet_comcu',
 'type': 'function',
 'function_id': 235,
 'name': 'Get SPITFP Baudrate',
@@ -233,6 +238,7 @@ Gibt die Baudrate für einen Bricklet Port zurück, siehe
 # Keep function 236 empty, so we can always call "get_bootloader_mode"
 
 common_packets.append({
+'feature': 'bricklet_comcu',
 'type': 'function',
 'function_id': 237,
 'name': 'Get SPITFP Error Count',
@@ -283,6 +289,7 @@ ausgibt.
 }]
 })
 common_packets.append({
+'feature': 'status_led',
 'type': 'function',
 'function_id': 238,
 'name': 'Enable Status LED',
@@ -318,6 +325,7 @@ Der Standardzustand ist aktiviert.
 })
 
 common_packets.append({
+'feature': 'status_led',
 'type': 'function',
 'function_id': 239,
 'name': 'Disable Status LED',
@@ -353,6 +361,7 @@ Der Standardzustand ist aktiviert.
 })
 
 common_packets.append({
+'feature': 'status_led',
 'type': 'function',
 'function_id': 240,
 'name': 'Is Status LED Enabled',
@@ -377,6 +386,7 @@ Gibt *true* zurück wenn die Status LED aktiviert ist, *false* sonst.
 })
 
 common_packets.append({
+'feature': 'bricklet_eeprom',
 'type': 'function',
 'function_id': 241,
 'name': 'Get Protocol1 Bricklet Name',
@@ -412,6 +422,7 @@ v1.x.y Plugins zu ermöglichen.
 })
 
 common_packets.append({
+'feature': 'chip_temperature',
 'type': 'function',
 'function_id': 242,
 'name': 'Get Chip Temperature',
