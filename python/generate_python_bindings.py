@@ -350,9 +350,8 @@ class {0}(Device):
         \"\"\"
         {doc}
         \"\"\"{coercions}
-        {stream_name_under} = list({stream_name_under}) # make a copy so we can potentially extend it
         {stream_name_under}_length = len({stream_name_under})
-        {stream_name_under}_data = {stream_name_under}
+        {stream_name_under}_data = list({stream_name_under}) # make a copy so we can potentially extend it
 
         if {stream_name_under}_length > {chunk_cardinality}:
             raise Error(Error.INVALID_PARAMETER, '{stream_name_space} can be at most {chunk_cardinality} items long')
