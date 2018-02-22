@@ -268,7 +268,7 @@ class TVPLExampleParameter(common.ExampleParameter):
 
 class TVPLExampleResult(common.ExampleResult):
     def get_tvpl_variable(self):
-        return self.get_name()
+        return self.get_name().space
 
     def add_tvpl_print_block(self, parent, list_variable, list_index):
         print_value, print_next = add_tvpl_print_block(parent)

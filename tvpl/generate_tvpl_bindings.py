@@ -46,7 +46,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             block_host = '_HOST'
             block_port = '_PORT'
             block_display_device_name = self.get_long_display_name()
-            block_display_function_name = packet.get_name()
+            block_display_function_name = packet.get_name().space
 
             if self.is_brick():
                 block_set_color = 'this.setColour(195);'
