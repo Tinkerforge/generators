@@ -1538,26 +1538,6 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
 
         return '\n    ///  '.join(text.strip().split('\n'))
 
-class DelphiBindingsStreamIn(common.StreamIn):
-    def get_name(self, *args, **kwargs):
-        name = common.StreamIn.get_name(self, *args, **kwargs)
-
-        # avoid keywords, check as lower because Delphi is caseless
-        if name.lower in ['length', 'unit', 'type', 'message']:
-            name = common.StreamIn.get_name(self, *args, suffix='2', **kwargs)
-
-        return name
-
-class DelphiBindingsStreamOut(common.StreamOut):
-    def get_name(self, *args, **kwargs):
-        name = common.StreamOut.get_name(self, *args, **kwargs)
-
-        # avoid keywords, check as lower because Delphi is caseless
-        if name.lower in ['length', 'unit', 'type', 'message']:
-            name = common.StreamOut.get_name(self, *args, suffix='2', **kwargs)
-
-        return name
-
 class DelphiBindingsElement(delphi_common.DelphiElement):
     def get_name(self, *args, **kwargs):
         name = delphi_common.DelphiElement.get_name(self, *args, **kwargs)
@@ -1580,12 +1560,6 @@ class DelphiBindingsGenerator(common.BindingsGenerator):
 
     def get_packet_class(self):
         return DelphiBindingsPacket
-
-    #def get_stream_in_class(self):
-    #    return DelphiBindingsStreamIn
-
-    #def get_stream_out_class(self):
-    #    return DelphiBindingsStreamOut
 
     def get_element_class(self):
         return DelphiBindingsElement
