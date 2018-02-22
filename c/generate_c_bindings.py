@@ -684,7 +684,7 @@ unlock:
 """
         template_stream_out_chunk_offset_check = """
 
-	if ({stream_name_under}_chunk_offset == {chunk_max_offset}) {{ // maximum chunk offset -> stream has no data
+	if ({stream_name_under}_chunk_offset == (1 << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
 		goto unlock;
 	}}"""
         template_stream_out_single_chunk = """
@@ -760,7 +760,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
 
                 if stream_out.get_fixed_length() != None:
                     chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_name_under=stream_out.get_name().under,
-                                                                                       chunk_max_offset=abs(stream_out.get_data_element().get_cardinality()))
+                                                                                       shift_size=int(stream_out.get_chunk_offset_element().get_type().replace('uint', '')))
                 else:
                     chunk_offset_check = ''
 

@@ -851,7 +851,7 @@ end;
 
                 template_stream_out_chunk_offset_check = """
 
-  if ({stream_name_headless}ChunkOffset = {chunk_max_offset}) then exit; {{ Maximum chunk offset -> stream has no data }}"""
+    if ({stream_name_headless}ChunkOffset = ((1 shl {shift_size}) - 1)) then exit; {{ Maximum chunk offset -> stream has no data }}"""
 
                 template_high_level_stream_out = """{method_signature}var
   streamOutCurrentLength: integer;
@@ -1239,7 +1239,7 @@ end;
 
                     if stream_out.get_fixed_length() != None:
                         chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_name_headless = stream_out.get_name().headless,
-                                                                                           chunk_max_offset = str(abs(stream_out.get_data_element().get_cardinality())))
+                                                                                           shift_size=int(stream_out.get_chunk_offset_element().get_type().replace('uint', '')))
 
                     if stream_out.has_single_chunk():
                         method = template_high_level_stream_out_single_chunk.format(method_signature = method_signature,

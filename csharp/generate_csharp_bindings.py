@@ -791,7 +791,7 @@ namespace Tinkerforge
 			}}{result_return}
 		}}
 """
-        template_stream_out_chunk_offset_check = """if ({stream_name_headless}ChunkOffset == {chunk_max_offset}) {{ // maximum chunk offset -> stream has no data
+        template_stream_out_chunk_offset_check = """if ({stream_name_headless}ChunkOffset == (1 << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
 					{stream_name_headless}Length = 0;
 					{stream_name_headless}ChunkOffset = 0;
 					{stream_name_headless}OutOfSync = false;
@@ -901,7 +901,7 @@ namespace Tinkerforge
 
                 if stream_out.get_fixed_length() != None:
                     chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_name_headless=stream_out.get_name().headless,
-                                                                                       chunk_max_offset=abs(stream_out.get_data_element().get_cardinality()))
+                                                                                       shift_size=int(stream_out.get_chunk_offset_element().get_type().replace('uint', '')))
                     chunk_offset_check_end = '\n\t\t\t\t}'
                 else:
                     chunk_offset_check = ''
