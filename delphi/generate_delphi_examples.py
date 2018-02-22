@@ -212,7 +212,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
     def get_delphi_source(self):
         templateA = 'const {name}: {type0}'
         templateB = 'const {name}: TArray0To{array_end}Of{type1}'
-        templateC = 'const {name}: array of {type0}'
+        templateC = 'const {name}: TArrayOf{type1}'
 
         if self.get_cardinality() == 1:
             template = templateA
@@ -265,7 +265,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
     def get_delphi_variable_declaration(self):
         templateA = '{type0}'
         templateB = 'TArray0To{array_end}Of{type1}'
-        templateC = 'array of {type0}'
+        templateC = 'TArrayOf{type1}'
 
         if self.get_cardinality() == 1:
             template = templateA
