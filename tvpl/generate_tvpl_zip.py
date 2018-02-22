@@ -32,23 +32,26 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class TVPLZipGenerator(common.ZipGenerator):
-    tmp_dir                       = '/tmp/generator/tvpl'
-    tmp_examples_dir              = os.path.join(tmp_dir, 'examples')
-    tmp_source_dir                = os.path.join(tmp_dir, 'source')
-    tmp_build_dir                 = os.path.join(tmp_dir, 'build')
-    tmp_build_blockly_dir         = os.path.join(tmp_build_dir, 'blockly')
-    tmp_build_closure_library_dir = os.path.join(tmp_build_dir, 'closure-library')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
 
-    tmp_javascript_dir            = '/tmp/generator/javascript'
-    tmp_blocks_dir                = os.path.join(tmp_build_blockly_dir, 'blocks')
-    tmp_generators_javascript_dir = os.path.join(tmp_build_blockly_dir, 'generators', 'javascript')
-    tmp_generators_python_dir     = os.path.join(tmp_build_blockly_dir, 'generators', 'python')
+        self.tmp_dir                       = self.get_tmp_dir()
+        self.tmp_examples_dir              = os.path.join(self.tmp_dir, 'examples')
+        self.tmp_source_dir                = os.path.join(self.tmp_dir, 'source')
+        self.tmp_build_dir                 = os.path.join(self.tmp_dir, 'build')
+        self.tmp_build_blockly_dir         = os.path.join(self.tmp_build_dir, 'blockly')
+        self.tmp_build_closure_library_dir = os.path.join(self.tmp_build_dir, 'closure-library')
 
-    block_content                 = ''
-    generator_javascript_content  = ''
-    generator_python_content      = ''
-    brick_toolbox_part            = {}
-    bricklet_toolbox_part         = {}
+        self.tmp_javascript_dir            = '/tmp/generators/javascript'
+        self.tmp_blocks_dir                = os.path.join(self.tmp_build_blockly_dir, 'blocks')
+        self.tmp_generators_javascript_dir = os.path.join(self.tmp_build_blockly_dir, 'generators', 'javascript')
+        self.tmp_generators_python_dir     = os.path.join(self.tmp_build_blockly_dir, 'generators', 'python')
+
+        self.block_content                 = ''
+        self.generator_javascript_content  = ''
+        self.generator_python_content      = ''
+        self.brick_toolbox_part            = {}
+        self.bricklet_toolbox_part         = {}
 
     def get_bindings_name(self):
         return 'tvpl'

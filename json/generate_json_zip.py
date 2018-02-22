@@ -31,8 +31,11 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class JSONZipGenerator(common.ZipGenerator):
-    tmp_dir        = '/tmp/generator/json'
-    tmp_source_dir = os.path.join(tmp_dir, 'source')
+    def __init__(self, *args):
+        common.ZipGenerator.__init__(self, *args)
+
+        self.tmp_dir        = self.get_tmp_dir()
+        self.tmp_source_dir = os.path.join(self.tmp_dir, 'source')
 
     def get_bindings_name(self):
         return 'json'
