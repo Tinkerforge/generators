@@ -35,10 +35,11 @@ class JavaZipGenerator(common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 
-        self.tmp_dir                        = self.get_tmp_dir()
-        self.tmp_source_dir                 = os.path.join(self.tmp_dir, 'source')
-        self.tmp_source_com_tinkerforge_dir = os.path.join(self.tmp_source_dir, 'com', 'tinkerforge')
-        self.tmp_examples_dir               = os.path.join(self.tmp_dir, 'examples')
+        self.tmp_dir                          = self.get_tmp_dir()
+        self.tmp_source_dir                   = os.path.join(self.tmp_dir, 'source')
+        self.tmp_source_meta_inf_services_dir = os.path.join(self.tmp_source_dir, 'META-INF', 'services')
+        self.tmp_source_com_tinkerforge_dir   = os.path.join(self.tmp_source_dir, 'com', 'tinkerforge')
+        self.tmp_examples_dir                 = os.path.join(self.tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'java'
@@ -46,6 +47,7 @@ class JavaZipGenerator(common.ZipGenerator):
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_dir)
+        os.makedirs(self.tmp_source_meta_inf_services_dir)
         os.makedirs(self.tmp_source_com_tinkerforge_dir)
         os.makedirs(self.tmp_examples_dir)
 
@@ -68,18 +70,23 @@ class JavaZipGenerator(common.ZipGenerator):
         root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, r'^Example.*\.java$'):
-            shutil.copy(example[1], self.tmp_examples_dir)
+        if self.get_config_name().space == 'Tinkerforge':
+            for example in common.find_examples(root_dir, r'^Example.*\.java$'):
+                shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
-        for filename in self.get_released_files():# + ['DeviceFactory.java']:
+        for filename in self.get_released_files():
             shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_com_tinkerforge_dir)
+
+        shutil.copy(os.path.join(self.get_bindings_dir(), 'com.tinkerforge.DeviceProvider'), self.tmp_source_meta_inf_services_dir)
 
         if self.get_config_name().space == 'Tinkerforge':
             shutil.copy(os.path.join(root_dir, 'BrickDaemon.java'),               self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'Device.java'),                    self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'DeviceBase.java'),                self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'DeviceListener.java'),            self.tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'DeviceProvider.java'),            self.tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'DeviceFactory.java'),             self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'IPConnection.java'),              self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'IPConnectionBase.java'),          self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'TinkerforgeException.java'),      self.tmp_source_com_tinkerforge_dir)
@@ -123,7 +130,8 @@ class JavaZipGenerator(common.ZipGenerator):
                             'cfm',
                             os.path.join(self.tmp_dir, self.get_config_name().camel + '.jar'),
                             os.path.join(self.tmp_dir, 'manifest.txt'),
-                           'com'])
+                           'com',
+                           'META-INF'])
 
         # Remove manifest
         os.remove(os.path.join(self.tmp_dir, 'manifest.txt'))

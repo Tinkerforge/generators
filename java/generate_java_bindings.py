@@ -1322,6 +1322,23 @@ public class {0} extends Device {{
 
         return source
 
+    def get_java_provider(self):
+        template = """{0}
+package com.tinkerforge;
+
+public class {1}Provider implements DeviceProvider {{
+	public {1}Provider() {{}}
+	public int getDeviceIdentifier() {{ return {1}.DEVICE_IDENTIFIER; }}
+	public String getDeviceDisplayName() {{ return {1}.DEVICE_DISPLAY_NAME; }}
+	public Class<? extends Device> getDeviceClass() {{ return {1}.class; }}
+}}
+"""
+
+        return template.format(self.get_generator().get_header_comment('asterisk'),
+                               self.get_java_class_name(),
+                               self.get_device_identifier(),
+                               self.get_long_display_name())
+
 class JavaBindingsPacket(java_common.JavaPacket):
     def get_java_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
@@ -1498,7 +1515,7 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         return java_common.JavaElement
 
     def prepare(self):
-        self.device_factory_classes = []
+        self.device_classes = []
 
         result = common.BindingsGenerator.prepare(self)
 
@@ -1510,7 +1527,7 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         return result
 
     def generate(self, device):
-        filename = '{0}.java'.format(device.get_java_class_name())
+        class_name = device.get_java_class_name()
 
         if self.is_matlab():
             flavor = 'matlab'
@@ -1519,44 +1536,18 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         else:
             flavor = ''
 
-        with open(os.path.join(self.get_bindings_dir(), flavor, filename), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), flavor, class_name + '.java'), 'w') as f:
             f.write(device.get_java_source())
 
+        with open(os.path.join(self.get_bindings_dir(), flavor, class_name + 'Provider.java'), 'w') as f:
+            f.write(device.get_java_provider())
+
         if device.is_released():
-            self.device_factory_classes.append(device.get_java_class_name())
-            self.released_files.append(filename)
+            self.device_classes.append(class_name)
+            self.released_files.append(class_name + '.java')
+            self.released_files.append(class_name + 'Provider.java')
 
     def finish(self):
-        template = """{0}
-package com.tinkerforge;
-
-public class DeviceFactory {{
-	public static Class<? extends Device> getDeviceClass(int deviceIdentifier) {{
-		switch (deviceIdentifier) {{
-{1}
-		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
-		}}
-	}}
-
-	public static String getDeviceDisplayName(int deviceIdentifier) {{
-		switch (deviceIdentifier) {{
-{2}
-		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
-		}}
-	}}
-
-	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {{
-		return getDeviceClass(deviceIdentifier).getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
-	}}
-}}
-"""
-        classes = []
-        display_names = []
-
-        for name in sorted(self.device_factory_classes):
-            classes.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.class;'.format(name))
-            display_names.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.DEVICE_DISPLAY_NAME;'.format(name))
-
         if self.is_matlab():
             flavor = 'matlab'
         elif self.is_octave():
@@ -1564,10 +1555,9 @@ public class DeviceFactory {{
         else:
             flavor = ''
 
-        with open(os.path.join(self.get_bindings_dir(), flavor, 'DeviceFactory.java'), 'w') as f:
-            f.write(template.format(self.get_header_comment('asterisk'),
-                                    '\n'.join(classes),
-                                    '\n'.join(display_names)))
+        with open(os.path.join(self.get_bindings_dir(), flavor, 'com.tinkerforge.DeviceProvider'), 'w') as f:
+            for name in sorted(self.device_classes):
+                f.write('com.tinkerforge.{0}Provider\n'.format(name))
 
         return common.BindingsGenerator.finish(self)
 

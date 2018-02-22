@@ -35,15 +35,17 @@ class MATLABZipGenerator(common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 
-        self.tmp_dir                               = self.get_tmp_dir()
-        self.tmp_flavor_dir                        = {'matlab': os.path.join(self.tmp_dir, 'matlab'),
-                                                      'octave': os.path.join(self.tmp_dir, 'octave')}
-        self.tmp_flavor_source_dir                 = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'source'),
-                                                      'octave': os.path.join(self.tmp_flavor_dir['octave'], 'source')}
-        self.tmp_flavor_source_com_tinkerforge_dir = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'com', 'tinkerforge'),
-                                                      'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'com', 'tinkerforge')}
-        self.tmp_flavor_examples_dir               = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'examples'),
-                                                      'octave': os.path.join(self.tmp_flavor_dir['octave'], 'examples')}
+        self.tmp_dir                                 = self.get_tmp_dir()
+        self.tmp_flavor_dir                          = {'matlab': os.path.join(self.tmp_dir, 'matlab'),
+                                                        'octave': os.path.join(self.tmp_dir, 'octave')}
+        self.tmp_flavor_source_dir                   = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'source'),
+                                                        'octave': os.path.join(self.tmp_flavor_dir['octave'], 'source')}
+        self.tmp_flavor_source_meta_inf_services_dir = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'META-INF', 'services'),
+                                                        'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'META-INF', 'services')}
+        self.tmp_flavor_source_com_tinkerforge_dir   = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'com', 'tinkerforge'),
+                                                        'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'com', 'tinkerforge')}
+        self.tmp_flavor_examples_dir                 = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'examples'),
+                                                        'octave': os.path.join(self.tmp_flavor_dir['octave'], 'examples')}
 
     def get_bindings_name(self):
         return 'matlab'
@@ -54,6 +56,7 @@ class MATLABZipGenerator(common.ZipGenerator):
         for flavor in ['matlab', 'octave']:
             os.makedirs(self.tmp_flavor_dir[flavor])
             os.makedirs(self.tmp_flavor_source_dir[flavor])
+            os.makedirs(self.tmp_flavor_source_meta_inf_services_dir[flavor])
             os.makedirs(self.tmp_flavor_source_com_tinkerforge_dir[flavor])
             os.makedirs(self.tmp_flavor_examples_dir[flavor])
 
@@ -79,21 +82,27 @@ class MATLABZipGenerator(common.ZipGenerator):
         for flavor in ['matlab', 'octave']:
             tmp_dir = self.tmp_flavor_dir[flavor]
             tmp_source_dir = self.tmp_flavor_source_dir[flavor]
+            tmp_source_meta_inf_services_dir = self.tmp_flavor_source_meta_inf_services_dir[flavor]
             tmp_source_com_tinkerforge_dir = self.tmp_flavor_source_com_tinkerforge_dir[flavor]
             tmp_examples_dir = self.tmp_flavor_examples_dir[flavor]
 
             # Copy IP Connection examples
-            for example in common.find_examples(root_dir, '^' + flavor + r'_example_.*\.m$'):
-                shutil.copy(example[1], tmp_examples_dir)
+            if self.get_config_name().space == 'Tinkerforge':
+                for example in common.find_examples(root_dir, '^' + flavor + r'_example_.*\.m$'):
+                    shutil.copy(example[1], tmp_examples_dir)
 
             # Copy bindings and readme
-            for filename in self.get_released_files() + ['DeviceFactory.java']:
+            for filename in self.get_released_files():
                 shutil.copy(os.path.join(root_dir, self.get_bindings_dir(), flavor, filename), tmp_source_com_tinkerforge_dir)
+
+            shutil.copy(os.path.join(self.get_bindings_dir(), flavor, 'com.tinkerforge.DeviceProvider'), tmp_source_meta_inf_services_dir)
 
             shutil.copy(os.path.join(root_dir, '..', 'java', 'BrickDaemon.java'),               tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceBase.java'),                tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'Device_{0}.java'.format(flavor)),               os.path.join(tmp_source_com_tinkerforge_dir, 'Device.java'))
             shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceListener.java'),            tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceProvider.java'),            tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceFactory.java'),             tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'IPConnection_{0}.java'.format(flavor)),         os.path.join(tmp_source_com_tinkerforge_dir, 'IPConnection.java'))
             shutil.copy(os.path.join(root_dir, '..', 'java', 'IPConnectionBase.java'),          tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeException.java'),      tmp_source_com_tinkerforge_dir)
@@ -110,9 +119,13 @@ class MATLABZipGenerator(common.ZipGenerator):
             shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-x86.dll'),       tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-amd64.dll'),     tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-macos-x86_64.dynlib'),   tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'changelog.txt'),                                self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, 'readme.txt'),                                   self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),                 self.tmp_dir)
+
+            if self.get_config_name().space == 'Tinkerforge':
+                shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+                shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+                shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
+            else:
+                shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
 
             # Make manifest
             version = self.get_changelog_version()
@@ -138,9 +151,10 @@ class MATLABZipGenerator(common.ZipGenerator):
             with common.ChangedDirectory(tmp_source_dir):
                 common.execute(['/usr/bin/jar',
                                 'cfm',
-                                os.path.join(tmp_dir, 'Tinkerforge.jar'),
+                                os.path.join(tmp_dir, self.get_config_name().camel + '.jar'),
                                 os.path.join(tmp_dir, 'manifest.txt'),
-                                'com'])
+                                'com',
+                                'META-INF'])
 
             # Remove manifest
             os.remove(os.path.join(tmp_dir, 'manifest.txt'))
