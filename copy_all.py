@@ -55,6 +55,7 @@ def files_are_not_the_same(src_file, dest_path):
 path = os.getcwd()
 start_path = path.replace('/generators', '')
 brickv_path_bindings = os.path.join(start_path, 'brickv/src/brickv/bindings')
+flash_test_path_bindings = os.path.join(start_path, 'flash-test/src/flash-test/plugin_system/tinkerforge')
 bindings = []
 
 for d in os.listdir(path):
@@ -65,29 +66,30 @@ for d in os.listdir(path):
 bindings = sorted(bindings)
 
 if socket.gethostname() != 'tinkerforge.com':
-    print('')
-    print('Copying ip_connection to brickv:')
+    for tool_name, tool_path in [('brickv', brickv_path_bindings),
+                                 ('flash-test', flash_test_path_bindings)]:
+        print('')
+        print('Copying ip_connection to {0}:'.format(tool_name))
 
-    src_file = os.path.join(path, 'python', 'ip_connection.py')
+        src_file = os.path.join(path, 'python', 'ip_connection.py')
 
-    if files_are_not_the_same(src_file, brickv_path_bindings):
-        shutil.copy(src_file, brickv_path_bindings)
-        print(' * ip_connection.py')
+        if files_are_not_the_same(src_file, tool_path):
+            shutil.copy(src_file, tool_path)
+            print(' * ip_connection.py')
 
-    print('')
-    print('Copying Python bindings to brickv:')
+        print('')
+        print('Copying Python bindings to {0}:'.format(tool_name))
 
-    path_binding = os.path.join(path, 'python')
-    src_file_path = os.path.join(path_binding, 'bindings')
+        path_binding = os.path.join(path, 'python')
+        src_file_path = os.path.join(path_binding, 'bindings')
 
-    for f in os.listdir(src_file_path):
-        if f.endswith('.py'):
-            src_file = os.path.join(src_file_path, f)
-            dest_path = brickv_path_bindings
+        for f in os.listdir(src_file_path):
+            if f.endswith('.py'):
+                src_file = os.path.join(src_file_path, f)
 
-            if files_are_not_the_same(src_file, dest_path):
-                shutil.copy(src_file, dest_path)
-                print(' * {0}'.format(f))
+                if files_are_not_the_same(src_file, tool_path):
+                    shutil.copy(src_file, tool_path)
+                    print(' * {0}'.format(f))
 
 doc_copy = [('_Brick_', 'Bricks'),
             ('_Bricklet_', 'Bricklets'),
