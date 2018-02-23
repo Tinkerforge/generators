@@ -69,8 +69,9 @@ class PHPZipGenerator(common.ZipGenerator):
         root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, r'^Example.*\.php$'):
-            shutil.copy(example[1], self.tmp_examples_dir)
+        if self.get_config_name().space == 'Tinkerforge':
+            for example in common.find_examples(root_dir, r'^Example.*\.php$'):
+                shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']

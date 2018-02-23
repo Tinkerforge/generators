@@ -79,11 +79,12 @@ class LabVIEWZipGenerator(common.ZipGenerator):
         root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, '^Example .*\.vi$'):
-            shutil.copy(example[1], self.tmp_examples_dir)
+        if self.get_config_name().space == 'Tinkerforge':
+            for example in common.find_examples(root_dir, '^Example .*\.vi$'):
+                shutil.copy(example[1], self.tmp_examples_dir)
 
-            parts = os.path.split(example[1])
-            shutil.copy(os.path.join(parts[0], '10.0', parts[1]), self.tmp_examples_10_dir)
+                parts = os.path.split(example[1])
+                shutil.copy(os.path.join(parts[0], '10.0', parts[1]), self.tmp_examples_10_dir)
 
         # Copy bindings and readme
         for filename in self.get_released_files():

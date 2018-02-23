@@ -69,8 +69,9 @@ class PerlZipGenerator(common.ZipGenerator):
         root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, r'^example_.*\.pl$'):
-            shutil.copy(example[1], self.tmp_examples_dir)
+        if self.get_config_name().space == 'Tinkerforge':
+            for example in common.find_examples(root_dir, r'^example_.*\.pl$'):
+                shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         for filename in self.get_released_files():

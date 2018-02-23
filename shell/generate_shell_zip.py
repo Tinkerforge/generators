@@ -65,8 +65,9 @@ class ShellZipGenerator(common.ZipGenerator):
         bindings_dir = self.get_bindings_dir()
 
         # Copy IP Connection examples
-        for example in common.find_examples(root_dir, r'^example-.*\.sh$'):
-            shutil.copy(example[1], self.tmp_examples_dir)
+        if self.get_config_name().space == 'Tinkerforge':
+            for example in common.find_examples(root_dir, r'^example-.*\.sh$'):
+                shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         shutil.copy(os.path.join(bindings_dir, 'tinkerforge'),                    self.tmp_dir)
