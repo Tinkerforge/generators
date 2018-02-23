@@ -273,10 +273,10 @@ com['packets'].append({
 Sets the configuration for **receiving** data from a remote of type A, B or C.
 
 * Remote Type: Set to A, B or C depending on the type of remote you want to receive.
-* Minimum Repeats: The minimum number of repeated data packets until the callback is called (if enabled).
+* Minimum Repeats: The minimum number of repeated data packets until the callback is triggered (if enabled).
 * Callback Enabled: Enable or disable callback (see :cb:`Remote Status A` callback, :cb:`Remote Status B` callback and :cb:`Remote Status C` callback).
 
-Default is 'A', 2, false.
+Default is ('A', 2, false).
 """,
 'de':
 """

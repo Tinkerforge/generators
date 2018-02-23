@@ -49,6 +49,9 @@ depending on the oversampling configuration (:func:`Set Oversampling`).
 """,
 'de':
 """
+Gibt die gemessene Spannung zurück. Der Wert ist in mV und im
+Bereich von 0 bis 42V. Die Auflösung ca. 10mV bis 1mV abhängig von der
+Überabtastungs-Konfiguration (:func:`Set Oversampling`).
 """
 }
 

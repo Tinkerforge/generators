@@ -103,7 +103,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'NFC tag read/write, NFC P2P and Card Emulation',
-        'de': 'NFC Tag lesen/Schreiben, NFC P2P und Card Emulation'
+        'de': 'NFC Tag Lesen/Schreiben, NFC P2P und Card Emulation'
     },
     'comcu': True,
     'released': False,
@@ -123,19 +123,32 @@ com['packets'].append({
 """
 Sets the mode. The NFC Bricklet supports four modes:
 
-* Off 
-* Card Emulation (In this mode the Bricklet appears to be a tag for another reader)
-* Peer to Peer (In this mode it is possible to exchange data with other readers)
-* Reader (In this mode you can read from tags and write to tags)
+* Off
+* Card Emulation (Cardemu): Emulates a tag for other readers
+* Peer to Peer (P2P): Exchange data with other readers
+* Reader: Reads and writes tags
 
-If you change a mode, the Bricklet will completely reinitialize with this mode. So
-you can for example only use the "cardemu"-functions in Card Emulation mode.
+If you change a mode, the Bricklet will reconfigure the hardware for this mode.
+Therefore, you can only use functions corresponding to the current mode. For
+example, in Reader mode you can only use Reader functions.
 
 The default mode is "off".
 """,
 'de':
 """
-TODO
+Setzt den Modus. Das NFC Bricklet unterstützt vier Modi:
+
+* Off (Aus)
+* Card Emulation (Cardemu): Emuliert einen Tag für andere Reader
+* Peer to Peer (P2P): Datenaustausch mit anderen Readern
+* Reader: Ließt und schreibt Tags
+
+Wenn der Modus geändert wird, dann rekonfiguriert das Bricklet die Hardware für
+den gewählten Modus. Daher können immer nur die dem Modus zugehörigen Funktionen
+verwendet werden. Es können also im Reader Modus nur die Reader Funktionen
+verwendet werden.
+
+Der Standardwert ist "Off".
 """
 }]
 })
@@ -157,7 +170,6 @@ Gibt den aktuellen Modus zurück, wie von :func:`Set Mode` gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Request Tag ID',
@@ -169,7 +181,7 @@ com['packets'].append({
 To read or write a tag that is in proximity of the NFC Bricklet you
 first have to call this function with the expected tag type as parameter.
 It is no problem if you don't know the tag type. You can cycle through
-the available tag types until the tag gives an answer to the request.
+the available tag types until the tag answers the request.
 
 Currently the following tag types are supported:
 
@@ -185,16 +197,16 @@ You can either register the :cb:`Reader State Changed` callback or you can poll
 :func:`Reader Get State` to find out about the state change.
 
 If the state changes to *ReaderRequestTagIDError* it means that either there was
-no tag present or that the tag is of an incompatible type. If the state
+no tag present or that the tag has an incompatible type. If the state
 changes to *ReaderRequestTagIDReady* it means that a compatible tag was found
-and that the tag ID could be read out. You can now get the tag ID by
+and that the tag ID has been saved. You can now read out the tag ID by
 calling :func:`Reader Get Tag ID`.
 
 If two tags are in the proximity of the NFC Bricklet, this
 function will cycle through the tags. To select a specific tag you have
-to call :func:`Reader Request Tag ID` until the correct tag id is found.
+to call :func:`Reader Request Tag ID` until the correct tag ID is found.
 
-In case of any *Error* state the selection is lost and you have to
+In case of any *ReaderError* state the selection is lost and you have to
 start again by calling :func:`Reader Request Tag ID`.
 """,
 'de':
@@ -213,14 +225,14 @@ Aktuell werden die folgenden Tag Typen unterstützt:
 * NFC Forum Type 3
 * NFC Forum Type 4
 
-Beim Aufruf von :func:`Reader Request Tag ID` probiert das NFC Bricklet die Tag ID
+Beim Aufruf von :func:`Reader Request Tag ID` versucht das NFC Bricklet die Tag ID
 eines Tags auszulesen. Nachdem dieser Prozess beendet ist ändert sich
 der Zustand des Bricklets. Es ist möglich den :cb:`Reader State Changed` Callback zu
 registrieren oder den Zustand über :func:`Reader Get State` zu pollen.
 
 Wenn der Zustand auf *ReaderRequestTagIDError* wechselt ist ein Fehler aufgetreten.
 Dies bedeutet, dass entweder kein Tag oder kein Tag vom passenden Typ gefunden
-werden konnte. Wenn der Zustand auf *Reader RequestTagIDReady* wechselt ist ein
+werden konnte. Wenn der Zustand auf *ReaderRequestTagIDReady* wechselt ist ein
 kompatibles Tag gefunden worden und die Tag ID wurde gespeichert. Die
 Tag ID kann nun über :func:`Reader Get Tag ID` ausgelesen werden.
 
@@ -251,10 +263,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the tag type and the tag ID.
-This function can only be called if the
-NFC Bricklet is currently in one of the *ReaderReady* states. The returned ID
-is the ID that was saved through the last call of :func:`Reader Request Tag ID`.
+Returns the tag type and the tag ID. This function can only be called if the
+NFC Bricklet is currently in one of the *ReaderReady* states. The returned tag ID
+is the tag ID that was saved through the last call of :func:`Reader Request Tag ID`.
 
 To get the tag ID of a tag the approach is as follows:
 
@@ -265,10 +276,9 @@ To get the tag ID of a tag the approach is as follows:
 """,
 'de':
 """
-Gibt den Tag Typ und die Tag ID zurück.
-Diese Funktion kann nur aufgerufen werden wenn
+Gibt den Tag Typ und die Tag ID zurück. Diese Funktion kann nur aufgerufen werden wenn
 sich das Bricklet gerade in einem der *ReaderReady*-Zustände befindet. Die
-zurückgegebene ID ist die letzte ID die durch einen Aufruf von
+zurückgegebene tag ID ist die letzte tag ID die durch einen Aufruf von
 :func:`Reader Request Tag ID` gefunden wurde.
 
 Der Ansatz um die Tag ID eines Tags zu bekommen sieht wie folgt aus:
@@ -290,7 +300,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current state of the NFC Bricklet if in reader mode.
+Returns the current reader state of the NFC Bricklet.
 
 On startup the Bricklet will be in the *ReaderInitialization* state. The
 initialization will only take about 20ms. After that it changes to *ReaderIdle*.
@@ -309,21 +319,22 @@ The same approach is used analogously for the other API functions.
 """,
 'de':
 """
-Gibt den aktuellen Zustand des NFC Bricklets aus.
+Gibt den aktuellen Reader Zustand des NFC Bricklets aus.
 
 Während der Startphase ist der Zustand *ReaderInitialization*. Die
 Initialisierung dauert etwa 20ms. Danach ändert sich der Zustand zu
 *ReaderIdle*.
 
-Das Bricklet wird auch neu Initialisiert wenn der Modus geändert wird, siehe :func:`Set Mode`.
+Das Bricklet wird auch neu initialisiert wenn der Modus geändert wird, siehe
+:func:`Set Mode`.
 
 Die Funktionen dieses Bricklets können aufgerufen werden wenn der Zustand
 entweder *ReaderIdle* ist oder einer der *ReaderReady* oder *ReaderError*-Zustände
 erreicht wurde.
 
-Beispiel: Wenn :func:`Reader Request Page` aufgerufen wird, änder sich der
+Beispiel: Wenn :func:`Reader Request Page` aufgerufen wird, ändert sich der
 Zustand zu *ReaderRequestPage* solange der Leseprozess noch nicht abgeschlossen
-ist. Danach ändert sich der Zustand zu *ReaderRequestPageReady* wenn das lesen
+ist. Danach ändert sich der Zustand zu *ReaderRequestPageReady* wenn das Lesen
 funktioniert hat oder zu *ReaderRequestPageError* wenn nicht. Wenn die Anfrage
 erfolgreich war kann die Page mit :func:`Reader Read Page` abgerufen werden.
 
@@ -354,17 +365,31 @@ This function currently supports NFC Forum Type 2 and 4.
 The general approach for writing a NDEF message is as follows:
 
 1. Call :func:`Reader Request Tag ID`
-2. Wait for state to change to *ReaderRequestTagIDReady* (see :func:`Reader Get State` or
-   :cb:`Reader State Changed` callback)
-3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check if the
-   expected tag was found, if it was not found got back to step 1
+2. Wait for state to change to *ReaderRequestTagIDReady* (see
+   :func:`Reader Get State` or :cb:`Reader State Changed` callback)
+3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check
+   if the expected tag was found, if it was not found got back to step 1
 4. Call :func:`Reader Write Ndef` with the NDEF message that you want to write
-5. Wait for state to change to *ReaderWriteNdefReady* (see :func:`Reader Get State` or
-   :cb:`Reader State Changed` callback)
+5. Wait for state to change to *ReaderWriteNdefReady* (see :func:`Reader Get State`
+   or :cb:`Reader State Changed` callback)
 """,
 'de':
 """
-TODO
+Schreibt bis zu 255 Bytes and NDEF formatierten Daten.
+
+Diese Funktion unterstützt aktuell NFC Forum Type 2 und 4.
+
+Der Ansatz um eine NDEF Nachricht zu schreiben sieht wie folgt aus:
+
+1. Rufe :func:`Reader Request Tag ID` auf
+2. Warte auf einen Zustandswechsel auf *ReaderRequestTagIDReady* (siehe
+   :func:`Reader Get State` oder :cb:`Reader State Changed` Callback)
+3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
+   :func:`Reader Get Tag ID` auf und überprüfe, ob der erwartete Tag gefunden
+   wurde, wenn er nicht gefunden wurde mit Schritt 1 fortfahren
+4. Rufe :func:`Reader Write Ndef` mit der zu schreibenden NDEF Nachricht auf
+5. Warte auf einen Zustandswechsel auf *ReaderWriteNdefReady*
+   (siehe :func:`Reader Get State` oder :cb:`Reader State Changed` Callback)
 """
 }]
 })
@@ -395,7 +420,22 @@ The general approach for reading a NDEF message is as follows:
 """,
 'de':
 """
-TODO
+Ließt NDEF formatierten Daten von einem Tag.
+
+Diese Funktion unterstützt aktuell NFC Forum Type 1, 2, 3 und 4.
+
+Der Ansatz um eine NDEF Nachricht zu lesen sieht wie folgt aus:
+
+1. Rufe :func:`Reader Request Tag ID` auf
+2. Warte auf einen Zustandswechsel auf *ReaderRequestTagIDReady* (siehe
+   :func:`Reader Get State` oder :cb:`Reader State Changed` Callback)
+3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
+   :func:`Reader Get Tag ID` auf und überprüfe, ob der erwartete Tag gefunden
+   wurde, wenn er nicht gefunden wurde mit Schritt 1 fortfahren
+4. Rufe :func:`Reader Request Ndef` auf
+5. Warte auf einen Zustandswechsel auf *ReaderRequestNdefReady*
+   (siehe :func:`Reader Get State` oder :cb:`Reader State Changed` Callback)
+6. Rufe :func:`Reader Read Ndef` auf um die gespeicherte NDEF Nachricht abzufragen
 """
 }]
 })
@@ -422,11 +462,14 @@ The buffer can have a size of up to 8192 bytes.
 """,
 'de':
 """
-TODO
+Gibt NDEF Daten aus einem internen Buffer zurück. Der Buffer
+kann zuvor mit einer NDEF Nachricht über einen Aufruf von
+:func:`Reader Request Ndef` gefüllt werden.
+
+Der Buffer kann eine Größe von bis zu 8192 Bytes haben.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -464,9 +507,9 @@ The authentication will always work for one whole sector (4 pages).
 """
 Mifare Classic Tags nutzen Authentifizierung. Wenn eine Page eines
 Mifare Classic Tags gelesen oder geschrieben werden soll muss diese
-zuvor Authentifiziert werden. Jede Page kann mit zwei Schlüsseln, A
+zuvor authentifiziert werden. Jede Page kann mit zwei Schlüsseln, A
 (``key_number`` = 0) und B (``key_number`` = 1),
-authentifiziert werden. Ein neues Mifare Classic Tag welches noch nicht
+authentifiziert werden. Ein neuer Mifare Classic Tag welches noch nicht
 beschrieben wurde kann über Schlüssel A mit dem Standardschlüssel
 ``[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]`` genutzt werden.
 
@@ -534,7 +577,7 @@ Choose CC by setting page to 3 or NDEF by setting page to 4.
 """,
 'de':
 """
-Schreibt maximal 8192 Bytes startend von der übergebenen Page. Wie viele Pages
+Schreibt maximal 8192 Bytes beginnend von der übergebenen Page. Wie viele Pages
 dadurch geschrieben werden hängt vom Typ des Tags ab. Die Pagegrößen
 verhalten sich wie folgt:
 
@@ -611,7 +654,7 @@ Choose CC by setting page to 3 or NDEF by setting page to 4.
 """,
 'de':
 """
-Liest maximal 8192 Bytes startend von der übergebenen Page und speichert sie in
+Liest maximal 8192 Bytes beginnend von der übergebenen Page und speichert sie in
 einem Buffer. Dieser Buffer kann mit :func:`Reader Read Page` ausgelesen werden.
 Wie viele Pages dadurch gelesen werden hängt vom Typ des Tags ab.
 Die Pagegrößen verhalten sich wie folgt:
@@ -694,7 +737,6 @@ sich verändert. Siehe :func:`Reader Get State` für mehr Informationen
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Cardemu Get State',
@@ -704,7 +746,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current state of the NFC Bricklet if in card emulation mode.
+Returns the current cardemu state of the NFC Bricklet.
 
 On startup the Bricklet will be in the *CardemuInitialization* state. The
 initialization will only take about 20ms. After that it changes to *CardemuIdle*.
@@ -723,13 +765,13 @@ The same approach is used analogously for the other API functions.
 """,
 'de':
 """
-Gibt den aktuellen Zustand des NFC Bricklets aus wenn es sich im Cardemu-Modus befindet.
+Gibt den aktuellen Cardemu-Zustand des NFC Bricklets aus.
 
 Während der Startphase ist der Zustand *CardemuInitialization*. Die
 Initialisierung dauert etwa 20ms. Danach ändert sich der Zustand zu
 *CardmeuIdle*.
 
-Das Bricklet wird auch neu Initialisiert wenn der Modus geändert wird, siehe :func:`Set Mode`.
+Das Bricklet wird auch neu initialisiert wenn der Modus geändert wird, siehe :func:`Set Mode`.
 
 Die Funktionen dieses Bricklets können aufgerufen werden wenn der Zustand
 entweder *CardemuIdle* ist oder einer der *CardemuReady* oder *CardemuError*-Zustände
@@ -753,21 +795,29 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Starts the discovery process. If you call this function and then bring a
-smart phone with enabled NFC functionality near to the NFC Bricklet the
-state will change from *CardemuDiscovery* to *CardemuDiscoveryReady*.
+Starts the discovery process. If you call this function while a NFC
+reader device is near to the NFC Bricklet the state will change from
+*CardemuDiscovery* to *CardemuDiscoveryReady*.
 
-If no NFC master can be found or if there is an error during discovery
-the state will change to *CardemuDiscoveryError*. In this case you
-have to restart the discovery.
+If no NFC reader device can be found or if there is an error during
+discovery the cardemu state will change to *CardemuDiscoveryError*. In this case you
+have to restart the discovery process.
 
-If the state changes to *CardemuDiscoveryReady* you can start the transfer
-of the NDEF message that was written by :func:`Cardemu Write Ndef` by calling
-:func:`Cardemu Start Transfer`.
+If the cardemu state changes to *CardemuDiscoveryReady* you can start the NDEF message
+transfer with :func:`Cardemu Write Ndef` and :func:`Cardemu Start Transfer`.
 """,
 'de':
 """
-TODO
+Startet den Discovery Prozess. Wenn diese Funktion aufgerufen wird während
+ein NFC Lesegerät sich in Reichweite befindet, dann wechselt
+der Cardemu Zustand von *CardemuDiscovery* nach *CardemuDiscoveryReady*.
+
+Falls kein NFC Lesegerät gefunden werden kann oder während des Discovery
+Prozesses ein Fehler auftritt dann wechselt der Cardemu Zustand zu *CardemuDiscoveryReady*.
+In diesem Fall muss der Discovery Prozess.
+
+Wenn der Cardemu Zustand zu *CardemuDiscoveryReady* wechselt kann eine NDEF Nachricht
+mittels :func:`Cardemu Write Ndef` und :func:`Cardemu Start Transfer` übertragen werden.
 """
 }]
 })
@@ -787,7 +837,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes the NDEF messages that is to be transferred to the NFC master.
+Writes the NDEF messages that is to be transferred to the NFC peer.
 
 The maximum supported NDEF message size in Cardemu mode is 255 byte.
 
@@ -797,6 +847,13 @@ mode.
 """,
 'de':
 """
+Schreibt eine NDEF Nachricht die an einen NFC Peer übertragen werden soll.
+
+Die maximale NDEF Nachrichtengröße im Cardemu-Modus beträgt 255 Byte.
+
+Diese Funktion kann im Cardemu-Modus jederzeit aufgerufen werden. Der interne
+Buffer wird nicht überschrieben solange diese Funktion nicht erneut aufgerufen
+oder der Modus nicht gewechselt wird.
 """
 }]
 })
@@ -810,12 +867,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-You can start the transfer of a NDEF message if the state is *CardemuDiscoveryReady*.
+You can start the transfer of a NDEF message if the cardemu state is *CardemuDiscoveryReady*.
 
-Use parameter 1 to start the transfer. With parameter 0 you can abort the discovery.
-
-Before you call this function with parameter 1. The NDEF message that is to be
-transferred is set via :func:`Cardemu Write Ndef`.
+Before you call this function to start a write transfer, the NDEF message that
+is to be transferred has to be written via :func:`Cardemu Write Ndef` first.
 
 After you call this function the state will change to *CardemuTransferNdef*. It will
 change to *CardemuTransferNdefReady* if the transfer was successful or
@@ -823,6 +878,15 @@ change to *CardemuTransferNdefReady* if the transfer was successful or
 """,
 'de':
 """
+Der Transfer einer NDEF Nachricht kann im Cardemu-Zustand *CardemuDiscoveryReady*
+gestartet werden.
+
+Bevor ein Schreib-Transfer gestartet werden kann muss zuerst die zu
+übertragenden NDEF Nachricht mittels :func:`Cardemu Write Ndef` geschrieben werden.
+
+Nach einem Aufruf dieser Funktion ändert sich der Cardemu-Zustand zu *CardemuTransferNdef*.
+Danach ändert sich der P2P Zustand zu *CardemuTransferNdefReady* wenn der Transfer
+erfolgreich war oder zu *CardemuTransferNdefError* falls nicht.
 """
 }]
 })
@@ -836,7 +900,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called if the Cardemu state of the NFC Bricklet changes.
+This callback is called if the cardemu state of the NFC Bricklet changes.
 See :func:`Cardemu Get State` for more information about the possible states.
 """,
 'de':
@@ -857,7 +921,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current state of the NFC Bricklet if in p2p mode.
+Returns the current P2P state of the NFC Bricklet.
 
 On startup the Bricklet will be in the *P2PInitialization* state. The
 initialization will only take about 20ms. After that it changes to *P2PIdle*.
@@ -876,7 +940,7 @@ The same approach is used analogously for the other API functions.
 """,
 'de':
 """
-Gibt den aktuellen Zustand des NFC Bricklets aus wenn es sich im P2P-Modus befindet.
+Gibt den aktuellen P2P-Zustand des NFC Bricklets aus.
 
 Während der Startphase ist der Zustand *P2PInitialization*. Die
 Initialisierung dauert etwa 20ms. Danach ändert sich der Zustand zu
@@ -906,20 +970,29 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Starts the discovery process. If you call this function and then bring a
-smart phone with enabled NFC P2P app near to the NFC Bricklet the
-state will change from *P2PDiscovery* to *P2PDiscoveryReady*.
+Starts the discovery process. If you call this function while another NFC
+P2P enabled device is near to the NFC Bricklet the state will change from
+*P2PDiscovery* to *P2PDiscoveryReady*.
 
-If no NFC master in P2P mode can be found or if there is an error during discovery
-the state will change to *P2PDiscoveryError*. In this case you
-have to restart the discovery.
+If no NFC P2P enabled device can be found or if there is an error during
+discovery the P2P state will change to *P2PDiscoveryError*. In this case you
+have to restart the discovery process.
 
-If the state changes to *P2PDiscoveryReady* you can start the NDEF message
-transfer or reception with :func:`P2P Start Transfer`.
+If the P2P state changes to *P2PDiscoveryReady* you can start the NDEF message
+transfer with :func:`P2P Start Transfer`.
 """,
 'de':
 """
-TODO
+Startet den Discovery Prozess. Wenn diese Funktion aufgerufen wird während
+ein anderes NFC P2P fähiges Gerät sich in Reichweite befindet, dann wechselt
+der P2P Zustand von *P2PDiscovery* nach *P2PDiscoveryReady*.
+
+Falls kein NFC P2P fähiges Gerät gefunden werden kann oder während des Discovery
+Prozesses ein Fehler auftritt dann wechselt der P2P Zustand zu *P2PDiscoveryError*.
+In diesem Fall muss der Discovery Prozess.
+
+Wenn der P2P Zustand zu *P2PDiscoveryReady* wechselt kann eine NDEF Nachricht
+mittels :func:`P2P Write Ndef` und :func:`P2P Start Transfer` übertragen werden.
 """
 }]
 })
@@ -939,16 +1012,23 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes the NDEF messages that is to be transferred to the NFC master.
+Writes the NDEF messages that is to be transferred to the NFC peer.
 
 The maximum supported NDEF message size for P2P transfer is 255 byte.
 
 You can call this function at any time in P2P mode. The internal buffer
 will not be overwritten until you call this function again, change the
-mode or use P2P to read data.
+mode or use P2P to read an NDEF messages.
 """,
 'de':
 """
+Schreibt eine NDEF Nachricht die an einen NFC Peer übertragen werden soll.
+
+Die maximale NDEF Nachrichtngröße für P2P Übertragungen beträgt 255 Byte.
+
+Diese Funktion kann im P2P-Modus jederzeit aufgerufen werden. Der interne
+Buffer wird nicht überschrieben solange diese Funktion nicht erneut aufgerufen,
+der Modus nicht gewechselt oder über P2P eine NDEF Nachricht gelesen wird.
 """
 }]
 })
@@ -963,14 +1043,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-You can start the transfer/reception of a NDEF message if the state is *P2PDiscoveryReady*.
+You can start the transfer of a NDEF message if the P2P state is *P2PDiscoveryReady*.
 
-Use parameter 2 to read, parameter 1 to write or parameter 0 to abort the discovery.
+Before you call this function to start a write transfer, the NDEF message that
+is to be transferred has to be written via :func:`P2P Write Ndef` first.
 
-Before you call this function with parameter 1. The NDEF message that is to be
-transferred is set via :func:`P2P Write Ndef`.
-
-After you call this function the state will change to *P2PTransferNdef*. It will
+After you call this function the P2P state will change to *P2PTransferNdef*. It will
 change to *P2PTransferNdefReady* if the transfer was successfull or 
 *P2PTransferNdefError* if it wasn't.
 
@@ -980,6 +1058,19 @@ by the NFC peer.
 """,
 'de':
 """
+Der Transfer einer NDEF Nachricht kann im P2P Zustand *P2PDiscoveryReady* gestartet
+werden.
+
+Bevor ein Schreib-Transfer gestartet werden kann muss zuerst die zu
+übertragenden NDEF Nachricht mittels :func:`P2P Write Ndef` geschrieben werden.
+
+Nach einem Aufruf dieser Funktion ändert sich der P2P Zustand zu *P2PTransferNdef*.
+Danach ändert sich der P2P Zustand zu *P2PTransferNdefReady* wenn der Transfer
+erfolgreich war oder zu *P2PTransferNdefError* falls nicht.
+
+Ein Schreib-Transfer ist danach abgeschlossen. Bei einem Lese-Transfer kann jetzt
+die vom NFC Peer geschriebene NDEF Nachricht mittels :func:`P2P Read Ndef`
+ausgelesen werden.
 """
 }]
 })
@@ -995,15 +1086,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Call this function to read the NDEF message that was written by a NFC peer in
-NFC P2P mode. The maximum NDEF length is 8192 byte.
+Returns the NDEF message that was written by a NFC peer in NFC P2P mode.
+The maximum NDEF length is 8192 byte.
 
 The NDEF message is ready if you called :func:`P2P Start Transfer` with a
-read transfer and the state changed to *P2PTransferNdefReady*.
+read transfer and the P2P state changed to *P2PTransferNdefReady*.
 """,
 'de':
 """
-TODO
+Gibt die NDEF Nachricht zurück, die von einem NFC Peer im P2P Modus geschrieben
+wurde. Der maximale NDEF Länge beträgt 8192 Bytes.
+
+Die NDEF Nachricht ist bereit sobald sich nach einem :func:`P2P Start Transfer`
+Aufruf mit einem Lese-Transfer der P2P Zustand zu *P2PTransferNdefReady* ändert.
 """
 }]
 })
