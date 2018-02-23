@@ -553,13 +553,11 @@ namespace Tinkerforge
             for element in packet.get_elements(direction='out'):
                 aname = element.get_name().headless
                 from_method = element.get_csharp_le_converter_from_method()
-                length = ''
 
                 if element.get_cardinality() > 1:
-                    if element.get_type() == 'bool':
-                        pass
-                    else:
-                        length = ', ' + str(element.get_cardinality())
+                    length = ', ' + str(element.get_cardinality())
+                else:
+                    length = ''
 
                 if ret_count == 1:
                     read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_method, pos, length)

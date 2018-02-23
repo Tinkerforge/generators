@@ -1599,7 +1599,7 @@ namespace Tinkerforge
 
 			for (int i = 0; i < len; i++)
 			{
-				ret[i] = BoolFrom(position + i * 1, array);
+				ret[i] = (array[position + i / 8] & (1 << (i % 8))) != 0;
 			}
 
 			return ret;
@@ -1616,7 +1616,7 @@ namespace Tinkerforge
 
 			for (int i = 0; i < len; i++)
 			{
-				ret[i] = CharFrom(position + i * 1, array);
+				ret[i] = CharFrom(position + i, array);
 			}
 
 			return ret;
@@ -1633,7 +1633,7 @@ namespace Tinkerforge
 
 			for (int i = 0; i < len; i++)
 			{
-				ret[i] = SByteFrom(position + i * 1, array);
+				ret[i] = SByteFrom(position + i, array);
 			}
 
 			return ret;
@@ -1650,7 +1650,7 @@ namespace Tinkerforge
 
 			for (int i = 0; i < len; i++)
 			{
-				ret[i] = ByteFrom(position + i * 1, array);
+				ret[i] = ByteFrom(position + i, array);
 			}
 
 			return ret;
