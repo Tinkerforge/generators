@@ -58,7 +58,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the identifiers (number betwen 0 and 255) of all `stations <TBD>`__ that have been seen
+Returns the identifiers (number between 0 and 255) of all `stations <TBD>`__ that have been seen
 since the startup of the Bricklet.
 
 Each station gives itself a random identifier on first startup.
@@ -120,7 +120,6 @@ The return values are
 * Wind Direction (N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW),
 * Battery Low (true or false) and
 * Last Change (time in seconds since the last reception of data).
-
 """,
 'de':
 """
@@ -147,7 +146,6 @@ The return values are
 * Temperature in °C/10,
 * Humidity in %RH and
 * Last Change (time in seconds since the last reception of data).
-
 """,
 'de':
 """

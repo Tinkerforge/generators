@@ -26,7 +26,6 @@ com = {
     'examples': []
 }
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion Detected',
@@ -68,11 +67,11 @@ com['packets'].append({
 Sets the sensitivity of the PIR sensor. The range is 0-100. At full 
 sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.
 
-The range depends on many things in the enivronment (e.g. reflections) and the
+The range depends on many things in the environment (e.g. reflections) and the
 size of the object to be detected. While a big person might be detected in a range
 of 10m a cat may only be detected at 2m distance with the same setting.
 
-So you will have to find a good sensitivty for your application by trial and error.
+So you will have to find a good sensitivity for your application by trial and error.
 
 The default sensitivity value is 50.
 """,

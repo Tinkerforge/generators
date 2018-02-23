@@ -13,7 +13,6 @@ STATE_INITIALIZATION = 0
 STATE_IDLE = STATE_IDLE_MASK
 STATE_ERROR = STATE_ERROR_MASK
 
-
 READER_STATE_REQUEST_TAG_ID = 2
 READER_STATE_REQUEST_TAG_ID_READY = STATE_IDLE_MASK | READER_STATE_REQUEST_TAG_ID
 READER_STATE_REQUEST_TAG_ID_ERROR = STATE_ERROR_MASK | READER_STATE_REQUEST_TAG_ID
@@ -32,7 +31,6 @@ READER_STATE_WRITE_NDEF_ERROR = STATE_ERROR_MASK | READER_STATE_WRITE_NDEF
 READER_STATE_REQUEST_NDEF = 7
 READER_STATE_REQUEST_NDEF_READY = STATE_IDLE_MASK | READER_STATE_REQUEST_NDEF
 READER_STATE_REQUEST_NDEF_ERROR = STATE_ERROR_MASK | READER_STATE_REQUEST_NDEF
-
 
 READER_STATE = ('Reader State', [('Initialization', STATE_INITIALIZATION),
                                  ('Idle', STATE_IDLE),
@@ -89,8 +87,6 @@ P2P_STATE = ('P2P State', [('Initialization', STATE_INITIALIZATION),
                            ('Transfer Ndef', P2P_STATE_TRANSFER_NDEF),
                            ('Transfer Ndef Ready', P2P_STATE_TRANSFER_NDEF_READY),
                            ('Transfer Ndef Error', P2P_STATE_TRANSFER_NDEF_ERROR)])
-
-
 
 MODE = ('Mode', [('Off',     0),
                  ('Cardemu', 1),
@@ -206,7 +202,7 @@ start again by calling :func:`Reader Request Tag ID`.
 Um ein Tag welches sich in der nähe des NFC Bricklets befindet zu
 lesen oder zu schreiben muss zuerst diese Funktion mit dem erwarteten
 Tag Typ aufgerufen werden. Es ist kein Problem wenn der Typ nicht bekannt
-ist. Es ist möglich die verügbaren Tag Typen einfach nacheinander
+ist. Es ist möglich die verfügbaren Tag Typen einfach nacheinander
 durchzutesten bis das Tag antwortet.
 
 Aktuell werden die folgenden Tag Typen unterstützt:
@@ -791,7 +787,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes the Ndef messages that is to be transferred to the NFC master.
+Writes the NDEF messages that is to be transferred to the NFC master.
 
 The maximum supported NDEF message size in Cardemu mode is 255 byte.
 
@@ -822,7 +818,7 @@ Before you call this function with parameter 1. The NDEF message that is to be
 transferred is set via :func:`Cardemu Write Ndef`.
 
 After you call this function the state will change to *CardemuTransferNdef*. It will
-change to *CardemuTransferNdefReady* if the transfer was successfull or 
+change to *CardemuTransferNdefReady* if the transfer was successful or
 *CardemuTransferNdefError* if it wasn't.
 """,
 'de':
@@ -840,7 +836,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called if the cardemu state of the NFC Bricklet changes.
+This callback is called if the Cardemu state of the NFC Bricklet changes.
 See :func:`Cardemu Get State` for more information about the possible states.
 """,
 'de':
@@ -1021,7 +1017,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called if the p2p state of the NFC Bricklet changes.
+This callback is called if the P2P state of the NFC Bricklet changes.
 See :func:`P2P Get State` for more information about the possible states.
 """,
 'de':

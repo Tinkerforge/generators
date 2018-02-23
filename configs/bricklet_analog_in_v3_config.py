@@ -72,7 +72,7 @@ Sets the oversampling between 32 and 16384. The Bricklet
 takes one 12bit sample every 17.5us. Thus an oversampling
 of 32 is equivalent to an integration time of 0.56ms and
 a oversampling of 16384 is equivalent to an integration
-time of 286mh.
+time of 286ms.
 
 The oversampling uses the moving average principle. A
 new value is always calculated once per ms.
@@ -119,7 +119,7 @@ com['packets'].append({
 Sets a calibration for the measured voltage value.
 The formula for the calibration is as follows:
 
-* Calibrated Value = (Value + Offset)*Muliplier/Divisor
+* Calibrated Value = (Value + Offset) * Multiplier / Divisor
 
 We recommend that you use the Brick Viewer to calibrate
 the Bricklet. The calibration will be saved and only
