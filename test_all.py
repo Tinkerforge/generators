@@ -34,7 +34,7 @@ else:
 bindings = sorted(list(bindings))
 
 for binding in bindings:
-    if binding in ['tcpip', 'modbus', 'json', 'tvpl']:
+    if binding in ['tcpip', 'modbus', 'json', 'stubs', 'tvpl']:
         continue
 
     path_binding = os.path.join(path, binding)
