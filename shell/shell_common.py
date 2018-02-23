@@ -104,7 +104,7 @@ class ShellElement(common.Element):
         'float':  "'0.0'",
         'bool':   "'false'",
         'char':   "'\\0'",
-        'string': 'None'
+        'string': None
     }
 
     def get_shell_type(self, for_doc=False):
@@ -141,7 +141,7 @@ class ShellElement(common.Element):
 
         t = ShellElement.shell_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or self.get_type() == 'string':
+        if self.get_cardinality() == 1 or t == 'string':
             help_ = "'{0}{1}'".format(t, symbols_doc)
         else:
             help_ = "get_array_type_name(ctx, '{0}', {1})".format(t, self.get_cardinality())
@@ -163,6 +163,9 @@ class ShellElement(common.Element):
                 symbols['{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)] = constant.get_value()
 
             if self.get_cardinality() != 1 and type_converter != 'string':
+                if self.get_cardinality() < 0:
+                    default_item = None
+
                 return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_item, self.get_cardinality())
             elif type_converter == 'string':
                 return 'create_string_converter(ctx, create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, self.get_cardinality())
@@ -170,8 +173,19 @@ class ShellElement(common.Element):
                 return 'create_symbol_converter(ctx, {0}, {1})'.format(type_converter, symbols)
         else:
             if self.get_cardinality() != 1 and type_converter != 'string':
+                if self.get_cardinality() < 0:
+                    default_item = None
+
                 return 'create_array_converter(ctx, {0}, {1}, {2})'.format(type_converter, default_item, self.get_cardinality())
             elif type_converter == 'string':
                 return 'create_string_converter(ctx, str, {0})'.format(self.get_cardinality())
             else:
                 return type_converter
+
+    def get_shell_default_item_value(self):
+        value = ShellElement.shell_default_items[self.get_type()]
+
+        if value == None:
+            common.GeneratorError('Invalid array item type: ' + self.get_type())
+
+        return value

@@ -271,8 +271,8 @@ def dispatch_generic(ctx, name, callbacks, argv):
 
 	callbacks[args.callback](ctx, args.args)
 
-def device_send_request(ctx, device_class, function_id, request_data, format_in,
-                        format_out, command, expect_response, names, symbols):
+def device_call(ctx, device_class, function_id, request_data, format_in,
+                format_out, command, expect_response, names, symbols):
 	if dry_run:
 		return
 
@@ -303,7 +303,185 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 
 	connect_ipcon_and_call(ctx, function, ctx.timeout / 1000.0)
 
-def device_callback(ctx, device_class, function_id, command, names, symbols):
+def device_stream_call(ctx, device_class, function_id, direction, request_data,
+                       high_level_roles_in, high_level_roles_out, low_level_roles_in,
+                       low_level_roles_out, format_in, format_out, command,
+                       expect_response, names, symbols, chunk_padding, chunk_cardinality,
+                       chunk_max_offset, short_write, single_read, fixed_length):
+	if dry_run:
+		return
+
+	normal_level_request_data = [data for role, data in zip(high_level_roles_in, request_data) if role == None]
+
+	if command != None:
+		def handle_response(values):
+			execute_response(ctx, command, names, values)
+	else:
+		def handle_response(values):
+			output_response(ctx, names, values)
+
+	def function(ipcon):
+		device = device_class(ctx.uid, ipcon)
+
+		if expect_response:
+			device.set_response_expected(function_id, True)
+
+		if direction == 'in':
+			def create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data):
+				low_level_request_data = []
+				normal_level_request_data_iter = iter(normal_level_request_data)
+
+				for role in low_level_roles_in:
+					if role == None:
+						low_level_request_data.append(next(normal_level_request_data_iter))
+					elif role == 'stream_length':
+						low_level_request_data.append(stream_length)
+					elif role == 'stream_chunk_offset':
+						low_level_request_data.append(stream_chunk_offset)
+					elif role == 'stream_chunk_data':
+						low_level_request_data.append(stream_chunk_data)
+
+				return low_level_request_data
+
+			stream_data_index = high_level_roles_in.index('stream_data')
+			stream_data = request_data[stream_data_index]
+			stream_length = len(stream_data)
+			stream_chunk_offset = 0
+
+			if short_write:
+				stream_chunk_written_index = None if len(low_level_roles_out) == 1 else low_level_roles_out.index('stream_chunk_written')
+				stream_written = 0
+
+			if stream_length == 0:
+				stream_chunk_data = [chunk_padding] * chunk_cardinality
+				low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
+
+				response = ipcon.send_request(device, function_id, low_level_request_data, format_in, format_out)
+
+				if short_write:
+					if stream_chunk_written_index == None:
+						stream_written = response
+					else:
+						stream_written = response[stream_chunk_written_index]
+			else:
+				while stream_chunk_offset < stream_length:
+					stream_chunk_data = create_chunk_data(stream_data, stream_chunk_offset, chunk_cardinality, chunk_padding)
+					low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
+
+					response = ipcon.send_request(device, function_id, low_level_request_data, format_in, format_out)
+
+					if short_write:
+						if stream_chunk_written_index == None:
+							stream_chunk_written = response
+						else:
+							stream_chunk_written = response[stream_chunk_written_index]
+
+						stream_written += stream_chunk_written
+
+						if stream_chunk_written < chunk_cardinality:
+							break # either last chunk or short write
+
+					stream_chunk_offset += chunk_cardinality
+
+			if short_write:
+				if not isinstance(response, tuple):
+					response = (response,)
+
+				normal_level_response_iter = (data for role, data in zip(low_level_roles_out, response) if role == None)
+				high_level_response = []
+
+				for role in high_level_roles_out:
+					if role == None:
+						high_level_response.append(next(normal_level_response_iter))
+					elif role == 'stream_written':
+						high_level_response.append(stream_written)
+
+				if len(high_level_response) == 1:
+					response = high_level_response[0]
+				else:
+					response = tuple(high_level_response)
+		else: # out
+			low_level_response = ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+
+			if fixed_length == None:
+				stream_length_index = low_level_roles_out.index('stream_length')
+				stream_length = low_level_response[stream_length_index]
+			else:
+				stream_length_index = None
+				stream_length = fixed_length
+
+			if not single_read:
+				stream_chunk_offset_index = low_level_roles_out.index('stream_chunk_offset')
+				stream_chunk_offset = low_level_response[stream_chunk_offset_index]
+			else:
+				stream_chunk_offset_index = None
+				stream_chunk_offset = 0
+
+			stream_chunk_data_index = low_level_roles_out.index('stream_chunk_data')
+			stream_chunk_data = low_level_response[stream_chunk_data_index]
+
+			if fixed_length != None and stream_chunk_offset == chunk_max_offset:
+				stream_length = 0
+				stream_out_of_sync = False
+				stream_data = ()
+			else:
+				stream_out_of_sync = stream_chunk_offset != 0
+				stream_data = stream_chunk_data
+
+			while not stream_out_of_sync and len(stream_data) < stream_length:
+				low_level_response = ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+
+				if stream_length_index != None:
+					stream_length = low_level_response[stream_length_index]
+
+				if stream_chunk_offset_index != None:
+					stream_chunk_offset = low_level_response[stream_chunk_offset_index]
+
+				stream_chunk_data = low_level_response[stream_chunk_data_index]
+				stream_out_of_sync = stream_chunk_offset != len(stream_data)
+				stream_data += stream_chunk_data
+
+			if stream_out_of_sync: # discard remaining stream to bring it back in-sync
+				while stream_chunk_offset + chunk_cardinality < stream_length:
+					low_level_response = ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+
+					if stream_length_index != None:
+						stream_length = low_level_response[stream_length_index]
+
+					if stream_chunk_offset_index != None:
+						stream_chunk_offset = low_level_response[stream_chunk_offset_index]
+
+					stream_chunk_data = low_level_response[stream_chunk_data_index]
+
+				raise Error(Error.STREAM_OUT_OF_SYNC, 'Stream is out-of-sync')
+
+			normal_level_response_iter = (data for role, data in zip(low_level_roles_out, low_level_response) if role == None)
+			high_level_response = []
+
+			for role in high_level_roles_out:
+				if role == None:
+					high_level_response.append(next(normal_level_response_iter))
+				elif role == 'stream_data':
+					high_level_response.append(stream_data[:stream_length])
+
+			if len(high_level_response) == 1:
+				response = high_level_response[0]
+			else:
+				response = tuple(high_level_response)
+
+		if response != None:
+			if len(names) == 1:
+				response = (response,)
+
+			response = format_escaped_output(ctx, format_symbolic_output(ctx, response, symbols))
+
+			handle_response(response)
+		elif listen_mode:
+			ctx.output(group_terminator)
+
+	connect_ipcon_and_call(ctx, function, ctx.timeout / 1000.0)
+
+def device_dispatch(ctx, device_class, function_id, command, names, symbols):
 	if dry_run:
 		while True:
 			time.sleep(0.5)
@@ -370,15 +548,14 @@ def device_callback(ctx, device_class, function_id, command, names, symbols):
 
 	connect_ipcon_and_call(ctx, function)
 
-# length_is_fixed = False means length is maximum length
-def get_array_type_name(ctx, name, length, length_is_fixed=True):
-	if length_is_fixed:
-		if length < 7:
-			return ctx.item_separator.join([name]*length)
-		else:
-			return '{0}{1}{0}{1}..{2}x..{1}{0}{1}{0}'.format(name, ctx.item_separator, length - 4)
+# length > 0 means fixed-length, length < 0 means maximum of dynamic-length
+def get_array_type_name(ctx, name, length):
+	if length < 0:
+		return '{0}{1}{0}{1}..'.format(name, ctx.item_separator)
+	elif length <= 5:
+		return ctx.item_separator.join([name] * length)
 	else:
-		return ('[' + ctx.item_separator).join([name]*length) + ']'*(length - 1)
+		return '{0}{1}{0}{1}..{2}x..{1}{0}'.format(name, ctx.item_separator, length - 3)
 
 def format_symbolic_output(ctx, values, symbols):
 	if ctx.no_symbolic_output:
@@ -533,18 +710,20 @@ def create_symbol_converter(ctx, type_, symbols, strict=False):
 
 	return convert_symbol
 
-# length_is_fixed = False means length is maximum length
-def create_array_converter(ctx, type_, default_item, length, length_is_fixed=True):
+# length > 0 means fixed-length, length < 0 means maximum of dynamic-length
+def create_array_converter(ctx, type_, default_item, length):
+	assert length != 0
+
 	def convert_array(string):
 		items = string.split(ctx.item_separator)
 
-		if len(ctx.array_ellipsis) > 0 and len(items) > 0 and items[-1] == ctx.array_ellipsis:
+		if length > 0 and len(ctx.array_ellipsis) > 0 and len(items) > 0 and items[-1] == ctx.array_ellipsis:
 			if default_item == None:
 				name = getattr(type_, '__name__', repr(type_))
-				msg = 'array ellipsis not supported for %s value: %r' % (get_array_type_name(ctx, name, length, length_is_fixed), string)
+				msg = 'array ellipsis not supported for %s value: %r' % (get_array_type_name(ctx, name, length), string)
 				raise argparse.ArgumentTypeError(msg)
 
-			items = items[:-1] + [default_item]*(length - len(items) + 1)
+			items = items[:-1] + [default_item] * (length - len(items) + 1)
 
 		array = []
 
@@ -553,21 +732,21 @@ def create_array_converter(ctx, type_, default_item, length, length_is_fixed=Tru
 				value = type_(item)
 			except (ValueError, TypeError, argparse.ArgumentTypeError):
 				name = getattr(type_, '__name__', repr(type_))
-				msg = 'invalid %s value: %r' % (get_array_type_name(ctx, name, length, length_is_fixed), string)
+				msg = 'invalid %s value: %r' % (get_array_type_name(ctx, name, length), string)
 				raise argparse.ArgumentTypeError(msg)
 
 			array.append(value)
 
-		if (length_is_fixed and len(array) != length) or \
-		   (not length_is_fixed and (len(array) < 1 or len(array) > length)):
+		if (length > 0 and len(array) != length) or \
+		   (length < 0 and (len(array) < 1 or len(array) > -length)):
 			name = getattr(type_, '__name__', repr(type_))
-			msg = 'invalid %s value: %r' % (get_array_type_name(ctx, name, length, length_is_fixed), string)
+			msg = 'invalid %s value: %r' % (get_array_type_name(ctx, name, length), string)
 			raise argparse.ArgumentTypeError(msg)
 
 		return array
 
 	name = getattr(type_, '__name__', repr(type_))
-	convert_array.__name__ = get_array_type_name(ctx, name, length, length_is_fixed)
+	convert_array.__name__ = get_array_type_name(ctx, name, length)
 
 	return convert_array
 
@@ -625,11 +804,11 @@ def output_response(ctx, names, values):
 
 	ctx.output(line_separator.join(lines) + group_terminator)
 
-def common_get_identity(ctx, prog_prefix, klass, argv):
+def common_get_identity(ctx, prog_prefix, device_class, argv):
 	parser = ParserWithExecute(ctx, prog_prefix + ' get-identity')
 
 	args = parser.parse_args(argv)
 
-	device_send_request(ctx, klass, 255, (), '', '8s 8s c 3B 3B H', args.execute, False,
-	                    ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'],
-	                    [None, None, None, None, None, device_identifier_symbols])
+	device_call(ctx, device_class, 255, (), '', '8s 8s c 3B 3B H', args.execute, False,
+	            ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'],
+	            [None, None, None, None, None, device_identifier_symbols])
