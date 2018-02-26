@@ -47,12 +47,12 @@ READER_STATE = ('Reader State', [('Initialization', STATE_INITIALIZATION),
                                  ('Request Page', READER_STATE_REQUEST_PAGE),
                                  ('Request Page Ready', READER_STATE_REQUEST_PAGE_READY),
                                  ('Request Page Error', READER_STATE_REQUEST_PAGE_ERROR),
-                                 ('Write Ndef', READER_STATE_WRITE_NDEF),
-                                 ('Write Ndef Ready', READER_STATE_WRITE_NDEF_READY),
-                                 ('Write Ndef Error', READER_STATE_WRITE_NDEF_ERROR),
-                                 ('Request Ndef', READER_STATE_REQUEST_NDEF),
-                                 ('Request Ndef Ready', READER_STATE_REQUEST_NDEF_READY),
-                                 ('Request Ndef Error', READER_STATE_REQUEST_NDEF_ERROR)])
+                                 ('Write NDEF', READER_STATE_WRITE_NDEF),
+                                 ('Write NDEF Ready', READER_STATE_WRITE_NDEF_READY),
+                                 ('Write NDEF Error', READER_STATE_WRITE_NDEF_ERROR),
+                                 ('Request NDEF', READER_STATE_REQUEST_NDEF),
+                                 ('Request NDEF Ready', READER_STATE_REQUEST_NDEF_READY),
+                                 ('Request NDEF Error', READER_STATE_REQUEST_NDEF_ERROR)])
 
 CARDEMU_STATE_DISCOVER = 2
 CARDEMU_STATE_DISCOVER_READY = STATE_IDLE_MASK | CARDEMU_STATE_DISCOVER
@@ -67,9 +67,9 @@ CARDEMU_STATE = ('Cardemu State', [('Initialization', STATE_INITIALIZATION),
                                    ('Discover', CARDEMU_STATE_DISCOVER),
                                    ('Discover Ready', CARDEMU_STATE_DISCOVER_READY),
                                    ('Discover Error', CARDEMU_STATE_DISCOVER_ERROR),
-                                   ('Transfer Ndef', CARDEMU_STATE_TRANSFER_NDEF),
-                                   ('Transfer Ndef Ready', CARDEMU_STATE_TRANSFER_NDEF_READY),
-                                   ('Transfer Ndef Error', CARDEMU_STATE_TRANSFER_NDEF_ERROR)])
+                                   ('Transfer NDEF', CARDEMU_STATE_TRANSFER_NDEF),
+                                   ('Transfer NDEF Ready', CARDEMU_STATE_TRANSFER_NDEF_READY),
+                                   ('Transfer NDEF Error', CARDEMU_STATE_TRANSFER_NDEF_ERROR)])
 
 P2P_STATE_DISCOVER = 2
 P2P_STATE_DISCOVER_READY = STATE_IDLE_MASK | P2P_STATE_DISCOVER
@@ -84,9 +84,9 @@ P2P_STATE = ('P2P State', [('Initialization', STATE_INITIALIZATION),
                            ('Discover', P2P_STATE_DISCOVER),
                            ('Discover Ready', P2P_STATE_DISCOVER_READY),
                            ('Discover Error', P2P_STATE_DISCOVER_ERROR),
-                           ('Transfer Ndef', P2P_STATE_TRANSFER_NDEF),
-                           ('Transfer Ndef Ready', P2P_STATE_TRANSFER_NDEF_READY),
-                           ('Transfer Ndef Error', P2P_STATE_TRANSFER_NDEF_ERROR)])
+                           ('Transfer NDEF', P2P_STATE_TRANSFER_NDEF),
+                           ('Transfer NDEF Ready', P2P_STATE_TRANSFER_NDEF_READY),
+                           ('Transfer NDEF Error', P2P_STATE_TRANSFER_NDEF_ERROR)])
 
 MODE = ('Mode', [('Off',     0),
                  ('Cardemu', 1),
@@ -349,11 +349,11 @@ Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
 #       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
-'name': 'Reader Write Ndef Low Level',
-'elements': [('Ndef Length', 'uint16', 1, 'in'),
-             ('Ndef Chunk Offset', 'uint16', 1, 'in'),
-             ('Ndef Chunk Data', 'uint8', 60, 'in')],
-'high_level': {'stream_in': {'name': 'Ndef'}},
+'name': 'Reader Write NDEF Low Level',
+'elements': [('NDEF Length', 'uint16', 1, 'in'),
+             ('NDEF Chunk Offset', 'uint16', 1, 'in'),
+             ('NDEF Chunk Data', 'uint8', 60, 'in')],
+'high_level': {'stream_in': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -369,8 +369,8 @@ The general approach for writing a NDEF message is as follows:
    :func:`Reader Get State` or :cb:`Reader State Changed` callback)
 3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check
    if the expected tag was found, if it was not found got back to step 1
-4. Call :func:`Reader Write Ndef` with the NDEF message that you want to write
-5. Wait for state to change to *ReaderWriteNdefReady* (see :func:`Reader Get State`
+4. Call :func:`Reader Write NDEF` with the NDEF message that you want to write
+5. Wait for state to change to *ReaderWriteNDEFReady* (see :func:`Reader Get State`
    or :cb:`Reader State Changed` callback)
 """,
 'de':
@@ -387,8 +387,8 @@ Der Ansatz um eine NDEF Nachricht zu schreiben sieht wie folgt aus:
 3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
    :func:`Reader Get Tag ID` auf und überprüfe, ob der erwartete Tag gefunden
    wurde, wenn er nicht gefunden wurde mit Schritt 1 fortfahren
-4. Rufe :func:`Reader Write Ndef` mit der zu schreibenden NDEF Nachricht auf
-5. Warte auf einen Zustandswechsel auf *ReaderWriteNdefReady*
+4. Rufe :func:`Reader Write NDEF` mit der zu schreibenden NDEF Nachricht auf
+5. Warte auf einen Zustandswechsel auf *ReaderWriteNDEFReady*
    (siehe :func:`Reader Get State` oder :cb:`Reader State Changed` Callback)
 """
 }]
@@ -396,7 +396,7 @@ Der Ansatz um eine NDEF Nachricht zu schreiben sieht wie folgt aus:
 
 com['packets'].append({
 'type': 'function',
-'name': 'Reader Request Ndef',
+'name': 'Reader Request NDEF',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -413,10 +413,10 @@ The general approach for reading a NDEF message is as follows:
    or :cb:`Reader State Changed` callback)
 3. If looking for a specific tag then call :func:`Reader Get Tag ID` and check if the
    expected tag was found, if it was not found got back to step 1
-4. Call :func:`Reader Request Ndef`
-5. Wait for state to change to *ReaderRequestNdefReady* (see :func:`Reader Get State`
+4. Call :func:`Reader Request NDEF`
+5. Wait for state to change to *ReaderRequestNDEFReady* (see :func:`Reader Get State`
    or :cb:`Reader State Changed` callback)
-6. Call :func:`Reader Read Ndef` to retrieve the NDEF message from the buffer
+6. Call :func:`Reader Read NDEF` to retrieve the NDEF message from the buffer
 """,
 'de':
 """
@@ -432,10 +432,10 @@ Der Ansatz um eine NDEF Nachricht zu lesen sieht wie folgt aus:
 3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
    :func:`Reader Get Tag ID` auf und überprüfe, ob der erwartete Tag gefunden
    wurde, wenn er nicht gefunden wurde mit Schritt 1 fortfahren
-4. Rufe :func:`Reader Request Ndef` auf
-5. Warte auf einen Zustandswechsel auf *ReaderRequestNdefReady*
+4. Rufe :func:`Reader Request NDEF` auf
+5. Warte auf einen Zustandswechsel auf *ReaderRequestNDEFReady*
    (siehe :func:`Reader Get State` oder :cb:`Reader State Changed` Callback)
-6. Rufe :func:`Reader Read Ndef` auf um die gespeicherte NDEF Nachricht abzufragen
+6. Rufe :func:`Reader Read NDEF` auf um die gespeicherte NDEF Nachricht abzufragen
 """
 }]
 })
@@ -446,17 +446,17 @@ Der Ansatz um eine NDEF Nachricht zu lesen sieht wie folgt aus:
 #       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
-'name': 'Reader Read Ndef Low Level',
-'elements': [('Ndef Length', 'uint16', 1, 'out'),
-             ('Ndef Chunk Offset', 'uint16', 1, 'out'),
-             ('Ndef Chunk Data', 'uint8', 60, 'out')],
-'high_level': {'stream_out': {'name': 'Ndef'}},
+'name': 'Reader Read NDEF Low Level',
+'elements': [('NDEF Length', 'uint16', 1, 'out'),
+             ('NDEF Chunk Offset', 'uint16', 1, 'out'),
+             ('NDEF Chunk Data', 'uint8', 60, 'out')],
+'high_level': {'stream_out': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the NDEF data from an internal buffer. To fill the buffer
-with a NDEF message you have to call :func:`Reader Request Ndef` beforehand.
+with a NDEF message you have to call :func:`Reader Request NDEF` beforehand.
 
 The buffer can have a size of up to 8192 bytes.
 """,
@@ -464,7 +464,7 @@ The buffer can have a size of up to 8192 bytes.
 """
 Gibt NDEF Daten aus einem internen Buffer zurück. Der Buffer
 kann zuvor mit einer NDEF Nachricht über einen Aufruf von
-:func:`Reader Request Ndef` gefüllt werden.
+:func:`Reader Request NDEF` gefüllt werden.
 
 Der Buffer kann eine Größe von bis zu 8192 Bytes haben.
 """
@@ -538,7 +538,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Reader Write Page Low Level',
 'elements': [('Page', 'uint16', 1, 'in', ('Reader Write', [('Type4 Capability Container', 3),
-                                                           ('Type4 Ndef', 4)])),
+                                                           ('Type4 NDEF', 4)])),
              ('Data Length', 'uint16', 1, 'in'),
              ('Data Chunk Offset', 'uint16', 1, 'in'),
              ('Data Chunk Data', 'uint8', 58, 'in')],
@@ -615,7 +615,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Reader Request Page',
 'elements': [('Page', 'uint16', 1, 'in', ('Reader Request', [('Type4 Capability Container', 3),
-                                                             ('Type4 Ndef', 4)])),
+                                                             ('Type4 NDEF', 4)])),
              ('Length', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -804,7 +804,7 @@ discovery the cardemu state will change to *CardemuDiscoveryError*. In this case
 have to restart the discovery process.
 
 If the cardemu state changes to *CardemuDiscoveryReady* you can start the NDEF message
-transfer with :func:`Cardemu Write Ndef` and :func:`Cardemu Start Transfer`.
+transfer with :func:`Cardemu Write NDEF` and :func:`Cardemu Start Transfer`.
 """,
 'de':
 """
@@ -817,7 +817,7 @@ Prozesses ein Fehler auftritt dann wechselt der Cardemu Zustand zu *CardemuDisco
 In diesem Fall muss der Discovery Prozess.
 
 Wenn der Cardemu Zustand zu *CardemuDiscoveryReady* wechselt kann eine NDEF Nachricht
-mittels :func:`Cardemu Write Ndef` und :func:`Cardemu Start Transfer` übertragen werden.
+mittels :func:`Cardemu Write NDEF` und :func:`Cardemu Start Transfer` übertragen werden.
 """
 }]
 })
@@ -828,11 +828,11 @@ mittels :func:`Cardemu Write Ndef` und :func:`Cardemu Start Transfer` übertrage
 #       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
-'name': 'Cardemu Write Ndef Low Level',
-'elements': [('Ndef Length', 'uint16', 1, 'in'),
-             ('Ndef Chunk Offset', 'uint16', 1, 'in'),
-             ('Ndef Chunk Data', 'uint8', 60, 'in')],
-'high_level': {'stream_in': {'name': 'Ndef'}},
+'name': 'Cardemu Write NDEF Low Level',
+'elements': [('NDEF Length', 'uint16', 1, 'in'),
+             ('NDEF Chunk Offset', 'uint16', 1, 'in'),
+             ('NDEF Chunk Data', 'uint8', 60, 'in')],
+'high_level': {'stream_in': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -870,11 +870,11 @@ com['packets'].append({
 You can start the transfer of a NDEF message if the cardemu state is *CardemuDiscoveryReady*.
 
 Before you call this function to start a write transfer, the NDEF message that
-is to be transferred has to be written via :func:`Cardemu Write Ndef` first.
+is to be transferred has to be written via :func:`Cardemu Write NDEF` first.
 
-After you call this function the state will change to *CardemuTransferNdef*. It will
-change to *CardemuTransferNdefReady* if the transfer was successful or
-*CardemuTransferNdefError* if it wasn't.
+After you call this function the state will change to *CardemuTransferNDEF*. It will
+change to *CardemuTransferNDEFReady* if the transfer was successful or
+*CardemuTransferNDEFError* if it wasn't.
 """,
 'de':
 """
@@ -882,11 +882,11 @@ Der Transfer einer NDEF Nachricht kann im Cardemu-Zustand *CardemuDiscoveryReady
 gestartet werden.
 
 Bevor ein Schreib-Transfer gestartet werden kann muss zuerst die zu
-übertragenden NDEF Nachricht mittels :func:`Cardemu Write Ndef` geschrieben werden.
+übertragenden NDEF Nachricht mittels :func:`Cardemu Write NDEF` geschrieben werden.
 
-Nach einem Aufruf dieser Funktion ändert sich der Cardemu-Zustand zu *CardemuTransferNdef*.
-Danach ändert sich der P2P Zustand zu *CardemuTransferNdefReady* wenn der Transfer
-erfolgreich war oder zu *CardemuTransferNdefError* falls nicht.
+Nach einem Aufruf dieser Funktion ändert sich der Cardemu-Zustand zu *CardemuTransferNDEF*.
+Danach ändert sich der P2P Zustand zu *CardemuTransferNDEFReady* wenn der Transfer
+erfolgreich war oder zu *CardemuTransferNDEFError* falls nicht.
 """
 }]
 })
@@ -992,7 +992,7 @@ Prozesses ein Fehler auftritt dann wechselt der P2P Zustand zu *P2PDiscoveryErro
 In diesem Fall muss der Discovery Prozess.
 
 Wenn der P2P Zustand zu *P2PDiscoveryReady* wechselt kann eine NDEF Nachricht
-mittels :func:`P2P Write Ndef` und :func:`P2P Start Transfer` übertragen werden.
+mittels :func:`P2P Write NDEF` und :func:`P2P Start Transfer` übertragen werden.
 """
 }]
 })
@@ -1003,11 +1003,11 @@ mittels :func:`P2P Write Ndef` und :func:`P2P Start Transfer` übertragen werden
 #       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
-'name': 'P2P Write Ndef Low Level',
-'elements': [('Ndef Length', 'uint16', 1, 'in'),
-             ('Ndef Chunk Offset', 'uint16', 1, 'in'),
-             ('Ndef Chunk Data', 'uint8', 60, 'in')],
-'high_level': {'stream_in': {'name': 'Ndef'}},
+'name': 'P2P Write NDEF Low Level',
+'elements': [('NDEF Length', 'uint16', 1, 'in'),
+             ('NDEF Chunk Offset', 'uint16', 1, 'in'),
+             ('NDEF Chunk Data', 'uint8', 60, 'in')],
+'high_level': {'stream_in': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1046,14 +1046,14 @@ com['packets'].append({
 You can start the transfer of a NDEF message if the P2P state is *P2PDiscoveryReady*.
 
 Before you call this function to start a write transfer, the NDEF message that
-is to be transferred has to be written via :func:`P2P Write Ndef` first.
+is to be transferred has to be written via :func:`P2P Write NDEF` first.
 
-After you call this function the P2P state will change to *P2PTransferNdef*. It will
-change to *P2PTransferNdefReady* if the transfer was successfull or 
-*P2PTransferNdefError* if it wasn't.
+After you call this function the P2P state will change to *P2PTransferNDEF*. It will
+change to *P2PTransferNDEFReady* if the transfer was successfull or
+*P2PTransferNDEFError* if it wasn't.
 
 If you started a write transfer you are now done. If you started a read transfer
-you can now use :func:`P2P Read Ndef` to read the NDEF message that was written
+you can now use :func:`P2P Read NDEF` to read the NDEF message that was written
 by the NFC peer.
 """,
 'de':
@@ -1062,14 +1062,14 @@ Der Transfer einer NDEF Nachricht kann im P2P Zustand *P2PDiscoveryReady* gestar
 werden.
 
 Bevor ein Schreib-Transfer gestartet werden kann muss zuerst die zu
-übertragenden NDEF Nachricht mittels :func:`P2P Write Ndef` geschrieben werden.
+übertragenden NDEF Nachricht mittels :func:`P2P Write NDEF` geschrieben werden.
 
-Nach einem Aufruf dieser Funktion ändert sich der P2P Zustand zu *P2PTransferNdef*.
-Danach ändert sich der P2P Zustand zu *P2PTransferNdefReady* wenn der Transfer
-erfolgreich war oder zu *P2PTransferNdefError* falls nicht.
+Nach einem Aufruf dieser Funktion ändert sich der P2P Zustand zu *P2PTransferNDEF*.
+Danach ändert sich der P2P Zustand zu *P2PTransferNDEFReady* wenn der Transfer
+erfolgreich war oder zu *P2PTransferNDEFError* falls nicht.
 
 Ein Schreib-Transfer ist danach abgeschlossen. Bei einem Lese-Transfer kann jetzt
-die vom NFC Peer geschriebene NDEF Nachricht mittels :func:`P2P Read Ndef`
+die vom NFC Peer geschriebene NDEF Nachricht mittels :func:`P2P Read NDEF`
 ausgelesen werden.
 """
 }]
@@ -1077,11 +1077,11 @@ ausgelesen werden.
 
 com['packets'].append({
 'type': 'function',
-'name': 'P2P Read Ndef Low Level',
-'elements': [('Ndef Length', 'uint16', 1, 'out'),
-             ('Ndef Chunk Offset', 'uint16', 1, 'out'),
-             ('Ndef Chunk Data', 'uint8', 60, 'out')],
-'high_level': {'stream_out': {'name': 'Ndef'}},
+'name': 'P2P Read NDEF Low Level',
+'elements': [('NDEF Length', 'uint16', 1, 'out'),
+             ('NDEF Chunk Offset', 'uint16', 1, 'out'),
+             ('NDEF Chunk Data', 'uint8', 60, 'out')],
+'high_level': {'stream_out': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1090,7 +1090,7 @@ Returns the NDEF message that was written by a NFC peer in NFC P2P mode.
 The maximum NDEF length is 8192 byte.
 
 The NDEF message is ready if you called :func:`P2P Start Transfer` with a
-read transfer and the P2P state changed to *P2PTransferNdefReady*.
+read transfer and the P2P state changed to *P2PTransferNDEFReady*.
 """,
 'de':
 """
@@ -1098,7 +1098,7 @@ Gibt die NDEF Nachricht zurück, die von einem NFC Peer im P2P Modus geschrieben
 wurde. Der maximale NDEF Länge beträgt 8192 Bytes.
 
 Die NDEF Nachricht ist bereit sobald sich nach einem :func:`P2P Start Transfer`
-Aufruf mit einem Lese-Transfer der P2P Zustand zu *P2PTransferNdefReady* ändert.
+Aufruf mit einem Lese-Transfer der P2P Zustand zu *P2PTransferNDEFReady* ändert.
 """
 }]
 })
