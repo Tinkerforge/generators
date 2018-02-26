@@ -106,8 +106,8 @@ com = {
         'de': 'NFC Tag Lesen/Schreiben, NFC P2P und Card Emulation'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []

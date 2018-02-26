@@ -19,8 +19,8 @@ com = {
         'de': 'Passiver Infrarot (PIR) Bewegungssensor, 12m Reichweite'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []
@@ -207,4 +207,3 @@ com['examples'].append({
 'name': 'Indicator',
 'functions': [('setter', 'Set Indicator', [('uint8', 255), ('uint8', 255), ('uint8', 255)], 'Turn blue backlight LEDs on (maximum brightness)', None)]
 })
-

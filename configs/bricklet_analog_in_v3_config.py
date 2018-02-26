@@ -22,8 +22,8 @@ com = {
         'de': 'Misst Gleichspannung zwischen 0V und 42V'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []
