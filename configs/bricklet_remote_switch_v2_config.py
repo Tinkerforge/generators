@@ -63,7 +63,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called whenever the switching state changes
+This callback is triggered whenever the switching state changes
 from busy to ready, see :func:`Get Switching State`.
 """,
 'de':
@@ -246,7 +246,7 @@ can be found :ref:`here <remote_switch_bricklet_type_c_system_and_device_code>`.
 """,
 'de':
 """
-Um eine Typ A Steckdose zu schalten muss der Systemcode, Gerätecode sowie
+Um eine Typ C Steckdose zu schalten muss der Systemcode, Gerätecode sowie
 der Zustand (an oder aus) zu dem geschaltet werden soll übergeben werden.
 
 Der Systemcode hat einen Wertebereich von 'A' bis 'P' (4Bit) und der Gerätecode
@@ -272,14 +272,27 @@ com['packets'].append({
 """
 Sets the configuration for **receiving** data from a remote of type A, B or C.
 
-* Remote Type: Set to A, B or C depending on the type of remote you want to receive.
-* Minimum Repeats: The minimum number of repeated data packets until the callback is triggered (if enabled).
-* Callback Enabled: Enable or disable callback (see :cb:`Remote Status A` callback, :cb:`Remote Status B` callback and :cb:`Remote Status C` callback).
+* Remote Type: A, B or C depending on the type of remote you want to receive.
+* Minimum Repeats: The minimum number of repeated data packets until the callback
+  is triggered (if enabled).
+* Callback Enabled: Enable or disable callback (see :cb:`Remote Status A` callback,
+  :cb:`Remote Status B` callback and :cb:`Remote Status C` callback).
 
 Default is ('A', 2, false).
 """,
 'de':
 """
+Setzt die Konfiguration für das **Empfangen** von Daten von Fernbedienungen der
+Typen A, B und C.
+
+* Remote Type: A, B oder C abhängig vom Typ der Fernbedienung die empfangen
+  werden soll.
+* Minimum Repeats: Die Mindestanzahl an wiederholten Datenpaketen bevor der
+  Callback ausgelöst wird (falls aktiviert).
+* Callback Enabled: Aktiviert/Deaktivert den Callback (siehe :cb:`Remote Status A`
+  Callback, :cb:`Remote Status B` Callback und :cb:`Remote Status C` Callback).
+
+Der Standardwert ist ('A', 2, false).
 """
 }]
 })
@@ -317,18 +330,29 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the house code, receiver code, switch state (on/off) and number of repeats for
-remote type A.
+Returns the house code, receiver code, switch state (on/off) and number of
+repeats for remote type A.
 
-If repeats=0 there was no button press. If repeats >= 1 there
-was a button press with the specified house/receiver code. The repeats are the number of received
-identical data packets. The longer the button is pressed, the higher the repeat number.
+Repeats == 0 means there was no button press. Repeats >= 1 means there
+was a button press with the specified house/receiver code. The repeats are the
+number of received identical data packets. The longer the button is pressed,
+the higher the repeat number.
 
 Use the callback to get this data automatically when a button is pressed,
 see :func:`Set Remote Configuration` and :cb:`Remote Status A` callback.
 """,
 'de':
 """
+Gibt den Housecode, Receivercode, Schaltzustand (an/aus) und Anzahl der
+Wiederholungen für eine Typ A Fernbedienung zurück.
+
+Repeats == 0 bedeutet, dass kein Knopf auf der Fernbedienung gedrückt wurde.
+Repeats >= 1 bedeutet, dass ein Knopf mit dem angegebenen House/Receivercode
+auf der Fernbedienung gedrückt wurde. Die repeats sind die Anzahl der
+empfangenen identischen Datenpakete.
+
+Es kann auch automatisch ein Callback ausgelöst werden, wenn Daten empfangen werden,
+siehe :func:`Set Remote Configuration` und :cb:`Remote Status A` Callback.
 """
 }]
 })
@@ -346,8 +370,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the address (unique per remote), unit (button number), switch state (on/off) and number of repeats for
-remote type B.
+Returns the address (unique per remote), unit (button number), switch state
+(on/off) and number of repeats for remote type B.
 
 If the remote supports dimming the dim value is used instead of the switch state.
 
@@ -360,6 +384,20 @@ see :func:`Set Remote Configuration` and :cb:`Remote Status B` callback.
 """,
 'de':
 """
+Gibt die Address (eindeutig für jede Fernbedienung), Unit (Knopfnummer),
+Schaltzustand (an/aus) und Anzahl der Wiederholungen für eine Typ B
+Fernbedienung zurück.
+
+Falls die Fernbedienung Dimmen unterstützt, dann wie der Dimmwert anstatt des
+Schaltzustandes verwendet.
+
+Repeats == 0 bedeutet, dass kein Knopf auf der Fernbedienung gedrückt wurde.
+Repeats >= 1 bedeutet, dass ein Knopf mit der angegebenen Address/Unit auf der
+Fernbedienung gedrückt wurde. Die repeats sind die Anzahl der empfangenen
+identischen Datenpakete.
+
+Es kann auch automatisch ein Callback ausgelöst werden, wenn Daten empfangen werden,
+siehe :func:`Set Remote Configuration` und :cb:`Remote Status B` Callback.
 """
 }]
 })
@@ -388,6 +426,16 @@ see :func:`Set Remote Configuration` and :cb:`Remote Status C` callback.
 """,
 'de':
 """
+Gibt die Systemcode, Gerätecode, Schaltzustand (an/aus) und Anzahl der
+Wiederholungen für eine Typ C Fernbedienung zurück.
+
+Repeats == 0 bedeutet, dass kein Knopf auf der Fernbedienung gedrückt wurde.
+Repeats >= 1 bedeutet, dass ein Knopf mit der angegebenen System/Gerätecode auf der
+Fernbedienung gedrückt wurde. Die repeats sind die Anzahl der empfangenen
+identischen Datenpakete.
+
+Es kann auch automatisch ein Callback ausgelöst werden, wenn Daten empfangen werden,
+siehe :func:`Set Remote Configuration` und :cb:`Remote Status C` Callback.
 """
 }]
 })
@@ -408,14 +456,25 @@ Returns the house code, receiver code, switch state (on/off) and number of repea
 remote type A.
 
 The repeats are the number of received identical data packets. The longer the button is pressed,
-the higher the repeat number. The callback is called with every repeat.
+the higher the repeat number. The callback is triggered with every repeat.
 
 You have to enable the callback with :func:`Set Remote Configuration`. The number
 of repeats that you can set in the configuration is the minimum number of repeats that have
-to be seen before the callback is triggered.
+to be seen before the callback is triggered for the first time.
 """,
 'de':
 """
+Gibt den Housecode, Receivercode, Schaltzustand (an/aus) und Anzahl der
+Wiederholungen für eine Typ A Fernbedienung zurück.
+
+Die Wiederholungen ist die Anzahl empfangener identischer Datenpakete. Je länger
+der Knopf auf der Fernbedienung gedrückt wird, desto höher die Anzahl der
+Wiederholungen. Der Callback wird bei jeder Wiederholung ausgelöst.
+
+Der Callback muss zuerst aktiviert werden mittels :func:`Set Remote Configuration`.
+Die Mindestanzahl an Wiederholungen die konfiguriert werden kann ist die Anzahl
+an Wiederholungen die empfangen worden sein muss bevor der Callback das erste
+mal ausgelöst wird.
 """
 }]
 })
@@ -439,14 +498,26 @@ remote type B.
 If the remote supports dimming the dim value is used instead of the switch state.
 
 The repeats are the number of received identical data packets. The longer the button is pressed,
-the higher the repeat number. The callback is called with every repeat.
+the higher the repeat number. The callback is triggered with every repeat.
 
 You have to enable the callback with :func:`Set Remote Configuration`. The number
 of repeats that you can set in the configuration is the minimum number of repeats that have
-to be seen before the callback is triggered.
+to be seen before the callback is triggered for the first time.
 """,
 'de':
 """
+Gibt die Address (eindeutig für jede Fernbedienung), Unit (Knopfnummer),
+Schaltzustand (an/aus) und Anzahl der Wiederholungen für eine Typ B
+Fernbedienung zurück.
+
+Die Wiederholungen ist die Anzahl empfangener identischer Datenpakete. Je länger
+der Knopf auf der Fernbedienung gedrückt wird, desto höher die Anzahl der
+Wiederholungen. Der Callback wird bei jeder Wiederholung ausgelöst.
+
+Der Callback muss zuerst aktiviert werden mittels :func:`Set Remote Configuration`.
+Die Mindestanzahl an Wiederholungen die konfiguriert werden kann ist die Anzahl
+an Wiederholungen die empfangen worden sein muss bevor der Callback das erste
+mal ausgelöst wird.
 """
 }]
 })
@@ -467,14 +538,25 @@ Returns the system code, device code, switch state (on/off) and number of repeat
 remote type C.
 
 The repeats are the number of received identical data packets. The longer the button is pressed,
-the higher the repeat number. The callback is called with every repeat.
+the higher the repeat number. The callback is triggered with every repeat.
 
 You have to enable the callback with :func:`Set Remote Configuration`. The number
 of repeats that you can set in the configuration is the minimum number of repeats that have
-to be seen before the callback is triggered.
+to be seen before the callback is triggered for the first time.
 """,
 'de':
 """
+Gibt die Systemcode, Gerätecode, Schaltzustand (an/aus) und Anzahl der
+Wiederholungen für eine Typ C Fernbedienung zurück.
+
+Die Wiederholungen ist die Anzahl empfangener identischer Datenpakete. Je länger
+der Knopf auf der Fernbedienung gedrückt wird, desto höher die Anzahl der
+Wiederholungen. Der Callback wird bei jeder Wiederholung ausgelöst.
+
+Der Callback muss zuerst aktiviert werden mittels :func:`Set Remote Configuration`.
+Die Mindestanzahl an Wiederholungen die konfiguriert werden kann ist die Anzahl
+an Wiederholungen die empfangen worden sein muss bevor der Callback das erste
+mal ausgelöst wird.
 """
 }]
 })

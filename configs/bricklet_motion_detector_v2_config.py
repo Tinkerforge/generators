@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# Motion Detector Bricklet communication config
+# Motion Detector Bricklet 2.0 communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -67,16 +67,29 @@ com['packets'].append({
 Sets the sensitivity of the PIR sensor. The range is 0-100. At full 
 sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.
 
-The range depends on many things in the environment (e.g. reflections) and the
+The actual range depends on many things in the environment (e.g. reflections) and the
 size of the object to be detected. While a big person might be detected in a range
 of 10m a cat may only be detected at 2m distance with the same setting.
 
 So you will have to find a good sensitivity for your application by trial and error.
 
-The default sensitivity value is 50.
+The default value is 50.
 """,
 'de':
 """
+Setzt die Empfindlichkeit des PIR Sensors. Der Wertebereich ist 0-100. Bei
+maximaler Empfindlichkeit (100) kann das Bricklet Bewegung bin in ca. 12m
+Entfernung erkennen.
+
+Die wirkliche Entfernung hängt von vielen Dingen in der Umgebung ab (z.B.
+Ruflektionen) und der Größe des zu erkennenden Objekts. Während eine große
+Person bei 10m erkannt werden kann, wird eine Katze vielleicht erst an 2m erkannt
+mit den gleichen Einstellungen.
+
+Daher muss die passenden Empfindlichkeit je nach Anwendung experimentell
+bestimmt werden
+
+Der Standardwert ist 50.
 """
 }]
 })
@@ -93,6 +106,7 @@ Returns the sensitivity as set by :func:`Set Sensitivity`.
 """,
 'de':
 """
+Gibt die Empfindlichkeit zurück, wie von :func:`Set Sensitivity` gesetzt.
 """
 }]
 })
@@ -116,6 +130,12 @@ The default value is 0, 0, 0.
 """,
 'de':
 """
+Stellt die blaue Beleuchtung der Fresnel-Linse ein. Die Beleuchtung besteht aus
+drei LEDs. Die Helligkeit jeder LED kann einzeln mit einem 8-Bit Wert (0-255)
+eingestellt werden. Ein Wert von 0 deaktiviert die LED und ein Wert von 255
+aktiviert die LED mit voller Helligkeit.
+
+Der Standardwert ist 0, 0, 0.
 """
 }]
 })
@@ -134,6 +154,7 @@ Returns the indicator configuration as set by :func:`Set Indicator`.
 """,
 'de':
 """
+Gibt die Indikatorkonfiguration zurück, wie von :func:`Set Indicator` gesetzt.
 """
 }]
 })

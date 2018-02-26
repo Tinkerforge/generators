@@ -82,7 +82,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called whenever the switching state changes
+This callback is triggered whenever the switching state changes
 from busy to ready, see :func:`Get Switching State`.
 """,
 'de':
@@ -265,7 +265,7 @@ can be found :ref:`here <remote_switch_bricklet_type_c_system_and_device_code>`.
 """,
 'de':
 """
-Um eine Typ A Steckdose zu schalten muss der Systemcode, Gerätecode sowie
+Um eine Typ C Steckdose zu schalten muss der Systemcode, Gerätecode sowie
 der Zustand (an oder aus) zu dem geschaltet werden soll übergeben werden.
 
 Der Systemcode hat einen Wertebereich von 'A' bis 'P' (4Bit) und der Gerätecode

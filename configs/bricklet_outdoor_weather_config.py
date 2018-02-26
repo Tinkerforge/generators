@@ -58,13 +58,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the identifiers (number between 0 and 255) of all `stations <TBD>`__ that have been seen
-since the startup of the Bricklet.
+Returns the identifiers (number between 0 and 255) of all `stations
+<https://www.tinkerforge.com/en/shop/accessories/sensors/outdoor-weather-station-ws-6147.html>`__
+that have been seen since the startup of the Bricklet.
 
 Each station gives itself a random identifier on first startup.
 """,
 'de':
 """
+Gibt die Identifier (Zahl zwischen 0 und 255) von allen 'Stationen
+<https://www.tinkerforge.com/de/shop/accessories/sensors/outdoor-weather-station-ws-6147.html>`__
+die seit dem Start des Bricklets entdeckt wurden.
+
+Jede Station gibt sich selbst einen zufälligen Identifier beim ersten Start.
 """
 }]
 })
@@ -80,13 +86,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the identifiers (number between 0 and 255) of all `sensors <TBD>`__ that have been seen
-since the startup of the Bricklet.
+Returns the identifiers (number between 0 and 255) of all `sensors
+<https://www.tinkerforge.com/en/shop/accessories/sensors/temperature-humidity-sensor-th-6148.html>`__
+that have been seen since the startup of the Bricklet.
 
 Each sensor gives itself a random identifier on first startup.
 """,
 'de':
 """
+Gibt die Identifier (Zahl zwischen 0 und 255) von allen 'Sensoren
+<https://www.tinkerforge.com/en/shop/accessories/sensors/temperature-humidity-sensor-th-6148.html>`__
+die seit dem Start des Bricklets entdeckt wurden.
+
+Jede Sensor gibt sich selbst einen zufälligen Identifier beim ersten Start.
 """
 }]
 })
@@ -107,10 +119,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the last measured data for a station with the given identifier.
+Returns the last received data for a station with the given identifier.
 Call :func:`Get Station Identifiers` for a list of all available identifiers.
 
-The return values are
+The return values are:
 
 * Temperature in °C/10,
 * Humidity in %RH,
@@ -119,10 +131,23 @@ The return values are
 * Rain Fall in mm/10,
 * Wind Direction (N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW),
 * Battery Low (true or false) and
-* Last Change (time in seconds since the last reception of data).
+* Last Change (time in seconds since the reception of this data).
 """,
 'de':
 """
+Gibt die zuletzt empfangenen Daten für die Station mit dem entsprechenden
+Identifier zurück.
+
+Die Rückgabewerte sind:
+
+* Temperatur in °C/10,
+* Luftfeuchte in %RH,
+* Windgeschwindigkeit in m/10s,
+* Windböengeschwindigkeit in m/10s,
+* Niederschlag in mm/10,
+* Windrichtung (N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW),
+* Batteriewarnung (true oder false) und
+* Letzte Änderung (Zeit in Sekunden seitdem diese Daten empfangen wurden).
 """
 }]
 })
@@ -141,7 +166,7 @@ com['packets'].append({
 Returns the last measured data for a sensor with the given identifier.
 Call :func:`Get Sensor Identifiers` for a list of all available identifiers.
 
-The return values are
+The return values are:
 
 * Temperature in °C/10,
 * Humidity in %RH and
@@ -149,6 +174,14 @@ The return values are
 """,
 'de':
 """
+Gibt die zuletzt empfangenen Daten für den Sensor mit dem entsprechenden
+Identifier zurück.
+
+Die Rückgabewerte sind:
+
+* Temperatur in °C/10,
+* Luftfeuchte in %RH und
+* Letzte Änderung (Zeit in Sekunden seitdem diese Daten empfangen wurden).
 """
 }]
 })
@@ -165,6 +198,8 @@ Turns callback for station data on or off. Default is off.
 """,
 'de':
 """
+Aktiviert/Deaktiviert den Callback für Stationsdaten. Standardmäßig ist der
+Callback deaktiviert.
 """
 }]
 })
@@ -181,6 +216,8 @@ Returns the configuration as set by :func:`Set Station Callback Configuration`.
 """,
 'de':
 """
+Gibt die Konfiguration zurück wie von :func:`Set Station Callback Configuration`
+gesetzt.
 """
 }]
 })
@@ -197,6 +234,8 @@ Turns callback for sensor data on or off. Default is off.
 """,
 'de':
 """
+Aktiviert/Deaktiviert den Callback für Sensordaten. Standardmäßig ist der
+Callback deaktiviert.
 """
 }]
 })
@@ -213,6 +252,8 @@ Returns the configuration as set by :func:`Set Sensor Callback Configuration`.
 """,
 'de':
 """
+Gibt die Konfiguration zurück wie von :func:`Set Sensor Callback Configuration`
+gesetzt.
 """
 }]
 })
@@ -222,7 +263,7 @@ com['packets'].append({
 'name': 'Station Data',
 'elements': [('Identifier', 'uint8', 1, 'out'),
              ('Temperature', 'int16', 1, 'out'),   # in °C/10
-             ('Humidity', 'uint8', 1, 'out'),      # in %rel
+             ('Humidity', 'uint8', 1, 'out'),      # in %RH
              ('Wind Speed', 'uint32', 1, 'out'),   # in m/10s
              ('Gust Speed', 'uint32', 1, 'out'),   # in m/10s
              ('Rain', 'uint32', 1, 'out'),         # in mm/10
@@ -232,16 +273,23 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-Returns the station data every time a new data packet is received.
+Reports the station data every time a new data packet is received.
 See :func:`Get Station Data` for information about the data.
 
-For each station the callback will be called about every 45 seconds.
+For each station the callback will be triggered about every 45 seconds.
 
-Turn the callback on/off with :func:`Set Station Callback Configuration` (by default it is turned off).
+Turn the callback on/off with :func:`Set Station Callback Configuration`
+(by default it is turned off).
 """,
 'de':
 """
-TODO
+Meldet die Stationsdaten bei jedem eingehenden Datenpaket. Siehe
+:func:`Get Station Data` für Details über die Daten.
+
+Für jede Station wird dieser Callback ca. alle 45 Sekunden ausgelöst werden.
+
+Der Callback kann mittels :func:`Set Station Callback Configuration`
+aktiviert/deaktiviert werden (standardmäßig ist der Callback deaktiviert).
 """
 }]
 })
@@ -251,21 +299,28 @@ com['packets'].append({
 'name': 'Sensor Data',
 'elements': [('Identifier', 'uint8', 1, 'out'),
              ('Temperature', 'int16', 1, 'out'),   # in °C/10
-             ('Humidity', 'uint8', 1, 'out')],     # in %rel
+             ('Humidity', 'uint8', 1, 'out')],     # in %RH
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
-Returns the sensor data every time a new data packet is received.
+Reports the sensor data every time a new data packet is received.
 See :func:`Get Sensor Data` for information about the data.
 
 For each station the callback will be called about every 45 seconds.
 
-Turn the callback on/off with :func:`Set Sensor Callback Configuration` (by default it is turned off).
+Turn the callback on/off with :func:`Set Sensor Callback Configuration`
+(by default it is turned off).
 """,
 'de':
 """
-TODO
+Meldet die Sensordaten bei jedem eingehenden Datenpaket. Siehe
+:func:`Get Sensor Data` für Details über die Daten.
+
+Für jeden Sensor wird dieser Callback ca. alle 45 Sekunden ausgelöst werden.
+
+Der Callback kann mittels :func:`Set Sensor Callback Configuration`
+aktiviert/deaktiviert werden (standardmäßig ist der Callback deaktiviert).
 """
 }]
 })

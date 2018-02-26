@@ -71,23 +71,36 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the oversampling between 32 and 16384. The Bricklet
-takes one 12bit sample every 17.5us. Thus an oversampling
-of 32 is equivalent to an integration time of 0.56ms and
-a oversampling of 16384 is equivalent to an integration
+Sets the oversampling between 32x and 16384x. The Bricklet
+takes one 12bit sample every 17.5µs. Thus an oversampling
+of 32x is equivalent to an integration time of 0.56ms and
+a oversampling of 16384x is equivalent to an integration
 time of 286ms.
 
 The oversampling uses the moving average principle. A
-new value is always calculated once per ms.
+new value is always calculated once per millisecond.
 
 With increased oversampling the noise decreases. With decreased
 oversampling the reaction time increases (changes in voltage will be
 measured faster).
 
-The default oversampling value is 4096x.
+The default value is 4096x.
 """,
 'de':
 """
+Stellt die Überabtastung zwischen 32x und 16384x ein. Das Bricklet misst einen
+12-Bit Wert alle 17,5µs. Daher entspricht eine Überabtastung von 32x einer
+Integrationszeit von 0,56ms und eine Überabtastung von 16384x einer
+Integrationszeit von 286ms.
+
+Die Überabtastung arbeitet mit einem gleidenden Mittelwert. Ein neuer Messwert
+wird jede Millisekunden bestimmt.
+
+Je höher die Überabtastung desto geringer das Rauschen. Je geringer die
+Überabtastung steigt die Reaktionszeit (Änderugen der Eingangsspannung werden
+schneller erkannt).
+
+Der Standardwert ist 4096x.
 """
 }]
 })
@@ -120,16 +133,23 @@ com['packets'].append({
 'en':
 """
 Sets a calibration for the measured voltage value.
-The formula for the calibration is as follows:
+The formula for the calibration is as follows::
 
-* Calibrated Value = (Value + Offset) * Multiplier / Divisor
+ Calibrated Value = (Value + Offset) * Multiplier / Divisor
 
 We recommend that you use the Brick Viewer to calibrate
-the Bricklet. The calibration will be saved and only
+the Bricklet. The calibration will be saved internally and only
 has to be done once.
 """,
 'de':
 """
+Setzt die Kalibrierung für die gemessene Spannung. Die Formel lautet::
+
+ Kalibrierter Wert = (Wert + Offset) * Multiplier / Divisor
+
+Wir empfehlen für die Kalibrierung den Brick Viewer zu verwenden. Die
+Kalibrierung wird im Bricklet gespeichert und muss daher nur einmal durchgeführt
+werden.
 """
 }]
 })
