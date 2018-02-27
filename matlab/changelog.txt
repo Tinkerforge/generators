@@ -80,5 +80,10 @@
   LED Matrix and Thermal Imaging Bricklet
 - Add get/setSBASConfig functions to GPS Bricklet 2.0 API
 
-2017-11-24: 2.0.16 (<unknown>)
+2017-11-24: 2.0.16 (4317433)
 - Use correct chunk-offset while reconstructing output streams
+
+2018-02-28: 2.0.17 (<unknown>)
+- Add support for Analog In 3.0, Remote Switch 2.0, Motion Detector 2.0, NFC,
+  Rotary Encoder 2.0, Solid State 2.0, Temperature IR 2.0 and Outdoor Weather
+  Bricklet

@@ -248,3 +248,9 @@
 - Accept wider range of types for char (str, unicode, bytes, bytearray with
   length 1 and int) and list of char / string (str, unicode, bytes, bytearray
   and list of char), all type conversion is done with ord / chr
+
+2018-02-28: 2.1.16 (<unknown>)
+- Add support for Analog In 3.0, Remote Switch 2.0, Motion Detector 2.0, NFC,
+  Rotary Encoder 2.0, Solid State 2.0, Temperature IR 2.0 and Outdoor Weather
+  Bricklet
+- Add general streaming support
