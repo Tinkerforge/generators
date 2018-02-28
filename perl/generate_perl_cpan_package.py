@@ -53,12 +53,9 @@ def generate(root_dir):
                     tmp_unzipped_dir])
 
     # Make CPAN package structure
-    modules = ['Tinkerforge',
-               'Tinkerforge::IPConnection',
-               'Tinkerforge::Device',
-               'Tinkerforge::Error']
+    modules = ['Tinkerforge']
 
-    for filename in self.get_released_files():
+    for filename in os.listdir(os.path.join(tmp_unzipped_source_lib_dir, 'Tinkerforge')):
         modules.append('Tinkerforge::' + filename.replace('.pm', ''))
 
     common.execute(['module-starter',
