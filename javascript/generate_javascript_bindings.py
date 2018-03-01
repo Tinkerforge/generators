@@ -60,7 +60,7 @@ var IPConnection = require('./IPConnection');
             callback_constants += 'BrickletRS232.CALLBACK_ERROR_CALLBACK = 9; // for backward compatibility\n'
 
         for packet in self.get_packets('callback'):
-            if False:#packet.has_high_level():
+            if packet.has_high_level():
                 callback_constants += callback_constant_statement.format(packet.get_name(skip=-2).upper,
                                                                          -packet.get_function_id())
 
@@ -305,14 +305,14 @@ var IPConnection = require('./IPConnection');
 		/*
 		{1}
 		*/
-		this.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback);
+		this.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback, false);
 	}};
 """
             param_method_code = """	this.{0} = function({1}, returnCallback, errorCallback) {{
 		/*
 		{2}
 		*/
-		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback);
+		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback, false);
 	}};
 """
 
@@ -819,7 +819,7 @@ true);"""
 	}};
 """
 
-        for packet in []:#self.get_packets('function'):
+        for packet in self.get_packets('function'):
             stream_in = packet.get_high_level('stream_in')
             stream_out = packet.get_high_level('stream_out')
 
@@ -1165,8 +1165,8 @@ module.exports = {0};
         source += self.get_javascript_class_opening()
         source += self.get_javascript_response_expecteds()
         source += self.get_javascript_callback_formats()
-        #source += self.get_javascript_high_level_callbacks()
-        #source += self.get_javascript_stream_state_objects()
+        source += self.get_javascript_high_level_callbacks()
+        source += self.get_javascript_stream_state_objects()
         source += self.get_javascript_methods()
         source += self.get_javascript_class_closing()
 
