@@ -870,7 +870,8 @@ def check_name(name, display_name=None, is_constant=False):
             display_name_to_check = display_name_to_check.replace(' 2.0', ' V2')
         elif display_name.endswith(' 3.0'):
             display_name_to_check = display_name_to_check.replace(' 3.0', ' V3')
-        elif display_name in ['IO-4', 'IO-16']: # exceptions for legacy dash rules
+
+        if display_name in ['IO-4', 'IO-16']: # exceptions for legacy dash rules
             display_name_to_check = display_name_to_check.replace('-', '')
         else:
             display_name_to_check = display_name_to_check.replace('-', ' ')
