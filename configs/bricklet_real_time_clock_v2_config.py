@@ -134,6 +134,26 @@ in Millisekunden umgerechnet dar.
 
 com['packets'].append({
 'type': 'function',
+'name': 'Get Timestamp',
+'elements': [('Timestamp', 'int64', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the current date and the time of the real-time clock converted to
+milliseconds. The timestamp has an effective resolution of hundredths of a
+second.
+""",
+'de':
+"""
+Gibt das aktuelle Datum und Zeit der Echtzeituhr in Millisekunden umgerechnet
+zurück. Der Zeitstempel hat eine effektive Auflösung von Hundertstelsekunden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Set Offset',
 'elements': [('Offset', 'int8', 1, 'in')],
 'since_firmware': [1, 0, 0],
