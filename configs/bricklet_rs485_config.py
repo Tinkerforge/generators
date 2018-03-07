@@ -455,8 +455,8 @@ is 1024 byte (1kb) for both.
 
 The current buffer content is lost if this function is called.
 
-The send buffer holds data that is given by :func:`Write` and
-can not be written yet. The receive buffer holds data that is
+The send buffer holds data that was given by :func:`Write` and
+could not be written yet. The receive buffer holds data that is
 received through RS485 but could not yet be send to the
 user, either by :func:`Read` or through :cb:`Read` callback.
 

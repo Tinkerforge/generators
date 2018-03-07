@@ -43,7 +43,7 @@ ASCII or similar is not necessary.
 
 The return value is the number of characters that were written.
 
-See :func:`Set RS232 Configuration` for configuration possibilities
+See :func:`Set Configuration` for configuration possibilities
 regarding baudrate, parity and so on.
 """,
 'de':
@@ -53,7 +53,7 @@ sein, ASCII o.ä. ist nicht notwendig.
 
 Der Rückgabewert ist die Anzahl der Zeichen die geschrieben wurden.
 
-Siehe :func:`Set RS232 Configuration` für Konfigurationsmöglichkeiten
+Siehe :func:`Set Configuration` für Konfigurationsmöglichkeiten
 bezüglich Baudrate, Parität usw.
 """
 }]

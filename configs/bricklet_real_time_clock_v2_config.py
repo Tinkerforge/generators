@@ -268,11 +268,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`Set Date Time Callback Period`.
+Returns the period as set by :func:`Set Date Time Callback Configuration`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period`
+Gibt die Periode zurück, wie von :func:`Set Date Time Callback Configuration`
 gesetzt.
 """
 }]
@@ -404,7 +404,7 @@ same as for :func:`Get Date Time`.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
-:func:`Set Date Time Callback Period`, ausgelöst. Die :word:`parameters` sind
+:func:`Set Date Time Callback Configuration`, ausgelöst. Die :word:`parameters` sind
 die gleichen wie die von :func:`Get Date Time`.
 """
 }]

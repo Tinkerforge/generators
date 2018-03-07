@@ -234,7 +234,7 @@ The baud rate can be configured in steps between 10 and 1000 kbit/s.
 
 The CAN transceiver has three different modes:
 
-* Normal: Reads from and writes and to the CAN bus and performs active bus
+* Normal: Reads from and writes to the CAN bus and performs active bus
   error detection and acknowledgement.
 * Loopback: All reads and writes are performed internally. The transceiver
   is disconnected from the actual CAN bus.
