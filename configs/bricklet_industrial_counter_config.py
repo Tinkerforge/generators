@@ -238,7 +238,7 @@ com['packets'].append({
 'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
              ('Count Edge', 'uint8', 1, 'in', CONSTANT_COUNT_EDGE),
              ('Count Direction', 'uint8', 1, 'in', CONSTANT_COUNT_DIRECTON),
-             ('Duty Cylce Prescaler', 'uint8', 1, 'in', CONSTANT_DUTY_CYCLE_PRESCALER),
+             ('Duty Cycle Prescaler', 'uint8', 1, 'in', CONSTANT_DUTY_CYCLE_PRESCALER),
              ('Frequency Integration Time', 'uint8', 1, 'in', CONSTANT_FREQUENCY_INTEGRATION_TIME)],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -258,7 +258,7 @@ com['packets'].append({
 'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
              ('Count Edge', 'uint8', 1, 'out', CONSTANT_COUNT_EDGE),
              ('Count Direction', 'uint8', 1, 'out', CONSTANT_COUNT_DIRECTON),
-             ('Duty Cylce Prescaler', 'uint8', 1, 'out', CONSTANT_DUTY_CYCLE_PRESCALER),
+             ('Duty Cycle Prescaler', 'uint8', 1, 'out', CONSTANT_DUTY_CYCLE_PRESCALER),
              ('Frequency Integration Time', 'uint8', 1, 'out', CONSTANT_FREQUENCY_INTEGRATION_TIME)],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
