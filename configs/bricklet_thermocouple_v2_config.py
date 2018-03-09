@@ -37,7 +37,7 @@ e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
 
 If you want to get the temperature periodically, it is recommended
 to use the :cb:`Temperature` callback and set the period with
-:func:`Set Temperature Callback Period`.
+:func:`Set Temperature Callback Configuration`.
 """,
 'de':
 """
@@ -47,7 +47,7 @@ angegeben, z.B. bedeutet ein Wert von 4223 eine gemessene Temperatur von
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Temperature` Callback zu nutzen und die Periode mit
-:func:`Set Temperature Callback Period` vorzugeben.
+:func:`Set Temperature Callback Configuration` vorzugeben.
 """
 }
 
