@@ -1174,6 +1174,79 @@ Gibt die Konfiguration zurück, wie von :func:`Set Detection LED Config` gesetzt
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Maximum Timeout',
+'elements': [('Timeout', 'uint16', 1, 'in')],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Sets the maximum timeout in ms.
+
+This is a global maximum used for all internal state timeouts. The timeouts depend heavily
+on the used tags etc. For example: If you use a Type 2 tag and you want to detect if
+it is present, you have to use :func:`Reader Request Tag ID` and wait for the state
+to change to either the error state or the ready state.
+
+With the default configuration this takes 2-3 seconds. By setting the maximum timeout to
+100ms you can reduce this time to ~150-200ms. For Type 2 this would also still work
+with a 20ms timeout (a Type 2 tag answers usually within 10ms). A type 4 tag can take
+up to 500ms in our tests.
+
+If you need a fast response time to discover if a tag is present or not you can find
+a good timeout value by trial and error for your specific tag.
+
+By default we use a very conservative timeout, to be sure that any Tag can always
+answer in time.
+
+Default timeout: 2000ms.
+""",
+'de':
+"""
+Setzt das maximale Timeout in ms.
+
+Dies ist das globale Maximum für die internenn State-Timeouts. Der korrekte Timeout hängt
+vom verwendeten Tag Typ ab. Zum Beispiel: Wenn ein Typ 2 Tag verwendet wird und herausgefunden
+werden soll ob der Tag in Reichweite des Bricklets ist, muss :func:`Reader Request Tag ID`
+aufgerufen werden. Der State wechselt dann entweder auf Ready oder Error (Tag gefunden/nicht
+gefunden).
+
+Mit den Standardeinstellungen dauert dies ca. 2-3 Sekunden. Wenn man das maximale Timeout
+auf 100ms setzt reduziert sich diese zeit auf ~150-200ms. Für Typ 2 funktioniert das auch
+noch mit einem Timeout von 20ms (Ein Typ 2 Tag antwortet für gewöhnlich innerhalb von 10ms).
+Ein Typ 4 Tag benötigte bis zu 500ms in unsren Tests.
+
+Wenn eine schnelle reaktionszeit benötigt wird, kann das Timeout entsprechend verrigert werden
+einen guten Wert kann man per Trial-and-Error für einen spezfiischen Tag-Typ ermitteln.
+
+Standardmäßig nutzen wir einen sehr konservativen Timeout um sicher zu stellen das alle
+Tags definitiv funktionieren.
+
+Standardwert: 2000ms. 
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Maximum Timeout',
+'elements': [('Timeout', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Returns the timeout as set by :func:`Set Maximum Timeout`
+""",
+'de':
+"""
+Gibt das Timeout zurück, wie von :func:`Set Maximum Timeout` gesetzt.
+"""
+}]
+})
+
+
+
 com['examples'].append({
 'name': 'Scan For Tags',
 'functions': [('callback', ('Reader State Changed', 'reader state changed'), [(('State', 'State'), 'uint8', 1, None, None, None), (('Idle', 'Idle'), 'bool', 1, None, None, None)], None, None),
