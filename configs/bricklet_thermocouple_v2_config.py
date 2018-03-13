@@ -237,11 +237,10 @@ com['examples'].append({
 'functions': [('getter', ('Get Temperature', 'temperature'), [(('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None)], [])]
 })
 
-
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Temperature', 'temperature'), [(('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None)], None, None),
-              ('callback_period', ('Temperature', 'temperature'), [], 1000)]
+              ('callback_configuration', ('Temperature', 'temperature'), [], 1000, 'x', [(0, 0)])]
 })
 
 com['examples'].append({
