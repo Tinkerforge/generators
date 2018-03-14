@@ -343,8 +343,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the communication LED configuration. By default the LED shows
-communication traffic, it flickers once for every 10 received data packets.
+Sets the communication LED configuration. By default the LED shows RS485
+communication traffic by flickering.
 
 You can also turn the LED permanently on/off or show a heartbeat.
 
@@ -353,8 +353,7 @@ If the Bricklet is in bootloader mode, the LED is off.
 'de':
 """
 Setzt die Konfiguration der Kommunikations-LED. Standardmäßig zeigt
-die LED die Kommunikationsdatenmenge an. Sie blinkt einmal auf pro 10 empfangenen
-Datenpaketen zwischen Brick und Bricklet.
+die LED die RS485 Kommunikation durch Aufblinken an.
 
 Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
 
