@@ -136,7 +136,7 @@ gesetzt und die anderen Rückgabewerte beinhalte ungültige Werte.
 Der ``identifier`` Rückgabewerte folgt dem für :func:`Write Frame` beschriebenen
 Format.
 
-Für Remote-Frames beinhalte der ``data`` Rückgabewerte immer gültigen Werte.
+Für Remote-Frames beinhalte der ``data`` Rückgabewerte immer ungültigen Werte.
 
 Mittels eines einstellbaren Lesefilters kann festgelegt werden, welche Frames
 vom CAN-Transceiver überhaupt empfangen und im Lese-Buffer abgelegt werden
