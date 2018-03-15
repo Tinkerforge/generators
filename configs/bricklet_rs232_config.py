@@ -192,7 +192,7 @@ Sets the configuration for the RS232 communication. Available options:
 * Parity of none, odd, even or forced parity.
 * Stopbits can be 1 or 2.
 * Word length of 5 to 8.
-* Hard-/Software flow control can each be on or off.
+* Hard-/Software flow control can either be on or off but not both simultaneously on.
 
 The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
 """,
@@ -205,7 +205,7 @@ Verfügbare Optionen sind:
 * Parität von None, Odd, Even und Forced Parity.
 * Stop Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
-* Hard-/Software Flow Control kann je an oder aus sein.
+* Hard-/Software Flow Control kann entweder an oder aus sein aber nicht beides gleichzeitig an.
 
 Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/Software Flow Control aus.
 """
