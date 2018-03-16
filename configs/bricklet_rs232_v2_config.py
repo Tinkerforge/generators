@@ -154,19 +154,19 @@ Gibt *true* zurück falls :cb:`Read` Callback aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Baudrate', 'uint8', 1, 'in', ('Baudrate', [('300', 0),
-                                                          ('600', 1),
-                                                          ('1200', 2),
-                                                          ('2400', 3),
-                                                          ('4800', 4),
-                                                          ('9600', 5),
-                                                          ('14400', 6),
-                                                          ('19200', 7),
-                                                          ('28800', 8),
-                                                          ('38400', 9),
-                                                          ('57600', 10),
-                                                          ('115200', 11),
-                                                          ('230400', 12)])),
+'elements': [('Baudrate', 'uint32', 1, 'in', ('Baudrate', [('300', 300),
+                                                           ('600', 600),
+                                                           ('1200', 1200),
+                                                           ('2400', 2400),
+                                                           ('4800', 4800),
+                                                           ('9600', 9600),
+                                                           ('14400', 14400),
+                                                           ('19200', 19200),
+                                                           ('28800', 28800),
+                                                           ('38400', 38400),
+                                                           ('57600', 57600),
+                                                           ('115200', 115200),
+                                                           ('230400', 230400)])),
              ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
                                                       ('Odd', 1),
                                                       ('Even', 2),
@@ -178,10 +178,9 @@ com['packets'].append({
                                                               ('6', 6),
                                                               ('7', 7),
                                                               ('8', 8)])),
-             ('Hardware Flowcontrol', 'uint8', 1, 'in', ('Hardware Flowcontrol', [('Off', 0),
-                                                                                  ('On', 1)])),
-             ('Software Flowcontrol', 'uint8', 1, 'in', ('Software Flowcontrol', [('Off', 0),
-                                                                                  ('On', 1)]))],
+             ('Flowcontrol', 'uint8', 1, 'in', ('Flowcontrol', [('Off', 0),
+                                                                ('Software', 1),
+                                                                ('Hardware', 2)]))],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -193,7 +192,7 @@ Sets the configuration for the RS232 communication. Available options:
 * Parity of none, odd, even or forced parity.
 * Stopbits can be 1 or 2.
 * Word length of 5 to 8.
-* Hard-/Software flow control can each be on or off.
+* Flow control can be off, software or hardware.
 
 The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
 """,
@@ -206,7 +205,7 @@ Verfügbare Optionen sind:
 * Parität von None, Odd, Even und Forced Parity.
 * Stop Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
-* Hard-/Software Flow Control kann je an oder aus sein.
+* Flow Control kann aus, Software oder Hardware sein.
 
 Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/Software Flow Control aus.
 """
@@ -216,19 +215,19 @@ Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/S
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Baudrate', 'uint8', 1, 'out', ('Baudrate', [('300', 0),
-                                                           ('600', 1),
-                                                           ('1200', 2),
-                                                           ('2400', 3),
-                                                           ('4800', 4),
-                                                           ('9600', 5),
-                                                           ('14400', 6),
-                                                           ('19200', 7),
-                                                           ('28800', 8),
-                                                           ('38400', 9),
-                                                           ('57600', 10),
-                                                           ('115200', 11),
-                                                           ('230400', 12)])),
+'elements': [('Baudrate', 'uint32', 1, 'out', ('Baudrate', [('300', 300),
+                                                            ('600', 600),
+                                                            ('1200', 1200),
+                                                            ('2400', 2400),
+                                                            ('4800', 4800),
+                                                            ('9600', 9600),
+                                                            ('14400', 14400),
+                                                            ('19200', 19200),
+                                                            ('28800', 28800),
+                                                            ('38400', 38400),
+                                                            ('57600', 57600),
+                                                            ('115200', 115200),
+                                                            ('230400', 230400)])),
              ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
                                                        ('Odd', 1),
                                                        ('Even', 2),
@@ -240,10 +239,9 @@ com['packets'].append({
                                                                ('6', 6),
                                                                ('7', 7),
                                                                ('8', 8)])),
-             ('Hardware Flowcontrol', 'uint8', 1, 'out', ('Hardware Flowcontrol', [('Off', 0),
-                                                                                   ('On', 1)])),
-             ('Software Flowcontrol', 'uint8', 1, 'out', ('Software Flowcontrol', [('Off', 0),
-                                                                                   ('On', 1)]))],
+             ('Flowcontrol', 'uint8', 1, 'out', ('Flowcontrol', [('Off', 0),
+                                                                 ('Software', 1),
+                                                                 ('Hardware', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
