@@ -155,20 +155,20 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
 'elements': [('Baudrate', 'uint32', 1, 'in'),
-             ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
-                                                      ('Odd', 1),
-                                                      ('Even', 2),
-                                                      ('Forced Parity 1', 3),
-                                                      ('Forced Parity 0', 4)])),
+             ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 1),
+                                                      ('Odd', 2),
+                                                      ('Even', 3),
+                                                      ('Forced Parity 1', 4),
+                                                      ('Forced Parity 0', 5)])),
              ('Stopbits', 'uint8', 1, 'in', ('Stopbits', [('1', 1),
                                                           ('2', 2)])),
              ('Wordlength', 'uint8', 1, 'in', ('Wordlength', [('5', 5),
                                                               ('6', 6),
                                                               ('7', 7),
                                                               ('8', 8)])),
-             ('Flowcontrol', 'uint8', 1, 'in', ('Flowcontrol', [('Off', 0),
-                                                                ('Software', 1),
-                                                                ('Hardware', 2)]))],
+             ('Flowcontrol', 'uint8', 1, 'in', ('Flowcontrol', [('Off', 1),
+                                                                ('Software', 2),
+                                                                ('Hardware', 3)]))],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -204,20 +204,20 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
 'elements': [('Baudrate', 'uint32', 1, 'out'),
-             ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
-                                                       ('Odd', 1),
-                                                       ('Even', 2),
-                                                       ('Forced Parity 1', 3),
-                                                       ('Forced Parity 0', 4)])),
+             ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 1),
+                                                       ('Odd', 2),
+                                                       ('Even', 3),
+                                                       ('Forced Parity 1', 4),
+                                                       ('Forced Parity 0', 5)])),
              ('Stopbits', 'uint8', 1, 'out', ('Stopbits', [('1', 1),
                                                            ('2', 2)])),
              ('Wordlength', 'uint8', 1, 'out', ('Wordlength', [('5', 5),
                                                                ('6', 6),
                                                                ('7', 7),
                                                                ('8', 8)])),
-             ('Flowcontrol', 'uint8', 1, 'out', ('Flowcontrol', [('Off', 0),
-                                                                 ('Software', 1),
-                                                                 ('Hardware', 2)]))],
+             ('Flowcontrol', 'uint8', 1, 'out', ('Flowcontrol', [('Off', 1),
+                                                                 ('Software', 2),
+                                                                 ('Hardware', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -331,6 +331,24 @@ Siehe :func:`Set Buffer Config` zur Konfiguration der Buffergrößen.
 })
 
 com['packets'].append({
+'type': 'function',
+'name': 'Get Error Count',
+'elements': [('Error Count Overrun', 'uint32', 1, 'out'),
+             ('Error Count Parity', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the current number of overrun and parity errors.
+""",
+'de':
+"""
+Gibt die aktuelle Anzahl an Overrun und Parity Fehlern zurück.
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': 'Read Low Level',
 'elements': [('Message Length', 'uint16', 1, 'out'),
@@ -356,21 +374,20 @@ Dieser Callback kann durch :func:`Enable Read Callback` aktiviert werden.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Error',
-'elements': [('Error', 'uint8', 1, 'out', ('Error', [('Overrun', 1),
-                                                     ('Parity', 2),
-                                                     ('Framing', 4)]))],
-'since_firmware': [2, 0, 1],
+'name': 'Error Count',
+'elements': [('Error Count Overrun', 'uint32', 1, 'out'),
+             ('Error Count Parity', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
-This callback is called if an error occurs.
-Possible errors are overrun, parity or framing error.
+This callback is called if a new error occurs. It returns
+the current overrun and parity error count.
 """,
 'de':
 """
-Dieser Callback wird aufgerufen wenn ein Fehler auftritt.
-Mögliche Fehler sind Overrun-, Parity- oder Framing-Fehler.
+Dieser Callback wird aufgerufen wenn ein neuer Fehler auftritt.
+Er gibt die Anzahl der aufgetreten Overrun and Parity Fehler zurück.
 """
 }]
 })
