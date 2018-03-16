@@ -606,13 +606,13 @@ Gibt die Lese-Filter-Konfiguration zurück, wie von :func:`Set Read Filter Confi
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error Log Low Level',
-'elements': [('Transceiver State', 'uint8', 1, 'out', ('Transceiver State', [('Error Active', 0),
-                                                                             ('Error Passive', 1),
-                                                                             ('Bus Off', 2)])),
+'elements': [('Transceiver State', 'uint8', 1, 'out', ('Transceiver State', [('Active', 0),
+                                                                             ('Passive', 1),
+                                                                             ('Disabled', 2)])),
              ('Transceiver Write Error Level', 'uint8', 1, 'out'),
              ('Transceiver Read Error Level', 'uint8', 1, 'out'),
-             ('Transceiver Stuff Error Count', 'uint32', 1, 'out'),
-             ('Transceiver Form Error Count', 'uint32', 1, 'out'),
+             ('Transceiver Stuffing Error Count', 'uint32', 1, 'out'),
+             ('Transceiver Format Error Count', 'uint32', 1, 'out'),
              ('Transceiver ACK Error Count', 'uint32', 1, 'out'),
              ('Transceiver Bit1 Error Count', 'uint32', 1, 'out'),
              ('Transceiver Bit0 Error Count', 'uint32', 1, 'out'),
@@ -634,9 +634,8 @@ acknowledgement, bit and checksum errors during CAN bus write and read
 operations. For each of this error kinds there is also an individual counter.
 
 When the write error level extends 255 then the CAN transceiver gets disabled
-(bus-off) and no frames can be transmitted or received anymore. The CAN
-transceiver will automatically be activated again after the CAN bus is idle for
-a while.
+and no frames can be transmitted or received anymore. The CAN transceiver will
+automatically be activated again after the CAN bus is idle for a while.
 
 The write buffer timeout, read buffer and backlog overflow counts represents the
 number of these errors:
@@ -673,9 +672,9 @@ CAN-Bus Schreib- und Leseoperationen. Für jede dieser Fehlerarten ist jeweils
 auch ein eigener Zähler vorhanden.
 
 Wenn das Schreibfehler-Level 255 überschreitet dann wird der CAN-Transceiver
-deaktiviert (Bus-Off) und es können keine Frames mehr übertragen und empfangen
-werden. Wenn auf dem CAN-Bus für eine Weile Ruhe herrscht, dann wird der
-CAN-Transceiver automatisch wieder aktiviert.
+deaktiviert und es können keine Frames mehr übertragen und empfangen werden.
+Wenn auf dem CAN-Bus für eine Weile Ruhe herrscht, dann wird der CAN-Transceiver
+automatisch wieder aktiviert.
 
 Die Werte für Schreib-Buffer-Timeout, Lese-Buffer- und Lese-Backlog-Überlauf
 zählen die Anzahl dieser Fehler:
@@ -775,8 +774,8 @@ com['packets'].append({
 Sets the error LED configuration.
 
 By default (show-transceiver-state) the error LED turns on if the CAN
-transceiver is error-passive or bus-off state (see :func:`Get Error Log`). If
-the CAN transceiver is in error-active state the LED turns off.
+transceiver is passive or disabled state (see :func:`Get Error Log`). If
+the CAN transceiver is in active state the LED turns off.
 
 If the LED is configured as show-error then the error LED turns on if any error
 occurs. If you call this function with the show-error option again, the LED will
@@ -791,8 +790,8 @@ If the Bricklet is in bootloader mode, the LED is off.
 Setzt die Konfiguration der Error-LED.
 
 Standardmäßig (Show-Transceiver-State) geht die LED an, wenn der CAN-Transceiver
-im Error-Passive oder Bus-Off Zustand ist (siehe :func:`Get Error Log`). Wenn
-der CAN-Transceiver im Error-Active Zustand ist, dann geht die LED aus.
+im Passive oder Disabled Zustand ist (siehe :func:`Get Error Log`). Wenn
+der CAN-Transceiver im Active Zustand ist, dann geht die LED aus.
 
 Wenn die LED als Show-Error konfiguriert ist, dann geht die LED an wenn ein
 Error auftritt. Wenn diese Funktion danach nochmal mit der Show-Error-Option
