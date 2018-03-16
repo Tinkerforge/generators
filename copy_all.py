@@ -82,14 +82,19 @@ if socket.gethostname() != 'tinkerforge.com':
 
         path_binding = os.path.join(path, 'python')
         src_file_path = os.path.join(path_binding, 'bindings')
+        files = [f for f in os.listdir(src_file_path) if f.endswith('.py')]
 
-        for f in os.listdir(src_file_path):
-            if f.endswith('.py'):
-                src_file = os.path.join(src_file_path, f)
+        files.remove('device_factory.py')
 
-                if files_are_not_the_same(src_file, tool_path):
-                    shutil.copy(src_file, tool_path)
-                    print(' * {0}'.format(f))
+        if tool_name != 'flash-test':
+            files.remove('device_factory_all.py')
+
+        for f in files:
+            src_file = os.path.join(src_file_path, f)
+
+            if files_are_not_the_same(src_file, tool_path):
+                shutil.copy(src_file, tool_path)
+                print(' * {0}'.format(f))
 
 doc_copy = [('_Brick_', 'Bricks'),
             ('_Bricklet_', 'Bricklets'),

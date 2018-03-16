@@ -641,7 +641,8 @@ class PythonBindingsGenerator(common.BindingsGenerator):
         return python_common.PythonElement
 
     def prepare(self):
-        self.device_factory_classes = []
+        self.device_factory_all_classes = []
+        self.device_factory_released_classes = []
 
         return common.BindingsGenerator.prepare(self)
 
@@ -651,8 +652,10 @@ class PythonBindingsGenerator(common.BindingsGenerator):
         with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
             f.write(device.get_python_source())
 
+        self.device_factory_all_classes.append((device.get_python_import_name(), device.get_python_class_name()))
+
         if device.is_released():
-            self.device_factory_classes.append((device.get_python_import_name(), device.get_python_class_name()))
+            self.device_factory_released_classes.append((device.get_python_import_name(), device.get_python_class_name()))
             self.released_files.append(filename)
 
     def finish(self):
@@ -678,17 +681,19 @@ def get_device_display_name(device_identifier):
 def create_device(device_identifier, uid, ipcon):
     return get_device_class(device_identifier)(uid, ipcon)
 """
-        imports = []
-        classes = []
+        for filename, device_factory_classes in [('device_factory_all.py', self.device_factory_all_classes),
+                                                 ('device_factory.py', self.device_factory_released_classes)]:
+            imports = []
+            classes = []
 
-        for import_name, class_name in sorted(self.device_factory_classes):
-            imports.append(template_import.format(import_name, class_name))
-            classes.append('{0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
+            for import_name, class_name in sorted(device_factory_classes):
+                imports.append(template_import.format(import_name, class_name))
+                classes.append('{0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
 
-        with open(os.path.join(self.get_bindings_dir(), 'device_factory.py'), 'w') as f:
-            f.write(template.format(self.get_header_comment('hash'),
-                                    '\n'.join(imports),
-                                    '\n'.join(classes)))
+            with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
+                f.write(template.format(self.get_header_comment('hash'),
+                                        '\n'.join(imports),
+                                        '\n'.join(classes)))
 
         return common.BindingsGenerator.finish(self)
 
