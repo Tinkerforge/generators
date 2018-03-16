@@ -193,6 +193,24 @@ Das andere Relais bleibt unangetastet.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Selected State',
+'elements': [('Relay', 'uint8', 1, 'in'),
+             ('State', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TBD
+""",
+'de':
+"""
+TBD
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Simple',
 'functions': [('loop_header', 5, 'Turn relays alternating on/off 10 times with 1 second delay'),
