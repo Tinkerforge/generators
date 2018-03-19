@@ -157,9 +157,7 @@ com['packets'].append({
 'elements': [('Baudrate', 'uint32', 1, 'in'),
              ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
                                                       ('Odd', 1),
-                                                      ('Even', 2),
-                                                      ('Forced Parity 1', 3),
-                                                      ('Forced Parity 0', 4)])),
+                                                      ('Even', 2)])),
              ('Stopbits', 'uint8', 1, 'in', ('Stopbits', [('1', 1),
                                                           ('2', 2)])),
              ('Wordlength', 'uint8', 1, 'in', ('Wordlength', [('5', 5),
@@ -177,7 +175,6 @@ com['packets'].append({
 Sets the configuration for the RS232 communication. Available options:
 
 * Baudrate between 300 and 230400 baud.
-* Parity of none, odd, even or forced parity.
 * Stopbits can be 1 or 2.
 * Word length of 5 to 8.
 * Flow control can be off, software or hardware.
@@ -190,7 +187,6 @@ Setzt die Konfiguration für die RS232-Kommunikation.
 Verfügbare Optionen sind:
 
 * Baudrate zwischen 300 und 230400 Baud.
-* Parität von None, Odd, Even und Forced Parity.
 * Stop Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
 * Flow Control kann aus, Software oder Hardware sein.
@@ -206,9 +202,7 @@ com['packets'].append({
 'elements': [('Baudrate', 'uint32', 1, 'out'),
              ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
                                                        ('Odd', 1),
-                                                       ('Even', 2),
-                                                       ('Forced Parity 1', 3),
-                                                       ('Forced Parity 0', 4)])),
+                                                       ('Even', 2)])),
              ('Stopbits', 'uint8', 1, 'out', ('Stopbits', [('1', 1),
                                                            ('2', 2)])),
              ('Wordlength', 'uint8', 1, 'out', ('Wordlength', [('5', 5),
