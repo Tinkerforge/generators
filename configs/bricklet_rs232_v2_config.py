@@ -155,20 +155,20 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
 'elements': [('Baudrate', 'uint32', 1, 'in'),
-             ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 1),
-                                                      ('Odd', 2),
-                                                      ('Even', 3),
-                                                      ('Forced Parity 1', 4),
-                                                      ('Forced Parity 0', 5)])),
+             ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
+                                                      ('Odd', 1),
+                                                      ('Even', 2
+                                                      ('Forced Parity 1', 3),
+                                                      ('Forced Parity 0', 4)])),
              ('Stopbits', 'uint8', 1, 'in', ('Stopbits', [('1', 1),
                                                           ('2', 2)])),
              ('Wordlength', 'uint8', 1, 'in', ('Wordlength', [('5', 5),
                                                               ('6', 6),
                                                               ('7', 7),
                                                               ('8', 8)])),
-             ('Flowcontrol', 'uint8', 1, 'in', ('Flowcontrol', [('Off', 1),
-                                                                ('Software', 2),
-                                                                ('Hardware', 3)]))],
+             ('Flowcontrol', 'uint8', 1, 'in', ('Flowcontrol', [('Off', 0),
+                                                                ('Software', 1),
+                                                                ('Hardware', 2)]))],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -204,20 +204,20 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
 'elements': [('Baudrate', 'uint32', 1, 'out'),
-             ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 1),
-                                                       ('Odd', 2),
-                                                       ('Even', 3),
-                                                       ('Forced Parity 1', 4),
-                                                       ('Forced Parity 0', 5)])),
+             ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
+                                                       ('Odd', 1),
+                                                       ('Even', 2),
+                                                       ('Forced Parity 1', 3),
+                                                       ('Forced Parity 0', 4)])),
              ('Stopbits', 'uint8', 1, 'out', ('Stopbits', [('1', 1),
                                                            ('2', 2)])),
              ('Wordlength', 'uint8', 1, 'out', ('Wordlength', [('5', 5),
                                                                ('6', 6),
                                                                ('7', 7),
                                                                ('8', 8)])),
-             ('Flowcontrol', 'uint8', 1, 'out', ('Flowcontrol', [('Off', 1),
-                                                                 ('Software', 2),
-                                                                 ('Hardware', 3)]))],
+             ('Flowcontrol', 'uint8', 1, 'out', ('Flowcontrol', [('Off', 0),
+                                                                 ('Software', 1),
+                                                                 ('Hardware', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -227,25 +227,6 @@ Returns the configuration as set by :func:`Set Configuration`.
 'de':
 """
 Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Set Break Condition',
-'elements': [('Break Time', 'uint16', 1, 'in')],
-'since_firmware': [2, 0, 2],
-'doc': ['bf', {
-'en':
-"""
-Sets a break condition (the TX output is forced to a logic 0 state).
-The parameter sets the hold-time of the break condition (in ms).
-""",
-'de':
-"""
-Setzt eine Break Condition (die TX-Ausgabe wird fest of logisch 0 gezwungen).
-Der Parameter setzt die Haltezeit der Break Condition (in ms).
 """
 }]
 })
