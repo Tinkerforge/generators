@@ -157,7 +157,7 @@ com['packets'].append({
 'elements': [('Baudrate', 'uint32', 1, 'in'),
              ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
                                                       ('Odd', 1),
-                                                      ('Even', 2
+                                                      ('Even', 2),
                                                       ('Forced Parity 1', 3),
                                                       ('Forced Parity 0', 4)])),
              ('Stopbits', 'uint8', 1, 'in', ('Stopbits', [('1', 1),
