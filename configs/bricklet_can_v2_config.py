@@ -877,9 +877,9 @@ aktiviert werden.
 
 com['examples'].append({
 'name': 'Loopback',
-'functions': [('setter', 'Set Transceiver Configuration', [('uint8:constant', 7), ('uint8:constant', 1)], 'Configure transceiver for loopback mode', None),
-              ('callback', ('Frame Read', 'frame read'), [(('Frame Type', 'Frame Type'), 'uint8', 1, None, None, None), (('Identifier', 'Identifier'), 'uint32', 1, None, None, None), (('Data', 'Data'), 'uint8', 8, None, None, None), (('Length', 'Length'), 'uint8', 1, None, None, None)], None, None),
-              ('setter', 'Enable Frame Read Callback', [], 'Enable frame read callback', None)],
-'cleanups': [('setter', 'Disable Frame Read Callback', [], None, None)],
+'functions': [('setter', 'Set Transceiver Configuration', [('uint32', 1000000), ('uint8:constant', 1)], 'Configure transceiver for loopback mode', None),
+              ('callback', ('Frame Read', 'frame read'), [(('Frame Type', 'Frame Type'), 'uint8', 1, None, None, None), (('Identifier', 'Identifier'), 'uint32', 1, None, None, None), (('Data', 'Data'), 'uint8', -15, None, None, None)], None, None),
+              ('setter', 'Set Frame Read Callback', [('bool', True)], 'Enable frame read callback', None)],
+'cleanups': [('setter', 'Set Frame Read Callback', [('bool', False)], None, None)],
 'incomplete': True # because of callback with array parameter
 })
