@@ -174,24 +174,26 @@ com['packets'].append({
 """
 Sets the configuration for the RS232 communication. Available options:
 
-* Baudrate between 300 and 230400 baud.
+* Baudrate between 100 and 2000000 baud.
+* Parity of none, odd or even.
 * Stopbits can be 1 or 2.
 * Word length of 5 to 8.
 * Flow control can be off, software or hardware.
 
-The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
+The default is: 115200 baud, parity none, 1 stop bit, word length 8.
 """,
 'de':
 """
 Setzt die Konfiguration für die RS232-Kommunikation.
 Verfügbare Optionen sind:
 
-* Baudrate zwischen 300 und 230400 Baud.
+* Baudrate zwischen 100 und 2000000 Baud.
+* Parität von None, Odd und Even.
 * Stop Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
 * Flow Control kann aus, Software oder Hardware sein.
 
-Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/Software Flow Control aus.
+Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8.
 """
 }]
 })
@@ -369,8 +371,8 @@ Er gibt die Anzahl der aufgetreten Overrun and Parity Fehler zurück.
 
 com['examples'].append({
 'name': 'Loopback',
-'description': 'For this example connect the RX and TX pin to receive the sent message',
-'functions': [('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', 60, None, None, None), (('Length', 'Length'), 'uint8', 1, None, None, None)], None, None), # FIXME: wrong message type
+'description': 'For this example connect the RX pin to the TX pin on the same Bricklet',
+'functions': [('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', -65535, None, None, None)], None, None), # FIXME: wrong message type
               ('setter', 'Enable Read Callback', [], 'Enable read callback', None)],
 'incomplete': True # because of special logic and callback with array parameter
 })
