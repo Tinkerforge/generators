@@ -61,10 +61,24 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-in 1/100°C
+Sets a temperature offset in 1/100°C. A offset of 10 will decrease the temperature
+by 0.1°C.
+
+If you install this Bricklet into an enclosure and you want to measure the ambient
+temperature, you may have to decrease the measured temperature by some value to
+include for the error because of the heating inside of the enclosure.
+
+We would recommend that you leave the parts in the enclosure running for at least
+24 hours such that a temperature equilibrium can be reached. After that you can measure
+the temperature directly outside of enclosure and set the difference as offset.
+
+This temperature difference is used to calculate the correct ambient humidity and
+also for the in air quality measurements. If the precision of the measurements is
+important to you we recommend that you set this value.
 """,
 'de':
 """
+TBD
 """
 }]
 })
