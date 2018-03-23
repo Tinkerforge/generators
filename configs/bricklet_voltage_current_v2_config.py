@@ -219,12 +219,16 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Gain Multiplier', 'uint16', 1, 'in'),
-             ('Gain Divisor', 'uint16', 1, 'in')],
+'elements': [('Offset', 'int16', 1, 'in'),
+             ('Multiplier', 'uint16', 1, 'in'),
+             ('Divisor', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Offset is used to adjust the messured voltage. It can be positive
+or negative.
+
 Since the shunt resistor that is used to measure the current is not
 perfectly precise, it needs to be calibrated by a multiplier and
 divisor if a very precise reading is needed.
@@ -235,6 +239,9 @@ by setting the multiplier to 1000 and the divisor to 1023.
 """,
 'de':
 """
+Offset wird verwendet, um die gemessene Spannung einzustellen.
+Es kann positiv oder negativ sein.
+
 Da der Shunt-Widerstand über den die Stromstärke gemessen wird keine
 perfekte Genauigkeit hat, ist es nötig einen Multiplikator und
 einen Divisor zu setzen falls sehr genaue Messwerte nötig sind.
@@ -250,8 +257,9 @@ werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Gain Multiplier', 'uint16', 1, 'out'),
-             ('Gain Divisor', 'uint16', 1, 'out')],
+'elements': [('Offset', 'int16', 1, 'out'),
+             ('Multiplier', 'uint16', 1, 'out'),
+             ('Divisor', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
