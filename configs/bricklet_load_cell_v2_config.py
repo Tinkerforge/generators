@@ -101,25 +101,29 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set LED Configuration',
-'elements': [('Enable', 'bool', 1, 'in')],
+'name': 'Set Info LED Configuration',
+'elements': [('Configuration', 'uint8', 1, 'in', ('Info LED Configuration', [('Off', 0),
+                                                                             ('On', 1),
+                                                                             ('Heartbeat', 2),]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Enables/disables the LED.
+Configures the info LED to be either turned off, turned on, or blink in
+heartbeat mode.
 """,
 'de':
 """
-Aktiviert/deaktiviert die LED.
+Konfiguriert die Info-LED so es ist entweder ausgeschaltet, eingeschaltet oder
+in Herzschlagmodus.
 """
 }]
 })
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get LED Configuration',
-'elements': [('Enable', 'bool', 1, 'out')],
+'name': 'Get Info LED Configuration',
+'elements': [('Configuration', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
