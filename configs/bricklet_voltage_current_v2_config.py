@@ -22,8 +22,8 @@ com = {
         'de': 'Misst Leistung, Gleichspannung und Gleichstrom bis zu 720W/36V/20A'
     },
     'comcu': True,
-    'released': True,
-    'documented': True,
+    'released': False,
+    'documented': False,
     'discontinued': False,
     'packets': [],
     'examples': []
@@ -219,37 +219,33 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Offset', 'int16', 1, 'in'),
-             ('Multiplier', 'uint16', 1, 'in'),
-             ('Divisor', 'uint16', 1, 'in')],
+'elements': [('Voltage Multiplier', 'uint16', 1, 'in'),
+             ('Voltage Divisor', 'uint16', 1, 'in'),
+             ('Current Multiplier', 'uint16', 1, 'in'),
+             ('Current Divisor', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Offset is used to adjust the messured voltage. It can be positive
-or negative.
+Since the ADC and the shunt resistor used for the measurements
+are not perfect they need to be calibrated by a multiplier and
+a divisor if a very precise reading is needed.
 
-Since the shunt resistor that is used to measure the current is not
-perfectly precise, it needs to be calibrated by a multiplier and
-divisor if a very precise reading is needed.
-
-For example, if you are expecting a measurement of 1000mA and you
+For example, if you are expecting a current of 1000mA and you
 are measuring 1023mA, you can calibrate the Voltage/Current Bricklet
-by setting the multiplier to 1000 and the divisor to 1023.
+by setting the current multiplier to 1000 and the divisor to 1023.
+The same applies for the voltage.
 """,
 'de':
 """
-Offset wird verwendet, um die gemessene Spannung einzustellen.
-Es kann positiv oder negativ sein.
-
-Da der Shunt-Widerstand über den die Stromstärke gemessen wird keine
-perfekte Genauigkeit hat, ist es nötig einen Multiplikator und
+Da der ADC und der Shunt-Widerstand für die Messungen verwendet
+werden nicht perfekt sind, ist es nötig einen Multiplikator und
 einen Divisor zu setzen falls sehr genaue Messwerte nötig sind.
 
 Zum Beispiel: Wenn eine Messung von 1000mA erwartet wird, das
 Voltage/Current Bricklet aber 1023mA zurück gibt, sollte
 der Multiplikator auf 1000 und der Divisor auf 1023 gesetzt
-werden.
+werden. Das gleiches gilt für die Spannung.
 """
 }]
 })
@@ -257,9 +253,10 @@ werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Offset', 'int16', 1, 'out'),
-             ('Multiplier', 'uint16', 1, 'out'),
-             ('Divisor', 'uint16', 1, 'out')],
+'elements': [('Voltage Multiplier', 'uint16', 1, 'out'),
+             ('Voltage Divisor', 'uint16', 1, 'out'),
+             ('Current Multiplier', 'uint16', 1, 'out'),
+             ('Current Divisor', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
