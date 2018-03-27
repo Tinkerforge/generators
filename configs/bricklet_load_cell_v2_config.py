@@ -101,10 +101,10 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Info LED Configuration',
-'elements': [('Configuration', 'uint8', 1, 'in', ('Info LED Configuration', [('Off', 0),
-                                                                             ('On', 1),
-                                                                             ('Heartbeat', 2),]))],
+'name': 'Set Info LED Config',
+'elements': [('Config', 'uint8', 1, 'in', ('Info LED Config', [('Off', 0),
+                                                               ('On', 1),
+                                                               ('Show Heartbeat', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -122,17 +122,19 @@ in Herzschlagmodus.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Info LED Configuration',
-'elements': [('Configuration', 'uint8', 1, 'out')],
+'name': 'Get Info LED Config',
+'elements': [('Config', 'uint8', 1, 'out', ('Info LED Config', [('Off', 0),
+                                                                ('On', 1),
+                                                                ('Show Heartbeat', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the LED configuration as set by :func:`Set LED Configuration`
+Returns the LED configuration as set by :func:`Set Info LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set LED Configuration` gesetzt.
+Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
 """
 }]
 })
