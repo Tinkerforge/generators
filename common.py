@@ -1360,6 +1360,9 @@ class Packet(object):
     def get_generator(self):
         return self.device.get_generator()
 
+    def get_response_expected(self):
+        return self.raw_data.get('response_expected')
+
     def get_type(self):
         return self.raw_data['type']
 

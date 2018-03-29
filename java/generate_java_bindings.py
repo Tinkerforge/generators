@@ -327,12 +327,20 @@ public class {0} extends Device {{
         template = "\t\tresponseExpected[IPConnection.unsignedByte(FUNCTION_{0})] = {1}\n"
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements(direction='out')) > 0:
+            rp = packet.get_response_expected()
+            if rp == 'always_true':
                 flag = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
-            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
+            elif rp == 'true':
                 flag = 'RESPONSE_EXPECTED_FLAG_TRUE;'
-            else:
+            elif rp == 'false':
                 flag = 'RESPONSE_EXPECTED_FLAG_FALSE;'
+            else:
+                if len(packet.get_elements(direction='out')) > 0:
+                    flag = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
+                elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
+                    flag = 'RESPONSE_EXPECTED_FLAG_TRUE;'
+                else:
+                    flag = 'RESPONSE_EXPECTED_FLAG_FALSE;'
 
             response_expected += template.format(packet.get_name().upper, flag)
 
