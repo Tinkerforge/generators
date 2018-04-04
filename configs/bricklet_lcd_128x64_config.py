@@ -63,6 +63,28 @@ function.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Read Pixels Low Level',
+'elements': [('X Start', 'uint8', 1, 'in'),
+             ('Y Start', 'uint8', 1, 'in'),
+             ('X End', 'uint8', 1, 'in'),
+             ('Y End', 'uint8', 1, 'in'),
+             ('Pixels Length', 'uint16', 1, 'out'),
+             ('Pixels Chunk Offset', 'uint16', 1, 'out'),
+             ('Pixels Chunk Data', 'bool', 60*8, 'out')],
+'high_level': {'stream_out': {'name': 'Pixels'}},
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+"""
+}]
+})
 
 com['packets'].append({
 'type': 'function',
