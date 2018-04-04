@@ -78,7 +78,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Reads pixels from the specified window.
 
+The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are read
+from the window line by line from left to right.
+
+If automatic draw is enabled the pixels that are read are always the same that are
+shown on the display.
+
+If automatic draw is disabled the pixels are read from the internal buffer
+(see :func:`Draw Buffered Frame`).
+
+Automatic draw can be configured with the :func:`Set Display Configuration`
+function.
 """,
 'de':
 """
