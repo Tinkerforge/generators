@@ -127,15 +127,15 @@ com['packets'].append({
 """
 Sets the configuration of the display.
 
-You can set a contrast value from 0 to 63, a backlight intensity value
-from 0 to 100 and you can invert the color (black/white) of the display.
+You can set a contrast value from 0 to 255
+and you can invert the color (black/white) of the display.
 
 If automatic draw is set to *true*, the display is automatically updated with every
 call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
 changes are written into a temporary buffer and only shown on the display after
 a call of :func:`Draw Buffered Frame`.
 
-The default values are contrast 21, inverting off
+The default values are contrast 143, inverting off
 and automatic draw on.
 """,
 'de':
