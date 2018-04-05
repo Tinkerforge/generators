@@ -52,3 +52,45 @@ add_callback_value_function(
     doc       = temperature_doc
 )
 
+HEATER_CONFIG_CONSTANT = ('Heater Config', [('Disabled', 0),
+                                            ('Enabled',  1)])
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Heater Configuration',
+'elements': [('Heater Config', 'uint8', 1, 'in', HEATER_CONFIG_CONSTANT)],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Enables/disables the heater. The heater can be used to test the sensor.
+
+By default the heater is disabled.
+""",
+'de':
+"""
+Aktiviert/deaktiviert das Heizelement. Das Heizelement kann genutzt werden
+um den Sensor zu testen.
+
+Standardmäßig ist das Heizelement deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Heater Configuration',
+'elements': [('Heater Config', 'uint8', 1, 'out', HEATER_CONFIG_CONSTANT)],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the heater configuration as set by :func:`Set Heater Configuration`.
+""",
+'de':
+"""
+Gibt die Heizelement-Konfiguration zurück, wie von :func:`Set Heater Configuration` gesetzt.
+"""
+}]
+})
+
