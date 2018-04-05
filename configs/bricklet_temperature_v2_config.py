@@ -18,8 +18,8 @@ com = {
     'display_name': 'Temperature 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Measures ambient temperature with 0.1°C accuracy',
-        'de': 'Misst Umgebungstemperatur mit 0,1°C Genauigkeit'
+        'en': 'Measures ambient temperature with 0.2°C accuracy',
+        'de': 'Misst Umgebungstemperatur mit 0,2°C Genauigkeit'
     },
     'comcu': True,
     'released': False,
