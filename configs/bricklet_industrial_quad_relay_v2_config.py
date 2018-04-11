@@ -147,6 +147,68 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 })
 
 com['packets'].append({
+'type': 'function',
+'name': 'Set Selected Output Value',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Value', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the output value of the specified channel without affecting the other channels.
+""",
+'de':
+"""
+Setzt den Ausgabewert des spezifizierten Channels ohne die anderen Channelne zu beeinflussen.
+"""
+}]
+})
+
+# TODO: Documentation
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Info LED Config',
+'elements': [('LED', 'uint8', 1, 'in'),
+             ('Config', 'uint8', 1, 'in', ('Info LED Config', [('Off', 0),
+                                                               ('On', 1),
+                                                               ('Show Heartbeat', 2),
+                                                               ('Show Channel Status', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Info LED Config',
+'elements': [('LED', 'uint8', 1, 'in'),
+             ('Config', 'uint8', 1, 'out', ('Info LED Config', [('Off', 0),
+                                                                ('On', 1),
+                                                                ('Show Heartbeat', 2),
+                                                                ('Show Channel Status', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the Info LED configuration as set by :func:`Set Info LED Config`
+""",
+'de':
+"""
+Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
 'elements': [('Channel', 'uint8', 1, 'out'),
@@ -164,24 +226,6 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten den Channel und den aktuellen
 Zustand des Channels (der Zustand nach dem Monoflop).
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Set Selected Output Value',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Sets the output value of the specified channel without affecting the other channels.
-""",
-'de':
-"""
-Setzt den Ausgabewert des spezifizierten Channels ohne die anderen Channelne zu beeinflussen.
 """
 }]
 })
