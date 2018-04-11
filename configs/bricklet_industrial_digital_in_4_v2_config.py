@@ -6,9 +6,11 @@
 
 # Industrial Digital In 4 Bricklet communication config
 
+# TODO: Documentation and examples.
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 2100,
     'name': 'Industrial Digital In 4 V2',
@@ -28,7 +30,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Input Value',
+'name': 'Get Value',
 'elements': [('Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -45,13 +47,29 @@ bedeutet logisch 1 und *false* logisch 0.
 }]
 })
 
-
+com['packets'].append({
+'type': 'function',
+'name': 'Get Selected Value',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Value', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the logic levels that are currently measured on a specific channel.
+""",
+'de':
+"""
+Gibt die aktuell gemessenen Zustand zurück die derzeit auf einem bestimmten Channel
+gemessen werden.
+"""
+}]
+})
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Input Value Callback Configuration',
-'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Enable', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -68,8 +86,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Input Value Callback Configuration',
-'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Enable', 'bool', 1, 'out'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -84,43 +101,37 @@ com['packets'].append({
 })
 
 com['packets'].append({
-'type': 'callback',
-'name': 'Input Value',
-'elements': [('Enabled', 'bool', 4, 'out'),
-             ('Changed', 'bool', 4, 'out'),
-             ('Value', 'bool', 4, 'out')],
+'type': 'function',
+'name': 'Set All Input Value Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in'),
+             ('Value Has To Change', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
-'doc': ['c', {
+'doc': ['ccf', {
 'en':
 """
-This callback is triggered whenever a change of the voltage level is detected
-on pins where the interrupt was activated with :func:`Set Input Value Callback Configuration`.
 
-The values are a bitmask that specifies which interrupts occurred
-and the current value bitmask.
-
-For example:
-
-* (1, 1) or (0b0001, 0b0001) means that an interrupt on pin 0 occurred and
-  currently pin 0 is high and pins 1-3 are low.
-* (9, 14) or (0b1001, 0b1110) means that interrupts on pins 0 and 3
-  occurred and currently pin 0 is low and pins 1-3 are high.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst sobald eine Änderung des Spannungspegels
-detektiert wird, an Pins für welche der Interrupt mit :func:`Set Input Value Callback Configuration`
-aktiviert wurde.
 
-Die Rückgabewerte sind eine Bitmaske der aufgetretenen Interrupts und der
-aktuellen Zustände.
+"""
+}]
+})
 
-Beispiele:
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Input Value Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out'),
+             ('Value Has To Change', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
 
-* (1, 1) bzw. (0b0001, 0b0001) bedeutet, dass ein Interrupt am Pin 0 aufgetreten
-  ist und aktuell Pin 0 logisch 1 ist und die Pins 1-3 logisch 0 sind.
-* (9, 14) bzw. (0b1001, 0b1110) bedeutet, dass Interrupts an den Pins 0 und 3
-  aufgetreten sind und aktuell Pin 0 logisch 0 ist und die Pins 1-3 logisch 1 sind.
+""",
+'de':
+"""
+
 """
 }]
 })
@@ -128,14 +139,14 @@ Beispiele:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count',
-'elements': [('Pin', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Reset Counter', 'bool', 1, 'in'),
              ('Count', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the current value of the edge counter for the selected pin. You can
+Returns the current value of the edge counter for the selected channel. You can
 configure the edges that are counted with :func:`Set Edge Count Configuration`.
 
 If you set the reset counter to *true*, the count is set back to 0
@@ -143,7 +154,7 @@ directly after it is read.
 """,
 'de':
 """
-Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Pin zurück. Die
+Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Channel zurück. Die
 zu zählenden Flanken können mit :func:`Set Edge Count Configuration` konfiguriert werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
@@ -155,7 +166,7 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Configuration',
-'elements': [('Pin', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Edge Type', 'uint8', 1, 'in', ('Edge Type', [('Rising', 0),
                                                             ('Falling', 1),
                                                             ('Both', 2)])),
@@ -164,11 +175,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Configures the edge counter for the selected pins. A bitmask of 9 or 0b1001 will
-enable the edge counter for pins 0 and 3.
+Configures the edge counter for a specific channel.
 
 The edge type parameter configures if rising edges, falling edges or
-both are counted if the pin is configured for input. Possible edge types are:
+both are counted if the channel is configured for input. Possible edge types are:
 
 * 0 = rising (default)
 * 1 = falling
@@ -185,11 +195,10 @@ Default values: 0 (edge type) and 100ms (debounce time)
 """,
 'de':
 """
-Konfiguriert den Flankenzähler für die ausgewählten Pins. Eine Bitmaske von 9
-bzw. 0b1001 aktiviert den Flankenzähler für die Pins 0 und 3.
+Konfiguriert den Flankenzähler für einen bestimmten Kanal.
 
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
-steigende, fallende oder beide Flanken gezählt werden für Pins die als Eingang
+steigende, fallende oder beide Flanken gezählt werden für Channels die als Eingang
 konfiguriert sind. Mögliche Flankentypen sind:
 
 * 0 = steigend (Standard)
@@ -211,7 +220,7 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Configuration',
-'elements': [('Pin', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Edge Type', 'uint8', 1, 'out', ('Edge Type', [('Rising', 0),
                                                              ('Falling', 1),
                                                              ('Both', 2)])),
@@ -220,14 +229,92 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the edge type and debounce time for the selected pin as set by
+Returns the edge type and debounce time for the selected channel as set by
 :func:`Set Edge Count Configuration`.
 """,
 'de':
 """
-Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Pin zurück,
+Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Channel zurück,
 wie von :func:`Set Edge Count Configuration` gesetzt.
 """
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Info LED Config',
+'elements': [('LED', 'uint8', 1, 'in'),
+             ('Config', 'uint8', 1, 'in', ('Info LED Config', [('Off', 0),
+                                                               ('On', 1),
+                                                               ('Show Heartbeat', 2),
+                                                               ('Show Channel Status', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Info LED Config',
+'elements': [('LED', 'uint8', 1, 'in'),
+             ('Config', 'uint8', 1, 'out', ('Info LED Config', [('Off', 0),
+                                                                ('On', 1),
+                                                                ('Show Heartbeat', 2),
+                                                                ('Show Channel Status', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the Info LED configuration as set by :func:`Set Info LED Config`
+""",
+'de':
+"""
+Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Input Value',
+'elements': [('Channel', 'uint8', 1, 'out'),
+             ('Changed', 'bool', 1, 'out'),
+             ('Value', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'All Input Value',
+'elements': [('Changed', 'bool', 4, 'out'),
+             ('Value', 'bool', 4, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})

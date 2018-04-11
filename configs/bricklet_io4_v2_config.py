@@ -6,7 +6,7 @@
 
 # IO-4 Bricklet 2.0 communication config
 
-# TODO: Documentation.
+# TODO: Documentation and examples.
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
