@@ -347,6 +347,50 @@ TODO
 }]
 })
 
+# TODO: Documentation
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Info LED Config',
+'elements': [('LED', 'uint8', 1, 'in'),
+             ('Config', 'uint8', 1, 'in', ('Info LED Config', [('Off', 0),
+                                                               ('On', 1),
+                                                               ('Show Heartbeat', 2),
+                                                               ('Show Channel Status', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Info LED Config',
+'elements': [('LED', 'uint8', 1, 'in'),
+             ('Config', 'uint8', 1, 'out', ('Info LED Config', [('Off', 0),
+                                                                ('On', 1),
+                                                                ('Show Heartbeat', 2),
+                                                                ('Show Channel Status', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the Info LED configuration as set by :func:`Set Info LED Config`
+""",
+'de':
+"""
+Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
+"""
+}]
+})
+
 com['packets'].append({
 'type': 'callback',
 'name': 'All Counter',
