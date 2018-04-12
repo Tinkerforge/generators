@@ -425,6 +425,7 @@ void communication_init(void);
         folder_src = os.path.join(self.get_root_dir(), 'comcu_templates')
         shutil.copytree(os.path.join(folder_src, 'software'), os.path.join(folder_dst, 'software'))
         shutil.copy(os.path.join(folder_src, '.gitignore'), os.path.join(folder_dst))
+        shutil.copy(os.path.join(folder_src, 'README.rst'), os.path.join(folder_dst))
 
         if os.path.isdir(os.path.join(folder_src, 'hardware')):
             shutil.copytree(os.path.join(folder_src, 'hardware'),  os.path.join(folder_dst, 'hardware'))
@@ -443,8 +444,20 @@ void communication_init(void);
                 fpath = os.path.join(dname, fname)
                 with open(fpath, "r") as f:
                     s = f.read()
+
+                device_name_readme = device_name
+                if device_name_readme.endswith('V2'):
+                    device_name_readme = device_name_readme.replace('V2', 'Bricklet 2.0')
+                elif device_name_readme.endswith('V3'):
+                    device_name_readme = device_name_readme.replace('V3', 'Bricklet 3.0')
+                else:
+                    device_name_readme = device_name_readme + ' Bricklet'
+
+                device_name_readme = device_name_readme + '\n' + '='*len(device_name_readme)
+
                 s = s.replace("""<<<DEVICE_NAME_DASH>>>""", device_name_dash)
                 s = s.replace("""<<<DEVICE_NAME_READABLE>>>""", device_name)
+                s = s.replace("""<<<DEVICE_NAME_READABLE_README>>>""", device_name_readme)
                 s = s.replace("""<<<DEVICE_IDENTIFIER>>>""", str(device_identifier))
                 s = s.replace("""<<<YEAR>>>""", str(year))
                 s = s.replace("""<<<NAME>>>""", name)
