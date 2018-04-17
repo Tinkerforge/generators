@@ -143,6 +143,10 @@ Returns *true* if the sensor is connected correctly.
 If this function
 returns *false*, there is either no Pt100 or Pt1000 sensor connected,
 the sensor is connected incorrectly or the sensor itself is faulty.
+
+If you want to get the status automatically, it is recommended to use the
+:cb:`Sensor Connected` callback. You can set the callback configuration
+with :func:`Set Sensor Connected Callback Configuration`.
 """,
 'de':
 """
@@ -151,6 +155,11 @@ Gibt *true* zurück wenn ein Sensor korrekt verbunden ist.
 Falls diese Funktion *false* zurück gibt, ist entweder kein
 Pt100 oder Pt1000 Sensor verbunden, der Sensor ist inkorrekt
 verbunden oder der Sensor selbst ist fehlerhaft.
+
+Zum automatischen übertragen des Status kann auch der
+:cb:`Sensor Connected` Callback verwendet werden. 
+Der Callback wird mit der Funktion
+:func:`Set Sensor Connected Callback Configuration` konfiguriert.
 """
 }]
 })
@@ -260,6 +269,70 @@ Returns the moving average configuration as set by :func:`Set Moving Average Con
 'de':
 """
 Gibt die Moving Average-Konfiguration zurück, wie von :func:`Set Moving Average Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Sensor Connected Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+If you enable this callback, the :cb:`Sensor Connected` callback is triggered
+every time a Pt sensor is connected/disconnected.
+
+By default this callback is disabled.
+""",
+'de':
+"""
+Wenn dieser Callback aktiviert ist, wird der :cb:`Sensor Connected` Callback
+jedes mal ausgelöst wenn ein Pt-Sensor verbunden/getrennt wird.
+
+Standardmäßi ist dieser Callback deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Sensor Connected Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the configuration as set by :func:`Set Sensor Connected Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`Set Sensor Connected Callback Configuration`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Sensor Connected',
+'elements': [('Connected', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically according to the configuration set by
+:func:`Set Sensor Connected Callback Configuration`.
+
+The `parameter` is the same as :func:`Is Sensor Connected`.
+""",
+'de':
+"""
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set Sensor Connected Callback Configuration` gesetzten Konfiguration
+
+Der `parameter` ist der gleiche wie bei :func:`Is Sensor Connected`.
 """
 }]
 })
