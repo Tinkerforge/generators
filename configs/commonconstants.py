@@ -30,6 +30,13 @@ If you want to get the value periodically, it is recommended to use the
 with :func:`{1} Callback Configuration`.
 """.format(name, name_set)
 
+    getter['doc'][1]['de'] += """
+
+Wenn der Wert periodisch benötigt wird, kann auch der :cb:`{0}` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`{1} Callback Configuration` konfiguriert.
+""".format(name, name_set)
+
     callback_config_setter = {
 'type': 'function',
 'name': (name_set + ' Callback Configuration'),
