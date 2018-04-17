@@ -67,12 +67,7 @@ add_callback_value_function(
     doc       = altitude_doc
 )
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+temperature_doc = {
 'en':
 """
 
@@ -81,35 +76,39 @@ com['packets'].append({
 """
 
 """
-}]
-})
+}
+
+add_callback_value_function(
+    packets   = com['packets'],
+    name      = 'Get Temperature',
+    data_name = 'Temperature',
+    data_type = 'int32',
+    doc       = temperature_doc
+)
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average Configuration',
 'elements': [('Moving Average Length Air Pressure', 'uint16', 1, 'in'),
+             ('Moving Average Length Altitude', 'uint16', 1, 'in'),
              ('Moving Average Length Temperature', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-for the air pressure and temperature.
+for the air pressure, altitude and temperature.
 
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
-
-The range for the averaging is 1-1000. The default value is 100.
 """,
 'de':
 """
 Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
-für die Luftfeuchtigkeit und Temperatur.
+für die Luftfeuchtigkeit, Höhenberechnung und Temperatur.
 
 Wenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert.
 Desto kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 1-1000. Der Standardwert ist 100.
 """
 }]
 })
@@ -118,6 +117,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average Configuration',
 'elements': [('Moving Average Length Air Pressure', 'uint16', 1, 'out'),
+             ('Moving Average Length Altitude', 'uint16', 1, 'out'),
              ('Moving Average Length Temperature', 'uint16', 1, 'out')],
 
 'since_firmware': [1, 0, 0],
