@@ -291,7 +291,7 @@ By default this callback is disabled.
 Wenn dieser Callback aktiviert ist, wird der :cb:`Sensor Connected` Callback
 jedes mal ausgelöst wenn ein Pt-Sensor verbunden/getrennt wird.
 
-Standardmäßi ist dieser Callback deaktiviert.
+Standardmäßig ist dieser Callback deaktiviert.
 """
 }]
 })
