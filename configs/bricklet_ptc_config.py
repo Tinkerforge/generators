@@ -608,7 +608,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Connected Callback Configuration',
 'elements': [('Enabled', 'bool', 1, 'in')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
 'en':
 """
@@ -631,7 +631,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Connected Callback Configuration',
 'elements': [('Enabled', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
 'en':
 """
@@ -649,7 +649,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Sensor Connected',
 'elements': [('Connected', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 2],
 'doc': ['c', {
 'en':
 """
