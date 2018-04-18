@@ -17,8 +17,8 @@ com = {
     'display_name': 'Solid State Relay 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Controls AC and DC Solid State Relays',
+        'de': 'Schaltet AC und DC Halbleiterrelais (Solid State Relais)'
     },
     'comcu': True,
     'released': True,
