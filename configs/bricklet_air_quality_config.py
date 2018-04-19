@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# VOC Bricklet communication config
+# Air Quality Bricklet communication config
 
 from commonconstants import THRESHOLD_OPTION_CONSTANTS
 from commonconstants import add_callback_value_function
@@ -14,8 +14,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 297,
-    'name': 'VOC',
-    'display_name': 'VOC',
+    'name': 'Air Quality',
+    'display_name': 'Air Quality',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures relative IAQ index, temperature, humidity and air pressure',
