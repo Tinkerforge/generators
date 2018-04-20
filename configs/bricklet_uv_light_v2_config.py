@@ -31,58 +31,60 @@ com = {
     'examples': []
 }
 
-uv_light_doc = {
+uv_type_a_doc = {
 'en':
 """
-Returns the UV light intensity of the sensor, the intensity is given
+Returns the UV light type A intensity of the sensor, the intensity is given
 in µW/cm².
 
-To get UV Index you have to divide the value by 250. For example, a UV Light
-intensity of 500µW/cm² is equivalent to an UV Index of 2.
-
 If you want to get the intensity periodically, it is recommended to use the
-:cb:`UV Light` callback and set the period with
-:func:`Set UV Light Callback Configuration`.
+:cb:`UV Type A` callback and set the period with
+:func:`Set UV Type A Callback Configuration`.
 """,
 'de':
 """
-Gibt die UV-Licht-Intensität des Sensors zurück. Die Intensität wird
+Gibt die UV-Licht Type A Intensität des Sensors zurück. Die Intensität wird
 in der Einheit µW/cm² gegeben.
 
-Die Intensität kann einfach durch 250 geteilt werden um den UV Index zu
-bestimmen. Beispiel: Eine UV-Licht-Intensität von 500µW/cm² entspricht
-einem UV Index von 2.
-
 Wenn die Intensität periodisch abgefragt werden soll, wird empfohlen
-den :cb:`UV Light` Callback zu nutzen und die Periode mit
-:func:`Set UV Light Callback Configuration` vorzugeben.
+den :cb:`UV Type A` Callback zu nutzen und die Periode mit
+:func:`Set UV Type A Callback Configuration` vorzugeben.
 """
 }
 
 add_callback_value_function(
     packets   = com['packets'],
-    name      = 'Get UV Light',
-    data_name = 'UV Light',
+    name      = 'Get UV Type A',
+    data_name = 'UV Type A',
     data_type = 'uint32',
-    doc       = uv_light_doc
+    doc       = uv_type_a_doc
 )
 
-'''
-com['examples'].append({
-'name': 'Simple',
-'functions': [('getter', ('Get UV Light', 'UV light'), [(('UV Light', 'UV Light'), 'uint32', 1, None, 'µW/cm²', None)], [])]
-})
+uv_type_b_doc = {
+'en':
+"""
+Returns the UV light type B intensity of the sensor, the intensity is given
+in µW/cm².
 
-com['examples'].append({
-'name': 'Callback',
-'functions': [('callback', ('UV Light', 'UV light'), [(('UV Light', 'UV Light'), 'uint32', 1, None, 'µW/cm²', None)], None, None),
-              ('callback_period', ('UV Light', 'UV light'), [], 1000)]
-})
+If you want to get the intensity periodically, it is recommended to use the
+:cb:`UV Type B` callback and set the period with
+:func:`Set UV Type B Callback Configuration`.
+""",
+'de':
+"""
+Gibt die UV-Licht Type B Intensität des Sensors zurück. Die Intensität wird
+in der Einheit µW/cm² gegeben.
 
-com['examples'].append({
-'name': 'Threshold',
-'functions': [('debounce_period', 10000),
-              ('callback', ('UV Light Reached', 'UV light reached'), [(('UV Light', 'UV Light'), 'uint32', 1, None, 'µW/cm²', None)], None, 'UV Index > 3. Use sunscreen!'),
-              ('callback_threshold', ('UV Light', 'UV light'), [], '>', [(250*3, 0)])]
-})
-'''
+Wenn die Intensität periodisch abgefragt werden soll, wird empfohlen
+den :cb:`UV Type B` Callback zu nutzen und die Periode mit
+:func:`Set UV Type B Callback Configuration` vorzugeben.
+"""
+}
+
+add_callback_value_function(
+    packets   = com['packets'],
+    name      = 'Get UV Type B',
+    data_name = 'UV Type B',
+    data_type = 'uint32',
+    doc       = uv_type_b_doc
+)
