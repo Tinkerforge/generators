@@ -31,72 +31,72 @@ com = {
     'examples': []
 }
 
-uv_type_a_doc = {
+uva_light_doc = {
 'en':
 """
-Returns the UV light type A intensity of the sensor, the intensity is given
+Returns the UVA light intensity of the sensor, the intensity is given
 in µW/cm².
 
-UVA index (UVAI) can be calculated as:
+UVA light index (UVAI) can be calculated as:
 UVAI = ((UVA * 2) / 9) * 0.01
 
 If you want to get the intensity periodically, it is recommended to use the
-:cb:`UV Type A` callback and set the period with
-:func:`Set UV Type A Callback Configuration`.
+:cb:`UVA Light` callback and set the period with
+:func:`Set UVA Light Callback Configuration`.
 """,
 'de':
 """
-Gibt die UV-Licht Type A Intensität des Sensors zurück. Die Intensität wird
+Gibt die UVA Licht Intensität des Sensors zurück. Die Intensität wird
 in der Einheit µW/cm² gegeben.
 
-Der UVA Index (UVAI) kann wie folgt berechnet werden:
+Der UVA Licht Index (UVAI) kann wie folgt berechnet werden:
 UVAI = ((UVA * 2) / 9) * 0.01
 
 Wenn die Intensität periodisch abgefragt werden soll, wird empfohlen
-den :cb:`UV Type A` Callback zu nutzen und die Periode mit
-:func:`Set UV Type A Callback Configuration` vorzugeben.
+den :cb:`UVA Light` Callback zu nutzen und die Periode mit
+:func:`Set UVA Light Callback Configuration` vorzugeben.
 """
 }
 
 add_callback_value_function(
     packets   = com['packets'],
-    name      = 'Get UV Type A',
-    data_name = 'UV Type A',
+    name      = 'Get UVA Light',
+    data_name = 'UVA Light',
     data_type = 'uint32',
-    doc       = uv_type_a_doc
+    doc       = uva_light_doc
 )
 
-uv_type_b_doc = {
+uvb_light_doc = {
 'en':
 """
-Returns the UV light type B intensity of the sensor, the intensity is given
+Returns the UVB light intensity of the sensor, the intensity is given
 in µW/cm².
 
-UVB index (UVBI) can be calculated as:
+UVB light index (UVBI) can be calculated as:
 UVBI = ((UVB * 4) / 8) * 0.01
 
 If you want to get the intensity periodically, it is recommended to use the
-:cb:`UV Type B` callback and set the period with
-:func:`Set UV Type B Callback Configuration`.
+:cb:`UVB Light` callback and set the period with
+:func:`Set UVB Light Callback Configuration`.
 """,
 'de':
 """
-Gibt die UV-Licht Type B Intensität des Sensors zurück. Die Intensität wird
+Gibt die UVB Licht Intensität des Sensors zurück. Die Intensität wird
 in der Einheit µW/cm² gegeben.
 
-Der UVB Index (UVBI) kann wie folgt berechnet werden:
+Der UVB Licht Index (UVBI) kann wie folgt berechnet werden:
 UVBI = ((UVB * 4) / 8) * 0.01
 
 Wenn die Intensität periodisch abgefragt werden soll, wird empfohlen
-den :cb:`UV Type B` Callback zu nutzen und die Periode mit
-:func:`Set UV Type B Callback Configuration` vorzugeben.
+den :cb:`UVB Light` Callback zu nutzen und die Periode mit
+:func:`Set UVB Light Callback Configuration` vorzugeben.
 """
 }
 
 add_callback_value_function(
     packets   = com['packets'],
-    name      = 'Get UV Type B',
-    data_name = 'UV Type B',
+    name      = 'Get UVB Light',
+    data_name = 'UVB Light',
     data_type = 'uint32',
-    doc       = uv_type_b_doc
+    doc       = uvb_light_doc
 )
