@@ -837,7 +837,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
 check_name_valid_word_head = re.compile('^[A-Z]+[A-Z0-9]*[a-z0-9]*$')
 check_name_valid_word_tail = re.compile('^[A-Z0-9]+[a-z0-9]*$')
 check_name_valid_word_constant = re.compile('^[A-Z0-9]+[a-z0-9]*$') # constants are allowed to start with numbers
-check_name_exceptions_whole_name = ['Industrial Dual 0 20mA']
+check_name_exceptions_whole_name = ['Industrial Dual 0 20mA', 'Industrial Dual 0 20mA V2']
 check_name_exceptions_word_in_constant = ['20mA', '24mA']
 
 def check_name(name, display_name=None, is_constant=False):
