@@ -29,11 +29,11 @@ com = {
     'examples': []
 }
 
-channel_0_current_doc = {
+current_doc = {
 'en':
 """
-Returns the current of channel 0. The value is in nA and between 0nA and
-22505322nA (22.5mA).
+Returns the current of the specified channel. The value is in nA and between
+0nA and 22505322nA (22.5mA).
 
 It is possible to detect if an IEC 60381-1 compatible sensor is connected
 and if it works probably.
@@ -41,15 +41,11 @@ and if it works probably.
 If the returned current is below 4mA, there is likely no sensor connected
 or the sensor is may be defective. If the returned current is over 20mA,
 there might be a short circuit or the sensor is may be defective.
-
-If you want to get the current periodically, it is recommended to use the
-:cb:`Channel 0 Current` callback and set the period with
-:func:`Set Channel 0 Current Callback Configuration`.
 """,
 'de':
 """
-Gibt die gemessenen Stromstärke des Channel 0 zurück. Der Wert ist in nA
-und im Bereich von 0nA bis 22505322nA (22,5mA).
+Gibt die gemessenen Stromstärke des spezifiziert Channel zurück. Der Wert
+ist in nA und im Bereich von 0nA bis 22505322nA (22,5mA).
 
 Es ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen
 ist und ob er funktionsfähig ist.
@@ -59,64 +55,16 @@ kein Sensor angeschlossen oder der Sensor ist defekt. Falls die zurückgegebene
 Stromstärke über 20mA ist, besteht entweder ein Kurzschluss oder der Sensor
 ist defekt. Somit ist erkennbar ob ein Sensor angeschlossen und funktionsfähig
 ist.
-
-Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
-den :cb:`Channel 0 Current` Callback zu nutzen und die Periode mit
-:func:`Set Channel 0 Current Callback Configuration` vorzugeben.
 """
 }
 
 add_callback_value_function(
-    packets   = com['packets'],
-    name      = 'Get Channel 0 Current',
-    data_name = 'Channel 0 Current',
-    data_type = 'int32',
-    doc       = channel_0_current_doc
-)
-
-channel_1_current_doc = {
-'en':
-"""
-Returns the current of channel 1. The value is in nA and between 0nA and
-22505322nA (22.5mA).
-
-It is possible to detect if an IEC 60381-1 compatible sensor is connected
-and if it works probably.
-
-If the returned current is below 4mA, there is likely no sensor connected
-or the sensor is may be defective. If the returned current is over 20mA,
-there might be a short circuit or the sensor is may be defective.
-
-If you want to get the current periodically, it is recommended to use the
-:cb:`Channel 1 Current` callback and set the period with
-:func:`Set Channel 1 Current Callback Configuration`.
-""",
-'de':
-"""
-Gibt die gemessenen Stromstärke des Channel 1 zurück. Der Wert ist in nA
-und im Bereich von 0nA bis 22505322nA (22,5mA).
-
-Es ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen
-ist und ob er funktionsfähig ist.
-
-Falls die zurückgegebene Stromstärke kleiner als 4mA ist, ist wahrscheinlich
-kein Sensor angeschlossen oder der Sensor ist defekt. Falls die zurückgegebene
-Stromstärke über 20mA ist, besteht entweder ein Kurzschluss oder der Sensor
-ist defekt. Somit ist erkennbar ob ein Sensor angeschlossen und funktionsfähig
-ist.
-
-Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
-den :cb:`Channel 1 Current` Callback zu nutzen und die Periode mit
-:func:`Set Channel 1 Current Callback Configuration` vorzugeben.
-"""
-}
-
-add_callback_value_function(
-    packets   = com['packets'],
-    name      = 'Get Channel 1 Current',
-    data_name = 'Channel 1 Current',
-    data_type = 'int32',
-    doc       = channel_1_current_doc
+    packets       = com['packets'],
+    name          = 'Get Current',
+    data_name     = 'Current',
+    data_type     = 'int32',
+    channel_based = True,
+    doc           = current_doc
 )
 
 com['packets'].append({
@@ -242,6 +190,48 @@ Returns the Info LED configuration as set by :func:`Set Info LED Config`
 'de':
 """
 Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Channel Status LED Config',
+'elements': [('LED', 'uint8', 1, 'in'),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in'),
+             ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Threshold', 0),
+                                                                  ('Intensity', 1)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Channel Status LED Config',
+'elements': [('LED', 'uint8', 1, 'out'),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out'),
+             ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Threshold', 0),
+                                                                   ('Intensity', 1)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
 """
 }]
 })
