@@ -241,7 +241,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'out'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out'),
              ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Threshold', 0),
