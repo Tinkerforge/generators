@@ -6,6 +6,8 @@
 
 # Industrial Dual 0-20mA 2.0 Bricklet communication config
 
+# TODO: Documentation.
+
 from commonconstants import THRESHOLD_OPTION_CONSTANTS
 from commonconstants import add_callback_value_function
 
@@ -113,6 +115,27 @@ Der Standardwert ist 3 (4 Samples pro Sekunde mit 18 Bit Auflösung).
 
 com['packets'].append({
 'type': 'function',
+'name': 'Get Sample Rate',
+'elements': [('Rate', 'uint8', 1, 'out', ('Sample Rate', [('240 SPS', 0),
+                                                          ('60 SPS', 1),
+                                                          ('15 SPS', 2),
+                                                          ('4 SPS', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the gain as set by :func:`Set Sample Rate`.
+""",
+'de':
+"""
+Gibt die Verstärkung zurück, wie von :func:`Set Sample Rate`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Set Gain',
 'elements': [('Gain', 'uint8', 1, 'in', ('Gain', [('1X', 0),
                                                   ('2X', 1),
@@ -154,8 +177,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Info LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'name': 'Set Channel LED Config',
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Config', 'uint8', 1, 'in', ('Info LED Config', [('Off', 0),
                                                                ('On', 1),
                                                                ('Show Heartbeat', 2),
@@ -175,8 +198,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Info LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'name': 'Get Channel LED Config',
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Config', 'uint8', 1, 'out', ('Info LED Config', [('Off', 0),
                                                                 ('On', 1),
                                                                 ('Show Heartbeat', 2),
@@ -196,8 +219,8 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Channel Status LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'name': 'Set Channel LED Status Config',
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in'),
              ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Threshold', 0),
@@ -217,8 +240,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Channel Status LED Config',
-'elements': [('LED', 'uint8', 1, 'out'),
+'name': 'Get Channel LED Status Config',
+'elements': [('Channel', 'uint8', 1, 'out'),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out'),
              ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Threshold', 0),
