@@ -219,8 +219,8 @@ com['packets'].append({
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Threshold', 0),
-                                                                  ('Intensity', 1)]))],
+             ('Config', 'uint8', 1, 'in', ('Channel LED Status Config', [('Threshold', 0),
+                                                                         ('Intensity', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -240,17 +240,17 @@ com['packets'].append({
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out'),
-             ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Threshold', 0),
-                                                                   ('Intensity', 1)]))],
+             ('Config', 'uint8', 1, 'out', ('Channel LED Status Config', [('Threshold', 0),
+                                                                          ('Intensity', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-
+Returns the Channel LED configuration as set by :func:`Set Channel LED Status Config`
 """,
 'de':
 """
-
+Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Status Config` gesetzt.
 """
 }]
 })
