@@ -175,10 +175,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', ('Info LED Config', [('Off', 0),
-                                                               ('On', 1),
-                                                               ('Show Heartbeat', 2),
-                                                               ('Show Channel Status', 3)]))],
+             ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
+                                                                  ('On', 1),
+                                                                  ('Show Heartbeat', 2),
+                                                                  ('Show Channel Status', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -196,19 +196,19 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'out', ('Info LED Config', [('Off', 0),
-                                                                ('On', 1),
-                                                                ('Show Heartbeat', 2),
-                                                                ('Show Channel Status', 3)]))],
+             ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
+                                                                   ('On', 1),
+                                                                   ('Show Heartbeat', 2),
+                                                                   ('Show Channel Status', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the Info LED configuration as set by :func:`Set Info LED Config`
+Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
+Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })
