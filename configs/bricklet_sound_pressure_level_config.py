@@ -41,6 +41,12 @@ By default dB(A) will be used.
 """,
 'de':
 """
+Gibt die gemessenen Dezibel zurück. Die Werte werden in dB/10 (zentel dB) zurückgegeben.
+
+Das Bricklet unterstützt die Gewichtungen dB(A), dB(B), dB(C), dB(D), dB(Z) und ITU-R 468.
+Die Gewichtungsfunktion kann mittels :func:`Set Configuration` gesetzt werden. 
+
+Standardmäßig wird dB(A) genutzt.
 """
 }
 
@@ -73,7 +79,8 @@ DC offset and the other bins have a size between 40Hz (FFT size 1024) and
 In sum the frequency of the spectrum always has a range from 0 to
 20480Hz (the FFT is applied to samples with a frequency of 40960Hz).
 
-The Returned data is already equalized and the weighting function is applied
+The Returned data is already equalized, which means that the microphone 
+frequency response is compensated and the weighting function is applied
 (see :func:`Set Configuration` for the available weighting standards). Use
 dB(Z) if you need the unaltered spectrum.
 
@@ -83,6 +90,20 @@ on each value.
 """,
 'de':
 """
+Gibt das Spektrum zurück. Die Länge des Spektrums liegt zwischen 512 (FFT Größe 1024)
+und 64 (FFT Größe 128). Siehe :func:`Set Configuration`.
+
+Jedes Listen-Element ist eine Gruppe des FFTs. Die erste Gruppe stellt immer das DC Offset
+dar. Die anderen Gruppen haben eine Größe zwischen 40Hz (FFT Größe 1024) und 320Hz (FFT Größe 128).
+
+Der Frequenzberecht des Spektrums besitzt immer einen Umfang von 0 bis 20480Hz (FFT wird auf Samples mit bis zu 40960Hz angewendet).
+
+Die zurückgegebenen Daten sind bereits egalisiert, was bedeutet dass der Mikrofon-Frequenzgang kompensiert wurde, und 
+die Gewichtungsfunktion wurde angewendet (siehe :func:`Set Configuration` für die zur Verfügung stehenenden
+Gewichtungen). Für ein ungewichtets Spektrum kann dB(Z) genutzt werden.
+
+Die Daten sind nicht in dB skaliert. Um diese in einer dB Form darzustellen muss die Formel
+f(x) = 20*log10(max(1, x/sqrt(2))) auf jeden Wert angewendet werden.
 """
 }]
 })
@@ -203,6 +224,28 @@ The defaults are FFT size 1024 and weighting standard dB(A).
 """,
 'de':
 """
+Setzt die Sound Pressure Level Bricklet Konfiguration.
+
+Verschiedene FFT Größen führen zu unterschiedlichen Abtastraten und
+FFT Größen. Umso größer die FFT Größe ist, umso genauer ist das Ergebnis
+der dB(X) Berechnung.
+
+Verfügbare FFT Größen sind:
+
+* 1024: 512 Gruppen, 10 Samples pro Sekunde, jede Gruppe hat Größe 40Hz
+* 512: 256 Gruppen, 20 Samples per Sekunde, jede Gruppe hat Größe 80Hz
+* 256: 128 Gruppen, 40 Samples per Sekunde, jede Gruppe hat Größe 160Hz
+* 128: 64 Gruppen, 80 Samples pro Sekunde, jede Gruppe hat Größe 320Hz
+
+Das Bricklet unterstützt verschiedene Gewichtungsfunktionen. Es kann zwischen
+dB(A), dB(B), dB(C), dB(D), dB(Z) und ITU-R 468 gewählt werden.
+
+dB(A/B/C/D) sind Standard-Gewichtungskurven. dB(A) wird of genutzt um
+Lautstärke in Konzerten zu messen. dB(Z) besitzt keine Gewichtung und gibt 
+die Daten ungewichtet zurück. ITU-R 468 ist ein ITU Gewichtungsstandard der 
+hauptsächlich in UK und Europa verwendet wird.
+
+Die Standardeinstellungen sind FFT Größe 1024 und Gewichtung dB(A).
 """
 }]
 })
@@ -229,6 +272,7 @@ Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
+Gibt die Konfiguration, die mittels :func:`Set Configuration` gesetzt werden kann zurück.
 """
 }]
 })
