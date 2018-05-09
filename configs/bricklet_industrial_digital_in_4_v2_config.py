@@ -28,6 +28,11 @@ com = {
     'examples': []
 }
 
+CONSTANT_CHANNEL = ('Channel', [('0', 0),
+                                ('1', 1),
+                                ('2', 2),
+                                ('3', 3)])
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
@@ -50,7 +55,7 @@ bedeutet logisch 1 und *false* logisch 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Selected Value',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -69,7 +74,7 @@ gemessen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Input Value Callback Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -86,7 +91,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Input Value Callback Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -139,7 +144,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Reset Counter', 'bool', 1, 'in'),
              ('Count', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -166,7 +171,7 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Edge Type', 'uint8', 1, 'in', ('Edge Type', [('Rising', 0),
                                                             ('Falling', 1),
                                                             ('Both', 2)])),
@@ -220,7 +225,7 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Edge Type', 'uint8', 1, 'out', ('Edge Type', [('Rising', 0),
                                                              ('Falling', 1),
                                                              ('Both', 2)])),
@@ -243,7 +248,7 @@ wie von :func:`Set Edge Count Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
                                                                   ('On', 1),
                                                                   ('Show Heartbeat', 2),
@@ -252,11 +257,20 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Each channel has a corresponding LED. You can turn the LED Off, On or show a
+heartbeat. You can also ste the LED to "Channel Status". In this mode the
+LED is on if the channel is high and off otherwise.
 
+By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
+aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
+angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
+ein High-Signal am Kanal anliegt und sonst aus.
 
+Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
 """
 }]
 })
@@ -264,7 +278,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
                                                                    ('On', 1),
                                                                    ('Show Heartbeat', 2),
@@ -285,7 +299,7 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` geset
 com['packets'].append({
 'type': 'callback',
 'name': 'Input Value',
-'elements': [('Channel', 'uint8', 1, 'out'),
+'elements': [('Channel', 'uint8', 1, 'out', CONSTANT_CHANNEL),
              ('Changed', 'bool', 1, 'out'),
              ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
