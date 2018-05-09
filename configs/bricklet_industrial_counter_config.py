@@ -447,7 +447,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
                                                                   ('On', 1),
                                                                   ('Show Heartbeat', 2),
@@ -467,7 +467,7 @@ By default all channel LEDs are configured as "Channel Status".
 Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
 aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
 angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
-ein High-Signal am Channel anliegt und sonst aus.
+ein High-Signal am Kanal anliegt und sonst aus.
 
 Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
 """
@@ -477,7 +477,7 @@ Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
                                                                    ('On', 1),
                                                                    ('Show Heartbeat', 2),
