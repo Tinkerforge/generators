@@ -26,10 +26,10 @@ com = {
     'examples': []
 }
 
-CONSTANT_PIN = ('PIN', [('0', 0),
-                        ('1', 1),
-                        ('2', 2),
-                        ('3', 3)])
+CONSTANT_CHANNEL = ('Channel', [('0', 0),
+                                ('1', 1),
+                                ('2', 2),
+                                ('3', 3)])
 
 CONSTANT_COUNT_EDGE = ('Count Edge', [('Rising', 0),
                                       ('Falling', 1),
@@ -74,7 +74,7 @@ CONSTANT_FREQUENCY_INTEGRATION_TIME = ('Frequency Integration Time', [('128 MS',
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Counter', 'int64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -105,7 +105,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Counter', 'int64', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -136,11 +136,11 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Signal Data',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Duty Cycle', 'uint16', 1, 'out'),
              ('Period', 'uint64', 1, 'out'),
              ('Frequency', 'uint32', 1, 'out'),
-             ('Pin Value', 'bool', 1, 'out')],
+             ('Channel Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -158,7 +158,7 @@ com['packets'].append({
 'elements': [('Duty Cycle', 'uint16', 4, 'out'),
              ('Period', 'uint64', 4, 'out'),
              ('Frequency', 'uint32', 4, 'out'),
-             ('Pin Value', 'bool', 4, 'out')],
+             ('Channel Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -173,7 +173,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Active',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Active', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -204,7 +204,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Active',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Active', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -235,7 +235,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Configuration',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Count Edge', 'uint8', 1, 'in', CONSTANT_COUNT_EDGE),
              ('Count Direction', 'uint8', 1, 'in', CONSTANT_COUNT_DIRECTON),
              ('Duty Cycle Prescaler', 'uint8', 1, 'in', CONSTANT_DUTY_CYCLE_PRESCALER),
@@ -255,7 +255,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Configuration',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Count Edge', 'uint8', 1, 'out', CONSTANT_COUNT_EDGE),
              ('Count Direction', 'uint8', 1, 'out', CONSTANT_COUNT_DIRECTON),
              ('Duty Cycle Prescaler', 'uint8', 1, 'out', CONSTANT_DUTY_CYCLE_PRESCALER),
@@ -416,7 +416,7 @@ com['packets'].append({
 'elements': [('Duty Cycle', 'uint16', 4, 'out'),
              ('Period', 'uint64', 4, 'out'),
              ('Frequency', 'uint32', 4, 'out'),
-             ('Pin Value', 'bool', 4, 'out')],
+             ('Channel Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
