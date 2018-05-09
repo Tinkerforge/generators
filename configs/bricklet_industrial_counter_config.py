@@ -26,10 +26,10 @@ com = {
     'examples': []
 }
 
-CONSTANT_PIN = ('PIN', [('0', 0),
-                        ('1', 1),
-                        ('2', 2),
-                        ('3', 3)])
+CONSTANT_CHANNEL = ('Channel', [('0', 0),
+                                ('1', 1),
+                                ('2', 2),
+                                ('3', 3)])
 
 CONSTANT_COUNT_EDGE = ('Count Edge', [('Rising', 0),
                                       ('Falling', 1),
@@ -74,12 +74,13 @@ CONSTANT_FREQUENCY_INTEGRATION_TIME = ('Frequency Integration Time', [('128 MS',
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Counter', 'int64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
+Returns the current counter value for the given channel.
 """,
 'de':
 """
@@ -95,6 +96,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the current counter values for all four channels
 """,
 'de':
 """
@@ -105,12 +107,15 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Counter', 'int64', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
+Sets the counter value for the given channel.
+
+The default value for the counters on startup is 0.
 """,
 'de':
 """
@@ -126,6 +131,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the counter values for all four channels.
+
+The default value for the counters on startup is 0.
 """,
 'de':
 """
@@ -136,15 +144,23 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Signal Data',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Duty Cycle', 'uint16', 1, 'out'),
              ('Period', 'uint64', 1, 'out'),
              ('Frequency', 'uint32', 1, 'out'),
-             ('Pin Value', 'bool', 1, 'out')],
+             ('Channel Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
+Returns the signal data (duty cycle, period, frequency and value) for the given channel.
+
+The units are:
+
+* Duty Cycle: 1/100 %
+* Period: ns
+* Frequency: mHz (1/1000 Hz)
+* Channel Value: true = high, false = low
 """,
 'de':
 """
@@ -158,11 +174,19 @@ com['packets'].append({
 'elements': [('Duty Cycle', 'uint16', 4, 'out'),
              ('Period', 'uint64', 4, 'out'),
              ('Frequency', 'uint32', 4, 'out'),
-             ('Pin Value', 'bool', 4, 'out')],
+             ('Channel Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
+Returns the signal data (duty cycle, period, frequency and value) for all for chanels.
+
+The units are:
+
+* Duty Cycle: 1/100 %
+* Period: ns
+* Frequency: mHz (1/1000 Hz)
+* Channel Value: true = high, false = low
 """,
 'de':
 """
@@ -173,12 +197,17 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Active',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Active', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
+Activates/deactivates the counter of the given channel.
+
+true = activate, false = deactivate. 
+
+By default all channels are activated.
 """,
 'de':
 """
@@ -194,6 +223,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Activates/deactivates the counter of all four channels.
+
+true = activate, false = deactivate. 
+
+By default all channels are activated.
 """,
 'de':
 """
@@ -204,12 +238,15 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Active',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Active', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
+Returns the activation state of the given channel.
+
+true = activate, false = deactivate. 
 """,
 'de':
 """
@@ -225,6 +262,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the activation state of all four channels.
+
+true = activate, false = deactivate. 
 """,
 'de':
 """
@@ -235,7 +275,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Configuration',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Count Edge', 'uint8', 1, 'in', CONSTANT_COUNT_EDGE),
              ('Count Direction', 'uint8', 1, 'in', CONSTANT_COUNT_DIRECTON),
              ('Duty Cycle Prescaler', 'uint8', 1, 'in', CONSTANT_DUTY_CYCLE_PRESCALER),
@@ -244,6 +284,20 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the counter configuration for the given channel.
+
+* Count Edge: Counter can count on rising, falling or both edges.
+* Count Direction: Counter can count up or down. You can also use 
+  another channel as direction input, see 
+  `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
+  for details.
+* Duty Cycle Prescaler: Sets a divider for the internal clock. See
+  `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  for details.
+* Frequency Integration Time: Sets the integration time for the
+  frequency measurement. See 
+  `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  for details.
 """,
 'de':
 """
@@ -255,7 +309,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Configuration',
-'elements': [('Pin', 'uint8', 1, 'in', CONSTANT_PIN),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Count Edge', 'uint8', 1, 'out', CONSTANT_COUNT_EDGE),
              ('Count Direction', 'uint8', 1, 'out', CONSTANT_COUNT_DIRECTON),
              ('Duty Cycle Prescaler', 'uint8', 1, 'out', CONSTANT_DUTY_CYCLE_PRESCALER),
@@ -264,6 +318,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the counter configuration as set by :func:`Set Counter Configuration`.
 """,
 'de':
 """
@@ -274,18 +329,38 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Counter Callback Configuration',
-#'corresponding_getter': 'Get All Counter' ,
 'elements': [('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-TODO
+The period in ms is the period with which the :cb:`All Counter`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
 """,
 'de':
 """
-TODO
+Die Periode in ms ist die Periode mit der der :cb:`All Counter`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
 """
 }]
 })
@@ -293,18 +368,19 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Counter Callback Configuration',
-#'corresponding_getter': 'Get All Counter',
 'elements': [('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-TODO
+Returns the callback configuration as set by
+:func:`Set All Counter Callback Configuration`.
 """,
 'de':
 """
-TODO
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set All Counter Callback Configuration` gesetzt.
 """
 }]
 })
@@ -312,18 +388,38 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Signal Data Callback Configuration',
-#'corresponding_getter': 'Get All Signal Data' ,
 'elements': [('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-TODO
+The period in ms is the period with which the :cb:`All Signal Data`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
 """,
 'de':
 """
-TODO
+Die Periode in ms ist die Periode mit der der :cb:`All Signal Data`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
 """
 }]
 })
@@ -331,28 +427,27 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Signal Data Callback Configuration',
-#'corresponding_getter': 'Get All Signal Data',
 'elements': [('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-TODO
+Returns the callback configuration as set by
+:func:`Set All Data Signal Callback Configuration`.
 """,
 'de':
 """
-TODO
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set All Data Signal Callback Configuration` gesetzt.
 """
 }]
 })
 
-# TODO: Documentation
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
                                                                   ('On', 1),
                                                                   ('Show Heartbeat', 2),
@@ -361,11 +456,20 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Each channel has a corresponding LED. You can turn the LED Off, On or show a
+heartbeat. You can also ste the LED to "Channel Status". In this mode the
+LED is on if the channel is high and off otherwise.
 
+By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
+aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
+angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
+ein High-Signal am Kanal anliegt und sonst aus.
 
+Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
 """
 }]
 })
@@ -373,7 +477,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
                                                                    ('On', 1),
                                                                    ('Show Heartbeat', 2),
@@ -394,17 +498,22 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` geset
 com['packets'].append({
 'type': 'callback',
 'name': 'All Counter',
-#'corresponding_getter': 'Get All Counter',
 'elements': [('Counter', 'int64', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered periodically according to the configuration set by
+:func:`Set All Counter Callback Configuration`.
+
+The `parameters` are the same as :func:`Get All Counter`.
 """,
 'de':
 """
-TODO
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set All Counter Callback Configuration` gesetzten Konfiguration
+
+Die `parameters` sind der gleiche wie :func:`Get All Counter`.
 """
 }]
 })
@@ -412,20 +521,25 @@ TODO
 com['packets'].append({
 'type': 'callback',
 'name': 'All Signal Data',
-#'corresponding_getter': 'Get All Signal Data',
 'elements': [('Duty Cycle', 'uint16', 4, 'out'),
              ('Period', 'uint64', 4, 'out'),
              ('Frequency', 'uint32', 4, 'out'),
-             ('Pin Value', 'bool', 4, 'out')],
+             ('Channel Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically according to the configuration set by
+:func:`Set All Signal Data Callback Configuration`.
+
+The `parameters` are the same as :func:`Get All Signal Data`.
 """,
 'de':
 """
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set All Signal Data Callback Configuration` gesetzten Konfiguration
+
+Die `parameters` sind der gleiche wie :func:`Get All Signal Data`.
 """
 }]
 })
-
-
