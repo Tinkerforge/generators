@@ -434,12 +434,12 @@ com['packets'].append({
 'en':
 """
 Returns the callback configuration as set by
-:func:`Set All Data Signal Callback Configuration`.
+:func:`Set All Signal Data Callback Configuration`.
 """,
 'de':
 """
 Gibt die Callback-Konfiguration zurück, wie mittels
-:func:`Set All Data Signal Callback Configuration` gesetzt.
+:func:`Set All Signal Data Callback Configuration` gesetzt.
 """
 }]
 })
