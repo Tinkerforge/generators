@@ -43,7 +43,7 @@ Returns the particulate matter concentration in µg/m³, broken down as:
 * PM\ :sub:`10.0`\ .
 
 If the sensor is disabled (see :func:`Set Enable`) then the last known good
-values from the sensor are return.
+values from the sensor are returned.
 """,
 'de':
 """
@@ -83,7 +83,7 @@ diameter:
 * greater 10.0µm.
 
 If the sensor is disabled (see :func:`Set Enable`) then the last known good
-value from the sensor is return.
+value from the sensor is returned.
 """,
 'de':
 """
