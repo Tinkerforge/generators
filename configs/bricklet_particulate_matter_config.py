@@ -15,8 +15,8 @@ com = {
     'display_name': 'Particulate Matter',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': 'Measures Particulate Matter concentration (PM1.0, PM2.5 and PM10)',
+        'de': 'Misst Feinstaub concentration (PM1.0, PM2.5 und PM10)'
     },
     'comcu': True,
     'released': False,
