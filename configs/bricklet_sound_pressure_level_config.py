@@ -96,7 +96,7 @@ und 64 (FFT Größe 128). Siehe :func:`Set Configuration`.
 Jedes Listen-Element ist eine Gruppe des FFTs. Die erste Gruppe stellt immer das DC Offset
 dar. Die anderen Gruppen haben eine Größe zwischen 40Hz (FFT Größe 1024) und 320Hz (FFT Größe 128).
 
-Der Frequenzberecht des Spektrums besitzt immer einen Umfang von 0 bis 20480Hz (FFT wird auf Samples mit bis zu 40960Hz angewendet).
+Der Frequenzbereich des Spektrums besitzt immer einen Umfang von 0 bis 20480Hz (FFT wird auf Samples mit bis zu 40960Hz angewendet).
 
 Die zurückgegebenen Daten sind bereits egalisiert, was bedeutet dass der Mikrofon-Frequenzgang kompensiert wurde, und 
 die Gewichtungsfunktion wurde angewendet (siehe :func:`Set Configuration` für die zur Verfügung stehenenden
