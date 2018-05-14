@@ -186,9 +186,9 @@ The other relay remains untouched.
 """,
 'de':
 """
-Setzt den Zustand des selektierten Relais (1 oder 2), *true* bedeutet ein und *false* aus.
+Setzt den Zustand des gewählten Relais (1 oder 2), *true* bedeutet ein und *false* aus.
 
-Das andere Relais bleibt unangetastet.
+Das andere Relais bleibt unverändert.
 """
 }]
 })
@@ -202,11 +202,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TBD
+Returns the state of the selected relay (1 or 2). The state can be set by :func:`Set Selected State`.
 """,
 'de':
 """
-TBD
+Gibt dien Zustand des gewählten Relais (1 oder 2) zurück. Dieser kann mit :func:`Set Selected State`
+gesetzt werden.
 """
 }]
 })
