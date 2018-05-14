@@ -84,6 +84,7 @@ Returns the current counter value for the given channel.
 """,
 'de':
 """
+Gibt den aktuellen Zählerstand für den gegebenen Kanal zurück.
 """
 }]
 })
@@ -100,6 +101,7 @@ Returns the current counter values for all four channels
 """,
 'de':
 """
+Gibt die Zählerstände für alle vier Kanäle zurück.
 """
 }]
 })
@@ -119,6 +121,9 @@ The default value for the counters on startup is 0.
 """,
 'de':
 """
+Setzt den Zählerstand für den gegebenen Kanal.
+
+Der Standardwert für alle Zähler nach dem Start ist 0.
 """
 }]
 })
@@ -137,6 +142,9 @@ The default value for the counters on startup is 0.
 """,
 'de':
 """
+Setzt die Zählerstände für alle vier Kanäle.
+
+Der Stadardwert für die Zähler nach dem Starten ist 0.
 """
 }]
 })
@@ -164,6 +172,14 @@ The units are:
 """,
 'de':
 """
+Gibt die Signaldaten (Tastverhältnis, Periode, Frequenz und Status) für den gegebenen Kanal.
+
+Die Einheiten sind:
+
+* Tastverhältnis: 1/100 %
+* Periode: ns
+* Frequenz: mHz (1/1000 Hz)
+* Kanal Status: true = high, false = low
 """
 }]
 })
@@ -190,6 +206,14 @@ The units are:
 """,
 'de':
 """
+Gibt die Signaldaten (Tastverhältnis, Periode, Frequenz und Status) für den alle Kanäle zurück.
+
+Die Einheiten sind:
+
+* Tastverhältnis: 1/100 %
+* Periode: ns
+* Frequenz: mHz (1/1000 Hz)
+* Kanal Status: true = high, false = low
 """
 }]
 })
@@ -211,6 +235,11 @@ By default all channels are activated.
 """,
 'de':
 """
+Aktiviert/Deaktiviert den Zähler für den gegebenen Kanal.
+
+true = aktiviert, false = deaktiviert.
+
+Standardmäßig sind alle Kanäle aktiviert.
 """
 }]
 })
@@ -231,6 +260,12 @@ By default all channels are activated.
 """,
 'de':
 """
+Aktiviert/Deaktiviert den Zähler für alle Kanäle.
+
+true = aktiviert, false = deaktiviert.
+
+Standardmäßig sind alle Kanäle aktiviert.
+
 """
 }]
 })
@@ -250,6 +285,9 @@ true = activate, false = deactivate.
 """,
 'de':
 """
+Gibt den Zustand (aktiviert/deaktiviert) des gegebenen Zähler zurück.
+
+true = aktiviert, false = deaktiviert.
 """
 }]
 })
@@ -268,6 +306,9 @@ true = activate, false = deactivate.
 """,
 'de':
 """
+Gibt den Zustand (aktiviert/deaktiviert) aller Zähler zurück.
+
+true = aktiviert, false = deaktiviert.
 """
 }]
 })
@@ -301,6 +342,18 @@ Sets the counter configuration for the given channel.
 """,
 'de':
 """
+Setzt die Zähler-Konfiguration für den gegebenen Kanal.
+
+* Zählerflanke: Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen
+* Zählerrichtung: Der Zähler kann hoch-/ oder runterzählen. Es kann auch ein weiterer Kanal als Richtungseingang genutzt werden. Siehe 
+  `hier <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
+  für weitere Details.
+* Tastverhältnis Prescaler: Setzt einen Teiler für die interne Clock. Siehe 
+  `hier <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  für weitere Details.
+* Frequenz-Integration: Setzt die Integrationszeit für die Frequenzmessung. Siehe
+  `hier <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  für weitere Details.
 """
 }]
 })
@@ -322,6 +375,7 @@ Returns the counter configuration as set by :func:`Set Counter Configuration`.
 """,
 'de':
 """
+Gibt die Zähler-Konfiguration zurück, wie Sie mittels :func:`Set Counter Configuration` gesetzt wurde.
 """
 }]
 })
