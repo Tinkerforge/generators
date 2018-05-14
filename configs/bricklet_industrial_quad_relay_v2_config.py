@@ -178,11 +178,20 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Each channel has a corresponding LED. You can turn the LED Off, On or show a
+heartbeat. You can also ste the LED to "Channel Status". In this mode the
+LED is on if the channel is high and off otherwise.
 
+By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
+aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
+angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
+ein High-Signal am Kanal anliegt und sonst aus.
 
+Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
 """
 }]
 })
