@@ -56,10 +56,14 @@ for git_name in sorted(os.listdir('..')):
             print('examples:', ', '.join(example_names[git_name]))
 
     git_path = os.path.join('..', git_name)
+    gitignore_path = os.path.join(git_path, '.gitignore')
 
-    with open(os.path.join(git_path, '.gitignore'), 'r') as f:
-        if 'hardware/kicad-libraries\n' not in f.readlines():
-            error('hardware/kicad-libraries missing in .gitignore')
+    if not os.path.exists(gitignore_path):
+        error('hardware/.gitignore is missing')
+    else:
+        with open(gitignore_path, 'r') as f:
+            if 'hardware/kicad-libraries\n' not in f.readlines():
+                error('hardware/kicad-libraries missing in .gitignore')
 
     hardware_path = os.path.join(git_path, 'hardware')
     kicad_libraries_path = os.path.join(hardware_path, 'kicad-libraries')
