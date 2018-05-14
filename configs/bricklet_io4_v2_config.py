@@ -214,11 +214,36 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+This callback can be configured per channel.
 
+The period in ms is the period with which the :cb:`Input Value`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
 """,
 'de':
 """
+Dier Callback kann pro Kanal konfiguriert werden.
 
+Die Periode in ms ist die Periode mit der der :cb:`Input Value`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
 """
 }]
 })
@@ -233,11 +258,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-
+Returns the callback configuration for the given channel as set by
+:func:`Set Input Value Callback Configuration`.
 """,
 'de':
 """
-
+Gibt die Callback-Konfiguration für den gegebenen Kanal zurück, wie mittels
+:func:`Set Input Value Callback Configuration` gesetzt.
 """
 }]
 })
@@ -251,10 +278,34 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+The period in ms is the period with which the :cb:`All Input Value`
+callback is triggered periodically. A value of 0 turns the callback off.
 
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
 """,
 'de':
 """
+Dier Callback kann pro Kanal konfiguriert werden.
+
+Die Periode in ms ist die Periode mit der der :cb:`All Input Value`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
 
 """
 }]
@@ -269,11 +320,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-
+Returns the callback configuration as set by
+:func:`Set All Input Value Callback Configuration`.
 """,
 'de':
 """
-
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set All Input Value Callback Configuration` gesetzt.
 """
 }]
 })
@@ -288,11 +341,34 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+The first parameter  is the desired state of the channel (*true* means output *high*
+and *false* means output *low*). The second parameter indicates the time (in ms) that
+the channel should hold the state.
 
+If this function is called with the parameters (true, 1500):
+The channel will turn on and in 1.5s it will turn off again.
+
+A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+have a RS485 bus and a IO4 Bricklet is connected to one of the slave
+stacks. You can now call this function every second, with a time parameter
+of two seconds. The channel will be *high* all the time. If now the RS485
+connection is lost, the channel will turn *low* in at most two seconds.
 """,
 'de':
 """
+Der erste Parameter ist der gewünschte Zustand des Kanals
+(*true* bedeutet *high* und *false* *low*). Der zweite Parameter stellt die Zeit
+(in ms) dar, in welcher der Kanal den Zustand halten soll.
 
+Wenn diese Funktion mit den Parametern (true, 1500) aufgerufen wird:
+Der Kanal wird angeschaltet und nach 1,5s wieder ausgeschaltet.
+
+Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
+Angenommen ein RS485 Bus und ein IO4 Bricklet ist an ein Slave Stapel
+verbunden. Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter
+von 2 Sekunden, aufgerufen werden.
+Der Kanal wird die gesamte Zeit eingeschaltet sein. Wenn jetzt die RS485 Verbindung
+getrennt wird, wird der Kanal nach spätestens zwei Sekunden ausschalten.
 """
 }]
 })
@@ -439,11 +515,20 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically according to the configuration set by
+:func:`Set Input Value Callback Configuration`.
 
+The parameters are the channel, a value-changed indicator and the actual value
+for the channel. The `changed` parameter is true if the value has changed since
+the last callback.
 """,
 'de':
 """
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set Input Value Callback Configuration` gesetzten Konfiguration
 
+Die Parameter sind der Kanal, Changed und der Wert. Der `changed`-Parameter
+ist True wenn sich der Wert seit dem letzten Callback geändert hat.
 """
 }]
 })
@@ -457,11 +542,21 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically according to the configuration set by
+:func:`Set All Input Value Callback Configuration`.
+
+The `parameters` are the same as :func:`Get Value`. Additional the 
+`changed` parameter is true if the value has changed since
+the last callback.
 
 """,
 'de':
 """
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set All Input Value Callback Configuration` gesetzten Konfiguration
 
+Die `parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist der
+`changed`-Parameter True wenn sich der Wert seit dem letzten Callback geändert hat.
 """
 }]
 })
