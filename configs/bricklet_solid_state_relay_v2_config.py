@@ -102,10 +102,10 @@ Wenn diese Funktion mit den Parametern (true, 1500) aufgerufen wird:
 Das Relais wird angeschaltet und nach 1,5s wieder ausgeschaltet.
 
 Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
-Angenommen ein RS485 Bus und ein Dual Relay Bricklet ist an ein Slave Stapel
+Angenommen ein RS485 Bus und ein Solid State Relay Bricklet ist an ein Slave Stapel
 verbunden. Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter
 von 2 Sekunden, aufgerufen werden.
-Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung
+Das Relais wird die gesamte Zeit eingeschaltet sein. Wenn jetzt die RS485 Verbindung
 getrennt wird, wird das Relais nach spätestens zwei Sekunden ausschalten.
 """
 }]
