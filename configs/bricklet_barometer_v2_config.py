@@ -34,16 +34,15 @@ com = {
 air_pressure_doc = {
 'en':
 """
-Returns the air pressure of the air pressure sensor. The value
-has a range of 1064960 to 5160960 and is given in mbar/4096, i.e.
-a value of 4100473 means that an air pressure of 1001.092 mbar is
-measured.
+Returns the measured air pressure. The value has a range of
+260000 to 1260000 and is given in mbar/1000, i.e. a value of
+1001092 means that an air pressure of 1001.092 mbar is measured.
 """,
 'de':
 """
 Gibt den Luftdruck des Luftdrucksensors zurück. Der Wertbereich
-geht von 1064960 bis 5160960 und ist in mbar/4096 angegeben, d.h.
-bei einem Wert von 4100473 wurde ein Luftdruck von 1001,092 mbar
+geht von 260000 bis 1260000 und ist in mbar/1000 angegeben, d.h.
+bei einem Wert von 1001092 wurde ein Luftdruck von 1001,092 mbar
 gemessen.
 """
 }
@@ -59,16 +58,17 @@ add_callback_value_function(
 altitude_doc = {
 'en':
 """
-Returns the relative altitude of the air pressure sensor. The value is given in
-mm and is calculated based on the difference between the current air pressure
-and the reference air pressure that can be set with :func:`Set Reference Air Pressure`.
+Returns the relative altitude of the air pressure sensor. The value
+is given in mm and is calculated based on the difference between the
+current air pressure and the reference air pressure that can be set
+with :func:`Set Reference Air Pressure`.
 """,
 'de':
 """
-Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert ist in mm angegeben
-und wird auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem
-Referenzluftdruck berechnet, welcher mit :func:`Set Reference Air Pressure`
-gesetzt werden kann.
+Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert ist in
+mm angegeben und wird auf Basis der Differenz zwischen dem aktuellen
+Luftdruck und dem Referenzluftdruck berechnet, welcher mit
+:func:`Set Reference Air Pressure` gesetzt werden kann.
 """
 }
 
@@ -87,20 +87,21 @@ Returns the temperature of the air pressure sensor. The value
 has a range of -4000 to 8500 and is given in °C/100, i.e. a value
 of 2007 means that a temperature of 20.07 °C is measured.
 
-This temperature is used internally for temperature compensation of the air
-pressure measurement. It is not as accurate as the temperature measured by the
-:ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
+This temperature is used internally for temperature compensation
+of the air pressure measurement. It is not as accurate as the
+temperature measured by the :ref:`temperature_bricklet` or the
+:ref:`temperature_ir_bricklet`.
 """,
 'de':
 """
 Gibt die Temperatur des Luftdrucksensors zurück. Der Wertbereich
-ist von -4000 bis 8500 und ist in °C/100 angegeben, d.h. bei einem Wert von
-2007 wurde eine Temperatur von 20,07 °C gemessen.
+ist von -4000 bis 8500 und ist in °C/100 angegeben, d.h. bei
+einem Wert von 2007 wurde eine Temperatur von 20,07 °C gemessen.
 
-Diese Temperatur wird intern zur Temperaturkompensation der Luftdruckmessung
-verwendet. Sie ist nicht so genau wie die Temperatur die vom
-:ref:`temperature_bricklet` oder dem :ref:`temperature_ir_bricklet` gemessen
-wird.
+Diese Temperatur wird intern zur Temperaturkompensation der
+Luftdruckmessung verwendet. Sie ist nicht so genau wie die
+Temperatur die vom :ref:`temperature_bricklet` oder dem
+:ref:`temperature_ir_bricklet` gemessen wird.
 """
 }
 
@@ -162,11 +163,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the moving average configuration as set by :func:`Set Moving Average Configuration`.
+Returns the moving average configuration as set by
+:func:`Set Moving Average Configuration`.
 """,
 'de':
 """
-Gibt die Moving Average-Konfiguration zurück, wie von :func:`Set Moving Average Configuration` gesetzt.
+Gibt die Moving Average-Konfiguration zurück, wie von
+:func:`Set Moving Average Configuration` gesetzt.
 """
 }]
 })
@@ -174,16 +177,15 @@ Gibt die Moving Average-Konfiguration zurück, wie von :func:`Set Moving Average
 com['packets'].append({
 'type': 'function',
 'name': 'Set Reference Air Pressure',
-'elements': [('Air Pressure', 'uint32', 1, 'in')],
+'elements': [('Air Pressure', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the reference air pressure in mbar*4096 for the altitude calculation.
-Valid values are between 1064960 and 5160960.
-Setting the reference to the current air pressure results in a calculated
-altitude of 0 mm. Passing 0 is a shortcut for passing the current air pressure as
-reference.
+Sets the reference air pressure in mbar/1000 for the altitude calculation.
+Valid values are between 260000 and 1260000. Setting the reference to the
+current air pressure results in a calculated altitude of 0mm. Passing 0 is
+a shortcut for passing the current air pressure as reference.
 
 Well known reference values are the Q codes
 `QNH <https://en.wikipedia.org/wiki/QNH>`__ and
@@ -194,10 +196,10 @@ The default value is 1013.25mbar.
 """,
 'de':
 """
-Setzt den Referenzluftdruck in mbar*4096 für die Höhenberechnung.
-Gültige Werte liegen zwischen 1064960 und 5160960. Wenn der
-aktuelle Luftdruckwert als Referenz übergeben wird dann gibt die Höhenberechnung
-0cm aus. Als Abkürzung kann auch 0 übergeben werden, dadurch wird der
+Setzt den Referenzluftdruck in mbar/1000 für die Höhenberechnung.
+Gültige Werte liegen zwischen 260000 und 1260000. Wenn der aktuelle
+Luftdruckwert als Referenz übergeben wird dann gibt die Höhenberechnung
+0mm aus. Als Abkürzung kann auch 0 übergeben werden, dadurch wird der
 Referenzluftdruck intern auf den aktuellen Luftdruckwert gesetzt.
 
 Wohl bekannte Referenzluftdruckwerte, die in der Luftfahrt verwendet werden, sind
@@ -213,7 +215,7 @@ Der Standardwert ist 1013,25mbar.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reference Air Pressure',
-'elements': [('Air Pressure', 'uint32', 1, 'out')],
+'elements': [('Air Pressure', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -231,21 +233,19 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Calibration', 'int16', 1, 'in')],
+'elements': [('Measured Air Pressure', 'int32', 1, 'in'),
+             ('Reference Air Pressure', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Sets one point offset calibration value. The value is calculated using the
-following equation:
+Sets one point air pressure offset calibration value. The offset
+is the difference between currently measured air pressure by the
+sensor and the air pressure measured by an accurate reference
+barometer in mbar/1000. The values has a range of 260000 to 1260000.
 
-((pressure_measured - pressure_reference) / 0.1) * 1.6
-
-Where pressure_measured is the air pressure measured without the calibration and
-pressure_reference is the air pressure measured by an accurate reference barometer
-both in mbar.
-
-After calibration the pressure measurements will achieve accuracy of about 0.1 mbar.
+After calibration the air pressure measurements will achieve accuracy
+of about 0.1 mbar.
 """,
 'de':
 """
@@ -257,16 +257,17 @@ After calibration the pressure measurements will achieve accuracy of about 0.1 m
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Calibration', 'int16', 1, 'out')],
+'elements': [('Measured Air Pressure', 'int32', 1, 'out'),
+             ('Reference Air Pressure', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the reference air pressure as set by :func:`Set Calibration`.
+Returns the air pressure offset values as set by :func:`Set Calibration`.
 """,
 'de':
 """
-Gibt den Referenzluftdruckwert zurück, wie von :func:`Set Calibration`
+Gibt den Luftdruck offset werte zurück, wie von :func:`Set Calibration`
 gesetzt.
 """
 }]
