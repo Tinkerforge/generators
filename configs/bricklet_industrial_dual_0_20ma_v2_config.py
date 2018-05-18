@@ -6,7 +6,7 @@
 
 # Industrial Dual 0-20mA 2.0 Bricklet communication config
 
-# TODO: Documentation.
+# TODO: Documentation and examples.
 
 from commonconstants import THRESHOLD_OPTION_CONSTANTS
 from commonconstants import add_callback_value_function
@@ -41,8 +41,8 @@ It is possible to detect if an IEC 60381-1 compatible sensor is connected
 and if it works probably.
 
 If the returned current is below 4mA, there is likely no sensor connected
-or the sensor is may be defective. If the returned current is over 20mA,
-there might be a short circuit or the sensor is may be defective.
+or the connected sensor is defective. If the returned current is over 20mA,
+there might be a short circuit or the sensor is defective.
 """,
 'de':
 """
