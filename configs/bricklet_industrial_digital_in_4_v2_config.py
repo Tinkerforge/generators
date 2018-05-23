@@ -4,9 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# Industrial Digital In 4 Bricklet communication config
-
-# TODO: Documentation and examples.
+# Industrial Digital In 4 Bricklet 2.0 communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
