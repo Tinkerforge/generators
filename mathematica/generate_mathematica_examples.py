@@ -453,16 +453,16 @@ option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option
 class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
         templateA = r"""(*Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)*)
-{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec},False]
+{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change}]
 """
         templateB = r"""(*Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold*)
 option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option_name}
-{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec},False,option,{mininum_maximums}]
+{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{mininum_maximums}]
 """
         templateC = r"""(*Configure threshold for {function_name_comment} "{option_comment}"*)
 (*with a debounce period of {period_sec_short} ({period_msec}ms)*)
 option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option_name}
-{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec},False,option,{mininum_maximums}]
+{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{mininum_maximums}]
 """
 
         if self.get_option_char() == None:
@@ -493,6 +493,7 @@ option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,
+                               value_has_to_change=common.wrap_non_empty(',', self.get_value_has_to_change('True', 'False', ''), ''),
                                mininum_maximums=','.join(mininum_maximums))
 
 class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):

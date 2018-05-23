@@ -240,12 +240,12 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Temperature', 'temperature'), [(('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None)], None, None),
-              ('callback_configuration', ('Temperature', 'temperature'), [], 1000, 'x', [(0, 0)])]
+              ('callback_configuration', ('Temperature', 'temperature'), [], 1000, False, 'x', [(0, 0)])]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('callback', ('Temperature', 'temperature'), [(('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None)], None, None),
-              ('callback_configuration', ('Temperature', 'temperature'), [], 10000, '>', [(30, 0)])]
+              ('callback_configuration', ('Temperature', 'temperature'), [], 10000, False, '>', [(30, 0)])]
 })
 

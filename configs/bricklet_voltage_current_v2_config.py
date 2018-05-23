@@ -279,11 +279,11 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], None, None),
-              ('callback_configuration', ('Voltage', 'voltage'), [], 1000, 'x', [(0, 0)])]
+              ('callback_configuration', ('Voltage', 'voltage'), [], 1000, False, 'x', [(0, 0)])]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('callback', ('Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], None, None),
-              ('callback_configuration', ('Voltage', 'voltage'), [], 1000, '<', [(5, 0)])]
+              ('callback_configuration', ('Voltage', 'voltage'), [], 1000, False, '<', [(5, 0)])]
 })

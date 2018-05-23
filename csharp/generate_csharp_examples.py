@@ -481,14 +481,14 @@ class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
 
     def get_csharp_source(self):
         templateA = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
-		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false);
+		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
+		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
 """
         templateC = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
 		// with a debounce period of {period_sec_short} ({period_msec}ms)
-		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
+		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -511,6 +511,7 @@ class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
                                arguments=common.wrap_non_empty('', ', '.join(self.get_csharp_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
+                               value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums))

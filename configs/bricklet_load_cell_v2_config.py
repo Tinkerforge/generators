@@ -273,11 +273,11 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Weight', 'weight'), [(('Weight', 'Weight'), 'int32', 1, None, 'g', None)], None, None),
-              ('callback_configuration', ('Weight', 'weight'), [], 1000, 'x', [(0, 0)])]
+              ('callback_configuration', ('Weight', 'weight'), [], 1000, False, 'x', [(0, 0)])]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('callback', ('Weight', 'weight'), [(('Weight', 'Weight'), 'int32', 1, None, 'g', None)], None, None),
-              ('callback_configuration', ('Weight', 'weight'), [], 1000, '>', [(200, 0)])]
+              ('callback_configuration', ('Weight', 'weight'), [], 1000, False, '>', [(200, 0)])]
 })

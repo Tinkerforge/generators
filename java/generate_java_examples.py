@@ -451,14 +451,14 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
 
     def get_java_source(self):
         templateA = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
-		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false);
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false,<BP>'{option_char}', {mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {mininum_maximums});
 """
         templateC = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
 		// with a debounce period of {period_sec_short} ({period_msec}ms)
-		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false,<BP>'{option_char}', {mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {mininum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -482,6 +482,7 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
                                  period_msec=period_msec,
                                  period_sec_short=period_sec_short,
                                  period_sec_long=period_sec_long,
+                                 value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
                                  mininum_maximums=',<BP>'.join(mininum_maximums))

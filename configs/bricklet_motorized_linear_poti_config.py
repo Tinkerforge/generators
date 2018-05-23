@@ -224,7 +224,7 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint16', 1, None, None, (0, 100))], None, None),
-              ('callback_configuration', ('Position', 'position'), [], 50, 'x', [(0, 0)])]
+              ('callback_configuration', ('Position', 'position'), [], 50, False, 'x', [(0, 0)])]
 })
 
 com['examples'].append({

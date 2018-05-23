@@ -2426,7 +2426,7 @@ class ExampleCallbackConfigurationFunction(ExampleItem):
     def __init__(self, raw_data, index, example):
         ExampleItem.__init__(self, raw_data, index, example)
 
-        if len(raw_data) != 5:
+        if len(raw_data) != 6:
             raise GeneratorError('Invalid ExampleCallbackConfigurationFunction: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
@@ -2442,7 +2442,7 @@ class ExampleCallbackConfigurationFunction(ExampleItem):
 
         self.minimum_maximums = []
 
-        for index, raw_minimum_maximum in enumerate(raw_data[4]):
+        for index, raw_minimum_maximum in enumerate(raw_data[5]):
             self.minimum_maximums.append(self.get_generator().get_example_callback_threshold_minimum_maximum_class()(raw_minimum_maximum, index, self, example))
 
     def get_name(self, *args, **kwargs):
@@ -2456,6 +2456,15 @@ class ExampleCallbackConfigurationFunction(ExampleItem):
 
     def get_period(self): # msec
         return self.raw_data[2]
+
+    def get_value_has_to_change(self, true, false, none):
+        if self.raw_data[3] == None:
+            return none
+
+        if self.raw_data[3]:
+            return true
+
+        return false
 
     def get_formatted_period(self):
         period_msec = self.get_period()
@@ -2473,7 +2482,7 @@ class ExampleCallbackConfigurationFunction(ExampleItem):
         return period_msec, period_sec_short, period_sec_long
 
     def get_option_char(self):
-        return self.raw_data[3]
+        return self.raw_data[4]
 
     def get_option_comment(self):
         option_char = self.get_option_char()

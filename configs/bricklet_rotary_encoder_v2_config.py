@@ -129,5 +129,5 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Count', 'count'), [(('Count', 'Count'), 'int32', 1, None, None, None)], None, None),
-              ('callback_configuration', ('Count', 'count'), [], 1000, 'x', [(0, 0)])]
+              ('callback_configuration', ('Count', 'count'), [], 1000, False, 'x', [(0, 0)])]
 })

@@ -571,14 +571,14 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
 
     def get_javascript_source(self):
         templateA = r"""{global_line_prefix}        // Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
-{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false);
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""{global_line_prefix}        // Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
 """
         templateC = r"""{global_line_prefix}        // Configure threshold for {function_name_comment} "{option_comment}"
 {global_line_prefix}        // with a debounce period of {period_sec_short} ({period_msec}ms)
-{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}, false, '{option_char}', {mininum_maximums});
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -603,6 +603,7 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,
+                               value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                mininum_maximums=', '.join(mininum_maximums))
