@@ -49,6 +49,8 @@ for git_name in sorted(os.listdir('..')):
 
     print('>>>', git_name)
 
+    base_name = '-'.join(git_name.split('-')[:-1])
+
     if not git_name.endswith('-extension'):
         if len(example_names.get(git_name, [])) == 0:
             error('no example definitions')
@@ -81,35 +83,72 @@ for git_name in sorted(os.listdir('..')):
         error('too many hardware/*.pro files')
     else:
         pro_path = pro_paths[0]
+
+        if not pro_path.endswith('/{0}.pro'.format(base_name)):
+            error('hardware/*.pro has wrong name')
+
+        # hardware/*.sch
         sch_path = pro_path[:-4] + '.sch'
 
         if not os.path.exists(sch_path):
             error('hardware/*.sch is missing')
+        elif not sch_path.endswith('/{0}.sch'.format(base_name)):
+            error('hardware/*.sch has wrong name')
         elif os.system('cd {0}; git ls-files --error-unmatch {1} > /dev/null 2>&1'
                        .format(git_path, sch_path.replace(git_path, '').lstrip('/'))) != 0:
             error('hardware/*.sch is not tracked by git')
 
         pdf_paths = glob.glob(os.path.join(hardware_path, '*-schematic.pdf'))
 
+        # hardware/*-schematic.pdf
         if len(pdf_paths) == 0:
             error('hardware/*-schematic.pdf is missing')
         elif len(pdf_paths) > 1:
             error('too many hardware/*-schematic.pdf files')
+        elif not pdf_paths[0].endswith('/{0}-schematic.pdf'.format(base_name)):
+            error('hardware/*-schematic.pdf has wrong name')
         elif os.system('cd {0}; git ls-files --error-unmatch {1} > /dev/null 2>&1'
                        .format(git_path, pdf_paths[0].replace(git_path, '').lstrip('/'))) != 0:
             error('hardware/*-schematic.pdf is not tracked by git')
 
+        # hardware/*.kicad_pcb
         kicad_pcb_path = pro_path[:-4] + '.kicad_pcb'
 
         if not os.path.exists(kicad_pcb_path):
             error('hardware/*.kicad_pcb is missing')
+        elif not kicad_pcb_path.endswith('/{0}.kicad_pcb'.format(base_name)):
+            error('hardware/*.kicad_pcb has wrong name')
         elif os.system('cd {0}; git ls-files --error-unmatch {1} > /dev/null 2>&1'
                        .format(git_path, kicad_pcb_path.replace(git_path, '').lstrip('/'))) != 0:
             error('hardware/*.kicad_pcb is not tracked by git')
 
+        # hardware/*.step
+        step_path = pro_path[:-4] + '.step'
+
+        if not os.path.exists(step_path):
+            error('hardware/*.step is missing')
+        elif not step_path.endswith('/{0}.step'.format(base_name)):
+            error('hardware/*.step has wrong name')
+        elif os.system('cd {0}; git ls-files --error-unmatch {1} > /dev/null 2>&1'
+                       .format(git_path, step_path.replace(git_path, '').lstrip('/'))) != 0:
+            error('hardware/*.step is not tracked by git')
+
+        # hardware/*.FCStd
+        fcstd_path = pro_path[:-4] + '.FCStd'
+
+        if not os.path.exists(fcstd_path):
+            error('hardware/*.FCStd is missing')
+        elif not fcstd_path.endswith('/{0}.FCStd'.format(base_name)):
+            error('hardware/*.FCStd has wrong name')
+        elif os.system('cd {0}; git ls-files --error-unmatch {1} > /dev/null 2>&1'
+                       .format(git_path, fcstd_path.replace(git_path, '').lstrip('/'))) != 0:
+            error('hardware/*.FCStd is not tracked by git')
+
+        # hardware/*.brd
         if os.path.exists(pro_path[:-4] + '.brd'):
             error('hardware/*.brd found')
 
+        # check kicad-libraries configuration
         with open(pro_path, 'r') as f:
             pro_content = '[__dummy__]\n' + f.read()
 
