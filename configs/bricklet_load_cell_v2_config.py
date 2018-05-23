@@ -267,7 +267,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Wight', 'weight'), [(('Weight', 'Weight'), 'int32', 1, None, 'g', None)], [])]
+'functions': [('getter', ('Get Weight', 'weight'), [(('Weight', 'Weight'), 'int32', 1, None, 'g', None)], [])]
 })
 
 com['examples'].append({
