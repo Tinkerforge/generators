@@ -48,15 +48,29 @@ def check_file(git_path, glob_pattern, expected_name, others_allowed=False):
 
 sys.path.append(os.path.realpath('configs'))
 
+configs = {}
+config_contents = {}
 example_names = {}
+
+config_header = '''# -*- coding: utf-8 -*-
+
+# Redistribution and use in source and binary forms of this file,
+# with or without modification, are permitted. See the Creative
+# Commons Zero (CC0 1.0) License for more details.
+
+# {0} communication config
+'''
 
 for config_name in sorted(os.listdir('configs')):
     if not config_name.endswith('_config.py'):
         continue
 
     config = __import__(config_name[:-3]).com
-
     git_name = config['name'].lower().replace(' ', '-') + '-' + config['category'].lower()
+    configs[git_name] = config
+
+    with open(os.path.join('configs', config_name), 'r') as f:
+        config_contents[git_name] = f.read()
 
     example_names[git_name] = []
 
@@ -85,6 +99,17 @@ for git_name in sorted(os.listdir('..')):
         continue
 
     print('>>>', git_name)
+
+    if git_name in configs:
+        if configs[git_name]['display_name'].endswith(' 2.0'):
+            full_display_name = configs[git_name]['display_name'][:-4] + ' ' + configs[git_name]['category'] + ' 2.0'
+        elif configs[git_name]['display_name'].endswith(' 3.0'):
+            full_display_name = configs[git_name]['display_name'][:-4] + ' ' + configs[git_name]['category'] + ' 3.0'
+        else:
+            full_display_name = configs[git_name]['display_name'] + ' ' + configs[git_name]['category']
+
+        if not config_contents[git_name].startswith(config_header.format(full_display_name)):
+            error('wrong header comment in config')
 
     base_name = '-'.join(git_name.split('-')[:-1])
 
