@@ -15,8 +15,8 @@ com = {
     'display_name': 'One Wire',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': 'Communicates with up 64 1-Wire devices',
+        'de': 'Kommuniziert mit bis zu 64 1-Wire Geräten'
     },
     'comcu': True,
     'released': False,
