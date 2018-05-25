@@ -12,6 +12,9 @@ def error(message):
 def warning(message):
     print('\033[01;33m{0}\033[0m'.format(message))
 
+def info(message):
+    print('\033[01;34m{0}\033[0m'.format(message))
+
 def check_file(git_path, glob_pattern, expected_name, others_allowed=False):
     paths = glob.glob(os.path.join(git_path, glob_pattern))
 
@@ -39,7 +42,7 @@ def check_file(git_path, glob_pattern, expected_name, others_allowed=False):
 
     if not path.endswith(expected_name):
         warning('{0} has wrong name (expected: {1}, found: {2})'.format(glob_pattern, os.path.split(expected_name)[-1], os.path.split(path)[-1]))
-    elif os.system('cd {0}; git ls-files --error-unmatch {1} > /dev/null 2>&1'
+    elif os.system('cd {0}; git ls-files --error-unmatch "{1}" > /dev/null 2>&1'
                    .format(git_path, path.replace(git_path, '').lstrip('/'))) != 0:
         error('{0} is not tracked by git'.format(path.replace(git_path, '').lstrip('/')))
 
@@ -155,6 +158,11 @@ for git_name in sorted(os.listdir('..')):
 
     # check examples
     for bindings_name in sorted(example_name_formats.keys()):
+        try:
+            existing_names = list(os.listdir(os.path.join(git_path, 'software/examples', bindings_name)))
+        except FileNotFoundError:
+            existing_names = []
+
         for example_name in example_names.get(git_name, []):
             for example_name_format in example_name_formats[bindings_name]:
                 example_full_name = example_name_format.format(space=example_name,
@@ -165,7 +173,16 @@ for git_name in sorted(os.listdir('..')):
 
                 if not os.path.exists(example_path):
                     error('{0} is missing'.format(example_path.replace(git_path, '').lstrip('/')))
+                elif os.system('cd {0}; git ls-files --error-unmatch "{1}" > /dev/null 2>&1'
+                               .format(git_path, example_path.replace(git_path, '').lstrip('/'))) != 0:
+                    error('{0} is not tracked by git'.format(example_path.replace(git_path, '').lstrip('/')))
 
+                if example_full_name in existing_names:
+                    existing_names.remove(example_full_name)
+
+        # FIXME: ignore LabVIEW for now because of its extra files
+        if len(existing_names) > 0 and bindings_name != 'labview':
+            info('unexpected {0} example files: {1}'.format(bindings_name, ', '.join(existing_names)))
 
     print('')
 
