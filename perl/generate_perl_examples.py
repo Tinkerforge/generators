@@ -43,6 +43,7 @@ class PerlExample(common.Example):
     def get_perl_source(self):
         template = r"""#!/usr/bin/perl{incomplete}{description}
 
+use strict;
 use Tinkerforge::IPConnection;
 use Tinkerforge::{device_category}{device_name_camel};
 
@@ -469,6 +470,7 @@ ${device_name}->set_debounce_period({period_msec});
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
+            # FIXME: use Time::HiRes::sleep instead
             templateA = '{comment1}{global_line_prefix}sleep({duration});{comment2}\n'
             templateB = '{comment1}{global_line_prefix}select(undef, undef, undef, {duration});{comment2}\n'
             duration = self.get_sleep_duration()
