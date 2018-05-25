@@ -399,7 +399,6 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
             variable_declarations.append('{0} {1}'.format(merged_variable_declaration[0],
                                                           ',<BP>'.join(merged_variable_declaration[1])))
 
-        print merged_variable_declarations[0][0]
         variable_declarations = common.break_string('\t' + ';<BP>'.join(variable_declarations),
                                                     merged_variable_declarations[0][0] + ' ')
 
