@@ -72,13 +72,51 @@ class PerlLintExamplesTester(common.Tester):
                 '-MO=Lint,all',
                 path_lint]
 
+        retcode, output = common.check_output_and_error(args)
+        output = output.strip('\r\n')
+
+        if retcode != 0 and output == "Can't locate object method \"NAME\" via package \"B::IV\" at /usr/share/perl5/B/Lint.pm line 575.\nCHECK failed--call queue aborted.":
+            # FIXME: ignore the Lint module having bugs
+            success = True
+        else:
+            # FIXME: ignore the Lint module being confused about constants
+            filtered_output = []
+
+            for line in output.split('\n'):
+                if not line.startswith("Bare sub name 'HOST' interpreted as string at") and \
+                   not line.startswith("Bare sub name 'PORT' interpreted as string at") and \
+                   not line.startswith("Bare sub name 'UID' interpreted as string at") and \
+                   not line.startswith("Bare sub name 'SECRET' interpreted as string at") and \
+                   not line.startswith("Bare sub name 'NUM_LEDS' interpreted as string at") and \
+                   not line.startswith("Bare sub name 'NDEF_URI' interpreted as string at"):
+                    filtered_output.append(line)
+
+            success = retcode == 0 and len(filtered_output) == 1 and 'syntax OK' in output
+
+        self.handle_result(cookie, output, success)
+
+class PerlCriticExamplesTester(common.Tester):
+    def __init__(self, root_dir):
+        common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='critic')
+
+    def test(self, cookie, path, extra):
+        args = ['perlcritic',
+                #'--brutal', # FIXME
+                '--verbose',
+                '8',
+                '--exclude=ProhibitSleepViaSelect',
+                path]
+
         self.execute(cookie, args)
 
 def run(root_dir):
     if not PerlCheckExamplesTester(root_dir).run():
         return False
 
-    return PerlLintExamplesTester(root_dir).run()
+    if not PerlLintExamplesTester(root_dir).run():
+        return False
+
+    return PerlCriticExamplesTester(root_dir).run()
 
 if __name__ == "__main__":
     run(os.getcwd())
