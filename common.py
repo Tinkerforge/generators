@@ -705,7 +705,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
             if common_packet['since_firmware'] is None:
                 common_packet['to_be_removed'] = True
 
-            if common_packet.get('feature', None) in removed_features:
+            if common_packet.get('feature') in removed_features:
                 common_packet['to_be_removed'] = True
 
         return filter(lambda x: 'to_be_removed' not in x, common_packets)
