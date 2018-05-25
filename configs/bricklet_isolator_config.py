@@ -49,7 +49,6 @@ Gibt Statistken des Isolator Bricklets zurück.
 com['packets'].append({
 'feature': 'bricklet_comcu',
 'type': 'function',
-'function_id': 231,
 'name': 'Set SPITFP Baudrate Config',
 'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'in'),
              ('Minimum Dynamic Baudrate', 'uint32', 1, 'in')],
@@ -119,7 +118,6 @@ Standardmäßig ist die dynamische Baudrate aktiviert und die minimale dynamisch
 com['packets'].append({
 'feature': 'bricklet_comcu',
 'type': 'function',
-'function_id': 232,
 'name': 'Get SPITFP Baudrate Config',
 'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'out'),
              ('Minimum Dynamic Baudrate', 'uint32', 1, 'out')],
@@ -138,7 +136,6 @@ Gibt die Baudratenkonfiguration zurück, siehe :func:`Set SPITFP Baudrate Config
 
 com['packets'].append({
 'type': 'function',
-'function_id': 234,
 'name': 'Set SPITFP Baudrate',
 'elements': [('Baudrate', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -191,7 +188,6 @@ Die Standardbaudrate für alle Ports ist 1400000.
 
 com['packets'].append({
 'type': 'function',
-'function_id': 235,
 'name': 'Get SPITFP Baudrate',
 'elements': [('Baudrate', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -207,11 +203,9 @@ Gibt die Baudrate zurück, siehe :func:`Set SPITFP Baudrate`.
 }]
 })
 
-# Keep function 236 empty, so we can always call "get_bootloader_mode"
 
 com['packets'].append({
 'type': 'function',
-'function_id': 237,
 'name': 'Get Isolator SPITFP Error Count',
 'elements': [('Error Count ACK Checksum', 'uint32', 1, 'out'),
              ('Error Count Message Checksum', 'uint32', 1, 'out'),
