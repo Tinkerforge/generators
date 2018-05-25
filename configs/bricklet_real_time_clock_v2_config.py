@@ -393,7 +393,7 @@ com['packets'].append({
                                                          ('Saturday', 6),
                                                          ('Sunday', 7)])),
              ('Timestamp', 'int64', 1, 'out')],
-'since_firmware': [2, 0, 1],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

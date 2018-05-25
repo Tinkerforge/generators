@@ -490,7 +490,7 @@ com['packets'].append({
                                                              ('Falling', 1),
                                                              ('Both', 2)])),
              ('Debounce', 'uint8', 1, 'out')],
-'since_firmware': [2, 0, 1],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
