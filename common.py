@@ -1413,6 +1413,14 @@ class Packet(object):
     def get_since_firmware(self):
         return self.raw_data['since_firmware']
 
+    def get_formatted_since_firmware(self):
+        since_firmware = self.get_since_firmware()
+
+        if since_firmware == None:
+            return None
+
+        return '.'.join([str(x) for x in self.get_since_firmware()])
+
     def get_doc_type(self):
         return self.raw_data['doc'][0]
 
@@ -1534,6 +1542,7 @@ class Device(object):
         self.name = FlavoredName(raw_data['name'])
 
         next_function_id = 1
+
         for raw_packet in raw_data['packets']:
             if not 'function_id' in raw_packet:
                 raw_packet['function_id'] = next_function_id
@@ -1548,6 +1557,20 @@ class Device(object):
 
             if packet.get_function_id() >= 0:
                 self.all_packets_without_doc_only.append(packet)
+
+        since_firmwares = set()
+
+        for packet in self.all_packets:
+            since_firmware = packet.get_since_firmware()
+
+            if since_firmware != None and since_firmware > [2, 0, 0]:
+                since_firmwares.add(packet.get_formatted_since_firmware())
+
+        since_firmwares = list(since_firmwares)
+
+        if len(since_firmwares) + self.get_api_version_extra() != self.get_api_version()[2]:
+            raise GeneratorError('API version mismatch: len({0}) + {1} != {2}'
+                                 .format(since_firmwares, self.get_api_version_extra(), self.get_api_version()[2]))
 
         function_names = set()
         callback_names = set()
@@ -1632,6 +1655,9 @@ class Device(object):
 
     def get_api_version(self):
         return self.raw_data['api_version']
+
+    def get_api_version_extra(self):
+        return self.raw_data.get('api_version_extra', 0)
 
     def get_doc(self):
         return self.raw_data.get('doc', {'en': '', 'de': ''})

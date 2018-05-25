@@ -10,7 +10,7 @@ from commonconstants import THRESHOLD_OPTION_CONSTANTS
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 4],
+    'api_version': [2, 0, 9],
     'category': 'Brick',
     'device_identifier': 13,
     'name': 'Master',

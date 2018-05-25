@@ -11,6 +11,7 @@ from commonconstants import THRESHOLD_OPTION_CONSTANTS
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
+    'api_version_extra': 1, # +1 for "Break API to fix bool return type mismatch in Servo Brick and Accelerometer Brickelt API [cbddb0a]"
     'category': 'Bricklet',
     'device_identifier': 250,
     'name': 'Accelerometer',

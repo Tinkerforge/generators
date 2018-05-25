@@ -11,6 +11,7 @@ from commonconstants import THRESHOLD_OPTION_CONSTANTS
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
+    'api_version_extra': 1, # +1 for "Add unlimited illuminacne range config [a13e071]"
     'category': 'Bricklet',
     'device_identifier': 259,
     'name': 'Ambient Light V2',

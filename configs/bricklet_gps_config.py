@@ -9,6 +9,7 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
+    'api_version_extra': 1, # +1 for "Break API to fix types of altitude and geoidal separation [655420c]"
     'category': 'Bricklet',
     'device_identifier': 222,
     'name': 'GPS',
