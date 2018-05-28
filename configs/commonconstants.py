@@ -68,15 +68,14 @@ The `option`-parameter together with min/max sets a threshold for the :cb:`{0}` 
 The following options are possible:
 
 .. csv-table::
-:header: "Option", "Description"
-:widths: 10, 100
+ :header: "Option", "Description"
+ :widths: 10, 100
 
-"'x'",    "Threshold is turned off"
-"'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-"'i'",    "Threshold is triggered when the value is *inside* the min and max values"
-"'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
-"'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
-
+ "'x'",    "Threshold is turned off"
+ "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
+ "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+ "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
+ "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
 If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
 
@@ -100,14 +99,14 @@ Der `option`-Parameter`zusammen mit min/max setzt einen Threshold für den :cb:`
 Die folgenden Optionen sind möglich:
 
 .. csv-table::
-:header: "Option", "Beschreibung"
-:widths: 10, 100
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
 
-"'x'",    "Threshold ist abgeschaltet"
-"'o'",    "Threshold wird ausgelöst, wenn der Wert *außerhalb* der Min und Max Werte sind"
-"'i'",    "Threshold wird ausgelöst, wenn der Wert *innerhalb* der Min und Max Werte sind"
-"'<'",    "Threshold wird ausgelöst, wenn der Wert kleiner ist wie der Min Wert (Max wird ignoriert)"
-"'>'",    "Threshold wird ausgelöst, wenn der Wert größer ist wie der Max Wert (Min wird ignoriert)"
+ "'x'",    "Threshold ist abgeschaltet"
+ "'o'",    "Threshold wird ausgelöst, wenn der Wert *außerhalb* der Min und Max Werte sind"
+ "'i'",    "Threshold wird ausgelöst, wenn der Wert *innerhalb* der Min und Max Werte sind"
+ "'<'",    "Threshold wird ausgelöst, wenn der Wert kleiner ist wie der Min Wert (Max wird ignoriert)"
+ "'>'",    "Threshold wird ausgelöst, wenn der Wert größer ist wie der Max Wert (Min wird ignoriert)"
 
 Wird die Option auf 'x' gesetzt (Threshold abgeschaltet), so wird der Callback mit der festen Periode
 ausgelöst.
@@ -214,15 +213,14 @@ The `option`-parameter together with min/max sets a threshold for the :cb:`{0}` 
 The following options are possible:
 
 .. csv-table::
-:header: "Option", "Description"
-:widths: 10, 100
+ :header: "Option", "Description"
+ :widths: 10, 100
 
-"'x'",    "Threshold is turned off"
-"'o'",    "Threshold is triggered when the value is *outside* the min and max values"
-"'i'",    "Threshold is triggered when the value is *inside* the min and max values"
-"'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
-"'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
-
+ "'x'",    "Threshold is turned off"
+ "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
+ "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+ "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
+ "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
 If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
 
@@ -246,14 +244,14 @@ Der `option`-Parameter`zusammen mit min/max setzt einen Threshold für den :cb:`
 Die folgenden Optionen sind möglich:
 
 .. csv-table::
-:header: "Option", "Beschreibung"
-:widths: 10, 100
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
 
-"'x'",    "Threshold ist abgeschaltet"
-"'o'",    "Threshold wird ausgelöst, wenn der Wert *außerhalb* der Min und Max Werte sind"
-"'i'",    "Threshold wird ausgelöst, wenn der Wert *innerhalb* der Min und Max Werte sind"
-"'<'",    "Threshold wird ausgelöst, wenn der Wert kleiner ist wie der Min Wert (Max wird ignoriert)"
-"'>'",    "Threshold wird ausgelöst, wenn der Wert größer ist wie der Max Wert (Min wird ignoriert)"
+ "'x'",    "Threshold ist abgeschaltet"
+ "'o'",    "Threshold wird ausgelöst, wenn der Wert *außerhalb* der Min und Max Werte sind"
+ "'i'",    "Threshold wird ausgelöst, wenn der Wert *innerhalb* der Min und Max Werte sind"
+ "'<'",    "Threshold wird ausgelöst, wenn der Wert kleiner ist wie der Min Wert (Max wird ignoriert)"
+ "'>'",    "Threshold wird ausgelöst, wenn der Wert größer ist wie der Max Wert (Min wird ignoriert)"
 
 Wird die Option auf 'x' gesetzt (Threshold abgeschaltet), so wird der Callback mit der festen Periode
 ausgelöst.
@@ -295,7 +293,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels :func:`{0} Callback Configu
             'en': """
 This callback is triggered periodically according to the configuration set by
 :func:`{0} Callback Configuration`.
-s
+
 The `parameter` is the same as :func:`{1}`.
 """.format(name_set, name_get),
             'de': """
