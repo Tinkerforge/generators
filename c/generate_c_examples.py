@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -401,6 +402,7 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
 
         variable_declarations = common.break_string('\t' + ';<BP>'.join(variable_declarations),
                                                     merged_variable_declarations[0][0] + ' ')
+        variable_declarations = re.sub(';\n\t([ ]+)', ';\n\t', variable_declarations, flags=re.MULTILINE)
 
         while None in printfs:
             printfs.remove(None)
