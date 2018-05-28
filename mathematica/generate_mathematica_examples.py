@@ -36,7 +36,7 @@ global_line_suffix = ''
 
 class MathematicaConstant(common.Constant):
     def get_mathematica_source(self):
-        template = '{device_category}{device_name}`{constant_group_name}U{constant_name}'
+        template = 'Tinkerforge`{device_category}{device_name}`{constant_group_name}U{constant_name}'
 
         return template.format(device_category=self.get_device().get_category().camel,
                                device_name=self.get_device().get_name().camel,
