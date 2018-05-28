@@ -273,17 +273,18 @@ gesetzt.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'int32', 1, 1000.0, 'V', None)], [])]
+'functions': [('getter', ('Get Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'int32', 1, 1000.0, 'V', None)], []),
+              ('getter', ('Get Current', 'current'), [(('Current', 'Current'), 'int32', 1, 1000.0, 'A', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'int32', 1, 1000.0, 'V', None)], None, None),
-              ('callback_configuration', ('Voltage', 'voltage'), [], 1000, False, 'x', [(0, 0)])]
+'functions': [('callback', ('Current', 'current'), [(('Current', 'Current'), 'int32', 1, 1000.0, 'A', None)], None, None),
+              ('callback_configuration', ('Current', 'current'), [], 1000, False, 'x', [(0, 0)])]
 })
 
 com['examples'].append({
 'name': 'Threshold',
-'functions': [('callback', ('Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'int32', 1, 1000.0, 'V', None)], None, None),
-              ('callback_configuration', ('Voltage', 'voltage'), [], 1000, False, '<', [(5, 0)])]
+'functions': [('callback', ('Power', 'power'), [(('Power', 'power'), 'int32', 1, 1000.0, 'W', None)], None, None),
+              ('callback_configuration', ('Power', 'power'), [], 1000, False, '>', [(10, 0)])]
 })
