@@ -107,7 +107,8 @@ ReleaseNETObject[ipcon]
                                device_name_initial=self.get_device().get_initial_name(),
                                device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
-                               sources='\n' + '\n'.join(sources).replace(';\n\n\b', '\n\n').replace('\n\r', '').lstrip('\r'),
+                               # FIXME: '*)\n\n\b' -> '*)\n\n' misses to remove the final semicolon before a comment inside of a loop
+                               sources='\n' + '\n'.join(sources).replace('*)\n\n\b', '*)\n\n').replace(';\n\n\b', '\n\n').replace('\n\r', '').lstrip('\r'),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
 
 class MathematicaExampleArgument(common.ExampleArgument):
