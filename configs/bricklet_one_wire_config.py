@@ -203,19 +203,15 @@ Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` ges
 """
 com['examples'].append({
 'name': 'Read DS18B20 Temperature',
-
-
-'functions': [('setter', 'Write Command', [('uint64', 0), ('uint8', 0x4E)], 'WRITE SCRATCHPAD', None),
-              ('setter', 'Write', [('uint8', 0x00)], 'ALARM H (unused)', None),
-              ('setter', 'Write', [('uint8', 0x00)], 'ALARM L (unused)', None),
-              ('setter', 'Write', [('uint8', 0x7F)], 'CONFIGURATION: 12 bit mode', None),
-
+'functions': [('setter', 'Write Command', [('uint64', 0), ('uint8', 0x4E)], None, 'WRITE SCRATCHPAD'),
+              ('setter', 'Write', [('uint8', 0x00)], None, 'ALARM H (unused)'),
+              ('setter', 'Write', [('uint8', 0x00)], None, 'ALARM L (unused)'),
+              ('setter', 'Write', [('uint8', 0x7F)], None, 'CONFIGURATION: 12 bit mode'),
               ('loop_header', 10, 'Read temperature 10 times'),
-              ('setter', 'Write Command', [('uint64', 0), ('uint8', 0x44)], 'CONVERT T (start temperature conversion)', None),
+              ('setter', 'Write Command', [('uint64', 0), ('uint8', 0x44)], None, 'CONVERT T (start temperature conversion)'),
               ('sleep', 1000, None, 'Wait for conversion to finish'),
-              ('setter', 'Write Command', [('uint64', 0), ('uint8', 0xBE)], 'READ SCRATCHPAD', None),
-
-# TODO: Add getter for temperature values (see above)
-
-              ('loop_footer',)]
+              ('setter', 'Write Command', [('uint64', 0), ('uint8', 0xBE)], None, 'READ SCRATCHPAD'),
+              # TODO: Add getter for temperature values (see above)
+              ('loop_footer',)],
+'incomplete': True # because of special print logic
 })
