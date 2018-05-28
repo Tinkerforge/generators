@@ -1976,6 +1976,16 @@ class ExampleParameter(ExampleItem):
     def get_function(self): # parent
         return self.function
 
+    def get_element(self):
+        function_type = self.get_function().get_type()
+        function_name = self.get_function().get_name().space
+
+        for packet in self.get_device().get_packets(type_=function_type):
+            if packet.get_name().space == function_name:
+                return packet.get_elements(direction='in' if function_type == 'function' else 'out')[self.get_index()]
+
+        return None
+
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)
 
@@ -2053,6 +2063,14 @@ class ExampleParameter(ExampleItem):
             return ''
 
         return template.format(formatted_range)
+
+    def get_constant_group(self):
+        element = self.get_element()
+
+        if element != None:
+            return element.get_constant_group()
+
+        return None
 
 class ExampleResult(ExampleItem):
     def __init__(self, raw_data, index, function, example):
@@ -2073,6 +2091,15 @@ class ExampleResult(ExampleItem):
     def get_function(self): # parent
         return self.function
 
+    def get_element(self):
+        function_name = self.get_function().get_name().space
+
+        for packet in self.get_device().get_packets(type_='function'):
+            if packet.get_name().space == function_name:
+                return packet.get_elements(direction='out')[self.get_index()]
+
+        return None
+
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)
 
@@ -2150,6 +2177,14 @@ class ExampleResult(ExampleItem):
             return ''
 
         return template.format(formatted_range)
+
+    def get_constant_group(self):
+        element = self.get_element()
+
+        if element != None:
+            return element.get_constant_group()
+
+        return None
 
 class ExampleGetterFunction(ExampleItem):
     def __init__(self, raw_data, index, example):
@@ -2173,6 +2208,9 @@ class ExampleGetterFunction(ExampleItem):
 
         for index, raw_argument in enumerate(raw_data[2]):
             self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
+
+    def get_type(self):
+        return 'function'
 
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)
@@ -2200,6 +2238,9 @@ class ExampleSetterFunction(ExampleItem):
 
         for index, raw_argument in enumerate(raw_data[1]):
             self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
+
+    def get_type(self):
+        return 'function'
 
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)
@@ -2246,6 +2287,9 @@ class ExampleCallbackFunction(ExampleItem):
 
         for index, raw_parameter in enumerate(raw_data[1]):
             self.parameters.append(self.get_generator().get_example_parameter_class()(raw_parameter, index, self, example))
+
+    def get_type(self):
+        return 'callback'
 
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)
@@ -2295,6 +2339,9 @@ class ExampleCallbackPeriodFunction(ExampleItem):
 
         for index, raw_argument in enumerate(raw_data[1]):
             self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
+
+    def get_type(self):
+        return 'function'
 
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)
@@ -2408,6 +2455,9 @@ class ExampleCallbackThresholdFunction(ExampleItem):
         for index, raw_minimum_maximum in enumerate(raw_data[3]):
             self.minimum_maximums.append(self.get_generator().get_example_callback_threshold_minimum_maximum_class()(raw_minimum_maximum, index, self, example))
 
+    def get_type(self):
+        return 'function'
+
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)
 
@@ -2470,6 +2520,9 @@ class ExampleCallbackConfigurationFunction(ExampleItem):
 
         for index, raw_minimum_maximum in enumerate(raw_data[5]):
             self.minimum_maximums.append(self.get_generator().get_example_callback_threshold_minimum_maximum_class()(raw_minimum_maximum, index, self, example))
+
+    def get_type(self):
+        return 'function'
 
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)

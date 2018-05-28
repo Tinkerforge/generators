@@ -28,14 +28,22 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import perl_common
 
 global_line_prefix = ''
 
 class PerlConstant(common.Constant):
-    def get_perl_source(self):
-        template = '${device_name}->{constant_group_name}_{constant_name}'
+    def get_perl_source(self, callback=False):
+        templateA = 'Tinkerforge::{device_class}->{constant_group_name}_{constant_name}'
+        templateB = '${device_name}->{constant_group_name}_{constant_name}'
 
-        return template.format(device_name=self.get_device().get_initial_name(),
+        if callback:
+            template = templateA
+        else:
+            template = templateB
+
+        return template.format(device_class=self.get_device().get_perl_class_name(),
+                               device_name=self.get_device().get_initial_name(),
                                constant_group_name=self.get_constant_group().get_name().upper,
                                constant_name=self.get_name().upper)
 
@@ -139,45 +147,63 @@ class PerlExampleParameter(common.ExampleParameter):
         return template.format(name=self.get_name().under)
 
     def get_perl_prints(self):
-        templateA = '    print "{label}: " . {sprintf_prefix}{index_prefix}${name}{index_suffix}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
-        templateB = '    print "{label}: ${name}{unit}\\n";{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '    {else_}if (${name} == {constant_name})\n    {{\n        print "{label}: {constant_title}\\n";{comment}\n    }}'
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='els' if len(result) > 0 else '',
+                                              name=self.get_name().under,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_perl_source(callback=True),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' # {0}')))
 
-        type_ = self.get_type()
-        divisor = self.get_formatted_divisor('/{0}')
-        sprintf_prefix = ''
-        sprintf_suffix = ''
-        index_prefix = ''
-
-        if ':bitmask:' in type_:
-            template = templateA
-            sprintf_prefix = "sprintf('%0{0}b', ".format(int(type_.split(':')[2]))
-            sprintf_suffix = ')'
-        elif len(divisor) > 0 or self.get_label_count() > 1:
-            template = templateA
-
-            if self.get_label_count() > 1:
-                index_prefix = '@{'
+            result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = templateB
+            templateA = '    print "{label}: " . {sprintf_prefix}{index_prefix}${name}{index_suffix}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
+            templateB = '    print "{label}: ${name}{unit}\\n";{comment}'
 
-        result = []
+            if self.get_label_name() == None:
+                return []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=self.get_name().under,
-                                          label=self.get_label_name(index=index),
-                                          index_prefix=index_prefix,
-                                          index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(' {0}'),
-                                          sprintf_prefix=sprintf_prefix,
-                                          sprintf_suffix=sprintf_suffix,
-                                          comment=self.get_formatted_comment(' # {0}')))
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            type_ = self.get_type()
+            divisor = self.get_formatted_divisor('/{0}')
+            sprintf_prefix = ''
+            sprintf_suffix = ''
+            index_prefix = ''
+
+            if ':bitmask:' in type_:
+                template = templateA
+                sprintf_prefix = "sprintf('%0{0}b', ".format(int(type_.split(':')[2]))
+                sprintf_suffix = ')'
+            elif len(divisor) > 0 or self.get_label_count() > 1:
+                template = templateA
+
+                if self.get_label_count() > 1:
+                    index_prefix = '@{'
+            else:
+                template = templateB
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=self.get_name().under,
+                                              label=self.get_label_name(index=index),
+                                              index_prefix=index_prefix,
+                                              index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(' {0}'),
+                                              sprintf_prefix=sprintf_prefix,
+                                              sprintf_suffix=sprintf_suffix,
+                                              comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -192,50 +218,73 @@ class PerlExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_perl_prints(self):
-        templateA = 'print "{label}: " . {sprintf_prefix}{index_prefix}${name}{index_suffix}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
-        templateB = 'print "{label}: ${name}{unit}\\n";{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '{else_}if (${name} == {constant_name})\n{{\n    print "{label}: {constant_title}\\n";{comment}\n}}'
+            constant_group = self.get_constant_group()
+            name = self.get_name().under
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            if name == self.get_device().get_initial_name():
+                name += '_'
 
-        name = self.get_name().under
+            result = []
 
-        if name == self.get_device().get_initial_name():
-            name += '_'
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='els' if len(result) > 0 else '',
+                                              name=name,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_perl_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' # {0}')))
 
-        type_ = self.get_type()
-        divisor = self.get_formatted_divisor('/{0}')
-        sprintf_prefix = ''
-        sprintf_suffix = ''
-        index_prefix = ''
-
-        if ':bitmask:' in type_:
-            template = templateA
-            sprintf_prefix = "sprintf('%0{0}b', ".format(int(type_.split(':')[2]))
-            sprintf_suffix = ')'
-        elif len(divisor) > 0 or self.get_label_count() > 1:
-            template = templateA
-
-            if self.get_label_count() > 1:
-                index_prefix = '@{'
+            result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = templateB
+            templateA = 'print "{label}: " . {sprintf_prefix}{index_prefix}${name}{index_suffix}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
+            templateB = 'print "{label}: ${name}{unit}\\n";{comment}'
 
-        result = []
+            if self.get_label_name() == None:
+                return []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index),
-                                          index_prefix=index_prefix,
-                                          index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(' {0}'),
-                                          sprintf_prefix=sprintf_prefix,
-                                          sprintf_suffix=sprintf_suffix,
-                                          comment=self.get_formatted_comment(' # {0}')))
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            name = self.get_name().under
+
+            if name == self.get_device().get_initial_name():
+                name += '_'
+
+            type_ = self.get_type()
+            divisor = self.get_formatted_divisor('/{0}')
+            sprintf_prefix = ''
+            sprintf_suffix = ''
+            index_prefix = ''
+
+            if ':bitmask:' in type_:
+                template = templateA
+                sprintf_prefix = "sprintf('%0{0}b', ".format(int(type_.split(':')[2]))
+                sprintf_suffix = ')'
+            elif len(divisor) > 0 or self.get_label_count() > 1:
+                template = templateA
+
+                if self.get_label_count() > 1:
+                    index_prefix = '@{'
+            else:
+                template = templateB
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index),
+                                              index_prefix=index_prefix,
+                                              index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(' {0}'),
+                                              sprintf_prefix=sprintf_prefix,
+                                              sprintf_suffix=sprintf_suffix,
+                                              comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -264,13 +313,13 @@ class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumen
             prints.remove(None)
 
         if len(prints) > 1:
-            prints.insert(0, '')
+            prints.insert(0, '\b')
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
                                function_name_comment=self.get_comment_name(),
                                variables=variables,
-                               prints='\n'.join(prints),
+                               prints='\n'.join(prints).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                arguments=', '.join(self.get_perl_arguments()))
 
 class PerlExampleSetterFunction(common.ExampleSetterFunction, PerlExampleArgumentsMixin):
@@ -330,7 +379,7 @@ class PerlExampleCallbackFunction(common.ExampleCallbackFunction):
                                   override_comment=override_comment) + \
                  template2.format(function_name_under=self.get_name().under,
                                   parameters=common.wrap_non_empty('    my (', ',<BP>'.join(parameters), ') = @_;\n\n'),
-                                  prints='\n'.join(prints),
+                                  prints='\n'.join(prints).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                   extra_message=extra_message)
 
         return common.break_string(result, 'my (')
@@ -505,6 +554,9 @@ class PerlExamplesGenerator(common.ExamplesGenerator):
 
     def get_constant_class(self):
         return PerlConstant
+
+    def get_device_class(self):
+        return perl_common.PerlDevice
 
     def get_example_class(self):
         return PerlExample

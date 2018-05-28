@@ -804,5 +804,5 @@ com['examples'].append({
               ('callback', ('Velocity Reached', 'velocity reached'), [(('Velocity', 'Velocity'), 'int16', 1, None, None, None)], 'Use velocity reached callback to swing back and forth\nbetween full speed forward and full speed backward', None),
               ('setter', 'Enable', [], 'Enable motor power', None)],
 'cleanups': [('setter', 'Disable', [], None, 'Disable motor power')],
-'incomplete': True # because of special print logic in callback
+'incomplete': True # because of special drive logic in callback
 })

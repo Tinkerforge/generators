@@ -270,47 +270,76 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
         return False
 
     def get_matlab_fprintfs(self):
-        template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '    {else_}if {java2int_prefix}e.{name}{java2int_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
+            constant_group = self.get_constant_group()
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            if self.needs_octave_java2int():
+                java2int_prefix = 'java2int('
+                java2int_suffix = ')'
+            else:
+                java2int_prefix = ''
+                java2int_suffix = ''
 
-        if self.needs_octave_java2int():
-            java2int_prefix = 'java2int('
-            java2int_suffix = ')'
+            result = []
+
+            for constant in constant_group.get_constants():
+                result.append(template.format(global_quote=global_quote,
+                                              else_='else' if len(result) > 0 else '',
+                                              name=self.get_name().headless,
+                                              java2int_prefix=java2int_prefix,
+                                              java2int_suffix=java2int_suffix,
+                                              label=self.get_label_name().replace('%', '%%'),
+                                              constant_name=constant.get_value() if global_is_octave else 'com.tinkerforge.' + constant.get_matlab_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' % {0}')))
+
+            result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
-            java2int_prefix = ''
-            java2int_suffix = ''
+            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
 
-        type_ = self.get_type()
+            if self.get_label_name() == None:
+                return []
 
-        # FIXME: dec2bin doesn't support leading zeros. therefore,
-        #        the result is not padded to the requested number of digits
-        if ':bitmask:' in type_:
-            to_binary_prefix = 'dec2bin('
-            to_binary_suffix = ')'
-        else:
-            to_binary_prefix = ''
-            to_binary_suffix = ''
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
 
-        result = []
+            if self.needs_octave_java2int():
+                java2int_prefix = 'java2int('
+                java2int_suffix = ')'
+            else:
+                java2int_prefix = ''
+                java2int_suffix = ''
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(global_quote=global_quote,
-                                          name=self.get_name().headless,
-                                          label=self.get_label_name(index=index).replace('%', '%%'),
-                                          fprintf_format=self.get_matlab_fprintf_format(),
-                                          index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
-                                          divisor=self.get_formatted_divisor('/{0}'),
-                                          unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                          java2int_prefix=java2int_prefix,
-                                          java2int_suffix=java2int_suffix,
-                                          to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix,
-                                          comment=self.get_formatted_comment(' % {0}')))
+            type_ = self.get_type()
+
+            # FIXME: dec2bin doesn't support leading zeros. therefore,
+            #        the result is not padded to the requested number of digits
+            if ':bitmask:' in type_:
+                to_binary_prefix = 'dec2bin('
+                to_binary_suffix = ')'
+            else:
+                to_binary_prefix = ''
+                to_binary_suffix = ''
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(global_quote=global_quote,
+                                              name=self.get_name().headless,
+                                              label=self.get_label_name(index=index).replace('%', '%%'),
+                                              fprintf_format=self.get_matlab_fprintf_format(),
+                                              index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                              java2int_prefix=java2int_prefix,
+                                              java2int_suffix=java2int_suffix,
+                                              to_binary_prefix=to_binary_prefix,
+                                              to_binary_suffix=to_binary_suffix,
+                                              comment=self.get_formatted_comment(' % {0}')))
 
         return result
 
@@ -333,58 +362,97 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
         return name
 
     def get_matlab_fprintfs(self):
-        template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '    {else_}if {java2int_prefix}{object_prefix}{name}{java2int_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
+            constant_group = self.get_constant_group()
+            name = self.get_name().headless
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            if len(self.get_function().get_results()) > 1:
+                object_prefix = self.get_function().get_name(skip=1).headless + '.'
+            else:
+                if name == self.get_device().get_initial_name():
+                    name += '_'
 
-        name = self.get_name().headless
+                object_prefix = ''
 
-        if len(self.get_function().get_results()) > 1:
-            object_prefix = self.get_function().get_name(skip=1).headless + '.'
+            if self.needs_octave_java2int():
+                java2int_prefix = 'java2int('
+                java2int_suffix = ')'
+            else:
+                java2int_prefix = ''
+                java2int_suffix = ''
+
+            result = []
+
+            for constant in constant_group.get_constants():
+                result.append(template.format(global_quote=global_quote,
+                                              else_='else' if len(result) > 0 else '',
+                                              object_prefix=object_prefix,
+                                              name=name,
+                                              label=self.get_label_name().replace('%', '%%'),
+                                              constant_name=constant.get_value() if global_is_octave else constant.get_matlab_source(),
+                                              constant_title=constant.get_name().space,
+                                              java2int_prefix=java2int_prefix,
+                                              java2int_suffix=java2int_suffix,
+                                              comment=self.get_formatted_comment(' % {0}')))
+
+            result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
-            if name == self.get_device().get_initial_name():
-                name += '_'
+            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
 
-            object_prefix = ''
+            if self.get_label_name() == None:
+                return []
 
-        if self.needs_octave_java2int():
-            java2int_prefix = 'java2int('
-            java2int_suffix = ')'
-        else:
-            java2int_prefix = ''
-            java2int_suffix = ''
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
 
-        type_ = self.get_type()
+            name = self.get_name().headless
 
-        # FIXME: dec2bin doesn't support leading zeros. therefore,
-        #        the result is not padded to the requested number of digits
-        if ':bitmask:' in type_:
-            to_binary_prefix = 'dec2bin('
-            to_binary_suffix = ')'
-        else:
-            to_binary_prefix = ''
-            to_binary_suffix = ''
+            if len(self.get_function().get_results()) > 1:
+                object_prefix = self.get_function().get_name(skip=1).headless + '.'
+            else:
+                if name == self.get_device().get_initial_name():
+                    name += '_'
 
-        result = []
+                object_prefix = ''
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(global_quote=global_quote,
-                                          name=name,
-                                          label=self.get_label_name(index=index).replace('%', '%%'),
-                                          fprintf_format=self.get_matlab_fprintf_format(),
-                                          index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
-                                          divisor=self.get_formatted_divisor('/{0}'),
-                                          unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                          object_prefix=object_prefix,
-                                          java2int_prefix=java2int_prefix,
-                                          java2int_suffix=java2int_suffix,
-                                          to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix,
-                                          comment=self.get_formatted_comment(' % {0}')))
+            if self.needs_octave_java2int():
+                java2int_prefix = 'java2int('
+                java2int_suffix = ')'
+            else:
+                java2int_prefix = ''
+                java2int_suffix = ''
+
+            type_ = self.get_type()
+
+            # FIXME: dec2bin doesn't support leading zeros. therefore,
+            #        the result is not padded to the requested number of digits
+            if ':bitmask:' in type_:
+                to_binary_prefix = 'dec2bin('
+                to_binary_suffix = ')'
+            else:
+                to_binary_prefix = ''
+                to_binary_suffix = ''
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(global_quote=global_quote,
+                                              object_prefix=object_prefix,
+                                              name=name,
+                                              label=self.get_label_name(index=index).replace('%', '%%'),
+                                              fprintf_format=self.get_matlab_fprintf_format(),
+                                              index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                              java2int_prefix=java2int_prefix,
+                                              java2int_suffix=java2int_suffix,
+                                              to_binary_prefix=to_binary_prefix,
+                                              to_binary_suffix=to_binary_suffix,
+                                              comment=self.get_formatted_comment(' % {0}')))
 
         return result
 
@@ -418,13 +486,13 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
             fprintfs.remove(None)
 
         if len(fprintfs) > 1:
-            fprintfs.insert(0, '')
+            fprintfs.insert(0, '\b')
 
         return template.format(device_name_initial=self.get_device().get_initial_name(),
                                function_name_headless=self.get_name().headless,
                                function_name_comment=self.get_comment_name(),
                                variable=variable,
-                               fprintfs='\n'.join(fprintfs),
+                               fprintfs='\n'.join(fprintfs).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                arguments=', '.join(self.get_matlab_arguments()))
 
 class MATLABExampleSetterFunction(common.ExampleSetterFunction, MATLABExampleArgumentsMixin):
@@ -487,7 +555,7 @@ end
         functions = [template1.format(function_name_comment=self.get_comment_name(),
                                       override_comment=override_comment) + \
                      template2.format(function_name_under=self.get_name().under,
-                                      fprintfs='\n'.join(fprintfs),
+                                      fprintfs='\n'.join(fprintfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                       extra_message=extra_message)]
 
         return functions

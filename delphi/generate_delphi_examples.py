@@ -232,32 +232,55 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
                                name=name)
 
     def get_delphi_write_lns(self):
-        # FIXME: the parameter type can indicate a bitmask, but there is no easy way in Delphi
-        #        to format an integer in base-2, that doesn't require open-coding it with several
-        #        lines of code. so just print the integer in base-10 the normal way
-        template = "  WriteLn(Format('{label}: {printf_format}{unit}', [{name}{index}{divisor}]));{comment}"
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = "  {else_}if ({name} = {constant_name}) then begin\n    WriteLn('{label}: {constant_title}');{comment}\n  end"
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            name = self.get_name().headless
 
-        name = self.get_name().headless
+            if name == self.get_device().get_initial_name():
+                name += '_'
 
-        if name == self.get_device().get_initial_name():
-            name += '_'
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                                              name=name,
+                                              label=self.get_label_name().replace('%', '%%'),
+                                              constant_name=constant.get_delphi_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' {{ {0} }}')))
 
-        result = []
+            result = ['\r' + '\n'.join(result) + ';' + '\r']
+        else:
+            # FIXME: the parameter type can indicate a bitmask, but there is no easy way in Delphi
+            #        to format an integer in base-2, that doesn't require open-coding it with several
+            #        lines of code. so just print the integer in base-10 the normal way
+            template = "  WriteLn(Format('{label}: {printf_format}{unit}', [{name}{index}{divisor}]));{comment}"
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index).replace('%', '%%'),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=self.get_formatted_divisor('/{0}'),
-                                          printf_format=self.get_delphi_printf_format(),
-                                          unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                          comment=self.get_formatted_comment(' {{ {0} }}')))
+            if self.get_label_name() == None:
+                return []
+
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            name = self.get_name().headless
+
+            if name == self.get_device().get_initial_name():
+                name += '_'
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index).replace('%', '%%'),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              printf_format=self.get_delphi_printf_format(),
+                                              unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                              comment=self.get_formatted_comment(' {{ {0} }}')))
 
         return result
 
@@ -292,32 +315,55 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
         return name
 
     def get_delphi_write_lns(self):
-        # FIXME: the result type can indicate a bitmask, but there is no easy way in Delphi
-        #        to format an integer in base-2, that doesn't require open-coding it with several
-        #        lines of code. so just print the integer in base-10 the normal way
-        template = "  WriteLn(Format('{label}: {printf_format}{unit}', [{name}{index}{divisor}]));{comment}"
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = "  {else_}if ({name} = {constant_name}) then begin\n    WriteLn('{label}: {constant_title}');{comment}\n  end"
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            name = self.get_name().headless
 
-        name = self.get_name().headless
+            if name == self.get_device().get_initial_name():
+                name += '_'
 
-        if name == self.get_device().get_initial_name():
-            name += '_'
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                                              name=name,
+                                              label=self.get_label_name().replace('%', '%%'),
+                                              constant_name=constant.get_delphi_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' {{ {0} }}')))
 
-        result = []
+            result = ['\r' + '\n'.join(result) + ';' + '\r']
+        else:
+            # FIXME: the result type can indicate a bitmask, but there is no easy way in Delphi
+            #        to format an integer in base-2, that doesn't require open-coding it with several
+            #        lines of code. so just print the integer in base-10 the normal way
+            template = "  WriteLn(Format('{label}: {printf_format}{unit}', [{name}{index}{divisor}]));{comment}"
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index).replace('%', '%%'),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=self.get_formatted_divisor('/{0}'),
-                                          printf_format=self.get_delphi_printf_format(),
-                                          unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                          comment=self.get_formatted_comment(' {{ {0} }}')))
+            if self.get_label_name() == None:
+                return []
+
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            name = self.get_name().headless
+
+            if name == self.get_device().get_initial_name():
+                name += '_'
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index).replace('%', '%%'),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              printf_format=self.get_delphi_printf_format(),
+                                              unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                              comment=self.get_formatted_comment(' {{ {0} }}')))
 
         return result
 
@@ -361,7 +407,7 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
             write_lns.remove(None)
 
         if len(write_lns) > 1:
-            write_lns.insert(0, '')
+            write_lns.insert(0, '\b')
 
         arguments = self.get_delphi_arguments()
 
@@ -373,7 +419,7 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
                                  function_name_camel=self.get_name().camel,
                                  function_name_comment=self.get_comment_name(),
                                  variable_names=''.join(variable_names),
-                                 write_lns='\n'.join(write_lns),
+                                 write_lns='\n'.join(write_lns).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                  arguments=common.wrap_non_empty('(', ',<BP>'.join(arguments), ')'))
 
         return common.break_string(result, '.{0}('.format(self.get_name().camel))
@@ -456,7 +502,7 @@ end;
                                   device_name=self.get_device().get_name().camel,
                                   function_name_camel=self.get_name().camel,
                                   parameters=common.wrap_non_empty(';<BP>', ';<BP>'.join(parameters), ''),
-                                  write_lns='\n'.join(write_lns),
+                                  write_lns='\n'.join(write_lns).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                   extra_message=extra_message)
 
         return common.break_string(result, '{}CB('.format(self.get_name().camel))

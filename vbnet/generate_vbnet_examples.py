@@ -176,43 +176,66 @@ class VBNETExampleParameter(common.ExampleParameter):
                                name=self.get_name().headless)
 
     def get_vbnet_write_lines(self):
-        template = '        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '        {else_}If {name} = {constant_name} Then\n            Console.WriteLine("{label}: {constant_title}"){comment}'
+            constant_group = self.get_constant_group()
+            name = self.get_name().headless
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            if name == self.get_device().get_initial_name():
+                name += '_'
 
-        type_ = self.get_type()
-        divisor = self.get_formatted_divisor('/{0}')
+            result = []
 
-        # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
-        #        the result is not padded to the requested number of digits
-        if ':bitmask:' in self.get_type():
-            to_string_prefix = 'Convert.ToString('
-            to_string_suffix = ', 2)'
-        elif type_ in ['char', 'string']:
-            to_string_prefix = ''
-            to_string_suffix = ''
-        elif len(divisor) > 0:
-            to_string_prefix = '('
-            to_string_suffix = ').ToString()'
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='Else ' if len(result) > 0 else '',
+                                              name=name,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_vbnet_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(" ' {0}")))
+
+            result = ['\r' + '\n'.join(result) + '\n        End If\r']
         else:
-            to_string_prefix = ''
-            to_string_suffix = '.ToString()'
+            template = '        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
 
-        result = []
+            if self.get_label_name() == None:
+                return []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=self.get_name().headless,
-                                          label=self.get_label_name(index=index),
-                                          index='({0})'.format(index) if self.get_label_count() > 1 else '',
-                                          to_string_prefix=to_string_prefix,
-                                          to_string_suffix=to_string_suffix,
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(' + " {0}"'),
-                                          comment=self.get_formatted_comment(" ' {0}")))
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            type_ = self.get_type()
+            divisor = self.get_formatted_divisor('/{0}')
+
+            # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
+            #        the result is not padded to the requested number of digits
+            if ':bitmask:' in self.get_type():
+                to_string_prefix = 'Convert.ToString('
+                to_string_suffix = ', 2)'
+            elif type_ in ['char', 'string']:
+                to_string_prefix = ''
+                to_string_suffix = ''
+            elif len(divisor) > 0:
+                to_string_prefix = '('
+                to_string_suffix = ').ToString()'
+            else:
+                to_string_prefix = ''
+                to_string_suffix = '.ToString()'
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=self.get_name().headless,
+                                              label=self.get_label_name(index=index),
+                                              index='({0})'.format(index) if self.get_label_count() > 1 else '',
+                                              to_string_prefix=to_string_prefix,
+                                              to_string_suffix=to_string_suffix,
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(' + " {0}"'),
+                                              comment=self.get_formatted_comment(" ' {0}")))
 
         return result
 
@@ -235,48 +258,71 @@ class VBNETExampleResult(common.ExampleResult):
         return name
 
     def get_vbnet_write_lines(self):
-        template = '        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '        {else_}If {name} = {constant_name} Then\n            Console.WriteLine("{label}: {constant_title}"){comment}'
+            constant_group = self.get_constant_group()
+            name = self.get_name().headless
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            if name == self.get_device().get_initial_name():
+                name += '_'
 
-        name = self.get_name().headless
+            result = []
 
-        if name == self.get_device().get_initial_name():
-            name += '_'
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='Else ' if len(result) > 0 else '',
+                                              name=name,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_vbnet_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(" ' {0}")))
 
-        type_ = self.get_type()
-        divisor = self.get_formatted_divisor('/{0}')
-
-        # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
-        #        the result is not padded to the requested number of digits
-        if ':bitmask:' in type_:
-            to_string_prefix = 'Convert.ToString('
-            to_string_suffix = ', 2)'
-        elif type_ in ['char', 'string']:
-            to_string_prefix = ''
-            to_string_suffix = ''
-        elif len(divisor) > 0:
-            to_string_prefix = '('
-            to_string_suffix = ').ToString()'
+            result = ['\r' + '\n'.join(result) + '\n        End If\r']
         else:
-            to_string_prefix = ''
-            to_string_suffix = '.ToString()'
+            template = '        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
 
-        result = []
+            if self.get_label_name() == None:
+                return []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index),
-                                          index='({0})'.format(index) if self.get_label_count() > 1 else '',
-                                          to_string_prefix=to_string_prefix,
-                                          to_string_suffix=to_string_suffix,
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(' + " {0}"'),
-                                          comment=self.get_formatted_comment(" ' {0}")))
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            name = self.get_name().headless
+
+            if name == self.get_device().get_initial_name():
+                name += '_'
+
+            type_ = self.get_type()
+            divisor = self.get_formatted_divisor('/{0}')
+
+            # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
+            #        the result is not padded to the requested number of digits
+            if ':bitmask:' in type_:
+                to_string_prefix = 'Convert.ToString('
+                to_string_suffix = ', 2)'
+            elif type_ in ['char', 'string']:
+                to_string_prefix = ''
+                to_string_suffix = ''
+            elif len(divisor) > 0:
+                to_string_prefix = '('
+                to_string_suffix = ').ToString()'
+            else:
+                to_string_prefix = ''
+                to_string_suffix = '.ToString()'
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index),
+                                              index='({0})'.format(index) if self.get_label_count() > 1 else '',
+                                              to_string_prefix=to_string_prefix,
+                                              to_string_suffix=to_string_suffix,
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(' + " {0}"'),
+                                              comment=self.get_formatted_comment(" ' {0}")))
 
         return result
 
@@ -336,7 +382,7 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
             write_lines.remove(None)
 
         if len(write_lines) > 1:
-            write_lines.insert(0, '')
+            write_lines.insert(0, '\b')
 
         arguments = self.get_vbnet_arguments()
 
@@ -348,7 +394,7 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
                                  function_name_headless=self.get_name().headless,
                                  function_name_comment=self.get_comment_name(),
                                  variable_declarations='\n'.join(variable_declarations),
-                                 write_lines='\n'.join(write_lines),
+                                 write_lines='\n'.join(write_lines).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                  arguments=',<BP>'.join(arguments))
 
         return common.break_string(result, '.{}('.format(self.get_name().camel), continuation=' _')
@@ -416,7 +462,7 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
                                   device_name=self.get_device().get_name().camel,
                                   function_name_camel=self.get_name().camel,
                                   parameters=common.wrap_non_empty(',<BP>', ',<BP>'.join(parameters), ''),
-                                  write_lines='\n'.join(write_lines),
+                                  write_lines='\n'.join(write_lines).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                   extra_message=extra_message)
 
         return common.break_string(result, '{}CB('.format(self.get_name().camel), continuation=' _')

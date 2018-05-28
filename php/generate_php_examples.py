@@ -150,40 +150,59 @@ class PHPExampleParameter(common.ExampleParameter):
         return template.format(name=self.get_name().under)
 
     def get_php_echos(self):
-        templateA = '    echo "{label}: " . {sprintf_prefix}${name}{index}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
-        templateB = '    echo "{label}: ${name}{unit}\\n";{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '{else_}if (${name} == {constant_name}) {{\n        echo "{label}: {constant_title}\\n";{comment}\n    }}'
+            constant_group = self.get_constant_group()
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            result = []
 
-        type_ = self.get_type()
-        divisor = self.get_formatted_divisor('/{0}')
-        sprintf_prefix = ''
-        sprintf_suffix = ''
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='\belse' if len(result) > 0 else '    ',
+                                              name=self.get_name().under,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_php_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
-        if ':bitmask:' in type_:
-            template = templateA
-            sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type_.split(':')[2]))
-            sprintf_suffix = ')'
-        elif len(divisor) > 0:
-            template = templateA
+            result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
-            template = templateB
+            templateA = '    echo "{label}: " . {sprintf_prefix}${name}{index}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
+            templateB = '    echo "{label}: ${name}{unit}\\n";{comment}'
 
-        result = []
+            if self.get_label_name() == None:
+                return []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=self.get_name().under,
-                                          label=self.get_label_name(index=index),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(' {0}'),
-                                          sprintf_prefix=sprintf_prefix,
-                                          sprintf_suffix=sprintf_suffix,
-                                          comment=self.get_formatted_comment(' // {0}')))
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            type_ = self.get_type()
+            divisor = self.get_formatted_divisor('/{0}')
+            sprintf_prefix = ''
+            sprintf_suffix = ''
+
+            if ':bitmask:' in type_:
+                template = templateA
+                sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type_.split(':')[2]))
+                sprintf_suffix = ')'
+            elif len(divisor) > 0:
+                template = templateA
+            else:
+                template = templateB
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=self.get_name().under,
+                                              label=self.get_label_name(index=index),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(' {0}'),
+                                              sprintf_prefix=sprintf_prefix,
+                                              sprintf_suffix=sprintf_suffix,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -198,52 +217,77 @@ class PHPExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_php_echos(self):
-        templateA = 'echo "{label}: " . {sprintf_prefix}${name}{index}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
-        templateB = 'echo "{label}: ${name}{unit}\\n";{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '{else_}if (${name} == {constant_name}) {{\n    echo "{label}: {constant_title}\\n";{comment}\n}}'
+            constant_group = self.get_constant_group()
+            name = self.get_name().under
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
-
-        name = self.get_name().under
-        divisor = self.get_formatted_divisor('/{0}')
-
-        if len(self.get_function().get_results()) > 1:
-            name = "{0}['{1}']".format(self.get_function().get_name(skip=1).under, self.get_name().under)
-            template = templateA
-        else:
-            if name == self.get_device().get_initial_name():
+            if len(self.get_function().get_results()) > 1:
+                name = "{0}['{1}']".format(self.get_function().get_name(skip=1).under, self.get_name().under)
+            elif name == self.get_device().get_initial_name():
                 name += '_'
 
-            if len(divisor) > 0:
+            result = []
+
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='\belse' if len(result) > 0 else '',
+                                              name=name,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_php_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' // {0}')))
+
+            result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
+        else:
+            templateA = 'echo "{label}: " . {sprintf_prefix}${name}{index}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
+            templateB = 'echo "{label}: ${name}{unit}\\n";{comment}'
+
+            if self.get_label_name() == None:
+                return []
+
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            name = self.get_name().under
+            divisor = self.get_formatted_divisor('/{0}')
+
+            if len(self.get_function().get_results()) > 1:
+                name = "{0}['{1}']".format(self.get_function().get_name(skip=1).under, self.get_name().under)
                 template = templateA
             else:
-                template = templateB
+                if name == self.get_device().get_initial_name():
+                    name += '_'
 
-        type_ = self.get_type()
-        sprintf_prefix = ''
-        sprintf_suffix = ''
+                if len(divisor) > 0:
+                    template = templateA
+                else:
+                    template = templateB
 
-        if ':bitmask:' in type_:
-            template = templateA
-            sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type_.split(':')[2]))
-            sprintf_suffix = ')'
-        elif self.get_label_count() > 1:
-            template = templateA
+            type_ = self.get_type()
+            sprintf_prefix = ''
+            sprintf_suffix = ''
 
-        result = []
+            if ':bitmask:' in type_:
+                template = templateA
+                sprintf_prefix = 'sprintf("%0{0}b", '.format(int(type_.split(':')[2]))
+                sprintf_suffix = ')'
+            elif self.get_label_count() > 1:
+                template = templateA
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(' {0}'),
-                                          sprintf_prefix=sprintf_prefix,
-                                          sprintf_suffix=sprintf_suffix,
-                                          comment=self.get_formatted_comment(' // {0}')))
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(' {0}'),
+                                              sprintf_prefix=sprintf_prefix,
+                                              sprintf_suffix=sprintf_suffix,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -272,13 +316,13 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
             echos.remove(None)
 
         if len(echos) > 1:
-            echos.insert(0, '')
+            echos.insert(0, '\b')
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_headless=self.get_name().headless,
                                function_name_comment=self.get_comment_name(),
                                variables=variables,
-                               echos='\n'.join(echos),
+                               echos='\n'.join(echos).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                arguments=', '.join(self.get_php_arguments()))
 
 class PHPExampleSetterFunction(common.ExampleSetterFunction, PHPExampleArgumentsMixin):
@@ -337,7 +381,7 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
                                   override_comment=override_comment) + \
                  template2.format(function_name_headless=self.get_name().headless,
                                   parameters=',<BP>'.join(parameters),
-                                  echos='\n'.join(echos),
+                                  echos='\n'.join(echos).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                   extra_message=extra_message)
 
         return common.break_string(result, 'cb_{}('.format(self.get_name().headless))

@@ -313,42 +313,62 @@ class JavaScriptExampleParameter(common.ExampleParameter):
         return self.get_name().headless
 
     def get_javascript_outputs(self):
-        template = "        {global_output_prefix}'{label}: ' + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit}{global_output_suffix};{comment}"
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = "        {else_}if({name} === {constant_name}) {{\n            {global_output_prefix}'{label}: {constant_title}'{global_output_suffix};{comment}\n        }}"
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                                              global_output_prefix=global_output_prefix,
+                                              global_output_suffix=global_output_suffix,
+                                              name=self.get_name().headless,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_javascript_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
-        divisor = self.get_formatted_divisor('/{0}')
+            result = ['\r' + '\n'.join(result) + '\r']
+        else:
+            template = "        {global_output_prefix}'{label}: ' + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit}{global_output_suffix};{comment}"
 
-        # FIXME: toString(2) doesn't support leading zeros. therefore,
-        #        the result is not padded to the requested number of digits
-        if ':bitmask:' in self.get_type():
-            if len(divisor) > 0:
-                to_binary_prefix = '('
-                to_binary_suffix = ').toString(2)'
+            if self.get_label_name() == None:
+                return []
+
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            divisor = self.get_formatted_divisor('/{0}')
+
+            # FIXME: toString(2) doesn't support leading zeros. therefore,
+            #        the result is not padded to the requested number of digits
+            if ':bitmask:' in self.get_type():
+                if len(divisor) > 0:
+                    to_binary_prefix = '('
+                    to_binary_suffix = ').toString(2)'
+                else:
+                    to_binary_prefix = ''
+                    to_binary_suffix = '.toString(2)'
             else:
                 to_binary_prefix = ''
-                to_binary_suffix = '.toString(2)'
-        else:
-            to_binary_prefix = ''
-            to_binary_suffix = ''
+                to_binary_suffix = ''
 
-        result = []
+            result = []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(global_output_prefix=global_output_prefix,
-                                          global_output_suffix=global_output_suffix,
-                                          name=self.get_name().headless,
-                                          label=self.get_label_name(index=index),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(" + ' {0}'"),
-                                          to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix,
-                                          comment=self.get_formatted_comment(' // {0}')))
+            for index in range(self.get_label_count()):
+                result.append(template.format(global_output_prefix=global_output_prefix,
+                                              global_output_suffix=global_output_suffix,
+                                              name=self.get_name().headless,
+                                              label=self.get_label_name(index=index),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(" + ' {0}'"),
+                                              to_binary_prefix=to_binary_prefix,
+                                              to_binary_suffix=to_binary_suffix,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -357,43 +377,63 @@ class JavaScriptExampleResult(common.ExampleResult):
         return self.get_name().headless
 
     def get_javascript_outputs(self):
-        template = "{global_line_prefix}                {global_output_prefix}'{label}: ' + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit}{global_output_suffix};{comment}"
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = "                {else_}if({name} === {constant_name}) {{\n                    {global_output_prefix}'{label}: {constant_title}'{global_output_suffix};{comment}\n                }}"
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                                              global_output_prefix=global_output_prefix,
+                                              global_output_suffix=global_output_suffix,
+                                              name=self.get_name().headless,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_javascript_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
-        divisor = self.get_formatted_divisor('/{0}')
+            result = ['\r' + '\n'.join(result) + '\r']
+        else:
+            template = "{global_line_prefix}                {global_output_prefix}'{label}: ' + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit}{global_output_suffix};{comment}"
 
-        # FIXME: toString(2) doesn't support leading zeros. therefore,
-        #        the result is not padded to the requested number of digits
-        if ':bitmask:' in self.get_type():
-            if len(divisor) > 0:
-                to_binary_prefix = '('
-                to_binary_suffix = ').toString(2)'
+            if self.get_label_name() == None:
+                return []
+
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            divisor = self.get_formatted_divisor('/{0}')
+
+            # FIXME: toString(2) doesn't support leading zeros. therefore,
+            #        the result is not padded to the requested number of digits
+            if ':bitmask:' in self.get_type():
+                if len(divisor) > 0:
+                    to_binary_prefix = '('
+                    to_binary_suffix = ').toString(2)'
+                else:
+                    to_binary_prefix = ''
+                    to_binary_suffix = '.toString(2)'
             else:
                 to_binary_prefix = ''
-                to_binary_suffix = '.toString(2)'
-        else:
-            to_binary_prefix = ''
-            to_binary_suffix = ''
+                to_binary_suffix = ''
 
-        result = []
+            result = []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(global_line_prefix=global_line_prefix,
-                                          global_output_prefix=global_output_prefix,
-                                          global_output_suffix=global_output_suffix,
-                                          name=self.get_name().headless,
-                                          label=self.get_label_name(index=index),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(" + ' {0}'"),
-                                          to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix,
-                                          comment=self.get_formatted_comment(' // {0}')))
+            for index in range(self.get_label_count()):
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_output_prefix=global_output_prefix,
+                                              global_output_suffix=global_output_suffix,
+                                              name=self.get_name().headless,
+                                              label=self.get_label_name(index=index),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(" + ' {0}'"),
+                                              to_binary_prefix=to_binary_prefix,
+                                              to_binary_suffix=to_binary_suffix,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -429,7 +469,7 @@ class JavaScriptExampleGetterFunction(common.ExampleGetterFunction, JavaScriptEx
                                function_name_headless=self.get_name().headless,
                                function_name_comment=self.get_comment_name(),
                                variables=', '.join(variables),
-                               outputs='\n'.join(outputs),
+                               outputs='\n'.join(outputs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ','))
 
 class JavaScriptExampleSetterFunction(common.ExampleSetterFunction, JavaScriptExampleArgumentsMixin):
@@ -498,7 +538,7 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
                                   override_comment=override_comment) + \
                  template3.format(global_callback_output_suffix=global_callback_output_suffix,
                                   parameters=',<BP>'.join(parameters),
-                                  outputs='\n'.join(outputs),
+                                  outputs='\n'.join(outputs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                   extra_message=extra_message)
 
         return common.break_string(result, 'function (')

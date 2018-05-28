@@ -162,45 +162,63 @@ class MathematicaExampleParameter(common.ExampleParameter):
             return 'FIXME_'
 
     def get_mathematica_prints(self):
-        templateA = ' Print["{label}: "<>ToString[N[Quantity[{name}{index},"{quantity}"]]]]{comment}'
-        templateB = ' Print["{label}: "<>ToString[N[{name}{index}/{divisor}]]]{comment}'
-        templateC = ' Print["{label}: "<>FromCharacterCode[{name}{index}]]{comment}'
-        templateD = ' Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{name}{index},2,{bitmask_length}]]]]{comment}'
-        templateE = ' Print["{label}: "<>ToString[{name}{index}]]{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = ' {else_}If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_=' ' if len(result) > 0 else '',
+                                              name=self.get_name().headless,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_mathematica_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment('(*{0}*)')))
 
-        type_ = self.get_type()
-        quantity = self.get_formatted_unit_name('{0}' + self.get_formatted_divisor('/{0}', cast=int)) # FIXME: move divisor out of quantity name
-        divisor = self.get_formatted_divisor('{0}')
-        bitmask_length = 0
-
-        if len(quantity) > 0:
-            template = templateA
-        elif len(divisor) > 0:
-            template = templateB
-        elif type_ == 'char':
-            template = templateC
-        elif ':bitmask:' in type_:
-            template = templateD
-            bitmask_length = int(type_.split(':')[2])
+            result = ['\n'.join(result)]
         else:
-            template = templateE
+            templateA = ' Print["{label}: "<>ToString[N[Quantity[{name}{index},"{quantity}"]]]]{comment}'
+            templateB = ' Print["{label}: "<>ToString[N[{name}{index}/{divisor}]]]{comment}'
+            templateC = ' Print["{label}: "<>FromCharacterCode[{name}{index}]]{comment}'
+            templateD = ' Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{name}{index},2,{bitmask_length}]]]]{comment}'
+            templateE = ' Print["{label}: "<>ToString[{name}{index}]]{comment}'
 
-        result = []
+            if self.get_label_name() == None:
+                return []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=self.get_name().headless,
-                                          label=self.get_label_name(index=index),
-                                          quantity=quantity,
-                                          index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          bitmask_length=bitmask_length,
-                                          comment=self.get_formatted_comment('(*{0}*)')))
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            type_ = self.get_type()
+            quantity = self.get_formatted_unit_name('{0}' + self.get_formatted_divisor('/{0}', cast=int)) # FIXME: move divisor out of quantity name
+            divisor = self.get_formatted_divisor('{0}')
+            bitmask_length = 0
+
+            if len(quantity) > 0:
+                template = templateA
+            elif len(divisor) > 0:
+                template = templateB
+            elif type_ == 'char':
+                template = templateC
+            elif ':bitmask:' in type_:
+                template = templateD
+                bitmask_length = int(type_.split(':')[2])
+            else:
+                template = templateE
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=self.get_name().headless,
+                                              label=self.get_label_name(index=index),
+                                              quantity=quantity,
+                                              index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              bitmask_length=bitmask_length,
+                                              comment=self.get_formatted_comment('(*{0}*)')))
 
         return result
 
@@ -214,76 +232,100 @@ class MathematicaExampleResult(common.ExampleResult):
         return name
 
     def get_mathematica_prints(self, getter_call=None):
-        templateA = 'Print["{label}: "<>ToString[N[Quantity[{value}{index},"{quantity}"]]]]{comment}'
-        templateB = 'Print["{label}: "<>ToString[N[{value}{index}/{divisor}]]]{comment}'
-        templateC = 'Print["{label}: "<>FromCharacterCode[{value}{index}]]{comment}'
-        templateD = 'Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{comment}'
-        templateE = 'Print["{label}: "<>ToString[{value}{index}]]{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            assert getter_call == None
 
-        if self.get_label_name() == None:
-            return []
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            template = 'If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
+            constant_group = self.get_constant_group()
+            result = []
 
-        if getter_call != None:
-            value = getter_call
+            for constant in constant_group.get_constants():
+                result.append(template.format(name=self.get_name().headless,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_mathematica_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment('(*{0}*)')))
+
+            result = ['\n'.join(result)]
         else:
-            name = self.get_name().headless
+            templateA = 'Print["{label}: "<>ToString[N[Quantity[{value}{index},"{quantity}"]]]]{comment}'
+            templateB = 'Print["{label}: "<>ToString[N[{value}{index}/{divisor}]]]{comment}'
+            templateC = 'Print["{label}: "<>FromCharacterCode[{value}{index}]]{comment}'
+            templateD = 'Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{comment}'
+            templateE = 'Print["{label}: "<>ToString[{value}{index}]]{comment}'
 
-            if name == self.get_device().get_initial_name():
-                name += 'U'
+            if self.get_label_name() == None:
+                return []
 
-            value = name
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
 
-        type_ = self.get_type()
-        quantity = self.get_formatted_unit_name('{0}' + self.get_formatted_divisor('/{0}', cast=int)) # FIXME: move divisor out of quantity name
-        divisor = self.get_formatted_divisor('{0}')
-        bitmask_length = 0
+            if getter_call != None:
+                value = getter_call
+            else:
+                name = self.get_name().headless
 
-        if len(quantity) > 0:
-            template = templateA
-        elif len(divisor) > 0:
-            template = templateB
-        elif type_ == 'char':
-            template = templateC
-        elif ':bitmask:' in type_:
-            template = templateD
-            bitmask_length = int(type_.split(':')[2])
-        else:
-            template = templateE
+                if name == self.get_device().get_initial_name():
+                    name += 'U'
 
-        result = []
+                value = name
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(value=value,
-                                          label=self.get_label_name(index=index),
-                                          quantity=quantity,
-                                          index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          bitmask_length=bitmask_length,
-                                          comment=self.get_formatted_comment('(*{0}*)')))
+            type_ = self.get_type()
+            quantity = self.get_formatted_unit_name('{0}' + self.get_formatted_divisor('/{0}', cast=int)) # FIXME: move divisor out of quantity name
+            divisor = self.get_formatted_divisor('{0}')
+            bitmask_length = 0
+
+            if len(quantity) > 0:
+                template = templateA
+            elif len(divisor) > 0:
+                template = templateB
+            elif type_ == 'char':
+                template = templateC
+            elif ':bitmask:' in type_:
+                template = templateD
+                bitmask_length = int(type_.split(':')[2])
+            else:
+                template = templateE
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(value=value,
+                                              label=self.get_label_name(index=index),
+                                              quantity=quantity,
+                                              index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              bitmask_length=bitmask_length,
+                                              comment=self.get_formatted_comment('(*{0}*)')))
 
         return result
 
 class MathematicaExampleGetterFunction(common.ExampleGetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
-        template = '{device_name}@{function_name}[{arguments}]'
-        templateA = r"""(*Get current {function_name_comment}*)
+        template1 = '{device_name}@{function_name}[{arguments}]'
+        template2A = r"""(*Get current {function_name_comment}*)
+{variable_declarations}={device_name}@{function_name_camel}[{arguments}]
+
 {prints}
 """
-        templateB = r"""{variable_declarations}
-
-(*Get current {function_name_comment}*)
+        template2B = r"""(*Get current {function_name_comment}*)
+{prints}
+"""
+        template2C = r"""(*Get current {function_name_comment}*)
+{variable_declarations}
 {device_name}@{function_name_camel}[{arguments}]
 {prints}
 """
         arguments = self.get_mathematica_arguments()
+        results = self.get_results()
 
-        if len(self.get_results()) == 1:
-            getter_call = template.format(device_name=self.get_device().get_initial_name(),
-                                          function_name=self.get_name().camel,
-                                          arguments=','.join(arguments))
+        if len(results) == 1 and results[0].get_type().split(':')[-1] != 'constant':
+            getter_call = template1.format(device_name=self.get_device().get_initial_name(),
+                                           function_name=self.get_name().camel,
+                                           arguments=','.join(arguments))
         else:
             getter_call = None
 
@@ -291,15 +333,18 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
         variable_names = []
         prints = []
 
-        for result in self.get_results():
+        for result in results:
             variable_names.append(result.get_mathematica_variable_name())
             prints += result.get_mathematica_prints(getter_call)
 
-        if len(variable_names) == 1:
-            template = templateA
+        if getter_call == None and len(results) == 1:
+            template2 = template2A
+            variable_declarations = list(variable_names)
+        elif len(variable_names) == 1:
+            template2 = template2B
             variable_declarations = []
         else:
-            template = templateB
+            template2 = template2C
             variable_declarations = ['{0}=0'.format(variable_name) for variable_name in variable_names]
 
         while None in prints:
@@ -311,14 +356,14 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
         if len(variable_names) > 1:
             arguments += variable_names
 
-        return template.format(device_name=self.get_device().get_initial_name(),
-                               function_name_camel=self.get_name().camel,
-                               function_name_headless=self.get_name().headless,
-                               function_name_comment=self.get_comment_name(),
-                               variable_names=''.join(variable_names),
-                               variable_declarations=';'.join(variable_declarations),
-                               prints='\n'.join(prints),
-                               arguments=','.join(arguments))
+        return template2.format(device_name=self.get_device().get_initial_name(),
+                                function_name_camel=self.get_name().camel,
+                                function_name_headless=self.get_name().headless,
+                                function_name_comment=self.get_comment_name(),
+                                variable_names=''.join(variable_names),
+                                variable_declarations=';'.join(variable_declarations),
+                                prints='\n'.join(prints),
+                                arguments=','.join(arguments))
 
 class MathematicaExampleSetterFunction(common.ExampleSetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
@@ -371,7 +416,7 @@ AddEventHandler[{device_name}@{function_name_camel}Callback,{function_name_camel
 
         extra_message = self.get_formatted_extra_message(' Print["{0}"]')
 
-        if len(prints) > 1 or (len(prints) == 1 and len(extra_message) > 0):
+        if len(prints) > 1 or (len(prints) == 1 and len(extra_message) > 0) or sum([1 for p in prints if '\n' in p]) > 0:
             template2 = template2A
             prints = [' ' + prints for prints in prints]
 

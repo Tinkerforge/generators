@@ -140,42 +140,65 @@ class RubyExampleParameter(common.ExampleParameter):
         return name
 
     def get_ruby_puts(self):
-        template = '  puts "{label}: #{{{printf_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '  {else_}if {name} == {constant_name}\n    puts "{label}: {constant_title}"{comment}'
+            constant_group = self.get_constant_group()
+            name = self.get_name().under
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            if name == self.get_device().get_initial_name():
+                name += '_'
 
-        name = self.get_name().under
+            result = []
 
-        if name == self.get_device().get_initial_name():
-            name += '_'
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='els' if len(result) > 0 else '',
+                                              name=name,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_ruby_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' # {0}')))
 
-        type_ = self.get_type()
-        divisor = self.get_formatted_divisor('/{0}')
-        printf_prefix = ''
-        printf_suffix = ''
+            result = ['\r' + '\n'.join(result) + '\n  end\r']
+        else:
+            template = '  puts "{label}: #{{{printf_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
 
-        if ':bitmask:' in type_:
-            printf_prefix = "'%0{0}b' % ".format(int(type_.split(':')[2]))
+            if self.get_label_name() == None:
+                return []
 
-            if len(divisor) > 0:
-                printf_prefix += '('
-                printf_suffix = ')'
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
 
-        result = []
+            name = self.get_name().under
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(' {0}'),
-                                          printf_prefix=printf_prefix,
-                                          printf_suffix=printf_suffix,
-                                          comment=self.get_formatted_comment(' # {0}')))
+            if name == self.get_device().get_initial_name():
+                name += '_'
+
+            type_ = self.get_type()
+            divisor = self.get_formatted_divisor('/{0}')
+            printf_prefix = ''
+            printf_suffix = ''
+
+            if ':bitmask:' in type_:
+                printf_prefix = "'%0{0}b' % ".format(int(type_.split(':')[2]))
+
+                if len(divisor) > 0:
+                    printf_prefix += '('
+                    printf_suffix = ')'
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(' {0}'),
+                                              printf_prefix=printf_prefix,
+                                              printf_suffix=printf_suffix,
+                                              comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -189,49 +212,80 @@ class RubyExampleResult(common.ExampleResult):
         return name
 
     def get_ruby_puts(self):
-        template = 'puts "{label}: #{{{printf_prefix}{array_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '{else_}if {array_prefix}{name} == {constant_name}\n  puts "{label}: {constant_title}"{comment}'
+            constant_group = self.get_constant_group()
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            if len(self.get_function().get_results()) > 1:
+                name = '[{0}]'.format(self.get_index())
+                array_prefix = self.get_function().get_name(skip=1).under
+            else:
+                name = self.get_name().under
 
-        if len(self.get_function().get_results()) > 1:
-            name = '[{0}]'.format(self.get_index())
-            array_prefix = self.get_function().get_name(skip=1).under
+                if name == self.get_device().get_initial_name():
+                    name += '_'
+
+                array_prefix = ''
+
+            result = []
+
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='els' if len(result) > 0 else '',
+                                              name=name,
+                                              label=self.get_label_name(),
+                                              array_prefix=array_prefix,
+                                              constant_name=constant.get_ruby_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' # {0}')))
+
+            result = ['\r' + '\n'.join(result) + '\nend\r']
         else:
-            name = self.get_name().under
+            template = 'puts "{label}: #{{{printf_prefix}{array_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
 
-            if name == self.get_device().get_initial_name():
-                name += '_'
+            if self.get_label_name() == None:
+                return []
 
-            array_prefix = ''
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
 
-        type_ = self.get_type()
-        divisor = self.get_formatted_divisor('/{0}')
-        printf_prefix = ''
-        printf_suffix = ''
+            if len(self.get_function().get_results()) > 1:
+                name = '[{0}]'.format(self.get_index())
+                array_prefix = self.get_function().get_name(skip=1).under
+            else:
+                name = self.get_name().under
 
-        if ':bitmask:' in type_:
-            printf_prefix = "'%0{0}b' % ".format(int(type_.split(':')[2]))
+                if name == self.get_device().get_initial_name():
+                    name += '_'
 
-            if len(divisor) > 0:
-                printf_prefix += '('
-                printf_suffix = ')'
+                array_prefix = ''
 
-        result = []
+            type_ = self.get_type()
+            divisor = self.get_formatted_divisor('/{0}')
+            printf_prefix = ''
+            printf_suffix = ''
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index),
-                                          array_prefix=array_prefix,
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=divisor,
-                                          unit=self.get_formatted_unit_name(' {0}'),
-                                          printf_prefix=printf_prefix,
-                                          printf_suffix=printf_suffix,
-                                          comment=self.get_formatted_comment(' # {0}')))
+            if ':bitmask:' in type_:
+                printf_prefix = "'%0{0}b' % ".format(int(type_.split(':')[2]))
+
+                if len(divisor) > 0:
+                    printf_prefix += '('
+                    printf_suffix = ')'
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index),
+                                              array_prefix=array_prefix,
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=divisor,
+                                              unit=self.get_formatted_unit_name(' {0}'),
+                                              printf_prefix=printf_prefix,
+                                              printf_suffix=printf_suffix,
+                                              comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -259,7 +313,7 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
             puts.remove(None)
 
         if len(puts) > 1:
-            puts.insert(0, '')
+            puts.insert(0, '\b')
 
         arguments = common.wrap_non_empty(' ', ', '.join(self.get_ruby_arguments()), '')
 
@@ -271,7 +325,7 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
                                  function_name_comment=self.get_comment_name(),
                                  array_content=array_content,
                                  variables=', '.join(variables),
-                                 puts='\n'.join(puts),
+                                 puts='\n'.join(puts).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                  arguments=arguments)
 
         return common.break_string(result, '# Get current {0} as ['.format(self.get_comment_name()), indent_head='#')
@@ -338,7 +392,7 @@ end
                                   function_name_under=self.get_name().under,
                                   function_name_upper=self.get_name().upper,
                                   parameters=common.wrap_non_empty(' |', ',<BP>'.join(parameters), '|'),
-                                  puts='\n'.join(puts),
+                                  puts='\n'.join(puts).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                   extra_message=extra_message)
 
         return common.break_string(result, ') do |')

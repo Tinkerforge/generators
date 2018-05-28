@@ -166,34 +166,52 @@ class CSharpExampleParameter(common.ExampleParameter):
                                name=self.get_name().headless)
 
     def get_csharp_write_lines(self):
-        template = '\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '\t\t{else_}if({name} == {constant_name})\n\t\t{{\n\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n\t\t}}'
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                                              name=self.get_name().headless,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_csharp_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
-        # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
-        #        the result is not padded to the requested number of digits
-        if ':bitmask:' in self.get_type():
-            to_binary_prefix = 'Convert.ToString('
-            to_binary_suffix = ', 2)'
+            result = ['\r' + '\n'.join(result) + '\r']
         else:
-            to_binary_prefix = ''
-            to_binary_suffix = ''
+            template = '\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
-        result = []
+            if self.get_label_name() == None:
+                return []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=self.get_name().headless,
-                                          label=self.get_label_name(index=index),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=self.get_formatted_divisor('/{0}'),
-                                          unit=self.get_formatted_unit_name(' + " {0}"'),
-                                          to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix,
-                                          comment=self.get_formatted_comment(' // {0}')))
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
+            #        the result is not padded to the requested number of digits
+            if ':bitmask:' in self.get_type():
+                to_binary_prefix = 'Convert.ToString('
+                to_binary_suffix = ', 2)'
+            else:
+                to_binary_prefix = ''
+                to_binary_suffix = ''
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=self.get_name().headless,
+                                              label=self.get_label_name(index=index),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              unit=self.get_formatted_unit_name(' + " {0}"'),
+                                              to_binary_prefix=to_binary_prefix,
+                                              to_binary_suffix=to_binary_suffix,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -216,39 +234,57 @@ class CSharpExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_csharp_write_lines(self):
-        template = '\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '\t\t{else_}if({name} == {constant_name})\n\t\t{{\n\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n\t\t}}'
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                                              name=self.get_name().headless,
+                                              label=self.get_label_name(),
+                                              constant_name=constant.get_csharp_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
-        name = self.get_name().headless
-
-        if name == self.get_device().get_initial_name():
-            name += '_'
-
-        # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
-        #        the result is not padded to the requested number of digits
-        if ':bitmask:' in self.get_type():
-            to_binary_prefix = 'Convert.ToString('
-            to_binary_suffix = ', 2)'
+            result = ['\r' + '\n'.join(result) + '\r']
         else:
-            to_binary_prefix = ''
-            to_binary_suffix = ''
+            template = '\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
-        result = []
+            if self.get_label_name() == None:
+                return []
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=self.get_formatted_divisor('/{0}'),
-                                          unit=self.get_formatted_unit_name(' + " {0}"'),
-                                          to_binary_prefix=to_binary_prefix,
-                                          to_binary_suffix=to_binary_suffix,
-                                          comment=self.get_formatted_comment(' // {0}')))
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            name = self.get_name().headless
+
+            if name == self.get_device().get_initial_name():
+                name += '_'
+
+            # FIXME: Convert.ToString() doesn't support leading zeros. therefore,
+            #        the result is not padded to the requested number of digits
+            if ':bitmask:' in self.get_type():
+                to_binary_prefix = 'Convert.ToString('
+                to_binary_suffix = ', 2)'
+            else:
+                to_binary_prefix = ''
+                to_binary_suffix = ''
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              unit=self.get_formatted_unit_name(' + " {0}"'),
+                                              to_binary_prefix=to_binary_prefix,
+                                              to_binary_suffix=to_binary_suffix,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -310,7 +346,7 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
             write_lines.remove(None)
 
         if len(write_lines) > 1:
-            write_lines.insert(0, '')
+            write_lines.insert(0, '\b')
 
         arguments = self.get_csharp_arguments()
 
@@ -321,7 +357,7 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
                                  function_name_camel=self.get_name().camel,
                                  function_name_comment=self.get_comment_name(),
                                  variable_declarations=variable_declarations,
-                                 write_lines='\n'.join(write_lines),
+                                 write_lines='\n'.join(write_lines).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                  arguments=',<BP>'.join(arguments))
 
         return common.break_string(result, '{}('.format(self.get_name().camel))
@@ -390,7 +426,7 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
                                   device_name=self.get_device().get_name().camel,
                                   function_name_camel=self.get_name().camel,
                                   parameters=common.wrap_non_empty(',<BP>', ',<BP>'.join(parameters), ''),
-                                  write_lines='\n'.join(write_lines),
+                                  write_lines='\n'.join(write_lines).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                   extra_message=extra_message)
 
         return common.break_string(result, '{}CB('.format(self.get_name().camel))

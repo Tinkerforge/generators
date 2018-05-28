@@ -34,12 +34,12 @@ global_line_prefix = ''
 
 class CTypeMixin(object):
     def get_c_type(self):
-        type = self.get_type().split(':')[0]
+        type_ = self.get_type().split(':')[0]
 
-        if 'int' in type:
-            type += '_t'
+        if 'int' in type_:
+            type_ += '_t'
 
-        return type
+        return type_
 
 class CPrintfFormatMixin(object):
     def get_c_printf_defines(self):
@@ -251,31 +251,49 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         return result
 
     def get_c_printfs(self):
-        # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
-        #        integer in base-2, that doesn't require open-coding it with several lines of code.
-        #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
-        #        but it's not in the standard C library and it's not reentrant. so just print the
-        #        integer in base-10 the normal way
-        template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '{else_}if({name} == {constant_name}) {{\n\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t',
+                                              name=self.get_name().under,
+                                              label=self.get_label_name().replace('%', '%%'),
+                                              constant_name=constant.get_c_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
-        result = []
+            result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
+        else:
+            # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
+            #        integer in base-2, that doesn't require open-coding it with several lines of code.
+            #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
+            #        but it's not in the standard C library and it's not reentrant. so just print the
+            #        integer in base-10 the normal way
+            template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=self.get_name().under,
-                                          label=self.get_label_name(index=index).replace('%', '%%'),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=self.get_formatted_divisor('/{0}'),
-                                          printf_format=self.get_c_printf_format(),
-                                          printf_prefix=self.get_c_printf_prefix(),
-                                          printf_suffix=self.get_c_printf_suffix(),
-                                          unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                          comment=self.get_formatted_comment(' // {0}')))
+            if self.get_label_name() == None:
+                return []
+
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=self.get_name().under,
+                                              label=self.get_label_name(index=index).replace('%', '%%'),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              printf_format=self.get_c_printf_format(),
+                                              printf_prefix=self.get_c_printf_prefix(),
+                                              printf_suffix=self.get_c_printf_suffix(),
+                                              unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -308,36 +326,54 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         return template.format(name=name)
 
     def get_c_printfs(self):
-        # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
-        #        integer in base-2, that doesn't require open-coding it with several lines of code.
-        #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
-        #        but it's not in the standard C library and it's not reentrant. so just print the
-        #        integer in base-10 the normal way
-        template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+        if self.get_type().split(':')[-1] == 'constant':
+            # FIXME: need to handle multiple labels
+            assert self.get_label_count() == 1
 
-        if self.get_label_name() == None:
-            return []
+            template = '{else_}if({name} == {constant_name}) {{\n\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            constant_group = self.get_constant_group()
+            result = []
 
-        if self.get_cardinality() < 0:
-            return [] # FIXME: streaming
+            for constant in constant_group.get_constants():
+                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t',
+                                              name=self.get_name().under,
+                                              label=self.get_label_name().replace('%', '%%'),
+                                              constant_name=constant.get_c_source(),
+                                              constant_title=constant.get_name().space,
+                                              comment=self.get_formatted_comment(' // {0}')))
 
-        name = self.get_name().under
+            result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
+        else:
+            # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
+            #        integer in base-2, that doesn't require open-coding it with several lines of code.
+            #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
+            #        but it's not in the standard C library and it's not reentrant. so just print the
+            #        integer in base-10 the normal way
+            template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
-        if name == self.get_device().get_initial_name():
-            name += '_'
+            if self.get_label_name() == None:
+                return []
 
-        result = []
+            if self.get_cardinality() < 0:
+                return [] # FIXME: streaming
 
-        for index in range(self.get_label_count()):
-            result.append(template.format(name=name,
-                                          label=self.get_label_name(index=index).replace('%', '%%'),
-                                          index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                          divisor=self.get_formatted_divisor('/{0}'),
-                                          printf_format=self.get_c_printf_format(),
-                                          printf_prefix=self.get_c_printf_prefix(),
-                                          printf_suffix=self.get_c_printf_suffix(),
-                                          unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                          comment=self.get_formatted_comment(' // {0}')))
+            name = self.get_name().under
+
+            if name == self.get_device().get_initial_name():
+                name += '_'
+
+            result = []
+
+            for index in range(self.get_label_count()):
+                result.append(template.format(name=name,
+                                              label=self.get_label_name(index=index).replace('%', '%%'),
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              printf_format=self.get_c_printf_format(),
+                                              printf_prefix=self.get_c_printf_prefix(),
+                                              printf_suffix=self.get_c_printf_suffix(),
+                                              unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -413,7 +449,7 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
                                  function_name_under=self.get_name().under,
                                  variable_declarations=variable_declarations,
                                  variable_references=',<BP>' + ',<BP>'.join(variable_references),
-                                 printfs='\n'.join(printfs),
+                                 printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                  arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''))
 
         return common.break_string(result, '_{}('.format(self.get_name().under))
@@ -509,7 +545,7 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
                  template2.format(function_name_under=self.get_name().under,
                                   parameters=common.wrap_non_empty('', ',<BP>'.join(parameters), ',<BP>'),
                                   unuseds=unuseds,
-                                  printfs='\n'.join(printfs),
+                                  printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
                                   extra_message=extra_message)
 
         return common.break_string(result, 'cb_{}('.format(self.get_name().under))
