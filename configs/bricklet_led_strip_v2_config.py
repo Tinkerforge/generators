@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 3],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 2103,
     'name': 'LED Strip V2',
@@ -218,7 +218,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Clock Frequency',
 'elements': [('Frequency', 'uint32', 1, 'in')],
-'since_firmware': [2, 0, 1],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -269,7 +269,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Clock Frequency',
 'elements': [('Frequency', 'uint32', 1, 'out')],
-'since_firmware': [2, 0, 1],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -291,7 +291,7 @@ com['packets'].append({
                                                         ('WS2812', 2812),
                                                         ('LPD8806', 8806),
                                                         ('APA102', 102)]))],
-'since_firmware': [2, 0, 2],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -331,7 +331,7 @@ com['packets'].append({
                                                          ('WS2812', 2812),
                                                          ('LPD8806', 8806),
                                                          ('APA102', 102)]))],
-'since_firmware': [2, 0, 2],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -379,7 +379,7 @@ com['packets'].append({
                                                                 ('WGRB', 210),
                                                                 ('WBGR', 228),
                                                                 ('WBRG', 225)]))],
-'since_firmware': [2, 0, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -460,7 +460,7 @@ com['packets'].append({
                                                                  ('WGRB', 210),
                                                                  ('WBGR', 228),
                                                                  ('WBRG', 225)]))],
-'since_firmware': [2, 0, 6],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """

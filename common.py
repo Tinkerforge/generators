@@ -1558,6 +1558,9 @@ class Device(object):
             if packet.get_function_id() >= 0:
                 self.all_packets_without_doc_only.append(packet)
 
+        if not self.is_released() and self.get_api_version() != [2, 0, 0]:
+            raise GeneratorError('Unreleased device must have API version 2.0.0')
+
         since_firmwares = set()
 
         for packet in self.all_packets:
