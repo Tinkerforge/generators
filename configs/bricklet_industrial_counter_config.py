@@ -358,7 +358,6 @@ Setzt die Zähler-Konfiguration für den gegebenen Kanal.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Configuration',

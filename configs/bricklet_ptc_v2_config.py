@@ -81,7 +81,6 @@ add_callback_value_function(
     doc       = resistance_doc
 )
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Noise Rejection Filter',
@@ -336,4 +335,3 @@ Der `parameter` ist der gleiche wie bei :func:`Is Sensor Connected`.
 """
 }]
 })
-

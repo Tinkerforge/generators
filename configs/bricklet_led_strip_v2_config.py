@@ -345,7 +345,6 @@ Gibt den aktuell genutzten Typ des Chips zurück, wie von
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel Mapping',

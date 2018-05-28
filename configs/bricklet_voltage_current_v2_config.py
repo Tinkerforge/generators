@@ -92,7 +92,6 @@ add_callback_value_function(
     doc       = power_doc
 )
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
