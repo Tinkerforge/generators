@@ -156,7 +156,7 @@ com['packets'].append({
              ('Duty Cycle', 'uint16', 1, 'out'),
              ('Period', 'uint64', 1, 'out'),
              ('Frequency', 'uint32', 1, 'out'),
-             ('Channel Value', 'bool', 1, 'out')],
+             ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -168,7 +168,7 @@ The units are:
 * Duty Cycle: 1/100 %
 * Period: ns
 * Frequency: mHz (1/1000 Hz)
-* Channel Value: true = high, false = low
+* Value: true = high, false = low
 """,
 'de':
 """
@@ -190,7 +190,7 @@ com['packets'].append({
 'elements': [('Duty Cycle', 'uint16', 4, 'out'),
              ('Period', 'uint64', 4, 'out'),
              ('Frequency', 'uint32', 4, 'out'),
-             ('Channel Value', 'bool', 4, 'out')],
+             ('Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -202,7 +202,7 @@ The units are:
 * Duty Cycle: 1/100 %
 * Period: ns
 * Frequency: mHz (1/1000 Hz)
-* Channel Value: true = high, false = low
+* Value: true = high, false = low
 """,
 'de':
 """
@@ -577,7 +577,7 @@ com['packets'].append({
 'elements': [('Duty Cycle', 'uint16', 4, 'out'),
              ('Period', 'uint64', 4, 'out'),
              ('Frequency', 'uint32', 4, 'out'),
-             ('Channel Value', 'bool', 4, 'out')],
+             ('Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
