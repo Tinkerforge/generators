@@ -193,25 +193,6 @@ Das andere Relais bleibt unverändert.
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Selected State',
-'elements': [('Relay', 'uint8', 1, 'in'),
-             ('State', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the state of the selected relay (1 or 2). The state can be set by :func:`Set Selected State`.
-""",
-'de':
-"""
-Gibt dien Zustand des gewählten Relais (1 oder 2) zurück. Dieser kann mit :func:`Set Selected State`
-gesetzt werden.
-"""
-}]
-})
-
 com['examples'].append({
 'name': 'Simple',
 'functions': [('loop_header', 5, 'Turn relays alternating on/off 10 times with 1 second delay'),

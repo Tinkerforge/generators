@@ -52,25 +52,6 @@ bedeutet logisch 1 und *false* logisch 0.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Selected Value',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Value', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Returns the logic levels that are currently measured on a specific channel.
-""",
-'de':
-"""
-Gibt die aktuell gemessenen Zustand zurück die derzeit auf einem bestimmten Channel
-gemessen werden.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': 'Set Value Callback Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Period', 'uint32', 1, 'in'),

@@ -112,28 +112,6 @@ beeinflussen.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Selected Value',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Returns the logic levels that are currently measured on a specific channel. This
-function works if the channel is configured as input as well as if it is configured
-as output.
-""",
-'de':
-"""
-Gibt die aktuell gemessenen Zustand zurück die derzeit auf einem bestimmten Channel
-gemessen werden. Diese Funktion gibt die Zustände zurück, unabhängig ob diese als
-Ein- oder Ausgang konfiguriert sind.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': 'Set Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Direction', 'char', 1, 'in', ('Direction', [('In', 'i'),
