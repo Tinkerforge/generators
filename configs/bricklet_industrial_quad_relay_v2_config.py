@@ -28,7 +28,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Output Value',
+'name': 'Set Value',
 'elements': [('Value', 'bool', 4, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -37,31 +37,31 @@ com['packets'].append({
 Sets the output value of all four relays. A value of *true* closes the
 relay and a value of *false* opens the relay.
 
-Use :func:`Set Selected Output Value` to only change one relay.
+Use :func:`Set Selected Value` to only change one relay.
 """,
 'de':
 """
 Setzt den Ausgabewert der vier Relais. Ein Wert von *true* schließt das Relais
 und ein Wert von *False* öffnet das Relais.
 
-Nutze :func:`Set Selected Output Value` um einzelne Relais zu schalten.
+Nutze :func:`Set Selected Value` um einzelne Relais zu schalten.
 """
 }]
 })
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Output Value',
+'name': 'Get Value',
 'elements': [('Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the values as set by :func:`Set Output Value`.
+Returns the values as set by :func:`Set Value`.
 """,
 'de':
 """
-Gibt die Werte zurück, wie von :func:`Set Output Value` gesetzt.
+Gibt die Werte zurück, wie von :func:`Set Value` gesetzt.
 """
 }]
 })
@@ -148,7 +148,7 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Selected Output Value',
+'name': 'Set Selected Value',
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -163,8 +163,6 @@ Setzt den Ausgabewert des spezifizierten Channels ohne die anderen Channelne zu 
 """
 }]
 })
-
-# TODO: Documentation
 
 com['packets'].append({
 'type': 'function',
