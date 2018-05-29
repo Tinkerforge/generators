@@ -28,9 +28,9 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set State',
-'elements': [('Relay1', 'bool', 1, 'in'),
-             ('Relay2', 'bool', 1, 'in')],
+'name': 'Set Value',
+'elements': [('Channel0', 'bool', 1, 'in'),
+             ('Channel1', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -39,8 +39,8 @@ Sets the state of the relays, *true* means on and *false* means off.
 For example: (true, false) turns relay 1 on and relay 2 off.
 
 If you just want to set one of the relays and don't know the current state
-of the other relay, you can get the state with :func:`Get State` or you
-can use :func:`Set Selected State`.
+of the other relay, you can get the state with :func:`Get Value` or you
+can use :func:`Set Selected Value`.
 
 Running monoflop timers will be overwritten if this function is called.
 
@@ -52,8 +52,8 @@ Setzt den Zustand der Relais, *true* bedeutet ein und *false* aus.
 Beispiel: (true, false) schaltet Relais 1 ein und Relais 2 aus.
 
 Wenn nur eines der Relais gesetzt werden soll und der aktuelle Zustand des anderen Relais
-nicht bekannt ist, dann kann der Zustand mit :func:`Get State` ausgelesen werden oder
-es kann :func:`Set Selected State` genutzt werden.
+nicht bekannt ist, dann kann der Zustand mit :func:`Get Value` ausgelesen werden oder
+es kann :func:`Set Selected Value` genutzt werden.
 
 Laufende Monoflop Timer werden überschrieben wenn diese Funktion aufgerufen wird.
 
@@ -64,9 +64,9 @@ Der Standardwert ist (*false*, *false*).
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get State',
-'elements': [('Relay1', 'bool', 1, 'out'),
-             ('Relay2', 'bool', 1, 'out')],
+'name': 'Get Value',
+'elements': [('Channel0', 'bool', 1, 'out'),
+             ('Channel1', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -83,8 +83,8 @@ Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Monoflop',
-'elements': [('Relay', 'uint8', 1, 'in'),
-             ('State', 'bool', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Value', 'bool', 1, 'in'),
              ('Time', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -125,8 +125,8 @@ wird das Relais nach spätestens zwei Sekunden ausschalten.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Monoflop',
-'elements': [('Relay', 'uint8', 1, 'in'),
-             ('State', 'bool', 1, 'out'),
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Value', 'bool', 1, 'out'),
              ('Time', 'uint32', 1, 'out'),
              ('Time Remaining', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -152,8 +152,8 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Relay', 'uint8', 1, 'out'),
-             ('State', 'bool', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'out'),
+             ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -173,9 +173,9 @@ des Relais (der Zustand nach dem Monoflop).
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Selected State',
-'elements': [('Relay', 'uint8', 1, 'in'),
-             ('State', 'bool', 1, 'in')],
+'name': 'Set Selected Value',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -197,8 +197,8 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('loop_header', 5, 'Turn relays alternating on/off 10 times with 1 second delay'),
               ('sleep', 1000, None, None),
-              ('setter', 'Set State', [('bool', True), ('bool', False)], None, None),
+              ('setter', 'Set Value', [('bool', True), ('bool', False)], None, None),
               ('sleep', 1000, None, None),
-              ('setter', 'Set State', [('bool', False), ('bool', True)], None, None),
+              ('setter', 'Set Value', [('bool', False), ('bool', True)], None, None),
               ('loop_footer',)]
 })
