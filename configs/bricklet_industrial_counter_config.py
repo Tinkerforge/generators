@@ -97,7 +97,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current counter values for all four channels
+Returns the current counter values for all four channels.
 """,
 'de':
 """
@@ -330,14 +330,14 @@ Sets the counter configuration for the given channel.
 * Count Edge: Counter can count on rising, falling or both edges.
 * Count Direction: Counter can count up or down. You can also use 
   another channel as direction input, see 
-  `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
+  `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
   for details.
 * Duty Cycle Prescaler: Sets a divider for the internal clock. See
-  `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
   for details.
 * Frequency Integration Time: Sets the integration time for the
   frequency measurement. See 
-  `here <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
   for details.
 """,
 'de':
@@ -345,14 +345,14 @@ Sets the counter configuration for the given channel.
 Setzt die Zähler-Konfiguration für den gegebenen Kanal.
 
 * Zählerflanke: Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen
-* Zählerrichtung: Der Zähler kann hoch-/ oder runterzählen. Es kann auch ein weiterer Kanal als Richtungseingang genutzt werden. Siehe 
-  `hier <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
+* Zählerrichtung: Der Zähler kann hoch- oder runterzählen. Es kann auch ein weiterer Kanal als Richtungseingang genutzt werden. Siehe
+  `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
   für weitere Details.
 * Tastverhältnis Prescaler: Setzt einen Teiler für die interne Clock. Siehe 
-  `hier <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
   für weitere Details.
 * Frequenz-Integration: Setzt die Integrationszeit für die Frequenzmessung. Siehe
-  `hier <http://127.0.0.1:8000/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
   für weitere Details.
 """
 }]
