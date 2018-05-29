@@ -98,9 +98,9 @@ for git_name in sorted(os.listdir('..')):
     if not git_name.endswith('-brick') and not git_name.endswith('-bricklet') and not git_name.endswith('-extension'):
         continue
 
-    print('>>>', git_name)
-
     if git_name in configs:
+        print('>>>', git_name, '(released)' if configs[git_name]['released'] else '(not released)')
+
         if configs[git_name]['display_name'].endswith(' 2.0'):
             full_display_name = configs[git_name]['display_name'][:-4] + ' ' + configs[git_name]['category'] + ' 2.0'
         elif configs[git_name]['display_name'].endswith(' 3.0'):
@@ -110,6 +110,8 @@ for git_name in sorted(os.listdir('..')):
 
         if not config_contents[git_name].startswith(config_header.format(full_display_name)):
             error('wrong header comment in config')
+    else:
+        print('>>>', git_name)
 
     base_name = '-'.join(git_name.split('-')[:-1])
 
