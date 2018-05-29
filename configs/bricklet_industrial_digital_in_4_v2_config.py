@@ -71,7 +71,7 @@ gemessen werden.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Input Value Callback Configuration',
+'name': 'Set Value Callback Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
@@ -81,7 +81,7 @@ com['packets'].append({
 """
 This callback can be configured per channel.
 
-The period in ms is the period with which the :cb:`Input Value`
+The period in ms is the period with which the :cb:`Value`
 callback is triggered periodically. A value of 0 turns the callback off.
 
 If the `value has to change`-parameter is set to true, the callback is only
@@ -97,7 +97,7 @@ The default value is (0, false).
 """
 Dier Callback kann pro Kanal konfiguriert werden.
 
-Die Periode in ms ist die Periode mit der der :cb:`Input Value`
+Die Periode in ms ist die Periode mit der der :cb:`Value`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
 Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
@@ -115,7 +115,7 @@ Der Standardwert ist (0, false).
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Input Value Callback Configuration',
+'name': 'Get Value Callback Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
              ('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
@@ -124,26 +124,26 @@ com['packets'].append({
 'en':
 """
 Returns the callback configuration for the given channel as set by
-:func:`Set Input Value Callback Configuration`.
+:func:`Set Value Callback Configuration`.
 """,
 'de':
 """
 Gibt die Callback-Konfiguration für den gegebenen Kanal zurück, wie mittels
-:func:`Set Input Value Callback Configuration` gesetzt.
+:func:`Set Value Callback Configuration` gesetzt.
 """
 }]
 })
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set All Input Value Callback Configuration',
+'name': 'Set All Value Callback Configuration',
 'elements': [('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-The period in ms is the period with which the :cb:`All Input Value`
+The period in ms is the period with which the :cb:`All Value`
 callback is triggered periodically. A value of 0 turns the callback off.
 
 If the `value has to change`-parameter is set to true, the callback is only
@@ -159,7 +159,7 @@ The default value is (0, false).
 """
 Dier Callback kann pro Kanal konfiguriert werden.
 
-Die Periode in ms ist die Periode mit der der :cb:`All Input Value`
+Die Periode in ms ist die Periode mit der der :cb:`All Value`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
 Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
@@ -178,7 +178,7 @@ Der Standardwert ist (0, false).
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get All Input Value Callback Configuration',
+'name': 'Get All Value Callback Configuration',
 'elements': [('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -186,12 +186,12 @@ com['packets'].append({
 'en':
 """
 Returns the callback configuration as set by
-:func:`Set All Input Value Callback Configuration`.
+:func:`Set All Value Callback Configuration`.
 """,
 'de':
 """
 Gibt die Callback-Konfiguration zurück, wie mittels
-:func:`Set All Input Value Callback Configuration` gesetzt.
+:func:`Set All Value Callback Configuration` gesetzt.
 """
 }]
 })
@@ -353,7 +353,7 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` geset
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Input Value',
+'name': 'Value',
 'elements': [('Channel', 'uint8', 1, 'out', CONSTANT_CHANNEL),
              ('Changed', 'bool', 1, 'out'),
              ('Value', 'bool', 1, 'out')],
@@ -362,7 +362,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically according to the configuration set by
-:func:`Set Input Value Callback Configuration`.
+:func:`Set Value Callback Configuration`.
 
 The parameters are the channel, a value-changed indicator and the actual value
 for the channel. The `changed` parameter is true if the value has changed since
@@ -371,7 +371,7 @@ the last callback.
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
-:func:`Set Input Value Callback Configuration` gesetzten Konfiguration
+:func:`Set Value Callback Configuration` gesetzten Konfiguration
 
 Die Parameter sind der Kanal, Changed und der Wert. Der `changed`-Parameter
 ist True wenn sich der Wert seit dem letzten Callback geändert hat.
@@ -381,7 +381,7 @@ ist True wenn sich der Wert seit dem letzten Callback geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'All Input Value',
+'name': 'All Value',
 'elements': [('Changed', 'bool', 4, 'out'),
              ('Value', 'bool', 4, 'out')],
 'since_firmware': [1, 0, 0],
@@ -389,17 +389,16 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically according to the configuration set by
-:func:`Set All Input Value Callback Configuration`.
+:func:`Set All Value Callback Configuration`.
 
 The `parameters` are the same as :func:`Get Value`. Additional the 
 `changed` parameter is true if the value has changed since
 the last callback.
-
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
-:func:`Set All Input Value Callback Configuration` gesetzten Konfiguration
+:func:`Set All Value Callback Configuration` gesetzten Konfiguration
 
 Die `parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist der
 `changed`-Parameter True wenn sich der Wert seit dem letzten Callback geändert hat.
