@@ -78,7 +78,7 @@ module Tinkerforge
             data += r.pack "C#{n1}"
           elsif f0 == 'k'
             unpacked[0].each { |c| r << c.ord }
-            data += r.pack "c#{f1}"
+            data += r.pack "C#{f1}"
           else
             r = unpacked[0]
             if ['s', 'S', 'l', 'L', 'q', 'Q'].count(f0) > 0
@@ -95,7 +95,7 @@ module Tinkerforge
             data += r.pack 'C'
           elsif f == 'k'
             r = [unpacked[0].ord]
-            data += r.pack 'c'
+            data += r.pack 'C'
           else
             r = [unpacked[0]]
             if ['s', 'S', 'l', 'L', 'q', 'Q'].count(f) > 0
@@ -130,7 +130,7 @@ module Tinkerforge
               u << ((r[i / 8] & (1 << (i % 8))) != 0)
             end
           elsif f0 == 'k'
-            r = data.unpack "c#{f1}a*"
+            r = data.unpack "C#{f1}a*"
             data = r[-1]
             r.delete_at(-1)
             r.each { |c| u << c.chr }
@@ -158,7 +158,7 @@ module Tinkerforge
             r = data.unpack "Ca*"
             u = r[0] != 0
           elsif f == 'k'
-            r = data.unpack "ca*"
+            r = data.unpack "Ca*"
             u = r[0].chr
           else
             if ['s', 'q', 'l', 'L', 'S', 'Q'].count(f) > 0
