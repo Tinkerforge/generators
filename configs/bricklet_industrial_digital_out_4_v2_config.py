@@ -230,3 +230,45 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` geset
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set PWM Configuration',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Frequency', 'uint32', 1, 'in'),   # 1/10 Hz
+             ('Duty Cycle', 'uint16', 1, 'in')], # 1/100 %
+'since_firmware': [1, 0, 0], # FIXME: update once exact firmware version is known
+'doc': ['af', {
+'en':
+"""
+.. note: Not implemented yet, will be added in a future firmware version.
+""",
+'de':
+"""
+.. note: Noch nicht implementiert, wird in einer zukünftigen Firmware Version hinzugefügt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get PWM Configuration',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Frequency', 'uint32', 1, 'out'),   # 1/10 Hz
+             ('Duty Cycle', 'uint16', 1, 'out')], # 1/100 %
+'since_firmware': [1, 0, 0], # FIXME: update once exact firmware version is known
+'doc': ['af', {
+'en':
+"""
+.. note: Not implemented yet, will be added in a future firmware version.
+
+Returns the PWM configuration as set by :func:`Set PWM Configuration`.
+""",
+'de':
+"""
+.. note: Noch nicht implementiert, wird in einer zukünftigen Firmware Version hinzugefügt.
+
+Gibt die PWM Konfiguration zurück, wie von :func:`Set PWM Configuration` gesetzt.
+"""
+}]
+})
