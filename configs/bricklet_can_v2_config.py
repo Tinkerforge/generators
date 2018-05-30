@@ -219,6 +219,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Transceiver Configuration',
 'elements': [('Baud Rate', 'uint32', 1, 'in'),
+             ('Sample Point', 'uint16', 1, 'in'),
              ('Transceiver Mode', 'uint8', 1, 'in', ('Transceiver Mode', [('Normal', 0),
                                                                           ('Loopback', 1),
                                                                           ('Read Only', 2)]))],
@@ -228,7 +229,8 @@ com['packets'].append({
 """
 Sets the transceiver configuration for the CAN bus communication.
 
-The baud rate can be configured in bit/s between 10 and 1000 kbit/s.
+The baud rate can be configured in bit/s between 10 and 1000 kbit/s and the
+sample point can be configured in 1/10 % between 50 and 90 %.
 
 The CAN transceiver has three different modes:
 
@@ -240,13 +242,14 @@ The CAN transceiver has three different modes:
   detection nor acknowledgement. Only the receiving part of the transceiver
   is connected to the CAN bus.
 
-The default is: 125 kbit/s and normal transceiver mode.
+The default is: 125 kbit/s, 62.5 % and normal transceiver mode.
 """,
 'de':
 """
 Setzt die Transceiver-Konfiguration für die CAN-Bus-Kommunikation.
 
-Die Baudrate kann in Bit/s zwischen 10 und 1000 kBit/s eingestellt werden.
+Die Baudrate kann in Bit/s zwischen 10 und 1000 kBit/s eingestellt werden und
+der Abtastpunkt kann in 1/10 % zwischen 50 und 90 % eingestellt werden.
 
 Der CAN-Transceiver hat drei verschiedene Modi:
 
@@ -258,7 +261,7 @@ Der CAN-Transceiver hat drei verschiedene Modi:
   Bus-Fehlererkennung oder dem Acknowledgement mitzuwirken. Nur der empfangende
   Teil des Transceivers ist mit dem CAN-Bus verbunden.
 
-Der Standard ist: 125 kBit/s und normaler Transceiver-Modus.
+Der Standard ist: 125 kBit/s, 62,5 % und normaler Transceiver-Modus.
 """
 }]
 })
@@ -267,6 +270,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Transceiver Configuration',
 'elements': [('Baud Rate', 'uint32', 1, 'out'),
+             ('Sample Point', 'uint16', 1, 'out'),
              ('Transceiver Mode', 'uint8', 1, 'out', ('Transceiver Mode', [('Normal', 0),
                                                                            ('Loopback', 1),
                                                                            ('Read Only', 2)]))],
