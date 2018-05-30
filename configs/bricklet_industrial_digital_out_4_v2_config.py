@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# Industrial Digital Out 4 2.0 Bricklet communication config
+# Industrial Digital Out 4 Bricklet 2.0 communication config
 
 # TODO: Documentation and examples.
 
