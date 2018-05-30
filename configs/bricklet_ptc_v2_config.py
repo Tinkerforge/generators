@@ -32,7 +32,7 @@ com = {
 temperature_doc = {
 'en':
 """
-Returns the temperature of connected sensor. The value
+Returns the temperature of the connected sensor. The value
 has a range of -246 to 849 °C and is given in °C/100,
 e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
 """,
@@ -64,7 +64,7 @@ The value can be converted with the following formulas:
 """,
 'de':
 """
-Gibt den Wert zurück, wie vom "MAX31865 Präzisions Delta-Sigma ADC" berechnet.
+Gibt den Wert zurück, wie vom "MAX31865 Präzisions-Delta-Sigma ADC" berechnet.
 
 Der Wert kann mit den folgenden Formeln in einen Widerstand konvertiert werden:
 
@@ -231,7 +231,7 @@ averaging window has a length of 20s. If you want to do long term measurements t
 moving average will give the cleanest results.
 
 The default value is 1 for resistance and 40 for temperature. The default values match
-the non-changable averaging settings of the old PTC Bricklet 1.0
+the non-changeable averaging settings of the old PTC Bricklet 1.0
 """,
 'de':
 """
@@ -324,14 +324,14 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set Sensor Connected Callback Configuration`.
 
-The `parameter` is the same as :func:`Is Sensor Connected`.
+The :word:`parameter` is the same as :func:`Is Sensor Connected`.
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set Sensor Connected Callback Configuration` gesetzten Konfiguration
 
-Der `parameter` ist der gleiche wie bei :func:`Is Sensor Connected`.
+Der :word:`parameter` ist der gleiche wie bei :func:`Is Sensor Connected`.
 """
 }]
 })

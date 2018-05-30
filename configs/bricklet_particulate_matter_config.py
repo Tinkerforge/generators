@@ -47,7 +47,7 @@ values from the sensor are returned.
 """,
 'de':
 """
-Gibt die Feinstaub-Konzentration in µg/m³ zurück, augeschlüsselt nach:
+Gibt die Feinstaub-Konzentration in µg/m³ zurück, aufgeschlüsselt nach:
 
 * PM\ :sub:`1.0`\ ,
 * PM\ :sub:`2.5`\  und
@@ -87,7 +87,7 @@ value from the sensor is returned.
 """,
 'de':
 """
-Gibt die Anzahl der Feinstaub-Teilchen in 100ml Luft zurück, augeschlüsselt
+Gibt die Anzahl der Feinstaub-Teilchen in 100ml Luft zurück, aufgeschlüsselt
 nach deren Durchmesser:
 
 * größer 0,3µm,
@@ -306,14 +306,14 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set PM Concentration Callback Configuration`.
 
-The `parameters` are the same as :func:`Get PM Concentration`.
+The :word:`parameters` are the same as :func:`Get PM Concentration`.
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set PM Concentration Callback Configuration` gesetzten Konfiguration
 
-Die `parameters` sind der gleiche wie :func:`Get PM Concentration`.
+Die :word:`parameters` sind der gleiche wie :func:`Get PM Concentration`.
 """
 }]
 })
@@ -334,14 +334,14 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set PM Count Callback Configuration`.
 
-The `parameters` are the same as :func:`Get PM Count`.
+The :word:`parameters` are the same as :func:`Get PM Count`.
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set PM Count Callback Configuration` gesetzten Konfiguration
 
-Die `parameters` sind der gleiche wie :func:`Get PM Count`.
+Die :word:`parameters` sind der gleiche wie :func:`Get PM Count`.
 """
 }]
 })

@@ -57,7 +57,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the DMX mode, as set by func:`Set DMX Mode`.
+Returns the DMX mode, as set by :func:`Set DMX Mode`.
 """,
 'de':
 """

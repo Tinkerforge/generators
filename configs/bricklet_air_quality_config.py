@@ -176,14 +176,14 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set All Values Callback Configuration`.
 
-The `parameters` are the same as :func:`Get All Values`.
+The :word:`parameters` are the same as :func:`Get All Values`.
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set All Values Callback Configuration` gesetzten Konfiguration
 
-Die `parameters` sind der gleiche wie :func:`Get All Values`.
+Die :word:`parameters` sind der gleiche wie :func:`Get All Values`.
 """
 }]
 })

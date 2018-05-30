@@ -38,62 +38,61 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the RGB(W) values for the LEDs starting from the *index*.
+Sets the RGB(W) values for the LEDs starting from *index*.
 You can set at most 2048 RGB values or 1536 RGBW values.
 
 To make the colors show correctly you need to configure the chip type
-(:func:`Set Chip Type`) and a channel mapping (:func:`Set Channel Mapping`)
+(see :func:`Set Chip Type`) and a channel mapping (see :func:`Set Channel Mapping`)
 according to the connected LEDs.
 
 If the channel mapping has 3 colors, you need to give the data in the sequence
 RGBRGBRGB... if the channel mapping has 4 colors you need to give data in the
 sequence RGBWRGBWRGBW...
 
-The data is double buffered and the colors will be transfered to actual
-LEDs when the next frame duration ends, see :func:`Set Frame Duration`.
+The data is double buffered and the colors will be transfered to the
+LEDs when the next frame duration ends (see :func:`Set Frame Duration`).
 
 Generic approach:
 
-* Set the frame duration to a value that represents
-  the number of frames per second you want to achieve.
+* Set the frame duration to a value that represents the number of frames per
+  second you want to achieve.
 * Set all of the LED colors for one frame.
 * Wait for the :cb:`Frame Started` callback.
 * Set all of the LED colors for next frame.
 * Wait for the :cb:`Frame Started` callback.
-* and so on.
+* And so on.
 
-This approach ensures that you can change the LED colors with
-a fixed frame rate.
+This approach ensures that you can change the LED colors with a fixed frame rate.
 """,
 'de':
 """
-Setzt die RGB(W) Werte der LEDs startend bei dem gesetzten *index*.
+Setzt die RGB(W) Werte der LEDs beginnend beim *index*.
 Es können bis zu 2048 RGB Werte oder 1536 RGBW Werte gesetzt werden.
 
 Damit die Farben richtig angezeigt werden muss den LEDs entsprechend der
-richtig Chip Type (:func:`Set Chip Type`) und das richtige Channel Mapping
-(:func:`Set Channel Mapping`) eingestellt werden.
+richtig Chip Type (siehe :func:`Set Chip Type`) und das richtige Channel Mapping
+(siehe :func:`Set Channel Mapping`) eingestellt werden.
 
 Wenn das Channel Mapping 3 Farben hat, müssen die Werte in der Sequenz
 RGBRGBRGB... übergeben werden. Hat das Mapping 4 Farben, müssen die Werte in 
 der Sequenz RGBWRGBWRGBW... übergeben werden.
 
-Die Daten werden Zwischengespeichert und die Farben werden auf die 
-tatsächlichen LEDs transferiert wenn die nächste *frame duration* 
-abgelaufen ist, siehe :func:`Set Frame Duration`.
+Die Daten werden Zwischengespeichert und die Farben werden auf die LEDs
+transferiert wenn die nächste *frame duration*  abgelaufen ist (siehe
+:func:`Set Frame Duration`).
 
 Genereller Ansatz:
 
-* Setze *frame duration* auf einen Wert welcher der Anzahl der
-  Bilder pro Sekunde entspricht die erreicht werden sollen.
+* Setze *frame duration* auf einen Wert welcher der Anzahl der Bilder pro
+  Sekunde entspricht die erreicht werden sollen.
 * Setze alle LEDs für einen Frame.
-* Warte auf :cb:`Frame Started` Callback.
+* Warte auf den :cb:`Frame Started` Callback.
 * Setze alle LEDs für den nächsten Frame.
-* Warte auf :cb:`Frame Started` Callback.
+* Warte auf den :cb:`Frame Started` Callback.
 * Und so weiter.
 
-Dieser Ansatz garantiert, dass die LED Farben mit einer
-festen Framerate angezeigt werden.
+Dieser Ansatz garantiert, dass die LED Farben mit einer festen Framerate
+angezeigt werden.
 """
 }]
 })
@@ -111,9 +110,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the RGB(W) values as set by :func:`Set LED Values`.
 """,
 'de':
 """
+Gibt die RGB(W) Werte zurück, wie von :func:`Set LED Values` gesetzt.
 """
 }]
 })
@@ -193,7 +194,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered directly after a new frame render ist started. 
+This callback is triggered directly after a new frame render is started.
 The :word:`parameter` is the number of LEDs in that frame.
 
 You should send the data for the next frame directly after this callback
@@ -237,9 +238,6 @@ With a decreasing frequency your maximum frames per second will decrease
 too.
 
 The default value is 1.66MHz.
-
-.. note::
- The frequency in firmware version 2.0.0 is fixed at 2MHz.
 """,
 'de':
 """
@@ -258,9 +256,6 @@ Frequenz reduziert.
 Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerate ab.
 
 Der Standardwert ist 1,66MHz
-
-.. note::
- Die Frequenz in Firmware Version 2.0.0 ist fest auf 2MHz gesetzt.
 """
 }]
 })
@@ -402,9 +397,9 @@ The default value is BGR (36).
 """,
 'de':
 """
-Setzt das Channel Mapping für die angeschlossenene LEDs.
+Setzt das Channel Mapping für die angeschlossenen LEDs.
 
-Falls das Mapping 4 farben hat, erwartet die Funktion :func:`Set LED Values`
+Falls das Mapping 4 Farben hat, erwartet die Funktion :func:`Set LED Values`
 4 Werte pro Pixel. Bei einem Mapping mit 3 Farben werden 3 Werte pro Pixel
 erwartet.
 
@@ -502,11 +497,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the configuration as set by :func:`Set Frame Started Callback Configuration`.
+Returns the configuration as set by
+:func:`Set Frame Started Callback Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Frame Started Callback Configuration` gesetzt.
+Gibt die Konfiguration zurück, wie von
+:func:`Set Frame Started Callback Configuration` gesetzt.
 """
 }]
 })

@@ -109,7 +109,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the configuration of the Voltage/Current Bricklet. It is
+Sets the configuration of the Voltage/Current Bricklet 2.0. It is
 possible to configure number of averages as well as
 voltage and current conversion time.
 
@@ -148,7 +148,7 @@ conversion and current conversion.
 """,
 'de':
 """
-Setzt die Konfiguration des Voltage/Current Bricklet. Es ist
+Setzt die Konfiguration des Voltage/Current Bricklet 2.0. Es ist
 möglich die Anzahl für die Durchschnittsbildung, und die
 Wandlungszeit für Spannung und Stromstärke zu definieren.
 
@@ -209,8 +209,7 @@ Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Configuration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -242,7 +241,7 @@ werden nicht perfekt sind, ist es nötig einen Multiplikator und
 einen Divisor zu setzen falls sehr genaue Messwerte nötig sind.
 
 Zum Beispiel: Wenn eine Messung von 1000mA erwartet wird, das
-Voltage/Current Bricklet aber 1023mA zurück gibt, sollte
+Voltage/Current Bricklet 2.0 aber 1023mA zurück gibt, sollte
 der Multiplikator auf 1000 und der Divisor auf 1023 gesetzt
 werden. Das gleiches gilt für die Spannung.
 """
@@ -264,8 +263,7 @@ Returns the calibration as set by :func:`Set Calibration`.
 """,
 'de':
 """
-Gibt die Kalibrierung zurück, wie von :func:`Set Calibration`
-gesetzt.
+Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
 """
 }]
 })

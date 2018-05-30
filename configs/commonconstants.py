@@ -147,13 +147,13 @@ Gibt die Callback-Konfiguration zurück, wie mittels :func:`{0} Callback Configu
 This callback is triggered periodically according to the configuration set by
 :func:`{0} Callback Configuration`. 
 
-The `parameter` is the same as :func:`{1}`.
+The :word:`parameter` is the same as :func:`{1}`.
 """.format(name_set, name_get),
             'de': """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`{0} Callback Configuration` gesetzten Konfiguration
 
-Der `parameter` ist der gleiche wie :func:`{1}`.
+Der :word:`parameter` ist der gleiche wie :func:`{1}`.
 """.format(name_set, name_get)
             }]
         }
@@ -294,13 +294,13 @@ Gibt die Callback-Konfiguration zurück, wie mittels :func:`{0} Callback Configu
 This callback is triggered periodically according to the configuration set by
 :func:`{0} Callback Configuration`.
 
-The `parameter` is the same as :func:`{1}`.
+The :word:`parameter` is the same as :func:`{1}`.
 """.format(name_set, name_get),
             'de': """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`{0} Callback Configuration` gesetzten Konfiguration
 
-Der `parameter` ist der gleiche wie :func:`{1}`.
+Der :word:`parameter` ist der gleiche wie :func:`{1}`.
 """.format(name_set, name_get)
             }]
         }

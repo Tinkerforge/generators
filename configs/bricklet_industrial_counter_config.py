@@ -144,7 +144,7 @@ The default value for the counters on startup is 0.
 """
 Setzt die Zählerstände für alle vier Kanäle.
 
-Der Stadardwert für die Zähler nach dem Starten ist 0.
+Der Standardwert für die Zähler nach dem Starten ist 0.
 """
 }]
 })
@@ -161,7 +161,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the signal data (duty cycle, period, frequency and value) for the given channel.
+Returns the signal data (duty cycle, period, frequency and value) for the
+given channel.
 
 The units are:
 
@@ -172,14 +173,15 @@ The units are:
 """,
 'de':
 """
-Gibt die Signaldaten (Tastverhältnis, Periode, Frequenz und Status) für den gegebenen Kanal.
+Gibt die Signaldaten (Tastverhältnis, Periode, Frequenz und Status) für den
+gegebenen Kanal.
 
 Die Einheiten sind:
 
 * Tastverhältnis: 1/100 %
 * Periode: ns
 * Frequenz: mHz (1/1000 Hz)
-* Kanal Status: true = high, false = low
+* Wert: true = high, false = low
 """
 }]
 })
@@ -195,7 +197,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the signal data (duty cycle, period, frequency and value) for all for chanels.
+Returns the signal data (duty cycle, period, frequency and value) for all four
+channels.
 
 The units are:
 
@@ -206,14 +209,15 @@ The units are:
 """,
 'de':
 """
-Gibt die Signaldaten (Tastverhältnis, Periode, Frequenz und Status) für den alle Kanäle zurück.
+Gibt die Signaldaten (Tastverhältnis, Periode, Frequenz und Status) für alle
+vier Kanäle zurück.
 
 Die Einheiten sind:
 
 * Tastverhältnis: 1/100 %
 * Periode: ns
 * Frequenz: mHz (1/1000 Hz)
-* Kanal Status: true = high, false = low
+* Wert: true = high, false = low
 """
 }]
 })
@@ -237,7 +241,7 @@ By default all channels are activated.
 """
 Aktiviert/Deaktiviert den Zähler für den gegebenen Kanal.
 
-true = aktiviert, false = deaktiviert.
+true = aktivieren, false = deaktivieren.
 
 Standardmäßig sind alle Kanäle aktiviert.
 """
@@ -260,12 +264,11 @@ By default all channels are activated.
 """,
 'de':
 """
-Aktiviert/Deaktiviert den Zähler für alle Kanäle.
+Aktiviert/Deaktiviert den Zähler für alle vier Kanäle.
 
-true = aktiviert, false = deaktiviert.
+true = aktivieren, false = deaktivieren.
 
 Standardmäßig sind alle Kanäle aktiviert.
-
 """
 }]
 })
@@ -281,7 +284,7 @@ com['packets'].append({
 """
 Returns the activation state of the given channel.
 
-true = activate, false = deactivate. 
+true = activated, false = deactivated.
 """,
 'de':
 """
@@ -302,11 +305,11 @@ com['packets'].append({
 """
 Returns the activation state of all four channels.
 
-true = activate, false = deactivate. 
+true = activated, false = deactivated.
 """,
 'de':
 """
-Gibt den Zustand (aktiviert/deaktiviert) aller Zähler zurück.
+Gibt den Zustand (aktiviert/deaktiviert) aller vier Zähler zurück.
 
 true = aktiviert, false = deaktiviert.
 """
@@ -344,8 +347,9 @@ Sets the counter configuration for the given channel.
 """
 Setzt die Zähler-Konfiguration für den gegebenen Kanal.
 
-* Zählerflanke: Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen
-* Zählerrichtung: Der Zähler kann hoch- oder runterzählen. Es kann auch ein weiterer Kanal als Richtungseingang genutzt werden. Siehe
+* Zählflanke: Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen.
+* Zählrichtung: Der Zähler kann hoch- oder runterzählen. Es kann auch ein weiterer
+  Kanal als Richtungseingang genutzt werden. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
   für weitere Details.
 * Tastverhältnis Prescaler: Setzt einen Teiler für die interne Clock. Siehe 
@@ -374,7 +378,8 @@ Returns the counter configuration as set by :func:`Set Counter Configuration`.
 """,
 'de':
 """
-Gibt die Zähler-Konfiguration zurück, wie Sie mittels :func:`Set Counter Configuration` gesetzt wurde.
+Gibt die Zähler-Konfiguration zurück, wie Sie mittels
+:func:`Set Counter Configuration` gesetzt wurde.
 """
 }]
 })
@@ -510,16 +515,16 @@ com['packets'].append({
 'en':
 """
 Each channel has a corresponding LED. You can turn the LED Off, On or show a
-heartbeat. You can also ste the LED to "Channel Status". In this mode the
+heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
 
 By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
-Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
-aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
-angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
+ausgeschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanalstatus
+angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
 Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
@@ -559,14 +564,14 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set All Counter Callback Configuration`.
 
-The `parameters` are the same as :func:`Get All Counter`.
+The :word:`parameters` are the same as :func:`Get All Counter`.
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set All Counter Callback Configuration` gesetzten Konfiguration
 
-Die `parameters` sind der gleiche wie :func:`Get All Counter`.
+Die :word:`parameters` sind der gleiche wie :func:`Get All Counter`.
 """
 }]
 })
@@ -585,14 +590,14 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set All Signal Data Callback Configuration`.
 
-The `parameters` are the same as :func:`Get All Signal Data`.
+The :word:`parameters` are the same as :func:`Get All Signal Data`.
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set All Signal Data Callback Configuration` gesetzten Konfiguration
 
-Die `parameters` sind der gleiche wie :func:`Get All Signal Data`.
+Die :word:`parameters` sind der gleiche wie :func:`Get All Signal Data`.
 """
 }]
 })

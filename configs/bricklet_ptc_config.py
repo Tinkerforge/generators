@@ -656,14 +656,14 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set Sensor Connected Callback Configuration`.
 
-The `parameter` is the same as :func:`Is Sensor Connected`.
+The :word:`parameter` is the same as :func:`Is Sensor Connected`.
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set Sensor Connected Callback Configuration` gesetzten Konfiguration
 
-Der `parameter` ist der gleiche wie bei :func:`Is Sensor Connected`.
+Der :word:`parameter` ist der gleiche wie bei :func:`Is Sensor Connected`.
 """
 }]
 })

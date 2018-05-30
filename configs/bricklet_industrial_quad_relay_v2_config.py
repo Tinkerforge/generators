@@ -34,14 +34,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value of all four relays. A value of *true* closes the
+Sets the value of all four relays. A value of *true* closes the
 relay and a value of *false* opens the relay.
 
 Use :func:`Set Selected Value` to only change one relay.
 """,
 'de':
 """
-Setzt den Ausgabewert der vier Relais. Ein Wert von *true* schließt das Relais
+Setzt den Wert der vier Relais. Ein Wert von *true* schließt das Relais
 und ein Wert von *False* öffnet das Relais.
 
 Nutze :func:`Set Selected Value` um einzelne Relais zu schalten.
@@ -88,31 +88,32 @@ If this function is called with the parameters (0, 1, 1500) channel 0 will
 close and in 1.5s channel 0 will open again
 
 A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
-have a RS485 bus and a Quad Relay Bricklet connected to one of the slave
-stacks. You can now call this function every second, with a time parameter
-of two seconds and channel 0 closed. Channel 0 will be closed all the time. If now
-the RS485 connection is lost, then channel 0 will be opened in at most two seconds.
+have a RS485 bus and a Industrial Quad Relay Bricklet 2.0 connected to one of
+the slave stacks. You can now call this function every second, with a time
+parameter of two seconds and channel 0 closed. Channel 0 will be closed all the
+time. If now the RS485 connection is lost, then channel 0 will be opened in at
+most two seconds.
 """,
 'de':
 """
-Konfiguriert einen Monoflop für den angegebenen Channel.
+Konfiguriert einen Monoflop für den angegebenen Kanal.
 
-Der zweite Parameter ist eine der gewünschten Zuständ des
-festgelegten Channels. Eine *true bedeutet Relais geschlossen und
+Der zweite Parameter ist eine der gewünschten Zustände des
+festgelegten Kanals. Eine *true bedeutet Relais geschlossen und
 ein *false* bedeutet Relais offen.
 
-Der dritte Parameter ist die Zeit (in ms) die der Channel den Zustand
+Der dritte Parameter ist die Zeit (in ms) die der Kanal den Zustand
 halten sollen.
 
 Wenn diese Funktion mit den Parametern (0, 1, 1500) aufgerufen wird,
-wird channel 0 geschlossen und nach 1,5s wieder geöffnet.
+wird Kanal 0 geschlossen und nach 1,5s wieder geöffnet.
 
 Ein Monoflop kann zur Ausfallsicherung verwendet werden. Beispiel:
-Angenommen ein RS485 Bus und ein Quad Relay Bricklet ist an ein Slave
-Stapel verbunden.
+Angenommen ein RS485 Bus und ein Industrial Quad Relay Bricklet 2.0 ist an ein
+Slave Stapel verbunden.
 Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden,
-aufgerufen werden. Der Channel wird die gesamte Zeit im Zustand geschlossen sein.
-Wenn jetzt die RS485 Verbindung getrennt wird, wird der Channel nach spätestens
+aufgerufen werden. Der Kanal wird die gesamte Zeit im Zustand geschlossen sein.
+Wenn jetzt die RS485 Verbindung getrennt wird, wird der Kanal nach spätestens
 zwei Sekunden in den Zustand geöffnet wechseln.
 """
 }]
@@ -137,7 +138,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für den angegebenen Channel) den aktuellen Zustand und die Zeit, wie von
+Gibt (für den angegebenen Kanal) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
@@ -155,11 +156,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the output value of the specified channel without affecting the other channels.
+Sets the output value of the specified channel without affecting the other
+channels.
 """,
 'de':
 """
-Setzt den Ausgabewert des spezifizierten Channels ohne die anderen Channelne zu beeinflussen.
+Setzt den Ausgabewert des spezifizierten Kanals ohne die anderen Kanäle
+zu beeinflussen.
 """
 }]
 })
@@ -177,7 +180,7 @@ com['packets'].append({
 'en':
 """
 Each channel has a corresponding LED. You can turn the LED Off, On or show a
-heartbeat. You can also ste the LED to "Channel Status". In this mode the
+heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
 
 By default all channel LEDs are configured as "Channel Status".
@@ -185,11 +188,11 @@ By default all channel LEDs are configured as "Channel Status".
 'de':
 """
 Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
-aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
-angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
+aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanalstatus
+angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
-Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
+Standardmäßig sind die LEDs für alle Kanäle auf "Kanalstatus" konfiguriert.
 """
 }]
 })
@@ -231,8 +234,8 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
-:word:`parameters` enthalten den Channel und den aktuellen
-Zustand des Channels (der Zustand nach dem Monoflop).
+:word:`parameters` enthalten den Kanal und den aktuellen Zustand des Kanals
+(der Zustand nach dem Monoflop).
 """
 }]
 })

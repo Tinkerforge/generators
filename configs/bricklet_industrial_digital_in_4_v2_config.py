@@ -39,13 +39,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the input value as bools, *true*
-refers to high and *false* refers to low.
+Returns the input value as bools, *true* refers to high and *false* refers to low.
 """,
 'de':
 """
-Gibt die Ausgabewerte als Bools zurück, *true* 
-bedeutet logisch 1 und *false* logisch 0.
+Gibt die Eingangswerte als Bools zurück, *true* bedeutet logisch 1 und *false* logisch 0.
 """
 }]
 })
@@ -76,7 +74,7 @@ The default value is (0, false).
 """,
 'de':
 """
-Dier Callback kann pro Kanal konfiguriert werden.
+Dieser Callback kann pro Kanal konfiguriert werden.
 
 Die Periode in ms ist die Periode mit der der :cb:`Value`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
@@ -138,7 +136,7 @@ The default value is (0, false).
 """,
 'de':
 """
-Dier Callback kann pro Kanal konfiguriert werden.
+Dieser Callback kann pro Kanal konfiguriert werden.
 
 Die Periode in ms ist die Periode mit der der :cb:`All Value`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
@@ -152,7 +150,6 @@ Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
 festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 
 Der Standardwert ist (0, false).
-
 """
 }]
 })
@@ -195,8 +192,9 @@ directly after it is read.
 """,
 'de':
 """
-Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Channel zurück. Die
-zu zählenden Flanken können mit :func:`Set Edge Count Configuration` konfiguriert werden.
+Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Kanal zurück.
+Die zu zählenden Flanken können mit :func:`Set Edge Count Configuration`
+konfiguriert werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
@@ -218,8 +216,8 @@ com['packets'].append({
 """
 Configures the edge counter for a specific channel.
 
-The edge type parameter configures if rising edges, falling edges or
-both are counted if the channel is configured for input. Possible edge types are:
+The edge type parameter configures if rising edges, falling edges or both are
+counted. Possible edge types are:
 
 * 0 = rising (default)
 * 1 = falling
@@ -239,8 +237,8 @@ Default values: 0 (edge type) and 100ms (debounce time)
 Konfiguriert den Flankenzähler für einen bestimmten Kanal.
 
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
-steigende, fallende oder beide Flanken gezählt werden für Channels die als Eingang
-konfiguriert sind. Mögliche Flankentypen sind:
+steigende, fallende oder beide Flanken gezählt werden. Mögliche Flankentypen
+sind:
 
 * 0 = steigend (Standard)
 * 1 = fallend
@@ -294,7 +292,7 @@ com['packets'].append({
 'en':
 """
 Each channel has a corresponding LED. You can turn the LED Off, On or show a
-heartbeat. You can also ste the LED to "Channel Status". In this mode the
+heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
 
 By default all channel LEDs are configured as "Channel Status".
@@ -302,11 +300,11 @@ By default all channel LEDs are configured as "Channel Status".
 'de':
 """
 Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
-aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
-angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
+aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanalstatus
+angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
-Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
+Standardmäßig sind die LEDs für alle Kanäle auf "Kanalstatus" konfiguriert.
 """
 }]
 })
@@ -345,16 +343,16 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set Value Callback Configuration`.
 
-The parameters are the channel, a value-changed indicator and the actual value
-for the channel. The `changed` parameter is true if the value has changed since
-the last callback.
+The :word:`parameters` are the channel, a value-changed indicator and the actual
+value for the channel. The `changed` parameter is true if the value has changed
+since the last callback.
 """,
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set Value Callback Configuration` gesetzten Konfiguration
 
-Die Parameter sind der Kanal, Changed und der Wert. Der `changed`-Parameter
+Die :word:`parameters` sind der Kanal, Changed und der Wert. Der `changed`-Parameter
 ist True wenn sich der Wert seit dem letzten Callback geändert hat.
 """
 }]
@@ -372,7 +370,7 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set All Value Callback Configuration`.
 
-The `parameters` are the same as :func:`Get Value`. Additional the 
+The :word:`parameters` are the same as :func:`Get Value`. Additional the
 `changed` parameter is true if the value has changed since
 the last callback.
 """,
@@ -381,7 +379,7 @@ the last callback.
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set All Value Callback Configuration` gesetzten Konfiguration
 
-Die `parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist der
+Die :word:`parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist der
 `changed`-Parameter True wenn sich der Wert seit dem letzten Callback geändert hat.
 """
 }]

@@ -109,7 +109,7 @@ Array bestehend aus 16-Bit Werten dargestellt. Die Daten sind Zeile für Zeile
 von oben links bis unten rechts angeordnet.
 
 Jeder 16-Bit Wert stellt eine Temperaturmessung in entweder Kelvin/10 oder
-Kelvin/100 dar (abhängig von der Auflösung die mittels func:`Set Resolution`
+Kelvin/100 dar (abhängig von der Auflösung die mittels :func:`Set Resolution`
 eingestellt wurde).
 
 Bevor die Funktion genutzt werden kann muss diese mittels

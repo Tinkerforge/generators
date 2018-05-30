@@ -81,7 +81,7 @@ Mögliche Wertebereiche:
 * Minute: 0 bis 59
 * Second: 0 bis 59
 * Centisecond: 0 bis 99
-* Weekday: 1 bis 7 (Montag bis Sontag)
+* Weekday: 1 bis 7 (Montag bis Sonntag)
 
 Wenn die Backup Batterie eingebaut ist, dann behält die Echtzeituhr Datum und
 Zeit auch dann, wenn kein Brick das Bricklet mit Strom versorgt.

@@ -44,7 +44,7 @@ ASCII or similar is not necessary.
 The return value is the number of characters that were written.
 
 See :func:`Set Configuration` for configuration possibilities
-regarding baudrate, parity and so on.
+regarding baud rate, parity and so on.
 """,
 'de':
 """
@@ -84,7 +84,7 @@ Gibt bis zu *length* Zeichen aus dem Empfangsbuffer zurück.
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich
 Callbacks zu nutzen. Diese Funktion gibt nur Daten zurück wenn
-der Read-Callback nich aktiv ist.
+der Read-Callback nicht aktiv ist.
 Siehe :func:`Enable Read Callback` und :cb:`Read` Callback.
 """
 }]
@@ -174,9 +174,9 @@ com['packets'].append({
 """
 Sets the configuration for the RS232 communication. Available options:
 
-* Baudrate between 100 and 2000000 baud.
+* Baud rate between 100 and 2000000 baud.
 * Parity of none, odd or even.
-* Stopbits can be 1 or 2.
+* Stop bits can be 1 or 2.
 * Word length of 5 to 8.
 * Flow control can be off, software or hardware.
 
@@ -189,7 +189,7 @@ Verfügbare Optionen sind:
 
 * Baudrate zwischen 100 und 2000000 Baud.
 * Parität von None, Odd und Even.
-* Stop Bits von 1 oder 2.
+* Stopp-Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
 * Flow Control kann aus, Software oder Hardware sein.
 
@@ -364,7 +364,7 @@ the current overrun and parity error count.
 'de':
 """
 Dieser Callback wird aufgerufen wenn ein neuer Fehler auftritt.
-Er gibt die Anzahl der aufgetreten Overrun and Parity Fehler zurück.
+Er gibt die Anzahl der aufgetreten Overrun und Parity Fehler zurück.
 """
 }]
 })

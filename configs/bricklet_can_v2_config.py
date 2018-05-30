@@ -87,7 +87,7 @@ davon bis zu 8 Bytes als die eigentlichen Daten verwendet. Das Längenfeld (DLC)
 im Daten- oder Remote-Frame wird auf die eigentliche Länge des ``data``
 Parameters gesetzt. Dies erlaubt es Daten- und Remote-Frames mit Überlänge zu
 übertragen. Für Remote-Frames wird nur die Länge ``data`` Parameters verwendet.
-Die eigenlichen ``data`` Bytes werden ignoriert.
+Die eigentlichen ``data`` Bytes werden ignoriert.
 
 Gibt *true* zurück, wenn der Frame dem Schreib-Queue erfolgreich hinzugefügt
 wurde. Gibt *false* zurück wenn Frame nicht hinzugefügt werden konnte, weil
@@ -101,7 +101,7 @@ dadurch passieren, dass der CAN-Transceiver als nur-lesend oder mit einer
 niedrigen Baudrate konfiguriert ist (siehe :func:`Set Transceiver Configuration`).
 Es kann auch sein, dass der CAN-Bus stark belastet ist und der Frame nicht
 übertragen werden kann, da er immer wieder die Arbitrierung verliert. Ein anderer
-Grund kann sein, dass der CAN-Transceiver momentan deaktiviert ist, bedingt duch
+Grund kann sein, dass der CAN-Transceiver momentan deaktiviert ist, bedingt durch
 ein hohes Schreib-Fehlerlevel (siehe :func:`Get Error Log`).
 """
 }]
@@ -162,7 +162,7 @@ Der ``data`` Rückgabewerte kann bis zu 15 Bytes lang sein. Bei Data-Frames sind
 davon bis zu 8 Byte die eigentlich empfangenen Daten. Alle Bytes nach dem 8ten
 Byte sind immer Null und dienen nur der Wiedergabe der Länge von Data- und
 Remote-Frames mit Überlänge. Für Remote-Frames stellt die Länge des ``data``
-Rückgabewertes die angefragte Länge dar. Die eigenlichen ``data`` Bytes sind
+Rückgabewertes die angefragte Länge dar. Die eigentlichen ``data`` Bytes sind
 immer Null.
 
 Mittels eines einstellbaren Lesefilters kann festgelegt werden, welche Frames

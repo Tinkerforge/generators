@@ -191,7 +191,7 @@ Over/Under Voltage happens for voltages below 0V or above 3.3V. In this case
 it is very likely that your thermocouple is defective. An Open Circuit error
 indicates that there is no thermocouple connected.
 
-You can use the func:`ErrorState` callback to automatically get triggered
+You can use the :cb:`Error State` callback to automatically get triggered
 when the error state changes.
 """,
 'de':
@@ -206,7 +206,7 @@ Fall ist mit hoher Wahrscheinlichkeit das Thermoelement defekt. Ein
 Open Circuit-Error deutet darauf hin, das kein Thermoelement angeschlossen
 ist.
 
-Der func:`ErrorState` Callback wird automatisch jedes mal ausgelöst wenn sich
+Der :cb:`Error State` Callback wird automatisch jedes mal ausgelöst wenn sich
 der Error-Status ändert.
 """
 }]
@@ -222,12 +222,12 @@ com['packets'].append({
 'en':
 """
 This Callback is triggered every time the error state changes
-(see func:`GetErrorStatus`).
+(see :func:`Get Error State`).
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Error-Status sich verändert
-(siehe func:`GetErrorStatus`).
+(siehe :func:`Get Error State`).
 """
 }]
 })
