@@ -673,7 +673,7 @@ begin
                                                            str(int(math.ceil(element.get_cardinality() / 8.0) - 1)),
                                                            offset,
                                                            element.get_cardinality() - 1,
-                                                           element.get_name().headless)
+                                                           result)
                 elif element.get_type() == 'string':
                     method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
                                                                                            offset,
