@@ -487,15 +487,36 @@ com['packets'].append({
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Frequency', 'uint32', 1, 'in'),   # 1/10 Hz
              ('Duty Cycle', 'uint16', 1, 'in')], # 1/100 %
-'since_firmware': [1, 0, 0], # FIXME: update once exact firmware version is known
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-.. note: Not implemented yet, will be added in a future firmware version.
+Activates a PWM for the given channel with the frequency given in 1/10Hz and the duty
+cycle given in 1/100%.
+
+You need to set the channel to output before you call this function, otherwise it will
+be ignored. To turn the PWM off again, you can set the frequency to 0 or any other
+function that changes a value of the channel (e.g. :func:`Set Selected Value`).
+
+The maximum frequency value is 320000000 (32MHz). The maximum duty cycle value is 
+10000 (100%).
+
+The default values are 0, 0.
 """,
 'de':
 """
-.. note: Noch nicht implementiert, wird in einer zukünftigen Firmware Version hinzugefügt.
+Aktiviert ein PWM auf dem angegebenen Kanal. Die Frequenz wird in 1/10Hz angegeben und
+die Duty Cycle in 1/100%.
+
+Bevor diese Funktion aufgerufen wird, muss der Kanal als Ausgabe konfiguriert werden,
+ansonsten wird der Aufruf ignoriert. Um die PWM wieder auszustellen, kann die Frequenz auf
+0 gesetzt werden oder eine andere Funktion aufgerufen werden die Einstellungen am
+Kanal verändert (z.B. :func:`Set Selected Value`).
+
+Der maximale Frequenzwert beträgt 320000000 (32MHz). Der Maximale Duty Cycle-Wert beträgt
+10000 (100%).
+
+Die Standardwerte sind 0, 0.
 """
 }]
 })
@@ -506,18 +527,14 @@ com['packets'].append({
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Frequency', 'uint32', 1, 'out'),   # 1/10 Hz
              ('Duty Cycle', 'uint16', 1, 'out')], # 1/100 %
-'since_firmware': [1, 0, 0], # FIXME: update once exact firmware version is known
+'since_firmware': [1, 0, 0], 
 'doc': ['af', {
 'en':
 """
-.. note: Not implemented yet, will be added in a future firmware version.
-
 Returns the PWM configuration as set by :func:`Set PWM Configuration`.
 """,
 'de':
 """
-.. note: Noch nicht implementiert, wird in einer zukünftigen Firmware Version hinzugefügt.
-
 Gibt die PWM Konfiguration zurück, wie von :func:`Set PWM Configuration` gesetzt.
 """
 }]
