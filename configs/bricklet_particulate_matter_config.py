@@ -345,3 +345,14 @@ Die :word:`parameters` sind der gleiche wie :func:`Get PM Count`.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get PM Concentration', 'PM concentration'), [(('PM10', 'PM 1.0'), 'uint16', 1, None, 'µg/m³', None), (('PM25', 'PM 2.5'), 'uint16', 1, None, 'µg/m³', None), (('PM100', 'PM 10.0'), 'uint16', 1, None, 'µg/m³', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('PM Concentration', 'PM concentration'), [(('PM10', 'PM 1.0'), 'uint16', 1, None, 'µg/m³', None), (('PM25', 'PM 2.5'), 'uint16', 1, None, 'µg/m³', None), (('PM100', 'PM 10.0'), 'uint16', 1, None, 'µg/m³', None)], None, None),
+              ('callback_configuration', ('PM Concentration', 'PM concentration'), [], 1000, False, None, [])]
+})
