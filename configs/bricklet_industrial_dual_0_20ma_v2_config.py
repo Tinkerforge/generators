@@ -61,12 +61,12 @@ ist.
 }
 
 add_callback_value_function(
-    packets       = com['packets'],
-    name          = 'Get Current',
-    data_name     = 'Current',
-    data_type     = 'int32',
-    channel_based = True,
-    doc           = current_doc
+    packets      = com['packets'],
+    name         = 'Get Current',
+    data_name    = 'Current',
+    data_type    = 'int32',
+    has_channels = True,
+    doc          = current_doc
 )
 
 com['packets'].append({

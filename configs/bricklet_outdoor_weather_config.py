@@ -7,7 +7,6 @@
 # Outdoor Weather Bricklet communication config
 
 from commonconstants import THRESHOLD_OPTION_CONSTANTS
-from commonconstants import add_callback_value_function
 
 WIND_DIRECTION = ('Wind Direction', [('N', 0),
                                      ('NNE', 1),

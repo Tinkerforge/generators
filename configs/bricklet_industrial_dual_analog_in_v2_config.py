@@ -6,8 +6,6 @@
 
 # Industrial Dual Analog In Bricklet 2.0 communication config
 
-# TODO: Documentation.
-
 from commonconstants import THRESHOLD_OPTION_CONSTANTS
 from commonconstants import add_callback_value_function
 
@@ -43,12 +41,12 @@ Gibt die Spannung für den übergebenen Kanal in mV zurück.
 }
 
 add_callback_value_function(
-    packets       = com['packets'],
-    name          = 'Get Voltage',
-    data_name     = 'Voltage',
-    data_type     = 'int32',
-    channel_based = True,
-    doc           = voltage_doc
+    packets      = com['packets'],
+    name         = 'Get Voltage',
+    data_name    = 'Voltage',
+    data_type    = 'int32',
+    has_channels = True,
+    doc          = voltage_doc
 )
 
 com['packets'].append({
