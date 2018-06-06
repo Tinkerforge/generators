@@ -46,4 +46,3 @@ add_callback_value_function(
     data_type = 'uint16',
     doc       = moisture_doc
 )
-
