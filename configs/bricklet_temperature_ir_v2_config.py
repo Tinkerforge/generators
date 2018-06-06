@@ -11,7 +11,8 @@ from commonconstants import add_callback_value_function
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
+    'api_version_extra': 1, # +1 for "Fix min/max types in add_callback_value_function logic [aff5bfc]"
     'category': 'Bricklet',
     'device_identifier': 291,
     'name': 'Temperature IR V2',
