@@ -75,7 +75,7 @@ The following options are possible:
 
  "'x'",    "Threshold is turned off"
  "'o'",    "Threshold is triggered when the value is *outside* the min and max values"
- "'i'",    "Threshold is triggered when the value is *inside* the min and max values"
+ "'i'",    "Threshold is triggered when the value is *inside* or equal to the min and max values"
  "'<'",    "Threshold is triggered when the value is smaller than the min value (max is ignored)"
  "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
