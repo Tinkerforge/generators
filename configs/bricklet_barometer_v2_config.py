@@ -51,7 +51,7 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Air Pressure',
     data_name = 'Air Pressure',
-    data_type = 'int32',
+    data_type = 'int32', # FIXME: use a different data type, now that callback-value supports that?
     doc       = air_pressure_doc
 )
 
@@ -76,7 +76,7 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Altitude',
     data_name = 'Altitude',
-    data_type = 'int32',
+    data_type = 'int32', # FIXME: use a different data type, now that callback-value supports that?
     doc       = altitude_doc
 )
 
@@ -109,7 +109,7 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Temperature',
     data_name = 'Temperature',
-    data_type = 'int32',
+    data_type = 'int32', # FIXME: use a different data type, now that callback-value supports that?
     doc       = temperature_doc
 )
 
