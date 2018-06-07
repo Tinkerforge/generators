@@ -55,8 +55,7 @@ CONSTANT_DUTY_CYCLE_PRESCALER = ('Duty Cycle Prescaler', [('1', 0),
                                                           ('4096', 12),
                                                           ('8192', 13),
                                                           ('16384', 14),
-                                                          ('32768', 15),
-                                                          ('Auto', 255)])
+                                                          ('32768', 15)])
 
 CONSTANT_FREQUENCY_INTEGRATION_TIME = ('Frequency Integration Time', [('128 MS', 0),
                                                                       ('256 MS', 1),
@@ -66,8 +65,7 @@ CONSTANT_FREQUENCY_INTEGRATION_TIME = ('Frequency Integration Time', [('128 MS',
                                                                       ('4096 MS', 5),
                                                                       ('8192 MS', 6),
                                                                       ('16384 MS', 7),
-                                                                      ('32768 MS', 8),
-                                                                      ('Auto', 255)])
+                                                                      ('32768 MS', 8)])
 
 
 
