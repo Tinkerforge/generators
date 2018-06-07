@@ -15,8 +15,8 @@ com = {
     'display_name': 'Industrial Counter',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': '4 channel counter up to 4MHz',
+        'de': '4-Kanal Zähler bis zu 4MHz'
     },
     'comcu': True,
     'released': False,
