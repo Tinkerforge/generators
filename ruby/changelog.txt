@@ -201,4 +201,3 @@
 - Add support for Analog In 3.0, Remote Switch 2.0, Motion Detector 2.0, NFC,
   Rotary Encoder 2.0, Solid State 2.0, Temperature IR 2.0 and Outdoor Weather
   Bricklet
-- Add general streaming support
