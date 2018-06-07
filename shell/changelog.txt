@@ -110,8 +110,18 @@
   LED Matrix and Thermal Imaging Bricklet
 - Add get/set-sbas-config functions to GPS Bricklet 2.0 API
 
-2018-02-28: 2.1.16 (<unknown>)
+2018-02-28: 2.1.16 (da741b9)
 - Add support for Analog In 3.0, Remote Switch 2.0, Motion Detector 2.0, NFC,
   Rotary Encoder 2.0, Solid State 2.0, Temperature IR 2.0 and Outdoor Weather
   Bricklet
 - Add general streaming support
+
+2018-06-07: 2.1.17 (<unknown>)
+- Add support for CAN 2.0, Industrial Counter, Industrial Digital In 4 2.0,
+  Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED Strip 2.0,
+  Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, RS232 2.0,
+  Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
+- Add get/set-maximum-timeout functions to NFC Bricklet API
+- Add (is-)sensor-connected function and callback to PTC Bricklet API
+- Break Humiditiy 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
+  fix types for callback threshold min/max configuration

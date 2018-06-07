@@ -203,7 +203,7 @@
 
 2015-11-17: 2.1.8 (158f00f)
 - Add missing constant for 19200 baud to RS232 Bricklet API
-- Add error callback to RS232 Bricklet API
+- Add ERROR callback to RS232 Bricklet API
 - Add set_break_condition function to RS232 Bricklet API
 - Add unlimited illuminance range constant to Ambient Light Bricklet 2.0 API
 - Break API to fix threshold min/max type mismatch in Ambient Light, Analog In
@@ -266,7 +266,17 @@
   LED Matrix and Thermal Imaging Bricklet
 - Add get/set_sbas_config functions to GPS Bricklet 2.0 API
 
-2018-02-28: 2.1.19 (<unknown>)
+2018-02-28: 2.1.19 (da741b9)
 - Add support for Analog In 3.0, Remote Switch 2.0, Motion Detector 2.0, NFC,
   Rotary Encoder 2.0, Solid State 2.0, Temperature IR 2.0 and Outdoor Weather
   Bricklet
+
+2018-06-07: 2.1.20 (<unknown>)
+- Add support for CAN 2.0, Industrial Counter, Industrial Digital In 4 2.0,
+  Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED Strip 2.0,
+  Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, RS232 2.0,
+  Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
+- Add get/set_maximum_timeout functions to NFC Bricklet API
+- Add is_sensor_connected function and SENSOR_CONNECTED callback to PTC Bricklet API
+- Break Humiditiy 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
+  fix types for callback threshold min/max configuration
