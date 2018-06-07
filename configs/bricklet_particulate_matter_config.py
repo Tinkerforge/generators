@@ -19,7 +19,7 @@ com = {
         'de': 'Misst Feinstaub concentration (PM1.0, PM2.5 und PM10)'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

@@ -19,7 +19,7 @@ com = {
         'de': 'Batteriegepufferte Echtzeituhr'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

@@ -22,7 +22,7 @@ com = {
         'de': 'Misst Leistung, Gleichspannung und Gleichstrom bis zu 720W/36V/20A'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

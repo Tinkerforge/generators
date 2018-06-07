@@ -19,7 +19,7 @@ com = {
         'de': 'Zwei Relais um Gleich- und Wechselstromgeräte zu schalten'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

@@ -22,7 +22,7 @@ com = {
         'de': 'Misst Temperatur mit Thermoelementen'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

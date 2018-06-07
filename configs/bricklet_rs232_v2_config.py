@@ -19,7 +19,7 @@ com = {
         'de': 'Kommuniziert mit RS232 Geräten'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

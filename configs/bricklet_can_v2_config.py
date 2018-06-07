@@ -19,7 +19,7 @@ com = {
         'de': 'Kommuniziert mit CAN-Bus Geräten'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

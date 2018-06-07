@@ -19,7 +19,7 @@ com = {
         'de': '4 galvanisch getrennte Halbleiterrelais (Solid State Relais)'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

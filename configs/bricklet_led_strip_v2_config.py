@@ -19,7 +19,7 @@ com = {
         'de': 'Steuert bis zu 2048 RGB(W) LEDs'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

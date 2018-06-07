@@ -22,7 +22,7 @@ com = {
         'de': 'Misst Schalldruck in dB(A/B/C/D/Z)'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

@@ -19,7 +19,7 @@ com = {
         'de': '4-Kanal Zähler bis zu 4MHz'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

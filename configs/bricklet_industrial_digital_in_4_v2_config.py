@@ -19,7 +19,7 @@ com = {
         'de': '4 galvanisch getrennte digitale Eingänge'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

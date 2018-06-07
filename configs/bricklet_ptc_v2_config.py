@@ -22,7 +22,7 @@ com = {
         'de': 'Liest Temperaturen von Pt100 und Pt1000 Sensoren'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],
