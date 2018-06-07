@@ -96,3 +96,4 @@
 - Add isSensorConnected functino and SENSOR_CONNECTED callback to PTC Bricklet API
 - Break Humiditiy 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
   fix types for callback threshold min/max configuration
+- Add general streaming support
