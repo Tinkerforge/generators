@@ -937,7 +937,7 @@ function IPConnection() {
         // Clear timer
         clearTimeout(streamOutObject['responseProperties']['timeout']);
         // Call error callback (if any)
-        if (streamOutObject['responseProperties']['errorCB'] !== null) {
+        if (streamOutObject['responseProperties']['errorCB'] !== undefined) {
             streamOutObject['responseProperties']['errorCB'](IPConnection.ERROR_TIMEOUT);
         }
         // Reset stream state object
