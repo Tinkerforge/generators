@@ -111,7 +111,7 @@ for git_name in sorted(os.listdir('..')):
         if not config_contents[git_name].startswith(config_header.format(full_display_name)):
             error('wrong header comment in config')
     else:
-        print('>>>', git_name)
+        print('>>>', git_name, '(no config)')
 
     base_name = '-'.join(git_name.split('-')[:-1])
 
