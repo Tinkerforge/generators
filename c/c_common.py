@@ -52,7 +52,9 @@ class CPacket(common.Packet):
 
             if element.get_role() == 'stream_data' and signature:
                 if element.get_direction() == 'in' and self.get_type() == 'function':
-                    c_type = 'const ' + c_type
+                    if c_type == 'char':
+                        c_type = 'const ' + c_type
+
                     modifier = '*'
                 elif element.get_direction() == 'out' and self.get_type() == 'callback':
                     modifier = '*'
