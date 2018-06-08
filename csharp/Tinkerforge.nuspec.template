@@ -20,7 +20,7 @@
     <file src="unzipped_net20/Tinkerforge.xml" target="lib/net20" />
     <file src="unzipped_net40/Tinkerforge.dll" target="lib/net40" />
     <file src="unzipped_net40/Tinkerforge.xml" target="lib/net40" />
-    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.dll" target="lib/netcoreapp20" />
-    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.xml" target="lib/netcoreapp20" />
+    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.dll" target="lib/netcore20" />
+    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.xml" target="lib/netcore20" />
   </files>
 </package>
