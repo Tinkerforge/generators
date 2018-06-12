@@ -23,7 +23,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True,
+    'discontinued': True, # replaced by Humidity Bricklet 2.0
     'packets': [],
     'examples': []
 }

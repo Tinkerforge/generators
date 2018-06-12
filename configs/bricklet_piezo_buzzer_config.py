@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True,
+    'discontinued': True, # replaced by Piezo Speaker Bricklet
     'packets': [],
     'examples': []
 }

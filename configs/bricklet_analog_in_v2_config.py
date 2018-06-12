@@ -23,7 +23,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': False, # selling off remaining stock, replaced by Analog In Bricklet 3.0
     'packets': [],
     'examples': []
 }

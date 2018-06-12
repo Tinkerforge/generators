@@ -39,7 +39,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True,
+    'discontinued': True, # replaced by NFC Bricklet
     'packets': [],
     'examples': []
 }

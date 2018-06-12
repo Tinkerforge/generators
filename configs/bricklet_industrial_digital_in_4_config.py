@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True, # replaced by Industrial Digital In 4 Bricklet 2.0
     'packets': [],
     'examples': []
 }

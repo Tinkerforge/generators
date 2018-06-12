@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True, # replaced by Voltage/Current Bricklet 2.0
     'packets': [],
     'examples': []
 }

@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': False, # selling off remaining stock, replaced by IO-4 Bricklet 2.0
     'packets': [],
     'examples': []
 }

@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True, # replaced by PTC Bricklet 2.0
     'packets': [],
     'examples': []
 }
