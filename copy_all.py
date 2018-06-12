@@ -113,6 +113,9 @@ for lang in ['en', 'de']:
             os.makedirs(dest_dir)
 
     for binding in bindings:
+        if binding == 'tvpl':
+            continue
+
         path_binding = os.path.join(path, binding)
         src_file_path = os.path.join(path_binding, 'doc', lang)
 
