@@ -351,10 +351,10 @@ Setzt die Zähler-Konfiguration für den gegebenen Kanal.
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
   für weitere Details.
 * Tastverhältnis Prescaler: Setzt einen Teiler für die interne Clock. Siehe 
-  `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__
   für weitere Details.
 * Frequenz-Integration: Setzt die Integrationszeit für die Frequenzmessung. Siehe
-  `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
+  `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__
   für weitere Details.
 """
 }]
