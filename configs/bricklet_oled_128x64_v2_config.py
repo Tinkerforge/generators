@@ -206,7 +206,7 @@ com['packets'].append({
 'en':
 """
 Draws the currently buffered frame. Normally each call of :func:`Write Pixels` or
-:func:`Write Line` draws directly onto the disply. If you turn automatic draw off
+:func:`Write Line` draws directly onto the display. If you turn automatic draw off
 (:func:`Set Display Configuration`), the data is written in a temporary buffer and
 only transferred to the display by calling this function.
 

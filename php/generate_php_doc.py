@@ -146,8 +146,8 @@ class PHPDocDevice(php_common.PHPDevice):
             'en': """
 .. php:function:: void {1}::registerCallback(int $callback_id, callable $callback, mixed $user_data = NULL)
 
- Registriert die ``$function`` für die gegebene ``$callback_id``. Die optionalen
- ``$user_data`` werden der Funktion als letztes Parameter mit übergeben.
+ Registers the given ``$function`` with the given ``$callback_id``. The optional
+ ``$user_data`` will be passed as the last parameter to the function.
 
  The available callback IDs with corresponding function signatures are listed
  :ref:`below <{0}_php_callbacks>`.

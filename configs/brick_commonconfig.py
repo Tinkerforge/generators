@@ -31,7 +31,7 @@ The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate 
 enabled, the Brick will try to adapt the baudrate for the communication
 between Bricks and Bricklets according to the amount of data that is transferred.
 
-The baudrate will be increased exponetially if lots of data is send/receieved and
+The baudrate will be increased exponentially if lots of data is send/received and
 decreased linearly if little data is send/received.
 
 This lowers the baudrate in applications where little data is transferred (e.g.
@@ -180,7 +180,7 @@ baudrate.
 If the dynamic baudrate feature is enabled, the baudrate set by this
 function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
 
-Regulatory testing is done with the default baudrate. If CE compatability
+Regulatory testing is done with the default baudrate. If CE compatibility
 or similar is necessary in you applications we recommend to not change
 the baudrate.
 
@@ -264,7 +264,7 @@ The errors are divided into
 
 * ACK checksum errors,
 * message checksum errors,
-* frameing errors and
+* framing errors and
 * overflow errors.
 
 The errors counts are for errors that occur on the Brick side. All
