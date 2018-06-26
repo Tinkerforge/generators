@@ -740,9 +740,8 @@ sub authenticate
 		$self->{next_authentication_nonce} = $self->_get_random_uint32();
 	}
 
-	my @serverNonceArray = $self->_brickd_get_authentication_nonce();
-	my $serverNonce = \@serverNonceArray;
-	my $serverNonceBytes = pack('C4', @serverNonceArray);
+	my $serverNonce = $self->_brickd_get_authentication_nonce();
+	my $serverNonceBytes = pack('C4', @{$serverNonce});
 	my $clientNonceNumber = $self->{next_authentication_nonce}++;
 	my $clientNonceBytes = pack('V', $clientNonceNumber);
 	my $clientNonce = [unpack('C4', $clientNonceBytes)];
