@@ -285,3 +285,20 @@ Gibt die Konfiguration, die mittels :func:`Set Configuration` gesetzt werden kan
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Decibel', 'decibel'), [(('Decibel', 'Decibel'), 'uint16', 1, 10.0, 'dB(A)', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Decibel', 'decibel'), [(('Decibel', 'Decibel'), 'uint16', 1, 10.0, 'dB(A)', None)], None, None),
+              ('callback_configuration', ('Decibel', 'decibel'), [], 1000, False, 'x', [(0, 0)])]
+})
+
+com['examples'].append({
+'name': 'Threshold',
+'functions': [('callback', ('Decibel', 'decibel'), [(('Decibel', 'Decibel'), 'uint16', 1, 10.0, 'dB(A)', None)], None, None),
+              ('callback_configuration', ('Decibel', 'decibel'), [], 1000, False, '>', [(60, 0)])]
+})
