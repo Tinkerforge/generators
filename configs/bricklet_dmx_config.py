@@ -38,12 +38,16 @@ com['packets'].append({
 Sets the DMX mode to either master or slave.
 
 Calling this function sets frame number to 0.
+
+The default value is 0 (master).
 """,
 'de':
 """
 Setzt den DMX Modus entweder auf Master oder Slave.
 
 Ein Aufruf dieser Funktion setzt die Frame-Nummer auf 0.
+
+Der Standardwert ist 0 (Master).
 """
 }]
 })
@@ -125,7 +129,6 @@ Diese Funktion kann nur im Master Modus aufgerufen werden.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
