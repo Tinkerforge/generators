@@ -58,16 +58,11 @@ class {0}(Device):"""
 {0}
 """
         response_expected = []
+        mapping = {'always_true': 1, 'true': 2, 'false': 3}
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements(direction='out')) > 0:
-                flag = 1 #'Device.RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
-                flag = 2 #'Device.RESPONSE_EXPECTED_TRUE'
-            else:
-                flag = 3 #'Device.RESPONSE_EXPECTED_FALSE'
-
-            response_expected.append('re[{0}] = {1}'.format(packet.get_function_id(), flag))
+            response_expected.append('re[{0}] = {1}'.format(packet.get_function_id(),
+                                                            mapping[packet.get_response_expected()]))
 
         if len(response_expected) > 0:
             return template.format('\t\tre = self.response_expected\n\t\t' + '; '.join(response_expected))

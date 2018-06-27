@@ -181,18 +181,12 @@ sub new
 
 	my $self = Tinkerforge::Device->_new($uid, $ipcon, [{0}, {1}, {2}]);
 """
-        response_expecteds = []
+        response_expected = []
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements(direction='out')) > 0:
-                flag = '_RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
-                flag = '_RESPONSE_EXPECTED_TRUE'
-            else:
-                flag = '_RESPONSE_EXPECTED_FALSE'
-
-            response_expecteds.append('\t$self->{{response_expected}}->{{&FUNCTION_{0}}} = Tinkerforge::Device->{1};'
-                                      .format(packet.get_name().upper, flag))
+            response_expected.append('\t$self->{{response_expected}}->{{&FUNCTION_{0}}} = Tinkerforge::Device->_RESPONSE_EXPECTED_{1};'
+                                     .format(packet.get_name().upper,
+                                             packet.get_response_expected().upper()))
 
         callbacks = []
 
@@ -225,7 +219,7 @@ sub new
                                                              ', '.join(roles_by_index)))
 
         return template.format(*self.get_api_version()) + '\n' + \
-               '\n'.join(response_expecteds) + '\n\n' + \
+               '\n'.join(response_expected) + '\n\n' + \
                '\n'.join(callbacks) + '\n\n' + \
                '\n'.join(high_level_callbacks) + """
 

@@ -93,21 +93,16 @@ var IPConnection = require('./IPConnection');
                                self.get_javascript_class_name(),
                                *self.get_api_version())
 
-    def get_javascript_response_expecteds(self):
-        response_expected = ''
+    def get_javascript_response_expected(self):
+        result = []
+        template = '\tthis.responseExpected[{0}.FUNCTION_{1}] = Device.RESPONSE_EXPECTED_{2};\n'
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements(direction='out')) > 0:
-                flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
-                flag = 'RESPONSE_EXPECTED_TRUE'
-            else:
-                flag = 'RESPONSE_EXPECTED_FALSE'
+            result.append(template.format(self.get_javascript_class_name(),
+                                          packet.get_name().upper,
+                                          packet.get_response_expected().upper()))
 
-            response_expected += '\tthis.responseExpected[{0}.FUNCTION_{1}] = Device.{2};\n' \
-                                 .format(self.get_javascript_class_name(), packet.get_name().upper, flag)
-
-        return response_expected
+        return ''.join(result)
 
     def get_javascript_callback_formats(self):
         callbacks = ''
@@ -1163,7 +1158,7 @@ module.exports = {0};
         source  = self.get_javascript_require()
         source += self.get_javascript_constants()
         source += self.get_javascript_class_opening()
-        source += self.get_javascript_response_expecteds()
+        source += self.get_javascript_response_expected()
         source += self.get_javascript_callback_formats()
         source += self.get_javascript_high_level_callbacks()
         source += self.get_javascript_stream_state_objects()

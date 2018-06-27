@@ -322,17 +322,10 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
         response_expected = ''
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements(direction='out')) > 0:
-                flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
-                flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
-            else:
-                flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
-
-            response_expected += '\tdevice_p->response_expected[{0}_FUNCTION_{1}] = {2};\n' \
+            response_expected += '\tdevice_p->response_expected[{0}_FUNCTION_{1}] = DEVICE_RESPONSE_EXPECTED_{2};\n' \
                                  .format(self.get_name().upper,
                                          packet.get_name().upper,
-                                         flag)
+                                         packet.get_response_expected().upper())
 
         if len(response_expected) > 0:
             response_expected = '\n' + response_expected

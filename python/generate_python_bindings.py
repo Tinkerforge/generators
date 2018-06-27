@@ -163,15 +163,9 @@ class {0}(Device):
         response_expected = ''
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements(direction='out')) > 0:
-                flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
-                flag = 'RESPONSE_EXPECTED_TRUE'
-            else:
-                flag = 'RESPONSE_EXPECTED_FALSE'
-
-            response_expected += '        self.response_expected[{0}.FUNCTION_{1}] = {0}.{2}\n' \
-                                 .format(self.get_python_class_name(), packet.get_name().upper, flag)
+            response_expected += '        self.response_expected[{0}.FUNCTION_{1}] = {0}.RESPONSE_EXPECTED_{2}\n' \
+                                 .format(self.get_python_class_name(), packet.get_name().upper,
+                                         packet.get_response_expected().upper())
 
         return template.format(*self.get_api_version()) + common.wrap_non_empty('', response_expected, '\n')
 

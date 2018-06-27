@@ -115,20 +115,14 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         return template.format(*self.get_api_version())
 
     def get_ruby_response_expected(self):
-        response_expected = ''
+        result = []
+        template = '      @response_expected[FUNCTION_{name}] = RESPONSE_EXPECTED_{flag}\n'
 
         for packet in self.get_packets('function'):
-            if len(packet.get_elements(direction='out')) > 0:
-                flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc_type() == 'ccf' or packet.get_high_level('stream_in') != None:
-                flag = 'RESPONSE_EXPECTED_TRUE'
-            else:
-                flag = 'RESPONSE_EXPECTED_FALSE'
+            result.append(template.format(name=packet.get_name().upper,
+                                          flag=packet.get_response_expected().upper()))
 
-            response_expected += '      @response_expected[FUNCTION_{0}] = {1}\n' \
-                                 .format(packet.get_name().upper, flag)
-
-        return response_expected + '\n'
+        return ''.join(result) + '\n'
 
     def get_ruby_callback_formats(self):
         callback_formats = ''
