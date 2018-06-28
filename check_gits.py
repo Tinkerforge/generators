@@ -99,7 +99,11 @@ for git_name in sorted(os.listdir('..')):
         continue
 
     if git_name in configs:
-        print('>>>', git_name, '(released)' if configs[git_name]['released'] else '(not released)')
+        released = configs[git_name]['released']
+        category = configs[git_name]['category']
+        comcu = configs[git_name].get('comcu', False)
+
+        print('>>>', git_name, '(released)' if released else '(not released)')
 
         if configs[git_name]['display_name'].endswith(' 2.0'):
             full_display_name = configs[git_name]['display_name'][:-4] + ' ' + configs[git_name]['category'] + ' 2.0'
@@ -111,6 +115,25 @@ for git_name in sorted(os.listdir('..')):
         if not config_contents[git_name].startswith(config_header.format(full_display_name)):
             error('wrong header comment in config')
     else:
+        if (git_name.endswith('-brick') or git_name.endswith('-bricklet')) and \
+           not git_name.startswith('breakout-') and not git_name.startswith('stack-breakout-') and \
+           not git_name.startswith('debug-'):
+            released = False
+        else:
+            released = None
+
+        if git_name.endswith('-brick'):
+            category = 'Brick'
+        elif git_name.endswith('-bricklet'):
+            category = 'Bricklet'
+        else:
+            category = None
+
+        if git_name.endswith('-bricklet') and not git_name.startswith('breakout-'):
+            comcu = True
+        else:
+            comcu = None
+
         print('>>>', git_name, '(no config)')
 
     base_name = '-'.join(git_name.split('-')[:-1])
@@ -121,16 +144,41 @@ for git_name in sorted(os.listdir('..')):
         else:
             print('examples:', ', '.join(example_names[git_name]))
 
+    # .gitignore
     git_path = os.path.join('..', git_name)
     gitignore_path = os.path.join(git_path, '.gitignore')
 
     if not os.path.exists(gitignore_path):
-        error('hardware/.gitignore is missing')
+        error('.gitignore is missing')
     else:
         with open(gitignore_path, 'r') as f:
             if 'hardware/kicad-libraries\n' not in f.readlines():
                 error('hardware/kicad-libraries missing in .gitignore')
 
+    # README.rst
+    readme_path = os.path.join(git_path, 'README.rst')
+
+    if not os.path.exists(readme_path):
+        error('README.rst is missing')
+    else:
+        with open(readme_path, 'r') as f:
+            readme_data = f.read()
+
+        if released != None:
+            in_development = '\n**This {0} is currently in development.**\n'.format(category) in readme_data
+
+            if released and (in_development or '*This' in readme_data):
+                error('README.rst has in-development marker but config says released')
+            elif not released and not in_development:
+                error('config says not released but README.rst misses in-development marker')
+
+        if '\n If you want to ' in readme_data:
+            warning('wrong indentation in README.rst')
+
+        if comcu and '\ntutorial (https://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Build_Environment/Tutorial.html).\n' not in readme_data:
+            warning('Co-MCU Bricklet with old-style README.rst')
+
+    # hardware
     hardware_path = os.path.join(git_path, 'hardware')
     kicad_libraries_path = os.path.join(hardware_path, 'kicad-libraries')
 
