@@ -1,7 +1,7 @@
 /* <<<DEVICE_NAME_DASH>>>-bricklet
  * Copyright (C) <<<YEAR>>> <<<NAME>>> <<<<EMAIL>>>>
  *
- * config_logging.h: Logging configuration for <<<DEVICE_NAME_READABLE>>> Bricklet
+ * config_logging.h: Logging configuration for <<<DEVICE_NAME_READABLE>>>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

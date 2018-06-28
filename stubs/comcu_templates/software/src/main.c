@@ -1,7 +1,7 @@
 /* <<<DEVICE_NAME_DASH>>>-bricklet
  * Copyright (C) <<<YEAR>>> <<<NAME>>> <<<<EMAIL>>>>
  *
- * main.c: Initialization for <<<DEVICE_NAME_READABLE>>> Bricklet
+ * main.c: Initialization for <<<DEVICE_NAME_READABLE>>>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@
 
 int main(void) {
 	logging_init();
-	logd("Start <<<DEVICE_NAME_READABLE>>> Bricklet\n\r");
+	logd("Start <<<DEVICE_NAME_READABLE>>>\n\r");
 
 	communication_init();
 

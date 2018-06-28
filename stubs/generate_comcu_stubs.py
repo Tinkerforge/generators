@@ -438,26 +438,18 @@ void communication_init(void);
             os.mkdir(os.path.join(folder_dst, 'datasheets'))
 
     # FIXME: use specialize_template instead
-    def fill_templates(self, folder, device_name_dash, device_name, device_identifier, year, name, email, callback_value):
+    def fill_templates(self, folder, device_name_dash, device_name_display, device_identifier, year, name, email, callback_value):
         for dname, dirs, files in os.walk(folder):
             for fname in files:
                 fpath = os.path.join(dname, fname)
                 with open(fpath, "r") as f:
                     s = f.read()
 
-                device_name_readme = device_name
-                if device_name_readme.endswith('V2'):
-                    device_name_readme = device_name_readme.replace('V2', 'Bricklet 2.0')
-                elif device_name_readme.endswith('V3'):
-                    device_name_readme = device_name_readme.replace('V3', 'Bricklet 3.0')
-                else:
-                    device_name_readme = device_name_readme + ' Bricklet'
-
-                device_name_readme = device_name_readme + '\n' + '='*len(device_name_readme)
+                device_name_display_readme = device_name_display + '\n' + '='*len(device_name_display)
 
                 s = s.replace("""<<<DEVICE_NAME_DASH>>>""", device_name_dash)
-                s = s.replace("""<<<DEVICE_NAME_READABLE>>>""", device_name)
-                s = s.replace("""<<<DEVICE_NAME_READABLE_README>>>""", device_name_readme)
+                s = s.replace("""<<<DEVICE_NAME_READABLE>>>""", device_name_display)
+                s = s.replace("""<<<DEVICE_NAME_READABLE_README>>>""", device_name_display_readme)
                 s = s.replace("""<<<DEVICE_IDENTIFIER>>>""", str(device_identifier))
                 s = s.replace("""<<<YEAR>>>""", str(year))
                 s = s.replace("""<<<NAME>>>""", name)
@@ -489,7 +481,7 @@ void communication_init(void);
             callback_value = """\t"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/callback_value.c"\n"""
 
         self.copy_templates_to(folder)
-        self.fill_templates(folder, device_name_dash, device.get_name().space, device.get_device_identifier(), year, name, email, callback_value)
+        self.fill_templates(folder, device_name_dash, device.get_long_display_name(), device.get_device_identifier(), year, name, email, callback_value)
 
         h_constants = device.get_h_constants()
         h_defines = device.get_h_defines()

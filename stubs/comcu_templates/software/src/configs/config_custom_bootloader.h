@@ -2,7 +2,7 @@
  * Copyright (C) <<<YEAR>>> <<<NAME>>> <<<<EMAIL>>>>
  *
  * config_custom_bootloader.h: Bootloader configurations for
- *                             <<<DEVICE_NAME_READABLE>>> Bricklet
+ *                             <<<DEVICE_NAME_READABLE>>>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
