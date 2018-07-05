@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False, # selling off remaining stock, replaced by Particulate Matter Bricklet
+    'discontinued': False, # selling remaining stock, replaced by Particulate Matter Bricklet
     'packets': [],
     'examples': []
 }

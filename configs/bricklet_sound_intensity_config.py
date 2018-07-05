@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False, # selling off remaining stock, replaced by Sound Pressure Level Bricklet
+    'discontinued': False, # selling remaining stock, replaced by Sound Pressure Level Bricklet
     'packets': [],
     'examples': []
 }

@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False, # replaced by Remote Switch Bricklet 2.0
+    'discontinued': True, # replaced by Remote Switch Bricklet 2.0
     'packets': [],
     'examples': []
 }
