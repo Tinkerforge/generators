@@ -121,8 +121,6 @@ make
 cd ~/tf/master-brick/software/src/
 ln -s ../../../bricklib/ .
 cd ~/tf/master-brick/software/
-./generate_makefile
-cd ~/tf/master-brick/software/build/
 make
 
 # Build Temperature Bricklet
@@ -130,8 +128,6 @@ cd ~/tf/temperature-bricklet/software/src/
 ln -s ../../../bricklib/ .
 ln -s ../../../brickletlib/ .
 cd ~/tf/temperature-bricklet/software/
-./generate_makefile
-cd ~/tf/temperature-bricklet/software/build/
 make
 
 # Set up hardware design files for Master Brick
