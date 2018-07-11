@@ -11,9 +11,9 @@ Repository Content
 
 software/:
  * examples/: Examples for all supported languages
- * build/: Makefile and compiled files
+ * build/: Compiled files
  * src/: Source code of firmware
- * generate_makefile: Shell script to generate Makefile from cmake script
+ * Makefile: Makefile to build project
 
 hardware/:
  * Contains kicad project files and additionally schematics as pdf
@@ -50,8 +50,6 @@ separate folder and symlink it into software/src/
 (ln -s bricklib_path/bricklib2 project_path/software/src/). Finally make sure to
 have CMake installed (http://www.cmake.org/cmake/resources/software.html).
 
-After that you can generate a Makefile from the cmake script with the
-generate_makefile shell script (in software/) and build the firmware
-by invoking make in software/build/. The firmware (.zbin) can then be found
-in software/build/ and uploaded with brickv (click button "Flashing"
-on start screen).
+After that you can build the firmware by invoking make in software/. 
+The firmware (.zbin) can then be found in software/build/ and uploaded
+with brickv (click button "Flashing" on start screen).
