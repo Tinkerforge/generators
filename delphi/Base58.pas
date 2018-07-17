@@ -34,7 +34,7 @@ begin
 end;
 
 function Base58Decode(const encoded: string): uint64;
-var i, index: longint; base: uint64;
+var i: longint; index, base: uint64;
 begin
   result := 0;
   base := 1;
