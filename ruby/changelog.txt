@@ -209,6 +209,6 @@
   Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
 - Add get/set_maximum_timeout functions to NFC Bricklet API
 - Add is_sensor_connected function and SENSOR_CONNECTED callback to PTC Bricklet API
-- Break Humiditiy 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
+- Break Humidity 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
   fix types for callback threshold min/max configuration
 - Fix string (un)packing for non-ASCII chars

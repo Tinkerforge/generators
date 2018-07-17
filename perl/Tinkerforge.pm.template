@@ -206,7 +206,7 @@ new device again.
             print "\nHumidity too high: ".$humidity/10.0." RH%\n";
         }
 
-        print "\nRecommended humiditiy for human comfort is 30 to 60 %RH.\n";
+        print "\nRecommended humidity for human comfort is 30 to 60 %RH.\n";
     }
 
     $ipcon->connect(&HOST, &PORT); # Connect to brickd

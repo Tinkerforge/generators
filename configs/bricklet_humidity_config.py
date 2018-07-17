@@ -509,6 +509,6 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Humidity Reached', 'humidity reached'), [(('Humidity', 'Humidity'), 'uint16', 1, 10.0, '%RH', None)], None, 'Recommended humiditiy for human comfort is 30 to 60 %RH.'),
+              ('callback', ('Humidity Reached', 'humidity reached'), [(('Humidity', 'Humidity'), 'uint16', 1, 10.0, '%RH', None)], None, 'Recommended humidity for human comfort is 30 to 60 %RH.'),
               ('callback_threshold', ('Humidity', 'humidity'), [], 'o', [(30, 60)])]
 })
