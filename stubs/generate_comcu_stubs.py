@@ -177,13 +177,15 @@ class CoMCUStubDevice(common.Device):
     def get_c_cases(self):
         case =  '\t\tcase FID_{0}: return {1}(message);'
         case_with_response = '\t\tcase FID_{0}: return {1}(message, response);'
-        case_cv =  '\t\tcase FID_{0}: return {1}(message, &callback_value_{2});'
-        case_cv_with_response = '\t\tcase FID_{0}: return {1}(message, response, &callback_value_{2});'
+        case_cv =  '\t\tcase FID_{0}: return {1}_{2}(message, &callback_value_{3});'
+        case_cv_with_response = '\t\tcase FID_{0}: return {1}_{2}(message, response, &callback_value_{3});'
         cases = []
 
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200:
                 if packet.is_part_of_callback_value():
+                    c_type = packet.get_elements()[-1].get_c_type(False)
+
                     if not 'corresponding_getter' in packet.raw_data:
                         callback_value_function_name = 'get_callback_value'
                     elif packet.raw_data['name'].startswith('Get '):
@@ -192,9 +194,9 @@ class CoMCUStubDevice(common.Device):
                         callback_value_function_name = 'set_callback_value_callback_configuration'
 
                     if len(packet.get_elements(direction='out')) == 0:
-                        cases.append(case_cv.format(packet.get_name().upper, callback_value_function_name, packet.get_callback_value_name()))
+                        cases.append(case_cv.format(packet.get_name().upper, callback_value_function_name, c_type, packet.get_callback_value_name()))
                     else:
-                        cases.append(case_cv_with_response.format(packet.get_name().upper, callback_value_function_name, packet.get_callback_value_name()))
+                        cases.append(case_cv_with_response.format(packet.get_name().upper, callback_value_function_name, c_type, packet.get_callback_value_name()))
                 else:
                     if len(packet.get_elements(direction='out')) == 0:
                         cases.append(case.format(packet.get_name().upper, packet.get_name().under))
@@ -253,14 +255,15 @@ bool handle_{0}_callback(void) {{
 
         callback_cv = """
 bool handle_{0}_callback(void) {{
-\treturn handle_callback_value_callback(&callback_value_{1}, FID_CALLBACK_{2});
+\treturn handle_callback_value_callback_{1}(&callback_value_{2}, FID_CALLBACK_{3});
 }}"""
 
         callbacks = []
         for packet in self.get_packets('callback'):
             if packet.get_function_id() < 200:
                 if packet.is_part_of_callback_value():
-                    callbacks.append(callback_cv.format(packet.get_name().under, packet.get_callback_value_name(), packet.get_name().upper))
+                    c_type = packet.get_elements()[-1].get_c_type(False)
+                    callbacks.append(callback_cv.format(packet.get_name().under, c_type, packet.get_callback_value_name(), packet.get_name().upper))
                 else:
                     callbacks.append(callback.format(packet.get_name().under, packet.get_name().camel, packet.get_name().upper))
 
@@ -270,7 +273,8 @@ bool handle_{0}_callback(void) {{
         callback_values = Set()
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
-                callback_values.add(packet.get_callback_value_name())
+                c_type = packet.get_elements()[-1].get_c_type(False)
+                callback_values.add((c_type, packet.get_callback_value_name()))
 
         if len(callback_values) == 0:
             return ''
@@ -281,7 +285,7 @@ bool handle_{0}_callback(void) {{
 """
         cv_declaration = ''
         for callback_value in callback_values:
-            cv_declaration += 'CallbackValue callback_value_{0};\n'.format(callback_value)
+            cv_declaration += 'CallbackValue_{0} callback_value_{1};\n'.format(*callback_value)
 
         return cv.format(cv_declaration)
 
@@ -289,7 +293,8 @@ bool handle_{0}_callback(void) {{
         callback_values = Set()
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
-                callback_values.add(packet.get_callback_value_name())
+                c_type = packet.get_elements()[-1].get_c_type(False)
+                callback_values.add((c_type, packet.get_callback_value_name()))
 
         if len(callback_values) == 0:
             return ''
@@ -299,7 +304,7 @@ bool handle_{0}_callback(void) {{
 """
         cv_declaration = ''
         for callback_value in callback_values:
-            cv_declaration += '\tcallback_value_init(&callback_value_{0}, NULL);;\n'.format(callback_value)
+            cv_declaration += '\tcallback_value_init_{0}(&callback_value_{1}, NULL);;\n'.format(*callback_value)
 
         return cv.format(cv_declaration)
 
