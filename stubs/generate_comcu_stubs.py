@@ -443,7 +443,7 @@ void communication_init(void);
             os.mkdir(os.path.join(folder_dst, 'datasheets'))
 
     # FIXME: use specialize_template instead
-    def fill_templates(self, folder, device_name_dash, device_name_display, device_identifier, year, name, email, callback_value):
+    def fill_templates(self, folder, device_name_dash, device_name_display, device_identifier, year, name, email, callback_value_define):
         for dname, dirs, files in os.walk(folder):
             for fname in files:
                 fpath = os.path.join(dname, fname)
@@ -459,7 +459,7 @@ void communication_init(void);
                 s = s.replace("""<<<YEAR>>>""", str(year))
                 s = s.replace("""<<<NAME>>>""", name)
                 s = s.replace("""<<<EMAIL>>>""", email)
-                s = s.replace("""<<<CMAKE_SOURCE_CALLBACK_VALUE>>>""", callback_value)
+                s = s.replace("""<<<CALLBACK_VALUE_DEFINE>>>""", callback_value_define)
                 with open(fpath, "w") as f:
                     f.write(s)
 
@@ -480,13 +480,20 @@ void communication_init(void);
         year = datetime.datetime.now().year
         name = device.get_author().split("<")[0].rstrip()             #author syntax: Firstname Lastname <email>
         email = device.get_author().split("<")[1].replace(">","")
-        callback_value = ''
+        callback_value_define = ''
 
         if device.has_callback_value():
-            callback_value = """\t"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/callback_value.c"\n"""
+            c_type = 'FIXME'
+            for packet in device.get_packets('function'):
+                if packet.get_function_id() < 200:
+                    if packet.is_part_of_callback_value():
+                        c_type = packet.get_elements()[-1].get_c_type(False)
+                        break
+
+            callback_value_define = """\n#define CALLBACK_VALUE_TYPE CALLBACK_VALUE_TYPE_{0}\n""".format(c_type.replace('_t', '').upper())
 
         self.copy_templates_to(folder)
-        self.fill_templates(folder, device_name_dash, device.get_long_display_name(), device.get_device_identifier(), year, name, email, callback_value)
+        self.fill_templates(folder, device_name_dash, device.get_long_display_name(), device.get_device_identifier(), year, name, email, callback_value_define)
 
         h_constants = device.get_h_constants()
         h_defines = device.get_h_defines()
