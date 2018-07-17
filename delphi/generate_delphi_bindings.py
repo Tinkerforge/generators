@@ -1007,8 +1007,7 @@ end;
                                     accumulated_written_value_variable = 'result'
                                     ll_function_call_define_current_written_variables += \
                                         '\n  ' + current_written_value_variable + ': ' + e.get_delphi_type()[0] + ';'
-                                    ll_function_call_init_written_variables += \
-                                        '\n  ' + current_written_value_variable + ' := 0;\n  result := 0;'
+                                    ll_function_call_init_written_variables += '\n  result := 0;'
                             else:
                                 accumulated_written_value_variable = 'result'
                                 current_written_value_variable = 'result'
@@ -1024,7 +1023,7 @@ end;
                                     ll_function_call_define_current_written_variables += \
                                         '\n  ' + current_written_value_variable + ': ' + e.get_delphi_type()[0] + ';'
                                     ll_function_call_init_written_variables += \
-                                        '\n  ' + current_written_value_variable + ' := 0;\n  ' + accumulated_written_value_variable + ' := 0;'
+                                        '\n  ' + accumulated_written_value_variable + ' := 0;'
 
                 if len(e_params) > 0:
                     params = '(' + '; '.join(e_params) + ')'

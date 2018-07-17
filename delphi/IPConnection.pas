@@ -900,7 +900,6 @@ var socketID_: longword; data: array [0..8191] of byte;
     disconnectReason: byte;
 begin
   socketID_ := socketID;
-  disconnectReason := IPCON_DISCONNECT_REASON_ERROR;
   while (receiveFlag) do begin
 {$ifdef FPC}
     len := fprecv(socket, @data[0], Length(data), 0);
