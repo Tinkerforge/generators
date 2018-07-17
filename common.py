@@ -1314,6 +1314,9 @@ class Packet(object):
             stream_out = StreamOut(raw_stream_out, stream_data_element, self)
             self.high_level['stream_out'] = stream_out
 
+        if self.raw_data.get('response_expected') not in [None, 'always_true', 'true', 'false']:
+            raise GeneratorError('Invalid response-expected value')
+
         self.constant_groups = []
 
         for element in self.elements:
@@ -1360,9 +1363,6 @@ class Packet(object):
     def get_generator(self):
         return self.device.get_generator()
 
-    def get_response_expected(self):
-        return self.raw_data.get('response_expected')
-
     def get_type(self):
         return self.raw_data['type']
 
@@ -1408,7 +1408,7 @@ class Packet(object):
 
             return None
 
-        return self.high_level.get(feature, None)
+        return self.high_level.get(feature)
 
     def get_since_firmware(self):
         return self.raw_data['since_firmware']
@@ -1420,6 +1420,19 @@ class Packet(object):
             return None
 
         return '.'.join([str(x) for x in self.get_since_firmware()])
+
+    def get_response_expected(self):
+        response_expected = self.raw_data.get('response_expected')
+
+        if response_expected == None:
+            if len(self.get_elements(direction='out')) > 0:
+                response_expected = 'always_true'
+            elif self.get_doc_type() == 'ccf' or self.get_high_level('stream_in') != None:
+                response_expected = 'true'
+            else:
+                response_expected = 'false'
+
+        return response_expected
 
     def get_doc_type(self):
         return self.raw_data['doc'][0]
