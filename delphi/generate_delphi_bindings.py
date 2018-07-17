@@ -177,12 +177,12 @@ uses
                     callback_state_length_delphi_type = element.get_delphi_type()[0]
 
                 if role.endswith('data'):
-                    callback_state_data_delphi_type = element.get_delphi_type()[0]
+                    callback_state_data_delphi_type = element.get_delphi_type()[1]
 
                     if stream_out.get_fixed_length():
                         callback_state_length_delphi_type = self.get_fixed_stream_length_type(abs(stream_out.get_data_element().get_cardinality()))
 
-            arrays += '  T{0}HighLevelCallbackState = record data: array of {1}; length: {2}; end;\n' \
+            arrays += '  T{0}HighLevelCallbackState = record data: TArrayOf{1}; length: {2}; end;\n' \
                       .format(packet.get_name(skip=-2).camel,
                               callback_state_data_delphi_type,
                               callback_state_length_delphi_type)
