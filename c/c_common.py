@@ -31,88 +31,106 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class CPacket(common.Packet):
-    def get_c_parameters(self, signature=True, high_level=False, callback_wrapper=False, single_chunk=False):
+    def get_c_parameters(self, high_level=False):
         parameters = []
 
         for element in self.get_elements(high_level=high_level):
-            c_type = element.get_c_type(True)
+            c_type = element.get_c_type('signature')
             modifier = ''
             name = element.get_name().under
+            direction = element.get_direction()
             role = element.get_role()
             array = ''
 
-            if element.get_direction() == 'out' and self.get_type() == 'function':
-                if signature:
-                    modifier = '*'
-                    name = 'ret_{0}'.format(name)
-                elif role in ['stream_length', 'stream_chunk_offset', 'stream_chunk_written']:
-                    modifier = '&'
-                elif role not in ['stream_chunk_data', 'stream_chunk_written']:
-                    name = 'ret_{0}'.format(name)
+            if direction == 'out' and self.get_type() == 'function':
+                modifier = '*'
+                name = 'ret_{0}'.format(name)
 
-            if element.get_role() == 'stream_data' and signature:
-                if element.get_direction() == 'in' and self.get_type() == 'function':
+            if role == 'stream_data':
+                if direction == 'in' and self.get_type() == 'function':
                     if c_type == 'char':
                         c_type = 'const ' + c_type
 
                     modifier = '*'
-                elif element.get_direction() == 'out' and self.get_type() == 'callback':
+                elif direction == 'out' and self.get_type() == 'callback':
                     modifier = '*'
 
-            if element.get_role() != 'stream_data' and element.get_cardinality() > 1:
+            if role != 'stream_data' and element.get_cardinality() > 1:
                 modifier = ''
                 array = '[{0}]'.format(element.get_cardinality())
 
-            if high_level and callback_wrapper and element.get_level() == 'high' and \
-               element.get_role() == 'stream_data':
-                if single_chunk:
-                    parameters.append('{0}_data'.format(name))
-                else:
-                    parameters.append('({0} *)high_level_callback->data'.format(c_type))
-            elif signature:
-                parameters.append('{0} {1}{2}{3}'.format(c_type, modifier, name, array))
-            else:
-                parameters.append('{0}{1}'.format(modifier, name))
+            parameters.append('{0} {1}{2}{3}'.format(c_type, modifier, name, array))
 
             length_elements = self.get_elements(role='stream_length')
             chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
 
-            if high_level and \
-               element.get_level() == 'high' and \
-               element.get_role() == 'stream_data' and \
-               (element.get_direction() == 'out' or \
-                len(length_elements) > 0):
-                if signature:
-                    if element.get_direction() == 'out' and self.get_type() == 'function':
-                        modifier = '*'
-                    else:
-                        modifier = ''
-
-                    if len(length_elements) > 0:
-                        c_type = length_elements[0].get_c_type(True)
-                    elif len(chunk_offset_elements) > 0:
-                        c_type = chunk_offset_elements[0].get_c_type(True)
-                    else:
-                        raise common.GeneratorError('Malformed stream config')
-
-                    parameters.append('{0} {1}{2}_length'.format(c_type, modifier, name))
-                elif callback_wrapper and not single_chunk:
-                    parameters.append('high_level_callback->length')
+            if role == 'stream_data' and \
+               (direction == 'out' or len(length_elements) > 0):
+                if direction == 'out' and self.get_type() == 'function':
+                    modifier = '*'
                 else:
-                    parameters.append('{0}{1}_length'.format(modifier, name))
+                    modifier = ''
+
+                if len(length_elements) > 0:
+                    c_type = length_elements[0].get_c_type('signature')
+                elif len(chunk_offset_elements) > 0:
+                    c_type = chunk_offset_elements[0].get_c_type('signature')
+                else:
+                    raise common.GeneratorError('Malformed stream config')
+
+                parameters.append('{0} {1}{2}_length'.format(c_type, modifier, name))
 
         return ', '.join(parameters)
 
+    def get_c_arguments(self, context, high_level=False, single_chunk=False):
+        assert context in ['default', 'callback_wrapper']
+
+        arguments = []
+
+        for element in self.get_elements(high_level=high_level):
+            modifier = ''
+            name = element.get_name().under
+            direction = element.get_direction()
+            role = element.get_role()
+
+            if direction == 'out' and self.get_type() == 'function':
+                if role in ['stream_length', 'stream_chunk_offset', 'stream_chunk_written']:
+                    modifier = '&'
+                elif role not in ['stream_chunk_data', 'stream_chunk_written']:
+                    name = 'ret_{0}'.format(name)
+
+            if context == 'callback_wrapper' and role == 'stream_data':
+                if single_chunk:
+                    arguments.append('{0}_data'.format(name))
+                else:
+                    arguments.append('({0} *)high_level_callback->data'.format(element.get_c_type('signature')))
+            else:
+                arguments.append('{0}{1}'.format(modifier, name))
+
+            length_elements = self.get_elements(role='stream_length')
+            chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
+
+            if role == 'stream_data' and \
+               (direction == 'out' or len(length_elements) > 0):
+                if context == 'callback_wrapper' and not single_chunk:
+                    arguments.append('high_level_callback->length')
+                else:
+                    arguments.append('{0}{1}_length'.format(modifier, name))
+
+        return ', '.join(arguments)
+
 class CElement(common.Element):
-    def get_c_type(self, signature, struct=False):
+    def get_c_type(self, context):
+        assert context in ['default', 'signature', 'struct']
+
         if self.get_type() == 'string':
-            if self.get_direction() == 'in' and signature:
+            if self.get_direction() == 'in' and context == 'signature':
                 return 'const char'
             else:
                 return 'char'
         elif self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
             return '{0}_t'.format(self.get_type())
-        elif self.get_type() == 'bool' and struct:
+        elif self.get_type() == 'bool' and context == 'struct':
             return 'uint8_t'
         else:
             return self.get_type()

@@ -85,7 +85,7 @@ class CoMCUStubDevice(common.Device):
                 if packet.get_type() == 'callback':
                     struct_body = ''
                     for element in packet.get_elements():
-                        c_type = element.get_c_type(False)
+                        c_type = element.get_c_type('default')
                         if element.get_cardinality() > 1:
                             struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                                       element.get_name().under,
@@ -99,7 +99,7 @@ class CoMCUStubDevice(common.Device):
                 struct_body = ''
 
                 for element in packet.get_elements(direction='in'):
-                    c_type = element.get_c_type(False)
+                    c_type = element.get_c_type('default')
 
                     if element.get_cardinality() > 1:
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
@@ -116,7 +116,7 @@ class CoMCUStubDevice(common.Device):
                 struct_body = ''
 
                 for element in packet.get_elements(direction='out'):
-                    c_type = element.get_c_type(False)
+                    c_type = element.get_c_type('default')
 
                     if element.get_cardinality() > 1:
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
@@ -184,7 +184,7 @@ class CoMCUStubDevice(common.Device):
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200:
                 if packet.is_part_of_callback_value():
-                    c_type = packet.get_elements()[-1].get_c_type(False)
+                    c_type = packet.get_elements()[-1].get_c_type('default')
 
                     if not 'corresponding_getter' in packet.raw_data:
                         callback_value_function_name = 'get_callback_value'
@@ -262,7 +262,7 @@ bool handle_{0}_callback(void) {{
         for packet in self.get_packets('callback'):
             if packet.get_function_id() < 200:
                 if packet.is_part_of_callback_value():
-                    c_type = packet.get_elements()[-1].get_c_type(False)
+                    c_type = packet.get_elements()[-1].get_c_type('default')
                     callbacks.append(callback_cv.format(packet.get_name().under, c_type, packet.get_callback_value_name(), packet.get_name().upper))
                 else:
                     callbacks.append(callback.format(packet.get_name().under, packet.get_name().camel, packet.get_name().upper))
@@ -273,7 +273,7 @@ bool handle_{0}_callback(void) {{
         callback_values = Set()
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
-                c_type = packet.get_elements()[-1].get_c_type(False)
+                c_type = packet.get_elements()[-1].get_c_type('default')
                 callback_values.add((c_type, packet.get_callback_value_name()))
 
         if len(callback_values) == 0:
@@ -293,7 +293,7 @@ bool handle_{0}_callback(void) {{
         callback_values = Set()
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
-                c_type = packet.get_elements()[-1].get_c_type(False)
+                c_type = packet.get_elements()[-1].get_c_type('default')
                 callback_values.add((c_type, packet.get_callback_value_name()))
 
         if len(callback_values) == 0:
@@ -487,7 +487,7 @@ void communication_init(void);
             for packet in device.get_packets('function'):
                 if packet.get_function_id() < 200:
                     if packet.is_part_of_callback_value():
-                        c_type = packet.get_elements()[-1].get_c_type(False)
+                        c_type = packet.get_elements()[-1].get_c_type('default')
                         break
 
             callback_value_define = """\n#define CALLBACK_VALUE_TYPE CALLBACK_VALUE_TYPE_{0}\n""".format(c_type.replace('_t', '').upper())
