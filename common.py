@@ -1952,6 +1952,12 @@ class ExampleArgument(ExampleItem):
             if packet.get_name().space == function_name:
                 return packet.get_elements(direction='in')[self.get_index()]
 
+        function_name = self.get_function().get_name().space + ' Low Level'
+
+        for packet in self.get_device().get_packets('function'):
+            if packet.get_name().space == function_name:
+                return packet.get_elements(direction='in')[self.get_index()]
+
         return None
 
     def get_type(self):
@@ -1960,7 +1966,7 @@ class ExampleArgument(ExampleItem):
     def get_value(self):
         return self.raw_data[1]
 
-    def get_value_constant(self):
+    def get_value_constant(self, value):
         element = self.get_element()
 
         if element != None:
@@ -1968,7 +1974,7 @@ class ExampleArgument(ExampleItem):
 
             if constant_group:
                 for constant in constant_group.get_constants():
-                    if self.get_value() == constant.get_value():
+                    if value == constant.get_value():
                         return constant
 
         return None

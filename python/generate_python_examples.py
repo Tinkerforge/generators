@@ -130,21 +130,28 @@ if __name__ == "__main__":
 class PythonExampleArgument(common.ExampleArgument):
     def get_python_source(self):
         type_ = self.get_type()
+
+        def helper(value):
+            if type_ == 'bool':
+                if value:
+                    return 'True'
+                else:
+                    return 'False'
+            elif type_ in  ['char', 'string']:
+                return '"{0}"'.format(value)
+            elif ':bitmask:' in type_:
+                return common.make_c_like_bitmask(value)
+            elif type_.endswith(':constant'):
+                return self.get_value_constant(value).get_python_source()
+            else:
+                return str(value)
+
         value = self.get_value()
 
-        if type_ == 'bool':
-            if value:
-                return 'True'
-            else:
-                return 'False'
-        elif type_ in  ['char', 'string']:
-            return '"{0}"'.format(value)
-        elif ':bitmask:' in type_:
-            return common.make_c_like_bitmask(value)
-        elif type_.endswith(':constant'):
-            return self.get_value_constant().get_python_source()
-        else:
-            return str(value)
+        if isinstance(value, list):
+            return '[{0}]'.format(', '.join([helper(item) for item in value]))
+
+        return helper(value)
 
 class PythonExampleArgumentsMixin(object):
     def get_python_arguments(self):

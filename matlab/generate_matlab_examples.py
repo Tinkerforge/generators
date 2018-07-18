@@ -239,21 +239,28 @@ end{functions}
 class MATLABExampleArgument(common.ExampleArgument):
     def get_matlab_source(self):
         type_ = self.get_type()
+
+        def helper(value):
+            if type_ == 'bool':
+                if value:
+                    return 'true'
+                else:
+                    return 'false'
+            elif type_ in  ['char', 'string']:
+                return global_quote + value + global_quote
+            elif ':bitmask:' in type_:
+                return common.make_c_like_bitmask(value, shift='bitshift({0}, {1})', combine='bitor({0}, {1})')
+            elif type_.endswith(':constant'):
+                return self.get_value_constant(value).get_matlab_source()
+            else:
+                return str(value)
+
         value = self.get_value()
 
-        if type_ == 'bool':
-            if value:
-                return 'true'
-            else:
-                return 'false'
-        elif type_ in  ['char', 'string']:
-            return global_quote + value + global_quote
-        elif ':bitmask:' in type_:
-            return common.make_c_like_bitmask(value, shift='bitshift({0}, {1})', combine='bitor({0}, {1})')
-        elif type_.endswith(':constant'):
-            return self.get_value_constant().get_matlab_source()
-        else:
-            return str(value)
+        if isinstance(value, list):
+            return '[{0}]'.format(' '.join([helper(item) for item in value]))
+
+        return helper(value)
 
 class MATLABExampleArgumentsMixin(object):
     def get_matlab_arguments(self):

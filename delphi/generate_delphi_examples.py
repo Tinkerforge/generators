@@ -188,21 +188,28 @@ end.
 class DelphiExampleArgument(common.ExampleArgument):
     def get_delphi_source(self):
         type_ = self.get_type()
+
+        def helper(value):
+            if type_ == 'bool':
+                if value:
+                    return 'true'
+                else:
+                    return 'false'
+            elif type_ in ['char', 'string']:
+                return "'{0}'".format(value)
+            elif ':bitmask:' in type_:
+                return common.make_c_like_bitmask(value, shift='{0} shl {1}', combine='({0}) or ({1})')
+            elif type_.endswith(':constant'):
+                return self.get_value_constant(value).get_delphi_source()
+            else:
+                return str(value)
+
         value = self.get_value()
 
-        if type_ == 'bool':
-            if value:
-                return 'true'
-            else:
-                return 'false'
-        elif type_ in ['char', 'string']:
-            return "'{0}'".format(value)
-        elif ':bitmask:' in type_:
-            return common.make_c_like_bitmask(value, shift='{0} shl {1}', combine='({0}) or ({1})')
-        elif type_.endswith(':constant'):
-            return self.get_value_constant().get_delphi_source()
-        else:
-            return str(value)
+        if isinstance(value, list):
+            return '[{0}]'.format(', '.join([helper(item) for item in value]))
+
+        return helper(value)
 
 class DelphiExampleArgumentsMixin(object):
     def get_delphi_arguments(self):

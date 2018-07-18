@@ -114,33 +114,40 @@ ReleaseNETObject[ipcon]
 class MathematicaExampleArgument(common.ExampleArgument):
     def get_mathematica_source(self):
         type_ = self.get_type()
+
+        def helper(value):
+            if type_ == 'bool':
+                if value:
+                    return 'True'
+                else:
+                    return 'False'
+            elif type_ == 'char':
+                return 'ToCharacterCode["{0}"][[1]]'.format(value)
+            elif type_ == 'string':
+                return '"{0}"'.format(value)
+            elif ':bitmask:' in type_:
+                bits = []
+
+                for i in range(64):
+                    if (value & (1 << i)) != 0:
+                        bits = ['1'] + bits
+                    else:
+                        bits = ['0'] + bits
+
+                length = int(type_.split(':')[2])
+
+                return 'FromDigits[{{{0}}},2]'.format(','.join(bits[-length:]))
+            elif type_.endswith(':constant'):
+                return self.get_value_constant(value).get_mathematica_source()
+            else:
+                return str(value)
+
         value = self.get_value()
 
-        if type_ == 'bool':
-            if value:
-                return 'True'
-            else:
-                return 'False'
-        elif type_ == 'char':
-            return 'ToCharacterCode["{0}"][[1]]'.format(value)
-        elif type_ == 'string':
-            return '"{0}"'.format(value)
-        elif ':bitmask:' in type_:
-            bits = []
+        if isinstance(value, list):
+            return '{{{0}}}'.format(','.join([helper(item) for item in value]))
 
-            for i in range(64):
-                if (value & (1 << i)) != 0:
-                    bits = ['1'] + bits
-                else:
-                    bits = ['0'] + bits
-
-            length = int(type_.split(':')[2])
-
-            return 'FromDigits[{{{0}}},2]'.format(','.join(bits[-length:]))
-        elif type_.endswith(':constant'):
-            return self.get_value_constant().get_mathematica_source()
-        else:
-            return str(value)
+        return helper(value)
 
 class MathematicaExampleArgumentsMixin(object):
     def get_mathematica_arguments(self):

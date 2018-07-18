@@ -126,36 +126,43 @@ public class Example{example_name} {{
 class JavaExampleArgument(common.ExampleArgument):
     def get_java_source(self):
         type_ = self.get_type()
+
+        def helper(value):
+            if type_ == 'bool':
+                if value:
+                    return 'true'
+                else:
+                    return 'false'
+            elif type_ == 'char':
+                return "'{0}'".format(value)
+            elif type_ == 'string':
+                return '"{0}"'.format(value)
+            elif ':bitmask:' in type_:
+                value = common.make_c_like_bitmask(value)
+                cast = java_common.get_java_type(type_.split(':')[0], 1, legacy=self.get_device().has_java_legacy_types())
+
+                if cast in ['byte', 'short']:
+                    return '({0})({1})'.format(cast, value)
+                else:
+                    return value
+            elif type_.endswith(':constant'):
+                return self.get_value_constant(value).get_java_source()
+            else:
+                cast = java_common.get_java_type(type_, 1, legacy=self.get_device().has_java_legacy_types())
+
+                if cast in ['byte', 'short']:
+                    cast = '({0})'.format(cast)
+                else:
+                    cast = ''
+
+                return cast + str(value)
+
         value = self.get_value()
 
-        if type_ == 'bool':
-            if value:
-                return 'true'
-            else:
-                return 'false'
-        elif type_ == 'char':
-            return "'{0}'".format(value)
-        elif type_ == 'string':
-            return '"{0}"'.format(value)
-        elif ':bitmask:' in type_:
-            value = common.make_c_like_bitmask(value)
-            cast = java_common.get_java_type(type_.split(':')[0], 1, legacy=self.get_device().has_java_legacy_types())
+        if isinstance(value, list):
+            return 'new {0}[]{{{1}}}'.format(java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()), ', '.join([helper(item) for item in value]))
 
-            if cast in ['byte', 'short']:
-                return '({0})({1})'.format(cast, value)
-            else:
-                return value
-        elif type_.endswith(':constant'):
-            return self.get_value_constant().get_java_source()
-        else:
-            cast = java_common.get_java_type(type_, 1, legacy=self.get_device().has_java_legacy_types())
-
-            if cast in ['byte', 'short']:
-                cast = '({0})'.format(cast)
-            else:
-                cast = ''
-
-            return cast + str(value)
+        return helper(value)
 
 class JavaExampleArgumentsMixin(object):
     def get_java_arguments(self):

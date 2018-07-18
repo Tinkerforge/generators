@@ -98,27 +98,34 @@ class ShellExampleArgument(common.ExampleArgument):
             return None
 
     def get_shell_source(self):
-        constant = self.get_value_constant()
-
-        if constant != None:
-            return '{0}-{1}'.format(constant.get_constant_group().get_name().dash, constant.get_name().dash)
-
         type_ = self.get_type()
+
+        def helper(value):
+            constant = self.get_value_constant(value)
+
+            if constant != None:
+                return '{0}-{1}'.format(constant.get_constant_group().get_name().dash, constant.get_name().dash)
+
+            if type_ == 'bool':
+                if value:
+                    return 'true'
+                else:
+                    return 'false'
+            elif type_ == 'char':
+                return '{0}'.format(value)
+            elif type_ == 'string':
+                return '"{0}"'.format(value)
+            elif ':bitmask:' in type_:
+                return str(value)
+            else:
+                return str(value)
+
         value = self.get_value()
 
-        if type_ == 'bool':
-            if value:
-                return 'true'
-            else:
-                return 'false'
-        elif type_ == 'char':
-            return '{0}'.format(value)
-        elif type_ == 'string':
-            return '"{0}"'.format(value)
-        elif ':bitmask:' in type_:
-            return str(value)
-        else:
-            return str(value)
+        if isinstance(value, list):
+            return ','.join([helper(item) for item in value])
+
+        return helper(value)
 
 class ShellExampleArgumentsMixin(object):
     def get_shell_arguments(self):

@@ -140,23 +140,30 @@ End Module
 class VBNETExampleArgument(common.ExampleArgument):
     def get_vbnet_source(self):
         type_ = self.get_type()
+
+        def helper(value):
+            if type_ == 'bool':
+                if value:
+                    return 'True'
+                else:
+                    return 'False'
+            elif type_ == 'char':
+                return '"{0}"C'.format(value)
+            elif type_ == 'string':
+                return '"{0}"'.format(value)
+            elif ':bitmask:' in type_:
+                return common.make_c_like_bitmask(value, combine='({0}) or ({1})')
+            elif type_.endswith(':constant'):
+                return self.get_value_constant(value).get_vbnet_source()
+            else:
+                return str(value)
+
         value = self.get_value()
 
-        if type_ == 'bool':
-            if value:
-                return 'True'
-            else:
-                return 'False'
-        elif type_ == 'char':
-            return '"{0}"C'.format(value)
-        elif type_ == 'string':
-            return '"{0}"'.format(value)
-        elif ':bitmask:' in type_:
-            return common.make_c_like_bitmask(value, combine='({0}) or ({1})')
-        elif type_.endswith(':constant'):
-            return self.get_value_constant().get_vbnet_source()
-        else:
-            return str(value)
+        if isinstance(value, list):
+            return 'new {0}(){{{1}}}'.format(get_vbnet_type(self.get_type().split(':')[0]), ', '.join([helper(item) for item in value]))
+
+        return helper(value)
 
 class VBNETExampleArgumentsMixin(object):
     def get_vbnet_arguments(self):

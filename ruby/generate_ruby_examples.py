@@ -110,21 +110,28 @@ ipcon.disconnect
 class RubyExampleArgument(common.ExampleArgument):
     def get_ruby_source(self):
         type_ = self.get_type()
+
+        def helper(value):
+            if type_ == 'bool':
+                if value:
+                    return 'true'
+                else:
+                    return 'false'
+            elif type_ in  ['char', 'string']:
+                return "'{0}'".format(value)
+            elif ':bitmask:' in type_:
+                return common.make_c_like_bitmask(value)
+            elif type_.endswith(':constant'):
+                return self.get_value_constant(value).get_ruby_source()
+            else:
+                return str(value)
+
         value = self.get_value()
 
-        if type_ == 'bool':
-            if value:
-                return 'true'
-            else:
-                return 'false'
-        elif type_ in  ['char', 'string']:
-            return "'{0}'".format(value)
-        elif ':bitmask:' in type_:
-            return common.make_c_like_bitmask(value)
-        elif type_.endswith(':constant'):
-            return self.get_value_constant().get_ruby_source()
-        else:
-            return str(value)
+        if isinstance(value, list):
+            return '[{0}]'.format(', '.join([helper(item) for item in value]))
+
+        return helper(value)
 
 class RubyExampleArgumentsMixin(object):
     def get_ruby_arguments(self):
