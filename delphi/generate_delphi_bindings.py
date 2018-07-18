@@ -771,7 +771,7 @@ begin
         if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then {stream_name_headless}ChunkLength := {chunk_cardinality};
 
         FillChar({stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-        Move({stream_name_headless}[Low({stream_name_headless}) + {stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}
+        Move({stream_name_headless}[{stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}
         Inc({stream_name_headless}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
       end;
     finally
@@ -805,7 +805,7 @@ begin
       end;
 
       FillChar({stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-      Move({stream_name_headless}[Low({stream_name_headless}) + {stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}
+      Move({stream_name_headless}[{stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}
       Inc({stream_name_headless}ChunkOffset, {chunk_cardinality});{ll_function_written_inc}
     end;
   finally
@@ -840,7 +840,7 @@ begin
         if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then {stream_name_headless}ChunkLength := {chunk_cardinality};
 
         FillChar({stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-        Move({stream_name_headless}[Low({stream_name_headless}) + {stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}{ll_function_written_inc}
+        Move({stream_name_headless}[{stream_name_headless}ChunkOffset], {stream_name_headless}ChunkData[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);{ll_function_call}{ll_function_written_inc}
 
         if ({current_written_value_variable} < {chunk_cardinality}) then break; {{ Either last chunk or short write }}
 
@@ -865,7 +865,7 @@ begin{ll_function_call_init_written_variables}
   {stream_name_headless}Length := Length({stream_name_headless});
 
   FillChar({stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-  Move({stream_name_headless}[Low({stream_name_headless})], {stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {stream_name_headless}Length);{ll_function_call}{ll_function_written_inc}
+  Move({stream_name_headless}[0], {stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {stream_name_headless}Length);{ll_function_call}{ll_function_written_inc}
 end;
 
 """
@@ -882,7 +882,7 @@ begin{ll_function_call_init_written_variables}
   {stream_name_headless}Length := Length({stream_name_headless});
 
   FillChar({stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {chunk_cardinality}, 0);
-  Move({stream_name_headless}[Low({stream_name_headless})], {stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {stream_name_headless}Length);{ll_function_call}{ll_function_written_inc}
+  Move({stream_name_headless}[0], {stream_name_headless}Data[0], SizeOf({chunk_data_type}) * {stream_name_headless}Length);{ll_function_call}{ll_function_written_inc}
 end;
 
 """
@@ -913,7 +913,7 @@ begin{output_prepare}
     if ((not {stream_name_headless}OutOfSync) and ({stream_name_headless}Length > 0)) then begin
       {stream_name_headless}ChunkLength := {stream_name_headless}Length - {stream_name_headless}ChunkOffset;
       if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then {stream_name_headless}ChunkLength := {chunk_cardinality};
-      Move({stream_name_headless}ChunkData, {stream_name_headless}[Low({stream_name_headless})], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);
+      Move({stream_name_headless}ChunkData, {stream_name_headless}[0], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);
       {stream_name_headless}CurrentLength := {stream_name_headless}ChunkLength;
 
       while ((not {stream_name_headless}OutOfSync) and ({stream_name_headless}CurrentLength < {stream_name_headless}Length)) do begin
@@ -921,7 +921,7 @@ begin{output_prepare}
         {stream_name_headless}OutOfSync := {stream_name_headless}ChunkOffset <> {stream_name_headless}CurrentLength;
         {stream_name_headless}ChunkLength := {stream_name_headless}Length - {stream_name_headless}ChunkOffset;
         if ({stream_name_headless}ChunkLength > {chunk_cardinality}) then {stream_name_headless}ChunkLength := {chunk_cardinality};
-        Move({stream_name_headless}ChunkData, {stream_name_headless}[Low({stream_name_headless}) + {stream_name_headless}CurrentLength], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);
+        Move({stream_name_headless}ChunkData, {stream_name_headless}[{stream_name_headless}CurrentLength], SizeOf({chunk_data_type}) * {stream_name_headless}ChunkLength);
         Inc({stream_name_headless}CurrentLength, {stream_name_headless}ChunkLength);
       end;
     end;
@@ -947,7 +947,7 @@ end;
 begin{output_prepare}
   {camel_name}LowLevel({parameters_low_level});
   SetLength({stream_name_headless}, {stream_name_headless}Length);
-  Move({stream_name_headless}Data, {stream_name_headless}[Low({stream_name_headless})], SizeOf({chunk_data_type}) * {stream_name_headless}Length);{output_finish}
+  Move({stream_name_headless}Data, {stream_name_headless}[0], SizeOf({chunk_data_type}) * {stream_name_headless}Length);{output_finish}
 end;
 
 """
