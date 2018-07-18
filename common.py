@@ -1257,7 +1257,7 @@ class Packet(object):
                 raise GeneratorError('Invalid element cardinality: ' + element.get_cardinality())
 
             if element.get_direction() not in ['in', 'out']:
-                raise GeneratorError('Invalid element direction ' + element.get_direction())
+                raise GeneratorError('Invalid element direction: ' + element.get_direction())
 
             if element.get_direction() == 'in' and len(self.elements) > 0 and self.elements[-1].get_direction() == 'out':
                 raise GeneratorError("'in' element cannot come after 'out' element")
