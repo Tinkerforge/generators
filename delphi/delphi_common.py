@@ -56,8 +56,8 @@ class DelphiPacket(common.Packet):
 
         return final_type
 
-    def get_delphi_parameters(self, context, name_prefix=None):
-        assert context in ['normal-signature', 'overload-signature', 'normal-variables', 'overload-variables', 'doc']
+    def get_delphi_parameters(self, context):
+        assert context in ['signature', 'variables', 'doc']
 
         param = []
 
@@ -74,26 +74,23 @@ class DelphiPacket(common.Packet):
                         modifier = 'out '
 
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
-                    if context == 'doc':
-                        final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
-                    elif context == 'overload-signature' and element.get_direction() == 'in':
-                        final_type = 'array of {0}'.format(delphi_type[0])
-                    else:
-                        final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+                    if context == 'signature':
+                        if element.get_direction() == 'in' and element.get_level() != 'low':
+                            final_type = 'array of {0}'.format(delphi_type[0])
+                        else:
+                            final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
 
-                        # special case for GetIdentity to avoid redefinition of TArray0To2OfUInt8 and signature mismatch
-                        if self.get_name().camel == 'GetIdentity' and final_type == 'TArray0To2OfUInt8':
-                            final_type = 'TVersionNumber'
+                            # special case for GetIdentity to avoid redefinition of TArray0To2OfUInt8 and signature mismatch
+                            if self.get_name().camel == 'GetIdentity' and final_type == 'TArray0To2OfUInt8':
+                                final_type = 'TVersionNumber'
+                    elif context == 'variables':
+                        final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+                    else:
+                        final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
                 else:
                     final_type = delphi_type[0]
 
-                if name_prefix != None:
-                    name = name_prefix + element.get_name().camel
-                else:
-                    name = element.get_name().headless
-
-                if context != 'overload-variables' or (element.get_cardinality() > 1 and element.get_type() != 'string'):
-                    param.append('{0}{1}: {2}'.format(modifier, name, final_type))
+                param.append('{0}{1}: {2}'.format(modifier, element.get_name().headless, final_type))
         else:
             for element in self.get_elements(direction='in'):
                 delphi_type = element.get_delphi_type()
@@ -104,22 +101,19 @@ class DelphiPacket(common.Packet):
                     modifier = 'const '
 
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
-                    if context == 'doc':
-                        final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
-                    elif context == 'overload-signature':
-                        final_type = 'array of {0}'.format(delphi_type[0])
-                    else:
+                    if context == 'signature':
+                        if element.get_level() != 'low':
+                            final_type = 'array of {0}'.format(delphi_type[0])
+                        else:
+                            final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+                    elif context == 'variables':
                         final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+                    else:
+                        final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
                 else:
                     final_type = delphi_type[0]
 
-                if name_prefix != None:
-                    name = name_prefix + element.get_name().camel
-                else:
-                    name = element.get_name().headless
-
-                if context != 'overload-variables' or (element.get_cardinality() > 1 and element.get_type() != 'string'):
-                    param.append('{0}{1}: {2}'.format(modifier, name, final_type))
+                param.append('{0}{1}: {2}'.format(modifier, element.get_name().headless, final_type))
 
         return param
 

@@ -197,7 +197,7 @@ uses
         template = '  {0}Notify{1} = procedure(sender: {0}{2}) of object;\n'
 
         for packet in self.get_packets('callback'):
-            params = common.wrap_non_empty('; ', '; '.join(packet.get_delphi_parameters('normal-signature')), '')
+            params = common.wrap_non_empty('; ', '; '.join(packet.get_delphi_parameters('signature')), '')
             prototypes += template.format(self.get_delphi_class_name(),
                                           packet.get_name().camel,
                                           params)
@@ -279,33 +279,22 @@ uses
     ///  {3}
     /// </summary>
     function {0}{1}: {2}; {4};"""
-        function_overload = '    function {0}{1}: {2}; {3};'
         procedure = """    /// <summary>
     ///  {2}
     /// </summary>
     procedure {0}{1}; {3};"""
-        procedure_overload = '    procedure {0}{1}; {2};'
 
         for packet in self.get_packets('function'):
             output_count = len(packet.get_elements(direction='out'))
             name = packet.get_name().camel
             doc = packet.get_delphi_formatted_doc()
             ret_type = packet.get_delphi_return_type('signature')
-            params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters('normal-signature')), ')')
-            has_array_in = False
-
-            for element in packet.get_elements(direction='in'):
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
-                    has_array_in = True
-                    break
+            params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters('signature')), ')')
 
             if packet.has_prototype_in_device():
                 modifier = 'override'
             else:
                 modifier = 'virtual'
-
-            if not packet.has_high_level() and has_array_in:
-                modifier = 'overload; ' + modifier
 
             if output_count == 1:
                 method = function.format(name, params, ret_type, doc, modifier)
@@ -313,16 +302,6 @@ uses
                 method = procedure.format(name, params, doc, modifier)
 
             methods.append(method)
-
-            if not packet.has_high_level() and has_array_in:
-                params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters('overload-signature')), ')')
-
-                if output_count == 1:
-                    method = function_overload.format(name, params, ret_type, modifier)
-                else:
-                    method = procedure_overload.format(name, params, modifier)
-
-                methods.append(method)
 
             if packet.has_high_level():
                 e_params = []
@@ -582,7 +561,7 @@ begin
             name = packet.get_name().camel
             ret_type = packet.get_delphi_return_type('signature')
             out_count = len(packet.get_elements(direction='out'))
-            params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters('normal-signature')), ')')
+            params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters('signature')), ')')
             function_id = '{0}_{1}_FUNCTION_{2}'.format(self.get_category().upper,
                                                         self.get_name().upper,
                                                         packet.get_name().upper)
@@ -625,6 +604,12 @@ begin
             offset = 8
 
             for element in packet.get_elements(direction='in'):
+                if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_level() != 'low':
+                    method += "  if (Length({0}) <> {2}) then raise EInvalidParameterException.Create('{1} has to be exactly {2} items long');\n" \
+                              .format(element.get_name().headless,
+                                      element.get_name().space.rstrip('_'),
+                                      element.get_cardinality())
+
                 if element.get_cardinality() > 1 and element.get_type() != 'string' and element.get_type() != 'bool':
                     prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_name().headless)
                     method += '  {0}LEConvert{1}To({2}[i], {3} + (i * {4}), request);\n'.format(prefix,
@@ -696,48 +681,6 @@ begin
             method += 'end;\n\n'
 
             methods += method
-
-            # open-array overload
-            has_array_in = False
-
-            for element in packet.get_elements(direction='in'):
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
-                    has_array_in = True
-                    break
-
-            if not packet.has_high_level() and has_array_in:
-                params = common.wrap_non_empty('(', '; '.join(packet.get_delphi_parameters('overload-signature')), ')')
-
-                if out_count == 1:
-                    overload = function.format(cls, name, params, ret_type)
-                else:
-                    overload = procedure.format(cls, name, params)
-
-                overload += 'var i: longint; ' + '; '.join(packet.get_delphi_parameters('overload-variables', name_prefix='static')) + ';'
-                overload += '\nbegin\n'
-
-                args = []
-
-                for element in packet.get_elements():
-                    if element.get_direction() == 'in' and element.get_cardinality() > 1 and element.get_type() != 'string':
-                        overload += "  if (Length({0}) <> {1}) then raise EInvalidParameterException.Create('Parameter {0} has wrong length');\n" \
-                                    .format(element.get_name().headless, element.get_cardinality())
-                        overload += '  for i := 0 to {0} do static{1}[i] := {2}[Low({2}) + i];\n'.format(element.get_cardinality() - 1,
-                                                                                                         element.get_name().camel,
-                                                                                                         element.get_name().headless)
-
-                        args.append('static' + element.get_name().camel)
-                    elif element.get_direction() == 'in' or out_count > 1:
-                        args.append(element.get_name().headless)
-
-                if out_count == 1:
-                    overload += '  result := {0}({1});\n'.format(packet.get_name().camel, ', '.join(args))
-                else:
-                    overload += '  {0}({1});\n'.format(packet.get_name().camel, ', '.join(args))
-
-                overload += 'end;\n\n'
-
-                methods += overload
 
             if packet.has_high_level():
                 # Following templates are used to ultimately
@@ -1318,7 +1261,7 @@ end;
             variables = []
 
             if len(packet.get_elements(direction='out')) > 0:
-                variables += packet.get_delphi_parameters('normal-variables')
+                variables += packet.get_delphi_parameters('variables')
 
             has_array = False
 
