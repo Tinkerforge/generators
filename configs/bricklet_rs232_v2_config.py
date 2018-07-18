@@ -373,6 +373,7 @@ com['examples'].append({
 'name': 'Loopback',
 'description': 'For this example connect the RX pin to the TX pin on the same Bricklet',
 'functions': [('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', -65535, None, None, None)], None, None), # FIXME: wrong message type
-              ('setter', 'Enable Read Callback', [], 'Enable read callback', None)],
-'incomplete': True # because of special logic and callback with array parameter
+              ('setter', 'Enable Read Callback', [], 'Enable read callback', None),
+              ('setter', 'Write', [('char', ['t', 'e', 's', 't'])], 'Write "test" string', None)],
+'incomplete': True # because of special logic and callback with array parameter, write function written output parameter and string split logic
 })
