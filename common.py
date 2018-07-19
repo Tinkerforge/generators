@@ -657,7 +657,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
     global lang
     lang = language
 
-    print '-->', config_name
+    print('--> {0}'.format(config_name))
 
     config_path_parts = [root_dir, '..', 'configs']
 
