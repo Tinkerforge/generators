@@ -814,6 +814,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
                                 'de': 'Macht alle Bricklet Signale zugänglich'}))
 
         with open(os.path.join(root_dir, '..', 'device_infos.py'), 'w') as f:
+            f.write('# -*- coding: utf-8 -*-')
             f.write('from collections import namedtuple\n')
             f.write('\n')
             f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part has_comcu is_released is_documented is_discontinued has_bindings description')\n")
