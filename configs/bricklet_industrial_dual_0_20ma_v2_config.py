@@ -145,7 +145,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets a gain between 1x and 8x. If you want to measure a very small current,
+you can incerase the gain to get some more resolution.
 
+Example: If you measure 0.5mA with a gain of 8x the return value will be
+4mA.
+
+The default gain is 1x.
 """,
 'de':
 """
@@ -169,8 +175,7 @@ Returns the gain as set by :func:`Set Gain`.
 """,
 'de':
 """
-Gibt die Verstärkung zurück, wie von :func:`Set Gain`
-gesetzt.
+Gibt die Verstärkung zurück, wie von :func:`Set Gain` gesetzt.
 """
 }]
 })
@@ -187,7 +192,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Each channel has a corresponding LED. You can turn the LED Off, On or show a
+heartbeat. You can also set the LED to "Channel Status". In this mode the
+LED can either be turned on with a pre-defined threshold or the intensity
+of the LED can change with the measured value.
 
+You can configure the channel status behavior with :func:`Set Channel LED Status Config`.
+
+By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
@@ -229,7 +241,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the channel LED status config. This config is used if the channel LED is configured
+as Channel Status, see :func:`Set Channel LED Config`.
 
+For each channel you can choose between the threshold and intensity.
+
+In the threshold-mode you can define a positive threshold in nA as the "min" parameter. The "max"
+parameter has to be 0. Example: If you set a positive threshold of 10mA, the LED will turn on
+as soon as the current exceeds 10mA and turn off again if it goes below 10mA. You can also define
+a negative threshold. For that you set the "max" parameter to the threshold value in nA and set
+the "min" parameter to 0. Example: If you set a negative threshold of 10mA, the LED will turn on
+as soon as the current goes below 10mA and the LED will turn off when the current exceeds 10mA.
+
+In the intensity-mode you can define a range that is used to scale the brightness of the LED.
+Example with min=4mA, max=20mA: The LED is off at 4mA, on at 20mA and the brightness is linearly
+scaled between the vales 4mA and 20mA. If the min value is greater than the max value, the
+LED brightness is scaled the other way around.
 """,
 'de':
 """
