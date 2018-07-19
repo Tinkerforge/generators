@@ -33,9 +33,15 @@ com = {
 distance_doc = {
 'en':
 """
+Returns the distance measured by the sensor. The value is in mm and possible
+distance ranges are 40 to 300, 100 to 800 and 200 to 1500, depending on the
+selected IR sensor.
 """,
 'de':
 """
+Gibt die gemessene Entfernung des Sensors zurück. Der Wert ist in mm und die möglichen
+Entfernungsbereiche sind 40 bis 300, 100 bis 800 und 200 bis 1500, in Abhängigkeit vom
+gewählten IR Sensor.
 """
 }
 
