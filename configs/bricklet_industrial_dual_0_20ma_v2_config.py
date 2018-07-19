@@ -257,6 +257,8 @@ In the intensity-mode you can define a range that is used to scale the brightnes
 Example with min=4mA, max=20mA: The LED is off at 4mA, on at 20mA and the brightness is linearly
 scaled between the vales 4mA and 20mA. If the min value is greater than the max value, the
 LED brightness is scaled the other way around.
+
+By default the channel LED status config is set to intensity with min=4mA and max=20mA.
 """,
 'de':
 """
