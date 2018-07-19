@@ -46,6 +46,20 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns all values measured by the Air Quality Bricklet. The values ae IAQ (In-Air Quality) Index,
+IAQ Index Accuracy, Temperature, Humidity and Air Pressure.
+
+.. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
+   :scale: 100 %
+   :alt: Air Quality Index description
+   :align: center
+   :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
+
+* IAQ Index: The IAQ Index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.
+* IAQ Index Accuracy: The accuracy goes from 0 = unreliable to 3 = high.
+* Temperature: The temperature is given in steps of 0.01 °C
+* Humidity: The relative humidity is given in steps of 0.01 %RH.
+* Air Pressure. The air pressure is given in steps of 0.01 mbar.
 """,
 'de':
 """
@@ -191,7 +205,13 @@ Die :word:`parameters` sind der gleiche wie :func:`Get All Values`.
 iaq_index_doc = {
 'en':
 """
-TBD
+Returns the IAQ (In-Air Quality) Index. The IAQ Index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.
+
+.. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
+   :scale: 100 %
+   :alt: Air Quality Index description
+   :align: center
+   :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
 """,
 'de':
 """
@@ -203,14 +223,14 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get IAQ Index',
     data_name = 'IAQ Index',
-    data_type = 'int32', # FIXME: use a different data type, now that callback-value supports that?
+    data_type = 'int32',
     doc       = iaq_index_doc
 )
 
 temperature_doc = {
 'en':
 """
-TBD
+Returns temperature in steps of 0.01 °C.
 """,
 'de':
 """
@@ -222,14 +242,14 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Temperature',
     data_name = 'Temperature',
-    data_type = 'int32', # FIXME: use a different data type, now that callback-value supports that?
+    data_type = 'int32',
     doc       = temperature_doc
 )
 
 humidity_doc = {
 'en':
 """
-TBD
+Returns relative humidity in steps of 0.01 %RH.
 """,
 'de':
 """
@@ -241,14 +261,14 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Humidity',
     data_name = 'Humidity',
-    data_type = 'int32', # FIXME: use a different data type, now that callback-value supports that?
+    data_type = 'int32',
     doc       = humidity_doc
 )
 
 air_pressure_doc = {
 'en':
 """
-TBD
+Returns air pressure in steps of 0.01 mbar.
 """,
 'de':
 """
@@ -260,6 +280,6 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Air Pressure',
     data_name = 'Air Pressure',
-    data_type = 'int32', # FIXME: use a different data type, now that callback-value supports that?
+    data_type = 'int32',
     doc       = air_pressure_doc
 )
