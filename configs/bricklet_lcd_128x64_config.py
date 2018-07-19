@@ -136,7 +136,7 @@ call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
 changes are written into a temporary buffer and only shown on the display after
 a call of :func:`Draw Buffered Frame`.
 
-The default values are contrast 21, backlight intensity 100, inverting off
+The default values are contrast 14, backlight intensity 100, inverting off
 and automatic draw on.
 """,
 'de':
