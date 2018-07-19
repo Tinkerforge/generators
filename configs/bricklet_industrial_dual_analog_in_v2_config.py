@@ -181,7 +181,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Each channel has a corresponding LED. You can turn the LED Off, On or show a
+heartbeat. You can also set the LED to "Channel Status". In this mode the
+LED can either be turned on with a pre-defined threshold or the intensity
+of the LED can change with the measured value.
 
+You can configure the channel status behavior with :func:`Set Channel LED Status Config`.
+
+By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
@@ -223,7 +230,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the channel LED status config. This config is used if the channel LED is configured
+as Channel Status, see :func:`Set Channel LED Config`.
 
+For each channel you can choose between the threshold and intensity.
+
+In the threshold-mode you can define a positive threshold in mV as the "min" parameter. The "max"
+parameter has to be 0. Example: If you set a positive threshold of 10V, the LED will turn on
+as soon as the voltage exceeds 10V and turn off again if it goes below 10V. You can also define
+a negative threshold. For that you set the "max" parameter to the threshold value in nA and set
+the "min" parameter to 0. Example: If you set a negative threshold of 10V, the LED will turn on
+as soon as the voltage goes below 10V and the LED will turn off when the voltage exceeds 10V.
+
+In the intensity-mode you can define a range that is used to scale the brightness of the LED.
+Example with min=4V, max=20V: The LED is off at 4V, on at 20V and the brightness is linearly
+scaled between the vales 4V and 20V. If the min value is greater than the max value, the
+LED brightness is scaled the other way around.
 """,
 'de':
 """
