@@ -1137,7 +1137,8 @@ com['packets'].append({
 'name': 'Set Sensor Fusion Mode',
 'elements': [('Mode', 'uint8', 1, 'in', ('Sensor Fusion', [('Off', 0),
                                                            ('On', 1),
-                                                           ('On Without Magnetometer', 2)]))],
+                                                           ('On Without Magnetometer', 2),
+                                                           ('On Without Fast Magnetometer Calibration', 3)]))],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
@@ -1150,6 +1151,12 @@ Since firmware version 2.0.6 you can also use a fusion mode without magnetometer
 In this mode the calculated orientation is relative (with magnetometer it is
 absolute with respect to the earth). However, the calculation can't be influenced
 by spurious magnetic fields.
+
+Since firmware version 2.0.13 you can also use a fusion mode without fast
+magnetometer calibration. This mode is the same as the normal fusion mode,
+but the fast magnetometer calibration is turned off. So to find the orientation
+the first time will likely take longer, but small magnetic influences might
+not affect the automatic calibration as much.
 
 By default sensor fusion is on.
 """,
@@ -1165,6 +1172,13 @@ werden. In diesem Modus wird die Orientierung relativ berechnet (mit Magnetomete
 ist sie absolut in Bezug auf die Erde). Allerdings kann die Berechnung in diesem
 Fall nicht von störenden Magnetfeldern beeinflusst werden.
 
+Seit Firmware Version 2.0.13 kann auch ein Fusion-Modus ohne schnell
+Magnetometer-Kalibrierung ausgewählt werden. Dieser Modus ist der gleiche wie der
+"normale" Fusion-Modus, aber die schnelle Magnetometer-Kalibrierung ist aus. D.h.
+die Orientierung zu finden mag beim ersten start länger dauern, allerdings mag
+es sein das kleine magnetische einflüsse die automatische Kalibrierung nicht
+so stark stören.
+
 Standardmäßig ist der Fusion-Modus aktiviert.
 """
 }]
@@ -1175,7 +1189,8 @@ com['packets'].append({
 'name': 'Get Sensor Fusion Mode',
 'elements': [('Mode', 'uint8', 1, 'out', ('Sensor Fusion', [('Off', 0),
                                                             ('On', 1),
-                                                            ('On Without Magnetometer', 2)]))],
+                                                            ('On Without Magnetometer', 2),
+                                                            ('On Without Fast Magnetometer Calibration', 3)]))],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
