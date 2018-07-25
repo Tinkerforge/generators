@@ -114,8 +114,8 @@ heartbeat mode.
 """,
 'de':
 """
-Konfiguriert die Info-LED so es ist entweder ausgeschaltet, eingeschaltet oder
-in Herzschlagmodus.
+Konfiguriert die Info-LED. Die LED kann ausgeschaltet, eingeschaltet oder
+im Herzschlagmodus betrieben werden.
 """
 }]
 })
