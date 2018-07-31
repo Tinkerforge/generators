@@ -239,3 +239,17 @@ Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('loop_header', 10, 'Turn relays alternating on/off 10 times with 100 ms delay'),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Value', [('bool', [True, False, False, False])], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Value', [('bool', [False, True, False, False])], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Value', [('bool', [False, False, True, False])], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Value', [('bool', [False, False, False, True])], None, None),
+              ('loop_footer',)]
+})
