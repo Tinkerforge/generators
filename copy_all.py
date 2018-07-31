@@ -215,7 +215,7 @@ if socket.gethostname() == 'tinkerforge.com':
             device = '_'.join(git.split('-')[:-1])
         else:
             category = 'accessories'
-            device = git.split('-', '_')
+            device = git.replace('-', '_')
 
         target_dir = os.path.join('/srv/web/com.tinkerforge.download/downloads/3d', category, device)
 
