@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# RGB LED Bricklet 2.0 communication config
+# Segment Display 4x7 Bricklet 2.0 communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
