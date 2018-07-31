@@ -180,84 +180,99 @@ for git_name in sorted(os.listdir('..')):
 
     # hardware
     hardware_path = os.path.join(git_path, 'hardware')
-    kicad_libraries_path = os.path.join(hardware_path, 'kicad-libraries')
 
-    if not os.path.exists(kicad_libraries_path):
-        error('hardware/kicad-libraries is missing')
+    if not os.path.exists(hardware_path):
+        warning('hardware/* is missing')
+    else:
+        kicad_libraries_path = os.path.join(hardware_path, 'kicad-libraries')
 
-    # hardware/*.pro
-    check_file(git_path, 'hardware/*.pro', 'hardware/{0}.pro'.format(base_name))
+        if not os.path.exists(kicad_libraries_path):
+            error('hardware/kicad-libraries is missing')
 
-    # hardware/*.sch
-    check_file(git_path, 'hardware/*.sch', 'hardware/{0}.sch'.format(base_name), others_allowed=True)
+        # hardware/*.pro
+        check_file(git_path, 'hardware/*.pro', 'hardware/{0}.pro'.format(base_name))
 
-    # hardware/*-schematic.pdf
-    check_file(git_path, 'hardware/*-schematic.pdf', 'hardware/{0}-schematic.pdf'.format(base_name))
+        # hardware/*.sch
+        check_file(git_path, 'hardware/*.sch', 'hardware/{0}.sch'.format(base_name), others_allowed=True)
 
-    # hardware/*.kicad_pcb
-    check_file(git_path, 'hardware/*.kicad_pcb', 'hardware/{0}.kicad_pcb'.format(base_name))
+        # hardware/*-schematic.pdf
+        check_file(git_path, 'hardware/*-schematic.pdf', 'hardware/{0}-schematic.pdf'.format(base_name))
 
-    # hardware/*.step
-    check_file(git_path, 'hardware/*.step', 'hardware/{0}.step'.format(base_name))
+        # hardware/*.kicad_pcb
+        check_file(git_path, 'hardware/*.kicad_pcb', 'hardware/{0}.kicad_pcb'.format(base_name))
 
-    # hardware/*.FCStd
-    check_file(git_path, 'hardware/*.FCStd', 'hardware/{0}.FCStd'.format(base_name))
+        # hardware/*.step
+        check_file(git_path, 'hardware/*.step', 'hardware/{0}.step'.format(base_name))
 
-    # hardware/*.brd
-    if len(glob.glob(os.path.join(git_path, 'hardware/*.brd'))) > 0:
-        warning('hardware/*.brd found')
+        # hardware/*.FCStd
+        check_file(git_path, 'hardware/*.FCStd', 'hardware/{0}.FCStd'.format(base_name))
 
-    # check kicad-libraries configuration
-    pro_path = os.path.join(git_path, 'hardware/{0}.pro'.format(base_name))
+        # hardware/*.brd
+        if len(glob.glob(os.path.join(git_path, 'hardware/*.brd'))) > 0:
+            warning('hardware/*.brd found')
 
-    if os.path.exists(pro_path):
-        with open(pro_path, 'r') as f:
-            pro_content = '[__dummy__]\n' + f.read()
+        # check kicad-libraries configuration
+        pro_path = os.path.join(git_path, 'hardware/{0}.pro'.format(base_name))
 
-        if '=special\n' in pro_content:
-            error('hardware/*.pro uses special library')
+        if os.path.exists(pro_path):
+            with open(pro_path, 'r') as f:
+                pro_content = '[__dummy__]\n' + f.read()
 
-        cp = configparser.ConfigParser()
+            if '=special\n' in pro_content:
+                error('hardware/*.pro uses special library')
 
-        cp.read_string(pro_content)
+            cp = configparser.ConfigParser()
 
-        if 'pcbnew/libraries' in cp and \
-           cp['pcbnew/libraries'].get('LibDir', 'kicad-libraries') != 'kicad-libraries':
-            print('invalid pcbnew/libraries:LibDir in hardware/*.pro')
+            cp.read_string(pro_content)
 
-        if cp['eeschema']['LibDir'] != 'kicad-libraries':
-            error('invalid eeschema:LibDir in hardware/*.pro')
+            if 'pcbnew/libraries' in cp and \
+               cp['pcbnew/libraries'].get('LibDir', 'kicad-libraries') != 'kicad-libraries':
+                print('invalid pcbnew/libraries:LibDir in hardware/*.pro')
 
-        if cp['eeschema/libraries']['LibName1'] != 'tinkerforge':
-            error('invalid eeschema/libraries:LibName1 in hardware/*.pro')
+            if cp['eeschema']['LibDir'] != 'kicad-libraries':
+                error('invalid eeschema:LibDir in hardware/*.pro')
 
-    # check examples
-    for bindings_name in sorted(example_name_formats.keys()):
-        try:
-            existing_names = list(os.listdir(os.path.join(git_path, 'software/examples', bindings_name)))
-        except FileNotFoundError:
-            existing_names = []
+            if 'eeschema/libraries' not in cp or cp['eeschema/libraries']['LibName1'] != 'tinkerforge':
+                error('invalid eeschema/libraries:LibName1 in hardware/*.pro')
 
-        for example_name in example_names.get(git_name, []):
-            for example_name_format in example_name_formats[bindings_name]:
-                example_full_name = example_name_format.format(space=example_name,
-                                                               camel=example_name.replace(' ', ''),
-                                                               under=example_name.replace(' ', '_').lower(),
-                                                               dash=example_name.replace(' ', '-').lower())
-                example_path = os.path.join(git_path, 'software/examples', bindings_name, example_full_name)
+    # software
+    software_path = os.path.join(git_path, 'software')
 
-                if not os.path.exists(example_path):
-                    error('{0} is missing'.format(example_path.replace(git_path, '').lstrip('/')))
-                elif os.system('cd {0}; git ls-files --error-unmatch "{1}" > /dev/null 2>&1'
-                               .format(git_path, example_path.replace(git_path, '').lstrip('/'))) != 0:
-                    error('{0} is not tracked by git'.format(example_path.replace(git_path, '').lstrip('/')))
+    if not os.path.exists(software_path):
+        warning('software/* is missing')
+    else:
+        # software/Makefile
+        makefile_path = os.path.join(software_path, 'Makefile')
 
-                if example_full_name in existing_names:
-                    existing_names.remove(example_full_name)
+        if not os.path.exists(makefile_path):
+            error('software/Makefile is missing')
 
-        # FIXME: ignore LabVIEW for now because of its extra files
-        if len(existing_names) > 0 and bindings_name != 'labview':
-            info('unexpected {0} example files: {1}'.format(bindings_name, ', '.join(existing_names)))
+        # software/examples
+        for bindings_name in sorted(example_name_formats.keys()):
+            try:
+                existing_names = list(os.listdir(os.path.join(software_path, 'examples', bindings_name)))
+            except FileNotFoundError:
+                existing_names = []
+
+            for example_name in example_names.get(git_name, []):
+                for example_name_format in example_name_formats[bindings_name]:
+                    example_full_name = example_name_format.format(space=example_name,
+                                                                   camel=example_name.replace(' ', ''),
+                                                                   under=example_name.replace(' ', '_').lower(),
+                                                                   dash=example_name.replace(' ', '-').lower())
+                    example_path = os.path.join(software_path, 'examples', bindings_name, example_full_name)
+
+                    if not os.path.exists(example_path):
+                        error('{0} is missing'.format(example_path.replace(git_path, '').lstrip('/')))
+                    elif os.system('cd {0}; git ls-files --error-unmatch "{1}" > /dev/null 2>&1'
+                                   .format(git_path, example_path.replace(git_path, '').lstrip('/'))) != 0:
+                        error('{0} is not tracked by git'.format(example_path.replace(git_path, '').lstrip('/')))
+
+                    if example_full_name in existing_names:
+                        existing_names.remove(example_full_name)
+
+            # FIXME: ignore LabVIEW for now because of its extra files
+            if len(existing_names) > 0 and bindings_name != 'labview':
+                info('unexpected {0} example files: {1}'.format(bindings_name, ', '.join(existing_names)))
 
     print('')
-
