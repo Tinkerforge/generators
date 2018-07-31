@@ -764,7 +764,9 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when a position set by :func:`Set Position`
-is reached. The :word:`parameters` are the servo and the position that is reached.
+is reached. If the new position matches the current position then the
+callback is not triggered, because the servo didn't move.
+The :word:`parameters` are the servo and the position that is reached.
 
 You can enable this callback with :func:`Enable Position Reached Callback`.
 
@@ -776,9 +778,11 @@ You can enable this callback with :func:`Enable Position Reached Callback`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
-:func:`Set Position` gesetzt, erreicht wird. Die :word:`parameters` sind der
-Servo und die Position die erreicht wurde.
+Dieser Callback wird ausgelöst wenn eine konfigurierte Position, wie von
+:func:`Set Position` gesetzt, erreicht wird. Falls die neue Position der
+aktuellen Position entspricht, wird der Callback nicht ausgelöst, weil sich der
+Servo nicht bewegt hat.
+Die :word:`parameters` sind der Servo und die Position die erreicht wurde.
 
 Dieser Callback kann mit :func:`Enable Position Reached Callback` aktiviert werden.
 
