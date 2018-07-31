@@ -36,10 +36,11 @@ com['packets'].append({
 'en':
 """
 Returns the UV light intensity of the sensor, the intensity is given
-in 1/10 mW/m².
+in 1/10 mW/m². The sensor has already weighted the intensity with the erythemal
+action spectrum to get the skin-affecting irradiation.
 
-To get UV Index you have to divide the value by 250. For example, a UV Light
-intensity of 500 is equivalent to an UV Index of 2.
+To get UV index you just have to divide the value by 250. For example, a UV
+light intensity of 500 is equivalent to an UV index of 2.
 
 If you want to get the intensity periodically, it is recommended to use the
 :cb:`UV Light` callback and set the period with
@@ -48,9 +49,11 @@ If you want to get the intensity periodically, it is recommended to use the
 'de':
 """
 Gibt die UV-Licht-Intensität des Sensors zurück. Die Intensität wird
-in der Einheit 1/10 mW/m² gegeben.
+in der Einheit 1/10 mW/m² gegeben. Der Sensor hat die Intensität bereits mit
+dem Erythem-Wirkungsspektrum gewichtet, um die hautbeeinflussende
+Bestrahlungsstärke zu bestimmen.
 
-Die Intensität kann einfach durch 250 geteilt werden um den UV Index zu
+Die Intensität kann dann einfach durch 250 geteilt werden um den UV Index zu
 bestimmen. Beispiel: Eine UV-Licht-Intensität von 500 entspricht
 einem UV Index von 2.
 
