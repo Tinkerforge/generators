@@ -186,11 +186,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the LED configuration as set by :func:`Set Info LED Config`
+Returns the LED configuration as set by :func:`Set Distance LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
+Gibt die LED-Konfiguration zurück, wie von :func:`Set Distance LED Config` gesetzt.
 """
 }]
 })
