@@ -155,7 +155,6 @@ The default gain is 1x.
 """,
 'de':
 """
-
 """
 }]
 })
@@ -203,7 +202,6 @@ By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
-
 """
 }]
 })
@@ -262,7 +260,6 @@ By default the channel LED status config is set to intensity with min=4mA and ma
 """,
 'de':
 """
-
 """
 }]
 })
@@ -286,4 +283,21 @@ Returns the Channel LED configuration as set by :func:`Set Channel LED Status Co
 Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Status Config` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Current', 'current from channel 0'), [(('Voltage', 'Voltage (Channel 0)'), 'int32', 1, 1000000.0, 'mA', None)], [('uint8', 0)])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Current', 'current'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Current', 'Current'), 'int32', 1, 1000000.0, 'mA', None)], None, None),
+              ('callback_configuration', ('Current', 'current (channel 0)'), [('uint8', 0)], 1000, False, 'x', [(0, 0)])]
+})
+
+com['examples'].append({
+'name': 'Threshold',
+'functions': [('callback', ('Current', 'voltage'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Current', 'Current'), 'int32', 1, 1000000.0, 'mA', None)], None, None),
+              ('callback_configuration', ('Current', 'current (channel 0)'), [('uint8', 0)], 10000, False, '>', [(10, 0)])]
 })
