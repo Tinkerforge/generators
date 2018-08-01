@@ -36,7 +36,7 @@ Returns the UVA intensity of the sensor, the intensity is given
 in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
 action spectrum to get the skin-affecting irradiation. Therefore, you cannot
 just divide the value by 250 to get the UVA index. To get the UV index use
-:ref:`Get UVI`.
+:func:`Get UVI`.
 
 If the sensor is saturated, then -1 is returned, see :func:`Set Configuration`.
 
@@ -51,7 +51,7 @@ Gibt die UVA Intensität des Sensors zurück. Die Intensität wird in der Einhei
 Erythem-Wirkungsspektrum gewichtet, daher handelt es sich nicht um die
 hautbeeinflussende Bestrahlungsstärke. Der Wert kann nicht einfach durch 250
 geteilt werden, um den UVA Index zu bestimmen. Um den UV Index zu bestimmen kann
-:ref:`Get UVI` verwendet werden.
+:func:`Get UVI` verwendet werden.
 
 Falls der Sensor gesättigt (saturated) ist, dann wird -1 zurückgegeben,
 siehe :func:`Set Configuration`.
@@ -77,7 +77,7 @@ Returns the UVB intensity of the sensor, the intensity is given
 in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
 action spectrum to get the skin-affecting irradiation. Therefore, you cannot
 just divide the value by 250 to get the UVB index. To get the UV index use
-:ref:`Get UVI`.
+:func:`Get UVI`.
 
 If the sensor is saturated, then -1 is returned, see :func:`Set Configuration`.
 
@@ -92,7 +92,7 @@ Gibt die UVB Intensität des Sensors zurück. Die Intensität wird in der Einhei
 Erythem-Wirkungsspektrum gewichtet, daher handelt es sich nicht um die
 hautbeeinflussende Bestrahlungsstärke. Der Wert kann nicht einfach durch 250
 geteilt werde, um den UVB Index zu bestimmen. Um den UV Index zu bestimmen kann
-:ref:`Get UVI` verwendet werden.
+:func:`Get UVI` verwendet werden.
 
 Falls der Sensor gesättigt (saturated) ist, dann wird -1 zurückgegeben,
 siehe :func:`Set Configuration`.
