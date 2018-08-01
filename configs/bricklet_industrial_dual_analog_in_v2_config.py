@@ -192,7 +192,6 @@ By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
-
 """
 }]
 })
@@ -251,7 +250,6 @@ By default the channel LED status config is set to intensity with min=0V and max
 """,
 'de':
 """
-
 """
 }]
 })
@@ -275,4 +273,21 @@ Returns the Channel LED configuration as set by :func:`Set Channel LED Status Co
 Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Status Config` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Voltage', 'voltage from channel 0'), [(('Voltage', 'Voltage (Channel 0)'), 'int32', 1, 1000.0, 'V', None)], [('uint8', 0)])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Voltage', 'voltage'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Voltage', 'Voltage'), 'int32', 1, 1000.0, 'V', None)], None, None),
+              ('callback_configuration', ('Voltage', 'voltage (channel 0)'), [('uint8', 0)], 1000, False, 'x', [(0, 0)])]
+})
+
+com['examples'].append({
+'name': 'Threshold',
+'functions': [('callback', ('Voltage', 'voltage'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Voltage', 'Voltage'), 'int32', 1, 1000.0, 'V', None)], None, None),
+              ('callback_configuration', ('Voltage', 'voltage (channel 0)'), [('uint8', 0)], 10000, False, '>', [(10, 0)])]
 })
