@@ -29,6 +29,22 @@ com = {
     'examples': []
 }
 
+com['doc'] = {
+'en':
+"""
+The Bricklet has two input channel. Functions that are related
+directly to a channel have a ``channel`` parameter to specify one of the two
+channels. Valid values for the ``channel`` parameter are 0 and 1.
+""",
+'de':
+"""
+Das Bricklet hat zwei Eingangskanäle. Funktionen die
+sich direkt auf einen der Kanäle beziehen haben einen ``channel`` Parameter,
+um den Kanal anzugeben. Gültige Werte für das ``channel`` Parameter sind 0
+und 1.
+"""
+}
+
 voltage_doc = {
 'en':
 """
