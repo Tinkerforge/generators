@@ -21,7 +21,7 @@ com = {
     'comcu': True,
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True, # currently no replacement available
     'packets': [],
     'examples': []
 }
