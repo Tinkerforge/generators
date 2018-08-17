@@ -53,6 +53,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+""",
+'de':
+"""
 """
 }]
 })
@@ -64,10 +67,15 @@ com['packets'].append({
 'elements': [('Power Off Delay', 'uint32', 1, 'in'),
              ('Power Off Duration', 'uint32', 1, 'in'),
              ('Raspberry Pi Off', 'bool', 1, 'in'),
-             ('Bricklets Off', 'bool', 1, 'in')],
+             ('Bricklets Off', 'bool', 1, 'in'),
+             ('Enable Sleep Indicator', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
+"""
+Enable Sleep Indicator => status led blinks in 1s interval => ~0.3mA
+""",
+'de':
 """
 """
 }]
@@ -79,10 +87,14 @@ com['packets'].append({
 'elements': [('Power Off Delay', 'uint32', 1, 'out'),
              ('Power Off Duration', 'uint32', 1, 'out'),
              ('Raspberry Pi Off', 'bool', 1, 'out'),
-             ('Bricklets Off', 'bool', 1, 'out')],
+             ('Bricklets Off', 'bool', 1, 'out'),
+             ('Enable Sleep Indicator', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
+"""
+""",
+'de':
 """
 """
 }]
@@ -102,6 +114,9 @@ com['packets'].append({
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
+"""
+""",
+'de':
 """
 """
 }]
