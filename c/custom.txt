@@ -1,0 +1,5 @@
+Tinkerforge C/C++ Bindings for Custom Devices
+=============================================
+
+The custom C/C++ bindings code in the custom source/ directory depends on the
+regular C/C++ bindings code in the regular source/ directory.

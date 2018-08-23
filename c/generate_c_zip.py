@@ -70,9 +70,12 @@ class CZipGenerator(common.ZipGenerator):
             for example in common.find_examples(root_dir, r'^example_.*\.c$'):
                 shutil.copy(example[1], self.tmp_examples_dir)
 
-        # Copy bindings and readme and merge symbols
-        with open(os.path.join(root_dir, 'ip_connection.symbols'), 'r') as f:
-            symbols = 'EXPORTS\n' + f.read()
+        # Copy bindings and merge symbols
+        symbols = 'EXPORTS\n'
+
+        if self.get_config_name().space == 'Tinkerforge':
+            with open(os.path.join(root_dir, 'ip_connection.symbols'), 'r') as f:
+                symbols += f.read()
 
         for filename in self.get_released_files():
             path = os.path.join(self.get_bindings_dir(), filename)
@@ -83,15 +86,19 @@ class CZipGenerator(common.ZipGenerator):
             else:
                 shutil.copy(path, self.tmp_source_dir)
 
-        with open(os.path.join(self.tmp_source_dir, 'tinkerforge.def'), 'w') as f:
+        with open(os.path.join(self.tmp_source_dir, self.get_config_name().under + '.def'), 'w') as f:
             f.write(symbols)
 
-        shutil.copy(os.path.join(root_dir, 'ip_connection.c'),              self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'ip_connection.h'),              self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'Makefile'),                     self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
+        if self.get_config_name().space == 'Tinkerforge':
+            shutil.copy(os.path.join(root_dir, 'ip_connection.c'),              self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'ip_connection.h'),              self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'Makefile'),                     self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
+        else:
+            shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
