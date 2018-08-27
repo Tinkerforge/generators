@@ -1707,11 +1707,14 @@ class Device(object):
 
         if name.endswith(' V2'):
             name = name[:-3]
-        elif name.endswith(' V3'):
+
+        if name.endswith(' V3'):
             name = name[:-3]
-        elif name.endswith('mA'):
+
+        if name.endswith('mA'):
             name = name[:-2]
-        elif name in ['IO4', 'IO16']:
+
+        if name in ['IO4', 'IO16']:
             name = 'IO'
 
         name = re.sub('[0-9]+x[0-9]+', '', name).replace('  ', ' ').strip()
