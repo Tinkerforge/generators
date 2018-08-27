@@ -202,30 +202,117 @@ Die :word:`parameters` sind der gleiche wie :func:`Get All Values`.
 }]
 })
 
-iaq_index_doc = {
+com['packets'].append({
+'type': 'function',
+'name': 'Get IAQ Index',
+'elements': [('IAQ Index', 'int32', 1, 'out'),
+             ('IAQ Index Accuracy', 'uint8', 1, 'out', IAQ_CONSTANT)],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
 'en':
 """
-Returns the IAQ (In-Air Quality) Index. The IAQ Index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.
+Returns the IAQ (In-Air Quality) index and accuracy. The IAQ index goes from
+0 to 500. The higher the IAQ index, the greater the level of air pollution.
 
 .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
    :scale: 100 %
    :alt: Air Quality Index description
    :align: center
    :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
+
+If you want to get the value periodically, it is recommended to use the
+:cb:`IAQ Index` callback. You can set the callback configuration
+with :func:`Set IAQ Index Callback Configuration`.
 """,
 'de':
 """
 TBD
 """
-}
+}]
+})
 
-add_callback_value_function(
-    packets   = com['packets'],
-    name      = 'Get IAQ Index',
-    data_name = 'IAQ Index',
-    data_type = 'int32',
-    doc       = iaq_index_doc
-)
+com['packets'].append({
+'type': 'function',
+'name': 'Set IAQ Index Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in'),
+             ('Value Has To Change', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+The period in ms is the period with which the :cb:`IAQ Index`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after at least one of the values has changed. If the values didn't
+change within the period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
+""",
+'de':
+"""
+Die Periode in ms ist die Periode mit der der :cb:`IAQ Index`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn sich mindest ein Wert im Vergleich zum letzten mal
+geändert hat. Ändert sich kein Wert innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn ein Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen der Werte.
+
+Der Standardwert ist (0, false).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get IAQ Index Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out'),
+             ('Value Has To Change', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set IAQ Index Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set IAQ Index Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'IAQ Index',
+'elements': [('IAQ Index', 'int32', 1, 'out'),
+             ('IAQ Index Accuracy', 'uint8', 1, 'out', IAQ_CONSTANT)],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically according to the configuration set by
+:func:`Set IAQ Index Callback Configuration`.
+
+The :word:`parameters` are the same as :func:`Get IAQ Index`.
+""",
+'de':
+"""
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set IAQ Index Callback Configuration` gesetzten Konfiguration
+
+Die :word:`parameters` sind die gleichen wie :func:`Get IAQ Index`.
+"""
+}]
+})
 
 temperature_doc = {
 'en':
