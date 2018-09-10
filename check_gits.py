@@ -268,6 +268,11 @@ for git_name in sorted(os.listdir('..')):
                                    .format(git_path, example_path.replace(git_path, '').lstrip('/'))) != 0:
                         error('{0} is not tracked by git'.format(example_path.replace(git_path, '').lstrip('/')))
 
+                    if os.path.exists(example_path) and not example_path.endswith('.vi'): # ignore binary LabVIEW files
+                        with open(example_path, 'rb') as f:
+                            if b'incomplete' in f.read():
+                                error('{0} is incomplete'.format(example_path.replace(git_path, '').lstrip('/')))
+
                     if example_full_name in existing_names:
                         existing_names.remove(example_full_name)
 
