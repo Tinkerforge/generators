@@ -297,7 +297,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
         templateB = 'TArray0To{array_end}Of{type1}'
         templateC = 'TArrayOf{type1}'
 
-        if self.get_cardinality() == 1:
+        if self.get_cardinality() == 1 or self.get_type().split(':')[0] == 'string':
             template = templateA
         elif self.get_cardinality() > 1:
             template = templateB

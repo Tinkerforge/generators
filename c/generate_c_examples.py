@@ -36,7 +36,9 @@ class CTypeMixin(object):
     def get_c_type(self):
         type_ = self.get_type().split(':')[0]
 
-        if 'int' in type_:
+        if type_ == 'string':
+            type_ = 'char'
+        elif 'int' in type_:
             type_ += '_t'
 
         return type_
