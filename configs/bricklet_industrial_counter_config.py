@@ -599,3 +599,11 @@ Die :word:`parameters` sind der gleiche wie :func:`Get All Signal Data`.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Counter', 'counter from channel 0'), [(('Counter', 'Counter (Channel 0)'), 'int64', 1, None, None, None)], [('uint8:constant', 0)]),
+              ('getter', ('Get Signal Data', 'signal data from channel 0'), [(('Duty Cycle', 'Duty Cycle (Channel 0)'), 'uint16', 1, 100.0, '%', None), (('Period', 'Period (Channel 0)'), 'uint64', 1, None, 'ns', None), (('Frequency', 'Frequency (Channel 0)'), 'uint32', 1, 1000.0, 'Hz', None), (('Value', 'Value (Channel 0)'), 'bool', 1, None, None, None)], [('uint8:constant', 0)])]
+})
+
+# FIXME: add all-counter / all-signal-data callback example
