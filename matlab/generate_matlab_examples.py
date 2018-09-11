@@ -281,15 +281,19 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {java2int_prefix}e.{name}{java2int_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
+            template = '    {else_}if {cast_prefix}e.{name}{cast_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
             constant_group = self.get_constant_group()
+            type_ = self.get_type()
 
             if self.needs_octave_java2int():
-                java2int_prefix = 'java2int('
-                java2int_suffix = ')'
+                cast_prefix = 'java2int('
+                cast_suffix = ')'
+            elif not global_is_octave and type_ == 'string':
+                cast_prefix = 'char('
+                cast_suffix = ')'
             else:
-                java2int_prefix = ''
-                java2int_suffix = ''
+                cast_prefix = ''
+                cast_suffix = ''
 
             result = []
 
@@ -297,8 +301,8 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
                 result.append(template.format(global_quote=global_quote,
                                               else_='else' if len(result) > 0 else '',
                                               name=self.get_name().headless,
-                                              java2int_prefix=java2int_prefix,
-                                              java2int_suffix=java2int_suffix,
+                                              cast_prefix=cast_prefix,
+                                              cast_suffix=cast_suffix,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_value() if global_is_octave else 'com.tinkerforge.' + constant.get_matlab_source(),
                                               constant_title=constant.get_name().space,
@@ -306,7 +310,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
 
             result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
-            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
+            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{cast_prefix}e.{name}{index}{cast_suffix}{divisor}{to_binary_suffix});{comment}"
 
             if self.get_label_name() == None:
                 return []
@@ -314,14 +318,17 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
             if self.get_cardinality() < 0:
                 return [] # FIXME: streaming
 
-            if self.needs_octave_java2int():
-                java2int_prefix = 'java2int('
-                java2int_suffix = ')'
-            else:
-                java2int_prefix = ''
-                java2int_suffix = ''
-
             type_ = self.get_type()
+
+            if self.needs_octave_java2int():
+                cast_prefix = 'java2int('
+                cast_suffix = ')'
+            elif not global_is_octave and type_ == 'string':
+                cast_prefix = 'char('
+                cast_suffix = ')'
+            else:
+                cast_prefix = ''
+                cast_suffix = ''
 
             # FIXME: dec2bin doesn't support leading zeros. therefore,
             #        the result is not padded to the requested number of digits
@@ -342,8 +349,8 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
                                               index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              java2int_prefix=java2int_prefix,
-                                              java2int_suffix=java2int_suffix,
+                                              cast_prefix=cast_prefix,
+                                              cast_suffix=cast_suffix,
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
                                               comment=self.get_formatted_comment(' % {0}')))
@@ -373,7 +380,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {java2int_prefix}{object_prefix}{name}{java2int_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
+            template = '    {else_}if {cast_prefix}{object_prefix}{name}{cast_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
             constant_group = self.get_constant_group()
             name = self.get_name().headless
 
@@ -385,12 +392,17 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
 
                 object_prefix = ''
 
+            type_ = self.get_type()
+
             if self.needs_octave_java2int():
-                java2int_prefix = 'java2int('
-                java2int_suffix = ')'
+                cast_prefix = 'java2int('
+                cast_suffix = ')'
+            elif not global_is_octave and type_ == 'string':
+                cast_prefix = 'char('
+                cast_suffix = ')'
             else:
-                java2int_prefix = ''
-                java2int_suffix = ''
+                cast_prefix = ''
+                cast_suffix = ''
 
             result = []
 
@@ -402,13 +414,13 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_value() if global_is_octave else constant.get_matlab_source(),
                                               constant_title=constant.get_name().space,
-                                              java2int_prefix=java2int_prefix,
-                                              java2int_suffix=java2int_suffix,
+                                              cast_prefix=cast_prefix,
+                                              cast_suffix=cast_suffix,
                                               comment=self.get_formatted_comment(' % {0}')))
 
             result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
-            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
+            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{cast_prefix}{object_prefix}{name}{index}{cast_suffix}{divisor}{to_binary_suffix});{comment}"
 
             if self.get_label_name() == None:
                 return []
@@ -426,14 +438,17 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
 
                 object_prefix = ''
 
-            if self.needs_octave_java2int():
-                java2int_prefix = 'java2int('
-                java2int_suffix = ')'
-            else:
-                java2int_prefix = ''
-                java2int_suffix = ''
-
             type_ = self.get_type()
+
+            if self.needs_octave_java2int():
+                cast_prefix = 'java2int('
+                cast_suffix = ')'
+            elif not global_is_octave and type_ == 'string':
+                cast_prefix = 'char('
+                cast_suffix = ')'
+            else:
+                cast_prefix = ''
+                cast_suffix = ''
 
             # FIXME: dec2bin doesn't support leading zeros. therefore,
             #        the result is not padded to the requested number of digits
@@ -455,8 +470,8 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                               index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              java2int_prefix=java2int_prefix,
-                                              java2int_suffix=java2int_suffix,
+                                              cast_prefix=cast_prefix,
+                                              cast_suffix=cast_suffix,
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
                                               comment=self.get_formatted_comment(' % {0}')))

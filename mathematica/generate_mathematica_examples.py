@@ -188,11 +188,12 @@ class MathematicaExampleParameter(common.ExampleParameter):
 
             result = ['\n'.join(result)]
         else:
-            templateA = ' Print["{label}: "<>ToString[N[Quantity[{name}{index},"{quantity}"]]]]{comment}'
-            templateB = ' Print["{label}: "<>ToString[N[{name}{index}/{divisor}]]]{comment}'
-            templateC = ' Print["{label}: "<>FromCharacterCode[{name}{index}]]{comment}'
-            templateD = ' Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{name}{index},2,{bitmask_length}]]]]{comment}'
-            templateE = ' Print["{label}: "<>ToString[{name}{index}]]{comment}'
+            templateA = ' Print["{label}: "<>{name}{index}]{comment}'
+            templateB = ' Print["{label}: "<>ToString[N[Quantity[{name}{index},"{quantity}"]]]]{comment}'
+            templateC = ' Print["{label}: "<>ToString[N[{name}{index}/{divisor}]]]{comment}'
+            templateD = ' Print["{label}: "<>FromCharacterCode[{name}{index}]]{comment}'
+            templateE = ' Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{name}{index},2,{bitmask_length}]]]]{comment}'
+            templateF = ' Print["{label}: "<>ToString[{name}{index}]]{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -205,17 +206,19 @@ class MathematicaExampleParameter(common.ExampleParameter):
             divisor = self.get_formatted_divisor('{0}')
             bitmask_length = 0
 
-            if len(quantity) > 0:
+            if type_ == 'string':
                 template = templateA
-            elif len(divisor) > 0:
+            elif len(quantity) > 0:
                 template = templateB
-            elif type_ == 'char':
+            elif len(divisor) > 0:
                 template = templateC
-            elif ':bitmask:' in type_:
+            elif type_ == 'char':
                 template = templateD
+            elif ':bitmask:' in type_:
+                template = templateE
                 bitmask_length = int(type_.split(':')[2])
             else:
-                template = templateE
+                template = templateF
 
             result = []
 
@@ -259,11 +262,12 @@ class MathematicaExampleResult(common.ExampleResult):
 
             result = ['\n'.join(result)]
         else:
-            templateA = 'Print["{label}: "<>ToString[N[Quantity[{value}{index},"{quantity}"]]]]{comment}'
-            templateB = 'Print["{label}: "<>ToString[N[{value}{index}/{divisor}]]]{comment}'
-            templateC = 'Print["{label}: "<>FromCharacterCode[{value}{index}]]{comment}'
-            templateD = 'Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{comment}'
-            templateE = 'Print["{label}: "<>ToString[{value}{index}]]{comment}'
+            templateA = 'Print["{label}: "<>{value}{index}]{comment}'
+            templateB = 'Print["{label}: "<>ToString[N[Quantity[{value}{index},"{quantity}"]]]]{comment}'
+            templateC = 'Print["{label}: "<>ToString[N[{value}{index}/{divisor}]]]{comment}'
+            templateD = 'Print["{label}: "<>FromCharacterCode[{value}{index}]]{comment}'
+            templateE = 'Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{comment}'
+            templateF = 'Print["{label}: "<>ToString[{value}{index}]]{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -286,17 +290,19 @@ class MathematicaExampleResult(common.ExampleResult):
             divisor = self.get_formatted_divisor('{0}')
             bitmask_length = 0
 
-            if len(quantity) > 0:
+            if type_ == 'string':
                 template = templateA
-            elif len(divisor) > 0:
+            elif len(quantity) > 0:
                 template = templateB
-            elif type_ == 'char':
+            elif len(divisor) > 0:
                 template = templateC
-            elif ':bitmask:' in type_:
+            elif type_ == 'char':
                 template = templateD
+            elif ':bitmask:' in type_:
+                template = templateE
                 bitmask_length = int(type_.split(':')[2])
             else:
-                template = templateE
+                template = templateF
 
             result = []
 
