@@ -272,3 +272,21 @@ gesetzt.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], []),
+              ('getter', ('Get Altitude', 'altitude'), [(('Altitude', 'Altitude'), 'int32', 1, 1000.0, 'm', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], None, None),
+              ('callback_configuration', ('Air Pressure', 'air pressure'), [], 1000, False, 'x', [(0, 0)])]
+})
+
+com['examples'].append({
+'name': 'Threshold',
+'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], None, 'Enjoy the potentially good weather!'),
+              ('callback_configuration', ('Air Pressure', 'air pressure'), [], 1000, False, '>', [(1025, 0)])]
+})

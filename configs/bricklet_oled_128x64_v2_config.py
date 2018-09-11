@@ -219,3 +219,11 @@ instead of only the changed parts. Normally it should not be necessary to set th
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Hello World',
+'functions': [('setter', 'Clear Display', [], 'Clear display', None),
+              ('setter', 'Write Line', [('uint8', 0), ('uint8', 0), ('string', 'Hello World')], 'Write "Hello World" starting from upper left corner of the screen', None)]
+})
+
+# FIXME: add pixel-matrix example
