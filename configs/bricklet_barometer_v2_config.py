@@ -234,18 +234,20 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
 'elements': [('Measured Air Pressure', 'int32', 1, 'in'),
-             ('Reference Air Pressure', 'int32', 1, 'in')],
+             ('Actual Air Pressure', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets one point air pressure offset calibration value. The offset
 is the difference between currently measured air pressure by the
-sensor and the air pressure measured by an accurate reference
-barometer in mbar/1000. The values has a range of 260000 to 1260000.
+sensor and the actual air pressure measured by an accurate barometer in
+mbar/1000. The values has a range of 260000 to 1260000.
 
 After calibration the air pressure measurements will achieve accuracy
 of about 0.1 mbar.
+
+Setting the calibration to 0,0 removes the previous calibration.
 """,
 'de':
 """
@@ -258,7 +260,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
 'elements': [('Measured Air Pressure', 'int32', 1, 'out'),
-             ('Reference Air Pressure', 'int32', 1, 'out')],
+             ('Actual Air Pressure', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
