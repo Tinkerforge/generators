@@ -462,6 +462,10 @@ com['examples'].append({
               ('setter', 'Write Line', [('uint8', 0), ('uint8', 0), ('string', 'Hello World')], 'Write "Hello World" starting from upper left corner of the screen', None)]
 })
 
-# FIXME: add pixel-matrix example
-
-# FIXME: add touch callback example
+com['examples'].append({
+'name': 'Touch',
+'functions': [('callback', ('Touch Position', 'touch_position'), [(('Pressure', 'Pressure'), 'uint16', 1, None, None, None), (('X', 'X'), 'uint16', 1, None, None, None), (('Y', 'Y'), 'uint16', 1, None, None, None), (('Age', 'Age'), 'uint32', 1, None, None, None)], None, None), 
+              ('callback', ('Touch Gesture', 'touch_gesture'), [(('Gesture', 'Gesture'), 'uint8', 1, None, None, None), (('Duration', 'Duration'), 'uint32', 1, None, None, None), (('X Start', 'X Start'), 'uint16', 1, None, None, None), (('X End', 'X End'), 'uint16', 1, None, None, None), (('Y Start', 'Y Start'), 'uint16', 1, None, None, None), (('Y End', 'Y End'), 'uint16', 1, None, None, None), (('Age', 'Age'), 'uint32', 1, None, None, None)], None, None),
+              ('setter', 'Set Touch Position Callback Configuration', [('uint8', 100), ('bool', True)], 'Configure touch position callback with a period of 100ms', None),
+              ('setter', 'Set Touch Gesture Callback Configuration', [('uint8', 100), ('bool', True)], 'Configure touch gesture callback with a period of 100ms', None)]
+})
