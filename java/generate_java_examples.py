@@ -309,7 +309,7 @@ class JavaExampleResult(common.ExampleResult):
             for index in range(self.get_label_count()):
                 result.append(template.format(object_prefix=object_prefix,
                                               name=name,
-                                              label=self.get_label_name(),
+                                              label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
