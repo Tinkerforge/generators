@@ -162,11 +162,12 @@ class PythonExampleParameter(common.ExampleParameter):
         return self.get_name().under
 
     def get_python_prints(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {name} == {constant_name}:\n        print("{label}: {constant_title}"){comment}'
+            template = '{global_line_prefix}    {else_}if {name} == {constant_name}:\n{global_line_prefix}        print("{label}: {constant_title}"){comment}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -176,11 +177,12 @@ class PythonExampleParameter(common.ExampleParameter):
                                               label=self.get_label_name(),
                                               constant_name=constant.get_python_source(callback=True),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' # {0}')))
+                                              comment=self.get_formatted_comment(' # {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
+            template = '{global_line_prefix}    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -210,7 +212,8 @@ class PythonExampleParameter(common.ExampleParameter):
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               format_prefix=format_prefix,
                                               format_suffix=format_suffix,
-                                              comment=self.get_formatted_comment(' # {0}')))
+                                              comment=self.get_formatted_comment(' # {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -224,11 +227,12 @@ class PythonExampleResult(common.ExampleResult):
         return name
 
     def get_python_prints(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {name} == {constant_name}:\n        print("{label}: {constant_title}"){comment}'
+            template = '{global_line_prefix}    {else_}if {name} == {constant_name}:\n{global_line_prefix}        print("{label}: {constant_title}"){comment}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -238,11 +242,12 @@ class PythonExampleResult(common.ExampleResult):
                                               label=self.get_label_name(),
                                               constant_name=constant.get_python_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' # {0}')))
+                                              comment=self.get_formatted_comment(' # {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
+            template = '{global_line_prefix}    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -277,7 +282,8 @@ class PythonExampleResult(common.ExampleResult):
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               format_prefix=format_prefix,
                                               format_suffix=format_suffix,
-                                              comment=self.get_formatted_comment(' # {0}')))
+                                              comment=self.get_formatted_comment(' # {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -289,8 +295,9 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         return None
 
     def get_python_source(self):
-        template = r"""    # Get current {function_name_comment}
-    {variables} = {device_name}.{function_name_under}({arguments})
+        global global_line_prefix
+        template = r"""{global_line_prefix}    # Get current {function_name_comment}
+{global_line_prefix}    {variables} = {device_name}.{function_name_under}({arguments})
 {prints}
 """
         variables = []
@@ -311,7 +318,8 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
                                  function_name_comment=self.get_comment_name(),
                                  variables=',<BP>'.join(variables),
                                  prints='\n'.join(prints).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                                 arguments=', '.join(self.get_python_arguments()))
+                                 arguments=', '.join(self.get_python_arguments()),
+                                 global_line_prefix=global_line_prefix)
 
         return common.break_string(result, '    ', continuation=' \\', indent_suffix='  ')
 

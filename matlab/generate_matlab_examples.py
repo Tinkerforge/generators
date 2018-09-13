@@ -277,11 +277,12 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
         return False
 
     def get_matlab_fprintfs(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {cast_prefix}e.{name}{cast_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
+            template = '{global_line_prefix}    {else_}if {cast_prefix}e.{name}{cast_suffix} == {constant_name}\n{global_line_prefix}        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
             constant_group = self.get_constant_group()
             type_ = self.get_type()
 
@@ -306,11 +307,12 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_value() if global_is_octave else 'com.tinkerforge.' + constant.get_matlab_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' % {0}')))
+                                              comment=self.get_formatted_comment(' % {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
-            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{cast_prefix}e.{name}{index}{cast_suffix}{divisor}{to_binary_suffix});{comment}"
+            template = r"{global_line_prefix}    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{cast_prefix}e.{name}{index}{cast_suffix}{divisor}{to_binary_suffix});{comment}"
 
             if self.get_label_name() == None:
                 return []
@@ -353,7 +355,8 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
                                               cast_suffix=cast_suffix,
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' % {0}')))
+                                              comment=self.get_formatted_comment(' % {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -376,11 +379,12 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
         return name
 
     def get_matlab_fprintfs(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {cast_prefix}{object_prefix}{name}{cast_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
+            template = '{global_line_prefix}    {else_}if {cast_prefix}{object_prefix}{name}{cast_suffix} == {constant_name}\n{global_line_prefix}        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
             constant_group = self.get_constant_group()
             name = self.get_name().headless
 
@@ -416,11 +420,12 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                               constant_title=constant.get_name().space,
                                               cast_prefix=cast_prefix,
                                               cast_suffix=cast_suffix,
-                                              comment=self.get_formatted_comment(' % {0}')))
+                                              comment=self.get_formatted_comment(' % {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
-            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{cast_prefix}{object_prefix}{name}{index}{cast_suffix}{divisor}{to_binary_suffix});{comment}"
+            template = r"{global_line_prefix}    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{cast_prefix}{object_prefix}{name}{index}{cast_suffix}{divisor}{to_binary_suffix});{comment}"
 
             if self.get_label_name() == None:
                 return []
@@ -474,7 +479,8 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                               cast_suffix=cast_suffix,
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' % {0}')))
+                                              comment=self.get_formatted_comment(' % {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -488,8 +494,9 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
         return []
 
     def get_matlab_source(self):
-        template = r"""    % Get current {function_name_comment}
-    {variable} = {device_name_initial}.{function_name_headless}({arguments});
+        global global_line_prefix
+        template = r"""{global_line_prefix}    % Get current {function_name_comment}
+{global_line_prefix}    {variable} = {device_name_initial}.{function_name_headless}({arguments});
 {fprintfs}
 """
         variables = []
@@ -515,7 +522,8 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
                                function_name_comment=self.get_comment_name(),
                                variable=variable,
                                fprintfs='\n'.join(fprintfs).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                               arguments=', '.join(self.get_matlab_arguments()))
+                               arguments=', '.join(self.get_matlab_arguments()),
+                               global_line_prefix=global_line_prefix)
 
 class MATLABExampleSetterFunction(common.ExampleSetterFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):

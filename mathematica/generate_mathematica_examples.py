@@ -170,11 +170,12 @@ class MathematicaExampleParameter(common.ExampleParameter):
             return 'FIXME_'
 
     def get_mathematica_prints(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = ' {else_}If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
+            template = '{global_line_prefix} {else_}If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -188,12 +189,12 @@ class MathematicaExampleParameter(common.ExampleParameter):
 
             result = ['\n'.join(result)]
         else:
-            templateA = ' Print["{label}: "<>{name}{index}]{comment}'
-            templateB = ' Print["{label}: "<>ToString[N[Quantity[{name}{index},"{quantity}"]]]]{comment}'
-            templateC = ' Print["{label}: "<>ToString[N[{name}{index}/{divisor}]]]{comment}'
-            templateD = ' Print["{label}: "<>FromCharacterCode[{name}{index}]]{comment}'
-            templateE = ' Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{name}{index},2,{bitmask_length}]]]]{comment}'
-            templateF = ' Print["{label}: "<>ToString[{name}{index}]]{comment}'
+            templateA = '{global_line_prefix} Print["{label}: "<>{name}{index}]{comment}'
+            templateB = '{global_line_prefix} Print["{label}: "<>ToString[N[Quantity[{name}{index},"{quantity}"]]]]{comment}'
+            templateC = '{global_line_prefix} Print["{label}: "<>ToString[N[{name}{index}/{divisor}]]]{comment}'
+            templateD = '{global_line_prefix} Print["{label}: "<>FromCharacterCode[{name}{index}]]{comment}'
+            templateE = '{global_line_prefix} Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{name}{index},2,{bitmask_length}]]]]{comment}'
+            templateF = '{global_line_prefix} Print["{label}: "<>ToString[{name}{index}]]{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -229,7 +230,8 @@ class MathematicaExampleParameter(common.ExampleParameter):
                                               index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
                                               bitmask_length=bitmask_length,
-                                              comment=self.get_formatted_comment('(*{0}*)')))
+                                              comment=self.get_formatted_comment('(*{0}*)'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -243,13 +245,14 @@ class MathematicaExampleResult(common.ExampleResult):
         return name
 
     def get_mathematica_prints(self, getter_call=None):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             assert getter_call == None
 
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = 'If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
+            template = '{global_line_prefix}If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -262,12 +265,12 @@ class MathematicaExampleResult(common.ExampleResult):
 
             result = ['\n'.join(result)]
         else:
-            templateA = 'Print["{label}: "<>{value}{index}]{comment}'
-            templateB = 'Print["{label}: "<>ToString[N[Quantity[{value}{index},"{quantity}"]]]]{comment}'
-            templateC = 'Print["{label}: "<>ToString[N[{value}{index}/{divisor}]]]{comment}'
-            templateD = 'Print["{label}: "<>FromCharacterCode[{value}{index}]]{comment}'
-            templateE = 'Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{comment}'
-            templateF = 'Print["{label}: "<>ToString[{value}{index}]]{comment}'
+            templateA = '{global_line_prefix}Print["{label}: "<>{value}{index}]{comment}'
+            templateB = '{global_line_prefix}Print["{label}: "<>ToString[N[Quantity[{value}{index},"{quantity}"]]]]{comment}'
+            templateC = '{global_line_prefix}Print["{label}: "<>ToString[N[{value}{index}/{divisor}]]]{comment}'
+            templateD = '{global_line_prefix}Print["{label}: "<>FromCharacterCode[{value}{index}]]{comment}'
+            templateE = '{global_line_prefix}Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{comment}'
+            templateF = '{global_line_prefix}Print["{label}: "<>ToString[{value}{index}]]{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -306,6 +309,7 @@ class MathematicaExampleResult(common.ExampleResult):
 
             result = []
 
+            print('"{0}"'.format(getter_call))
             for index in range(self.get_label_count()):
                 result.append(template.format(value=value,
                                               label=self.get_label_name(index=index),
@@ -313,24 +317,26 @@ class MathematicaExampleResult(common.ExampleResult):
                                               index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
                                               bitmask_length=bitmask_length,
-                                              comment=self.get_formatted_comment('(*{0}*)')))
+                                              comment=self.get_formatted_comment('(*{0}*)'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
 class MathematicaExampleGetterFunction(common.ExampleGetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
+        global global_line_prefix
         template1 = '{device_name}@{function_name}[{arguments}]'
-        template2A = r"""(*Get current {function_name_comment}*)
-{variable_declarations}={device_name}@{function_name_camel}[{arguments}]
+        template2A = r"""{global_line_prefix}(*Get current {function_name_comment}*)
+{global_line_prefix}{variable_declarations}={device_name}@{function_name_camel}[{arguments}]
 
 {prints}
 """
-        template2B = r"""(*Get current {function_name_comment}*)
+        template2B = r"""{global_line_prefix}(*Get current {function_name_comment}*)
 {prints}
 """
-        template2C = r"""(*Get current {function_name_comment}*)
-{variable_declarations}
-{device_name}@{function_name_camel}[{arguments}]
+        template2C = r"""{global_line_prefix}(*Get current {function_name_comment}*)
+{global_line_prefix}{variable_declarations}
+{global_line_prefix}{device_name}@{function_name_camel}[{arguments}]
 {prints}
 """
         arguments = self.get_mathematica_arguments()
@@ -339,7 +345,8 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
         if len(results) == 1 and results[0].get_type().split(':')[-1] != 'constant':
             getter_call = template1.format(device_name=self.get_device().get_initial_name(),
                                            function_name=self.get_name().camel,
-                                           arguments=','.join(arguments))
+                                           arguments=','.join(arguments),
+                                           global_line_prefix=global_line_prefix)
         else:
             getter_call = None
 
@@ -377,7 +384,8 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
                                 variable_names=''.join(variable_names),
                                 variable_declarations=';'.join(variable_declarations),
                                 prints='\n'.join(prints),
-                                arguments=','.join(arguments))
+                                arguments=','.join(arguments),
+                                global_line_prefix=global_line_prefix)
 
 class MathematicaExampleSetterFunction(common.ExampleSetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
@@ -600,7 +608,7 @@ class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):
             global_line_prefix = ''
             global_line_suffix = ''
 
-            return '\b\r]\n'
+            return ']\n'
 
 class MathematicaExamplesGenerator(common.ExamplesGenerator):
     def get_bindings_name(self):

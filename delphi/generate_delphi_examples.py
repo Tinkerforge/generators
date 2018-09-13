@@ -239,11 +239,12 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
                                name=name)
 
     def get_delphi_write_lns(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = "  {else_}if ({name} = {constant_name}) then begin\n    WriteLn('{label}: {constant_title}');{comment}\n  end"
+            template = "{global_line_prefix}  {else_}if ({name} = {constant_name}) then begin\n{global_line_prefix}    WriteLn('{label}: {constant_title}');{comment}\n{global_line_prefix}  end"
             constant_group = self.get_constant_group()
             result = []
 
@@ -265,7 +266,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
             # FIXME: the parameter type can indicate a bitmask, but there is no easy way in Delphi
             #        to format an integer in base-2, that doesn't require open-coding it with several
             #        lines of code. so just print the integer in base-10 the normal way
-            template = "  WriteLn(Format('{label}: {printf_format}{unit}', [{name}{index}{divisor}]));{comment}"
+            template = "{global_line_prefix}  WriteLn(Format('{label}: {printf_format}{unit}', [{name}{index}{divisor}]));{comment}"
 
             if self.get_label_name() == None:
                 return []
@@ -287,7 +288,8 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               printf_format=self.get_delphi_printf_format(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              comment=self.get_formatted_comment(' {{ {0} }}')))
+                                              comment=self.get_formatted_comment(' {{ {0} }}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -322,11 +324,12 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
         return name
 
     def get_delphi_write_lns(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = "  {else_}if ({name} = {constant_name}) then begin\n    WriteLn('{label}: {constant_title}');{comment}\n  end"
+            template = "{global_line_prefix}  {else_}if ({name} = {constant_name}) then begin\n{global_line_prefix}    WriteLn('{label}: {constant_title}');{comment}\n{global_line_prefix}  end"
             constant_group = self.get_constant_group()
             result = []
 
@@ -348,7 +351,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
             # FIXME: the result type can indicate a bitmask, but there is no easy way in Delphi
             #        to format an integer in base-2, that doesn't require open-coding it with several
             #        lines of code. so just print the integer in base-10 the normal way
-            template = "  WriteLn(Format('{label}: {printf_format}{unit}', [{name}{index}{divisor}]));{comment}"
+            template = "{global_line_prefix}  WriteLn(Format('{label}: {printf_format}{unit}', [{name}{index}{divisor}]));{comment}"
 
             if self.get_label_name() == None:
                 return []
@@ -370,7 +373,8 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               printf_format=self.get_delphi_printf_format(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              comment=self.get_formatted_comment(' {{ {0} }}')))
+                                              comment=self.get_formatted_comment(' {{ {0} }}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -390,12 +394,13 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
         return variable_declarations
 
     def get_delphi_source(self):
-        templateA = r"""  {{ Get current {function_name_comment} }}
-  {variable_names} := {device_name}.{function_name_camel}{arguments};
+        global global_line_prefix
+        templateA = r"""{global_line_prefix}  {{ Get current {function_name_comment} }}
+{global_line_prefix}  {variable_names} := {device_name}.{function_name_camel}{arguments};
 {write_lns}
 """
-        templateB = r"""  {{ Get current {function_name_comment} }}
-  {device_name}.{function_name_camel}{arguments};
+        templateB = r"""{global_line_prefix}  {{ Get current {function_name_comment} }}
+{global_line_prefix}  {device_name}.{function_name_camel}{arguments};
 {write_lns}
 """
         variable_names = []
@@ -427,7 +432,8 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
                                  function_name_comment=self.get_comment_name(),
                                  variable_names=''.join(variable_names),
                                  write_lns='\n'.join(write_lns).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                                 arguments=common.wrap_non_empty('(', ',<BP>'.join(arguments), ')'))
+                                 arguments=common.wrap_non_empty('(', ',<BP>'.join(arguments), ')'),
+                                 global_line_prefix=global_line_prefix)
 
         return common.break_string(result, '.{0}('.format(self.get_name().camel))
 

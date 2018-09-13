@@ -147,11 +147,12 @@ class RubyExampleParameter(common.ExampleParameter):
         return name
 
     def get_ruby_puts(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '  {else_}if {name} == {constant_name}\n    puts "{label}: {constant_title}"{comment}'
+            template = '{global_line_prefix}  {else_}if {name} == {constant_name}\n{global_line_prefix}    puts "{label}: {constant_title}"{comment}'
             constant_group = self.get_constant_group()
             name = self.get_name().under
 
@@ -166,11 +167,12 @@ class RubyExampleParameter(common.ExampleParameter):
                                               label=self.get_label_name(),
                                               constant_name=constant.get_ruby_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' # {0}')))
+                                              comment=self.get_formatted_comment(' # {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result) + '\n  end\r']
         else:
-            template = '  puts "{label}: #{{{printf_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
+            template = '{global_line_prefix}  puts "{label}: #{{{printf_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -205,7 +207,8 @@ class RubyExampleParameter(common.ExampleParameter):
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               printf_prefix=printf_prefix,
                                               printf_suffix=printf_suffix,
-                                              comment=self.get_formatted_comment(' # {0}')))
+                                              comment=self.get_formatted_comment(' # {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -219,11 +222,12 @@ class RubyExampleResult(common.ExampleResult):
         return name
 
     def get_ruby_puts(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if {array_prefix}{name} == {constant_name}\n  puts "{label}: {constant_title}"{comment}'
+            template = '{global_line_prefix}{else_}if {array_prefix}{name} == {constant_name}\n{global_line_prefix}  puts "{label}: {constant_title}"{comment}'
             constant_group = self.get_constant_group()
 
             if len(self.get_function().get_results()) > 1:
@@ -246,11 +250,12 @@ class RubyExampleResult(common.ExampleResult):
                                               array_prefix=array_prefix,
                                               constant_name=constant.get_ruby_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' # {0}')))
+                                              comment=self.get_formatted_comment(' # {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result) + '\nend\r']
         else:
-            template = 'puts "{label}: #{{{printf_prefix}{array_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
+            template = '{global_line_prefix}puts "{label}: #{{{printf_prefix}{array_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -292,14 +297,16 @@ class RubyExampleResult(common.ExampleResult):
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               printf_prefix=printf_prefix,
                                               printf_suffix=printf_suffix,
-                                              comment=self.get_formatted_comment(' # {0}')))
+                                              comment=self.get_formatted_comment(' # {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
 class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumentsMixin):
+    global global_line_prefix
     def get_ruby_source(self):
-        template = r"""# Get current {function_name_comment}{array_content}
-{variables} = {device_name}.{function_name_under}{arguments}
+        template = r"""{global_line_prefix}# Get current {function_name_comment}{array_content}
+{global_line_prefix}{variables} = {device_name}.{function_name_under}{arguments}
 {puts}
 """
         comments = []
@@ -333,7 +340,8 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
                                  array_content=array_content,
                                  variables=', '.join(variables),
                                  puts='\n'.join(puts).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                                 arguments=arguments)
+                                 arguments=arguments,
+                                 global_line_prefix=global_line_prefix)
 
         return common.break_string(result, '# Get current {0} as ['.format(self.get_comment_name()), indent_head='#')
 

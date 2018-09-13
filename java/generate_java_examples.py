@@ -182,11 +182,12 @@ class JavaExampleParameter(common.ExampleParameter):
                                name=self.get_name().headless)
 
     def get_java_printlns(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n\t\t\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n\t\t\t\t}}'
+            template = '{global_line_prefix}{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\t\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t\t\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -196,11 +197,12 @@ class JavaExampleParameter(common.ExampleParameter):
                                               label=self.get_label_name(),
                                               constant_name=constant.get_java_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
-            template = '\t\t\t\tSystem.out.println("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+            template = '{global_line_prefix}\t\t\t\tSystem.out.println("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -227,7 +229,8 @@ class JavaExampleParameter(common.ExampleParameter):
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -243,11 +246,12 @@ class JavaExampleResult(common.ExampleResult):
                                name=name)
 
     def get_java_printlns(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({object_prefix}{name} == {constant_name}) {{\n\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n\t\t}}'
+            template = '{global_line_prefix}{else_}if({object_prefix}{name} == {constant_name}) {{\n{global_line_prefix}\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t}}'
             constant_group = self.get_constant_group()
             name = self.get_name().headless
 
@@ -268,11 +272,12 @@ class JavaExampleResult(common.ExampleResult):
                                               label=self.get_label_name(),
                                               constant_name=constant.get_java_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
-            template = '\t\tSystem.out.println("{label}: " + {to_binary_prefix}{object_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+            template = '{global_line_prefix}\t\tSystem.out.println("{label}: " + {to_binary_prefix}{object_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -310,7 +315,8 @@ class JavaExampleResult(common.ExampleResult):
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -326,8 +332,9 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
             return []
 
     def get_java_source(self):
-        template = r"""		// Get current {function_name_comment}
-		{variable} = {device_name}.{function_name_headless}({arguments}); // Can throw com.tinkerforge.TimeoutException
+        global global_line_prefix
+        template = r"""{global_line_prefix}		// Get current {function_name_comment}
+{global_line_prefix}		{variable} = {device_name}.{function_name_headless}({arguments}); // Can throw com.tinkerforge.TimeoutException
 {printlns}
 """
         variables = []
@@ -353,7 +360,8 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
                                function_name_comment=self.get_comment_name(),
                                variable=variable,
                                printlns='\n'.join(printlns).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                               arguments=', '.join(self.get_java_arguments()))
+                               arguments=', '.join(self.get_java_arguments()),
+                               global_line_prefix=global_line_prefix)
 
 class JavaExampleSetterFunction(common.ExampleSetterFunction, JavaExampleArgumentsMixin):
     def get_java_imports(self):

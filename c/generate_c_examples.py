@@ -260,11 +260,12 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         return result
 
     def get_c_printfs(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{global_line_prefix}{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -283,7 +284,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
             #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
-            template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+            template = '{global_line_prefix}\tprintf("{label}: {printf_format}{unit}\\n",{global_line_prefix} {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -302,7 +303,8 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
                                               printf_prefix=self.get_c_printf_prefix(),
                                               printf_suffix=self.get_c_printf_suffix(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -335,11 +337,12 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         return template.format(name=name)
 
     def get_c_printfs(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{global_line_prefix}{else_}if({name} == {constant_name}) {{\n\t\t{global_line_prefix}printf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -358,7 +361,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
             #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
-            template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+            template = '{global_line_prefix}\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -382,11 +385,13 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
                                               printf_prefix=self.get_c_printf_prefix(),
                                               printf_suffix=self.get_c_printf_suffix(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
 class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixin):
+    global global_line_prefix
     def get_c_defines(self):
         defines = []
 
@@ -407,12 +412,12 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         return None
 
     def get_c_source(self):
-        template = r"""	// Get current {function_name_comment}
-{variable_declarations};
-	if({device_name_under}_{function_name_under}(&{device_name_initial}{arguments}{variable_references}) < 0) {{
-		fprintf(stderr, "Could not get {function_name_comment}, probably timeout\n");
-		return 1;
-	}}
+        template = r"""{global_line_prefix}	// Get current {function_name_comment}
+{global_line_prefix}{variable_declarations};
+{global_line_prefix}	if({device_name_under}_{function_name_under}(&{device_name_initial}{arguments}{variable_references}) < 0) {{
+{global_line_prefix}		fprintf(stderr, "Could not get {function_name_comment}, probably timeout\n");
+{global_line_prefix}		return 1;
+{global_line_prefix}	}}
 
 {printfs}
 """
@@ -459,7 +464,8 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
                                  variable_declarations=variable_declarations,
                                  variable_references=',<BP>' + ',<BP>'.join(variable_references),
                                  printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
-                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''))
+                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''),
+                                 global_line_prefix=global_line_prefix)
 
         return common.break_string(result, '_{}('.format(self.get_name().under))
 

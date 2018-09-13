@@ -157,11 +157,12 @@ class PHPExampleParameter(common.ExampleParameter):
         return template.format(name=self.get_name().under)
 
     def get_php_echos(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if (${name} == {constant_name}) {{\n        echo "{label}: {constant_title}\\n";{comment}\n    }}'
+            template = '{global_line_prefix}{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}        echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}    }}'
             constant_group = self.get_constant_group()
 
             result = []
@@ -172,12 +173,13 @@ class PHPExampleParameter(common.ExampleParameter):
                                               label=self.get_label_name(),
                                               constant_name=constant.get_php_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
-            templateA = '    echo "{label}: " . {sprintf_prefix}${name}{index}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
-            templateB = '    echo "{label}: ${name}{unit}\\n";{comment}'
+            templateA = '{global_line_prefix}    echo "{label}: " . {sprintf_prefix}${name}{index}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
+            templateB = '{global_line_prefix}    echo "{label}: ${name}{unit}\\n";{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -209,7 +211,8 @@ class PHPExampleParameter(common.ExampleParameter):
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               sprintf_prefix=sprintf_prefix,
                                               sprintf_suffix=sprintf_suffix,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -224,11 +227,12 @@ class PHPExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_php_echos(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if (${name} == {constant_name}) {{\n    echo "{label}: {constant_title}\\n";{comment}\n}}'
+            template = '{global_line_prefix}{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}    echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}}}'
             constant_group = self.get_constant_group()
             name = self.get_name().under
 
@@ -245,12 +249,13 @@ class PHPExampleResult(common.ExampleResult):
                                               label=self.get_label_name(),
                                               constant_name=constant.get_php_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
-            templateA = 'echo "{label}: " . {sprintf_prefix}${name}{index}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
-            templateB = 'echo "{label}: ${name}{unit}\\n";{comment}'
+            templateA = '{global_line_prefix}echo "{label}: " . {sprintf_prefix}${name}{index}{divisor}{sprintf_suffix} . "{unit}\\n";{comment}'
+            templateB = '{global_line_prefix}echo "{label}: ${name}{unit}\\n";{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -294,7 +299,8 @@ class PHPExampleResult(common.ExampleResult):
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               sprintf_prefix=sprintf_prefix,
                                               sprintf_suffix=sprintf_suffix,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -303,8 +309,9 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
         return None
 
     def get_php_source(self):
-        template = r"""// Get current {function_name_comment}
-{variables} = ${device_name}->{function_name_headless}({arguments});
+        global global_line_prefix
+        template = r"""{global_line_prefix}// Get current {function_name_comment}
+{global_line_prefix}{variables} = ${device_name}->{function_name_headless}({arguments});
 {echos}
 """
         variables = []
@@ -330,7 +337,8 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
                                function_name_comment=self.get_comment_name(),
                                variables=variables,
                                echos='\n'.join(echos).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                               arguments=', '.join(self.get_php_arguments()))
+                               arguments=', '.join(self.get_php_arguments()),
+                               global_line_prefix=global_line_prefix)
 
 class PHPExampleSetterFunction(common.ExampleSetterFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):

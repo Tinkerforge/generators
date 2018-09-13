@@ -173,11 +173,12 @@ class CSharpExampleParameter(common.ExampleParameter):
                                name=self.get_name().headless)
 
     def get_csharp_write_lines(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '\t\t{else_}if({name} == {constant_name})\n\t\t{{\n\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n\t\t}}'
+            template = '{global_line_prefix}\t\t{else_}if({name} == {constant_name})\n{global_line_prefix}\t\t{{\n{global_line_prefix}\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -191,7 +192,7 @@ class CSharpExampleParameter(common.ExampleParameter):
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+            template = '{global_line_prefix}\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -218,7 +219,8 @@ class CSharpExampleParameter(common.ExampleParameter):
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -241,11 +243,12 @@ class CSharpExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_csharp_write_lines(self):
+        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '\t\t{else_}if({name} == {constant_name})\n\t\t{{\n\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n\t\t}}'
+            template = '{global_line_prefix}\t\t{else_}if({name} == {constant_name})\n{global_line_prefix}\t\t{{\n\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -259,7 +262,7 @@ class CSharpExampleResult(common.ExampleResult):
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+            template = '{global_line_prefix}\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -291,7 +294,8 @@ class CSharpExampleResult(common.ExampleResult):
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}'),
+                                              global_line_prefix=global_line_prefix))
 
         return result
 
@@ -303,13 +307,14 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
         return None
 
     def get_csharp_source(self):
-        templateA = r"""		// Get current {function_name_comment}
-{variable_declarations} = {device_name}.{function_name_camel}({arguments});
+        global global_line_prefix
+        templateA = r"""{global_line_prefix}		// Get current {function_name_comment}
+{global_line_prefix}{variable_declarations} = {device_name}.{function_name_camel}({arguments});
 {write_lines}
 """
-        templateB = r"""		// Get current {function_name_comment}
-{variable_declarations};
-		{device_name}.{function_name_camel}({arguments});
+        templateB = r"""{global_line_prefix}		// Get current {function_name_comment}
+{global_line_prefix}{variable_declarations};
+{global_line_prefix}		{device_name}.{function_name_camel}({arguments});
 {write_lines}
 """
         variable_declarations = []
@@ -365,7 +370,8 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
                                  function_name_comment=self.get_comment_name(),
                                  variable_declarations=variable_declarations,
                                  write_lines='\n'.join(write_lines).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                                 arguments=',<BP>'.join(arguments))
+                                 arguments=',<BP>'.join(arguments),
+                                 global_line_prefix=global_line_prefix)
 
         return common.break_string(result, '{}('.format(self.get_name().camel))
 
