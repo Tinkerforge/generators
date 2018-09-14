@@ -479,6 +479,6 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Interrupt',
-'functions': [('callback', ('Input Value', 'input_value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
-              ('setter', 'Set Input Value Callback Configuration', [('uint8', 4), ('uint32', 500), ('bool', False)], 'Configure callback for channel 4 with fixed 500ms period', None)]
+'functions': [('callback', ('Input Value', 'input value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
+              ('callback_configuration', ('Input Value', 'input value (channel 4)'), [('uint8', 4)], 500, False, None, [])]
 })

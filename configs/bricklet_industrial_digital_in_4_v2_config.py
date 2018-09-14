@@ -393,12 +393,12 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Value', 'value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'uint8', 1, None, None, None)], None, None),
-              ('setter', 'Set Value Callback Configuration', [('uint8', 1), ('uint32', 100), ('bool', False)], 'Configure callback for channel 1 with fixed 100ms period', None)]
+              ('callback_configuration', ('Value', 'value (channel 1)'), [], 100, False, None, [])]
 })
 
 com['examples'].append({
 'name': 'Edge Count',
-'functions': [('setter', 'Set Edge Count Configuration', [('uint8', 3), ('uint8', 0), ('uint8', 10)], 'Configure rising edge count for channel 3 with 10ms debounce', None),
+'functions': [('setter', 'Set Edge Count Configuration', [('uint8', 3), ('uint8', 0), ('uint8', 10)], 'Configure rising edge count (channel 3) with 10ms debounce', None),
               ('loop_header', 10, 'Get edge count 10 times with 1s delay'),
               ('sleep', 1000, None, None),
               ('getter', ('Get Edge Count', 'edge count'), [(('Count', 'Count'), 'uint32', 1, None, None, None)], [('uint8', 3), ('bool', False)]),
