@@ -550,7 +550,7 @@ class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunct
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_camel=self.get_name().camel,
-                               function_name_comment=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
@@ -591,7 +591,7 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_camel=self.get_name().camel,
-                               function_name_comment=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
