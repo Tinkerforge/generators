@@ -310,7 +310,6 @@ class MathematicaExampleResult(common.ExampleResult):
 
             result = []
 
-            print('"{0}"'.format(getter_call))
             for index in range(self.get_label_count()):
                 result.append(template.format(global_line_prefix=global_line_prefix,
                                               global_line_suffix=global_line_suffix,
