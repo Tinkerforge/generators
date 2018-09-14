@@ -290,18 +290,18 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get UV Light', 'UV light'), [(('UV Light', 'UV Light'), 'uint32', 10, None, 'mW/m²', None)], [])]
+'functions': [('getter', ('Get UV Light', 'UV light'), [(('UV Light', 'UV Light'), 'uint32', 1, 10.0, 'mW/m²', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('UV Light', 'UV light'), [(('UV Light', 'UV Light'), 'uint32', 10, None, 'mW/m²', None)], None, None),
+'functions': [('callback', ('UV Light', 'UV light'), [(('UV Light', 'UV Light'), 'uint32', 1, 10.0, 'mW/m²', None)], None, None),
               ('callback_period', ('UV Light', 'UV light'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('UV Light Reached', 'UV light reached'), [(('UV Light', 'UV Light'), 'uint32', 10, None, 'mW/m²', None)], None, 'UV Index > 3. Use sunscreen!'),
+              ('callback', ('UV Light Reached', 'UV light reached'), [(('UV Light', 'UV Light'), 'uint32', 1, 10.0, 'mW/m²', None)], None, 'UV Index > 3. Use sunscreen!'),
               ('callback_threshold', ('UV Light', 'UV light'), [], '>', [(250*3, 0)])]
 })
