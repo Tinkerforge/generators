@@ -183,7 +183,6 @@ class VBNETExampleParameter(common.ExampleParameter):
                                name=self.get_name().headless)
 
     def get_vbnet_write_lines(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -198,14 +197,15 @@ class VBNETExampleParameter(common.ExampleParameter):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='Else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='Else ' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_vbnet_source(),
                                               constant_title=constant.get_name().space,
                                               comment=self.get_formatted_comment(" ' {0}")))
 
-            result = ['\r' + '\n'.join(result) + '{global_line_prefix}\n        End If\r']
+            result = ['\r' + '\n'.join(result) + '\n        End If\r']
         else:
             template = '{global_line_prefix}        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
 
@@ -267,7 +267,6 @@ class VBNETExampleResult(common.ExampleResult):
         return name
 
     def get_vbnet_write_lines(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -290,7 +289,7 @@ class VBNETExampleResult(common.ExampleResult):
                                               comment=self.get_formatted_comment(" ' {0}"),
                                               global_line_prefix=global_line_prefix))
 
-            result = ['\r' + '\n'.join(result) + '\n{global_line_prefix}        End If\r']
+            result = ['\r' + '\n'.join(result) + '\n        End If\r']
         else:
             template = '{global_line_prefix}        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
 
@@ -346,7 +345,6 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
         return None
 
     def get_vbnet_source(self):
-        global global_line_prefix
         templateA = r"""{global_line_prefix}        ' Get current {function_name_comment}
 {global_line_prefix}{variable_declarations} = {device_name}.{function_name_camel}({arguments})
 {write_lines}

@@ -379,7 +379,6 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
         return name
 
     def get_matlab_fprintfs(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1

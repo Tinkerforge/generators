@@ -162,7 +162,6 @@ class PythonExampleParameter(common.ExampleParameter):
         return self.get_name().under
 
     def get_python_prints(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -227,7 +226,6 @@ class PythonExampleResult(common.ExampleResult):
         return name
 
     def get_python_prints(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -295,7 +293,6 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         return None
 
     def get_python_source(self):
-        global global_line_prefix
         template = r"""{global_line_prefix}    # Get current {function_name_comment}
 {global_line_prefix}    {variables} = {device_name}.{function_name_under}({arguments})
 {prints}

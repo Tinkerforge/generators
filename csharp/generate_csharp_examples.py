@@ -173,7 +173,6 @@ class CSharpExampleParameter(common.ExampleParameter):
                                name=self.get_name().headless)
 
     def get_csharp_write_lines(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -183,7 +182,8 @@ class CSharpExampleParameter(common.ExampleParameter):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='else ' if len(result) > 0 else '',
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_csharp_source(),
@@ -243,7 +243,6 @@ class CSharpExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_csharp_write_lines(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -253,7 +252,8 @@ class CSharpExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='else ' if len(result) > 0 else '',
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_csharp_source(),
@@ -307,7 +307,6 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
         return None
 
     def get_csharp_source(self):
-        global global_line_prefix
         templateA = r"""{global_line_prefix}		// Get current {function_name_comment}
 {global_line_prefix}{variable_declarations} = {device_name}.{function_name_camel}({arguments});
 {write_lines}

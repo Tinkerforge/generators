@@ -157,24 +157,23 @@ class PHPExampleParameter(common.ExampleParameter):
         return template.format(name=self.get_name().under)
 
     def get_php_echos(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{global_line_prefix}{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}        echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}    }}'
+            template = '{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}        echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}    }}'
             constant_group = self.get_constant_group()
 
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse' if len(result) > 0 else '    ',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse' if len(result) > 0 else global_line_prefix + '    ',
                                               name=self.get_name().under,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_php_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
@@ -227,12 +226,11 @@ class PHPExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_php_echos(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{global_line_prefix}{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}    echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}}}'
+            template = '{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}    echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}}}'
             constant_group = self.get_constant_group()
             name = self.get_name().under
 
@@ -244,13 +242,13 @@ class PHPExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse' if len(result) > 0 else global_line_prefix,
                                               name=name,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_php_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
@@ -309,7 +307,6 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
         return None
 
     def get_php_source(self):
-        global global_line_prefix
         template = r"""{global_line_prefix}// Get current {function_name_comment}
 {global_line_prefix}{variables} = ${device_name}->{function_name_headless}({arguments});
 {echos}

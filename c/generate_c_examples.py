@@ -260,17 +260,17 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         return result
 
     def get_c_printfs(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{global_line_prefix}{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse ' if len(result) > 0 else global_line_prefix + '\t',
                                               name=self.get_name().under,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_c_source(),
@@ -284,7 +284,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
             #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
-            template = '{global_line_prefix}\tprintf("{label}: {printf_format}{unit}\\n",{global_line_prefix} {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+            template = '{global_line_prefix}\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -337,17 +337,17 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         return template.format(name=name)
 
     def get_c_printfs(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{global_line_prefix}{else_}if({name} == {constant_name}) {{\n\t\t{global_line_prefix}printf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse ' if len(result) > 0 else global_line_prefix + '\t',
                                               name=self.get_name().under,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_c_source(),
@@ -391,7 +391,6 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         return result
 
 class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixin):
-    global global_line_prefix
     def get_c_defines(self):
         defines = []
 

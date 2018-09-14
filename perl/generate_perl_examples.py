@@ -154,7 +154,6 @@ class PerlExampleParameter(common.ExampleParameter):
         return template.format(name=self.get_name().under)
 
     def get_perl_prints(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -228,7 +227,6 @@ class PerlExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_perl_prints(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -306,7 +304,6 @@ class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumen
         return None
 
     def get_perl_source(self):
-        global global_line_prefix
         template = r"""{global_line_prefix}# Get current {function_name_comment}
 {global_line_prefix}{variables} = ${device_name}->{function_name_under}({arguments});
 {prints}

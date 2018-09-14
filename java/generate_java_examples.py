@@ -182,23 +182,22 @@ class JavaExampleParameter(common.ExampleParameter):
                                name=self.get_name().headless)
 
     def get_java_printlns(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{global_line_prefix}{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\t\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t\t\t}}'
+            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\t\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t\t\t}}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t\t\t\t',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse ' if len(result) > 0 else global_line_prefix + '\t\t\t\t',
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_java_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
@@ -246,12 +245,11 @@ class JavaExampleResult(common.ExampleResult):
                                name=name)
 
     def get_java_printlns(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{global_line_prefix}{else_}if({object_prefix}{name} == {constant_name}) {{\n{global_line_prefix}\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t}}'
+            template = '{else_}if({object_prefix}{name} == {constant_name}) {{\n{global_line_prefix}\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t}}'
             constant_group = self.get_constant_group()
             name = self.get_name().headless
 
@@ -266,14 +264,14 @@ class JavaExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t\t',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse ' if len(result) > 0 else global_line_prefix + '\t\t',
                                               object_prefix=object_prefix,
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_java_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
@@ -332,7 +330,6 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
             return []
 
     def get_java_source(self):
-        global global_line_prefix
         template = r"""{global_line_prefix}		// Get current {function_name_comment}
 {global_line_prefix}		{variable} = {device_name}.{function_name_headless}({arguments}); // Can throw com.tinkerforge.TimeoutException
 {printlns}

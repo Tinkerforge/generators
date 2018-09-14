@@ -147,7 +147,6 @@ class RubyExampleParameter(common.ExampleParameter):
         return name
 
     def get_ruby_puts(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -222,7 +221,6 @@ class RubyExampleResult(common.ExampleResult):
         return name
 
     def get_ruby_puts(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -303,7 +301,6 @@ class RubyExampleResult(common.ExampleResult):
         return result
 
 class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumentsMixin):
-    global global_line_prefix
     def get_ruby_source(self):
         template = r"""{global_line_prefix}# Get current {function_name_comment}{array_content}
 {global_line_prefix}{variables} = {device_name}.{function_name_under}{arguments}

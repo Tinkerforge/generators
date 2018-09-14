@@ -153,7 +153,6 @@ class ShellExampleResult(common.ExampleResult):
 
 class ShellExampleGetterFunction(common.ExampleGetterFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):
-        global global_line_prefix
         template = r"""{global_line_prefix}# Get current {function_name_comment}
 {global_line_prefix}tinkerforge call {device_name}-{device_category} $uid {function_name_dash}{arguments}
 """
