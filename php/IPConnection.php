@@ -1384,8 +1384,12 @@ class IPConnection
         $_payload = array_fill(0, ceil($length/8), 0);
         $result = array_fill(0, $length, (bool)false);
 
-        for ($i = 1; $i <= ceil($length/8); $i++) {
-            $_payload[$i - 1] = $payload[$field . $i];
+        if( ceil($length/8) == 1 ) {
+            $_payload[0] = $payload[$field];
+        } else {
+            for ($i = 1; $i <= ceil($length/8); $i++) {
+                $_payload[$i - 1] = $payload[$field . $i];
+            }
         }
 
         for ($i = 0; $i < $length; $i++) {
