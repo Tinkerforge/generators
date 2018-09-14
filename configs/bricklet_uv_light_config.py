@@ -303,5 +303,5 @@ com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
               ('callback', ('UV Light Reached', 'UV light reached'), [(('UV Light', 'UV Light'), 'uint32', 1, 10.0, 'mW/m²', None)], None, 'UV Index > 3. Use sunscreen!'),
-              ('callback_threshold', ('UV Light', 'UV light'), [], '>', [(250*3, 0)])]
+              ('callback_threshold', ('UV Light', 'UV light'), [], '>', [(25*3, 0)])]
 })
