@@ -277,7 +277,6 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
         return False
 
     def get_matlab_fprintfs(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -299,7 +298,8 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(global_quote=global_quote,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_quote=global_quote,
                                               else_='else' if len(result) > 0 else '',
                                               name=self.get_name().headless,
                                               cast_prefix=cast_prefix,
@@ -307,8 +307,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_value() if global_is_octave else 'com.tinkerforge.' + constant.get_matlab_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' % {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' % {0}')))
 
             result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
@@ -344,7 +343,8 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(global_quote=global_quote,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_quote=global_quote,
                                               name=self.get_name().headless,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               fprintf_format=self.get_matlab_fprintf_format(),
@@ -355,8 +355,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
                                               cast_suffix=cast_suffix,
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' % {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' % {0}')))
 
         return result
 
@@ -410,7 +409,8 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(global_quote=global_quote,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_quote=global_quote,
                                               else_='else' if len(result) > 0 else '',
                                               object_prefix=object_prefix,
                                               name=name,
@@ -419,8 +419,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                               constant_title=constant.get_name().space,
                                               cast_prefix=cast_prefix,
                                               cast_suffix=cast_suffix,
-                                              comment=self.get_formatted_comment(' % {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' % {0}')))
 
             result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
@@ -466,7 +465,8 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(global_quote=global_quote,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_quote=global_quote,
                                               object_prefix=object_prefix,
                                               name=name,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
@@ -478,8 +478,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                               cast_suffix=cast_suffix,
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' % {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' % {0}')))
 
         return result
 
@@ -493,7 +492,6 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
         return []
 
     def get_matlab_source(self):
-        global global_line_prefix
         template = r"""{global_line_prefix}    % Get current {function_name_comment}
 {global_line_prefix}    {variable} = {device_name_initial}.{function_name_headless}({arguments});
 {fprintfs}
@@ -516,13 +514,13 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
         if len(fprintfs) > 1:
             fprintfs.insert(0, '\b')
 
-        return template.format(device_name_initial=self.get_device().get_initial_name(),
+        return template.format(global_line_prefix=global_line_prefix,
+                               device_name_initial=self.get_device().get_initial_name(),
                                function_name_headless=self.get_name().headless,
                                function_name_comment=self.get_comment_name(),
                                variable=variable,
                                fprintfs='\n'.join(fprintfs).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                               arguments=', '.join(self.get_matlab_arguments()),
-                               global_line_prefix=global_line_prefix)
+                               arguments=', '.join(self.get_matlab_arguments()))
 
 class MATLABExampleSetterFunction(common.ExampleSetterFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):

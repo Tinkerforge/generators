@@ -212,15 +212,15 @@ class CSharpExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().headless,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().headless,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -287,15 +287,15 @@ class CSharpExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 

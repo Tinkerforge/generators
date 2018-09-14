@@ -163,13 +163,13 @@ class PerlExampleParameter(common.ExampleParameter):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='els' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='els' if len(result) > 0 else '',
                                               name=self.get_name().under,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_perl_source(callback=True),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' # {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' # {0}')))
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
@@ -203,7 +203,8 @@ class PerlExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().under,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().under,
                                               label=self.get_label_name(index=index),
                                               index_prefix=index_prefix,
                                               index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
@@ -211,8 +212,7 @@ class PerlExampleParameter(common.ExampleParameter):
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               sprintf_prefix=sprintf_prefix,
                                               sprintf_suffix=sprintf_suffix,
-                                              comment=self.get_formatted_comment(' # {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -241,13 +241,13 @@ class PerlExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='els' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='els' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_perl_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' # {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' # {0}')))
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
@@ -286,7 +286,8 @@ class PerlExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index_prefix=index_prefix,
                                               index_suffix='}}[{0}]'.format(index) if self.get_label_count() > 1 else '',
@@ -294,8 +295,7 @@ class PerlExampleResult(common.ExampleResult):
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               sprintf_prefix=sprintf_prefix,
                                               sprintf_suffix=sprintf_suffix,
-                                              comment=self.get_formatted_comment(' # {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -326,13 +326,13 @@ class PerlExampleGetterFunction(common.ExampleGetterFunction, PerlExampleArgumen
         if len(prints) > 1:
             prints.insert(0, '\b')
 
-        return template.format(device_name=self.get_device().get_initial_name(),
+        return template.format(global_line_prefix=global_line_prefix,
+                               device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
                                function_name_comment=self.get_comment_name(),
                                variables=variables,
                                prints='\n'.join(prints).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                               arguments=', '.join(self.get_perl_arguments()),
-                               global_line_prefix=global_line_prefix)
+                               arguments=', '.join(self.get_perl_arguments()))
 
 class PerlExampleSetterFunction(common.ExampleSetterFunction, PerlExampleArgumentsMixin):
     def get_perl_subroutine(self):

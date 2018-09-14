@@ -295,7 +295,8 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().under,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().under,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -303,8 +304,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
                                               printf_prefix=self.get_c_printf_prefix(),
                                               printf_suffix=self.get_c_printf_suffix(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -377,7 +377,8 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -385,8 +386,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
                                               printf_prefix=self.get_c_printf_prefix(),
                                               printf_suffix=self.get_c_printf_suffix(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -456,15 +456,15 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         while None in printfs:
             printfs.remove(None)
 
-        result = template.format(device_name_under=self.get_device().get_name().under,
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_name_under=self.get_device().get_name().under,
                                  device_name_initial=self.get_device().get_initial_name(),
                                  function_name_comment=self.get_comment_name(),
                                  function_name_under=self.get_name().under,
                                  variable_declarations=variable_declarations,
                                  variable_references=',<BP>' + ',<BP>'.join(variable_references),
                                  printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
-                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''),
-                                 global_line_prefix=global_line_prefix)
+                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''))
 
         return common.break_string(result, '_{}('.format(self.get_name().under))
 

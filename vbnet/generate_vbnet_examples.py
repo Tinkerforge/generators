@@ -236,15 +236,15 @@ class VBNETExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().headless,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().headless,
                                               label=self.get_label_name(index=index),
                                               index='({0})'.format(index) if self.get_label_count() > 1 else '',
                                               to_string_prefix=to_string_prefix,
                                               to_string_suffix=to_string_suffix,
                                               divisor=divisor,
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
-                                              comment=self.get_formatted_comment(" ' {0}"),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(" ' {0}")))
 
         return result
 
@@ -281,13 +281,13 @@ class VBNETExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='Else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='Else ' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_vbnet_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(" ' {0}"),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(" ' {0}")))
 
             result = ['\r' + '\n'.join(result) + '\n        End If\r']
         else:
@@ -325,15 +325,15 @@ class VBNETExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='({0})'.format(index) if self.get_label_count() > 1 else '',
                                               to_string_prefix=to_string_prefix,
                                               to_string_suffix=to_string_suffix,
                                               divisor=divisor,
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
-                                              comment=self.get_formatted_comment(" ' {0}"),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(" ' {0}")))
 
         return result
 
@@ -400,14 +400,14 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
         if len(variable_references) > 1:
             arguments += variable_references
 
-        result = template.format(device_name=self.get_device().get_initial_name(),
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_name=self.get_device().get_initial_name(),
                                  function_name_camel=self.get_name().camel,
                                  function_name_headless=self.get_name().headless,
                                  function_name_comment=self.get_comment_name(),
                                  variable_declarations='\n'.join(variable_declarations),
                                  write_lines='\n'.join(write_lines).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                                 arguments=',<BP>'.join(arguments),
-                                 global_line_prefix=global_line_prefix)
+                                 arguments=',<BP>'.join(arguments))
 
         return common.break_string(result, '.{}('.format(self.get_name().camel), continuation=' _')
 

@@ -157,12 +157,12 @@ class ShellExampleGetterFunction(common.ExampleGetterFunction, ShellExampleArgum
 {global_line_prefix}tinkerforge call {device_name}-{device_category} $uid {function_name_dash}{arguments}
 """
 
-        return template.format(device_name=self.get_device().get_name().dash,
+        return template.format(global_line_prefix=global_line_prefix,
+                               device_name=self.get_device().get_name().dash,
                                device_category=self.get_device().get_category().dash,
                                function_name_comment=self.get_comment_name(),
                                function_name_dash=self.get_name().dash,
-                               arguments=common.wrap_non_empty(' ', ' '.join(self.get_shell_arguments()), ''),
-                               global_line_prefix=global_line_prefix)
+                               arguments=common.wrap_non_empty(' ', ' '.join(self.get_shell_arguments()), ''))
 
 class ShellExampleSetterFunction(common.ExampleSetterFunction, ShellExampleArgumentsMixin):
     def get_shell_source(self):

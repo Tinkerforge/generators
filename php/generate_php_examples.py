@@ -203,15 +203,15 @@ class PHPExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().under,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().under,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               sprintf_prefix=sprintf_prefix,
                                               sprintf_suffix=sprintf_suffix,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -290,15 +290,15 @@ class PHPExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               sprintf_prefix=sprintf_prefix,
                                               sprintf_suffix=sprintf_suffix,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -329,13 +329,13 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
         if len(echos) > 1:
             echos.insert(0, '\b')
 
-        return template.format(device_name=self.get_device().get_initial_name(),
+        return template.format(global_line_prefix=global_line_prefix,
+                               device_name=self.get_device().get_initial_name(),
                                function_name_headless=self.get_name().headless,
                                function_name_comment=self.get_comment_name(),
                                variables=variables,
                                echos='\n'.join(echos).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                               arguments=', '.join(self.get_php_arguments()),
-                               global_line_prefix=global_line_prefix)
+                               arguments=', '.join(self.get_php_arguments()))
 
 class PHPExampleSetterFunction(common.ExampleSetterFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):

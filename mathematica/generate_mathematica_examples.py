@@ -224,14 +224,14 @@ class MathematicaExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().headless,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().headless,
                                               label=self.get_label_name(index=index),
                                               quantity=quantity,
                                               index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
                                               bitmask_length=bitmask_length,
-                                              comment=self.get_formatted_comment('(*{0}*)'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment('(*{0}*)')))
 
         return result
 
