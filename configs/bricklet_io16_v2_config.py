@@ -36,7 +36,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value of all four Channels. A value of *true* or *false* outputs
+Sets the output value of all four channels. A value of *true* or *false* outputs
 logic 1 or logic 0 respectively on the corresponding channel.
 
 Use :func:`Set Selected Value` to change only one output channel state.

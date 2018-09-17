@@ -143,7 +143,7 @@ Die Periode in ms ist die Periode mit der der :cb:`All Values`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
 Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
-Callback nur ausgelöst, wenn sich mindest ein Wert im Vergleich zum letzten mal geändert
+Callback nur ausgelöst, wenn sich mindestens ein Wert im Vergleich zum letzten mal geändert
 hat. Ändert sich kein Wert innerhalb der Periode, so wird der Callback
 sofort ausgelöst, wenn ein Wert sich das nächste mal ändert.
 
@@ -258,7 +258,7 @@ Die Periode in ms ist die Periode mit der der :cb:`IAQ Index`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
 Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
-Callback nur ausgelöst, wenn sich mindest ein Wert im Vergleich zum letzten mal
+Callback nur ausgelöst, wenn sich mindestens ein Wert im Vergleich zum letzten mal
 geändert hat. Ändert sich kein Wert innerhalb der Periode, so wird der Callback
 sofort ausgelöst, wenn ein Wert sich das nächste mal ändert.
 
