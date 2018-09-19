@@ -117,7 +117,6 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average Configuration',
 'elements': [('Moving Average Length Air Pressure', 'uint16', 1, 'in'),
-             ('Moving Average Length Altitude', 'uint16', 1, 'in'),
              ('Moving Average Length Temperature', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -157,7 +156,6 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average Configuration',
 'elements': [('Moving Average Length Air Pressure', 'uint16', 1, 'out'),
-             ('Moving Average Length Altitude', 'uint16', 1, 'out'),
              ('Moving Average Length Temperature', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -270,6 +268,55 @@ Returns the air pressure offset values as set by :func:`Set Calibration`.
 'de':
 """
 Gibt den Luftdruck offset werte zurück, wie von :func:`Set Calibration`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Sensor Configuration',
+'elements': [('Data Rate', 'uint8', 1, 'in', ('Data Rate', [('Off', 0),
+                                                            ('1Hz', 1),
+                                                            ('10Hz', 2),
+                                                            ('25Hz', 3),
+                                                            ('50Hz', 4),
+                                                            ('75Hz', 5)])),
+             ('Air Pressure Low Pass Filter', 'uint8', 1, 'in', ('Low Pass Filter', [('Off', 0),
+                                                                                     ('1 9th', 1),
+                                                                                     ('1 20th', 2)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Sensor Configuration',
+'elements': [('Data Rate', 'uint8', 1, 'out', ('Data Rate', [('Off', 0),
+                                                             ('1Hz', 1),
+                                                             ('10Hz', 2),
+                                                             ('25Hz', 3),
+                                                             ('50Hz', 4),
+                                                             ('75Hz', 5)])),
+             ('Air Pressure Low Pass Filter', 'uint8', 1, 'out', ('Low Pass Filter', [('Off', 0),
+                                                                                      ('1 9th', 1),
+                                                                                      ('1 20th', 2)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
+""",
+'de':
+"""
+Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration`
 gesetzt.
 """
 }]
