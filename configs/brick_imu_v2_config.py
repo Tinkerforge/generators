@@ -1172,7 +1172,7 @@ werden. In diesem Modus wird die Orientierung relativ berechnet (mit Magnetomete
 ist sie absolut in Bezug auf die Erde). Allerdings kann die Berechnung in diesem
 Fall nicht von störenden Magnetfeldern beeinflusst werden.
 
-Seit Firmware Version 2.0.13 kann auch ein Fusion-Modus ohne schnell
+Seit Firmware Version 2.0.13 kann auch ein Fusion-Modus ohne schnelle
 Magnetometer-Kalibrierung ausgewählt werden. Dieser Modus ist der gleiche wie der
 "normale" Fusion-Modus, aber die schnelle Magnetometer-Kalibrierung ist aus. D.h.
 die Orientierung zu finden mag beim ersten start länger dauern, allerdings mag
