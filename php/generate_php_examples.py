@@ -157,24 +157,23 @@ class PHPExampleParameter(common.ExampleParameter):
         return template.format(name=self.get_name().under)
 
     def get_php_echos(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{global_line_prefix}{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}        echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}    }}'
+            template = '{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}        echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}    }}'
             constant_group = self.get_constant_group()
 
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse' if len(result) > 0 else '    ',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse' if len(result) > 0 else global_line_prefix + '    ',
                                               name=self.get_name().under,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_php_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
@@ -204,15 +203,15 @@ class PHPExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().under,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().under,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               sprintf_prefix=sprintf_prefix,
                                               sprintf_suffix=sprintf_suffix,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -227,12 +226,11 @@ class PHPExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_php_echos(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{global_line_prefix}{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}    echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}}}'
+            template = '{else_}if (${name} == {constant_name}) {{\n{global_line_prefix}    echo "{label}: {constant_title}\\n";{comment}\n{global_line_prefix}}}'
             constant_group = self.get_constant_group()
             name = self.get_name().under
 
@@ -244,13 +242,13 @@ class PHPExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse' if len(result) > 0 else global_line_prefix,
                                               name=name,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_php_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
@@ -292,15 +290,15 @@ class PHPExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
                                               unit=self.get_formatted_unit_name(' {0}'),
                                               sprintf_prefix=sprintf_prefix,
                                               sprintf_suffix=sprintf_suffix,
-                                              comment=self.get_formatted_comment(' // {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
@@ -309,7 +307,6 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
         return None
 
     def get_php_source(self):
-        global global_line_prefix
         template = r"""{global_line_prefix}// Get current {function_name_comment}
 {global_line_prefix}{variables} = ${device_name}->{function_name_headless}({arguments});
 {echos}
@@ -332,13 +329,13 @@ class PHPExampleGetterFunction(common.ExampleGetterFunction, PHPExampleArguments
         if len(echos) > 1:
             echos.insert(0, '\b')
 
-        return template.format(device_name=self.get_device().get_initial_name(),
+        return template.format(global_line_prefix=global_line_prefix,
+                               device_name=self.get_device().get_initial_name(),
                                function_name_headless=self.get_name().headless,
                                function_name_comment=self.get_comment_name(),
                                variables=variables,
                                echos='\n'.join(echos).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                               arguments=', '.join(self.get_php_arguments()),
-                               global_line_prefix=global_line_prefix)
+                               arguments=', '.join(self.get_php_arguments()))
 
 class PHPExampleSetterFunction(common.ExampleSetterFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):

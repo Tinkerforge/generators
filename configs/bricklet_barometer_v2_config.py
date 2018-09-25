@@ -117,7 +117,6 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average Configuration',
 'elements': [('Moving Average Length Air Pressure', 'uint16', 1, 'in'),
-             ('Moving Average Length Altitude', 'uint16', 1, 'in'),
              ('Moving Average Length Temperature', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -157,7 +156,6 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average Configuration',
 'elements': [('Moving Average Length Air Pressure', 'uint16', 1, 'out'),
-             ('Moving Average Length Altitude', 'uint16', 1, 'out'),
              ('Moving Average Length Temperature', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -234,18 +232,20 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
 'elements': [('Measured Air Pressure', 'int32', 1, 'in'),
-             ('Reference Air Pressure', 'int32', 1, 'in')],
+             ('Actual Air Pressure', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets one point air pressure offset calibration value. The offset
 is the difference between currently measured air pressure by the
-sensor and the air pressure measured by an accurate reference
-barometer in mbar/1000. The values has a range of 260000 to 1260000.
+sensor and the actual air pressure measured by an accurate barometer in
+mbar/1000. The values has a range of 260000 to 1260000.
 
 After calibration the air pressure measurements will achieve accuracy
 of about 0.1 mbar.
+
+Setting the calibration to 0,0 removes the previous calibration.
 """,
 'de':
 """
@@ -258,7 +258,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
 'elements': [('Measured Air Pressure', 'int32', 1, 'out'),
-             ('Reference Air Pressure', 'int32', 1, 'out')],
+             ('Actual Air Pressure', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -268,6 +268,55 @@ Returns the air pressure offset values as set by :func:`Set Calibration`.
 'de':
 """
 Gibt den Luftdruck offset werte zurück, wie von :func:`Set Calibration`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Sensor Configuration',
+'elements': [('Data Rate', 'uint8', 1, 'in', ('Data Rate', [('Off', 0),
+                                                            ('1Hz', 1),
+                                                            ('10Hz', 2),
+                                                            ('25Hz', 3),
+                                                            ('50Hz', 4),
+                                                            ('75Hz', 5)])),
+             ('Air Pressure Low Pass Filter', 'uint8', 1, 'in', ('Low Pass Filter', [('Off', 0),
+                                                                                     ('1 9th', 1),
+                                                                                     ('1 20th', 2)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Sensor Configuration',
+'elements': [('Data Rate', 'uint8', 1, 'out', ('Data Rate', [('Off', 0),
+                                                             ('1Hz', 1),
+                                                             ('10Hz', 2),
+                                                             ('25Hz', 3),
+                                                             ('50Hz', 4),
+                                                             ('75Hz', 5)])),
+             ('Air Pressure Low Pass Filter', 'uint8', 1, 'out', ('Low Pass Filter', [('Off', 0),
+                                                                                      ('1 9th', 1),
+                                                                                      ('1 20th', 2)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
+""",
+'de':
+"""
+Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration`
 gesetzt.
 """
 }]

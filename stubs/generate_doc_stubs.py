@@ -117,11 +117,12 @@ Test your {0}
 |test_tab|
 If everything went as expected ... TBD.
 
-.. image:: /Images/Bricklets/bricklet_{2}_brickv.jpg
-   :scale: 100 %
-   :alt: {0} in Brick Viewer
-   :align: center
-   :target: ../../_images/Bricklets/bricklet_{2}_brickv.jpg
+..
+	.. image:: /Images/Bricklets/bricklet_{2}_brickv.jpg
+	   :scale: 100 %
+	   :alt: {0} in Brick Viewer
+	   :align: center
+	   :target: ../../_images/Bricklets/bricklet_{2}_brickv.jpg
 
 |test_pi_ref|
 
@@ -247,11 +248,12 @@ Erster Test
 |test_tab|
 Wenn alles wie erwartet funktioniert ... TBD.
 
-.. image:: /Images/Bricklets/bricklet_{2}_brickv.jpg
-   :scale: 100 %
-   :alt: {0} im Brick Viewer
-   :align: center
-   :target: ../../_images/Bricklets/bricklet_{2}_brickv.jpg
+..
+	.. image:: /Images/Bricklets/bricklet_{2}_brickv.jpg
+	   :scale: 100 %
+	   :alt: {0} im Brick Viewer
+	   :align: center
+	   :target: ../../_images/Bricklets/bricklet_{2}_brickv.jpg
 
 |test_pi_ref|
 

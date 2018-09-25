@@ -239,7 +239,6 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
                                name=name)
 
     def get_delphi_write_lns(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -254,7 +253,8 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
                 name += '_'
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='else ' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_delphi_source(),
@@ -282,14 +282,14 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               printf_format=self.get_delphi_printf_format(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              comment=self.get_formatted_comment(' {{ {0} }}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' {{ {0} }}')))
 
         return result
 
@@ -324,7 +324,6 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
         return name
 
     def get_delphi_write_lns(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -339,7 +338,8 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
                 name += '_'
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='else ' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_delphi_source(),
@@ -367,14 +367,14 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               printf_format=self.get_delphi_printf_format(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              comment=self.get_formatted_comment(' {{ {0} }}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' {{ {0} }}')))
 
         return result
 
@@ -394,7 +394,6 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
         return variable_declarations
 
     def get_delphi_source(self):
-        global global_line_prefix
         templateA = r"""{global_line_prefix}  {{ Get current {function_name_comment} }}
 {global_line_prefix}  {variable_names} := {device_name}.{function_name_camel}{arguments};
 {write_lns}
@@ -427,13 +426,13 @@ class DelphiExampleGetterFunction(common.ExampleGetterFunction, DelphiPrintfForm
             arguments += variable_names
             variable_names = []
 
-        result = template.format(device_name=self.get_device().get_initial_name(),
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_name=self.get_device().get_initial_name(),
                                  function_name_camel=self.get_name().camel,
                                  function_name_comment=self.get_comment_name(),
                                  variable_names=''.join(variable_names),
                                  write_lns='\n'.join(write_lns).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                                 arguments=common.wrap_non_empty('(', ',<BP>'.join(arguments), ')'),
-                                 global_line_prefix=global_line_prefix)
+                                 arguments=common.wrap_non_empty('(', ',<BP>'.join(arguments), ')'))
 
         return common.break_string(result, '.{0}('.format(self.get_name().camel))
 

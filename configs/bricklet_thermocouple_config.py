@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False, # selling remaining stock, replaced by Thermocouple Bricklet 2.0
+    'discontinued': True, # replaced by Thermocouple Bricklet 2.0
     'packets': [],
     'examples': []
 }

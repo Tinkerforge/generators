@@ -72,7 +72,7 @@ Gibt den Analogwert des Analog/Digital-Wandler zurück.
 Der Wert hat 21 Bit und einen Wertebereich von 0 bis 2097151.
 
 Dieser Wert ist ein unverarbeiteter Rohwert. Wir haben sichergestellt,
-dass die Integrationszeit des ADCs kleinerist als das Messintervall des
+dass die Integrationszeit des ADCs kleiner ist als das Messintervall des
 Sensors (10ms vs 16,5ms). Dadurch ist sichergestellt das keine Informationen
 verloren gehen können.
 
@@ -106,7 +106,7 @@ averaging, there is more noise on the data.
 The range for the averaging is 1-1000.
 
 New data is gathered every ~10ms. With a moving average of length 1000 the resulting
-averaging window has a length of aproximately 10s. If you want to do long term measurements the longest
+averaging window has a length of approximately 10s. If you want to do long term measurements the longest
 moving average will give the cleanest results.
 
 The default value is 25.
@@ -238,7 +238,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the sensor type as set by :func:`Set Sensor Type`
+Returns the sensor type as set by :func:`Set Sensor Type`.
 """,
 'de':
 """

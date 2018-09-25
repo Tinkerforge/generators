@@ -162,7 +162,6 @@ class PythonExampleParameter(common.ExampleParameter):
         return self.get_name().under
 
     def get_python_prints(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -172,13 +171,13 @@ class PythonExampleParameter(common.ExampleParameter):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='el' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='el' if len(result) > 0 else '',
                                               name=self.get_name().under,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_python_source(callback=True),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' # {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' # {0}')))
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
@@ -205,15 +204,15 @@ class PythonExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().under,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().under,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               format_prefix=format_prefix,
                                               format_suffix=format_suffix,
-                                              comment=self.get_formatted_comment(' # {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -227,7 +226,6 @@ class PythonExampleResult(common.ExampleResult):
         return name
 
     def get_python_prints(self):
-        global global_line_prefix
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -237,13 +235,13 @@ class PythonExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='el' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='el' if len(result) > 0 else '',
                                               name=self.get_name().under,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_python_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' # {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' # {0}')))
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
@@ -275,15 +273,15 @@ class PythonExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
                                               format_prefix=format_prefix,
                                               format_suffix=format_suffix,
-                                              comment=self.get_formatted_comment(' # {0}'),
-                                              global_line_prefix=global_line_prefix))
+                                              comment=self.get_formatted_comment(' # {0}')))
 
         return result
 
@@ -295,7 +293,6 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         return None
 
     def get_python_source(self):
-        global global_line_prefix
         template = r"""{global_line_prefix}    # Get current {function_name_comment}
 {global_line_prefix}    {variables} = {device_name}.{function_name_under}({arguments})
 {prints}
@@ -313,13 +310,13 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         if len(prints) > 1:
             prints.insert(0, '\b')
 
-        result = template.format(device_name=self.get_device().get_initial_name(),
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_name=self.get_device().get_initial_name(),
                                  function_name_under=self.get_name().under,
                                  function_name_comment=self.get_comment_name(),
                                  variables=',<BP>'.join(variables),
                                  prints='\n'.join(prints).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                                 arguments=', '.join(self.get_python_arguments()),
-                                 global_line_prefix=global_line_prefix)
+                                 arguments=', '.join(self.get_python_arguments()))
 
         return common.break_string(result, '    ', continuation=' \\', indent_suffix='  ')
 
