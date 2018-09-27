@@ -19,7 +19,7 @@ com = {
         'de': '16 digitale Ein- und Ausgänge'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

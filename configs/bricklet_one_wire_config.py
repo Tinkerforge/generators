@@ -19,7 +19,7 @@ com = {
         'de': 'Kommuniziert mit bis zu 64 1-Wire Geräten'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

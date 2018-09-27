@@ -22,7 +22,7 @@ com = {
         'de': 'Misst Umgebungstemperatur mit 0,2°C Genauigkeit'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

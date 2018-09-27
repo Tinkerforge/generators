@@ -22,7 +22,7 @@ com = {
         'de': 'Misst zwei Gleichströme zwischen 0mA und 20mA (IEC 60381-1)'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

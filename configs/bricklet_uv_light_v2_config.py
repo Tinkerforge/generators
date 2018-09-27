@@ -22,7 +22,7 @@ com = {
         'de': 'Misst UV-Licht'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

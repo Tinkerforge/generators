@@ -19,7 +19,7 @@ com = {
         'de': 'LCD mit 128x64 Pixel'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

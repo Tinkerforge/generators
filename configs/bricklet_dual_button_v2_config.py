@@ -19,7 +19,7 @@ com = {
         'de': 'Zwei Taster mit eingebauten blauen LEDs'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

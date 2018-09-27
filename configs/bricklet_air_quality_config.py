@@ -22,7 +22,7 @@ com = {
         'de': 'Misst IAQ Index, Temperatur, relative Luftfeuchtigkeit und Luftdruck'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

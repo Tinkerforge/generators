@@ -19,7 +19,7 @@ com = {
         'de': '3,3cm (1,3") OLED mit 128x64 Pixel'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],

@@ -19,7 +19,7 @@ com = {
         'de': 'Erzeugt konfigurierbare Gleichspannung zwischen 0V und 12V'
     },
     'comcu': True,
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'packets': [],
