@@ -231,7 +231,12 @@ class CSharpExampleResult(common.ExampleResult):
         if name == self.get_device().get_initial_name():
             name += '_'
 
-        return csharp_common.get_csharp_type(self.get_type().split(':')[0], 1), name
+        type_ = csharp_common.get_csharp_type(self.get_type().split(':')[0], 1)
+
+        if self.get_cardinality() > 1:
+            type_ += '[]'
+
+        return type_, name
 
     def get_csharp_variable_reference(self):
         template = 'out {name}'

@@ -256,7 +256,12 @@ class VBNETExampleResult(common.ExampleResult):
         if name == self.get_device().get_initial_name():
             name += '_'
 
-        return get_vbnet_type(self.get_type().split(':')[0]), name
+        type_ = get_vbnet_type(self.get_type().split(':')[0])
+
+        if self.get_cardinality() > 1:
+            type_ += '()'
+
+        return type_, name
 
     def get_vbnet_variable_reference(self):
         name = self.get_name().headless

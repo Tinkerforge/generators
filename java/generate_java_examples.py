@@ -241,7 +241,7 @@ class JavaExampleResult(common.ExampleResult):
         if name == self.get_device().get_initial_name():
             name += '_'
 
-        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
+        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], self.get_cardinality(), legacy=self.get_device().has_java_legacy_types()),
                                name=name)
 
     def get_java_printlns(self):
