@@ -186,7 +186,7 @@ Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
                                                                   ('On', 1),
                                                                   ('Show Heartbeat', 2),
@@ -216,7 +216,7 @@ Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
                                                                    ('On', 1),
                                                                    ('Show Heartbeat', 2),
