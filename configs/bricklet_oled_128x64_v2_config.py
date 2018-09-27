@@ -264,8 +264,8 @@ instead of only the changed parts. Normally it should not be necessary to set th
 """
 Stellt den aktuell Inhalt des internen Buffers auf dem Display dar. Normalerweise
 schreibt jeder Aufruf von :func:`Write Pixels` und :func:`Write Line` direkt auf
-den Display. Wenn jedoch Automatic Draw deaktiviert ist (:func:`Set Display
-Configuration`), dann werden Änderungen in einen internen Buffer anstatt auf den
+den Display. Wenn jedoch Automatic Draw deaktiviert ist (:func:`Set Display Configuration`),
+dann werden Änderungen in einen internen Buffer anstatt auf den
 Display geschrieben. Der internen Buffer kann dann durch einen Aufruf dieser
 Funktion auf den Display geschrieben werden. Dadurch kann Flicker vermieden
 werden, wenn ein komplexes Bild in mehreren Schritten aufgebaut wird.
