@@ -118,7 +118,6 @@ Gibt den aktuellen Bootloader-Modus zurück, siehe :func:`Set Bootloader Mode`.
 }]
 })
 
-
 common_packets.append({
 'type': 'function',
 'function_id': 237,
@@ -146,8 +145,6 @@ normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 """
 }]
 })
-
-
 
 common_packets.append({
 'type': 'function',
@@ -181,7 +178,6 @@ normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 """
 }]
 })
-
 
 common_packets.append({
 'type': 'function',
@@ -264,7 +260,6 @@ Indikation von Temperaturveränderungen.
 """
 }]
 })
-
 
 common_packets.append({
 'type': 'function',

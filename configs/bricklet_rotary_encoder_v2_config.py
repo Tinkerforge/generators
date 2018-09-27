@@ -56,8 +56,8 @@ dekrementiert, d.h. negative Zählerwerte sind möglich.
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Count', 
+    packets   = com['packets'],
+    name      = 'Get Count',
     data_name = 'Count',
     data_type = 'int32',
     doc       = count_doc

@@ -496,7 +496,7 @@ You need to set the channel to output before you call this function, otherwise i
 be ignored. To turn the PWM off again, you can set the frequency to 0 or any other
 function that changes a value of the channel (e.g. :func:`Set Selected Value`).
 
-The maximum frequency value is 320000000 (32MHz). The maximum duty cycle value is 
+The maximum frequency value is 320000000 (32MHz). The maximum duty cycle value is
 10000 (100%).
 
 The default values are 0, 0.
@@ -525,7 +525,7 @@ com['packets'].append({
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Frequency', 'uint32', 1, 'out'),
              ('Duty Cycle', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0], 
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """

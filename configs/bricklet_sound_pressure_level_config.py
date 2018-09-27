@@ -88,7 +88,7 @@ frequency response is compensated and the weighting function is applied
 dB(Z) if you need the unaltered spectrum.
 
 The values are not in dB form yet. If you want a proper dB scale of the
-spectrum you have to apply the formula f(x) = 20*log10(max(1, x/sqrt(2))) 
+spectrum you have to apply the formula f(x) = 20*log10(max(1, x/sqrt(2)))
 on each value.
 """,
 'de':
@@ -175,7 +175,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically according to the configuration set by
-:func:`Set Spectrum Callback Configuration`. 
+:func:`Set Spectrum Callback Configuration`.
 
 The :word:`parameter` is the same as :func:`Get Spectrum`.
 """,
@@ -250,8 +250,8 @@ Das Bricklet unterstützt verschiedene Gewichtungsfunktionen. Es kann zwischen
 dB(A), dB(B), dB(C), dB(D), dB(Z) und ITU-R 468 gewählt werden.
 
 dB(A/B/C/D) sind Standard-Gewichtungskurven. dB(A) wird of genutzt um
-Lautstärke in Konzerten zu messen. dB(Z) besitzt keine Gewichtung und gibt 
-die Daten ungewichtet zurück. ITU-R 468 ist ein ITU Gewichtungsstandard der 
+Lautstärke in Konzerten zu messen. dB(Z) besitzt keine Gewichtung und gibt
+die Daten ungewichtet zurück. ITU-R 468 ist ein ITU Gewichtungsstandard der
 hauptsächlich in UK und Europa verwendet wird.
 
 Die Standardeinstellungen sind FFT Größe 1024 und Gewichtung dB(A).

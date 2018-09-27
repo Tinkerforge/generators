@@ -64,7 +64,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the sensitivity of the PIR sensor. The range is 0-100. At full 
+Sets the sensitivity of the PIR sensor. The range is 0-100. At full
 sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.
 
 The actual range depends on many things in the environment (e.g. reflections) and the

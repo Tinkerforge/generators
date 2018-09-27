@@ -43,8 +43,8 @@ Bereich von -20000mA bis 20000mA.
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Current', 
+    packets   = com['packets'],
+    name      = 'Get Current',
     data_name = 'Current',
     data_type = 'int32',
     doc       = current_doc
@@ -64,8 +64,8 @@ Bereich von 0mV bis 36000mV.
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Voltage', 
+    packets   = com['packets'],
+    name      = 'Get Voltage',
     data_name = 'Voltage',
     data_type = 'int32',
     doc       = voltage_doc
@@ -85,8 +85,8 @@ Bereich von 0mW bis 720000mW.
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Power', 
+    packets   = com['packets'],
+    name      = 'Get Power',
     data_name = 'Power',
     data_type = 'int32',
     doc       = power_doc

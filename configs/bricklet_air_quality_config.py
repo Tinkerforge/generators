@@ -165,7 +165,7 @@ The period in ms is the period with which the :cb:`All Values`
 callback is triggered periodically. A value of 0 turns the callback off.
 
 If the `value has to change`-parameter is set to true, the callback is only
-triggered after at least one of the values has changed. If the values didn't 
+triggered after at least one of the values has changed. If the values didn't
 change within the period, the callback is triggered immediately on change.
 
 If it is set to false, the callback is continuously triggered with the period,

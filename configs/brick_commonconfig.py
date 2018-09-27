@@ -42,7 +42,7 @@ In cases where some data has to transferred as fast as possible every few second
 (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn
 the dynamic baudrate off to get the highest possible performance.
 
-The maximum value of the baudrate can be set per port with the function 
+The maximum value of the baudrate can be set per port with the function
 :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
 as set by :func:`Set SPITFP Baudrate` will be used statically.
 

@@ -29,7 +29,6 @@ com = {
     'examples': []
 }
 
-
 distance_doc = {
 'en':
 """

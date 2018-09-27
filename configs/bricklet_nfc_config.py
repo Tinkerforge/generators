@@ -628,7 +628,7 @@ as follows:
 
 * Mifare Classic page size: 16 byte
 * NFC Forum Type 1 page size: 8 byte
-* NFC Forum Type 2 page size: 4 byte 
+* NFC Forum Type 2 page size: 4 byte
 * NFC Forum Type 3 page size: 16 byte
 * NFC Forum Type 4: No pages, page = file selection (CC or NDEF, see below)
 
@@ -1145,7 +1145,7 @@ If the Bricklet is in bootloader mode, the LED is off.
 'de':
 """
 Setzt die Konfiguration der Kommunikations-LED. Standardmäßig zeigt
-die LED ob eine Karte/ein Lesegerät detektiert wurde. 
+die LED ob eine Karte/ein Lesegerät detektiert wurde.
 
 Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
 
@@ -1223,7 +1223,7 @@ einen guten Wert kann man per Trial-and-Error für einen spezfiischen Tag-Typ er
 Standardmäßig nutzen wir einen sehr konservativen Timeout um sicher zu stellen das alle
 Tags definitiv funktionieren.
 
-Standardwert: 2000ms. 
+Standardwert: 2000ms.
 """
 }]
 })
@@ -1244,8 +1244,6 @@ Gibt das Timeout zurück, wie von :func:`Set Maximum Timeout` gesetzt.
 """
 }]
 })
-
-
 
 com['examples'].append({
 'name': 'Scan For Tags',

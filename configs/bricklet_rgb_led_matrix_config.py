@@ -200,7 +200,6 @@ Gibt die *Frame Duration* (Dauer des Frames) in ms zurück, wie von
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Frame',

@@ -60,7 +60,6 @@ com['packets'].append({
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Power Off',
@@ -99,7 +98,6 @@ com['packets'].append({
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

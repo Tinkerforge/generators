@@ -319,7 +319,6 @@ gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',

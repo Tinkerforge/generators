@@ -538,7 +538,7 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Touch',
-'functions': [('callback', ('Touch Position', 'touch position'), [(('Pressure', 'Pressure'), 'uint16', 1, None, None, None), (('X', 'X'), 'uint16', 1, None, None, None), (('Y', 'Y'), 'uint16', 1, None, None, None), (('Age', 'Age'), 'uint32', 1, None, None, None)], None, None), 
+'functions': [('callback', ('Touch Position', 'touch position'), [(('Pressure', 'Pressure'), 'uint16', 1, None, None, None), (('X', 'X'), 'uint16', 1, None, None, None), (('Y', 'Y'), 'uint16', 1, None, None, None), (('Age', 'Age'), 'uint32', 1, None, None, None)], None, None),
               ('callback', ('Touch Gesture', 'touch gesture'), [(('Gesture', 'Gesture'), 'uint8', 1, None, None, None), (('Duration', 'Duration'), 'uint32', 1, None, None, None), (('Pressure Max', 'Pressure Max'), 'uint16', 1, None, None, None), (('X Start', 'X Start'), 'uint16', 1, None, None, None), (('X End', 'X End'), 'uint16', 1, None, None, None), (('Y Start', 'Y Start'), 'uint16', 1, None, None, None), (('Y End', 'Y End'), 'uint16', 1, None, None, None), (('Age', 'Age'), 'uint32', 1, None, None, None)], None, None),
               ('callback_configuration', ('Touch Position', 'touch position'), [], 100, True, None, []),
               ('callback_configuration', ('Touch Gesture', 'touch gesture'), [], 100, True, None, [])]

@@ -40,8 +40,8 @@ TODO
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Moisture', 
+    packets   = com['packets'],
+    name      = 'Get Moisture',
     data_name = 'Moisture',
     data_type = 'uint16',
     doc       = moisture_doc

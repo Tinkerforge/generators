@@ -233,7 +233,6 @@ gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'callback',
 'name': 'UV Light',

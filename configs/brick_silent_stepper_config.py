@@ -370,12 +370,12 @@ The default is 1/256-step with interpolation on.
 """
 Setzt die Schrittauflösung von Vollschritt bis zu 1/256 Schritt.
 
-Wenn Interpolation aktiviert ist, führt der Silent Stepper Brick immer 1/256 
+Wenn Interpolation aktiviert ist, führt der Silent Stepper Brick immer 1/256
 interpolierte Schritte aus. Wenn zum Beispiel Vollschritt mit Interpolation
 genutzt wird, führt jeder Schritt zu 256 1/256 Schritten beim Motor.
 
 Für einen maximalen Drehmoment sollte Vollschritt mit Interpolation genutzt
-werden. Für maximale Auflösung sollte 1/256 Schritt genutzt werden. 
+werden. Für maximale Auflösung sollte 1/256 Schritt genutzt werden.
 Interpolation führt auch dazu, dass der Motor weniger Geräusche erzeugt.
 
 Für den Fall, dass oft die Geschwindigkeit mit sehr hohen Beschleunigungen
@@ -536,8 +536,6 @@ des Stapels verfügbar sein, erfolgt die Versorgung des Motors über diese.
 }]
 })
 
-
-
 com['packets'].append({
 'type': 'function',
 'function_id': 22,
@@ -659,16 +657,16 @@ com['packets'].append({
 Sets the basic configuration parameters for the different modes (Stealth, Coolstep, Classic).
 
 * Standstill Current: This value can be used to lower the current during stand still. This might
-  be reasonable to reduce the heating of the motor and the Brick. When the motor is in standstill 
-  the configured motor phase current will be driven until the configured 
-  Power Down Time is elapsed. After that the phase current will be reduced to the standstill 
+  be reasonable to reduce the heating of the motor and the Brick. When the motor is in standstill
+  the configured motor phase current will be driven until the configured
+  Power Down Time is elapsed. After that the phase current will be reduced to the standstill
   current. The elapsed time for this reduction can be configured with the Standstill Delay Time.
   The unit is in mA and the maximum allowed value is the configured maximum motor current
   (see :func:`Set Motor Current`).
 
-* Motor Run Current: The value sets the motor current when the motor is running. 
-  Use a value of at least one half of the global maximum motor current for a good 
-  microstep performance. The unit is in mA and the maximum allowed value is the current 
+* Motor Run Current: The value sets the motor current when the motor is running.
+  Use a value of at least one half of the global maximum motor current for a good
+  microstep performance. The unit is in mA and the maximum allowed value is the current
   motor current. The API maps the entered value to 1/32 ... 32/32 of the maximum
   motor current. This value should be used to change the motor current during motor movement,
   whereas the global maximum motor current should not be changed while the motor is moving
@@ -714,26 +712,26 @@ The default values are:
 """
 Setzt die Basiskonfiguration-Parameter für verschiedene Modi (Stealth, Coolstep, Classic).
 
-* Standstill Current: Mit diesem Wert kann der Phasenstrom im Stillstand 
-  reduziert werden. Dies ist zum Beispiel sinnvoll um das Aufheizen des Motors 
-  zu verringern. Wenn der Motor steht wird dieser mit dem eingestellte 
-  Phasenstrom betrieben bis die eingestellte Power Down Time um ist. Danach 
-  wird der Phasenstrom schrittweise bis zum Standstill Current reduziert. Die 
+* Standstill Current: Mit diesem Wert kann der Phasenstrom im Stillstand
+  reduziert werden. Dies ist zum Beispiel sinnvoll um das Aufheizen des Motors
+  zu verringern. Wenn der Motor steht wird dieser mit dem eingestellte
+  Phasenstrom betrieben bis die eingestellte Power Down Time um ist. Danach
+  wird der Phasenstrom schrittweise bis zum Standstill Current reduziert. Die
   dafür benötigte Zeit wird mittels Power Down Time eingestellt. Die Einheit ist
   mA und der eingestellte Phasenstrom ist das Maximum für diesen Wert
   (see :func:`Set Motor Current`).
 
 * Motor Run Current: Dieser Wert setzt den Phasenstrom, wenn der Motor sich dreht.
-  Ein Wert von mindestens der Hälfte des maximalen Phasenstrom sollte für gute 
-  Ergebnisse im Mikroschrittbetrieb gesetzt werden. Die Einheit ist mA und der maximal 
+  Ein Wert von mindestens der Hälfte des maximalen Phasenstrom sollte für gute
+  Ergebnisse im Mikroschrittbetrieb gesetzt werden. Die Einheit ist mA und der maximal
   zulässige Wert ist der maximale Phasenstrom. Der eingegebene Wert wird von der API intern
-  in einen Faktor im Bereich von 1/32 ... 32/32 umgerechnet, mit dem der Phasenstrom 
-  begrenzt wird. Der maximale Phasenstrom sollte im laufenden Betrieb nicht geändert werden. 
+  in einen Faktor im Bereich von 1/32 ... 32/32 umgerechnet, mit dem der Phasenstrom
+  begrenzt wird. Der maximale Phasenstrom sollte im laufenden Betrieb nicht geändert werden.
   Für eine Änderung im laufenden Betrieb ist dieser Wert da (see :func:`Set Motor Current`).
 
-* Standstill Delay Time: 
-  Steuert die Zeit für das Verringern des Motorstroms bis zum 
-  Standstill Current. Eine hohe Standstill Delay Time führt zu einem ruhigen und 
+* Standstill Delay Time:
+  Steuert die Zeit für das Verringern des Motorstroms bis zum
+  Standstill Current. Eine hohe Standstill Delay Time führt zu einem ruhigen und
   ruckelfreien Übergang. Der Wertebereich ist 0 bis 307ms.
 
 * Power Down Time: Setzt die Wartezeit nach dem Stehenbleiben.
@@ -741,14 +739,14 @@ Setzt die Basiskonfiguration-Parameter für verschiedene Modi (Stealth, Coolstep
 
 * Stealth Threshold: Setzt den oberen Grenzwert für den Stealth Modus in Schritte/s.
   Der Wertebereich ist 0-65536 Schritte/s. Wenn die Geschwindigkeit des Motors über diesen Wert liegt wird
-  der Stealth Modus abgeschaltet. Ansonsten angeschaltet. Im Stealth Modus nimmt das Drehmoment mit 
+  der Stealth Modus abgeschaltet. Ansonsten angeschaltet. Im Stealth Modus nimmt das Drehmoment mit
   steigender Geschwindigkeit ab.
 
 * Coolstep Threshold: Setzt den unteren Grenzwert für den Coolstep Modus Schritte/s. Der Wertebereich
   ist 0-65536 Schritte/s. Der Coolstep Grenzwert muss über dem Stealth Grenzwert liegen.
 
 * Classic Threshold:  Sets den unteren Grenzwert für den Classic Modus. Der Wertebereich ist
-  0-65536 Schritte/s. Im Classic Modus wird der Schrittmotor geräuschvoll aber das Drehmoment wird 
+  0-65536 Schritte/s. Im Classic Modus wird der Schrittmotor geräuschvoll aber das Drehmoment wird
   maximiert.
 
 * High Velocity Shopper Mode: Wenn der High Velocity Shopper Modus aktiviert wird, optimiert der
@@ -876,7 +874,7 @@ den Motorstrom regelt. Weitere Informationen dazu können im TMC2130 Datenblatt 
 47 (7 spreadCycle and Classic Chopper) gefunden werden.
 
 * Slow Decay Duration: Steuert die Aus-Zeit (off time) in der Slow Decay Phase. Werte sind im Bereich
-  von 0-15 möglich. 0 = Treiber deaktiviert, alle Brücken aus. Nur wenn die Comparator Blank Time >=2 
+  von 0-15 möglich. 0 = Treiber deaktiviert, alle Brücken aus. Nur wenn die Comparator Blank Time >=2
   ist sollte ein Wert von 1 gesetzt werden.
 
 * Enable Random Slow Decay: Muss auf False gesetzt werden um die Aus-Zeit (off time) des Choppers
@@ -889,7 +887,7 @@ den Motorstrom regelt. Weitere Informationen dazu können im TMC2130 Datenblatt 
 * Hysteresis Start Value: Setzt der Startwert der Hysterese. Der Wertebereich ist 0-7. Dieser Parameter
   wird nur benutzt, wenn der Spread Cycle als Chopper Modus genutzt wird.
 
-* Hysteresis End Value: Setzt den Endwert der Hysterese. Der Wertebereich ist -3 bis 12. 
+* Hysteresis End Value: Setzt den Endwert der Hysterese. Der Wertebereich ist -3 bis 12.
 * Sets the hysteresis end value. The value range is -3 to 12. Dieser Parameter
   wird nur benutzt, wenn der Spread Cycle als Chopper Modus genutzt wird.
 
@@ -1015,7 +1013,7 @@ Setzt die Konfigurationsparameter für den Stealth Modus.
   :func:`Set Basic Configuration` gesetzt wurde, liegt.
 
 * Amplitude: Wenn Autoscale aktiviert wurde, wird die PWM Amplitude mit diesem Wert skaliert.
-  Wenn autoscale deaktiviert ist, definiert dieser Wert die maximale PWM Amplitudenänderungen pro Halbwelle. 
+  Wenn autoscale deaktiviert ist, definiert dieser Wert die maximale PWM Amplitudenänderungen pro Halbwelle.
   Der Wertebereich ist 0-255.
 
 * Gradient: Wenn Autoscale deaktiviert wurde, wird der PWM Steigung (Gradient) bei diesem Wert skaliert. Wird
@@ -1151,7 +1149,7 @@ Setzt die Konfigurationsparameter für Coolstep.
 * Current Down Step Width: Setzt das Decrement pro Stallguard-Wert. Der Wertebereich ist 0-3,
   was mit den Dekrementen 1, 2, 8 und 16 korrespondiert.
 
-* Minimum Current: Setzt den minimalen Strom für die Coolstep Stromregelung. Es kann zwischen der Hälfte und einem 
+* Minimum Current: Setzt den minimalen Strom für die Coolstep Stromregelung. Es kann zwischen der Hälfte und einem
   Viertel des Motorstroms gewählt werden.
 
 * Stallguard Threshold Value: Setzt den Grenzwert für die Stall-Ausgabe (Motor blockiert)
@@ -1243,13 +1241,13 @@ geändert werden, wenn man weiß was man tut.
 
 Setzt verschiedene Parametereinstellungen.
 
-* Disable Short To Ground Protection: Setze diesen Wert auf False um den Kurzschluss nach Masse 
+* Disable Short To Ground Protection: Setze diesen Wert auf False um den Kurzschluss nach Masse
   Schutz zu aktivieren. Ansonsten ist dieser deaktiviert.
 
 * Synchronize Phase Frequency: Mit diesem Parameter kann der Chopper für beide Phasen eines
   zweiphasen Motors synchronisiert werden. Der Wertebereich ist 0-15. Wenn der Wert auf 0 gesetzt
   wird ist die Synchronisation abgeschaltet. Ansonsten wird die Synchronisation mit folgender
-  Formel durchgeführt: f_sync = f_clk/(value*64). Im Classic Modus ist die Synchronisation 
+  Formel durchgeführt: f_sync = f_clk/(value*64). Im Classic Modus ist die Synchronisation
   automatisch abgeschaltet. f_clk ist 12.8MHz.
 
 Die Standardwerte sind:
@@ -1316,7 +1314,7 @@ Returns the current driver status.
 
 * Motor Stalled: Is true if a motor stall was detected.
 
-* Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode. 
+* Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode.
   The returned value is between 0 and 31. It represents a multiplier of 1/32 to 32/32 of the
   ``Motor Run Current`` as set by :func:`Set Basic Configuration`. Example: If a ``Motor Run Current``
   of 1000mA was set and the returned value is 15, the ``Actual Motor Current`` is 16/32*1000mA = 500mA.
@@ -1335,7 +1333,7 @@ Returns the current driver status.
 """
 Gibt den aktuellen Treiberstatus zurück.
 
-* Open Load: Gibt an, dass keine Last an den Phasen A oder B, oder bei beiden vorhanden ist (open load). 
+* Open Load: Gibt an, dass keine Last an den Phasen A oder B, oder bei beiden vorhanden ist (open load).
   In dem Fall kann es ein Problem mit der Verkabelung des Motors geben. Es kann aber auch Fehlmeldungen geben,
   wenn der Motor sich schnell bewegt oder sich im Stillstand befindet.
 
@@ -1355,9 +1353,9 @@ Gibt den aktuellen Treiberstatus zurück.
   von 16/32*1000mA = 500mA.
 
 * Stallguard Result: Der Stallguard Wert gibt einen Hinweis auf die Last des Motors. Ein niedriger Wert bedeutet eine
-  höhere Last. Über Ausprobieren kann man mit diesem Wert herausfinden, welcher Wert zu einem geeigneten Drehmoment bei 
-  der aktuellen Geschwindigkeit führt. Danach kann über diesen Wert herausgefunden werden, wenn eine Blockierung des 
-  Motors wahrscheinlich wird und es kann dementsprechend darauf reagiert werden (z.B. indem die Geschwindigkeit reduziert 
+  höhere Last. Über Ausprobieren kann man mit diesem Wert herausfinden, welcher Wert zu einem geeigneten Drehmoment bei
+  der aktuellen Geschwindigkeit führt. Danach kann über diesen Wert herausgefunden werden, wenn eine Blockierung des
+  Motors wahrscheinlich wird und es kann dementsprechend darauf reagiert werden (z.B. indem die Geschwindigkeit reduziert
   wird). Im Stillstand kann dieser Wert nicht benutzt werden. Er zeigt dann die Chopper On-Time für Motorspule A.
 
 * Stealth Voltage Amplitude: Zeigt das aktuelle PWM Scaling. Im Stealth Modus kann dieser Wert benutzt werden um die
@@ -1550,7 +1548,7 @@ Geschwindigkeit, die aktuelle Position, die verbleibenden Schritte,
 die Spannung des Stapels, die externe Spannung und der aktuelle Stromverbrauch
 des Schrittmotors.
 
-Der Stromverbrauch des Schrittmotors wird berechnet aus dem 
+Der Stromverbrauch des Schrittmotors wird berechnet aus dem
 ``Actual Motor Current``-Wert (siehe :func:`Set Basic Configuration`) multipliziert
 mit dem  ``Motor Run Current`` (see :func:`Get Driver Status`). Es handelt
 sich dabei um eine interne Berechnung des Treibers, nicht um eine externe

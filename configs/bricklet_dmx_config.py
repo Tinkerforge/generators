@@ -371,7 +371,6 @@ Gibt die Konfiguration zurück, wie von :func:`Set Error LED Config` gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Callback Config',

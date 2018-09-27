@@ -56,8 +56,8 @@ Bereich von 0 bis 42V. Die Auflösung ca. 10mV bis 1mV abhängig von der
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Voltage', 
+    packets   = com['packets'],
+    name      = 'Get Voltage',
     data_name = 'Voltage',
     data_type = 'uint16',
     doc       = voltage_doc

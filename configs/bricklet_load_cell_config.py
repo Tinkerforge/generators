@@ -323,7 +323,6 @@ Gibt *true* zurück wenn die LED aktiviert ist, *false* sonst.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Calibrate',

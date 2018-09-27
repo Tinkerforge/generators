@@ -41,8 +41,8 @@ Gibt das aktuell gemessene Gewicht in Gramm zurück.
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Weight', 
+    packets   = com['packets'],
+    name      = 'Get Weight',
     data_name = 'Weight',
     data_type = 'int32',
     doc       = weight_doc

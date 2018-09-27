@@ -1530,7 +1530,6 @@ gesetzt
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set USB Voltage Callback Period',
