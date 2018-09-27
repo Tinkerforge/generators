@@ -234,7 +234,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the last valid touch position.
+Returns the last valid touch position:
 
 * *X*: Touch position on x-axis (0-127)
 * *Y*: Touch position on y-axis (0-63)
@@ -354,8 +354,8 @@ Returns one of four touch gestures that can be automatically detected by the Bri
 
 The gestures are swipes from left to right, right to left, top to bottom and bottom to top.
 
-Additionally to the gestures a vector with a start and end position of the gesture is is
-provided. You can use this vecotr do determine a more exact location of the gesture (e.g.
+Additionally to the gestures a vector with a start and end position of the gesture is
+provided. You can use this vector do determine a more exact location of the gesture (e.g.
 the swipe from top to bottom was on the left or right part of the screen).
 
 The *age*-parameter corresponds to the age of gesture in ms (how long ago it was).

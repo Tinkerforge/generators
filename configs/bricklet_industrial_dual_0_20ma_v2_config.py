@@ -146,7 +146,7 @@ com['packets'].append({
 'en':
 """
 Sets a gain between 1x and 8x. If you want to measure a very small current,
-you can incerase the gain to get some more resolution.
+you can increase the gain to get some more resolution.
 
 Example: If you measure 0.5mA with a gain of 8x the return value will be
 4mA.
@@ -191,7 +191,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Each channel has a corresponding LED. You can turn the LED Off, On or show a
+Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED can either be turned on with a pre-defined threshold or the intensity
 of the LED can change with the measured value.

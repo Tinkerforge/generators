@@ -60,11 +60,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the logic levels that are currently measured on the channels.
+Returns the logic levels that are currently output on the channels.
 """,
 'de':
 """
-Gibt die aktuell gemessenen Zustände zurück.
+Gibt die aktuellen Zustände der Kanäle zurück.
 """
 }]
 })
@@ -82,7 +82,7 @@ Sets the output value of a specific channel without affecting the other channels
 """,
 'de':
 """
-Setzt den Ausgabewert des spezifizierte Channel ohne die anderen Channele zu
+Setzt den Ausgabewert des spezifizierten Kanals ohne die anderen Kanäle zu
 beeinflussen.
 """
 }]
@@ -106,7 +106,7 @@ If this function is called with the parameters (true, 1500):
 The channel will turn on and in 1.5s it will turn off again.
 
 A monoflop can be used as a failsafe mechanism. For example: Lets assume you
-have a RS485 bus and a IO4 Bricklet is connected to one of the slave
+have a RS485 bus and a IO-4 Bricklet is connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
 of two seconds. The channel will be *high* all the time. If now the RS485
 connection is lost, the channel will turn *low* in at most two seconds.
@@ -121,7 +121,7 @@ Wenn diese Funktion mit den Parametern (true, 1500) aufgerufen wird:
 Der Kanal wird angeschaltet und nach 1,5s wieder ausgeschaltet.
 
 Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
-Angenommen ein RS485 Bus und ein IO4 Bricklet ist an ein Slave Stapel
+Angenommen ein RS485 Bus und ein IO-4 Bricklet ist an ein Slave Stapel
 verbunden. Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter
 von 2 Sekunden, aufgerufen werden.
 Der Kanal wird die gesamte Zeit eingeschaltet sein. Wenn jetzt die RS485 Verbindung
@@ -192,7 +192,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Each channel has a corresponding LED. You can turn the LED Off, On or show a
+Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
 
@@ -200,12 +200,12 @@ By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
-Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
-aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
-angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
+ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
+angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
-Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
+Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -222,7 +222,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """

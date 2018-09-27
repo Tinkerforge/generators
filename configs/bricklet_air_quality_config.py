@@ -75,14 +75,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets a temperature offset in 1/100°C. A offset of 10 will decrease the temperature
-by 0.1°C.
+Sets a temperature offset in 1/100°C. A offset of 10 will decrease the measured
+temperature by 0.1°C.
 
 If you install this Bricklet into an enclosure and you want to measure the ambient
 temperature, you may have to decrease the measured temperature by some value to
-include for the error because of the heating inside of the enclosure.
+compensate for the error because of the heating inside of the enclosure.
 
-We would recommend that you leave the parts in the enclosure running for at least
+We recommend that you leave the parts in the enclosure running for at least
 24 hours such that a temperature equilibrium can be reached. After that you can measure
 the temperature directly outside of enclosure and set the difference as offset.
 
@@ -110,7 +110,7 @@ Returns the temperature offset as set by
 """,
 'de':
 """
-Gibt den Temperatur-Offset zurück, wie mittels
+Gibt das Temperatur-Offset zurück, wie mittels
 :func:`Set Temperature Offset` gesetzt.
 """
 }]

@@ -117,7 +117,7 @@ com['packets'].append({
 """
 Sets offset and gain of MCP3911 internal calibration registers.
 
-See MCP3911 datasheet 7.7 and 7.8. The Industrial Dual Analog In Bricklet
+See MCP3911 datasheet 7.7 and 7.8. The Industrial Dual Analog In Bricklet 2.0
 is already factory calibrated by Tinkerforge. It should not be necessary
 for you to use this function
 """,
@@ -125,7 +125,7 @@ for you to use this function
 """
 Setzt Offset und Gain der MCP3911 internen Kalibrierungsregister.
 
-Siehe MCP3911 Datenblatt 7.7 und 7.8. Das Industrial Dual Analog In Bricklet
+Siehe MCP3911 Datenblatt 7.7 und 7.8. Das Industrial Dual Analog In Bricklet 2.0
 wird von Tinkerforge werkskalibriert. Ein Aufruf dieser Funktion sollte
 nicht notwendig sein.
 """
@@ -181,7 +181,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Each channel has a corresponding LED. You can turn the LED Off, On or show a
+Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED can either be turned on with a pre-defined threshold or the intensity
 of the LED can change with the measured value.

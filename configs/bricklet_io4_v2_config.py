@@ -268,8 +268,6 @@ The default value is (0, false).
 """,
 'de':
 """
-Dieser Callback kann pro Kanal konfiguriert werden.
-
 Die Periode in ms ist die Periode mit der der :cb:`All Input Value`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 

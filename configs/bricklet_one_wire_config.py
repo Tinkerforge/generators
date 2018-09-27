@@ -121,9 +121,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes a command to the 1-Wire device with the given identifier. You can obain
+Writes a command to the 1-Wire device with the given identifier. You can obtain
 the identifier by calling :func:`Search Bus`. The MATCH ROM operation is used to
-write the command
+write the command.
 
 If you only have one device connected you can set the identifier to 0. In this case
 the SKIP ROM command is used to write the command.
@@ -189,7 +189,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` ges
     ow.write_command(0, 0x4E) # WRITE SCRATCHPAD
     ow.write(0x00) # ALARM H (unused)
     ow.write(0x00) # ALARM L (unused)
-    ow.write(0x7F) # COFIGURATION: 12 bit mode
+    ow.write(0x7F) # CONFIGURATION: 12 bit mode
 
     while True:
         ow.write_command(0, 0x44) # CONVERT T (start temperature conversion)

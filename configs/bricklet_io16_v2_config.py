@@ -36,7 +36,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value of all four channels. A value of *true* or *false* outputs
+Sets the output value of all sixteen channels. A value of *true* or *false* outputs
 logic 1 or logic 0 respectively on the corresponding channel.
 
 Use :func:`Set Selected Value` to change only one output channel state.
@@ -324,7 +324,7 @@ directly after it is read.
 Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Channel zurück. Die
 zu zählenden Flanken können mit :func:`Set Edge Count Configuration` konfiguriert werden.
 
-Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
+Wenn `reset counter` auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
 """
 }]
