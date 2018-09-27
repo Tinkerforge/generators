@@ -221,3 +221,7 @@
 - Add (Is)SensorConnected method and callback to PTC Bricklet API
 - Break Humidity 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
   fix types for callback threshold min/max configuration
+
+<unknown>: 2.1.20 (<unknown>)
+- Fix compile errors in Delphi XE
+- Convert all array parameters from static to open to accept dynamic arrays too
