@@ -213,7 +213,7 @@ Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })

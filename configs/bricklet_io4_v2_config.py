@@ -437,7 +437,7 @@ Default values: 0 (edge type) and 100ms (debounce time)
 Konfiguriert den Flankenzähler für einen bestimmten Kanal.
 
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
-steigende, fallende oder beide Flanken gezählt werden für Channels die als Eingang
+steigende, fallende oder beide Flanken gezählt werden für Kanäle die als Eingang
 konfiguriert sind. Mögliche Flankentypen sind:
 
 * 0 = steigend (Standard)
@@ -473,7 +473,7 @@ Returns the edge type and debounce time for the selected channel as set by
 """,
 'de':
 """
-Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Channel zurück,
+Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Kanal zurück,
 wie von :func:`Set Edge Count Configuration` gesetzt.
 """
 }]
@@ -483,8 +483,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'in'),   # 1/10 Hz
-             ('Duty Cycle', 'uint16', 1, 'in')], # 1/100 %
+             ('Frequency', 'uint32', 1, 'in'),
+             ('Duty Cycle', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -523,8 +523,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'out'),   # 1/10 Hz
-             ('Duty Cycle', 'uint16', 1, 'out')], # 1/100 %
+             ('Frequency', 'uint32', 1, 'out'),
+             ('Duty Cycle', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0], 
 'doc': ['af', {
 'en':

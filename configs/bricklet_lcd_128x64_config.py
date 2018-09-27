@@ -43,22 +43,41 @@ com['packets'].append({
 """
 Writes pixels to the specified window.
 
-The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are written
-into the window line by line from left to right.
+The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
+into the window line by line top to bottom and each line is written from left to
+right.
 
 If automatic draw is enabled (default) the pixels are directly written to
-the screen and only changes are updated. If you only need to update a few
-pixels, only these pixels are updated on the screen, the rest stays the same.
+the screen. Only pixels that have actually changed are updated on the screen,
+the rest stays the same.
 
-If automatic draw is disabled the pixels are written to a buffer and the
-buffer is transferred to the display only after :func:`Draw Buffered Frame`
-is called.
+If automatic draw is disabled the pixels are written to an internal buffer and
+the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+is called. This can be used to avoid flicker when drawing a complex frame in
+multiple steps.
 
 Automatic draw can be configured with the :func:`Set Display Configuration`
 function.
 """,
 'de':
 """
+Schreibt Pixel in das angegebene Fenster.
+
+Die X-Achse läuft von 0 bis 127 und die Y-Achse von 0 bis 63. Die Pixel werden
+zeilenweise von oben nach unten geschrieben und die Zeilen werden jeweils von
+links nach rechts geschrieben.
+
+Wenn Automatic Draw aktiviert ist (Standard), dann werden die Pixel direkt auf
+den Display geschrieben. Nur Pixel die sich wirklich verändert haben werden
+auf dem Display aktualisiert.
+
+Wenn Automatic Draw deaktiviert ist, dann werden die Pixel in einen internen
+Buffer geschrieben der dann durch einen Aufruf von :func:`Draw Buffered Frame`
+auf dem Display angezeigt werden kann. Dadurch kann Flicker vermieden werden,
+wenn ein komplexes Bild in mehreren Schritten aufgebaut wird.
+
+Automatic Draw kann über die :func:`Set Display Configuration` Funktion
+eingestellt werden.
 """
 }]
 })
@@ -80,11 +99,12 @@ com['packets'].append({
 """
 Reads pixels from the specified window.
 
-The x-axis goes from 0-127 and the y-axis from 0-63. The pixels are read
-from the window line by line from left to right.
+The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
+from the window line by line top to bottom and each line is read from left to
+right.
 
-If automatic draw is enabled the pixels that are read are always the same that are
-shown on the display.
+If automatic draw is enabled (default) the pixels that are read are always the
+same that are shown on the display.
 
 If automatic draw is disabled the pixels are read from the internal buffer
 (see :func:`Draw Buffered Frame`).
@@ -94,6 +114,20 @@ function.
 """,
 'de':
 """
+Liest Pixel aus dem angegebenen Fenster.
+
+Die X-Achse läuft von 0 bis 127 und die Y-Achse von 0 bis 63. Die Pixel werden
+zeilenweise von oben nach unten und die Zeilen werden jeweils von links nach
+rechts gelesen.
+
+Wenn Automatic Draw aktiviert ist (Standard), dann werden die Pixel direkt vom
+Display gelesen.
+
+Wenn Automatic Draw deaktiviert ist, dann werden die Pixel aus einen internen
+Buffer gelesen (siehe :func:`Draw Buffered Frame`).
+
+Automatic Draw kann über die :func:`Set Display Configuration` Funktion
+eingestellt werden.
 """
 }]
 })
@@ -129,11 +163,11 @@ com['packets'].append({
 Sets the configuration of the display.
 
 You can set a contrast value from 0 to 63, a backlight intensity value
-from 0 to 100 and you can invert the color (black/white) of the display.
+from 0 to 100 and you can invert the color (white/black) of the display.
 
 If automatic draw is set to *true*, the display is automatically updated with every
-call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
-changes are written into a temporary buffer and only shown on the display after
+call of :func:`Write Pixels` and :func:`Write Line`. If it is set to false, the
+changes are written into an internal buffer and only shown on the display after
 a call of :func:`Draw Buffered Frame`.
 
 The default values are contrast 14, backlight intensity 100, inverting off
@@ -141,6 +175,19 @@ and automatic draw on.
 """,
 'de':
 """
+Setzt die Konfiguration des Displays.
+
+Der Kontrast kann zwischen 0 und 63, die Backlight-Intensität zwischen 0 und 100
+und das Farbschema invertiert (weiß/schwarz) eingestellt werden.
+
+Wenn Automatic Draw aktiviert (*true*) ist dann wird das Display bei jedem
+Aufruf von :func:`Write Pixels` und :func:`Write Line` aktualisiert. Wenn
+Automatic Draw deaktiviert (*false*) ist, dann werden Änderungen in einen
+internen Buffer geschrieben, der dann bei bei einem Aufruf von
+:func:`Draw Buffered Frame` auf dem Display angezeigt wird.
+
+Standardwerte: Kontrast 14, Backlight-Intensität 100, Invertierung aus und
+Automatic Draw aktiviert.
 """
 }]
 })
@@ -207,21 +254,32 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Draws the currently buffered frame. Normally each call of :func:`Write Pixels` or
+Draws the currently buffered frame. Normally each call of :func:`Write Pixels` and
 :func:`Write Line` draws directly onto the display. If you turn automatic draw off
-(:func:`Set Display Configuration`), the data is written in a temporary buffer and
-only transferred to the display by calling this function.
+(:func:`Set Display Configuration`), the data is written in an internal buffer and
+only transferred to the display by calling this function. This can be used to
+avoid flicker when drawing a complex frame in multiple steps.
 
-Set the *force complete redraw* parameter to *true* to redraw the whole display
+Set the `force complete redraw` to *true* to redraw the whole display
 instead of only the changed parts. Normally it should not be necessary to set this to
 *true*. It may only become necessary in case of stuck pixels because of errors.
 """,
 'de':
 """
+Stellt den aktuell Inhalt des internen Buffers auf dem Display dar. Normalerweise
+schreibt jeder Aufruf von :func:`Write Pixels` und :func:`Write Line` direkt auf
+den Display. Wenn jedoch Automatic Draw deaktiviert ist (:func:`Set Display
+Configuration`), dann werden Änderungen in einen internen Buffer anstatt auf den
+Display geschrieben. Der internen Buffer kann dann durch einen Aufruf dieser
+Funktion auf den Display geschrieben werden. Dadurch kann Flicker vermieden werden,
+wenn ein komplexes Bild in mehreren Schritten aufgebaut wird.
+
+Wenn `Force Complete Redraw` auf *true* gesetzt ist, dann wird der gesamte Display
+aktualisiert, anstatt nur die Pixel die sich wirklich verändert haben. Normalerweise
+sollte dies nicht notwendig sein, außer bei hängenden Pixeln bedingt durch Fehler.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -236,18 +294,22 @@ com['packets'].append({
 """
 Returns the last valid touch position:
 
-* *X*: Touch position on x-axis (0-127)
-* *Y*: Touch position on y-axis (0-63)
-* *Pressure*: Amount of pressure applied by the user (0-300).
-* *Age*: Age of touch press in ms (how long ago it was).
+* Pressure: Amount of pressure applied by the user (0-300)
+* X: Touch position on x-axis (0-127)
+* Y: Touch position on y-axis (0-63)
+* Age: Age of touch press in ms (how long ago it was)
 """,
 'de':
 """
-TBD
+Gibt die letzte gültige Touch-Position zurück:
+
+* Pressure: Anpressdruck des Touches (0-300)
+* X: Touch-Position auf der X-Achse (0-127)
+* Y: Touch-Position auf der Y-Achse (0-63)
+* Age: Alter des Touches in ms (wie lange ist die Erkennung des Touches her)
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -358,15 +420,25 @@ Additionally to the gestures a vector with a start and end position of the gestu
 provided. You can use this vector do determine a more exact location of the gesture (e.g.
 the swipe from top to bottom was on the left or right part of the screen).
 
-The *age*-parameter corresponds to the age of gesture in ms (how long ago it was).
+The age parameter corresponds to the age of gesture in ms (how long ago it was).
 """,
 'de':
 """
-TBD
+Gibt eine der vier Touch-Gesten zurück, die das Bricklet automatisch erkennen kann.
+
+Die Gesten umfassen Wischen von links nach rechts, rechts nach links, oben nach
+unten und unten nach oben.
+
+Zusätzlich zu Geste wird der Vektor von Start- nach Endposition des Wischens
+angegeben. Dieser kann genutzt werden um die genaue Position der Geste zu
+ermitteln (z.B. ob ein Wischen von oben nach unten auf der linken oder rechten
+des Bildschirms erkannt wurde).
+
+Das Age Parameter gibt das Alter der Geste in ms an (wie lange ist die Erkennung
+der Geste her).
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

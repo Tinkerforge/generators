@@ -44,16 +44,23 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns a list of up to 64 Identifiers of the connected 1-Wire devices. 
-Each identifier has 64 bits and consists of 8 bit family code, 48 bit ID and
-8 bit CRC.
+Returns a list of up to 64 identifiers of the connected 1-Wire devices.
+Each identifier is 64-bit and consists of 8-bit family code, 48-bit ID and
+8-bit CRC.
 
-To get these Identifiers the Bricklet runs the SEARCH ROM algorithm, as 
-`defined by maxim <https://www.maximintegrated.com/en/app-notes/index.mvp/id/187>`__.
+To get these identifiers the Bricklet runs the
+`SEARCH ROM algorithm <https://www.maximintegrated.com/en/app-notes/index.mvp/id/187>`__,
+as defined by Maxim.
 """,
 'de':
 """
+Gibt eine Liste mit bis zu 64 Identifiern von angeschlossenen 1-Wire Geräten
+zurück. Jeder Identifier ist 64-Bit und besteht aus 8-Bit Familien-Code,
+48-Bit ID und 8-Bit CRC.
 
+Um diese Liste zu erhalten führt das Bricklet den
+`SEARCH ROM Algorithmus <https://www.maximintegrated.com/en/app-notes/index.mvp/id/187>`__
+von Maxim aus.
 """
 }]
 })
@@ -70,7 +77,7 @@ Resets the bus with the 1-Wire reset operation.
 """,
 'de':
 """
-
+Setzt den Bus mit einer 1-Wire Reset Operation zurück.
 """
 }]
 })
@@ -88,7 +95,7 @@ Writes a byte of data to the 1-Wire bus.
 """,
 'de':
 """
-
+Schreibt ein Byte an Daten auf den 1-Wire Bus.
 """
 }]
 })
@@ -106,7 +113,7 @@ Reads a byte of data from the 1-Wire bus.
 """,
 'de':
 """
-
+Liest ein Byte an Daten vom 1-Wire Bus.
 """
 }]
 })
@@ -125,12 +132,19 @@ Writes a command to the 1-Wire device with the given identifier. You can obtain
 the identifier by calling :func:`Search Bus`. The MATCH ROM operation is used to
 write the command.
 
-If you only have one device connected you can set the identifier to 0. In this case
-the SKIP ROM command is used to write the command.
+If you only have one device connected or want to broadcast to all devices
+you can set the identifier to 0. In this case the SKIP ROM operation is used to
+write the command.
 """,
 'de':
 """
+Sendet einen Befehl an das 1-Wire Gerät mit der angegebenen Identifier. Die
+Liste der Identifier können mittels :func:`Search Bus` ermittelt werden. Die
+MATCH ROM Operation wird verwendet, um den Befehl zu übertragen.
 
+Wenn nur ein Gerät angeschlossen ist, oder der Befehl an alle Geräte gesendet
+werden soll kann als Identifier 0 verwendet werden. Dann wird die SKIP ROM
+Operation verwendet, um den Befehl zu übertragen.
 """
 }]
 })
@@ -180,7 +194,8 @@ Returns the configuration as set by :func:`Set Communication LED Config`
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config`
+gesetzt.
 """
 }]
 })

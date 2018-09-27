@@ -18,7 +18,7 @@ com = {
     'display_name': 'Air Quality',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Measures relative IAQ index, temperature, humidity and air pressure',
+        'en': 'Measures IAQ index, temperature, humidity and air pressure',
         'de': 'Misst IAQ Index, Temperatur, relative Luftfeuchtigkeit und Luftdruck'
     },
     'comcu': True,
@@ -46,8 +46,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns all values measured by the Air Quality Bricklet. The values ae IAQ (In-Air Quality) Index,
-IAQ Index Accuracy, Temperature, Humidity and Air Pressure.
+Returns all values measured by the Air Quality Bricklet. The values are
+IAQ (Indoor Air Quality) Index, IAQ Index Accuracy, Temperature, Humidity and
+Air Pressure.
 
 .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
    :scale: 100 %
@@ -55,14 +56,33 @@ IAQ Index Accuracy, Temperature, Humidity and Air Pressure.
    :align: center
    :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
 
-* IAQ Index: The IAQ Index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.
-* IAQ Index Accuracy: The accuracy goes from 0 = unreliable to 3 = high.
-* Temperature: The temperature is given in steps of 0.01 °C
-* Humidity: The relative humidity is given in steps of 0.01 %RH.
-* Air Pressure. The air pressure is given in steps of 0.01 mbar.
+The values have these ranges and units:
+
+* IAQ Index: 0 to 500, higher value means greater level of air pollution
+* IAQ Index Accuracy: 0 = unreliable to 3 = high
+* Temperature: in steps of 0.01 °C
+* Humidity: in steps of 0.01 %RH
+* Air Pressure: in steps of 0.01 mbar
 """,
 'de':
 """
+Gibt alle Werte zurück, die das Air Quality Bricklet misst. Diese Werte umfassen:
+IAQ (Indoor Air Quality = Innenraumluftqualität) Index, IAQ Index Genauigkeit,
+Temperatur, Luftfeuchte und Luftdruck.
+
+.. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
+   :scale: 100 %
+   :alt: Air Quality Index description
+   :align: center
+   :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
+
+Die Werte haben diese Bereiche und Einheiten:
+
+* IAQ Index: 0 bis 500, ein höhere Werte bedeutet eine stärkere Luftverschmutzung
+* IAQ Index Genauigkeit: 0 = unzuverlässig bis 3 = hoch
+* Temperatur: in 0,01 °C Schritten
+* Luftfeuchte: in 0,01 %RH Schritten
+* Luftdruck: in 0,01 mbar Schritten
 """
 }]
 })
@@ -86,13 +106,29 @@ We recommend that you leave the parts in the enclosure running for at least
 24 hours such that a temperature equilibrium can be reached. After that you can measure
 the temperature directly outside of enclosure and set the difference as offset.
 
-This temperature difference is used to calculate the correct ambient humidity and
-also for the in air quality measurements. If the precision of the measurements is
-important to you we recommend that you set this value.
+This temperature offset is used to calculate the relative humidity and
+IAQ index measurements. In case the Bricklet is installed in an enclosure, we
+recommend to measure and set the temperature offset to imporve the accuracy of
+the measurements.
 """,
 'de':
 """
-TBD
+Setzt ein Temperatur-Offset 1/100°C. Ein Offset von 10 verringert die gemessene
+Temperatur um 0,1°C.
+
+Wenn das Bricklet in einem Gehäuse verbaut wird, aber die Umgebungstemperatur
+außerhalb des Gehäuses gemessen werden soll, dann muss vom gemessenen Temperatur
+ein bestimmter Wert abgezogen werden, um den Messfehler durch das Aufheizen des
+Gehäuses zu kompensieren.
+
+Wir empfehlen den Messaufbau im Gehäuse mindestens 24 Stunden laufen zu lassen,
+damit sich ein Temperaturgleichgewicht einstellt. Danach muss die Temperatur
+außerhalb des Gehäuses gemessen werden und die Differenz zur Temperatur innerhalb
+des Gehäuses als Offset eingestellt werden.
+
+Dieses Temperatur-Offset geht in die Berechnung der Luftfeuchte und des IAQ Index
+mit ein. Um die Genauigkeit der Messwerte innerhalb eines Gehäuses zu verbessern
+sollte der Temperatur-Offset unbedingt bestimmt und eingestellt werden.
 """
 }]
 })
@@ -211,12 +247,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the IAQ (In-Air Quality) index and accuracy. The IAQ index goes from
+Returns the IAQ index and accuracy. The IAQ index goes from
 0 to 500. The higher the IAQ index, the greater the level of air pollution.
 
 .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
    :scale: 100 %
-   :alt: Air Quality Index description
+   :alt: IAQ index description
    :align: center
    :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
 
@@ -226,7 +262,19 @@ with :func:`Set IAQ Index Callback Configuration`.
 """,
 'de':
 """
-TBD
+Gibt den IAQ Index und dessen Genaugkeit zurück. Der IAQ Index hate einen
+Wertebereich von 0 bis 500, ein höhere Werte bedeutet eine stärkere
+Luftverschmutzung.
+
+.. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
+   :scale: 100 %
+   :alt: IAQ Index Beschreibung
+   :align: center
+   :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
+
+Wenn der Wert periodisch benötigt wird, kann auch der :cb:`IAQ Index` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set IAQ Index Callback Configuration` konfiguriert.
 """
 }]
 })
@@ -321,7 +369,7 @@ Returns temperature in steps of 0.01 °C.
 """,
 'de':
 """
-TBD
+Gibt die Temperatur in 0,01 °C Schritten zurück.
 """
 }
 
@@ -340,7 +388,7 @@ Returns relative humidity in steps of 0.01 %RH.
 """,
 'de':
 """
-TBD
+Gibt die relative Luftfeuchtigkeit in 0,01 %RH Schritten zurück.
 """
 }
 
@@ -359,7 +407,7 @@ Returns air pressure in steps of 0.01 mbar.
 """,
 'de':
 """
-TBD
+Gibt den Luftdruck in 0,01 mbar Schritten zurück.
 """
 }
 

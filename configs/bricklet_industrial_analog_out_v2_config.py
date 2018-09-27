@@ -226,11 +226,27 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+You can turn the Out LED off, on or show a
+heartbeat. You can also set the LED to "Out Status". In this mode the
+LED can either be turned on with a pre-defined threshold or the intensity
+of the LED can change with the output value (voltage or current).
 
+You can configure the channel status behavior with :func:`Set Out LED Status Config`.
+
+By default the LED is configured as "Out Status"
 """,
 'de':
 """
+Die Out LED kann an- oder
+ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der "Out-Status"
+angezeigt werden. Falls Out-Status gewählt wird kann die LED entweder ab einem
+vordefinierten Schwellwert eingeschaltet werden oder ihre Helligkeit anhand des
+Ausgabewertes (Spannung oder Strom) skaliert werden.
 
+Das Verhalten des Out-Status kann mittels :func:`Set Out LED Status Config`
+eingestellt werden.
+
+Standardmäßig ist die LED auf Out-Status konfiguriert.
 """
 }]
 })
@@ -250,7 +266,7 @@ Returns the Out LED configuration as set by :func:`Set Out LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Out LED Config` gesetzt.
+Gibt die Out-LED-Konfiguration zurück, wie von :func:`Set Out LED Config` gesetzt.
 """
 }]
 })
@@ -266,11 +282,57 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the Out LED status config. This config is used if the Out LED is
+configured as "Out Status", see :func:`Set Out LED Config`.
 
+For each channel you can choose between threshold and intensity mode.
+
+In threshold mode you can define a positive or a negative threshold.
+For a positive threshold set the "min" parameter to the threshold value in mV or
+µA above which the LED should turn on and set the "max" parameter to 0. Example:
+If you set a positive threshold of 5V, the LED will turn on as soon as the
+output value exceeds 5V and turn off again if it goes below 5V.
+For a negative threshold set the "max" parameter to the threshold value in mV or
+µA below which the LED should turn on and set the "min" parameter to 0. Example:
+If you set a negative threshold of 5V, the LED will turn on as soon as the
+output value goes below 5V and the LED will turn off when the output value
+exceeds 5V.
+
+In intensity mode you can define a range mV or µA that is used to scale the brightness
+of the LED. Example with min=2V, max=8V: The LED is off at 2V and below, on at
+8V and above and the brightness is linearly scaled between the values 2V and 8V.
+If the min value is greater than the max value, the LED brightness is scaled the
+other way around.
+
+By default the channel LED status config is set to intensity with min=0V and
+max=10V.
 """,
 'de':
 """
+Setzt die Out-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
+die Out-LED auf Out-Status eingestellt ist, siehe :func:`Set Out LED Config`.
 
+Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
+
+Im Schwellwertmodus kann ein positiver oder negativer Schwellwert definiert werden.
+Für einen positiven Schwellwert muss das "min" Parameter auf den gewünschten
+Schwellwert in mV oder µA gesetzt werden, über dem die LED eingeschaltet werden
+soll. Der "max" Parameter muss auf 0 gesetzt werden. Beispiel: Bei einem
+positiven Schwellwert von 5V wird die LED eingeschaltet sobald der Ausgabewert
+über 5V steigt und wieder ausgeschaltet sobald der Ausgabewert unter 5V fällt.
+Für einen negativen Schwellwert muss das "max" Parameter auf den gewünschten
+Schwellwert in mV oder µA gesetzt werden, unter dem die LED eingeschaltet werden
+soll. Der "max" Parameter muss auf 0 gesetzt werden. Beispiel: Bei einem negativen
+Schwellwert von 5V wird die LED eingeschaltet sobald der Ausgabewert unter
+5V fällt und wieder ausgeschaltet sobald der Ausgabewert über 5V steigt.
+
+Im Intensitätsmodus kann ein Bereich in mV oder µA angegeben werden über den die
+Helligkeit der LED skaliert wird. Beispiel mit min=2V und max=8V: Die LED ist
+bei 2V und darunter aus, bei 8V und darüber an und zwischen 2V und 8V wird die
+Helligkeit linear skaliert. Wenn der min Wert größer als der max Wert ist, dann
+wird die Helligkeit andersherum skaliert.
+
+Standardwerte: Intensitätsmodus mit min=0V und max=10V.
 """
 }]
 })
@@ -286,11 +348,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the Out LED configuration as set by :func:`Set Out LED Status Config`
+Returns the Out LED status configuration as set by :func:`Set Out LED Status Config`.
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Out LED Status Config` gesetzt.
+Gibt die Out-LED-Status-Konfiguration zurück, wie von :func:`Set Out LED Status Config`
+gesetzt.
 """
 }]
 })

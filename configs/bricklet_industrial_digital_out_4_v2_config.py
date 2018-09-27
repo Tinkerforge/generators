@@ -6,8 +6,6 @@
 
 # Industrial Digital Out 4 Bricklet 2.0 communication config
 
-# TODO: Documentation and examples.
-
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -46,8 +44,13 @@ channels 2-3 low.
 """,
 'de':
 """
-Beispiel: (True, True, False, False) setzt die Channels 0-1 auf logisch 1 und die
-Channels 2-3 auf logisch 0.
+Setzt den Zustand aller vier Kanäle. Der Wert *true* bzw. *false* erzeugen
+logisch 1 bzw. logisch 0 auf dem entsprechenden Kanal.
+
+Mittels :func:`Set Selected Value` können auch einzelnen Kanäle gesetzt werden.
+
+Beispiel: (True, True, False, False) setzt die Kanäle 0-1 auf logisch 1 und die
+Kanäle 2-3 auf logisch 0.
 """
 }]
 })
@@ -149,7 +152,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für den angegebenen Channel) den aktuellen Zustand und die Zeit, wie von
+Gibt (für den angegebenen Kanal) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
@@ -174,8 +177,8 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
-:word:`parameters` enthalten den Channel und den aktuellen
-Zustand des Channels (der Zustand nach dem Monoflop).
+:word:`parameters` enthalten den Kanal und den aktuellen Zustand des Kanals
+(der Zustand nach dem Monoflop).
 """
 }]
 })
@@ -226,7 +229,7 @@ Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })
@@ -235,8 +238,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'in'),   # 1/10 Hz
-             ('Duty Cycle', 'uint16', 1, 'in')], # 1/100 %
+             ('Frequency', 'uint32', 1, 'in'),
+             ('Duty Cycle', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -276,8 +279,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'out'),   # 1/10 Hz
-             ('Duty Cycle', 'uint16', 1, 'out')], # 1/100 %
+             ('Frequency', 'uint32', 1, 'out'),
+             ('Duty Cycle', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

@@ -6,8 +6,6 @@
 
 # Barometer Bricklet 2.0 communication config
 
-# TODO: Documentation and examples.
-
 from commonconstants import THRESHOLD_OPTION_CONSTANTS
 from commonconstants import add_callback_value_function
 
@@ -51,7 +49,7 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Air Pressure',
     data_name = 'Air Pressure',
-    data_type = 'int32', 
+    data_type = 'int32',
     doc       = air_pressure_doc
 )
 
@@ -76,7 +74,7 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Altitude',
     data_name = 'Altitude',
-    data_type = 'int32', 
+    data_type = 'int32',
     doc       = altitude_doc
 )
 
@@ -89,8 +87,8 @@ of 2007 means that a temperature of 20.07 °C is measured.
 
 This temperature is used internally for temperature compensation
 of the air pressure measurement. It is not as accurate as the
-temperature measured by the :ref:`temperature_bricklet` or the
-:ref:`temperature_ir_bricklet`.
+temperature measured by the :ref:`temperature_v2_bricklet` or the
+:ref:`temperature_ir_v2_bricklet`.
 """,
 'de':
 """
@@ -100,8 +98,8 @@ einem Wert von 2007 wurde eine Temperatur von 20,07 °C gemessen.
 
 Diese Temperatur wird intern zur Temperaturkompensation der
 Luftdruckmessung verwendet. Sie ist nicht so genau wie die
-Temperatur die vom :ref:`temperature_bricklet` oder dem
-:ref:`temperature_ir_bricklet` gemessen wird.
+Temperatur die vom :ref:`temperature_v2_bricklet` oder dem
+:ref:`temperature_ir_v2_bricklet` gemessen wird.
 """
 }
 
@@ -109,7 +107,7 @@ add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Temperature',
     data_name = 'Temperature',
-    data_type = 'int32', 
+    data_type = 'int32',
     doc       = temperature_doc
 )
 
@@ -123,7 +121,7 @@ com['packets'].append({
 'en':
 """
 Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-for the air pressure, altitude and temperature.
+for the air pressure and temperature measurements.
 
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
@@ -138,7 +136,7 @@ The default value is 100.
 'de':
 """
 Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
-für die Luftfeuchtigkeit und Temperatur.
+für die Luftdruck- und Temperaturmessung.
 
 Wenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert.
 Desto kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
@@ -237,19 +235,40 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets one point air pressure offset calibration value. The offset
-is the difference between currently measured air pressure by the
-sensor and the actual air pressure measured by an accurate barometer in
-mbar/1000. The values has a range of 260000 to 1260000.
+Sets the one point calibration (OPC) values for the air pressure measurement.
 
-After calibration the air pressure measurements will achieve accuracy
-of about 0.1 mbar.
+Before the Bricklet can be calibrated any previous calibration has to be removed
+by setting ``measured air pressure`` and ``actual air pressure`` to 0.
 
-Setting the calibration to 0,0 removes the previous calibration.
+Then the current air pressure has to be measured using the Bricklet
+(``measured air pressure``) and with and accurate reference barometer
+(``actual air pressure``) at the same time and passed to this function in
+mbar/1000.
+
+After proper calibration the air pressure measurement can achieve an accuracy
+up to 0.2 mbar.
+
+The calibration is saved in the EEPROM of the Bricklet and only needs to be
+configured once.
 """,
 'de':
 """
+Setzt den One Point Calibration (OPC) Werte für die Luftdruckmessung.
 
+Bevor das Bricklet kalibriert werden kann muss die möglicherweise vorhandene
+Kalibierung gelöschet werden, dazu muss ``Measured Air Pressure`` und
+``Actual Air Pressure`` auf 0 gesetzt werden.
+
+Dann muss der aktuelle Luftdruck gleichzeitig mit dem Bricklet
+(``Measured Air Pressure``) und einem genauen Referenzbarometer
+(``Actual Air Pressure``) gemessen und die Werte in mbar/1000 an diese Funktion
+übergeben werden.
+
+Nach einer ordentlichen Kalibrierung kann der Luftdruck mit bis zu 0,2 mbar
+Genauigkeit gemessen werden
+
+Die Kalibrierung wird im EEPROM des Bricklets gespeichert und muss nur einmal
+gesetzt werden.
 """
 }]
 })
@@ -263,12 +282,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the air pressure offset values as set by :func:`Set Calibration`.
+Returns the air pressure one point calibration values as set by
+:func:`Set Calibration`.
 """,
 'de':
 """
-Gibt den Luftdruck offset werte zurück, wie von :func:`Set Calibration`
-gesetzt.
+Gibt die Luftdruck One Point Calibration Werte zurück, wie von
+:func:`Set Calibration` gesetzt.
 """
 }]
 })
@@ -289,9 +309,28 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Configures the data rate and air pressure low pass filter. The low pass filter
+cut-off frequency (if enabled) can be set to 1/9th or 1/20th of the configure
+data rate to decrease the noise on the air pressure data.
+
+The low pass filter configuration only applies to the air pressure measurement.
+There is no low pass filter for the temperature measurement.
+
+The default values are 50Hz data rate and 1/9th low pass filter.
 """,
 'de':
 """
+Konfiguriert die Datenrate und de Luftdrucktiefpassfilter. Die Grenzfrequenz des
+Tiefpassfilters (falls aktiviert) kann auf 1/9tel oder 1/20stel der eingestellten
+Datenrate gesetzt werden, um das Rauschen auf den Luftdruckdaten zu verringert.
+
+Die Tiefpassfiltereinstellung gilt nur für die Luftdruckmessung. Es gibt keinen
+Tiefpassfilter für die Temperaturmessung.
+
+Eine Verringerung der Datenrate oder des Wertebereichs verringert auch
+automatisch das Rauschen auf den Daten.
+
+Die Standardwerte sind 50Hz Datenrate und 1/9tel Tiefpassfilter.
 """
 }]
 })

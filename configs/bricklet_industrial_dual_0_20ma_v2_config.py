@@ -6,8 +6,6 @@
 
 # Industrial Dual 0-20mA Bricklet 2.0 communication config
 
-# TODO: Documentation and examples.
-
 from commonconstants import THRESHOLD_OPTION_CONSTANTS
 from commonconstants import add_callback_value_function
 
@@ -46,7 +44,7 @@ there might be a short circuit or the sensor is defective.
 """,
 'de':
 """
-Gibt die gemessenen Stromstärke des spezifiziert Channel zurück. Der Wert
+Gibt die gemessenen Stromstärke des spezifizierten Kanals zurück. Der Wert
 ist in nA und im Bereich von 0nA bis 22505322nA (22,5mA).
 
 Es ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen
@@ -137,10 +135,10 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Gain',
-'elements': [('Gain', 'uint8', 1, 'in', ('Gain', [('1X', 0),
-                                                  ('2X', 1),
-                                                  ('4X', 2),
-                                                  ('8X', 3)]))],
+'elements': [('Gain', 'uint8', 1, 'in', ('Gain', [('1x', 0),
+                                                  ('2x', 1),
+                                                  ('4x', 2),
+                                                  ('8x', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -155,6 +153,13 @@ The default gain is 1x.
 """,
 'de':
 """
+Setzt den Gain zwischen 1x und 8x. Wenn ein sehr kleiner Strom gemessen werden
+soll, dann kann der Gain hochgesetzt werden, um die Auflösung zu verbessern.
+
+Beispiel: Wenn 0,5mA gememsen werden mit einem Gain von 8x dann wird 4mA
+zurückgegeben.
+
+Der Standardwert ist 1x.
 """
 }]
 })
@@ -162,10 +167,10 @@ The default gain is 1x.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Gain',
-'elements': [('Gain', 'uint8', 1, 'out', ('Gain', [('1X', 0),
-                                                   ('2X', 1),
-                                                   ('4X', 2),
-                                                   ('8X', 3)]))],
+'elements': [('Gain', 'uint8', 1, 'out', ('Gain', [('1x', 0),
+                                                   ('2x', 1),
+                                                   ('4x', 2),
+                                                   ('8x', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -202,6 +207,16 @@ By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
+ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
+angezeigt werden. Falls Kanalstatus gewählt wird kann die LED entweder ab einem
+vordefinierten Schwellwert eingeschaltet werden oder ihre Helligkeit anhand des
+gemessenen Wertes skaliert werden.
+
+Das Verhalten des Kanalstatus kann mittels :func:`Set Channel LED Status Config`
+eingestellt werden.
+
+Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -222,7 +237,7 @@ Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })
@@ -239,27 +254,56 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the channel LED status config. This config is used if the channel LED is configured
-as Channel Status, see :func:`Set Channel LED Config`.
+Sets the channel LED status config. This config is used if the channel LED is
+configured as "Channel Status", see :func:`Set Channel LED Config`.
 
-For each channel you can choose between the threshold and intensity.
+For each channel you can choose between threshold and intensity mode.
 
-In the threshold-mode you can define a positive threshold in nA as the "min" parameter. The "max"
-parameter has to be 0. Example: If you set a positive threshold of 10mA, the LED will turn on
-as soon as the current exceeds 10mA and turn off again if it goes below 10mA. You can also define
-a negative threshold. For that you set the "max" parameter to the threshold value in nA and set
-the "min" parameter to 0. Example: If you set a negative threshold of 10mA, the LED will turn on
-as soon as the current goes below 10mA and the LED will turn off when the current exceeds 10mA.
+In threshold mode you can define a positive or a negative threshold.
+For a positive threshold set the "min" parameter to the threshold value in nA
+above which the LED should turn on and set the "max" parameter to 0. Example:
+If you set a positive threshold of 10mA, the LED will turn on as soon as the
+current exceeds 10mA and turn off again if it goes below 10mA.
+For a negative threshold set the "max" parameter to the threshold value in nA
+below which the LED should turn on and set the "min" parameter to 0. Example:
+If you set a negative threshold of 10mA, the LED will turn on as soon as the
+current goes below 10mA and the LED will turn off when the current exceeds 10mA.
 
-In the intensity-mode you can define a range that is used to scale the brightness of the LED.
-Example with min=4mA, max=20mA: The LED is off at 4mA, on at 20mA and the brightness is linearly
-scaled between the vales 4mA and 20mA. If the min value is greater than the max value, the
-LED brightness is scaled the other way around.
+In intensity mode you can define a range in nA that is used to scale the brightness
+of the LED. Example with min=4mA and max=20mA: The LED is off at 4mA and below,
+on at 20mA and above and the brightness is linearly scaled between the values
+4mA and 20mA. If the min value is greater than the max value, the LED brightness
+is scaled the other way around.
 
-By default the channel LED status config is set to intensity with min=4mA and max=20mA.
+By default the channel LED status config is set to intensity with min=4mA and
+max=20mA.
 """,
 'de':
 """
+Setzt die Kanal-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
+die Kanal-LED auf Kanalstatus eingestellt ist, siehe :func:`Set Channel LED Config`.
+
+Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
+
+Im Schwellwertmodus kann ein positiver oder negativer Schwellwert definiert werden.
+Für einen positiven Schwellwert muss das "min" Parameter auf den gewünschten
+Schwellwert in nA gesetzt werden, über dem die LED eingeschaltet werden soll.
+Der "max" Parameter muss auf 0 gesetzt werden. Beispiel: Bei einem positiven
+Schwellwert von 10mA wird die LED eingeschaltet sobald der gemessene Strom über
+10mA steigt und wieder ausgeschaltet sobald der Strom unter 10mA fällt.
+Für einen negativen Schwellwert muss das "max" Parameter auf den gewünschten
+Schwellwert in nA gesetzt werden, unter dem die LED eingeschaltet werden soll.
+Der "max" Parameter muss auf 0 gesetzt werden. Beispiel: Bei einem negativen
+Schwellwert von 10mA wird die LED eingeschaltet sobald der gemessene Strom unter
+10mA fällt und wieder ausgeschaltet sobald der Strom über 10mA steigt.
+
+Im Intensitätsmodus kann ein Bereich in nA angegeben werden über den die Helligkeit
+der LED skaliert wird. Beispiel mit min=4mA und max=20mA: Die LED ist bei 4mA und
+darunter aus, bei 20mA und darüber an und zwischen 4mA und 20mA wird die Helligkeit
+linear skaliert. Wenn der min Wert größer als der max Wert ist, dann wird die
+Helligkeit andersherum skaliert.
+
+Standardwerte: Intensitätsmodus mit min=4mA und max=20mA.
 """
 }]
 })
@@ -276,11 +320,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the channel LED configuration as set by :func:`Set Channel LED Status Config`
+Returns the channel LED status configuration as set by
+:func:`Set Channel LED Status Config`.
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Status Config` gesetzt.
+Gibt die Kanal-LED-Status-Konfiguration zurück, wie von
+:func:`Set Channel LED Status Config` gesetzt.
 """
 }]
 })

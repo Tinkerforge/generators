@@ -525,7 +525,7 @@ ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
 angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
-Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
+Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -546,7 +546,7 @@ Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })

@@ -211,8 +211,6 @@ Die andere LED bleibt unangetastet.
 }]
 })
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set State Changed Callback Configuration',
@@ -253,7 +251,6 @@ gesetzt.
 """
 }]
 })
-
 
 com['examples'].append({
 'name': 'Callback',

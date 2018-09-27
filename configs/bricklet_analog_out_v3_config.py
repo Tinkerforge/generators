@@ -55,8 +55,7 @@ Returns the voltage as set by :func:`Set Output Voltage`.
 """,
 'de':
 """
-Gibt die Spannung zurück, wie von :func:`Set Output Voltage`
-gesetzt.
+Gibt die Spannung zurück, wie von :func:`Set Output Voltage` gesetzt.
 """
 }]
 })
