@@ -386,7 +386,7 @@ Die :word:`parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist d
 })
 
 com['examples'].append({
-'name': 'Input',
+'name': 'Simple',
 'functions': [('getter', ('Get Value', 'value'), [(('Value', ['Channel 0', 'Channel 1', 'Channel 2', 'Channel 3']), 'bool', 4, None, None, None)], [])]
 })
 
