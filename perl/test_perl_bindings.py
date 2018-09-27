@@ -88,7 +88,9 @@ class PerlLintExamplesTester(common.Tester):
                    not line.startswith("Bare sub name 'UID' interpreted as string at") and \
                    not line.startswith("Bare sub name 'SECRET' interpreted as string at") and \
                    not line.startswith("Bare sub name 'NUM_LEDS' interpreted as string at") and \
-                   not line.startswith("Bare sub name 'NDEF_URI' interpreted as string at"):
+                   not line.startswith("Bare sub name 'NDEF_URI' interpreted as string at") and \
+                   not line.startswith("Bare sub name 'WIDTH' interpreted as string at") and \
+                   not line.startswith("Bare sub name 'HEIGHT' interpreted as string at"):
                     filtered_output.append(line)
 
             success = retcode == 0 and len(filtered_output) == 1 and 'syntax OK' in output
