@@ -16,6 +16,9 @@ else:
 
 root = os.path.split(__file__)[0]
 
+if len(root) == 0:
+    root = '.'
+
 with common.ChangedDirectory(root):
     version = common.get_changelog_version(bindings)
 
