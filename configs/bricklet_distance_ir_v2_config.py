@@ -11,7 +11,8 @@ from commonconstants import add_callback_value_function
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
+    'api_version_extra': 1,
     'category': 'Bricklet',
     'device_identifier': 2125,
     'name': 'Distance IR V2',
@@ -91,7 +92,7 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average Configuration',
-'elements': [('Moving Average Length', 'uint8', 1, 'in')],
+'elements': [('Moving Average Length', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -132,8 +133,7 @@ Der Standardwert ist 25.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average Configuration',
-'elements': [('Moving Average Length', 'uint8', 1, 'out')],
-
+'elements': [('Moving Average Length', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
