@@ -98,8 +98,11 @@
 - Break Humidity 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
   fix types for callback threshold min/max configuration
 
-2018-09-28: 2.1.18 (<unknown>)
+2018-09-28: 2.1.18 (f7c65f7)
 - Add support for Air Quality, Analog Out 3.0, Barometer 2.0, Distance IR 2.0,
   Dual Button 2.0, Industrial Analog Out 2.0, Industrial Digital Out 4 2.0,
   Industrial Dual 0-20mA 2.0, Industrial Dual Analog In 2.0, IO-16 2.0, Isolator,
   LCD 128x64, OLED 128x64 2.0, One Wire, Temperature 2.0 and UV Light 2.0 Bricklet
+
+2018-10-05: 2.1.19 (<unknown>)
+- Break API to fix moving-average-length type in Distance IR Bricklet 2.0 API
