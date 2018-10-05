@@ -119,5 +119,5 @@
   LCD 128x64, OLED 128x64 2.0, One Wire, Temperature 2.0 and UV Light 2.0 Bricklet
 - Fix authentication server nonce packing
 
-2018-10-05: 2.1.19 (<unknown>)
+2018-10-05: 2.1.19 (e3c6f36)
 - Break API to fix moving-average-length type in Distance IR Bricklet 2.0 API
