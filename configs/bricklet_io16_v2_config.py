@@ -26,6 +26,21 @@ com = {
     'examples': []
 }
 
+com['doc'] = {
+'en':
+"""
+The Bricklet has sixteen channels that are named 0 to 15 in the API. The
+corresponding connectors on the Bricklet are labeled A0 to A7 for channel 0 to 7
+and B0 to B7 for channels 8 to 15.
+""",
+'de':
+"""
+Das Bricklet hat sechzehn Kanäle die in der API von 0 bis 15 benannt sind. Die
+entsprechenden Anschlüsse auf dem Bricklet sind mit A0 bis A7 für die Kanäle 0
+bis 7 und B0 bis B7 für die Kanäle 8 bis 15 benannt.
+"""
+}
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value',
