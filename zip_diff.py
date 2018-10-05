@@ -114,6 +114,19 @@ javascript_header2 = re.compile(r'^@@ -[0-9]+,9 \+[0-9]+,9 @@\n' + \
 '  \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
 '  \*                                                           \*\n$')
 
+javascript_header3 = re.compile(r'^@@ -[0-9]+,9 \+[0-9]+,9 @@\n' + \
+' \n' + \
+' },{"\./Device":[0-9]+,"\./IPConnection":[0-9]+}\],[0-9]+:\[function\(require,module,exports\){\n' + \
+' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n' + \
+'- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'  \*                                                           \*\n' + \
+'- \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'\+ \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'  \*                                                           \*\n' + \
+'  \* If you have a bugfix for this file and want to commit it, \*\n' + \
+'  \* please fix the bug in the generator\. You can find a link  \*\n$')
+
 perl_header1 = re.compile(r'^@@ -1,5 \+1,5 @@\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
@@ -215,6 +228,7 @@ for diff in diffs:
            not delphi_header2.match(hunk) and \
            not javascript_header1.match(hunk) and \
            not javascript_header2.match(hunk) and \
+           not javascript_header3.match(hunk) and \
            not perl_header1.match(hunk) and \
            not perl_header2.match(hunk) and \
            not php_header1.match(hunk) and \
