@@ -12,7 +12,7 @@ from commonconstants import add_callback_value_function
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
-    'api_version_extra': 1,
+    'api_version_extra': 1, # +1 for "Break API to fix wrong moving-average-length type [ec51349]"
     'category': 'Bricklet',
     'device_identifier': 2125,
     'name': 'Distance IR V2',
