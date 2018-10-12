@@ -316,6 +316,10 @@ data rate to decrease the noise on the air pressure data.
 The low pass filter configuration only applies to the air pressure measurement.
 There is no low pass filter for the temperature measurement.
 
+A higher data rate will result in a less precise temperature because of
+self-heating of the sensor. If the accuracy of the temperature reading is
+important to you, we would recommend the 1Hz data rate.
+
 The default values are 50Hz data rate and 1/9th low pass filter.
 """,
 'de':
@@ -328,7 +332,9 @@ Die Tiefpassfiltereinstellung gilt nur für die Luftdruckmessung. Es gibt keinen
 Tiefpassfilter für die Temperaturmessung.
 
 Eine Verringerung der Datenrate oder des Wertebereichs verringert auch
-automatisch das Rauschen auf den Daten.
+automatisch das Rauschen auf den Daten. Eine hohe Datenrate erhöht zusätzlich
+die Selbsterhitzung des Sensors. Wenn eine hohe Temperaturgenauigkeit
+wichtig ist empfehlen wir eine Datenrate von 1Hz.
 
 Die Standardwerte sind 50Hz Datenrate und 1/9tel Tiefpassfilter.
 """
