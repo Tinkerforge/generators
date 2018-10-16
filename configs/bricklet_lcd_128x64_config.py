@@ -15,8 +15,8 @@ com = {
     'display_name': 'LCD 128x64',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'LCD with 128x64 pixel',
-        'de': 'LCD mit 128x64 Pixel'
+        'en': '7.1cm (2.8") display with 128x64 pixel and touch screen',
+        'de': '7,1cm (2,8") Display mit 128x64 Pixel und Touchscreen'
     },
     'comcu': True,
     'released': True,

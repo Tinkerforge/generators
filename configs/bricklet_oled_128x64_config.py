@@ -15,8 +15,8 @@ com = {
     'display_name': 'OLED 128x64',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '3.3cm (1.3") OLED with 128x64 pixels',
-        'de': '3,3cm (1,3") OLED mit 128x64 Pixel'
+        'en': '3.3cm (1.3") OLED display with 128x64 pixels',
+        'de': '3,3cm (1,3") OLED Display mit 128x64 Pixel'
     },
     'released': True,
     'documented': True,

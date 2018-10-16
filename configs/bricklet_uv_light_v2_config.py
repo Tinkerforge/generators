@@ -18,8 +18,8 @@ com = {
     'display_name': 'UV Light 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Measures UV light',
-        'de': 'Misst UV-Licht'
+        'en': 'Measures UV-A, UV-B and UV index',
+        'de': 'Misst UV-A, UV-B und UV Index'
     },
     'comcu': True,
     'released': True,
