@@ -61,18 +61,19 @@ except ValueError:
             if len(packet.get_elements(direction='out')) < 2:
                 continue
 
-            name = packet.get_name().camel
-            name_tup = name
+            name = packet.get_name()
 
-            if name_tup.startswith('Get'):
-                name_tup = name_tup[3:]
+            if name.space.startswith('Get '):
+                name_tup = name.camel[3:]
+            else:
+                name_tup = name.camel
 
             params = []
 
             for element in packet.get_elements(direction='out'):
                 params.append("'{0}'".format(element.get_name().under))
 
-            tuples += template.format(name, name_tup, ", ".join(params))
+            tuples += template.format(name.camel, name_tup, ", ".join(params))
 
         for packet in self.get_packets('function'):
             if not packet.has_high_level():
@@ -81,18 +82,19 @@ except ValueError:
             if len(packet.get_elements(direction='out', high_level=True)) < 2:
                 continue
 
-            name = packet.get_name(skip=-2).camel
-            name_tup = name
+            name = packet.get_name(skip=-2)
 
-            if name_tup.startswith('Get'):
-                name_tup = name_tup[3:]
+            if name.space.startswith('Get '):
+                name_tup = name.camel[3:]
+            else:
+                name_tup = name.camel
 
             params = []
 
             for element in packet.get_elements(direction='out', high_level=True):
                 params.append("'{0}'".format(element.get_name().under))
 
-            tuples += template.format(name, name_tup, ", ".join(params))
+            tuples += template.format(name.camel, name_tup, ", ".join(params))
 
         return tuples
 

@@ -117,12 +117,12 @@ class JavaDevice(common.Device):
 
 class JavaPacket(common.Packet):
     def get_java_object_name(self, skip=0):
-        name = self.get_name(skip=skip).camel
+        name = self.get_name(skip=skip)
 
-        if name.startswith('Get'):
-            name = name[3:]
+        if name.space.startswith('Get '):
+            return name.camel[3:]
 
-        return name
+        return name.camel
 
     def get_java_return_type(self, for_doc=False, high_level=False):
         elements = self.get_elements(direction='out', high_level=high_level)
