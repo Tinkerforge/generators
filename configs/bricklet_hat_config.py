@@ -42,8 +42,6 @@ com['packets'].append({
              ('Capacity Nominal', 'int32', 1, 'out'),
              ('Capacity Remaining', 'int32', 1, 'out'),
              ('Percentage Charge', 'int32', 1, 'out'),
-             ('Time To Empty', 'int32', 1, 'out'),
-             ('Time To Full', 'int32', 1, 'out'),
              ('Voltage Battery', 'int32', 1, 'out'),
              ('Voltage USB', 'int32', 1, 'out'),
              ('Voltage DC', 'int32', 1, 'out'),
