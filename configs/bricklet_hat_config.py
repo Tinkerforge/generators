@@ -138,3 +138,40 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Battery Parameters',
+'elements': [('Nominal Capacity', 'uint16', 1, 'in'),
+             ('Charge Termination Current', 'uint16', 1, 'in'),
+             ('Empty Voltage', 'uint16', 1, 'in'),
+             ('Learned Parameters', 'uint16', 5, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Battery Parameters',
+'elements': [('Nominal Capacity', 'uint16', 1, 'out'),
+             ('Charge Termination Current', 'uint16', 1, 'out'),
+             ('Empty Voltage', 'uint16', 1, 'out'),
+             ('Learned Parameters', 'uint16', 5, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
