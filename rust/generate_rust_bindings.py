@@ -165,9 +165,7 @@ pub struct {name} {{
         self.returnTypes = {}
         
         for packet in self.get_packets():
-            returns = packet.get_elements(direction='out')
-            if "real_time_clock" in self.get_name().under and "get_date_time" in packet.get_name().under:
-                print ""
+            returns = packet.get_elements(direction='out')            
             name = packet.get_rust_type_name() + ("Event" if packet.get_type() == 'callback' else "")
             
             if name in self.returnTypes.values():
