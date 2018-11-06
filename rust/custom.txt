@@ -1,0 +1,5 @@
+Tinkerforge Rust Bindings for Custom Devices
+=============================================
+
+The custom Rust bindings code in the custom source/ directory depends on the
+regular Rust bindings code in the regular source/ directory.
