@@ -391,10 +391,10 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
 
     def get_rust_source(self):
         #TODO: high level callback receivers send Option<Result>, so we need to match them here. OTOH streaming examples are incomplete anyway, so this can be done manually.
-        template = r"""     // Create receiver for {function_name_comment} events.
-        let {function_name_under}_receiver = {device_name_initials}.get_{function_name_under}_receiver();
+        template = r"""     let {function_name_under}_receiver = {device_name_initials}.get_{function_name_under}_callback_receiver();
 
-        // Spawn thread to handle received events. This thread ends when the `{device_name_initials}` object
+        // Spawn thread to handle received callback messages. 
+        // This thread ends when the `{device_name_initials}` object
         // is dropped, so there is no need for manual cleanup.
         thread::spawn(move || {{
             for {function_name_under} in {function_name_under}_receiver {{{match_expr}           

@@ -26,10 +26,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     ipcon.connect((HOST, PORT)).recv()??; // Connect to brickd
 
-    // Get Enumerate Receiver
-    let receiver = ipcon.get_enumerate_receiver();
+    let receiver = ipcon.get_enumerate_callback_receiver();
 
-    // Spawn thread to react to enumerate events. This thread must not be terminated or joined,
+    // Spawn thread to react to enumerate callback messages.
+    // This thread must not be terminated or joined,
     // as it will end when the IP connection (and the receiver's sender) is dropped.
     thread::spawn(move || {
         for response in receiver {

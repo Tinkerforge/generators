@@ -52,11 +52,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
     ipcon.set_auto_reconnect(false);
-    
-    // Get Connect Receiver
-    let connect_receiver = ipcon.get_connect_receiver();
 
-    // Spawn thread to react to connect events. This thread must not be terminated or joined,
+    let connect_receiver = ipcon.get_connect_callback_receiver();
+
+    // Spawn thread to react to connect callback messages. 
+    // This thread must not be terminated or joined,
     // as it will end when the IP connection (and the receiver's sender) is dropped.
     let mut request_sender = ipcon.get_request_sender();
     thread::spawn(move || {
@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     });
 
     // Get Enumerate Receiver
-    let enumerate_receiver = ipcon.get_enumerate_receiver();
+    let enumerate_receiver = ipcon.get_enumerate_callback_receiver();
 
     // Spawn thread to react to enumerate events. This thread must not be terminated or joined,
     // as it will end when the IP connection (and the receiver's sender) is dropped.

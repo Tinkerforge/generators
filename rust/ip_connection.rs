@@ -297,7 +297,7 @@ fn register_callback(
 }
 
 /// This enum specifies the reason of a successful connection.
-/// It is generated from the [Connect event receiver](`crate::ip_connection::IpConnection::get_connect_receiver)
+/// It is generated from the [Connect event receiver](`crate::ip_connection::IpConnection::get_connect_callback_receiver)
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ConnectReason {
     /// Connection established after request from user.
@@ -307,7 +307,7 @@ pub enum ConnectReason {
 }
 
 /// This enum specifies the reason of a connections termination.
-/// It is generated from the [Disconnect event receiver](`crate::ip_connection::IpConnection::get_disconnect_receiver)
+/// It is generated from the [Disconnect event receiver](`crate::ip_connection::IpConnection::get_disconnect_callback_receiver)
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum DisconnectReason {
     /// Disconnect was requested by user.
@@ -773,7 +773,7 @@ impl IpConnectionRequestSender {
     }
 
     /// This event is triggered whenever the IP Connection got connected to a Brick Daemon or to a WIFI/Ethernet Extension.
-    pub fn get_connect_receiver(&self) -> Receiver<ConnectReason> {
+    pub fn get_connect_callback_receiver(&self) -> Receiver<ConnectReason> {
         let (tx, rx) = channel();
         let (sent_tx, sent_rx) = channel();
         self.socket_thread_tx
@@ -784,7 +784,7 @@ impl IpConnectionRequestSender {
     }
 
     /// This event is triggered whenever the IP Connection got disconnected from a Brick Daemon or to a WIFI/Ethernet Extension.
-    pub fn get_disconnect_receiver(&self) -> Receiver<DisconnectReason> {
+    pub fn get_disconnect_callback_receiver(&self) -> Receiver<DisconnectReason> {
         let (tx, rx) = channel();
         let (sent_tx, sent_rx) = channel();
         self.socket_thread_tx
@@ -837,7 +837,7 @@ impl IpConnectionRequestSender {
 
     /// This receiver receives enumerate events, as described [here](crate::ip_connection::EnumerateResponse).
     ///
-    pub fn get_enumerate_receiver(&self) -> ConvertingCallbackReceiver<EnumerateResponse> {
+    pub fn get_enumerate_callback_receiver(&self) -> ConvertingCallbackReceiver<EnumerateResponse> {
         let (tx, rx) = channel();
         let (sent_tx, sent_rx) = channel();
         self.socket_thread_tx
@@ -917,10 +917,10 @@ impl IpConnection {
     pub fn disconnect(&self) -> Receiver<Result<(), DisconnectErrorNotConnected>> { self.req.disconnect() }
 
     /// This event is triggered whenever the IP Connection got connected to a Brick Daemon or to a WIFI/Ethernet Extension.
-    pub fn get_connect_receiver(&self) -> Receiver<ConnectReason> { self.req.get_connect_receiver() }
+    pub fn get_connect_callback_receiver(&self) -> Receiver<ConnectReason> { self.req.get_connect_callback_receiver() }
 
     /// This event is triggered whenever the IP Connection got disconnected from a Brick Daemon or to a WIFI/Ethernet Extension.
-    pub fn get_disconnect_receiver(&self) -> Receiver<DisconnectReason> { self.req.get_disconnect_receiver() }
+    pub fn get_disconnect_callback_receiver(&self) -> Receiver<DisconnectReason> { self.req.get_disconnect_callback_receiver() }
 
     /// Returns the timeout as set by [`set_timeout`](crate::ip_connection::IpConnection::set_timeout)
     pub fn get_timeout(&self) -> Duration { self.req.get_timeout() }
@@ -948,7 +948,7 @@ impl IpConnection {
 
     /// This receiver receives enumerate events, as described [here](crate::ip_connection::EnumerateResponse).
     ///
-    pub fn get_enumerate_receiver(&self) -> ConvertingCallbackReceiver<EnumerateResponse> { self.req.get_enumerate_receiver() }
+    pub fn get_enumerate_callback_receiver(&self) -> ConvertingCallbackReceiver<EnumerateResponse> { self.req.get_enumerate_callback_receiver() }
 
     /// Performs an authentication handshake with the connected Brick Daemon or WIFI/Ethernet Extension.
     /// If the handshake succeeds the connection switches from non-authenticated to authenticated state

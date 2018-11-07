@@ -37,7 +37,7 @@ class RustDevice(common.Device):
         specialized = []
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                name = 'get_{0}_receiver'.format(packet.get_name(skip=-2 if high_level else 0).under)                
+                name = 'get_{0}_callback_receiver'.format(packet.get_name(skip=-2 if high_level else 0).under)                
             else:
                 name = packet.get_name(skip=-2 if high_level else 0).under
             result = '[`{0}`]'.format(name)

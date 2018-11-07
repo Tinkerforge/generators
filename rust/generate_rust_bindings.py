@@ -330,11 +330,11 @@ pub struct {name} {{
      
         functions = []
 
-        callback_template = """{description}\n\tpub fn get_{name}_receiver(&self) -> ConvertingCallbackReceiver<{type}> {{
-        self.device.get_receiver(u8::from({fun_enum}::Callback{fn_id}))
+        callback_template = """{description}\n\tpub fn get_{name}_callback_receiver(&self) -> ConvertingCallbackReceiver<{type}> {{
+        self.device.get_callback_receiver(u8::from({fun_enum}::Callback{fn_id}))
     }}"""
-        high_level_callback_template = """{description}\n\tpub fn get_{name}_receiver(&self) -> ConvertingHighLevelCallbackReceiver<{payload_type}, {result_type}, {low_level_type}> {{
-        ConvertingHighLevelCallbackReceiver::new(self.device.get_receiver(u8::from({fun_enum}::Callback{fn_id})))
+        high_level_callback_template = """{description}\n\tpub fn get_{name}_callback_receiver(&self) -> ConvertingHighLevelCallbackReceiver<{payload_type}, {result_type}, {low_level_type}> {{
+        ConvertingHighLevelCallbackReceiver::new(self.device.get_callback_receiver(u8::from({fun_enum}::Callback{fn_id})))
     }}"""
 
         for packet in self.get_packets('callback'):
