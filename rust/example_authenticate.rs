@@ -16,6 +16,8 @@ fn authenticate(reason: ConnectReason, request_sender: &mut IpConnectionRequestS
         Ok(rx) => {
             if let Ok(_) = rx.recv() {
                 println!("Authentication succeded");
+
+                //Reenable auto reconnect mechanism, as described below.
                 request_sender.set_auto_reconnect(true);
 
                 // ...then trigger enumerate
@@ -47,7 +49,10 @@ fn print_enumerate_response(response: &EnumerateResponse) {
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut ipcon = IpConnection::new(); // Create IP connection
+
+    // Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
     ipcon.set_auto_reconnect(false);
+    
     // Get Connect Receiver
     let connect_receiver = ipcon.get_connect_receiver();
 
