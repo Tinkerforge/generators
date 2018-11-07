@@ -53,7 +53,7 @@ class RustExamplesTester(common.Tester):
                 path,
                 '--features=fail-on-warnings',
                 '--no-fail-fast']
-        print ">>> Compiling examples, this will take a while..."
+        print(">>> Compiling examples, this will take a while...")
         self.execute(cookie, args)
 
 def run(root_dir):

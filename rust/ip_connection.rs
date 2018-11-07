@@ -3,8 +3,8 @@ use std::{
     collections::HashMap,
     error::Error,
     io::{Read, Write},
-    net::{IpAddr, Shutdown, SocketAddr, TcpStream},
-    str::{self, FromStr},
+    net::{Shutdown, SocketAddr, TcpStream, ToSocketAddrs},
+    str,
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
         mpsc::{Receiver, Sender, *},
@@ -24,13 +24,15 @@ use sha1::Sha1;
 /// Before Bricks and Bricklets can be controlled using their API an IP Connection has to be created and its TCP/IP connection has to be established.
 #[derive(Debug)]
 pub struct IpConnection {
-    pub(crate) req: IpConRequestSender,
+    pub(crate) req: IpConnectionRequestSender,
     //pub(crate) socket_thread_tx: Sender<SocketThreadRequest>,
     socket_thread: Option<JoinHandle<()>>,
 }
 
+/// The IP connection request sender is a cloneable object created by a IP connection. The sender can send requests to connected devices
+/// and can be shared across threads by cloning.
 #[derive(Debug, Clone)]
-pub struct IpConRequestSender {
+pub struct IpConnectionRequestSender {
     pub(crate) socket_thread_tx: Sender<SocketThreadRequest>,
     connection_state: Arc<AtomicUsize>,
     auto_reconnect_enabled: Arc<AtomicBool>,
@@ -157,7 +159,7 @@ fn socket_read_thread_fn(mut tcp_stream: TcpStream, response_tx: Sender<SocketTh
 /// Type of enumeration of a device.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub enum EnumerationType {
-    /// Device is available (enumeration triggered by user: [`Enumerate`](crate::ipconnection::IpConnection::enumerate())).
+    /// Device is available (enumeration triggered by user: [`Enumerate`](crate::ip_connection::IpConnection::enumerate())).
     /// This enumeration type can occur multiple times for the same device.
     Available,
     /// Device is newly connected (automatically send by Brick after establishing a communication connection).
@@ -180,10 +182,10 @@ impl From<u8> for EnumerationType {
     }
 }
 
-/// Devices send `EnumerateAnswer`s when they are connected, disconnected or when an enumeration was
-/// triggered by the user using the [`Enumerate`](crate::ipconnection::IpConnection::enumerate) method.
+/// Devices send `EnumerateResponse`s when they are connected, disconnected or when an enumeration was
+/// triggered by the user using the [`Enumerate`](crate::ip_connection::IpConnection::enumerate) method.
 #[derive(Clone, Debug)]
-pub struct EnumerateAnswer {
+pub struct EnumerateResponse {
     /// The UID of the device.
     pub uid: String,
     /// UID where the device is connected to.
@@ -205,13 +207,13 @@ pub struct EnumerateAnswer {
     ///
     /// For example: MasterBrick.DEVICE_IDENTIFIER or AmbientLightBricklet.DEVICE_IDENTIFIER.
     pub device_identifier: u16,
-    /// Type of enumeration. See [`EnumerationType`](crate::ipconnection::EnumerationType)
+    /// Type of enumeration. See [`EnumerationType`](crate::ip_connection::EnumerationType)
     pub enumeration_type: EnumerationType,
 }
 
-impl FromByteSlice for EnumerateAnswer {
-    fn from_le_bytes(bytes: &[u8]) -> EnumerateAnswer {
-        EnumerateAnswer {
+impl FromByteSlice for EnumerateResponse {
+    fn from_le_bytes(bytes: &[u8]) -> EnumerateResponse {
+        EnumerateResponse {
             uid: str::from_utf8(&bytes[0..8])
                 .expect("Could not convert to string. This is a bug in the rust bindings.")
                 .replace("\u{0}", ""),
@@ -295,7 +297,7 @@ fn register_callback(
 }
 
 /// This enum specifies the reason of a successful connection.
-/// It is generated from the [Connect event listener](`crate::ipconnection::IpConnection::get_connect_event_listener)
+/// It is generated from the [Connect event receiver](`crate::ip_connection::IpConnection::get_connect_receiver)
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ConnectReason {
     /// Connection established after request from user.
@@ -305,7 +307,7 @@ pub enum ConnectReason {
 }
 
 /// This enum specifies the reason of a connections termination.
-/// It is generated from the [Disconnect event listener](`crate::ipconnection::IpConnection::get_disconnect_event_listener)
+/// It is generated from the [Disconnect event receiver](`crate::ip_connection::IpConnection::get_disconnect_receiver)
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum DisconnectReason {
     /// Disconnect was requested by user.
@@ -329,8 +331,19 @@ fn is_socket_really_connected(stream: &mut TcpStream) -> Result<bool, std::io::E
     result
 }
 
-fn create_socket(addr: IpAddr, port: u16) -> std::io::Result<(TcpStream, TcpStream)> {
-    let mut tcp_stream = TcpStream::connect_timeout(&SocketAddr::new(addr, port), Duration::new(30, 0))?;
+fn create_socket_from_list(addrs: &Vec<SocketAddr>) -> std::io::Result<(TcpStream, TcpStream)> {
+    let mut error = std::io::Error::new(std::io::ErrorKind::Other, "Could not resolve hostname or no IP address was given!");
+    for addr in addrs {
+        match create_socket(addr) {
+            Ok(tup) => return Ok(tup),
+            Err(e) => error = e
+        }
+    }
+    return Err(error)
+}
+
+fn create_socket(addr: &SocketAddr) -> std::io::Result<(TcpStream, TcpStream)> {
+    let mut tcp_stream = TcpStream::connect_timeout(&addr, Duration::new(30, 0))?;
 
     tcp_stream.set_read_timeout(Some(Duration::new(5, 0)))?;
     tcp_stream.set_write_timeout(Some(Duration::new(5, 0)))?;
@@ -368,7 +381,7 @@ fn socket_thread_fn(
         let mut disconnect_reason = DisconnectReason::Error;
 
         //wait for ip address and port
-        let (addr, port, connection_request_done_tx) = 'wait_for_connect: loop {
+        let (addrs, connection_request_done_tx) = 'wait_for_connect: loop {
             match work_queue_rx.recv() {
                 Ok(SocketThreadRequest::Request(Request::RegisterCallback { uid, function_id, response_sender }, sent_tx)) => {
                     register_callback(uid, function_id, response_sender, &mut registered_callbacks);
@@ -391,9 +404,9 @@ fn socket_thread_fn(
                     sent_tx.send(timeout).expect("Request sent queue was dropped. This is a bug in the rust bindings.")
                 }
                 Ok(SocketThreadRequest::Terminate) => break 'thread,
-                Ok(SocketThreadRequest::Connect(addr, port, tx)) => {
+                Ok(SocketThreadRequest::Connect(addrs, tx)) => {
                     is_auto_reconnect = false;
-                    break 'wait_for_connect (addr, port, Some(tx));
+                    break 'wait_for_connect (addrs, Some(tx));
                 }
                 Ok(SocketThreadRequest::Disconnect(tx)) =>
                     if !is_auto_reconnect {
@@ -404,12 +417,12 @@ fn socket_thread_fn(
                 Ok(SocketThreadRequest::SocketWasClosed(_, _)) => {} //Ignore: There is no socket that could be closed yet.
                 Ok(SocketThreadRequest::Response(_, _)) => {}        //ignore network data, the thread creating it is not running yet
                 Ok(SocketThreadRequest::SetTimeout(t)) => timeout = t,
-                Ok(SocketThreadRequest::TriggerAutoReconnect(addr, port)) => {
+                Ok(SocketThreadRequest::TriggerAutoReconnect(addrs)) => {
                     if !auto_reconnect_allowed {
                         continue 'wait_for_connect;
                     }
                     is_auto_reconnect = true;
-                    break 'wait_for_connect (addr, port, None);
+                    break 'wait_for_connect (addrs, None);
                 }
                 Ok(SocketThreadRequest::SetAutoReconnect(ar_enabled)) => auto_reconnect_enabled = ar_enabled,
                 Err(_) => {
@@ -423,14 +436,14 @@ fn socket_thread_fn(
         session_id += 1;
         connection_state.store(2, Ordering::SeqCst);
 
-        let (mut tcp_stream, stream_copy) = match create_socket(addr, port) {
+        let (mut tcp_stream, stream_copy) = match create_socket_from_list(&addrs) {
             Ok((a, b)) => (a, b),
             Err(e) => {
                 if let Some(tx) = connection_request_done_tx {
                     let _ = tx.send(Err(ConnectError::IoError(e)));
                 }
                 work_queue_tx
-                    .send(SocketThreadRequest::TriggerAutoReconnect(addr, port))
+                    .send(SocketThreadRequest::TriggerAutoReconnect(addrs))
                     .expect("Socket thread was still running, but it's work queue was destroyed. This is a bug in the rust bindings.");
                 continue 'thread;
             }
@@ -443,7 +456,7 @@ fn socket_thread_fn(
             })
         };
 
-        //we have a connection, notify requester, connection state and all registered event listeners
+        //we have a connection, notify requester, connection state and all registered event receivers
         if let Some(tx) = connection_request_done_tx {
             let _ = tx.send(Ok(()));
         }
@@ -500,7 +513,7 @@ fn socket_thread_fn(
                             send_buffer.extend_from_slice(&payload);
                             if tcp_stream.write_all(&send_buffer).is_err() {
                                 if auto_reconnect_enabled {
-                                    let _ = work_queue_tx.send(SocketThreadRequest::TriggerAutoReconnect(addr, port));
+                                    let _ = work_queue_tx.send(SocketThreadRequest::TriggerAutoReconnect(addrs));
                                 }
                                 break 'connection;
                             }
@@ -513,10 +526,10 @@ fn socket_thread_fn(
                 Ok(SocketThreadRequest::Terminate) => {
                     break 'thread;
                 }
-                Ok(SocketThreadRequest::Connect(_, _, tx)) => {
+                Ok(SocketThreadRequest::Connect(_, tx)) => {
                     let _ = tx.send(Err(ConnectError::AlreadyConnected));
                 }
-                Ok(SocketThreadRequest::TriggerAutoReconnect(_, _)) => {}
+                Ok(SocketThreadRequest::TriggerAutoReconnect(_)) => {}
                 Ok(SocketThreadRequest::Disconnect(tx)) => {
                     let _ = tcp_stream.shutdown(Shutdown::Both); //we are closing the connection anyway, so ignore errors here
                     let _ = tx.send(Ok(()));
@@ -525,7 +538,7 @@ fn socket_thread_fn(
                 }
                 Ok(SocketThreadRequest::SocketWasClosed(sid, was_shutdown)) if sid == session_id => {
                     if auto_reconnect_enabled {
-                        let _ = work_queue_tx.send(SocketThreadRequest::TriggerAutoReconnect(addr, port));
+                        let _ = work_queue_tx.send(SocketThreadRequest::TriggerAutoReconnect(addrs));
                     }
                     disconnect_reason = if was_shutdown { DisconnectReason::Shutdown } else { DisconnectReason::Error };
                     break 'connection;
@@ -584,11 +597,13 @@ fn socket_thread_fn(
     disconnect_callbacks.retain(|queue| queue.send(DisconnectReason::Request).is_ok());
 }
 
-/// This error is raised if a [`connect`](crate::ipconnection::IpConnection::connect) call fails.
+/// This error is raised if a [`connect`](crate::ip_connection::IpConnection::connect) call fails.
 #[derive(Debug)]
 pub enum ConnectError {
     /// Could not parse the given ip address.
     CouldNotParseIpAddress(String),
+    /// Could not resolve the given ip addresses.
+    CouldNotResolveIpAddress,
     /// An [`IoError`](std::io::Error) was raised while creating the socket.
     IoError(std::io::Error),
     /// Already connected. Disconnect before connecting somewhere else.
@@ -616,6 +631,7 @@ impl std::fmt::Display for ConnectError {
                 "{}",
                 match self {
                     ConnectError::CouldNotParseIpAddress(addr) => format!("Could not parse ip address: {}", addr),
+                    ConnectError::CouldNotResolveIpAddress => format!("Could not resolve any of the given ip addresses"),
                     ConnectError::IoError(_e) => unreachable!("Could not query io error description. This is a bug in the rust bindings."),
                     ConnectError::AlreadyConnected => "Already connected. Disconnect before connecting somewhere else.".to_owned(),
                     ConnectError::CouldNotSetNoDelayFlag =>
@@ -630,23 +646,29 @@ impl std::fmt::Display for ConnectError {
     }
 }
 
+impl From<std::io::Error> for ConnectError {
+    fn from(err: std::io::Error) -> Self {
+        ConnectError::IoError(err)
+    }
+}
+
 /// This error is raised if a disconnect request failed, because there was no connection to disconnect
 #[derive(Debug)]
 pub struct DisconnectErrorNotConnected;
 
 pub(crate) enum SocketThreadRequest {
     Request(Request, Sender<Duration>),
-    Connect(IpAddr, u16, Sender<Result<(), ConnectError>>),
+    Connect(Vec<SocketAddr>, Sender<Result<(), ConnectError>>),
     Disconnect(Sender<Result<(), DisconnectErrorNotConnected>>),
     SocketWasClosed(u64, bool),
     Response(PacketHeader, Vec<u8>),
     SetTimeout(Duration),
-    TriggerAutoReconnect(IpAddr, u16),
+    TriggerAutoReconnect(Vec<SocketAddr>),
     SetAutoReconnect(bool),
     Terminate,
 }
 
-/// This enum is returned from the [`get_connection_state`](crate::ipconnection::IpConnection::get_connection_state) method.
+/// This enum is returned from the [`get_connection_state`](crate::ip_connection::IpConnection::get_connection_state) method.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ConnectionState {
     /// No connection is established.
@@ -693,7 +715,7 @@ impl Default for IpConnection {
         let copy = socket_thread_tx.clone();
         let atomic = Arc::new(AtomicUsize::new(0));
         IpConnection {
-            req: IpConRequestSender {
+            req: IpConnectionRequestSender {
                 socket_thread_tx,
                 connection_state: Arc::clone(&atomic),
                 auto_reconnect_enabled: Arc::new(AtomicBool::new(false)),
@@ -715,24 +737,28 @@ impl Drop for IpConnection {
     }
 }
 
-impl IpConRequestSender {
-    /// Creates a TCP/IP connection to the given `host` and `port`. The host and port can refer to a Brick Daemon or to a WIFI/Ethernet Extension.
+impl IpConnectionRequestSender {
+    /// Creates a TCP/IP connection to the given `addr`. `addr` can be any object which implements
+    /// [`ToSocketAddrs`](std::net::ToSocketAddrs), for example a tuple of a hostname and a port. 
+    /// The address can refer to a Brick Daemon or to a WIFI/Ethernet Extension.
     ///
     /// Devices can only be controlled when the connection was established successfully.
     ///
     /// Blocks until the connection is established and throws an exception if there is no Brick Daemon or WIFI/Ethernet Extension listening at the given host and port.
-    pub fn connect(&self, host: &str, port: u16) -> Receiver<Result<(), ConnectError>> {
-        let (tx, rx) = channel();
-        let addr = match IpAddr::from_str(host) {
-            Err(std::net::AddrParseError { .. }) => {
-                let _ = tx.send(Err(ConnectError::CouldNotParseIpAddress(host.to_owned())));
+    pub fn connect<T: ToSocketAddrs>(&self, addr: T) -> Receiver<Result<(), ConnectError>> {
+        let (tx, rx) = channel();       
+        let sock_addrs = match addr.to_socket_addrs()
+                                  .map_err(|e| ConnectError::IoError(e))
+                                  .map(|iter| iter.collect::<Vec<SocketAddr>>()) {
+            Ok(addresses) => addresses,
+            Err(e) => {
+                tx.send(Err(e))
+                  .expect("Socket thread has crashed. This is a bug in the rust bindings.");
                 return rx;
             }
-            Ok(address) => address,
         };
-
         self.socket_thread_tx
-            .send(SocketThreadRequest::Connect(addr, port, tx))
+            .send(SocketThreadRequest::Connect(sock_addrs, tx))
             .expect("Socket thread has crashed. This is a bug in the rust bindings.");
         rx
     }
@@ -747,7 +773,7 @@ impl IpConRequestSender {
     }
 
     /// This event is triggered whenever the IP Connection got connected to a Brick Daemon or to a WIFI/Ethernet Extension.
-    pub fn get_connect_event_listener(&self) -> Receiver<ConnectReason> {
+    pub fn get_connect_receiver(&self) -> Receiver<ConnectReason> {
         let (tx, rx) = channel();
         let (sent_tx, sent_rx) = channel();
         self.socket_thread_tx
@@ -758,7 +784,7 @@ impl IpConRequestSender {
     }
 
     /// This event is triggered whenever the IP Connection got disconnected from a Brick Daemon or to a WIFI/Ethernet Extension.
-    pub fn get_disconnect_event_listener(&self) -> Receiver<DisconnectReason> {
+    pub fn get_disconnect_receiver(&self) -> Receiver<DisconnectReason> {
         let (tx, rx) = channel();
         let (sent_tx, sent_rx) = channel();
         self.socket_thread_tx
@@ -768,7 +794,7 @@ impl IpConRequestSender {
         rx
     }
 
-    /// Returns the timeout as set by [`set_timeout`](crate::ipconnection::IpConnection::set_timeout)
+    /// Returns the timeout as set by [`set_timeout`](crate::ip_connection::IpConnection::set_timeout)
     pub fn get_timeout(&self) -> Duration { Duration::from_millis(self.current_timeout_ms.load(Ordering::SeqCst) as u64) }
 
     /// Sets the timeout for getters and for setters for which the response expected flag is activated.
@@ -790,7 +816,7 @@ impl IpConRequestSender {
 
     /// Enables or disables auto-reconnect. If auto-reconnect is enabled, the IP Connection will try to reconnect to
     /// the previously given host and port, if the currently existing connection is lost.
-    /// Therefore, auto-reconnect only does something after a successful [`connect`](crate::ipconnection::IpConnection::connect) call.
+    /// Therefore, auto-reconnect only does something after a successful [`connect`](crate::ip_connection::IpConnection::connect) call.
     ///
     /// Default value is true.
     pub fn set_auto_reconnect(&mut self, auto_reconnect_enabled: bool) {
@@ -809,9 +835,9 @@ impl IpConRequestSender {
         rx.recv().expect("The sent queue was dropped. This is a bug in the rust bindings.");
     }
 
-    /// This listener receives enumerate events, as described [here](crate::ipconnection::EnumerateAnswer).
+    /// This receiver receives enumerate events, as described [here](crate::ip_connection::EnumerateResponse).
     ///
-    pub fn get_enumerate_event_listener(&self) -> ConvertingCallbackReceiver<EnumerateAnswer> {
+    pub fn get_enumerate_receiver(&self) -> ConvertingCallbackReceiver<EnumerateResponse> {
         let (tx, rx) = channel();
         let (sent_tx, sent_rx) = channel();
         self.socket_thread_tx
@@ -877,31 +903,31 @@ impl IpConnection {
     /// Creates an IP Connection object that can be used to enumerate the available devices. It is also required for the constructor of Bricks and Bricklets.
     pub fn new() -> IpConnection { Default::default() }
 
-    /// Returns a new request sender, to be used in other threads.
-    pub fn get_request_sender(&self) -> IpConRequestSender { self.req.clone() }
+    /// Returns a new request sender, to be used for example in other threads.
+    pub fn get_request_sender(&self) -> IpConnectionRequestSender { self.req.clone() }
 
     /// Creates a TCP/IP connection to the given `host` and `port`. The host and port can refer to a Brick Daemon or to a WIFI/Ethernet Extension.
     ///
     /// Devices can only be controlled when the connection was established successfully.
     ///
     /// Blocks until the connection is established and throws an exception if there is no Brick Daemon or WIFI/Ethernet Extension listening at the given host and port.
-    pub fn connect(&self, host: &str, port: u16) -> Receiver<Result<(), ConnectError>> { self.req.connect(host, port) }
+    pub fn connect<T: ToSocketAddrs + Send>(&self, addr: T) -> Receiver<Result<(), ConnectError>> { self.req.connect(addr) }
 
     /// Disconnects the TCP/IP connection from the Brick Daemon or the WIFI/Ethernet Extension.
     pub fn disconnect(&self) -> Receiver<Result<(), DisconnectErrorNotConnected>> { self.req.disconnect() }
 
     /// This event is triggered whenever the IP Connection got connected to a Brick Daemon or to a WIFI/Ethernet Extension.
-    pub fn get_connect_event_listener(&self) -> Receiver<ConnectReason> { self.req.get_connect_event_listener() }
+    pub fn get_connect_receiver(&self) -> Receiver<ConnectReason> { self.req.get_connect_receiver() }
 
     /// This event is triggered whenever the IP Connection got disconnected from a Brick Daemon or to a WIFI/Ethernet Extension.
-    pub fn get_disconnect_event_listener(&self) -> Receiver<DisconnectReason> { self.req.get_disconnect_event_listener() }
+    pub fn get_disconnect_receiver(&self) -> Receiver<DisconnectReason> { self.req.get_disconnect_receiver() }
 
-    /// Returns the timeout as set by [`set_timeout`](crate::ipconnection::IpConnection::set_timeout)
+    /// Returns the timeout as set by [`set_timeout`](crate::ip_connection::IpConnection::set_timeout)
     pub fn get_timeout(&self) -> Duration { self.req.get_timeout() }
 
     /// Sets the timeout for getters and for setters for which the response expected flag is activated.
     ///
-    /// Default timeout is 2,5s.
+    /// Default timeout is 2500 ms.
     pub fn set_timeout(&mut self, timeout: Duration) { self.req.set_timeout(timeout) }
 
     /// Queries the current connection state.
@@ -912,7 +938,7 @@ impl IpConnection {
 
     /// Enables or disables auto-reconnect. If auto-reconnect is enabled, the IP Connection will try to reconnect to
     /// the previously given host and port, if the currently existing connection is lost.
-    /// Therefore, auto-reconnect only does something after a successful [`connect`](crate::ipconnection::IpConnection::connect) call.
+    /// Therefore, auto-reconnect only does something after a successful [`connect`](crate::ip_connection::IpConnection::connect) call.
     ///
     /// Default value is true.
     pub fn set_auto_reconnect(&mut self, auto_reconnect_enabled: bool) { self.req.set_auto_reconnect(auto_reconnect_enabled) }
@@ -920,9 +946,9 @@ impl IpConnection {
     /// Broadcasts an enumerate request. All devices will respond with an enumerate event.
     pub fn enumerate(&self) { self.req.enumerate() }
 
-    /// This listener receives enumerate events, as described [here](crate::ipconnection::EnumerateAnswer).
+    /// This receiver receives enumerate events, as described [here](crate::ip_connection::EnumerateResponse).
     ///
-    pub fn get_enumerate_event_listener(&self) -> ConvertingCallbackReceiver<EnumerateAnswer> { self.req.get_enumerate_event_listener() }
+    pub fn get_enumerate_receiver(&self) -> ConvertingCallbackReceiver<EnumerateResponse> { self.req.get_enumerate_receiver() }
 
     /// Performs an authentication handshake with the connected Brick Daemon or WIFI/Ethernet Extension.
     /// If the handshake succeeds the connection switches from non-authenticated to authenticated state

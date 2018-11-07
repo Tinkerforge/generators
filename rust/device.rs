@@ -5,7 +5,7 @@ use crate::{
     byte_converter::FromByteSlice,
     converting_callback_receiver::ConvertingCallbackReceiver,
     converting_receiver::{BrickletError, BrickletRecvTimeoutError, ConvertingReceiver},
-    ipconnection::{IpConnection, Request, SocketThreadRequest},
+    ip_connection::{IpConnection, Request, SocketThreadRequest},
     low_level_traits::*,
 };
 use std::sync::{
@@ -138,7 +138,7 @@ impl Device {
         }
     }
 
-    pub(crate) fn get_listener<T: FromByteSlice>(&self, function_id: u8) -> ConvertingCallbackReceiver<T> {
+    pub(crate) fn get_receiver<T: FromByteSlice>(&self, function_id: u8) -> ConvertingCallbackReceiver<T> {
         let (tx, rx) = channel();
         let (sent_tx, sent_rx) = channel();
         self.req_tx

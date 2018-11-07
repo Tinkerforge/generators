@@ -46,20 +46,20 @@ class RustExample(common.Example):
     def get_rust_source(self):
         template = r"""use std::{{io, error::Error}};
 {imports}
-use tinkerforge::{{ipconnection::IpConnection, 
+use tinkerforge::{{ip_connection::IpConnection, 
                   {device_name_under}_{device_category_under}::*}};
 {incomplete}{description}
 
-const HOST: &str = "127.0.0.1";
+const HOST: &str = "localhost";
 const PORT: u16 = 4223;
-const UID: &str = "{dummy_uid}"; // Change {dummy_uid} to the UID of your {device_name_long_display}
+const UID: &str = "{dummy_uid}"; // Change {dummy_uid} to the UID of your {device_name_long_display}.
 {functions}
 fn main() -> Result<(), Box<dyn Error>> {{
-    let ipcon = IpConnection::new(); // Create IP connection
-    let {device_name_under}_{device_category_under} = {device_name_camel}{device_category_camel}::new(UID, &ipcon); // Create device object
+    let ipcon = IpConnection::new(); // Create IP connection.
+    let {device_name_initials} = {device_name_camel}{device_category_camel}::new(UID, &ipcon); // Create device object.
 
-    ipcon.connect(HOST, PORT).recv()??; // Connect to brickd
-    // Don't use device before ipcon is connected
+    ipcon.connect((HOST, PORT)).recv()??; // Connect to brickd.
+    // Don't use device before ipcon is connected.
 {sources}
     println!("Press enter to exit.");
     let mut _input = String::new();
@@ -106,12 +106,12 @@ fn main() -> Result<(), Box<dyn Error>> {{
             sources.remove(None)
 
         if len(sources) == 0:
-            sources = ['\t// TODO: Add example code here\n']
+            sources = ['\t// TODO: Add example code here.\n']
 
         while None in cleanups:
             cleanups.remove(None)
 
-        if len(self.get_device().get_name().camel) > 14:
+        if len(self.get_device().get_name().camel_abbrv) > 14:
             constructor_break = '\n\t\t  '
         else:
             constructor_break = ' '
@@ -119,10 +119,10 @@ fn main() -> Result<(), Box<dyn Error>> {{
         return template.format(incomplete=incomplete,
                                description=description,
                                device_category_under=self.get_device().get_category().under,
-                               device_category_camel=self.get_device().get_category().camel,
+                               device_category_camel=self.get_device().get_category().camel_abbrv,
                                device_name_under=self.get_device().get_name().under,
-                               device_name_camel=self.get_device().get_name().camel,
-                               device_name_initial=self.get_device().get_initial_name(),
+                               device_name_camel=self.get_device().get_name().camel_abbrv,                               
+                               device_name_initials=self.get_device().get_initial_name(),
                                device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports='\n'.join(unique_imports),
@@ -206,8 +206,8 @@ class RustExampleParameter(common.ExampleParameter):
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            non_array_template = '{global_line_prefix}\t\tprintln!("{label}: {{{colon}{binary}}}{unit_placeholder}", {name}{index}{divisor}{unit_param});{comment}'
-            array_template = '{global_line_prefix}\t\tfor item in {name}.iter() {{println!("{label}: {{{colon}{binary}}}{unit_placeholder}", item{index}{divisor}{unit_param});}}{comment}'
+            non_array_template = '{global_line_prefix}\t\tprintln!("{label}: {{{colon}{binary}}}{unit_param}", {name}{index}{divisor});{comment}'
+            array_template = '{global_line_prefix}\t\tfor item in {name}.iter() {{println!("{label}: {{{colon}{binary}}}{unit_param}", item{index}{divisor});}}{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -230,11 +230,7 @@ class RustExampleParameter(common.ExampleParameter):
 
             result = []
 
-            unit_param = self.get_formatted_unit_name(', " {0}"')
-            if unit_param is not '':
-                unit_placeholder = '{}'
-            else:
-                unit_placeholder = ''
+            unit_param = self.get_formatted_unit_name(' {0}')
 
             for index in range(self.get_label_count()):
                 result.append(template.format(global_line_prefix=global_line_prefix,
@@ -242,7 +238,6 @@ class RustExampleParameter(common.ExampleParameter):
                                               label=self.get_label_name(index=index),
                                               colon=colon,
                                               binary=binary,
-                                              unit_placeholder=unit_placeholder,
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor(' as f32 /{0}'),
                                               unit_param=unit_param,
@@ -291,7 +286,7 @@ class RustExampleResult(common.ExampleResult):
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '{global_line_prefix}\t\tprintln!("{label}: {{{colon}{binary}}}{unit_placeholder}", {name}{index}{divisor}{unit_param});{comment}'
+            template = '{global_line_prefix}\t\tprintln!("{label}: {{{colon}{binary}}}{unit_param}", {name}{index}{divisor});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -309,11 +304,7 @@ class RustExampleResult(common.ExampleResult):
 
             result = []
 
-            unit_param = self.get_formatted_unit_name(', " {0}"')
-            if unit_param is not '':
-                unit_placeholder = '{}'
-            else:
-                unit_placeholder = ''
+            unit_param = self.get_formatted_unit_name(' {0}')
 
             for index in range(self.get_label_count()):
                 result.append(template.format(global_line_prefix=global_line_prefix,
@@ -321,10 +312,9 @@ class RustExampleResult(common.ExampleResult):
                                               label=self.get_label_name(index=index),
                                               colon=colon,
                                               binary=binary,
-                                              unit_placeholder=unit_placeholder,
-                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                              divisor=self.get_formatted_divisor(' as f32 /{0}'),
                                               unit_param=unit_param,
+                                              index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
+                                              divisor=self.get_formatted_divisor(' as f32 /{0}'),                                              
                                               comment=self.get_formatted_comment(' // {0}')))
 
         return result
@@ -337,8 +327,8 @@ class RustExampleGetterFunction(common.ExampleGetterFunction, RustExampleArgumen
         return None
 
     def get_rust_source(self):        
-        template = r"""{global_line_prefix}		// Get current {function_name_comment}
-{global_line_prefix}let {result_name} = {device_name_under}_{device_category_under}.{function_name_under}({arguments}).recv()?;
+        template = r"""{global_line_prefix}		// Get current {function_name_comment}.
+{global_line_prefix}let {result_name} = {device_name_initials}.{function_name_under}({arguments}).recv()?;
 {write_lines}
 """
         returns_struct = len(self.get_results()) > 1
@@ -360,6 +350,7 @@ class RustExampleGetterFunction(common.ExampleGetterFunction, RustExampleArgumen
         arguments = self.get_rust_arguments()
 
         result = template.format(device_name_under=self.get_device().get_name().under,
+                                 device_name_initials=self.get_device().get_initial_name(),
                                  device_category_under = self.get_device().get_category().under,
                                  result_name = result_name,                                 
                                  function_name_under=self.get_name().under,
@@ -368,7 +359,7 @@ class RustExampleGetterFunction(common.ExampleGetterFunction, RustExampleArgumen
                                  arguments=',<BP>'.join(arguments),
                                  global_line_prefix=global_line_prefix)
 
-        return common.break_string(result, '{}('.format(self.get_name().camel))
+        return common.break_string(result, '{}('.format(self.get_name().camel_abbrv))
 
 class RustExampleSetterFunction(common.ExampleSetterFunction, RustExampleArgumentsMixin):
     def get_rust_imports(self):
@@ -378,17 +369,18 @@ class RustExampleSetterFunction(common.ExampleSetterFunction, RustExampleArgumen
         return None
 
     def get_rust_source(self):
-        template = '{comment1}{global_line_prefix}\t\t{device_name_under}_{device_category_under}.{function_name}({arguments});{comment2}\n'
+        template = '{comment1}{global_line_prefix}\t\t{device_name_initials}.{function_name}({arguments});{comment2}\n'
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_name_under=self.get_device().get_name().under,
+                                 device_name_initials=self.get_device().get_initial_name(),
                                  device_category_under = self.get_device().get_category().under,
                                  function_name=self.get_name().under,
                                  arguments=',<BP>'.join(self.get_rust_arguments()),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
-        return common.break_string(result, '{}('.format(self.get_name().camel))
+        return common.break_string(result, '{}('.format(self.get_name().camel_abbrv))
 
 class RustExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_rust_imports(self):
@@ -398,13 +390,14 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
         return ""
 
     def get_rust_source(self):
-        #TODO: high level callback listeners send Option<Result>, so we need to match them here. OTOH streaming examples are incomplete anyway, so this can be done manually.
-        template = r"""     //Create listener for {function_name_comment} events.
-        let {function_name_under}_listener = {device_name_under}_{device_category_under}.get_{function_name_under}_receiver();
-        // Spawn thread to handle received events. This thread ends when the {device_name_under}_{device_category_under}
+        #TODO: high level callback receivers send Option<Result>, so we need to match them here. OTOH streaming examples are incomplete anyway, so this can be done manually.
+        template = r"""     // Create receiver for {function_name_comment} events.
+        let {function_name_under}_receiver = {device_name_initials}.get_{function_name_under}_receiver();
+
+        // Spawn thread to handle received events. This thread ends when the `{device_name_initials}` object
         // is dropped, so there is no need for manual cleanup.
         thread::spawn(move || {{
-            for event in {function_name_under}_listener {{{match_expr}           
+            for {function_name_under} in {function_name_under}_receiver {{{match_expr}           
                 {write_lines}{extra_message}
             {match_expr_end}}}
         }});
@@ -413,7 +406,7 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
         has_high_level = [packet for packet in self.get_device().get_packets(type_='callback') if (packet.get_name().under == self.get_name().under) or (len(packet.get_name().under.split("_")) > 2 and packet.get_name(skip=-2).under == self.get_name().under)][0].has_high_level()
 
         if has_high_level:
-            match_expr = "match event {\nSome((payload, result)) => {\n"
+            match_expr = "match {function_name_under} {{\nSome((payload, result)) => {{\n".format(function_name_under = self.get_name().under)
             match_expr_end = '}\nNone => println!("Stream was out of sync.")\n}'
         else:
             match_expr = ""
@@ -421,10 +414,10 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
 
         if len(self.get_parameters()) > 1:
             for parameter in self.get_parameters():
-                write_lines += parameter.get_rust_write_lines(parameter_struct_name="event" if not has_high_level else "result")
+                write_lines += parameter.get_rust_write_lines(parameter_struct_name=self.get_name().under if not has_high_level else "result")
         else:
             for parameter in self.get_parameters():
-                write_lines += parameter.get_rust_write_lines(override_parameter_name="event" if not has_high_level else "result")
+                write_lines += parameter.get_rust_write_lines(override_parameter_name=self.get_name().under if not has_high_level else "result")
 
         while None in write_lines:
             write_lines.remove(None)
@@ -440,6 +433,7 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
         result = template.format(match_expr = match_expr, 
                                  match_expr_end = match_expr_end,
                                  device_name_under=self.get_device().get_name().under,
+                                 device_name_initials=self.get_device().get_initial_name(),
                                  device_category_under=self.get_device().get_category().under,
                                  function_name_under=self.get_name().under,
                                  function_name_comment=self.get_comment_name(),
@@ -456,13 +450,13 @@ class RustExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, Ru
         return None
 
     def get_rust_source(self):
-        templateA = r"""		// Set period for {function_name_comment} listener to {period_sec_short} ({period_msec}ms)
-		{device_name_under}_{device_category_under}.set_{function_name_under}_period({arguments}{period_msec});
+        templateA = r"""		// Set period for {function_name_comment} receiver to {period_sec_short} ({period_msec}ms).
+		{device_name_initials}.set_{function_name_under}_period({arguments}{period_msec});
 """
-        templateB = r"""		// Set period for {function_name_comment} listener to {period_sec_short} ({period_msec}ms)
+        templateB = r"""		// Set period for {function_name_comment} receiver to {period_sec_short} ({period_msec}ms).
 		// Note: The {function_name_comment} callback is only called every {period_sec_long}
 		//       if the {function_name_comment} has changed since the last call!
-		{device_name_under}_{device_category_under}.set_{function_name_under}_callback_period({arguments}{period_msec});
+		{device_name_initials}.set_{function_name_under}_callback_period({arguments}{period_msec});
 """
 
         if self.get_device().get_name().space.startswith('IMU'):
@@ -473,6 +467,7 @@ class RustExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, Ru
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         return template.format(device_name_under=self.get_device().get_name().under,
+                               device_name_initials=self.get_device().get_initial_name(),
                                device_category_under=self.get_device().get_category().under,
                                function_name_under=self.get_name().under,
                                function_name_comment=self.get_comment_name(),
@@ -499,8 +494,8 @@ class RustExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         return None
 
     def get_rust_source(self):
-        template = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
-		{device_name_under}_{device_category_under}.set_{function_name_under}_callback_threshold({arguments}'{option_char}', {minimum_maximums});
+        template = r"""		// Configure threshold for {function_name_comment} "{option_comment}".
+		{device_name_initials}.set_{function_name_under}_callback_threshold({arguments}'{option_char}', {minimum_maximums});
 """
         minimum_maximums = []
 
@@ -508,6 +503,7 @@ class RustExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
             minimum_maximums.append(minimum_maximum.get_rust_source())
 
         return template.format(device_name_under=self.get_device().get_name().under,
+                               device_name_initials=self.get_device().get_initial_name(),
                                device_category_under=self.get_device().get_category().under,
                                function_name_under=self.get_name().under,
                                function_name_comment=self.get_comment_name(),
@@ -524,15 +520,15 @@ class RustExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         return None
 
     def get_rust_source(self):
-        templateA = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
-		{device_name_under}_{device_category_under}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change});
+        templateA = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms).
+		{device_name_initials}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change});
 """
-        templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-		{device_name_under}_{device_category_under}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
+        templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold.
+		{device_name_initials}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
         templateC = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
-		// with a debounce period of {period_sec_short} ({period_msec}ms)
-		{device_name_under}_{device_category_under}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
+		// with a debounce period of {period_sec_short} ({period_msec}ms).
+		{device_name_initials}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -550,6 +546,7 @@ class RustExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
             minimum_maximums.append(minimum_maximum.get_rust_source())
 
         return template.format(device_name_under=self.get_device().get_name().under,
+                               device_name_initials=self.get_device().get_initial_name(),
                                device_category_under=self.get_device().get_category().under,
                                function_name_under=self.get_name().under,
                                function_name_comment=self.get_comment_name(),
@@ -579,12 +576,13 @@ class RustExampleSpecialFunction(common.ExampleSpecialFunction):
         if type_ == 'empty':
             return ''
         elif type_ == 'debounce_period':
-            template = r"""		// Get threshold listeners with a debounce time of {period_sec} ({period_msec}ms)
-		{device_name_under}_{device_category_under}.set_debounce_period({period_msec});
+            template = r"""		// Get threshold receivers with a debounce time of {period_sec} ({period_msec}ms).
+		{device_name_initials}.set_debounce_period({period_msec});
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
             return template.format(device_name_under=self.get_device().get_name().under,
+                                   device_name_initials=self.get_device().get_initial_name(),
                                    device_category_under=self.get_device().get_category().under,
                                    period_msec=period_msec,
                                    period_sec=period_sec)
@@ -652,7 +650,7 @@ class RustExamplesGenerator(common.ExamplesGenerator):
         return RustExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel_abbrv) != device.get_name().camel_abbrv:
             print('  \033[01;31m- skipped\033[0m')
             return
 
@@ -685,9 +683,9 @@ class RustExamplesGenerator(common.ExamplesGenerator):
                 p = subprocess.Popen(["rustfmt", filename, "--config-path", os.getcwd()], cwd=examples_dir, stdout = subprocess.PIPE)
                 out, err = p.communicate() #block until rustfmt has finished
                 if out != "" or err is not None:
-                    print "Got the following output from rustfmt:"
-                    print out
-                    print err
+                    print("Got the following output from rustfmt:")
+                    print(out)
+                    print(err)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', RustExamplesGenerator)

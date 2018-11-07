@@ -1,5 +1,5 @@
 //! A wrapper for [`Receiver`](std::sync::mpsc::Receiver), which converts received byte vectors to structured data.
-//! This variant of [`ConvertingReceiver`](crate::converting_receiver::ConvertingReceiver) is used for event listeners.
+//! This variant of [`ConvertingReceiver`](crate::converting_receiver::ConvertingReceiver) is used for events.
 
 use crate::byte_converter::FromByteSlice;
 use std::{
@@ -37,7 +37,7 @@ impl std::error::Error for CallbackRecvError {
 pub enum CallbackRecvTimeoutError {
     /// The queue was disconnected. This usually happens if the ip connection is destroyed.
     QueueDisconnected,
-    /// The request could not be answered before the timeout was reached.
+    /// The request could not be responded to before the timeout was reached.
     QueueTimeout,
     /// The received packet had an unexpected length. Maybe a function was called on a wrong brick or bricklet?
     MalformedPacket,
@@ -52,7 +52,7 @@ impl std::error::Error for CallbackRecvTimeoutError {
         match self {
             CallbackRecvTimeoutError::QueueDisconnected =>
                 "The queue was disconnected. This usually happens if the ip connection is destroyed.",
-            CallbackRecvTimeoutError::QueueTimeout => "The request could not be answered before the timeout was reached.",
+            CallbackRecvTimeoutError::QueueTimeout => "The request could not be responded to before the timeout was reached.",
             CallbackRecvTimeoutError::MalformedPacket =>
                 "The received packet had an unexpected length. Maybe a function was called on a wrong brick or bricklet?",
         }
@@ -64,7 +64,7 @@ impl std::error::Error for CallbackRecvTimeoutError {
 pub enum CallbackTryRecvError {
     /// The queue was disconnected. This usually happens if the ip connection is destroyed.
     QueueDisconnected,
-    /// There are currently no answers available.
+    /// There are currently no responses available.
     QueueEmpty,
     /// The received packet had an unexpected length. Maybe a function was called on a wrong brick or bricklet?
     MalformedPacket,
@@ -79,7 +79,7 @@ impl std::error::Error for CallbackTryRecvError {
         match self {
             CallbackTryRecvError::QueueDisconnected =>
                 "The queue was disconnected. This usually happens if the ip connection is destroyed.",
-            CallbackTryRecvError::QueueEmpty => "There are currently no answers available.",
+            CallbackTryRecvError::QueueEmpty => "There are currently no responses available.",
             CallbackTryRecvError::MalformedPacket =>
                 "The received packet had an unexpected length. Maybe a function was called on a wrong brick or bricklet?",
         }
@@ -87,7 +87,7 @@ impl std::error::Error for CallbackTryRecvError {
 }
 
 /// A wrapper for [`Receiver`], which converts received byte vectors to structured data. This variant of
-/// [`ConvertingReceiver`](crate::converting_receiver::ConvertingReceiver) is used for event listeners.
+/// [`ConvertingReceiver`](crate::converting_receiver::ConvertingReceiver) is used for events.
 ///
 /// This receiver wraps a [`Receiver`] receiving raw bytes. Calling [`recv_forever`], [`recv_timeout`] or [`try_recv`]
 /// will call equivalent methods on the wrapped [`Receiver`] and then convert the received bytes
@@ -101,7 +101,7 @@ impl std::error::Error for CallbackTryRecvError {
 /// # Errors
 ///
 /// Returned errors are equivalent to those returned from methods of a [`Receiver`].
-/// If the received answer can not be interpreted as the result type `T`, a `MalformedPacket`
+/// If the received response can not be interpreted as the result type `T`, a `MalformedPacket`
 /// error is raised.
 ///
 /// [`Receiver`]: std::sync::mpsc::Receiver

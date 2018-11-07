@@ -1,54 +1,48 @@
 use std::{error::Error, io, thread};
-use tinkerforge::ipconnection::{IpConnection, EnumerationType, EnumerateAnswer};
+use tinkerforge::ip_connection::{EnumerateResponse, EnumerationType, IpConnection};
 
-const HOST: &str = "127.0.0.1";
+const HOST: &str = "localhost";
 const PORT: u16 = 4223;
 
-fn print_enumerate_answer(answer: &EnumerateAnswer) {
-    println!("UID:               {}", answer.uid);
-    println!("Enumeration Type:  {:?}", answer.enumeration_type);
+fn print_enumerate_response(response: &EnumerateResponse) {
+    println!("UID:               {}", response.uid);
+    println!("Enumeration Type:  {:?}", response.enumeration_type);
 
-    if answer.enumeration_type == EnumerationType::Disconnected {
+    if response.enumeration_type == EnumerationType::Disconnected {
         println!("");
         return;
     }
 
-    println!("Connected UID:     {}", answer.connected_uid);
-    println!("Position:          {}", answer.position);
-    println!(
-        "Hardware Version:  {}.{}.{}",
-        answer.hardware_version[0], answer.hardware_version[1], answer.hardware_version[2]
-    );
-    println!(
-        "Firmware Version:  {}.{}.{}",
-        answer.firmware_version[0], answer.firmware_version[1], answer.firmware_version[2]
-    );
-    println!("Device Identifier: {}", answer.device_identifier);
+    println!("Connected UID:     {}", response.connected_uid);
+    println!("Position:          {}", response.position);
+    println!("Hardware Version:  {}.{}.{}", response.hardware_version[0], response.hardware_version[1], response.hardware_version[2]);
+    println!("Firmware Version:  {}.{}.{}", response.firmware_version[0], response.firmware_version[1], response.firmware_version[2]);
+    println!("Device Identifier: {}", response.device_identifier);
     println!("");
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let ipc = IpConnection::new(); // Create IP connection
+    let ipcon = IpConnection::new(); // Create IP connection
 
-    ipc.connect(HOST, PORT).recv()??; // Connect to brickd
+    ipcon.connect((HOST, PORT)).recv()??; // Connect to brickd
 
-    // Get Enumerate Listener
-    let listener = ipc.get_enumerate_event_listener();
+    // Get Enumerate Receiver
+    let receiver = ipcon.get_enumerate_receiver();
 
     // Spawn thread to react to enumerate events. This thread must not be terminated or joined,
-    // as it will end when the IP connection (and the listener's sender) is dropped.
+    // as it will end when the IP connection (and the receiver's sender) is dropped.
     thread::spawn(move || {
-        for answer in listener {
-            print_enumerate_answer(&answer);
+        for response in receiver {
+            print_enumerate_response(&response);
         }
     });
 
     // Trigger Enumerate
-    ipc.enumerate();
+    ipcon.enumerate();
 
     println!("Press enter to exit.");
     let mut _input = String::new();
     io::stdin().read_line(&mut _input)?;
-    ipc.disconnect();
+    ipcon.disconnect();
     Ok(())
 }

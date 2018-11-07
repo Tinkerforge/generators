@@ -55,7 +55,7 @@ class RustZipGenerator(common.ZipGenerator):
 
         # Copy device examples
         tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
-                                               device.get_name().camel + device.get_category().camel)
+                                               device.get_name().camel_abbrv + device.get_category().camel_abbrv)
 
         if not os.path.exists(tmp_examples_device_dir):
             os.makedirs(tmp_examples_device_dir)
@@ -84,7 +84,7 @@ class RustZipGenerator(common.ZipGenerator):
             'converting_callback_receiver.rs',
             'converting_high_level_callback_receiver.rs',
             'device.rs',
-            'ipconnection.rs',
+            'ip_connection.rs',
             'lib.rs',
             'low_level_traits.rs',            
         ]
@@ -112,9 +112,9 @@ class RustZipGenerator(common.ZipGenerator):
         p = subprocess.Popen(["cargo", "fmt"], cwd=self.tmp_dir, stdout = subprocess.PIPE)
         out, err = p.communicate() #block until cargo fmt has finished
         if out != "" or err is not None:
-            print "Got the following output from cargo fmt:"
-            print out
-            print err
+            print("Got the following output from cargo fmt:")
+            print(out)
+            print(err)
 
         # Make zip
         self.create_zip_file(self.tmp_dir)

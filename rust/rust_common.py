@@ -32,7 +32,7 @@ import common
 
 class RustDevice(common.Device):
     def get_rust_name(self):
-        return self.get_name().camel + self.get_category().camel
+        return self.get_name().camel_abbrv + self.get_category().camel_abbrv
     def specialize_rust_doc_function_links(self, text):
         specialized = []
         def specializer(packet, high_level):
@@ -70,7 +70,7 @@ class RustPacket(common.Packet):
         return self.get_rust_type_name()
 
     def get_rust_name(self, skip=0):
-        return self.get_name(skip=skip).camel
+        return self.get_name(skip=skip).camel_abbrv
 
     def get_rust_type_name(self, skip=0):        
         name = self.get_rust_name(skip)
@@ -157,10 +157,10 @@ class RustPacket(common.Packet):
         text, links = self.get_device().specialize_rust_doc_function_links(text)
         text += '\n' + '\n'.join(links)
 
-        text = text.replace('Callback ', 'Listener ')
-        text = text.replace(' Callback', ' Listener')
-        text = text.replace('callback ', 'listener ')
-        text = text.replace(' callback', ' listener')
+        text = text.replace('Callback ', 'Receiver ')
+        text = text.replace(' Callback', ' Receiver')
+        text = text.replace('callback ', 'receiver ')
+        text = text.replace(' callback', ' receiver')
         text = text.replace('.. note::', '# Note')
         text = text.replace('.. warning::', '# Warning')
 

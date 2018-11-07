@@ -19,7 +19,7 @@ pub enum BrickletError {
     UnknownError,
     /// The request can not be fulfulled, as there is currently no connection to a brick daemon.
     NotConnected,
-    /// The request was sent, but response expected is disabled, so no answer can be received. This is not an error.
+    /// The request was sent, but response expected is disabled, so no response can be received. This is not an error.
     SuccessButResponseExpectedIsDisabled,
 }
 
@@ -45,7 +45,7 @@ impl std::error::Error for BrickletError {
             BrickletError::UnknownError => "UnknownError, Currently unused",
             BrickletError::NotConnected => "The request can not be fulfulled, as there is currently no connection to a brick daemon.",
             BrickletError::SuccessButResponseExpectedIsDisabled =>
-                "The request was sent, but response expected is disabled, so no answer can be received. This is not an error.",
+                "The request was sent, but response expected is disabled, so no response can be received. This is not an error.",
         }
     }
 }
@@ -69,7 +69,7 @@ impl std::error::Error for BrickletError {
 ///
 /// Returned errors are equivalent to those returned from methods of a [`Receiver`]. Additionally errors
 /// raised by the brick or bricklet, such as `InvalidParameter`, `FunctionNotSupported` and `UnknownError`
-/// will be returned. If the received answer can not be interpreted as the result type `T`, a `MalformedPacket`
+/// will be returned. If the received response can not be interpreted as the result type `T`, a `MalformedPacket`
 /// error is raised.
 /// ### Note
 /// If the device is configured to send no response for a result-less setter, the Error `SuccessButResponseExpectedIsDisabled`
@@ -90,7 +90,7 @@ pub struct ConvertingReceiver<T: FromByteSlice> {
 pub enum BrickletRecvTimeoutError {
     /// The queue was disconnected. This usually happens if the ip connection is destroyed.
     QueueDisconnected,
-    /// The request could not be answered before the timeout was reached.
+    /// The request could not be responded to before the timeout was reached.
     QueueTimeout,
     /// A parameter was invalid or had an unexpected length.
     InvalidParameter,
@@ -102,7 +102,7 @@ pub enum BrickletRecvTimeoutError {
     MalformedPacket,
     /// The request can not be fulfulled, as there is currently no connection to a brick daemon.
     NotConnected,
-    /// The request was sent, but response expected is disabled, so no answer can be received. This is not an error.
+    /// The request was sent, but response expected is disabled, so no response can be received. This is not an error.
     SuccessButResponseExpectedIsDisabled,
 }
 
@@ -115,7 +115,7 @@ impl std::error::Error for BrickletRecvTimeoutError {
         match self {
             BrickletRecvTimeoutError::QueueDisconnected =>
                 "The queue was disconnected. This usually happens if the ip connection is destroyed.",
-            BrickletRecvTimeoutError::QueueTimeout => "The request could not be answered before the timeout was reached.",
+            BrickletRecvTimeoutError::QueueTimeout => "The request could not be responded to before the timeout was reached.",
             BrickletRecvTimeoutError::InvalidParameter => "A parameter was invalid or had an unexpected length.",
             BrickletRecvTimeoutError::FunctionNotSupported => "The brick or bricklet does not support the requested function.",
             BrickletRecvTimeoutError::UnknownError => "UnknownError, Currently unused",
@@ -124,7 +124,7 @@ impl std::error::Error for BrickletRecvTimeoutError {
             BrickletRecvTimeoutError::NotConnected =>
                 "The request can not be fulfulled, as there is currently no connection to a brick daemon.",
             BrickletRecvTimeoutError::SuccessButResponseExpectedIsDisabled =>
-                "The request was sent, but response expected is disabled, so no answer can be received. This is not an error.",
+                "The request was sent, but response expected is disabled, so no response can be received. This is not an error.",
         }
     }
 }
@@ -134,7 +134,7 @@ impl std::error::Error for BrickletRecvTimeoutError {
 pub enum BrickletTryRecvError {
     /// The queue was disconnected. This usually happens if the ip connection is destroyed.
     QueueDisconnected,
-    /// There are currently no answers available.
+    /// There are currently no responses available.
     QueueEmpty,
     /// A parameter was invalid or had an unexpected length.
     InvalidParameter,
@@ -146,7 +146,7 @@ pub enum BrickletTryRecvError {
     MalformedPacket,
     /// The request can not be fulfulled, as there is currently no connection to a brick daemon.
     NotConnected,
-    /// The request was sent, but response expected is disabled, so no answer can be received. This is not an error.
+    /// The request was sent, but response expected is disabled, so no response can be received. This is not an error.
     SuccessButResponseExpectedIsDisabled,
 }
 
@@ -159,7 +159,7 @@ impl std::error::Error for BrickletTryRecvError {
         match self {
             BrickletTryRecvError::QueueDisconnected =>
                 "The queue was disconnected. This usually happens if the ip connection is destroyed.",
-            BrickletTryRecvError::QueueEmpty => "There are currently no answers available.",
+            BrickletTryRecvError::QueueEmpty => "There are currently no responses available.",
             BrickletTryRecvError::InvalidParameter => "A parameter was invalid or had an unexpected length.",
             BrickletTryRecvError::FunctionNotSupported => "The brick or bricklet does not support the requested function.",
             BrickletTryRecvError::UnknownError => "UnknownError, Currently unused",
@@ -168,7 +168,7 @@ impl std::error::Error for BrickletTryRecvError {
             BrickletTryRecvError::NotConnected =>
                 "The request can not be fulfulled, as there is currently no connection to a brick daemon.",
             BrickletTryRecvError::SuccessButResponseExpectedIsDisabled =>
-                "The request was sent, but response expected is disabled, so no answer can be received. This is not an error.",
+                "The request was sent, but response expected is disabled, so no response can be received. This is not an error.",
         }
     }
 }

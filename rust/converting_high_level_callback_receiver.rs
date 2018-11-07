@@ -1,13 +1,13 @@
 //! A wrapper for [`Receiver`](std::sync::mpsc::Receiver), which converts received byte vectors to structured data.
 //! This variant of [`ConvertingReceiver`](crate::converting_receiver::ConvertingReceiver) is used for high level
-//! event listeners, for use cases such as streaming.
+//! events, for use cases such as streaming.
 
 use crate::{byte_converter::FromByteSlice, converting_callback_receiver::*, low_level_traits::*};
 use std::{marker::PhantomData, time::Duration};
 
 /// A wrapper for [`Receiver`], which converts received byte vectors to structured data. This variant of
 /// [`ConvertingReceiver`](crate::converting_receiver::ConvertingReceiver) is used for high level
-/// event listeners, for use cases such as streaming.
+/// events, for use cases such as streaming.
 ///
 /// This receiver wraps a [`Receiver`] receiving raw bytes. Calling [`recv_forever`], [`recv_timeout`] or [`try_recv`]
 /// will call equivalent methods on the wrapped [`Receiver`] and then convert the received bytes
@@ -25,7 +25,7 @@ use std::{marker::PhantomData, time::Duration};
 /// # Errors
 ///
 /// Returned errors are equivalent to those returned from methods of a [`Receiver`].
-/// If the received answer can not be interpreted as the result type `T`, a `MalformedPacket`
+/// If the received response can not be interpreted as the result type `T`, a `MalformedPacket`
 /// error is raised.
 ///
 /// [`Receiver`]: std::sync::mpsc::Receiver

@@ -57,7 +57,7 @@ use crate::{{
     byte_converter::*,
     converting_receiver::{conv_receiver},{callback_recv}{high_level_callback_recv}
     device::*,
-    ipconnection::IpConnection,{low_level}    
+    ip_connection::IpConnection,{low_level}    
 }};""".format(header=self.get_generator().get_header_comment(kind='asterisk'),
               description=common.select_lang(self.get_description()),
               callback_recv = "" if len(self.get_packets("callback")) == 0 else "\n\tconverting_callback_receiver::ConvertingCallbackReceiver,",
@@ -70,9 +70,9 @@ use crate::{{
 
         # Create function and callback constants for get/set response expected
         for packet in self.get_packets('function'):
-            constants.append((packet.get_name().camel, packet.get_function_id()))
+            constants.append((packet.get_name().camel_abbrv, packet.get_function_id()))
         for packet in self.get_packets('callback'):
-            constants.append(("Callback"+packet.get_name().camel, packet.get_function_id()))
+            constants.append(("Callback"+packet.get_name().camel_abbrv, packet.get_function_id()))
         
         function_enum_name = self.get_rust_name() + "Function"
 
@@ -326,15 +326,15 @@ pub struct {name} {{
     {functions}
 }}"""
         resp_expct_template = "result.device.response_expected[u8::from({function}::{name}) as usize] = {value};"
-        resp_expct_config = [resp_expct_template.format(function=self.get_rust_name() + "Function", name=packet.get_name().camel, value=self.get_rust_response_expected(packet.get_response_expected())) for packet in self.get_packets('function')]
+        resp_expct_config = [resp_expct_template.format(function=self.get_rust_name() + "Function", name=packet.get_name().camel_abbrv, value=self.get_rust_response_expected(packet.get_response_expected())) for packet in self.get_packets('function')]
      
         functions = []
 
         callback_template = """{description}\n\tpub fn get_{name}_receiver(&self) -> ConvertingCallbackReceiver<{type}> {{
-        self.device.get_listener(u8::from({fun_enum}::Callback{fn_id}))
+        self.device.get_receiver(u8::from({fun_enum}::Callback{fn_id}))
     }}"""
         high_level_callback_template = """{description}\n\tpub fn get_{name}_receiver(&self) -> ConvertingHighLevelCallbackReceiver<{payload_type}, {result_type}, {low_level_type}> {{
-        ConvertingHighLevelCallbackReceiver::new(self.device.get_listener(u8::from({fun_enum}::Callback{fn_id})))
+        ConvertingHighLevelCallbackReceiver::new(self.device.get_receiver(u8::from({fun_enum}::Callback{fn_id})))
     }}"""
 
         for packet in self.get_packets('callback'):
@@ -342,17 +342,17 @@ pub struct {name} {{
                                                       description= packet.get_rust_formatted_doc(),
                                                       type = self.returnTypes[packet],
                                                       fun_enum = self.get_rust_name() + "Function",
-                                                      fn_id = packet.get_name().camel))
+                                                      fn_id = packet.get_name().camel_abbrv))
             if packet.has_high_level():
                 payload_type = [elem.get_rust_type(ignore_cardinality=True) for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
 
                 functions.append(high_level_callback_template.format(name = packet.get_name(skip=-2).under,
                                                       description= packet.get_rust_formatted_doc(),
                                                       payload_type=payload_type,
-                                                      result_type=packet.get_name(skip=-2).camel+"Result",
+                                                      result_type=packet.get_name(skip=-2).camel_abbrv+"Result",
                                                       low_level_type = self.returnTypes[packet],
                                                       fun_enum = self.get_rust_name() + "Function",
-                                                      fn_id = packet.get_name().camel))
+                                                      fn_id = packet.get_name().camel_abbrv))
 
         function_template = """{description}\n\tpub fn {name}(&self{params}) -> {returnType} {{
         let {mut}payload = vec![0;{byte_count}];
@@ -447,7 +447,7 @@ pub struct {name} {{
                                      fill_payload = "\n\t\t".join(fill_payload) + ("\n" if len(fill_payload) > 0 else ""),
                                      fn = fn,
                                      fun_enum = self.get_rust_name() + "Function",
-                                     fn_id=packet.get_name().camel))
+                                     fn_id=packet.get_name().camel_abbrv))
 
             if packet.get_high_level('stream_in') != None:                
                 high_level_function_counter += 1
@@ -472,7 +472,7 @@ pub struct {name} {{
                         elif role == 'stream_chunk_data':
                             low_level_params.append("chunk_array")
                         else:
-                            print "Unknown role {role} for stream_in-getter".format(role=role)
+                            print("Unknown role {role} for stream_in-getter".format(role=role))
 
                 if fn == 'get':
                     result_count = self.returnTypesResultCardinality[packet]
@@ -570,7 +570,7 @@ pub struct {name} {{
                     if param.get_level() != 'low':
                         low_level_params.append(param.get_rust_name())
                     else:
-                       print "Unexpected low level parameter in stream_out-getter!"
+                       print("Unexpected low level parameter in stream_out-getter!")
                 functions.append(stream_out_getter_template.format(name=name,
                                                                    description= packet.get_rust_formatted_doc(),
                                                                    params=(", " + params) if len(params) > 0 else "",
@@ -753,7 +753,7 @@ pub mod converting_callback_receiver;
 pub mod converting_high_level_callback_receiver;
 pub mod converting_receiver;
 pub mod device;
-pub mod ipconnection;
+pub mod ip_connection;
 pub mod low_level_traits;
 """
         with open(os.path.join(self.get_bindings_dir(), "..", 'lib.rs'), 'w') as f:

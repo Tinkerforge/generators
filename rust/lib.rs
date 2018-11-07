@@ -15,5 +15,5 @@ pub mod converting_callback_receiver;
 pub mod converting_high_level_callback_receiver;
 pub mod converting_receiver;
 pub mod device;
-pub mod ipconnection;
+pub mod ip_connection;
 pub mod low_level_traits;
