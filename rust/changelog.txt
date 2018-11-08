@@ -6,3 +6,6 @@
 
 2018-11-08: 2.0.2 (2ee80c5)
 - Fixed readme link in Cargo.toml
+
+2018-11-08: 2.0.3 (<unknown>)
+- Fixed github links in readme.md
