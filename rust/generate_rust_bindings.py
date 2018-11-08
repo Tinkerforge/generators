@@ -741,7 +741,7 @@ impl FromByteSlice for [bool; {count}] {{
 #![allow(unstable_name_collisions)]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![cfg_attr(feature = "fail-on-warnings", deny(clippy::all))]
-#![doc(html_root_url = "https://docs.rs/tinkerforge/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/tinkerforge/2.0.2")]
 
 //! Rust API bindings for [Tinkerforge](https://www.tinkerforge.com) bricks and bricklets.
 
