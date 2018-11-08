@@ -4,5 +4,5 @@
 2018-11-08: 2.0.1 (54b1772)
 - Added readme.md and licenses
 
-2018-11-08: 2.0.2 (<unknown>)
+2018-11-08: 2.0.2 (2ee80c5)
 - Fixed readme link in Cargo.toml
