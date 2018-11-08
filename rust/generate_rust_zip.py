@@ -94,7 +94,11 @@ class RustZipGenerator(common.ZipGenerator):
             'Cargo.toml',
             'rustfmt.toml',
             'changelog.txt',
-            'readme.txt'
+            'readme.txt',
+            'readme.md',
+            'LICENSE-APACHE',
+            'LICENSE-CC0',
+            'LICENSE-MIT'
         ]
 
         if self.get_config_name().space == 'Tinkerforge':

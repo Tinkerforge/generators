@@ -1,2 +1,5 @@
-<unknown>: 2.0.0 (unknown)
+2018-11-08: 2.0.0 (78e2e85)
 - Initial version
+
+2018-11-08: 2.0.1 (<unknown>)
+- Added readme.md and licenses

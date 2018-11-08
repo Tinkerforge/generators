@@ -1,6 +1,6 @@
 [package]
 name = "tinkerforge"
-version = "2.0.0" # remember to update html_root_url
+version = "2.0.1" # remember to update html_root_url
 authors = ["Erik Fleckstein <erik@tinkerforge.com>"]
 edition = "2018"
 description = "Rust API bindings for https://www.tinkerforge.com bricks and bricklets."
@@ -10,6 +10,10 @@ repository = "https://github.com/Tinkerforge/generators"
 readme = "readme.txt"
 keywords = ["api", "tinkerforge" ,"bindings"]
 categories = ["api-bindings"] 
+exclude = [
+    "examples/*",
+    "readme.txt"
+]
 
 [dependencies]
 sha-1 = "0.8"
