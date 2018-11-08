@@ -193,26 +193,25 @@ impl FromByteSlice for char {
 }
 
 impl ToBytes for String {
-    fn to_le_bytes(s: String) -> Vec<u8> {
-        s.into_bytes()
-    }
+    fn to_le_bytes(s: String) -> Vec<u8> { s.into_bytes() }
 
     fn try_to_le_bytes(s: String, max_len: usize) -> Result<Vec<u8>, BrickletError> {
-        let bytes = s.into_bytes();
+        if s.chars().any(|c| c as u32 > 255) {
+            return Err(BrickletError::InvalidParameter);
+        }
+        let bytes: Vec<u8> = s.chars().map(|c| c as u8).collect();
         if bytes.len() > max_len {
             Err(BrickletError::InvalidParameter)
         } else {
             let mut result = vec![0u8; max_len];
             result[0..bytes.len()].copy_from_slice(&bytes);
             Ok(result)
-        }        
+        }
     }
 }
 
 impl FromByteSlice for String {
-    fn from_le_bytes(bytes: &[u8]) -> String {
-          String::from_utf8(bytes.to_vec()).expect("").replace("\u{0}", "") //TODO: endianess conversion?
-    }
+    fn from_le_bytes(bytes: &[u8]) -> String { bytes.into_iter().filter(|&&b| b != 0).map(|&b| b as char).collect() }
 
     fn bytes_expected() -> usize { 1 }
 }

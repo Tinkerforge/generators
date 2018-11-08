@@ -201,7 +201,8 @@ pub struct EnumerateResponse {
     /// Major, minor and release number for firmware version.
     pub firmware_version: [u8; 3],
     /// A number that represents the device.
-    /// The device identifier numbers can be found TODO LINK here. There are also constants for these numbers named following this pattern:
+    /// The device identifier numbers can be found [here](https://www.tinkerforge.com/en/doc/Software/Device_Identifier.html).
+    /// There are also constants for these numbers named following this pattern:
     ///
     /// <device-class>.DEVICE_IDENTIFIER
     ///

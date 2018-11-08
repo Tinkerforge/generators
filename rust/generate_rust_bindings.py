@@ -767,9 +767,7 @@ pub mod low_level_traits;
     def finish(self):        
         self.write_lib_rs()
         self.write_byte_converter()
-        with open(os.path.join(self.get_bindings_dir(), '__released_files__'), 'w') as f: #TODO: currently too stupid for inheritance, fix later
-            for released_file in self.released_files:
-                f.write(released_file + '\n')
+        common.BindingsGenerator.finish(self)
 
 
 def generate(root_dir):
