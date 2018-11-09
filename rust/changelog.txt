@@ -9,3 +9,6 @@
 
 2018-11-08: 2.0.3 (ede6832)
 - Fixed github links in readme.md
+
+unknown: 2.0.4 (<unknown>)
+- Fixed :func: links

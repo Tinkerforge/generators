@@ -104,7 +104,7 @@ class RustPacket(common.Packet):
 
         # handle links      
         text = text.replace(":ref:", "")
-        text = text.replace(":func:", "")
+        #text = text.replace(":func:", "")
         #if ":ref:" in text:
             #substitutions = {
             #    "device_identifier": "https://www.tinkerforge.com/en/doc/Software/Device_Identifier.html",

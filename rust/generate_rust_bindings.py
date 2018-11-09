@@ -329,7 +329,7 @@ pub struct {name} {{
         resp_expct_config = [resp_expct_template.format(function=self.get_rust_name() + "Function", name=packet.get_name().camel_abbrv, value=self.get_rust_response_expected(packet.get_response_expected())) for packet in self.get_packets('function')]
      
         functions = []
-
+        
         callback_template = """{description}\n\tpub fn get_{name}_callback_receiver(&self) -> ConvertingCallbackReceiver<{type}> {{
         self.device.get_callback_receiver(u8::from({fun_enum}::Callback{fn_id}))
     }}"""
