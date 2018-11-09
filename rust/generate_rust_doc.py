@@ -427,7 +427,7 @@ class RustDocGenerator(common.DocGenerator):
         return 'Rust'
 
     def get_doc_rst_filename_part(self):
-        return 'rs'
+        return 'Rust'
 
     def get_doc_example_regex(self):
         return r'^example_.*\.rs$'

@@ -48,6 +48,9 @@ class RustDevice(common.Device):
         return result
 
 class RustPacket(common.Packet):
+    def get_rust_parameters(self, high_level=False):
+        return ''
+
     def get_return_type(self):
         returns = self.get_elements(direction='out')
         if len(returns) == 0:
