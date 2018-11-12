@@ -52,7 +52,7 @@ class RustDocDevice(common.Device):
 
     def get_rust_methods(self, type_):
         methods = ''
-        func_start = '.. c:function:: int '
+        func_start = '.. rs:function:: int '
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
@@ -83,7 +83,7 @@ class RustDocDevice(common.Device):
         }
 
         cbs = ''
-        func_start = '.. c:var:: '
+        func_start = '.. rs:var:: '
 
         for packet in self.get_packets('callback'):
             plist = packet.get_rust_parameters(high_level=True)
@@ -108,7 +108,7 @@ class RustDocDevice(common.Device):
     def get_rust_api(self):
         create_str = {
             'en': """
-.. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
+.. rs:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
 
  Creates the device object ``{1}`` with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
@@ -122,7 +122,7 @@ class RustDocDevice(common.Device):
  (see examples :ref:`above <{0}_rust_examples>`).
 """,
             'de': """
-.. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
+.. rs:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
 
  Erzeugt ein Geräteobjekt ``{1}`` mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IP Connection ``ipcon`` hinzu:
@@ -139,13 +139,13 @@ class RustDocDevice(common.Device):
 
         destroy_str = {
             'en': """
-.. c:function:: void {0}_destroy({1} *{0})
+.. rs:function:: void {0}_destroy({1} *{0})
 
  Removes the device object ``{0}`` from its IPConnection and destroys it.
  The device object cannot be used anymore afterwards.
 """,
             'de': """
-.. c:function:: void {0}_destroy({1} *{0})
+.. rs:function:: void {0}_destroy({1} *{0})
 
  Entfernt das Geräteobjekt ``{0}`` von dessen IP Connection und zerstört es.
  Das Geräteobjekt kann hiernach nicht mehr verwendet werden.
@@ -154,7 +154,7 @@ class RustDocDevice(common.Device):
 
         register_str = {
             'en': """
-.. c:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
+.. rs:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
 
  Registers the given ``function`` with the given ``callback_id``. The
  ``user_data`` will be passed as the last parameter to the ``function``.
@@ -163,7 +163,7 @@ class RustDocDevice(common.Device):
  listed :ref:`below <{0}_rust_callbacks>`.
 """,
             'de': """
-.. c:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
+.. rs:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
 
  Registriert die ``function`` für die gegebene ``callback_id``. Die ``user_data``
  werden der Funktion als letztes Parameter mit übergeben.
@@ -182,7 +182,7 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :c:func:`{1}_register_callback` function. The parameters consist of
+with the :rs:func:`{1}_register_callback` function. The parameters consist of
 the device object, the callback ID, the callback function and optional
 user data:
 
@@ -212,7 +212,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :c:func:`{1}_register_callback` durchgeführt werden. Die
+mit der Funktion :rs:func:`{1}_register_callback` durchgeführt werden. Die
 Parameter bestehen aus dem Geräteobjekt, der Callback ID, der Callback Funktion
 und optionalen Benutzer Daten:
 
@@ -317,15 +317,15 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 Constants
 ^^^^^^^^^
 
-.. c:var:: {1}_DEVICE_IDENTIFIER
+.. rs:var:: {1}_DEVICE_IDENTIFIER
 
  This constant is used to identify a {4}.
 
- The :c:func:`{2}_get_identity` function and the :c:data:`IPCON_CALLBACK_ENUMERATE`
+ The :rs:func:`{2}_get_identity` function and the :rs:data:`IPCON_CALLBACK_ENUMERATE`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 
-.. c:var:: {1}_DEVICE_DISPLAY_NAME
+.. rs:var:: {1}_DEVICE_DISPLAY_NAME
 
  This constant represents the human readable name of a {4}.
 """,
@@ -335,15 +335,15 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. c:var:: {1}_DEVICE_IDENTIFIER
+.. rs:var:: {1}_DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {3} {4} zu identifizieren.
 
- Die :c:func:`{2}_get_identity` Funktion und der :c:data:`IPCON_CALLBACK_ENUMERATE`
+ Die :rs:func:`{2}_get_identity` Funktion und der :rs:data:`IPCON_CALLBACK_ENUMERATE`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. c:var:: {1}_DEVICE_DISPLAY_NAME
+.. rs:var:: {1}_DEVICE_DISPLAY_NAME
 
  Diese Konstante stellt den Anzeigenamen eines {4} dar.
 """
