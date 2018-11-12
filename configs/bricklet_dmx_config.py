@@ -546,3 +546,9 @@ Er gibt die Anzahl der aufgetreten Overrun und Framing Fehler zurück.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('setter', 'Set DMX Mode', [('uint8:constant', 0)], 'Configure Bricklet as DMX master', None),
+              ('setter', 'Write Frame', [('uint8', [255, 128, 0])], 'Write DMX frame with 3 channels', None)]
+})

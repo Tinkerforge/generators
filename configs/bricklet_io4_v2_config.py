@@ -615,3 +615,20 @@ Zustand des Kanals (der Zustand nach dem Monoflop).
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Output',
+'functions': [('setter', 'Set Configuration', [('uint8', 3), ('char', 'o'), ('bool', False)], 'Configure channel 3 as output low', None),
+              ('loop_header', 10, 'Set channel 3 alternating high/low 10 times with 100 ms delay'),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Selected Value', [('uint8', 3), ('bool', True)], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Selected Value', [('uint8', 3), ('bool', False)], None, None),
+              ('loop_footer',)]
+})
+
+com['examples'].append({
+'name': 'Interrupt',
+'functions': [('callback', ('Input Value', 'input value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
+              ('callback_configuration', ('Input Value', 'input value (channel 1)'), [('uint8', 1)], 500, False, None, [])]
+})

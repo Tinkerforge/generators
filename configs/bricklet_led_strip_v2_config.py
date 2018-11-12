@@ -510,7 +510,7 @@ Gibt die Konfiguration zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'incomplete': True # because of array parameters
+'functions': [('setter', 'Set LED Values', [('uint16', 0), ('uint8', [255, 0, 0, 0, 255, 0, 0, 0, 255])], 'Set first 3 LEDs to red, green and blue', None)]
 })
 
 com['examples'].append({
