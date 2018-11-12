@@ -1595,10 +1595,10 @@ class Device(object):
 
         for packet in self.all_packets:
             if packet.get_type() == 'function':
-                if packet.get_name().space in function_names:
+                if packet.get_name().lower in function_names:
                     raise GeneratorError('Function name is not unique: ' + packet.get_name().space)
                 else:
-                    function_names.add(packet.get_name().space)
+                    function_names.add(packet.get_name().lower)
 
                 self.all_function_packets.append(packet)
 
@@ -1608,10 +1608,10 @@ class Device(object):
                 if 'Callback' in packet.get_name().space:
                     raise GeneratorError("Callback name cannot contain 'Callback': " + packet.get_name().space)
 
-                if packet.get_name().space in callback_names:
+                if packet.get_name().lower in callback_names:
                     raise GeneratorError('Callback name is not unique: ' + packet.get_name().space)
                 else:
-                    callback_names.add(packet.get_name().space)
+                    callback_names.add(packet.get_name().lower)
 
                 self.callback_packets.append(packet)
             else:
