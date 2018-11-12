@@ -156,7 +156,11 @@ class RustExampleArgument(common.ExampleArgument):
 
         if isinstance(value, list):            
             fn = self.get_function()
-            has_high_level = [packet for packet in self.get_device().get_packets() if (packet.get_name().under == fn.get_name().under) or (len(packet.get_name().under.split("_")) > 2 and packet.get_name(skip=-2).under == fn.get_name().under)][0].has_high_level()
+            packets_of_function = [packet for packet in self.get_device().get_packets()  
+                                            if (packet.get_name().under == fn.get_name().under) # compare name directly
+                                            or (len(packet.get_name().under.split("_")) > 2 and packet.get_name(skip=-2).under == fn.get_name().under)] # or try without "low level"
+            assert len(packets_of_function) == 1, "Found not exactly one packet in device %s for function %s. Maybe the example's configuration is wrong? (Found %d packets)" % (self.get_device().get_name().under, fn.get_name().under, len(packets_of_function))
+            has_high_level = packets_of_function[0].has_high_level()
             if has_high_level:
                 return '&[{}]'.format(', '.join([helper(item) for item in value]))
             else:
