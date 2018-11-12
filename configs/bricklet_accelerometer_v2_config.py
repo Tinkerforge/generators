@@ -279,7 +279,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-For high throughput of acceleration data (> 1000Hz) you have to use the 
+For high throughput of acceleration data (> 1000Hz) you have to use the
 :cb:`Continuous Acceleration 16 Bit` or :cb:`Continuous Acceleration 8 Bit`
 callbacks.
 
