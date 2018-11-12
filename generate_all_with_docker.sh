@@ -9,11 +9,11 @@ else
 fi
 
 if command -v docker >/dev/null 2>&1 ; then
-	if [ $(/usr/bin/docker images -q tinkerforge/build_environment_full) ]; then
+	if [ $(/usr/bin/docker images -q tinkerforge/build_environment_full:latest) ]; then
 		echo "Using docker image to build."
 		docker run $DOCKER_FLAGS \
 		-v $ROOT_DIR/../:/$ROOT_DIR/../ -u $(id -u):$(id -g) \
-		tinkerforge/build_environment_full /bin/bash \
+		tinkerforge/build_environment_full:latest /bin/bash \
 		-c "cd $ROOT_DIR ; python3 -u generate_all.py "$@""
 	else
 		echo "No docker image found."
