@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-C/C++ Documentation Generator
+Rust Documentation Generator
 Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
@@ -35,13 +35,13 @@ class RustDocDevice(common.Device):
     def specialize_rust_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return ':c:data:`{0}_CALLBACK_{1}`'.format(packet.get_device().get_name().upper,
-                                                           packet.get_name(skip=-2 if high_level else 0).upper)
+                return ':rs:data:`{0}_CALLBACK_{1}`'.format(packet.get_device().get_name().upper,
+                                                            packet.get_name(skip=-2 if high_level else 0).upper)
             else:
-                return ':c:func:`{0}_{1}`'.format(packet.get_device().get_name().under,
-                                                  packet.get_name(skip=-2 if high_level else 0).under)
+                return ':rs:func:`{0}_{1}`'.format(packet.get_device().get_name().under,
+                                                   packet.get_name(skip=-2 if high_level else 0).under)
 
-        return self.specialize_doc_rst_links(text, specializer, prefix='c')
+        return self.specialize_doc_rst_links(text, specializer, prefix='rs')
 
     def get_rust_examples(self):
         def title_from_filename(filename):
