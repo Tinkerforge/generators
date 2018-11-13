@@ -772,6 +772,19 @@ impl FromByteSlice for [char; 59] {
     fn bytes_expected() -> usize { 59 }
 }
 
+impl ToBytes for [i8; 60] {
+    fn to_le_bytes(arr: [i8; 60]) -> Vec<u8> {
+        vec![arr[0] as u8, arr[1] as u8, arr[2] as u8, arr[3] as u8, arr[4] as u8, arr[5] as u8, arr[6] as u8, arr[7] as u8, arr[8] as u8, arr[9] as u8, arr[10] as u8, arr[11] as u8, arr[12] as u8, arr[13] as u8, arr[14] as u8, arr[15] as u8, arr[16] as u8, arr[17] as u8, arr[18] as u8, arr[19] as u8, arr[20] as u8, arr[21] as u8, arr[22] as u8, arr[23] as u8, arr[24] as u8, arr[25] as u8, arr[26] as u8, arr[27] as u8, arr[28] as u8, arr[29] as u8, arr[30] as u8, arr[31] as u8, arr[32] as u8, arr[33] as u8, arr[34] as u8, arr[35] as u8, arr[36] as u8, arr[37] as u8, arr[38] as u8, arr[39] as u8, arr[40] as u8, arr[41] as u8, arr[42] as u8, arr[43] as u8, arr[44] as u8, arr[45] as u8, arr[46] as u8, arr[47] as u8, arr[48] as u8, arr[49] as u8, arr[50] as u8, arr[51] as u8, arr[52] as u8, arr[53] as u8, arr[54] as u8, arr[55] as u8, arr[56] as u8, arr[57] as u8, arr[58] as u8, arr[59] as u8]
+    }
+}
+
+impl FromByteSlice for [i8; 60] {
+    fn from_le_bytes(bytes: &[u8]) -> [i8; 60] {
+        [bytes[0] as i8, bytes[1] as i8, bytes[2] as i8, bytes[3] as i8, bytes[4] as i8, bytes[5] as i8, bytes[6] as i8, bytes[7] as i8, bytes[8] as i8, bytes[9] as i8, bytes[10] as i8, bytes[11] as i8, bytes[12] as i8, bytes[13] as i8, bytes[14] as i8, bytes[15] as i8, bytes[16] as i8, bytes[17] as i8, bytes[18] as i8, bytes[19] as i8, bytes[20] as i8, bytes[21] as i8, bytes[22] as i8, bytes[23] as i8, bytes[24] as i8, bytes[25] as i8, bytes[26] as i8, bytes[27] as i8, bytes[28] as i8, bytes[29] as i8, bytes[30] as i8, bytes[31] as i8, bytes[32] as i8, bytes[33] as i8, bytes[34] as i8, bytes[35] as i8, bytes[36] as i8, bytes[37] as i8, bytes[38] as i8, bytes[39] as i8, bytes[40] as i8, bytes[41] as i8, bytes[42] as i8, bytes[43] as i8, bytes[44] as i8, bytes[45] as i8, bytes[46] as i8, bytes[47] as i8, bytes[48] as i8, bytes[49] as i8, bytes[50] as i8, bytes[51] as i8, bytes[52] as i8, bytes[53] as i8, bytes[54] as i8, bytes[55] as i8, bytes[56] as i8, bytes[57] as i8, bytes[58] as i8, bytes[59] as i8]
+    }
+    fn bytes_expected() -> usize { 60 }
+}
+
 impl ToBytes for [char; 60] {
     fn to_le_bytes(arr: [char; 60]) -> Vec<u8> {
         vec![arr[0] as u8, arr[1] as u8, arr[2] as u8, arr[3] as u8, arr[4] as u8, arr[5] as u8, arr[6] as u8, arr[7] as u8, arr[8] as u8, arr[9] as u8, arr[10] as u8, arr[11] as u8, arr[12] as u8, arr[13] as u8, arr[14] as u8, arr[15] as u8, arr[16] as u8, arr[17] as u8, arr[18] as u8, arr[19] as u8, arr[20] as u8, arr[21] as u8, arr[22] as u8, arr[23] as u8, arr[24] as u8, arr[25] as u8, arr[26] as u8, arr[27] as u8, arr[28] as u8, arr[29] as u8, arr[30] as u8, arr[31] as u8, arr[32] as u8, arr[33] as u8, arr[34] as u8, arr[35] as u8, arr[36] as u8, arr[37] as u8, arr[38] as u8, arr[39] as u8, arr[40] as u8, arr[41] as u8, arr[42] as u8, arr[43] as u8, arr[44] as u8, arr[45] as u8, arr[46] as u8, arr[47] as u8, arr[48] as u8, arr[49] as u8, arr[50] as u8, arr[51] as u8, arr[52] as u8, arr[53] as u8, arr[54] as u8, arr[55] as u8, arr[56] as u8, arr[57] as u8, arr[58] as u8, arr[59] as u8]
@@ -992,6 +1005,23 @@ impl FromByteSlice for [i16; 10] {
         buf
     }
     fn bytes_expected() -> usize { 20 }
+}
+
+impl ToBytes for [i16; 30] {
+    fn to_le_bytes(arr: [i16; 30]) -> Vec<u8> {
+        let mut buf = vec![0,60];
+        LittleEndian::write_i16_into(&arr, &mut buf);
+        buf
+    }
+}
+
+impl FromByteSlice for [i16; 30] {
+    fn from_le_bytes(bytes: &[u8]) -> [i16; 30] {
+        let mut buf = [0i16; 30];
+        LittleEndian::read_i16_into(&bytes, &mut buf);
+        buf
+    }
+    fn bytes_expected() -> usize { 60 }
 }
 
 impl ToBytes for [u32; 4] {

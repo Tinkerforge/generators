@@ -267,9 +267,11 @@ class RustExampleResult(common.ExampleResult):
         return template.format(name=name)
 
     def get_rust_write_lines(self):
-        name = self.get_name().under
+        #name = self.get_name().under
+        name = self.get_function().get_rust_result_prefix()
         if len(self.get_function().get_results()) > 1:
-            name = self.get_function().get_name().under + "_result." + name
+            #name = self.get_function().get_name().under + "_result." + name
+            name += "." + self.get_name().under
 
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
@@ -330,16 +332,26 @@ class RustExampleGetterFunction(common.ExampleGetterFunction, RustExampleArgumen
     def get_rust_function(self):
         return None
 
+    def get_rust_result_prefix(self):
+        if len(self.get_results()) > 1:
+            if self.get_name().under.startswith("is_") or self.get_name().under.startswith("get_"):
+                return self.get_name(skip=1).under
+            return self.get_name().under+"_result"
+        else:
+            return self.get_results()[0].get_name().under
+
     def get_rust_source(self):        
         template = r"""{global_line_prefix}		// Get current {function_name_comment}.
 {global_line_prefix}let {result_name} = {device_name_initials}.{function_name_under}({arguments}).recv()?;
 {write_lines}
 """
-        returns_struct = len(self.get_results()) > 1
-        if returns_struct:
-            result_name = self.get_name().under+"_result"
-        else:
-            result_name = self.get_results()[0].get_name().under
+        result_name = self.get_rust_result_prefix()
+
+        #returns_struct = len(self.get_results()) > 1
+        #if returns_struct:
+        #    result_name = self.get_name().under+"_result"
+        #else:
+        #    result_name = self.get_results()[0].get_name().under
         
         write_lines = []
         for result in self.get_results():

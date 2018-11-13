@@ -3,7 +3,7 @@
 #![allow(unstable_name_collisions)]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![cfg_attr(feature = "fail-on-warnings", deny(clippy::all))]
-#![doc(html_root_url = "https://docs.rs/tinkerforge/2.0.3")]
+#![doc(html_root_url = "https://docs.rs/tinkerforge/2.0.4")]
 
 //! Rust API bindings for [Tinkerforge](https://www.tinkerforge.com) bricks and bricklets.
 

@@ -735,13 +735,16 @@ impl FromByteSlice for [bool; {count}] {{
             f.write("\n")
             f.write("\n\n".join(array_impl))
 
+    def write_cargo_toml(self):
+        common.specialize_template("Cargo.toml.template", "Cargo.toml", {"{version}": '"'+".".join(list(self.get_changelog_version())) + '"'})
+
     def write_lib_rs(self):
         template = """#![forbid(unsafe_code)]
 #![allow(clippy::too_many_arguments)]
 #![allow(unstable_name_collisions)]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![cfg_attr(feature = "fail-on-warnings", deny(clippy::all))]
-#![doc(html_root_url = "https://docs.rs/tinkerforge/2.0.3")]
+#![doc(html_root_url = "https://docs.rs/tinkerforge/{version}")]
 
 //! Rust API bindings for [Tinkerforge](https://www.tinkerforge.com) bricks and bricklets.
 
@@ -757,14 +760,15 @@ pub mod ip_connection;
 pub mod low_level_traits;
 """
         with open(os.path.join(self.get_bindings_dir(), "..", 'lib.rs'), 'w') as f:
-            f.write(template)
+            f.write(template.format(version=".".join(list(self.get_changelog_version()))))
 
         bindings_mod_template = """pub mod {module};"""
         decls = [bindings_mod_template.format(module=f.replace(".rs", "")) for f in self.released_files]
         with open(os.path.join(self.get_bindings_dir(), 'mod.rs'), 'w') as f:
             f.write("\n".join(decls))
 
-    def finish(self):        
+    def finish(self):
+        self.write_cargo_toml()    
         self.write_lib_rs()
         self.write_byte_converter()
         common.BindingsGenerator.finish(self)
