@@ -414,7 +414,7 @@ changed since the last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
-:func:`Set Acceleration Callback Period`, ausgelöst. Die :word:`parameter`
+:func:`Set Acceleration Callback Period`, ausgelöst. Die :word:`parameters`
 sind die Beschleunigungen der X-, Y- und Z-Achse.
 
 Der :cb:`Acceleration` Callback wird nur ausgelöst wenn sich die Beschleunigung
@@ -444,7 +444,7 @@ with the period as set by :func:`Set Debounce Period`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Acceleration Callback Threshold` gesetzt, erreicht wird.
-Die :word:`parameter` sind die Beschleunigungen der X-, Y- und Z-Achse.
+Die :word:`parameters` sind die Beschleunigungen der X-, Y- und Z-Achse.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`Set Debounce Period` gesetzt, ausgelöst.
