@@ -433,7 +433,7 @@ pub struct {name} {{
                 byte_offset += size
             
             if len(packet.get_constant_groups()) > 0:
-                constant_doc = "\n\t///\n\t/// Associated constants:\n\t/// {constants}".format(constants = "\n\t///\t".join(["* " + self.get_name().upper + self.get_category().upper +'_'+ const_group.get_name().upper + "_" + const.get_name().upper for const_group in packet.get_constant_groups() for const in const_group.get_constants()]))
+                constant_doc = "\n\t///\n\t/// Associated constants:\n\t/// {constants}".format(constants = "\n\t///\t".join(["* " + self.get_name().upper + "_" + self.get_category().upper +'_'+ const_group.get_name().upper + "_" + const.get_name().upper for const_group in packet.get_constant_groups() for const in const_group.get_constants()]))
             else:
                 constant_doc = ""
 
@@ -746,6 +746,7 @@ impl FromByteSlice for [bool; {count}] {{
 #![doc(html_root_url = "https://docs.rs/tinkerforge/{version}")]
 
 //! Rust API bindings for [Tinkerforge](https://www.tinkerforge.com) bricks and bricklets.
+//! See also the additional documentation and examples [here](http://www.tinkerforge.com/en/doc/Software/API_Bindings_Rust.html)
 
 mod bindings;
 pub use crate::bindings::*;

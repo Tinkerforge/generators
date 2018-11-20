@@ -285,12 +285,12 @@ Konstanten
                                               api_str)
 
     def get_rust_doc(self):
-        docs_rs = {'en': 'Additional documentation can be found on `docs.rs <https://docs.rs/tinkerforge/>`_.\n',
-                   'de': 'Zusätzliche Dokumentation findet sich auf `docs.rs <https://docs.rs/tinkerforge/>`_.\n'}
+        docs_rs = {'en': 'Additional documentation can be found on `docs.rs <https://docs.rs/tinkerforge/latest/tinkerforge/{device_name_under}/index.html>`_.\n',
+                   'de': 'Zusätzliche Dokumentation findet sich auf `docs.rs <https://docs.rs/tinkerforge/latest/tinkerforge/{device_name_under}/index.html>`_.\n'}
 
         doc  = common.make_rst_header(self)
         doc += common.make_rst_summary(self)
-        doc += common.select_lang(docs_rs)
+        doc += common.select_lang(docs_rs).format(device_name_under=self.get_name().under + "_" + self.get_category().under)
         doc += self.get_rust_examples()
         doc += self.get_rust_api()
 
@@ -316,7 +316,7 @@ class RustDocPacket(rust_common.RustPacket):
             text = common.handle_rst_word(text, constants=constants)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = self.get_device().get_name().upper + '_'
+        prefix = self.get_device().get_name().upper + '_' + self.get_device().get_category().upper + '_'
 
         if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device(), constants)
