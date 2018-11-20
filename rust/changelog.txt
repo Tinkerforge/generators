@@ -12,3 +12,5 @@
 
 unknown: 2.0.4 (<unknown>)
 - Fixed :func: links
+- Relaxed IpConnection::connect type parameter requirements
+- Fixed some documentation

@@ -337,10 +337,10 @@ fn create_socket_from_list(addrs: &Vec<SocketAddr>) -> std::io::Result<(TcpStrea
     for addr in addrs {
         match create_socket(addr) {
             Ok(tup) => return Ok(tup),
-            Err(e) => error = e
+            Err(e) => error = e,
         }
     }
-    return Err(error)
+    return Err(error);
 }
 
 fn create_socket(addr: &SocketAddr) -> std::io::Result<(TcpStream, TcpStream)> {
@@ -648,9 +648,7 @@ impl std::fmt::Display for ConnectError {
 }
 
 impl From<std::io::Error> for ConnectError {
-    fn from(err: std::io::Error) -> Self {
-        ConnectError::IoError(err)
-    }
+    fn from(err: std::io::Error) -> Self { ConnectError::IoError(err) }
 }
 
 /// This error is raised if a disconnect request failed, because there was no connection to disconnect
@@ -737,24 +735,20 @@ impl Drop for IpConnection {
         }
     }
 }
-
 impl IpConnectionRequestSender {
     /// Creates a TCP/IP connection to the given `addr`. `addr` can be any object which implements
-    /// [`ToSocketAddrs`](std::net::ToSocketAddrs), for example a tuple of a hostname and a port. 
+    /// [`ToSocketAddrs`](std::net::ToSocketAddrs), for example a tuple of a hostname and a port.
     /// The address can refer to a Brick Daemon or to a WIFI/Ethernet Extension.
     ///
     /// Devices can only be controlled when the connection was established successfully.
     ///
-    /// Blocks until the connection is established and throws an exception if there is no Brick Daemon or WIFI/Ethernet Extension listening at the given host and port.
+    /// Returns a receiver, which will receive either ``()`` or an ``ConnectError`` if there is no Brick Daemon or WIFI/Ethernet Extension listening at the given host and port.
     pub fn connect<T: ToSocketAddrs>(&self, addr: T) -> Receiver<Result<(), ConnectError>> {
-        let (tx, rx) = channel();       
-        let sock_addrs = match addr.to_socket_addrs()
-                                  .map_err(|e| ConnectError::IoError(e))
-                                  .map(|iter| iter.collect::<Vec<SocketAddr>>()) {
+        let (tx, rx) = channel();
+        let sock_addrs = match addr.to_socket_addrs().map_err(|e| ConnectError::IoError(e)).map(|iter| iter.collect::<Vec<SocketAddr>>()) {
             Ok(addresses) => addresses,
             Err(e) => {
-                tx.send(Err(e))
-                  .expect("Socket thread has crashed. This is a bug in the rust bindings.");
+                tx.send(Err(e)).expect("Socket thread has crashed. This is a bug in the rust bindings.");
                 return rx;
             }
         };
@@ -911,8 +905,8 @@ impl IpConnection {
     ///
     /// Devices can only be controlled when the connection was established successfully.
     ///
-    /// Blocks until the connection is established and throws an exception if there is no Brick Daemon or WIFI/Ethernet Extension listening at the given host and port.
-    pub fn connect<T: ToSocketAddrs + Send>(&self, addr: T) -> Receiver<Result<(), ConnectError>> { self.req.connect(addr) }
+    /// Returns a receiver, which will receive either ``()`` or an ``ConnectError`` if there is no Brick Daemon or WIFI/Ethernet Extension listening at the given host and port.
+    pub fn connect<T: ToSocketAddrs>(&self, addr: T) -> Receiver<Result<(), ConnectError>> { self.req.connect(addr) }
 
     /// Disconnects the TCP/IP connection from the Brick Daemon or the WIFI/Ethernet Extension.
     pub fn disconnect(&self) -> Receiver<Result<(), DisconnectErrorNotConnected>> { self.req.disconnect() }
@@ -949,7 +943,9 @@ impl IpConnection {
 
     /// This receiver receives enumerate events, as described [here](crate::ip_connection::EnumerateResponse).
     ///
-    pub fn get_enumerate_callback_receiver(&self) -> ConvertingCallbackReceiver<EnumerateResponse> { self.req.get_enumerate_callback_receiver() }
+    pub fn get_enumerate_callback_receiver(&self) -> ConvertingCallbackReceiver<EnumerateResponse> {
+        self.req.get_enumerate_callback_receiver()
+    }
 
     /// Performs an authentication handshake with the connected Brick Daemon or WIFI/Ethernet Extension.
     /// If the handshake succeeds the connection switches from non-authenticated to authenticated state
