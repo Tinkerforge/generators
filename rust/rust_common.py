@@ -48,8 +48,31 @@ class RustDevice(common.Device):
         return result
 
 class RustPacket(common.Packet):
+    def get_rust_return_type(self):
+        returns = self.get_elements(direction='out')            
+        name = self.get_rust_type_name() + ("Event" if self.get_type() == 'callback' else "")
+        if len(returns) == 0 and not self.has_high_level():
+            return "()"
+        if len(returns) == 1 and not self.has_high_level():
+            return returns[0].get_rust_type()
+            
+        return name
+
+    def get_high_level_payload_type(self):
+        return [elem.get_rust_type(ignore_cardinality=True) for elem in self.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
+    
     def get_rust_parameters(self, high_level=False):
-        return ''
+        parameters = []
+
+        for element in self.get_elements(high_level=high_level):
+            if element.get_direction() == 'out' and self.get_type() == 'function':
+                continue
+
+            rust_type = element.get_rust_type()
+            name = element.get_name().under
+            parameters.append('{name}: {type}'.format(name=name, type=rust_type))
+
+        return ', '.join(parameters)
 
     def get_return_type(self):
         returns = self.get_elements(direction='out')

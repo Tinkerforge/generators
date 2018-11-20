@@ -173,6 +173,7 @@ pub struct {name} {{
                 self.returnTypes[packet] = name
                 continue
 
+            # FIXME: this logic is currently duplicated as RustPacket.get_rust_return_type
             # Don't create structs for functions returning nothing or one value, except if they are low level functions.
             if len(returns) == 0 and not packet.has_high_level():
                 self.returnTypes[packet] = "()"
@@ -344,11 +345,9 @@ pub struct {name} {{
                                                       fun_enum = self.get_rust_name() + "Function",
                                                       fn_id = packet.get_name().camel_abbrv))
             if packet.has_high_level():
-                payload_type = [elem.get_rust_type(ignore_cardinality=True) for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
-
                 functions.append(high_level_callback_template.format(name = packet.get_name(skip=-2).under,
                                                       description= packet.get_rust_formatted_doc(),
-                                                      payload_type=payload_type,
+                                                      payload_type=packet.get_high_level_payload_type(),
                                                       result_type=packet.get_name(skip=-2).camel_abbrv+"Result",
                                                       low_level_type = self.returnTypes[packet],
                                                       fun_enum = self.get_rust_name() + "Function",
@@ -545,7 +544,7 @@ pub struct {name} {{
                 name = packet.get_name(skip=-2).under
                 params = ", ".join(["{name}: {type}".format(name=param.get_rust_name(), type=param.get_rust_type()) for param in packet_params if param.get_level() != 'low'])               
                 
-                payload_type = [elem.get_rust_type(ignore_cardinality=True) for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
+                payload_type = packet.get_high_level_payload_type()
                 result_count = self.returnTypesResultCardinality[packet]
 
                 # Don't return structs without or with one member only.
@@ -736,7 +735,7 @@ impl FromByteSlice for [bool; {count}] {{
             f.write("\n\n".join(array_impl))
 
     def write_cargo_toml(self):
-        common.specialize_template("Cargo.toml.template", "Cargo.toml", {"{version}": '"'+".".join(list(self.get_changelog_version())) + '"'})
+        common.specialize_template(os.path.join(self.get_root_dir(), "Cargo.toml.template"), os.path.join(self.get_root_dir(), "Cargo.toml"), {"{version}": '"'+".".join(list(self.get_changelog_version())) + '"'})
 
     def write_lib_rs(self):
         template = """#![forbid(unsafe_code)]

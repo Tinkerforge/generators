@@ -6,7 +6,7 @@ Rust Documentation Generator
 Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generate_rust_doc.py: Generator for C/C++ documentation
+generate_rust_doc.py: Generator for Rust documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,17 +31,17 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import rust_common
 
-class RustDocDevice(common.Device):
+class RustDocDevice(rust_common.RustDevice):
     def specialize_rust_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return ':rs:data:`{0}_CALLBACK_{1}`'.format(packet.get_device().get_name().upper,
-                                                            packet.get_name(skip=-2 if high_level else 0).upper)
+                return ':rust:func:`{0}::get_{1}_callback_receiver`'.format(packet.get_device().get_rust_name(),
+                                                            packet.get_name(skip=-2 if high_level else 0).under)
             else:
-                return ':rs:func:`{0}_{1}`'.format(packet.get_device().get_name().under,
+                return ':rust:func:`{0}::{1}`'.format(packet.get_device().get_rust_name(),
                                                    packet.get_name(skip=-2 if high_level else 0).under)
 
-        return self.specialize_doc_rst_links(text, specializer, prefix='rs')
+        return self.specialize_doc_rst_links(text, specializer, prefix='rust')
 
     def get_rust_examples(self):
         def title_from_filename(filename):
@@ -52,127 +52,85 @@ class RustDocDevice(common.Device):
 
     def get_rust_methods(self, type_):
         methods = ''
-        func_start = '.. rs:function:: int '
+        func_start = '.. rust:function:: '
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
                 continue
 
             skip = -2 if packet.has_high_level() else 0
-            name = '{0}_{1}'.format(self.get_name().under, packet.get_name(skip=skip).under)
+            name = packet.get_name(skip=skip).under
             plist = common.wrap_non_empty(', ', packet.get_rust_parameters(high_level=True), '')
-            params = '{0} *{1}{2}'.format(self.get_name().camel, self.get_name().under, plist)
+            returns = packet.get_rust_return_type()
+            if "et_response_expected" in name:
+                params = '&mut self{}'.format(plist)    
+            else:
+                params = '&self{}'.format(plist)
             desc = packet.get_rust_formatted_doc()
-            func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
+            func = '{start}{struct_name}::{func_name}({params})-> ConvertingReceiver<{returns}>\n{desc}'.format(start=func_start, struct_name=self.get_rust_name(), func_name=name, params=params, returns = returns, desc=desc)
             methods += func + '\n'
 
         return methods
 
     def get_rust_callbacks(self):
-        param_format = {
-            'en': """
- .. code-block:: c
+        cb = {
+        'en': """
+.. rust:function:: {device}::get_{callback_name_under}_callback_receiver(&self) -> {receiver_type}<{result_type}>
 
-  void callback({0})
+Receivers created with this function receive {callback_name_space} events.
+
+{desc}
 """,
             'de': """
- .. code-block:: c
+.. rust:function:: {device}::get_{callback_name_under}_callback_receiver(&self) -> {receiver_type}<{result_type}>
 
-  void callback({0})
+Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space}-Events.
+
+{desc}
 """
         }
 
         cbs = ''
-        func_start = '.. rs:var:: '
-
+        device = self.get_rust_name()
         for packet in self.get_packets('callback'):
-            plist = packet.get_rust_parameters(high_level=True)
-
-            if len(plist) == 0:
-                plist = 'void *user_data'
-            else:
-                plist += ', void *user_data'
-
-            params = common.select_lang(param_format).format(plist)
             desc = packet.get_rust_formatted_doc()
-            skip = -2 if packet.has_high_level() else 0
-            func = '{0}{1}_CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                          self.get_name().upper,
-                                                          packet.get_name(skip=skip).upper,
-                                                          params,
-                                                          desc)
-            cbs += func + '\n'
-
+            if packet.has_high_level():
+                skip = -2
+                receiver_type = "ConvertingHighLevelCallbackReceiver"
+                result_type = ", ".join([packet.get_high_level_payload_type(), packet.get_name(skip=-2).camel_abbrv+"Result", packet.get_rust_return_type()])
+            else:
+                skip = 0
+                receiver_type = "ConvertingCallbackReceiver"
+                result_type = packet.get_rust_return_type()
+            cbs += common.select_lang(cb).format(device=device,
+                                                    callback_name_under=packet.get_name(skip=skip).under,
+                                                    callback_name_space=packet.get_name(skip=skip).space,
+                                                    receiver_type=receiver_type,
+                                                    result_type=result_type,
+                                                    desc=desc)
         return cbs
-
     def get_rust_api(self):
         create_str = {
             'en': """
-.. rs:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
+.. rust:function:: {bricklet_camel}::new(uid: &str, ip_connection: &IpConnection) -> {bricklet_camel}
 
- Creates the device object ``{1}`` with the unique device ID ``uid`` and adds
+ Creates a new ``{bricklet_camel}`` object with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
 
- .. code-block:: c
-
-    {2} {1};
-    {1}_create(&{1}, "YOUR_DEVICE_UID", &ipcon);
-
  This device object can be used after the IP connection has been connected
- (see examples :ref:`above <{0}_rust_examples>`).
+ (see examples :ref:`above <{rst_ref_name}_rust_examples>`).
 """,
             'de': """
-.. rs:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
+.. rust:function:: {bricklet_camel}::new(uid: &str, ip_connection: &IpConnection) -> {bricklet_camel}
 
- Erzeugt ein Geräteobjekt ``{1}`` mit der eindeutigen Geräte ID ``uid`` und
- fügt es der IP Connection ``ipcon`` hinzu:
+ Erzeugt ein neues ``{bricklet_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
+ fügt es der IP-Connection ``ipcon`` hinzu:
 
- .. code-block:: c
-
-    {2} {1};
-    {1}_create(&{1}, "YOUR_DEVICE_UID", &ipcon);
-
- Dieses Geräteobjekt kann benutzt werden, nachdem die IP Connection verbunden
- wurde (siehe Beispiele :ref:`oben <{0}_rust_examples>`).
+ Dieses Geräteobjekt kann benutzt werden, nachdem die IP-Connection verbunden
+ wurde (siehe Beispiele :ref:`oben <{rst_ref_name}_rust_examples>`).
 """
         }
-
-        destroy_str = {
-            'en': """
-.. rs:function:: void {0}_destroy({1} *{0})
-
- Removes the device object ``{0}`` from its IPConnection and destroys it.
- The device object cannot be used anymore afterwards.
-""",
-            'de': """
-.. rs:function:: void {0}_destroy({1} *{0})
-
- Entfernt das Geräteobjekt ``{0}`` von dessen IP Connection und zerstört es.
- Das Geräteobjekt kann hiernach nicht mehr verwendet werden.
-"""
-        }
-
-        register_str = {
-            'en': """
-.. rs:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
-
- Registers the given ``function`` with the given ``callback_id``. The
- ``user_data`` will be passed as the last parameter to the ``function``.
-
- The available callback IDs with corresponding function signatures are
- listed :ref:`below <{0}_rust_callbacks>`.
-""",
-            'de': """
-.. rs:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void *function, void *user_data)
-
- Registriert die ``function`` für die gegebene ``callback_id``. Die ``user_data``
- werden der Funktion als letztes Parameter mit übergeben.
-
- Die verfügbaren Callback IDs mit den zugehörigen Funktionssignaturen
- sind :ref:`unten <{0}_rust_callbacks>` zu finden.
-"""
-        }
-
+                
         c_str = {
             'en': """
 .. _{0}_rust_callbacks:
@@ -182,20 +140,8 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :rs:func:`{1}_register_callback` function. The parameters consist of
-the device object, the callback ID, the callback function and optional
-user data:
-
- .. code-block:: c
-
-    void my_callback(int p, void *user_data) {{
-        printf("parameter: %d\\n", p);
-    }}
-
-    {1}_register_callback(&{1}, {2}_CALLBACK_EXAMPLE, (void *)my_callback, NULL);
-
-The available constants with corresponding callback function signatures
-are described below.
+with the corresponding `get_*_callback_receiver` function, which returns a receiver
+for callback events. 
 
 .. note::
  Using callbacks for recurring events is *always* preferred
@@ -212,20 +158,8 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :rs:func:`{1}_register_callback` durchgeführt werden. Die
-Parameter bestehen aus dem Geräteobjekt, der Callback ID, der Callback Funktion
-und optionalen Benutzer Daten:
-
- .. code-block:: c
-
-    void my_callback(int p, void *user_data) {{
-        printf("parameter: %d\\n", p);
-    }}
-
-    {1}_register_callback(&{1}, {2}_CALLBACK_EXAMPLE, (void *)my_callback, NULL);
-
-Die verfügbaren IDs mit den zugehörigen Callback Funktionssignaturen
-werden weiter unten beschrieben.
+mit der entsprechenden `get_*_callback_receiver`-Function durchgeführt werden,
+welche einen Receiver für Callback-Events zurück gibt.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist
@@ -244,30 +178,15 @@ werden weiter unten beschrieben.
 API
 ---
 
-Every function of the C/C++ bindings returns an integer which describes an
-error code. Data returned from the device, when a getter is called,
-is handled via call by reference. These parameters are labeled with the
-``ret_`` prefix.
+To allow non-blocking usage, nearly every function of the Rust bindings returns
+a wrapper around a mpsc::Receiver. To block until the function has finished and
+get your result, call one of the receiver's recv variants. Those return either 
+the result sent by the device, or any error occured.
 
-Possible error codes are:
+Functions returning a result directly will block until the device has finished 
+processing the request.
 
-* E_OK = 0
-* E_TIMEOUT = -1
-* E_NO_STREAM_SOCKET = -2
-* E_HOSTNAME_INVALID = -3
-* E_NO_CONNECT = -4
-* E_NO_THREAD = -5
-* E_NOT_ADDED = -6 (unused since bindings version 2.0.0)
-* E_ALREADY_CONNECTED = -7
-* E_NOT_CONNECTED = -8
-* E_INVALID_PARAMETER = -9
-* E_NOT_SUPPORTED = -10
-* E_UNKNOWN_ERROR_CODE = -11
-* E_STREAM_OUT_OF_SYNC = -12
-
-as defined in :file:`ip_connection.h`.
-
-All functions listed below are thread-safe.
+All functions listed below are thread-safe, those which return a receiver are lock-free.
 
 {1}
 
@@ -278,31 +197,16 @@ All functions listed below are thread-safe.
 
 API
 ---
+Um eine nicht-blockierende Verwendung zu erlauben, gibt fast jede Funktion der Rust-Bindings
+einen Wrapper um einen mpsc::Receiver zurück. Um das Ergebnis eines Funktionsaufrufs zu erhalten
+und zu blockieren, bis das Gerät die Anfrage verarbeitet hat, können die recv-Varianten des 
+Receivers verwendet werden. Diese geben entweder das vom Gerät gesendete Ergebnis, oder einen
+aufgetretenen Fehler zurück.
 
-Jede Funktion der C/C++ Bindings gibt einen Integer zurück, welcher einen
-Fehlercode beschreibt. Vom Gerät zurückgegebene Daten werden, wenn eine
-Abfrage aufgerufen wurde, über Referenzparameter gehandhabt. Diese Parameter
-sind mit dem ``ret_`` Präfix gekennzeichnet.
+Funktionen die direkt ein Result zurückgeben, blockieren bis das Gerät die Anfrage verarbeitet hat.
 
-Mögliche Fehlercodes sind:
-
-* E_OK = 0
-* E_TIMEOUT = -1
-* E_NO_STREAM_SOCKET = -2
-* E_HOSTNAME_INVALID = -3
-* E_NO_CONNECT = -4
-* E_NO_THREAD = -5
-* E_NOT_ADDED = -6 (wird seit Bindings Version 2.0.0 nicht mehr verwendet)
-* E_ALREADY_CONNECTED = -7
-* E_NOT_CONNECTED = -8
-* E_INVALID_PARAMETER = -9
-* E_NOT_SUPPORTED = -10
-* E_UNKNOWN_ERROR_CODE = -11
-* E_STREAM_OUT_OF_SYNC = -12
-
-wie in :file:`ip_connection.h` definiert.
-
-Alle folgend aufgelisteten Funktionen sind Thread-sicher.
+Alle folgend aufgelisteten Funktionen sind Thread-sicher, diese, die einen Receiver zurückgeben, sind
+Lock-frei.
 
 {1}
 
@@ -312,62 +216,56 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
         const_str = {
             'en': """
-.. _{0}_rust_constants:
+.. _{device_name_ref}_rust_constants:
 
 Constants
 ^^^^^^^^^
 
-.. rs:var:: {1}_DEVICE_IDENTIFIER
+.. rust:constant:: {device_name_camel}::DEVICE_IDENTIFIER: u16
 
- This constant is used to identify a {4}.
+ This constant is used to identify a {device_name_display}.
 
- The :rs:func:`{2}_get_identity` function and the :rs:data:`IPCON_CALLBACK_ENUMERATE`
+ The :rust:func:`{device_name_camel}::get_identity()` function and the :rust:func:`IpConnection::get_enumerate_callback_receiver()`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 
-.. rs:var:: {1}_DEVICE_DISPLAY_NAME
+.. rust:constant:: {device_name_camel}::DEVICE_DISPLAY_NAME: &str
 
- This constant represents the human readable name of a {4}.
+ This constant represents the human readable name of a {device_name_display}.
 """,
             'de': """
-.. _{0}_rust_constants:
+.. _{device_name_ref}_rust_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. rs:var:: {1}_DEVICE_IDENTIFIER
+.. rust:constant:: {device_name_camel}::DEVICE_IDENTIFIER: u16
 
- Diese Konstante wird verwendet um {3} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {article} {device_name_display} zu identifizieren.
 
- Die :rs:func:`{2}_get_identity` Funktion und der :rs:data:`IPCON_CALLBACK_ENUMERATE`
+ Die :rust:func:`{device_name_camel}::get_identity()` Funktion und der :rust:func:`IpConnection::get_enumerate_callback_receiver()`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. rs:var:: {1}_DEVICE_DISPLAY_NAME
+.. rust:constant:: {device_name_camel}::DEVICE_DISPLAY_NAME: &str
 
- Diese Konstante stellt den Anzeigenamen eines {4} dar.
+ Diese Konstante stellt den Anzeigenamen eines {device_name_display} dar.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_name().under,
-                                                    self.get_name().camel)
-        des = common.select_lang(destroy_str).format(self.get_name().under,
-                                                     self.get_name().camel)
-        reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
-                                                      self.get_name().under,
-                                                      self.get_name().camel)
+        cre = common.select_lang(create_str).format(rst_ref_name=self.get_doc_rst_ref_name(),
+                                                    bricklet_camel=self.get_rust_name())
         bf = self.get_rust_methods('bf')
         af = self.get_rust_methods('af')
         ccf = self.get_rust_methods('ccf')
         c = self.get_rust_callbacks()
         api_str = ''
         if bf:
-            api_str += common.select_lang(common.bf_str).format(cre + des, bf)
+            api_str += common.select_lang(common.bf_str).format(cre, bf)
         if af:
             api_str += common.select_lang(common.af_str).format(af)
         if c:
-            api_str += common.select_lang(common.ccf_str).format(reg, ccf)
+            api_str += common.select_lang(common.ccf_str).format("", ccf)
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,
                                                         self.get_name().upper,
@@ -376,19 +274,23 @@ Konstanten
         article = 'ein'
         if self.is_brick():
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
-                                                        self.get_name().upper,
-                                                        self.get_name().under,
-                                                        article,
-                                                        self.get_long_display_name())
+        api_str += common.select_lang(const_str).format(device_name_ref=self.get_doc_rst_ref_name(),
+                                                        #device_name_upper=self.get_name().upper,
+                                                        device_name_camel=self.get_rust_name(),
+                                                        article=article,
+                                                        device_name_display=self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
                                               self.specialize_rust_doc_function_links(common.select_lang(self.get_doc())),
                                               api_str)
 
     def get_rust_doc(self):
+        docs_rs = {'en': 'Additional documentation can be found on `docs.rs <https://docs.rs/tinkerforge/>`_.\n',
+                   'de': 'Zusätzliche Dokumentation findet sich auf `docs.rs <https://docs.rs/tinkerforge/>`_.\n'}
+
         doc  = common.make_rst_header(self)
         doc += common.make_rst_summary(self)
+        doc += common.select_lang(docs_rs)
         doc += self.get_rust_examples()
         doc += self.get_rust_api()
 
@@ -401,11 +303,17 @@ class RustDocPacket(rust_common.RustPacket):
 
         constants = {'en': 'constants', 'de': 'Konstanten'}
 
+        callback_parameter = {'en': 'received variable', 'de': 'empfangene Variable'}
+        callback_parameters = {'en': 'members of the received struct', 'de': 'Felder der empfangenen Struktur'}
+
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME
 
         text = common.handle_rst_param(text, format_parameter)
-        text = common.handle_rst_word(text, constants=constants)
+        if self.get_type() == 'callback':
+            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)            
+        else:
+            text = common.handle_rst_word(text, constants=constants)
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_name().upper + '_'
