@@ -211,7 +211,7 @@ Die lineare Beschleunigung ist die Beschleunigung in jede der drei
 Achsen. Der Einfluss von Erdbeschleunigung ist entfernt.
 
 Es ist auch möglich einen Vektor der Erdbeschleunigung zu bekommen, siehe
-:func:Get Gravity Vector`
+:func:`Get Gravity Vector`
 
 Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Linear Acceleration` Callback zu nutzen und die Periode mit

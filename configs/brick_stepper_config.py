@@ -948,7 +948,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the following :word:`parameters`: The current velocity,
+Returns the following parameters: The current velocity,
 the current position, the remaining steps, the stack voltage, the external
 voltage and the current consumption of the stepper motor.
 
@@ -956,7 +956,7 @@ There is also a callback for this function, see :cb:`All Data` callback.
 """,
 'de':
 """
-Gibt die folgenden :word:`parameters` zurück: Die aktuelle
+Gibt die folgenden Parameter zurück: Die aktuelle
 Geschwindigkeit, die aktuelle Position, die verbleibenden Schritte,
 die Spannung des Stapels, die externe Spannung und der aktuelle Stromverbrauch
 des Schrittmotors.

@@ -182,7 +182,7 @@ The :word:`parameter` is the same as :func:`Get Spectrum`.
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
-:func:Set Spectrum Callback Configuration` gesetzten Konfiguration
+:func:`Set Spectrum Callback Configuration` gesetzten Konfiguration
 
 Der :word:`parameter` ist der gleiche wie :func:`Get Spectrum`.
 """
