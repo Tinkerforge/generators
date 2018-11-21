@@ -50,6 +50,15 @@ class RustBindingsDevice(rust_common.RustDevice):
 
         conv_receiver = conv_receiver_imports[0] if len(conv_receiver_imports) == 1 else ("{" + ", ".join(conv_receiver_imports) + "}")
 
+        tf_doc_link = {'en': '//! See also the documentation [here](https://www.tinkerforge.com/en/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Rust.html).',
+                       'de': '//! Siehe auch die Dokumentation [hier](https://www.tinkerforge.com/de/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Rust.html).'
+        }
+
+        description = common.select_lang(self.get_description())
+        description += '\n'
+        description += common.select_lang(tf_doc_link).format(device_category_camel = self.get_category().camel,
+                                                              device_name_camel = self.get_name().camel)
+
         return """{header}
         
 //! {description}
@@ -59,7 +68,7 @@ use crate::{{
     device::*,
     ip_connection::IpConnection,{low_level}    
 }};""".format(header=self.get_generator().get_header_comment(kind='asterisk'),
-              description=common.select_lang(self.get_description()),
+              description=description,
               callback_recv = "" if len(self.get_packets("callback")) == 0 else "\n\tconverting_callback_receiver::ConvertingCallbackReceiver,",
               high_level_callback_recv = "" if all(not packet.has_high_level() for packet in self.get_packets("callback")) else "\n\tconverting_high_level_callback_receiver::ConvertingHighLevelCallbackReceiver,",
               low_level = "" if all(not packet.has_high_level() for packet in self.get_packets()) else "\n\tlow_level_traits::*",
@@ -744,6 +753,8 @@ impl FromByteSlice for [bool; {count}] {{
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![cfg_attr(feature = "fail-on-warnings", deny(clippy::all))]
 #![doc(html_root_url = "https://docs.rs/tinkerforge/{version}")]
+#![doc(html_logo_url = "https://raw.githubusercontent.com/Tinkerforge/generators/master/rust/logo_small.png")]
+#![doc(html_favicon_url = "https://raw.githubusercontent.com/Tinkerforge/generators/master/rust/logo_small.png")]
 
 //! Rust API bindings for [Tinkerforge](https://www.tinkerforge.com) bricks and bricklets.
 //! See also the additional documentation and examples [here](http://www.tinkerforge.com/en/doc/Software/API_Bindings_Rust.html)
