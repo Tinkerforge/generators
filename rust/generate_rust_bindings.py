@@ -54,8 +54,8 @@ class RustBindingsDevice(rust_common.RustDevice):
                        'de': '//! Siehe auch die Dokumentation [hier](https://www.tinkerforge.com/de/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Rust.html).'
         }
 
-        description = common.select_lang(self.get_description())
-        description += '\n'
+        description = common.select_lang(self.get_description()) + "."
+        description += '\n//! \n'
         description += common.select_lang(tf_doc_link).format(device_category_camel = self.get_category().camel,
                                                               device_name_camel = self.get_name().camel)
 
