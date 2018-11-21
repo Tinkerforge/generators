@@ -16,5 +16,5 @@
 - Fixed some documentation
 - Added link to Tinkerforge docs and logo
 
-2018-11-21: 2.0.5 (<unknown>)
+2018-11-21: 2.0.5 (db2bfdc)
 - Module description and link to tinkerforge docs had no separating newline.
