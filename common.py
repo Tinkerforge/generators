@@ -950,7 +950,7 @@ class FlavoredName(object):
                                           '_'.join(words).lower(), # under
                                           '_'.join(words).upper(), # upper
                                           '-'.join(words).lower(), # dash
-                                          ''.join([word[0].upper() + word[1:].lower() for word in words])) # camel_abbrv; like camel, but produces GetSpiTfp... instead of GetSPITFP...
+                                          ''.join([word.capitalize() for word in words])) # camel_abbrv; like camel, but produces GetSpiTfp... instead of GetSPITFP...
 
             return self.cache[key]
 
