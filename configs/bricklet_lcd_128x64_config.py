@@ -1322,4 +1322,39 @@ com['examples'].append({
               ('callback_configuration', ('Touch Gesture', 'touch gesture'), [], 100, True, None, [])]
 })
 
+com['examples'].append({
+'name': 'Big Font',
+'functions': [('setter', 'Clear Display', [], 'Clear display', None),
+              ('setter', 'Draw Text', [('uint8', 0), ('uint8', 0), ('uint8:constant', 9), ('bool:constant', True), ('string', '24x32')], 'Write "Hello World" with big 24x32 font', None)]
+})
+
+com['examples'].append({
+'name': 'GUI',
+'functions': [('callback', ('GUI Button Pressed', 'gui button pressed'), [(('Index', 'Index'), 'uint8', 1, None, None, None), (('Pressed', 'Pressed'), 'bool', 1, None, None, None)], None, None),
+              ('callback', ('GUI Slider Value', 'gui slider value'), [(('Index', 'Index'), 'uint8', 1, None, None, None), (('Value', 'Value'), 'uint8', 1, None, None, None)], None, None),
+              ('callback', ('GUI Tab Current', 'gui tab current'), [(('Index', 'Index'), 'uint8', 1, None, None, None)], None, None),
+
+              ('setter', 'Clear Display', [], 'Clear display', None),
+              ('setter', 'Remove All GUI', [], None, None),
+
+              ('setter', 'Set GUI Button', [('uint8', 0), ('uint8', 0), ('uint8', 0), ('uint8', 60), ('uint8', 20), ('string', 'button')], 'Add GUI elements: Button, Slider and Graph with 60 data points', None),
+              ('setter', 'Set GUI Slider', [('uint8', 0), ('uint8', 0), ('uint8', 30), ('uint8', 60), ('uint8:constant', 0), ('uint8', 50)], None, None),
+              ('setter', 'Set GUI Graph Configuration', [('uint8', 0), ('uint8:constant', 1), ('uint8', 62), ('uint8', 0), ('uint8', 60), ('uint8', 52), ('string', 'X'), ('string', 'Y')], None, None),
+              ('setter', 'Set GUI Graph Data', [('uint8', 0), ('uint8', tuple(range(20, 250, 20)))], 'Add a few data points (the remaining points will be 0)', None),
+
+              ('setter', 'Set GUI Tab Configuration', [('uint8:constant', 3), ('bool', False)], 'Add 5 text tabs without and configure it for click and swipe without auto-redraw', None),
+              ('setter', 'Set GUI Tab Text', [('uint8', 0), ('string', 'Tab A')], None, None),
+              ('setter', 'Set GUI Tab Text', [('uint8', 1), ('string', 'Tab B')], None, None),
+              ('setter', 'Set GUI Tab Text', [('uint8', 2), ('string', 'Tab C')], None, None),
+              ('setter', 'Set GUI Tab Text', [('uint8', 3), ('string', 'Tab D')], None, None),
+              ('setter', 'Set GUI Tab Text', [('uint8', 4), ('string', 'Tab E')], None, None),
+
+              ('callback_configuration', ('GUI Button Pressed', 'gui button pressed'), [], 100, True, None, []),
+              ('callback_configuration', ('GUI Slider Value', 'gui slider value'), [], 100, True, None, []),
+              ('callback_configuration', ('GUI Tab Current', 'gui tab current'), [], 100, True, None, [])]
+
+})
+
+
+
 # FIXME: add pixel-matrix example
