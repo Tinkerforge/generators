@@ -26,6 +26,8 @@ com = {
     'examples': []
 }
 
+COLOR = ('Color', [('White', False), ('Black', True)])
+
 com['packets'].append({
 'type': 'function',
 'name': 'Write Pixels Low Level',
@@ -526,6 +528,782 @@ same as for :func:`Get Touch Gesture`.
 Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Touch Gesture Callback Configuration`, ausgelöst. Die :word:`parameters` sind
 die gleichen wie die von :func:`Get Touch Gesture`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Draw Line',
+'elements': [('Position X Start', 'uint8', 1, 'in'),
+             ('Position Y Start', 'uint8', 1, 'in'),
+             ('Position X End', 'uint8', 1, 'in'),
+             ('Position Y End', 'uint8', 1, 'in'),
+             ('Color', 'bool', 1, 'in', COLOR)],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Draw Box',
+'elements': [('Position X Start', 'uint8', 1, 'in'),
+             ('Position Y Start', 'uint8', 1, 'in'),
+             ('Position X End', 'uint8', 1, 'in'),
+             ('Position Y End', 'uint8', 1, 'in'),
+             ('Fill', 'bool', 1, 'in'),
+             ('Color', 'bool', 1, 'in', COLOR)],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Draw Text',
+'elements': [('Position X', 'uint8', 1, 'in'),
+             ('Position Y', 'uint8', 1, 'in'),
+             ('Font', 'uint8', 1, 'in',  ('Font', [('6x8', 0),
+                                                   ('6x16', 1),
+                                                   ('6x24', 2),
+                                                   ('6x32', 3),
+                                                   ('12x16', 4),
+                                                   ('12x24', 5),
+                                                   ('12x32', 6),
+                                                   ('18x24', 7),
+                                                   ('18x32', 8),
+                                                   ('24x32', 9)])),
+             ('Color', 'bool', 1, 'in', COLOR),
+             ('Text', 'string', 22, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Button',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Position X', 'uint8', 1, 'in'),
+             ('Position Y', 'uint8', 1, 'in'),
+             ('Width', 'uint8', 1, 'in'),
+             ('Height', 'uint8', 1, 'in'),
+             ('Text', 'string', 16, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Button',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Active', 'bool', 1, 'out'),
+             ('Position X', 'uint8', 1, 'out'),
+             ('Position Y', 'uint8', 1, 'out'),
+             ('Width', 'uint8', 1, 'out'),
+             ('Height', 'uint8', 1, 'out'),
+             ('Text', 'string', 16, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Remove GUI Button',
+'elements': [('Index', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Button Pressed Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in'),
+             ('Value Has To Change', 'bool', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['ccf', {
+'en':
+"""
+The period in ms is the period with which the :cb:`GUI Button Pressed` callback
+is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
+""",
+'de':
+"""
+Die Periode in ms ist die Periode mit der der :cb:`GUI Button Pressed` Callback
+ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Button Pressed Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out'),
+             ('Value Has To Change', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set GUI Button Pressed Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set GUI Button Pressed Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Button Pressed',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Pressed', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'GUI Button Pressed',
+'elements': [('Index', 'uint8', 1, 'out'),
+             ('Pressed', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`Set GUI Button Pressed Callback Configuration`. The :word:`parameters` are the
+same as for :func:`Get GUI Button Pressed`.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set GUI Button Pressed Callback Configuration`, ausgelöst. Die :word:`parameters` sind
+die gleichen wie die von :func:`Get GUI Button Pressed`.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Slider',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Position X', 'uint8', 1, 'in'),
+             ('Position Y', 'uint8', 1, 'in'),
+             ('Length', 'uint8', 1, 'in'),
+             ('Direction', 'uint8', 1, 'in', ('Direction', [('Horizontal', 0),
+                                                            ('Vertical', 1)])),
+             ('Value', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Slider',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Active', 'bool', 1, 'out'),
+             ('Position X', 'uint8', 1, 'out'),
+             ('Position Y', 'uint8', 1, 'out'),
+             ('Length', 'uint8', 1, 'out'),
+             ('Direction', 'uint8', 1, 'out', ('Direction', [('Horizontal', 0),
+                                                             ('Vertical', 1)])),
+             ('Value', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Remove GUI Slider',
+'elements': [('Index', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Slider Value Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in'),
+             ('Value Has To Change', 'bool', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['ccf', {
+'en':
+"""
+The period in ms is the period with which the :cb:`GUI Slider Value` callback
+is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
+""",
+'de':
+"""
+Die Periode in ms ist die Periode mit der der :cb:`GUI Slider Value` Callback
+ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Slider Value Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out'),
+             ('Value Has To Change', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set GUI Slider Changed Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set GUI Slider Changed Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Slider Value',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Value', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'GUI Slider Value',
+'elements': [('Index', 'uint8', 1, 'out'),
+             ('Value', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`Set GUI Slider Value Callback Configuration`. The :word:`parameters` are the
+same as for :func:`Get GUI Slider Value`.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set GUI Slider Value Callback Configuration`, ausgelöst. Die :word:`parameters` sind
+die gleichen wie die von :func:`Get GUI Slider Value`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Tab Configuration',
+'elements': [('Change Tab Config', 'uint8', 1, 'in', ('Change Tab On', [('Click', 1),
+                                                                        ('Swipe', 2),
+                                                                        ('Click And Swipe', 3)])),
+             ('Clear GUI', 'bool', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Tab Configuration',
+'elements': [('Change Tab Config', 'uint8', 1, 'out', ('Change Tab On', [('Click', 1),
+                                                                         ('Swipe', 2),
+                                                                         ('Click And Swipe', 3)])),
+             ('Clear GUI', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Tab Text',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Text', 'string', 8, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Tab Text',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Active', 'bool', 1, 'out'),
+             ('Text', 'string', 8, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Tab Icon',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Icon', 'bool', 6*28, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Tab Icon',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Active', 'bool', 1, 'out'),
+             ('Icon', 'bool', 6*28, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Remove GUI Tab',
+'elements': [('Index', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Tab Current',
+'elements': [('Index', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Tab Current Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in'),
+             ('Value Has To Change', 'bool', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['ccf', {
+'en':
+"""
+The period in ms is the period with which the :cb:`GUI Tab Current` callback
+is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
+""",
+'de':
+"""
+Die Periode in ms ist die Periode mit der der :cb:`GUI Tab Current` Callback
+ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Tab Current Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out'),
+             ('Value Has To Change', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set GUI Tab Current Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set GUI Tab Current Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Tab Current',
+'elements': [('Index', 'int8', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'GUI Tab Current',
+'elements': [('Index', 'int8', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`Set GUI Tab Current Callback Configuration`. The :word:`parameters` are the
+same as for :func:`Get GUI Tab Current`.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set GUI Tab Current Callback Configuration`, ausgelöst. Die :word:`parameters` sind
+die gleichen wie die von :func:`Get GUI Tab Current`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Graph Configuration',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Graph Type', 'uint8', 1, 'in', ('Graph Type', [('Dot',  0),
+                                                              ('Line', 1),
+                                                              ('Bar',  2)])),
+             ('Position X', 'uint8', 1, 'in'),
+             ('Position Y', 'uint8', 1, 'in'),
+             ('Width', 'uint8', 1, 'in'),
+             ('Height', 'uint8', 1, 'in'),
+             ('Text X', 'string', 4, 'in'),
+             ('Text Y', 'string', 4, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Graph Configuration',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Active', 'bool', 1, 'out'),
+             ('Graph Type', 'uint8', 1, 'out', ('Graph Type', [('Dot',  0),
+                                                               ('Line', 1),
+                                                               ('Bar',  2)])),
+             ('Position X', 'uint8', 1, 'out'),
+             ('Position Y', 'uint8', 1, 'out'),
+             ('Width', 'uint8', 1, 'out'),
+             ('Height', 'uint8', 1, 'out'),
+             ('Text X', 'string', 4, 'out'),
+             ('Text Y', 'string', 4, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GUI Graph Data Low Level',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Data Length', 'uint16', 1, 'in'),
+             ('Data Chunk Offset', 'uint16', 1, 'in'),
+             ('Data Chunk Data', 'uint8', 59, 'in')],
+'high_level': {'stream_in': {'name': 'Data'}},
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GUI Graph Data Low Level',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Data Length', 'uint16', 1, 'out'),
+             ('Data Chunk Offset', 'uint16', 1, 'out'),
+             ('Data Chunk Data', 'uint8', 59, 'out')],
+'high_level': {'stream_out': {'name': 'Data'}},
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Remove GUI Graph',
+'elements': [('Index', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+
+index = 255 => remove all graphs
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Remove All GUI',
+'elements': [],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+Removes all GUI elements (buttons, slider, graphs, tabs).
+""",
+'de':
+"""
+
 """
 }]
 })
