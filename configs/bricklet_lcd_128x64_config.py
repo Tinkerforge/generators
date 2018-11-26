@@ -233,6 +233,10 @@ second line of the display.
 
 The display uses a special 5x7 pixel charset. You can view the characters
 of the charset in Brick Viewer.
+
+This function is a 1:1 replacement for the function with the same name
+in the LCD 20x4 Bricklet. You can draw text at a specific pixel position
+and with different font sizes with the :func:`Draw Line` function.
 """,
 'de':
 """
@@ -244,6 +248,10 @@ des Displays.
 
 Das Display nutzt einen speziellen 5x7 Pixel Zeichensatz. Der Zeichensatz
 kann mit Hilfe von Brick Viewer angezeigt werden.
+
+Diese Funktion ist ein 1:1-Ersatz für die Funktion mit dem gleichen Namen
+im LCD 20x4 Bricklet. Mit der Funktion :func:`Draw Text` kann Text Pixelgenau
+und mit unterschiedlichen Font-Größen gezeichnet werden.
 """
 }]
 })
@@ -544,11 +552,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Draws a white or black line from (x, y)-start to (x, y)-end. 
+The x values have to be within the range of 0 to 127 and the y
+values have t be within the range of 0 to 63.
 """,
 'de':
 """
-
+Zeichnet eine weiße oder schwarze Linie von (x, y)-start nach
+(x, y)-end. Der Wertebereich für die x-Werte ist 0 bis 127 und
+der Wertebereich für die y-Werte ist 0-63.
 """
 }]
 })
@@ -566,11 +578,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Draws a white or black box from (x, y)-start to (x, y)-end.
+The x values have to be within the range of 0 to 127 and the y
+values have to be within the range of 0 to 63.
 
+If you set :word:`fill` to true, the box will be filled with the
+color. Otherwise only the outline will be drawn.
 """,
 'de':
 """
+Zeichnet ein weißes oder schwarzes Rechteck von (x, y)-start nach
+(x, y)-end. Der Wertebereich für die x-Werte ist 0 bis 127 und
+der Wertebereich für die y-Werte ist 0-63.
 
+Wenn :world:`fill` auf true gesetzt wird, wird das Rechteck mit
+der angegebenen Farbe ausgefüllt. Ansonsten wird nur der Umriss
+gezeichnet.
 """
 }]
 })
@@ -596,11 +619,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Draws a text with up to 22 characters at the pixel position (x, y).
 
+The x values have to be within the range of 0 to 127 and the y
+values have to be within the range of 0 to 63.
+
+You can use one of 9 different font sizes and draw the text in white or black.
 """,
 'de':
 """
+Zeichnet einen Text mit bis zu 22 Buchstaben an die Pixelposition (x, y).
 
+Die Wertebereich für die x-Werte ist 0 bis 127 und
+der Wertebereich für die y-Werte ist 0-63.
+
+Es können 9 unterschiedliche Font-Größen genutzt werden und der Text
+kann in weiß oder schwar gezeichnet werden.
 """
 }]
 })
@@ -618,11 +652,50 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Draws a clickable button at position (x, y) with the given text 
+of up to 16 characters.
 
+You can use up to 12 buttons (index 0-11).
+
+The x position + width has to be within the range of 1 to 128 and the y
+position + height has to be within the range of 1 to 64.
+
+The minimum usefull width/height of a button is 3.
+
+You can enable a callback for a button press with 
+:func:`Set GUI Button Pressed Callback Configuration`. The callback will
+be triggered for press and release-events.
+
+The button is drawn in a separate gui buffer and the button-frame will 
+always stay on top of the graphics drawn with :func:`Write Pixels`. To
+remove the button use :func:`Remove GUI Button`.
+
+If you want an icon instead of text, you can draw the icon inside of the
+button with :func:`Write Pixels`.
 """,
 'de':
 """
+Zeichnet einen klickbaren Button an Position (x, y) mit dem gegebenem
+Text von bis zu 16 Zeichen.
 
+Es können bis zu 12 Buttons genutzt werden (Index 0-11).
+
+Die x-Position + Width muss im Wertebereich von 1 bis 128 liegen und die
+y-Position+Height muss im Wertebereich von 1 bis 64 liegen.
+
+Die minimale nützliche Breite/Höhe eines Buttons ist 3.
+
+Der Callback für Button-Events kann mit der Funktion 
+:func:`Set GUI Button Pressed Callback Configuration` eingestellt werden.
+Der Callback wird sowohl für gedrückt als auch losgelassen Events ausgelöst.
+
+Der Button wird in einem separaten GUI-Buffer gezeichnet und der Rahmen des
+Buttons wrd immer über den Grafiken bleiben die mit :func:`Write Pixels`
+gezeichnet werden. Um einen Button zu entfernen kann die Funktion 
+:func:`Remove GUI Button` genutzt werden.
+
+Wenn anstatt des Textes ein Icon verwedet werden soll, kann dieses innerhalb
+des Buttons mit per :func:`Write Pixels` gezeichnet werden.
 """
 }]
 })
@@ -641,11 +714,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the button properties for a given `Index` as set by :func:`Set GUI Button`.
 
+Additionally the `Active` parameter shows if a button is currently active
+or not.
 """,
 'de':
 """
+Gibt die Button-Eigenschaften für den gegebenen `Index` zurück, wie von
+:func:`Set GUI Button` gesetzt.
 
+Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv ist
+oder nicht.
 """
 }]
 })
@@ -658,11 +738,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Removes the button with the given index.
 """,
 'de':
 """
-
+Entfernt den Button mit dem gegebenen Index.
 """
 }]
 })
@@ -735,11 +815,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the state of the button for the given index.
 
+The state can either be pressed (true) or released (false).
 """,
 'de':
 """
+Gibt den aktuellen Button-Zustand für einen gegebenen Index zurück.
 
+Der Zustand kann entweder gedrückt (true) oder losgelassen (false) sein.
 """
 }]
 })
@@ -781,11 +865,56 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Draws a slider at position (x, y) with the given length.
 
+You can use up to 6 sliders (index 0-5).
+
+If you use the horizontal direction, the x position + length has to be 
+within the range of 1 to 128 and the y position has to be within 
+the range of 0 to 46.
+
+If you use the vertical direction, the y position + length has to be
+within the range of 1 to 64 and the x position has to be within
+the range of 0 to 110.
+
+The minimum length of a slider is 8.
+
+The :word:`parameter` value is the start-position of the slider, it can 
+be between 0 and length-8.
+
+You can enable a callback for the slider value with 
+:func:`Set GUI Slide Value Callback Configuration`. 
+
+The slider is drawn in a separate gui buffer and it will 
+always stay on top of the graphics drawn with :func:`Write Pixels`. To
+remove the button use :func:`Remove GUI Slider`.
 """,
 'de':
 """
+Zeichnet einen Slider an Position (x, y) mit der gegebenen Länge.
 
+Es können bis zu 8 Slider genutzt werden (Index 0-7).
+
+Wenn eine horizontale Richtung verwendet wird muss Die x-Position + Länge
+im Wertebereich von 1 bis 128 und die y-Position im Wertebereich von
+0 bis 46 liegen.
+
+Wenn eine vertikale Richtung verwendet wird muss Die y-Position + Länge
+im Wertebereich von 1 bis 64 und die x-Position im Wertebereich von
+0 bis 110 liegen.
+
+Die minimale Länge des Sliders ist 8.
+
+The :word:`parameter` value ist die Startposition des Sliders. Diese kann
+zwischen 0 und length-8 liegen.
+
+Der Callback für Slider-Events kann mit der Funktion 
+:func:`Set GUI Slider Value Callback Configuration` eingestellt werden.
+
+Der Slider wird in einem separaten GUI-Buffer gezeichnet und der Rahmen des
+Buttons wrd immer über den Grafiken bleiben die mit :func:`Write Pixels`
+gezeichnet werden. Um einen Button zu entfernen kann die Funktion 
+:func:`Remove GUI Slider` genutzt werden.
 """
 }]
 })
@@ -805,11 +934,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the slider properties for a given `Index` as set by :func:`Set GUI Slider`.
 
+Additionally the `Active` parameter shows if a button is currently active
+or not.
 """,
 'de':
 """
+Gibt die Slider-Eigenschaften für den gegebenen `Index` zurück, wie von
+:func:`Set GUI Slider` gesetzt.
 
+Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv ist
+oder nicht.
 """
 }]
 })
@@ -822,11 +958,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Removes the slider with the given index.
 """,
 'de':
 """
-
+Entfernt den Slider mit dem gegebenen Index.
 """
 }]
 })
@@ -899,11 +1035,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Returns the current slider value for the given index.
 """,
 'de':
 """
-
+Gibt den aktuellen Wert des Slider smit dem gegebenen Index zurück.
 """
 }]
 })
@@ -941,11 +1077,25 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the general configuration for tabs. You can configure the tabs to only
+accept clicks or only swipes (gesture left/right and right/left) or both.
 
+Additionally, if you set `Clear GUI` to true, all of the GUI elements (buttons, 
+slider, graphs) will automatically be removed on every tab change.
+
+By default click and swipe as well as automatic GUI clear is enabled.
 """,
 'de':
 """
+Setzt die generelle Konfiguration für Tabs. Tabs können auf klicken, wischen 
+(links/rechts und rechts/links) oder beides reagieren.
 
+Zusätzlich kann `Clear GUI` auf true gesetzt werden. In diesem Fall werden
+bei einem wechsel der Tabs automatisch alle GUI elemente (Buttons, Slider, 
+Graphen) gelöscht.
+
+Standardmäßig ist klicken und wischen sowie das automatische löschen der GUI
+aktiviert.
 """
 }]
 })
@@ -961,11 +1111,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Returns the tab configuration as set by :func:`Set GUI Tab Configuration`.
 """,
 'de':
 """
-
+Gibt die Tab-Konfiguration zurück, wie von :func:`Set GUI Tab Configuration` gesetzt.
 """
 }]
 })
@@ -980,11 +1130,20 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Adds a text-tab with the given index. The text can have a length of up to 5 characters.
 
+You can use up to 10 tabs (index 0-9).
+
+A text-tab with the same index as a icon-tab will overwrite the icon-tab.
 """,
 'de':
 """
+Fügt einen Text-Tab mit dem gegebenen Index hinzu. Der Text kann eine Länge von
+bis zu 5 Buchstaben haben.
 
+Es können bis zu 10 Tabs verwendet werden (Index 0-9).
+
+Ein Text-Tab mit dem gleichen Index wie ein Icon-Tab überschreibt diesen.
 """
 }]
 })
@@ -999,11 +1158,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the text for a given index as set by :func:`Set GUI Tab Text`.
 
+Additionally the `Active` parameter shows if the tab is currently active
+or not.
 """,
 'de':
 """
+Gibt den Text für den gegebenen Index zurück, wie von :func:`Set GUI Tab Text` 
+gesetzt.
 
+Zusätzlich gibt der `Active`-Parameter an ob der Tab aktuell aktiv ist
+oder nicht.
 """
 }]
 })
@@ -1017,11 +1183,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Adds a icon-tab with the given index. The icon can have a width of 28 pixels
+with a height of 6 pixels. It is drawn line-by-line from left to right.
 
+You can use up to 10 tabs (index 0-9).
+
+A icon-tab with the same index as a text-tab will overwrite the text-tab.
 """,
 'de':
 """
+Fügt einen Icon-Tab mit dem gegebenen Index hinzu. Das Icon kann eine Breite von
+28 Pixel bei einer Höhe von 6 Pixel haben. Es wird Zeile für Zeile von links
+nach rechts gezeichnet.
 
+Es können bis zu 10 Tabs verwendet werden (Index 0-9).
+
+Ein Icon-Tab mit dem gleichen Index wie ein Text-Tab überschreibt diesen.
 """
 }]
 })
@@ -1036,11 +1213,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the icon for a given index as set by :func:`Set GUI Tab Icon`.
 
+Additionally the `Active` parameter shows if the tab is currently active
+or not.
 """,
 'de':
 """
+Gibt das Icon für den gegebenen Index zurück, wie von :func:`Set GUI Tab Icon` 
+gesetzt.
 
+Zusätzlich gibt der `Active`-Parameter an ob der Tab aktuell aktiv ist
+oder nicht.
 """
 }]
 })
@@ -1053,11 +1237,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Removes the tab with the given index.
 """,
 'de':
 """
-
+Entfernt den Tab mit dem gegebenen Index.
 """
 }]
 })
@@ -1070,11 +1254,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Sets the tab with the given index as selected (drawn as selected on the display).
 """,
 'de':
 """
-
+Setzt den Tab mit dem gegebenen Index als "selected" (wird auf dem Display als
+ausgewählt gezeichnet)
 """
 }]
 })
@@ -1146,11 +1331,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Returns the index of the currently selected tab.
 """,
 'de':
 """
-
+Gibt den Index des aktuell ausgewählten Tabs zurück.
 """
 }]
 })
