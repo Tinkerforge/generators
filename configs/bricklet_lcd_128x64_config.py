@@ -975,7 +975,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Tab Text',
 'elements': [('Index', 'uint8', 1, 'in'),
-             ('Text', 'string', 8, 'in')],
+             ('Text', 'string', 5, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -994,7 +994,7 @@ com['packets'].append({
 'name': 'Get GUI Tab Text',
 'elements': [('Index', 'uint8', 1, 'in'),
              ('Active', 'bool', 1, 'out'),
-             ('Text', 'string', 8, 'out')],
+             ('Text', 'string', 5, 'out')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1304,6 +1304,56 @@ Removes all GUI elements (buttons, slider, graphs, tabs).
 'de':
 """
 
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Touch LED Config',
+'elements': [('Config', 'uint8', 1, 'in', ('Touch LED Config', [('Off', 0),
+                                                                ('On', 1),
+                                                                ('Show Heartbeat', 2),
+                                                                ('Show Touch', 3)]))],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Sets the touch LED configuration. By default the LED is on if the
+LCD is touched.
+
+You can also turn the LED permanently on/off or show a heartbeat.
+
+If the Bricklet is in bootloader mode, the LED is off.
+""",
+'de':
+"""
+Setzt die Konfiguration der Kommunikations-LED. Standardmäßig ist die
+LED an wenn das LCD berührt wird.
+
+Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
+
+Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Touch LED Config',
+'elements': [('Config', 'uint8', 1, 'out', ('Touch LED Config', [('Off', 0),
+                                                                 ('On', 1),
+                                                                 ('Show Heartbeat', 2),
+                                                                 ('Show Touch', 3)]))],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`Set Touch LED Config`
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`Set Touch LED Config` gesetzt.
 """
 }]
 })
