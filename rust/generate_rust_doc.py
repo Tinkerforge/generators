@@ -3,8 +3,7 @@
 
 """
 Rust Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_rust_doc.py: Generator for Rust documentation
 
