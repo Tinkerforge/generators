@@ -1064,7 +1064,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set GUI Tab Current',
+'name': 'Set GUI Tab Selected',
 'elements': [('Index', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -1081,14 +1081,14 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set GUI Tab Current Callback Configuration',
+'name': 'Set GUI Tab Selected Callback Configuration',
 'elements': [('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
 'en':
 """
-The period in ms is the period with which the :cb:`GUI Tab Current` callback
+The period in ms is the period with which the :cb:`GUI Tab Selected` callback
 is triggered periodically. A value of 0 turns the callback off.
 
 If the `value has to change`-parameter is set to true, the callback is only
@@ -1102,7 +1102,7 @@ The default value is (0, false).
 """,
 'de':
 """
-Die Periode in ms ist die Periode mit der der :cb:`GUI Tab Current` Callback
+Die Periode in ms ist die Periode mit der der :cb:`GUI Tab Selected` Callback
 ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
 Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
@@ -1120,7 +1120,7 @@ Der Standardwert ist (0, false).
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get GUI Tab Current Callback Configuration',
+'name': 'Get GUI Tab Selected Callback Configuration',
 'elements': [('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
 'since_firmware': [2, 0, 2],
@@ -1128,19 +1128,19 @@ com['packets'].append({
 'en':
 """
 Returns the callback configuration as set by
-:func:`Set GUI Tab Current Callback Configuration`.
+:func:`Set GUI Tab Selected Callback Configuration`.
 """,
 'de':
 """
 Gibt die Callback-Konfiguration zurück, wie mittels
-:func:`Set GUI Tab Current Callback Configuration` gesetzt.
+:func:`Set GUI Tab Selected Callback Configuration` gesetzt.
 """
 }]
 })
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get GUI Tab Current',
+'name': 'Get GUI Tab Selected',
 'elements': [('Index', 'int8', 1, 'out')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -1157,21 +1157,21 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': 'GUI Tab Current',
+'name': 'GUI Tab Selected',
 'elements': [('Index', 'int8', 1, 'out')],
 'since_firmware': [2, 0, 2],
 'doc': ['c', {
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`Set GUI Tab Current Callback Configuration`. The :word:`parameters` are the
-same as for :func:`Get GUI Tab Current`.
+:func:`Set GUI Tab Selected Callback Configuration`. The :word:`parameters` are the
+same as for :func:`Get GUI Tab Selected`.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
-:func:`Set GUI Tab Current Callback Configuration`, ausgelöst. Die :word:`parameters` sind
-die gleichen wie die von :func:`Get GUI Tab Current`.
+:func:`Set GUI Tab Selected Callback Configuration`, ausgelöst. Die :word:`parameters` sind
+die gleichen wie die von :func:`Get GUI Tab Selected`.
 """
 }]
 })
@@ -1382,7 +1382,7 @@ com['examples'].append({
 'name': 'GUI',
 'functions': [('callback', ('GUI Button Pressed', 'gui button pressed'), [(('Index', 'Index'), 'uint8', 1, None, None, None), (('Pressed', 'Pressed'), 'bool', 1, None, None, None)], None, None),
               ('callback', ('GUI Slider Value', 'gui slider value'), [(('Index', 'Index'), 'uint8', 1, None, None, None), (('Value', 'Value'), 'uint8', 1, None, None, None)], None, None),
-              ('callback', ('GUI Tab Current', 'gui tab current'), [(('Index', 'Index'), 'uint8', 1, None, None, None)], None, None),
+              ('callback', ('GUI Tab Selected', 'gui tab selected'), [(('Index', 'Index'), 'uint8', 1, None, None, None)], None, None),
 
               ('setter', 'Clear Display', [], 'Clear display', None),
               ('setter', 'Remove All GUI', [], None, None),
@@ -1401,7 +1401,7 @@ com['examples'].append({
 
               ('callback_configuration', ('GUI Button Pressed', 'gui button pressed'), [], 100, True, None, []),
               ('callback_configuration', ('GUI Slider Value', 'gui slider value'), [], 100, True, None, []),
-              ('callback_configuration', ('GUI Tab Current', 'gui tab current'), [], 100, True, None, [])]
+              ('callback_configuration', ('GUI Tab Selected', 'gui tab selected'), [], 100, True, None, [])]
 
 })
 
