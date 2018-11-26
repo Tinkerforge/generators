@@ -107,7 +107,6 @@ impl Device {
         for resp_exp in self.response_expected.iter_mut() {
             if *resp_exp == ResponseExpectedFlag::True || *resp_exp == ResponseExpectedFlag::False {
                 *resp_exp = ResponseExpectedFlag::from(response_expected);
-                *resp_exp = ResponseExpectedFlag::from(response_expected);
             }
         }
     }
