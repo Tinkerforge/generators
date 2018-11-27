@@ -696,6 +696,11 @@ public class {0} extends Device {{
                         type_ = 'String'
                     else:
                         value = "'{0}'".format(constant.get_value())
+                elif constant_group.get_type() == 'bool':
+                    if constant_group.get_type():
+                        value = 'true'
+                    else:
+                        value = 'false'
                 else:
                     if type_ == 'int':
                         cast = '' # no need to cast int, its the default type for number literals
