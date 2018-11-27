@@ -716,7 +716,7 @@ com['packets'].append({
 """
 Returns the button properties for a given `Index` as set by :func:`Set GUI Button`.
 
-Additionally the `Active` parameter shows if a button is currently active
+Additionally the `Active` parameter shows if a button is currently active/visible
 or not.
 """,
 'de':
@@ -724,7 +724,7 @@ or not.
 Gibt die Button-Eigenschaften für den gegebenen `Index` zurück, wie von
 :func:`Set GUI Button` gesetzt.
 
-Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv ist
+Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv/sichtbar ist
 oder nicht.
 """
 }]
@@ -939,7 +939,7 @@ com['packets'].append({
 """
 Returns the slider properties for a given `Index` as set by :func:`Set GUI Slider`.
 
-Additionally the `Active` parameter shows if a button is currently active
+Additionally the `Active` parameter shows if a button is currently active/visible
 or not.
 """,
 'de':
@@ -947,7 +947,7 @@ or not.
 Gibt die Slider-Eigenschaften für den gegebenen `Index` zurück, wie von
 :func:`Set GUI Slider` gesetzt.
 
-Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv ist
+Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv/sichtbar ist
 oder nicht.
 """
 }]
@@ -1166,7 +1166,7 @@ com['packets'].append({
 """
 Returns the text for a given index as set by :func:`Set GUI Tab Text`.
 
-Additionally the `Active` parameter shows if the tab is currently active
+Additionally the `Active` parameter shows if the tab is currently active/visible
 or not.
 """,
 'de':
@@ -1174,7 +1174,7 @@ or not.
 Gibt den Text für den gegebenen Index zurück, wie von :func:`Set GUI Tab Text` 
 gesetzt.
 
-Zusätzlich gibt der `Active`-Parameter an ob der Tab aktuell aktiv ist
+Zusätzlich gibt der `Active`-Parameter an ob der Tab aktuell aktiv/sichtbar ist
 oder nicht.
 """
 }]
@@ -1221,7 +1221,7 @@ com['packets'].append({
 """
 Returns the icon for a given index as set by :func:`Set GUI Tab Icon`.
 
-Additionally the `Active` parameter shows if the tab is currently active
+Additionally the `Active` parameter shows if the tab is currently active/visible
 or not.
 """,
 'de':
@@ -1229,7 +1229,7 @@ or not.
 Gibt das Icon für den gegebenen Index zurück, wie von :func:`Set GUI Tab Icon` 
 gesetzt.
 
-Zusätzlich gibt der `Active`-Parameter an ob der Tab aktuell aktiv ist
+Zusätzlich gibt der `Active`-Parameter an ob der Tab aktuell aktiv/sichtbar ist
 oder nicht.
 """
 }]
@@ -1455,7 +1455,7 @@ com['packets'].append({
 """
 Returns the graph properties for a given `Index` as set by :func:`Set GUI Graph Configuration`.
 
-Additionally the `Active` parameter shows if a graph is currently active
+Additionally the `Active` parameter shows if a graph is currently active/visible
 or not.
 """,
 'de':
@@ -1463,7 +1463,7 @@ or not.
 Gibt die Graph-Eigenschaften für den gegebenen `Index` zurück, wie von
 :func:`Set GUI Graph Configuration` gesetzt.
 
-Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv ist
+Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv/sichtbar ist
 oder nicht.
 """
 }]
