@@ -93,7 +93,7 @@
   Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED Strip 2.0,
   Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, RS232 2.0,
   Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
-- Add get/set_maximum_timeout functions to NFC Bricklet API
+- Add Get/SetMaximumTimeout functions to NFC Bricklet API
 - Add (Is)SensorConnected function and callback to PTC Bricklet API
 - Break Humidity 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
   fix types for callback threshold min/max configuration
@@ -106,3 +106,7 @@
 
 2018-10-05: 2.1.19 (e3c6f36)
 - Break API to fix moving-average-length type in Distance IR Bricklet 2.0 API
+
+2018-11-27: 2.1.20 (<unknown>)
+- Add Get/SetSamplesPerSecond functions to Humidity Bricklet 2.0 API
+- Add button, slider, graph and tab functions to LCD 128x64 Bricklet API

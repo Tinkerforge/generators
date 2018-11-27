@@ -277,3 +277,7 @@
 
 2018-10-05: 2.1.20 (e3c6f36)
 - Break API to fix moving-average-length type in Distance IR Bricklet 2.0 API
+
+2018-11-27: 2.1.21 (<unknown>)
+- Add get/setSamplesPerSecond methods to Humidity Bricklet 2.0 API
+- Add button, slider, graph and tab methods to LCD 128x64 Bricklet API
