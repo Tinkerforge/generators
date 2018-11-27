@@ -642,7 +642,7 @@ class RustBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(filename + '.rs')
 
     def write_byte_converter(self):
-        with open(os.path.join(self.get_bindings_dir(), '..', 'byte_converter_template.rs'), 'r') as f: 
+        with open(os.path.join(self.get_root_dir(), 'byte_converter_template.rs'), 'r') as f: 
             primitive_type_impl = f.read()
         array_impl = []
         one_byte_template = """impl ToBytes for [u8; {count}] {{
@@ -738,13 +738,13 @@ impl FromByteSlice for [bool; {count}] {{
                 if typestring in packet_param_types or typestring in packet_return_types:
                     array_impl.append(template.format(type=primitive_type, count=i, count_in_bytes=size_in_bytes*i, unchecked=("" if "f" not in primitive_type else "_unchecked")))
         
-        with open(os.path.join(self.get_bindings_dir(), '..', 'byte_converter.rs'), 'w') as f:
+        with open(os.path.join(self.get_bindings_dir(), 'byte_converter.rs'), 'w') as f:
             f.write(primitive_type_impl)
             f.write("\n")
             f.write("\n\n".join(array_impl))
 
     def write_cargo_toml(self):
-        common.specialize_template(os.path.join(self.get_root_dir(), "Cargo.toml.template"), os.path.join(self.get_root_dir(), "Cargo.toml"), {"{version}": '"'+".".join(list(self.get_changelog_version())) + '"'})
+        common.specialize_template(os.path.join(self.get_root_dir(), "Cargo.toml.template"), os.path.join(self.get_bindings_dir(), "Cargo.toml"), {"{version}": '"'+".".join(list(self.get_changelog_version())) + '"'})
 
     def write_lib_rs(self):
         template = """#![forbid(unsafe_code)]
@@ -769,8 +769,8 @@ pub mod converting_receiver;
 pub mod device;
 pub mod ip_connection;
 pub mod low_level_traits;
-"""
-        with open(os.path.join(self.get_bindings_dir(), "..", 'lib.rs'), 'w') as f:
+"""        
+        with open(os.path.join(self.get_bindings_dir(), 'lib.rs'), 'w') as f:
             f.write(template.format(version=".".join(list(self.get_changelog_version()))))
 
         bindings_mod_template = """pub mod {module};"""

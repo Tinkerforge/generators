@@ -79,19 +79,18 @@ class RustZipGenerator(common.ZipGenerator):
 
         source_files = [
             'base58.rs',
-            'byte_converter.rs',
             'converting_receiver.rs',
             'converting_callback_receiver.rs',
             'converting_high_level_callback_receiver.rs',
             'device.rs',
             'ip_connection.rs',
-            'lib.rs',
             'low_level_traits.rs',            
         ]
-        bindings_source_files = ['mod.rs']
+        bindings_files = ['mod.rs']
+        bindings_source_files = ['lib.rs', 'byte_converter.rs']
+        bindings_top_level_files = ['Cargo.toml']
         top_level_files = [
             '.gitignore',
-            'Cargo.toml',
             'rustfmt.toml',
             'changelog.txt',
             'readme.txt',
@@ -106,8 +105,12 @@ class RustZipGenerator(common.ZipGenerator):
                 shutil.copy(os.path.join(root_dir, f), self.tmp_dir)
             for f in source_files:
                 shutil.copy(os.path.join(root_dir, f), self.tmp_source_dir)
-            for f in bindings_source_files:
+            for f in bindings_files:
                 shutil.copy(os.path.join(root_dir, 'bindings', f), self.tmp_bindings_dir)
+            for f in bindings_source_files:
+                shutil.copy(os.path.join(root_dir, 'bindings', f), self.tmp_source_dir)
+            for f in bindings_top_level_files:
+                shutil.copy(os.path.join(root_dir, 'bindings', f), self.tmp_dir)
             shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
         else:
             shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
