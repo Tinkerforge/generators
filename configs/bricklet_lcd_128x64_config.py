@@ -582,7 +582,7 @@ Draws a white or black box from (x, y)-start to (x, y)-end.
 The x values have to be within the range of 0 to 127 and the y
 values have to be within the range of 0 to 63.
 
-If you set :word:`fill` to true, the box will be filled with the
+If you set fill to true, the box will be filled with the
 color. Otherwise only the outline will be drawn.
 """,
 'de':
@@ -591,7 +591,7 @@ Zeichnet ein weißes oder schwarzes Rechteck von (x, y)-start nach
 (x, y)-end. Der Wertebereich für die x-Werte ist 0 bis 127 und
 der Wertebereich für die y-Werte ist 0-63.
 
-Wenn :world:`fill` auf true gesetzt wird, wird das Rechteck mit
+Wenn fill auf true gesetzt wird, wird das Rechteck mit
 der angegebenen Farbe ausgefüllt. Ansonsten wird nur der Umriss
 gezeichnet.
 """
@@ -634,7 +634,7 @@ Die Wertebereich für die x-Werte ist 0 bis 127 und
 der Wertebereich für die y-Werte ist 0-63.
 
 Es können 9 unterschiedliche Font-Größen genutzt werden und der Text
-kann in weiß oder schwar gezeichnet werden.
+kann in weiß oder schwarz gezeichnet werden.
 """
 }]
 })
@@ -660,13 +660,13 @@ You can use up to 12 buttons (index 0-11).
 The x position + width has to be within the range of 1 to 128 and the y
 position + height has to be within the range of 1 to 64.
 
-The minimum usefull width/height of a button is 3.
+The minimum useful width/height of a button is 3.
 
 You can enable a callback for a button press with 
 :func:`Set GUI Button Pressed Callback Configuration`. The callback will
 be triggered for press and release-events.
 
-The button is drawn in a separate gui buffer and the button-frame will 
+The button is drawn in a separate GUI buffer and the button-frame will
 always stay on top of the graphics drawn with :func:`Write Pixels`. To
 remove the button use :func:`Remove GUI Button`.
 
@@ -690,11 +690,11 @@ Der Callback für Button-Events kann mit der Funktion
 Der Callback wird sowohl für gedrückt als auch losgelassen Events ausgelöst.
 
 Der Button wird in einem separaten GUI-Buffer gezeichnet und der Rahmen des
-Buttons wrd immer über den Grafiken bleiben die mit :func:`Write Pixels`
+Buttons wird immer über den Grafiken bleiben die mit :func:`Write Pixels`
 gezeichnet werden. Um einen Button zu entfernen kann die Funktion 
 :func:`Remove GUI Button` genutzt werden.
 
-Wenn anstatt des Textes ein Icon verwedet werden soll, kann dieses innerhalb
+Wenn anstatt des Textes ein Icon verwendet werden soll, kann dieses innerhalb
 des Buttons mit per :func:`Write Pixels` gezeichnet werden.
 """
 }]
@@ -854,7 +854,6 @@ die gleichen wie die von :func:`Get GUI Button Pressed`.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Slider',
@@ -889,7 +888,7 @@ be between 0 and length-8.
 You can enable a callback for the slider value with 
 :func:`Set GUI Slider Value Callback Configuration`. 
 
-The slider is drawn in a separate gui buffer and it will 
+The slider is drawn in a separate GUI buffer and it will
 always stay on top of the graphics drawn with :func:`Write Pixels`. To
 remove the button use :func:`Remove GUI Slider`.
 """,
@@ -909,7 +908,7 @@ im Wertebereich von 1 bis 64 und die x-Position im Wertebereich von
 
 Die minimale Länge des Sliders ist 8.
 
-The :word:`parameter` value ist die Startposition des Sliders. Diese kann
+Das :word:`parameter` value ist die Startposition des Sliders. Diese kann
 zwischen 0 und length-8 liegen.
 
 Der Callback für Slider-Events kann mit der Funktion 
@@ -1047,7 +1046,7 @@ Returns the current slider value for the given index.
 """,
 'de':
 """
-Gibt den aktuellen Wert des Slider smit dem gegebenen Index zurück.
+Gibt den aktuellen Wert des Slider mit dem gegebenen Index zurück.
 """
 }]
 })
@@ -1099,7 +1098,7 @@ Setzt die generelle Konfiguration für Tabs. Tabs können auf klicken, wischen
 (links/rechts und rechts/links) oder beides reagieren.
 
 Zusätzlich kann `Clear GUI` auf true gesetzt werden. In diesem Fall werden
-bei einem wechsel der Tabs automatisch alle GUI elemente (Buttons, Slider, 
+bei einem wechsel der Tabs automatisch alle GUI Elemente (Buttons, Slider,
 Graphen) gelöscht.
 
 Standardmäßig ist klicken und wischen sowie das automatische löschen der GUI
@@ -1127,7 +1126,6 @@ Gibt die Tab-Konfiguration zurück, wie von :func:`Set GUI Tab Configuration` ge
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -1401,12 +1399,12 @@ maximum height is 63.
 You can add a text for the x and y axis with at most 4 characters each.
 The text is drawn at the inside of the graph and it can overwrite some
 of the graph data. If you need the text outside of the graph you can
-leave this text here emtpy and use :func:`Draw Text` to draw the caption
+leave this text here empty and use :func:`Draw Text` to draw the caption
 outside of the graph.
 
 The data of the graph can be set and updated with :func:`Set GUI Graph Data`.
 
-The graph is drawn in a separate gui buffer and the graph-frame and data will 
+The graph is drawn in a separate GUI buffer and the graph-frame and data will
 always stay on top of the graphics drawn with :func:`Write Pixels`. To
 remove the graph use :func:`Remove GUI Graph`.
 """,
@@ -1420,11 +1418,11 @@ Die x- und y-Positionen sind Pixel-Positionen. Diese sind im Wertebereich
 von (0, 0) bis (127, 63). Die Maximale Breite (width) ist 118 und die maximale
 Höhe (height) ist 63.
 
-Es können bis zu 4 Buchstaben text zur Beschreibung der x- und y-Achse
-genutzt ewrden. Der Text wird auf die Innenseite des Graphen gezeichnet und
+Es können bis zu 4 Buchstaben Text zur Beschreibung der x- und y-Achse
+genutzt werden. Der Text wird auf die Innenseite des Graphen gezeichnet und
 er kann Datenpunkte des Graphen überschreiben. Wenn der Text außerhalb des
-Graphen benötigt wird kann die Beschriftung hier leergelassen werden. Der
-Text kann im nachhinein mit :func:`Draw Text` hinzugefügt werden.
+Graphen benötigt wird kann die Beschriftung hier leer gelassen werden. Der
+Text kann im Nachhinein mit :func:`Draw Text` hinzugefügt werden.
 
 Die Datenpunkte des Graphen können mit der Funktion :func:`Set GUI Graph Data`
 gesetzt und aktualisiert werden.
@@ -1471,7 +1469,6 @@ oder nicht.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Graph Data Low Level',
@@ -1508,7 +1505,7 @@ ist die mit :func:`Set GUI Graph Configuration` gesetzt wurde. Wenn weniger als
 n Werte gesetzt werden, werden die restlichen Datenpunkte als 0 angezeigt.
 
 Die maximale Anzahl an Datenpunkte die gesetzt werden kann ist 118 (dies entspricht
-auch der maximumalen Breite des Graphen).
+auch der maximalen Breite des Graphen).
 
 Die gesetzten Werte müssen zwischen 0 und 255 skaliert werden. 0 wird unten und
 255 wird oben im Graph gezeichnet.
@@ -1672,7 +1669,5 @@ com['examples'].append({
               ('callback_configuration', ('GUI Tab Selected', 'gui tab selected'), [], 100, True, None, [])]
 
 })
-
-
 
 # FIXME: add pixel-matrix example
