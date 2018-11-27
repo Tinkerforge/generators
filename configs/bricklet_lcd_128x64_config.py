@@ -1658,7 +1658,7 @@ com['examples'].append({
               ('setter', 'Set GUI Button', [('uint8', 0), ('uint8', 0), ('uint8', 0), ('uint8', 60), ('uint8', 20), ('string', 'button')], 'Add GUI elements: Button, Slider and Graph with 60 data points', None),
               ('setter', 'Set GUI Slider', [('uint8', 0), ('uint8', 0), ('uint8', 30), ('uint8', 60), ('uint8:constant', 0), ('uint8', 50)], None, None),
               ('setter', 'Set GUI Graph Configuration', [('uint8', 0), ('uint8:constant', 1), ('uint8', 62), ('uint8', 0), ('uint8', 60), ('uint8', 52), ('string', 'X'), ('string', 'Y')], None, None),
-              ('setter', 'Set GUI Graph Data', [('uint8', 0), ('uint8', tuple(range(20, 250, 20)))], 'Add a few data points (the remaining points will be 0)', None),
+              ('setter', 'Set GUI Graph Data', [('uint8', 0), ('uint8', list(range(20, 250, 20)))], 'Add a few data points (the remaining points will be 0)', None),
 
               ('setter', 'Set GUI Tab Configuration', [('uint8:constant', 3), ('bool', False)], 'Add 5 text tabs without and configure it for click and swipe without auto-redraw', None),
               ('setter', 'Set GUI Tab Text', [('uint8', 0), ('string', 'Tab A')], None, None),
