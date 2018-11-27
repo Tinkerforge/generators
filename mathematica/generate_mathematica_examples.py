@@ -144,7 +144,7 @@ class MathematicaExampleArgument(common.ExampleArgument):
 
         value = self.get_value()
 
-        if isinstance(value, list):
+        if isinstance(value, list) or isinstance(value, tuple):
             return '{{{0}}}'.format(','.join([helper(item) for item in value]))
 
         return helper(value)
