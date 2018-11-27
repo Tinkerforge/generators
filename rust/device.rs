@@ -249,6 +249,7 @@ impl Device {
 
             assert!(out_of_sync);
             while chunk_offset + result.ll_message_chunk_data().len() < message_length {
+		chunk_offset += result.ll_message_chunk_data().len();
                 result = low_level_closure()?;
             }
             Err(BrickletRecvTimeoutError::MalformedPacket)
