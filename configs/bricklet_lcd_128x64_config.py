@@ -1463,7 +1463,7 @@ or not.
 'de':
 """
 Gibt die Graph-Eigenschaften für den gegebenen `Index` zurück, wie von
-:func:`Set GUI Graph` gesetzt.
+:func:`Set GUI Graph Configuration` gesetzt.
 
 Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv ist
 oder nicht.
