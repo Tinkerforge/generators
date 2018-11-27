@@ -21,3 +21,4 @@
 
 unknown: 2.0.6 (<unknown>)
 - Removed duplicated assignment in Device::set_response_expected_all
+- Fixed infinite loop when stream reading out of sync
