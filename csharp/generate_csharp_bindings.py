@@ -243,6 +243,11 @@ namespace Tinkerforge
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
                     value = "'{0}'".format(constant.get_value())
+                elif constant_group.get_type() == 'bool':
+                    if constant_group.get_type():
+                        value = 'true'
+                    else:
+                        value = 'false'
                 else:
                     value = str(constant.get_value())
 
