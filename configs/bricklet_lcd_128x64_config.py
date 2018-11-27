@@ -739,10 +739,14 @@ com['packets'].append({
 'en':
 """
 Removes the button with the given index.
+
+You can use index 255 to remove all buttons.
 """,
 'de':
 """
 Entfernt den Button mit dem gegebenen Index.
+
+Index 255 kann genutzt werden um alle Buttons zu entfernen.
 """
 }]
 })
@@ -883,7 +887,7 @@ The :word:`parameter` value is the start-position of the slider, it can
 be between 0 and length-8.
 
 You can enable a callback for the slider value with 
-:func:`Set GUI Slide Value Callback Configuration`. 
+:func:`Set GUI Slider Value Callback Configuration`. 
 
 The slider is drawn in a separate gui buffer and it will 
 always stay on top of the graphics drawn with :func:`Write Pixels`. To
@@ -959,10 +963,14 @@ com['packets'].append({
 'en':
 """
 Removes the slider with the given index.
+
+You can use index 255 to remove all slider.
 """,
 'de':
 """
 Entfernt den Slider mit dem gegebenen Index.
+
+Index 255 kann genutzt werden um alle Slider zu entfernen.
 """
 }]
 })
@@ -1016,12 +1024,12 @@ com['packets'].append({
 'en':
 """
 Returns the callback configuration as set by
-:func:`Set GUI Slider Changed Callback Configuration`.
+:func:`Set GUI Slider Value Callback Configuration`.
 """,
 'de':
 """
 Gibt die Callback-Konfiguration zurück, wie mittels
-:func:`Set GUI Slider Changed Callback Configuration` gesetzt.
+:func:`Set GUI Slider Value Callback Configuration` gesetzt.
 """
 }]
 })
@@ -1238,10 +1246,14 @@ com['packets'].append({
 'en':
 """
 Removes the tab with the given index.
+
+You can use index 255 to remove all tabs.
 """,
 'de':
 """
 Entfernt den Tab mit dem gegebenen Index.
+
+Index 255 kann genutzt werden um alle Tabs zu entfernen.
 """
 }]
 })
@@ -1378,11 +1390,49 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the configuration for up to four graphs (index 0-3).
 
+The graph type can be dot-, line- or bar-graph.
+
+The x and y position are pixel positions. They have to be within
+the range of (0, 0) to (127, 63). The maximum width is 118 and the
+maximum height is 63.
+
+You can add a text for the x and y axis with at most 4 characters each.
+The text is drawn at the inside of the graph and it can overwrite some
+of the graph data. If you need the text outside of the graph you can
+leave this text here emtpy and use :func:`Draw Text` to draw the caption
+outside of the graph.
+
+The data of the graph can be set and updated with :func:`Set GUI Graph Data`.
+
+The graph is drawn in a separate gui buffer and the graph-frame and data will 
+always stay on top of the graphics drawn with :func:`Write Pixels`. To
+remove the graph use :func:`Remove GUI Graph`.
 """,
 'de':
 """
+Setzt die Konfiguration für bis zu vier Graphen (Index 0-3).
 
+Der Graph kann vom Typ Dot-, Line- oder Bar-Graph sein.
+
+Die x- und y-Positionen sind Pixel-Positionen. Diese sind im Wertebereich
+von (0, 0) bis (127, 63). Die Maximale Breite (width) ist 118 und die maximale
+Höhe (height) ist 63.
+
+Es können bis zu 4 Buchstaben text zur Beschreibung der x- und y-Achse
+genutzt ewrden. Der Text wird auf die Innenseite des Graphen gezeichnet und
+er kann Datenpunkte des Graphen überschreiben. Wenn der Text außerhalb des
+Graphen benötigt wird kann die Beschriftung hier leergelassen werden. Der
+Text kann im nachhinein mit :func:`Draw Text` hinzugefügt werden.
+
+Die Datenpunkte des Graphen können mit der Funktion :func:`Set GUI Graph Data`
+gesetzt und aktualisiert werden.
+
+Der Graph wird in einem separaten GUI-Buffer gezeichnet und der Rahmen sowie die
+Datenpunkte des Graphen werden immer über den Grafiken bleiben die mit
+:func:`Write Pixels` gezeichnet werden. Um einen Graphen zu entfernen kann die 
+Funktion :func:`Remove GUI Graph` genutzt werden.
 """
 }]
 })
@@ -1405,11 +1455,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the graph properties for a given `Index` as set by :func:`Set GUI Graph Configuration`.
 
+Additionally the `Active` parameter shows if a graph is currently active
+or not.
 """,
 'de':
 """
+Gibt die Graph-Eigenschaften für den gegebenen `Index` zurück, wie von
+:func:`Set GUI Graph` gesetzt.
 
+Zusätzlich gibt der `Active`-Parameter an ob der Button aktuell aktiv ist
+oder nicht.
 """
 }]
 })
@@ -1427,11 +1484,34 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the data for a graph with the given index. You have to configure the graph with 
+:func:`Set GUI Graph Configuration` before you can set the first data.
 
+The graph will show the first n values of the data that you set, where
+n is the width set with :func:`Set GUI Graph Configuration`. If you set
+less then n values it will show the rest of the values as zero.
+
+The maximum number of data-points you can set is 118 (which also corresponds to the
+maximum width of the graph).
+
+You have to scale your values to be between 0 and 255. 0 will be shown
+at the bottom of the graph and 255 at the top.
 """,
 'de':
 """
+Setzt die Datenpukte für den Graph mit dem gegebenen Index. Der Graph muss mit
+:func:`Set GUI Graph Configuration` konfiguriert werden bevor die ersten Daten
+gesetzt werden können.
 
+Der Graph zeigt die ersten n Werte der gesetzten Daten an, wobei n die Breite (width)
+ist die mit :func:`Set GUI Graph Configuration` gesetzt wurde. Wenn weniger als
+n Werte gesetzt werden, werden die restlichen Datenpunkte als 0 angezeigt.
+
+Die maximale Anzahl an Datenpunkte die gesetzt werden kann ist 118 (dies entspricht
+auch der maximumalen Breite des Graphen).
+
+Die gesetzten Werte müssen zwischen 0 und 255 skaliert werden. 0 wird unten und
+255 wird oben im Graph gezeichnet.
 """
 }]
 })
@@ -1448,11 +1528,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Returns the graph data for a given index as set by :func:`Set GUI Graph Data`.
 """,
 'de':
 """
-
+Gibt die Datenpunkte des Graphen mit dem gegebenen Index zurück, wie von 
+:func:`Set GUI Graph Data` gesetzt.
 """
 }]
 })
@@ -1465,13 +1546,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Removes the graph with the given index.
 
-index = 255 => remove all graphs
-
+You can use index 255 to remove all graphs.
 """,
 'de':
 """
+Entfernt den Graph mit dem gegebenen Index.
 
+Index 255 kann genutzt werden um alle Graphen zu entfernen.
 """
 }]
 })
@@ -1488,7 +1571,7 @@ Removes all GUI elements (buttons, slider, graphs, tabs).
 """,
 'de':
 """
-
+Entfernt alle GUI-Elemente (Buttons, Slider, Graphen, Tabs).
 """
 }]
 })
