@@ -111,12 +111,18 @@ impl From<{function}> for u8 {{
             for constant in constant_group.get_constants():
                 name = constant_name + constant.get_name().upper
                 value = str(constant.get_value()) if not "char" in constant_type else "'" + constant.get_value() + "'"
+
+                # Bools are with a capital letter in python, but not in rust
+                if value == "False" or value == "True":
+                    value = value.lower()                
+                
                 # clippy nags about number literals with a length > 5, so insert '_' after every three characters from the right:
                 # 4294967295 becomes 4_294_967_295
                 if len(value) > 5 and "32" in constant_type or "64" in constant_type:
                     value = value[::-1]                  
                     value = "_".join(value[i:i+3] for i in range(0, len(value), 3))
                     value = value[::-1]
+                    
                 enum_values.append("pub const {name}: {type} = {value};".format(type=constant_type, name=name, value=value))
             result += "\n" + "\n".join(enum_values)
 
