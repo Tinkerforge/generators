@@ -236,7 +236,7 @@ of the charset in Brick Viewer.
 
 This function is a 1:1 replacement for the function with the same name
 in the LCD 20x4 Bricklet. You can draw text at a specific pixel position
-and with different font sizes with the :func:`Draw Line` function.
+and with different font sizes with the :func:`Draw Text` function.
 """,
 'de':
 """
