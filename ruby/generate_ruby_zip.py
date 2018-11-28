@@ -111,7 +111,7 @@ end
 
         # Make gem
         with common.ChangedDirectory(self.tmp_source_dir):
-            common.execute(['/usr/bin/gem', 'build', 'tinkerforge.gemspec'])
+            common.execute(['gem', 'build', 'tinkerforge.gemspec'])
 
         # Remove build stuff
         tmp_gem = os.path.join(self.tmp_source_dir, 'tinkerforge-{0}.{1}.{2}.gem'.format(*version))

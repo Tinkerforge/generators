@@ -43,7 +43,7 @@ class DelphiExamplesTester(common.Tester):
             shutil.copy(path, '/tmp/tester/delphi')
             path = os.path.join('/tmp/tester/delphi', os.path.split(path)[1])
 
-        args = ['/usr/bin/fpc',
+        args = ['fpc',
                 '-vw',
                 '-Fu/tmp/tester/delphi/source',
                 '-l',

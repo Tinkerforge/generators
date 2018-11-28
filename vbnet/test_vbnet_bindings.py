@@ -41,7 +41,7 @@ class VBNETExamplesTester(common.Tester):
 
         output = path[:-3] + '.exe'
 
-        args = ['/usr/bin/vbnc',
+        args = ['vbnc',
                 '/nologo',
                 '/optimize',
                 '/optionstrict',

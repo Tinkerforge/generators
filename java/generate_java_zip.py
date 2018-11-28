@@ -117,7 +117,7 @@ class JavaZipGenerator(common.ZipGenerator):
             class_path = '-cp /tmp/generators/java/Tinkerforge.jar '
 
         with common.ChangedDirectory(self.tmp_dir):
-            common.execute('/usr/bin/javac ' +
+            common.execute('javac ' +
                            '-Xlint ' +
                            '-source 1.6 ' +
                            '-target 1.6 ' +
@@ -127,7 +127,7 @@ class JavaZipGenerator(common.ZipGenerator):
 
         # Make jar
         with common.ChangedDirectory(self.tmp_source_dir):
-            common.execute(['/usr/bin/jar',
+            common.execute(['jar',
                             'cfm',
                             os.path.join(self.tmp_dir, self.get_config_name().camel + '.jar'),
                             os.path.join(self.tmp_dir, 'manifest.txt'),

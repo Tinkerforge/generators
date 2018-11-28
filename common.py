@@ -2949,7 +2949,7 @@ class ZipGenerator(Generator):
         zipname = '{0}_{1}_bindings_{2}_{3}_{4}.zip'.format(self.get_config_name().under, self.get_bindings_name(), *version)
 
         with ChangedDirectory(source_path):
-            execute(['/usr/bin/zip', '-q', '-r', zipname, '.'])
+            execute(['zip', '-q', '-r', zipname, '.'])
             shutil.copy(zipname, self.get_root_dir())
 
 class ExamplesGenerator(Generator):
@@ -3045,7 +3045,7 @@ class Tester(object):
             # unzip
             print('>>> unpacking {0} to {1}'.format(self.zipname, tmp_dir))
 
-            args = ['/usr/bin/unzip',
+            args = ['unzip',
                     '-q',
                     os.path.join(tmp_dir, self.zipname)]
 
