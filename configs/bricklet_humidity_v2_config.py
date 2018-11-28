@@ -136,12 +136,11 @@ averaging, there is more noise on the data.
 
 The range for the averaging is 1-1000.
 
-New data is gathered every 50ms\*. With a moving average of length 1000 the resulting
+New data is gathered every 50ms*. With a moving average of length 1000 the resulting
 averaging window has a length of 50s. If you want to do long term measurements the longest
 moving average will give the cleanest results.
 
 The default value is 5.
-
 
 \* In firmware version 2.0.3 we added the :func:`Set Samples Per Second` function. It
 configures the measurement frequency. Since high frequencies can result in self-heating
@@ -158,12 +157,11 @@ Desto kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Da
 
 Der Wertebereich liegt bei 1-1000.
 
-Einer neue Wert wird alle 50ms\* gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
+Einer neue Wert wird alle 50ms* gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
 resultierende gleitende Fenster eine Zeitspanne von 50s. Bei Langzeitmessungen gibt
 ein langer Mittelwert die saubersten Resultate.
 
 Der Standardwert ist 5.
-
 
 \* In Firmware Version 2.0.3 haben wir die Funktion :func:`Set Samples Per Second`
 hinzugefügt. Diese konfiguriert die Messfrequenz. Da eine hohe Messfrequenz zu
