@@ -47,7 +47,7 @@ class RustZipGenerator(common.ZipGenerator):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_dir)
         os.makedirs(self.tmp_bindings_dir)
-        os.makedirs(self.tmp_examples_dir)        
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
@@ -71,7 +71,7 @@ class RustZipGenerator(common.ZipGenerator):
         if self.get_config_name().space == 'Tinkerforge':
             for example in common.find_examples(root_dir, r'^example_.*\.rs$'):
                 shutil.copy(example[1], self.tmp_examples_dir)
-        
+
 
         for filename in self.get_released_files():
             path = os.path.join(self.get_bindings_dir(), filename)
@@ -84,7 +84,7 @@ class RustZipGenerator(common.ZipGenerator):
             'converting_high_level_callback_receiver.rs',
             'device.rs',
             'ip_connection.rs',
-            'low_level_traits.rs',            
+            'low_level_traits.rs',
         ]
         bindings_files = ['mod.rs']
         bindings_source_files = ['lib.rs', 'byte_converter.rs']
