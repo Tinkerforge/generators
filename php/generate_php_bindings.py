@@ -145,7 +145,7 @@ class {0} extends Device
     def get_php_constants(self):
         constant_format = '    const {constant_group_name_upper}_{constant_name_upper} = {constant_value};\n'
 
-        return '\n' + self.get_formatted_constants(constant_format)
+        return '\n' + self.get_formatted_constants(constant_format, bool_format_func=lambda value: str(value).lower())
 
     def get_php_device_identifier(self):
         template = """

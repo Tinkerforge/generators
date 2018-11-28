@@ -388,7 +388,7 @@ class MathematicaDocPacket(common.Packet):
                 return '* {0}{1}U{2} = {3}\n'.format(prefix, constant_group.get_name().upper.replace('_', 'U'),
                                                      constant.get_name().upper.replace('_', 'U'), value)
 
-            text += common.format_constants(prefix, self, char_format='``ToCharacterCode["{0}"][[0]]``',
+            text += common.format_constants(prefix, self, char_format_func='``ToCharacterCode["{0}"][[0]]``'.format,
                                             constant_format_func=constant_format)
 
         text += common.format_since_firmware(self.get_device(), self)

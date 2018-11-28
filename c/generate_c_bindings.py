@@ -157,6 +157,7 @@ extern "C" {{
 """
 
         return '\n' + self.get_formatted_constants(constant_format,
+                                                   bool_format_func=lambda value: str(value).lower(),
                                                    doxygen=self.get_category().camel + self.get_name().camel,
                                                    device_name=self.get_name().upper)
 

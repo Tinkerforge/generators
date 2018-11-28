@@ -72,7 +72,7 @@ var IPConnection = require('./IPConnection');
                                                                      packet.get_function_id())
         constant_statement = self.get_javascript_class_name() + \
                              '.{constant_group_name_upper}_{constant_name_upper} = {constant_value};\n'
-        constants = self.get_formatted_constants(constant_statement) + '\n'
+        constants = self.get_formatted_constants(constant_statement, bool_format_func=lambda value: str(value).lower()) + '\n'
 
         return callback_constants+function_constants+constants
 

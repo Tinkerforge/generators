@@ -484,7 +484,8 @@ def default_constant_format(prefix, constant_group, constant, value):
 
 def format_constants(prefix, packet,
                      constants_name=None,
-                     char_format="'{0}'",
+                     char_format_func="'{0}'".format,
+                     bool_format_func=str,
                      constant_format_func=default_constant_format,
                      constants_intro=None):
     if constants_name == None:
@@ -507,7 +508,9 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     for constant_group in packet.get_constant_groups():
         for constant in constant_group.get_constants():
             if constant_group.get_type() == 'char':
-                value = char_format.format(constant.get_value())
+                value = char_format_func(constant.get_value())
+            elif constant_group.get_type() == 'bool':
+                value = bool_format_func(constant.get_value())
             else:
                 value = str(constant.get_value())
 
@@ -1515,13 +1518,15 @@ class Packet(object):
     def get_constant_groups(self):
         return self.constant_groups
 
-    def get_formatted_constants(self, constant_format, char_format="'{0}'", **extra_value):
+    def get_formatted_constants(self, constant_format, char_format_func="'{0}'".format, bool_format_func=str, **extra_value):
         constants = []
 
         for constant_group in self.get_constant_groups():
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = char_format.format(constant.get_value())
+                    value = char_format_func(constant.get_value())
+                elif constant_group.get_type() == 'bool':
+                    value = bool_format_func(constant.get_value())
                 else:
                     value = str(constant.get_value())
 
@@ -1788,13 +1793,15 @@ class Device(object):
     def get_constant_groups(self):
         return self.constant_groups
 
-    def get_formatted_constants(self, constant_format, char_format="'{0}'", **extra_value):
+    def get_formatted_constants(self, constant_format, char_format_func="'{0}'".format, bool_format_func=str, **extra_value):
         constants = []
 
         for constant_group in self.get_constant_groups():
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = char_format.format(constant.get_value())
+                    value = char_format_func(constant.get_value())
+                elif constant_group.get_type() == 'bool':
+                    value = bool_format_func(constant.get_value())
                 else:
                     value = str(constant.get_value())
 

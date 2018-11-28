@@ -223,7 +223,8 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
             return c + '\n'
 
         text += common.format_constants('', self, constants_name=constants,
-                                        char_format='{0}',
+                                        char_format_func=str,
+                                        bool_format_func=lambda value: str(int(value)),
                                         constant_format_func=constant_format,
                                         constants_intro=constants_intro)
 

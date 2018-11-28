@@ -107,7 +107,9 @@ uses
     def get_delphi_constants(self):
         constant_format = '  {device_name}_{constant_group_name_upper}_{constant_name_upper} = {constant_value};\n'
 
-        return self.get_formatted_constants(constant_format, device_name=self.get_category().upper + '_' + self.get_name().upper) + '\n'
+        return self.get_formatted_constants(constant_format,
+                                            bool_format_func=lambda value: str(value).lower(),
+                                            device_name=self.get_category().upper + '_' + self.get_name().upper) + '\n'
 
     def get_delphi_callback_id_definitions(self):
         callback_ids = ''

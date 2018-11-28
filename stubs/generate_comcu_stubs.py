@@ -37,7 +37,6 @@ import c.c_common as c_common
 class CoMCUStubDevice(common.Device):
     def get_h_constants(self):
         constant_format = '#define {device_name}_{constant_group_name}_{constant_name} {constant_value}'
-        char_format="'{0}'"
         constants = []
 
         for i, constant_group in enumerate(self.get_constant_groups()):
@@ -46,7 +45,9 @@ class CoMCUStubDevice(common.Device):
 
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = char_format.format(constant.get_value())
+                    value = "'{0}'".format(constant.get_value())
+                elif constant_group.get_type() == 'bool':
+                    value = str(constant.get_value()).lower()
                 else:
                     value = str(constant.get_value())
 

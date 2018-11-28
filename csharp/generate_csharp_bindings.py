@@ -244,10 +244,7 @@ namespace Tinkerforge
                 if constant_group.get_type() == 'char':
                     value = "'{0}'".format(constant.get_value())
                 elif constant_group.get_type() == 'bool':
-                    if constant_group.get_type():
-                        value = 'true'
-                    else:
-                        value = 'false'
+                    value = str(constant.get_value()).lower()
                 else:
                     value = str(constant.get_value())
 
