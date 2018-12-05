@@ -333,7 +333,7 @@ Gibt die Kanal-LED-Status-Konfiguration zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Current', 'current from channel 0'), [(('Voltage', 'Voltage (Channel 0)'), 'int32', 1, 1000000.0, 'mA', None)], [('uint8', 0)])]
+'functions': [('getter', ('Get Current', 'current from channel 0'), [(('Current', 'Current (Channel 0)'), 'int32', 1, 1000000.0, 'mA', None)], [('uint8', 0)])]
 })
 
 com['examples'].append({
