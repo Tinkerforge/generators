@@ -344,6 +344,6 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Threshold',
-'functions': [('callback', ('Current', 'voltage'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Current', 'Current'), 'int32', 1, 1000000.0, 'mA', None)], None, None),
+'functions': [('callback', ('Current', 'current'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Current', 'Current'), 'int32', 1, 1000000.0, 'mA', None)], None, None),
               ('callback_configuration', ('Current', 'current (channel 0)'), [('uint8', 0)], 10000, False, '>', [(10, 0)])]
 })
