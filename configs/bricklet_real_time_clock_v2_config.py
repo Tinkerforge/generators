@@ -448,11 +448,11 @@ aktuelle Uhrzeit mit dem eingestellten Alarm übereinstimmen (siehe
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Date Time', 'date and time'), [(('Year', 'Year'), 'uint16', 1, None, None, None), (('Month', 'Month'), 'uint8', 1, None, None, None), (('Day', 'Day'), 'uint8', 1, None, None, None), (('Hour', 'Hour'), 'uint8', 1, None, None, None), (('Minute', 'Minute'), 'uint8', 1, None, None, None), (('Second', 'Second'), 'uint8', 1, None, None, None), (('Centisecond', 'Centisecond'), 'uint8', 1, None, None, None), (('Weekday', 'Weekday'), 'uint8', 1, None, None, None), (('Timestamp', 'Timestamp'), 'int64', 1, None, 'ms', None)], [])]
+'functions': [('getter', ('Get Date Time', 'date and time'), [(('Year', 'Year'), 'uint16', 1, None, None, None), (('Month', 'Month'), 'uint8', 1, None, None, None), (('Day', 'Day'), 'uint8', 1, None, None, None), (('Hour', 'Hour'), 'uint8', 1, None, None, None), (('Minute', 'Minute'), 'uint8', 1, None, None, None), (('Second', 'Second'), 'uint8', 1, None, None, None), (('Centisecond', 'Centisecond'), 'uint8', 1, None, None, None), (('Weekday', 'Weekday'), 'uint8:constant', 1, None, None, None), (('Timestamp', 'Timestamp'), 'int64', 1, None, 'ms', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Date Time', 'date and time'), [(('Year', 'Year'), 'uint16', 1, None, None, None), (('Month', 'Month'), 'uint8', 1, None, None, None), (('Day', 'Day'), 'uint8', 1, None, None, None), (('Hour', 'Hour'), 'uint8', 1, None, None, None), (('Minute', 'Minute'), 'uint8', 1, None, None, None), (('Second', 'Second'), 'uint8', 1, None, None, None), (('Centisecond', 'Centisecond'), 'uint8', 1, None, None, None), (('Weekday', 'Weekday'), 'uint8', 1, None, None, None), (('Timestamp', 'Timestamp'), 'int64', 1, None, None, None)], None, None),
+'functions': [('callback', ('Date Time', 'date and time'), [(('Year', 'Year'), 'uint16', 1, None, None, None), (('Month', 'Month'), 'uint8', 1, None, None, None), (('Day', 'Day'), 'uint8', 1, None, None, None), (('Hour', 'Hour'), 'uint8', 1, None, None, None), (('Minute', 'Minute'), 'uint8', 1, None, None, None), (('Second', 'Second'), 'uint8', 1, None, None, None), (('Centisecond', 'Centisecond'), 'uint8', 1, None, None, None), (('Weekday', 'Weekday'), 'uint8:constant', 1, None, None, None), (('Timestamp', 'Timestamp'), 'int64', 1, None, None, None)], None, None),
               ('callback_configuration', ('Date Time', 'date and time'), [], 5000, None, None, [])]
 })

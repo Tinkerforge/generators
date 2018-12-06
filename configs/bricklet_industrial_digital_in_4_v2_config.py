@@ -392,7 +392,7 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Value', 'value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
+'functions': [('callback', ('Value', 'value'), [(('Channel', 'Channel'), 'uint8:constant', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
               ('callback_configuration', ('Value', 'value (channel 1)'), [('uint8', 1)], 100, False, None, [])]
 })
 

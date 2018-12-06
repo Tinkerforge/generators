@@ -336,7 +336,7 @@ com['examples'].append({
                 (('Wind Speed', 'Wind Speed (Station)'), 'uint32', 1, 10.0, 'm/s', None),
                 (('Gust Speed', 'Gust Speed (Station)'), 'uint32', 1, 10.0, 'm/s', None),
                 (('Rain', 'Rain (Station)'), 'uint32', 1, 10.0, 'mm', None),
-                (('Wind Direction', 'Wind Direction (Station)'), 'uint8', 1, None, None, None), # FIXME: print as constant
+                (('Wind Direction', 'Wind Direction (Station)'), 'uint8:constant', 1, None, None, None), # FIXME: print as constant
                 (('Battery Low', 'Battery Low (Station)'), 'bool', 1, None, None, None)
               ],
               None, None),

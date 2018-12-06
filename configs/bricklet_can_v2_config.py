@@ -882,7 +882,7 @@ aktiviert werden.
 com['examples'].append({
 'name': 'Loopback',
 'functions': [('setter', 'Set Transceiver Configuration', [('uint32', 1000000), ('uint16', 625), ('uint8:constant', 1)], 'Configure transceiver for loopback mode', None),
-              ('callback', ('Frame Read', 'frame read'), [(('Frame Type', 'Frame Type'), 'uint8', 1, None, None, None), (('Identifier', 'Identifier'), 'uint32', 1, None, None, None), (('Data', 'Data'), 'uint8', -15, None, None, None)], None, None),
+              ('callback', ('Frame Read', 'frame read'), [(('Frame Type', 'Frame Type'), 'uint8:constant', 1, None, None, None), (('Identifier', 'Identifier'), 'uint32', 1, None, None, None), (('Data', 'Data'), 'uint8', -15, None, None, None)], None, None),
               ('setter', 'Set Frame Read Callback Configuration', [('bool', True)], 'Enable frame read callback', None),
               ('setter', 'Write Frame', [('uint8:constant', 0), ('uint32', 1742), ('uint8', [42, 23, 17])], 'Write standard data frame with identifier 1742 and 3 bytes of data', None)],
 'cleanups': [('setter', 'Set Frame Read Callback Configuration', [('bool', False)], None, None)],
