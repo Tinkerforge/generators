@@ -4,7 +4,7 @@ Tinkerforge Rust Bindings
 The Rust bindings allow you to control Tinkerforge Bricks and Bricklets from
 your Rust programs. This ZIP file contains:
 
- source/   -- source code of the bindings
+ src/   -- source code of the bindings
  examples/ -- examples for every Brick and Bricklet
 
 For more information about the Rust bindings (including setup instructions)
