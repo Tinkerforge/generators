@@ -2964,8 +2964,12 @@ class ExamplesGenerator(Generator):
         if self.forbid_execution:
             raise GeneratorError('ExamplesGenerator execution is forbidden')
 
-    def get_examples_dir(self, device):
-        return os.path.join(device.get_git_dir(), 'software', 'examples', self.get_bindings_name())
+    def get_examples_dir(self, device, override_git_dir=None):
+        if override_git_dir is None:
+            git_dir = device.get_git_dir()
+        else:
+            git_dir = os.path.join(override_git_dir, device.get_git_name())
+        return os.path.join(git_dir, 'software', 'examples', self.get_bindings_name())
 
 def tester_worker(cookie, args, env):
     try:
