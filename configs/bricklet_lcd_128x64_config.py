@@ -1342,10 +1342,12 @@ com['packets'].append({
 'en':
 """
 Returns the index of the currently selected tab.
+If there are not tabs, the returned index is -1.
 """,
 'de':
 """
 Gibt den Index des aktuell ausgewählten Tabs zurück.
+Wenn es keine Tabs gibt, wird -1 als Index zurückgegeben.
 """
 }]
 })
