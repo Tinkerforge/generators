@@ -261,7 +261,7 @@ class VBNETExampleResult(common.ExampleResult):
 
         type_ = get_vbnet_type(self.get_type().split(':')[0])
 
-        if self.get_cardinality() > 1:
+        if self.get_cardinality() > 1 and type_ != 'String':
             type_ += '()'
 
         return type_, name

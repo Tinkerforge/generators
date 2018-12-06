@@ -236,7 +236,7 @@ class CSharpExampleResult(common.ExampleResult):
 
         type_ = csharp_common.get_csharp_type(self.get_type().split(':')[0], 1)
 
-        if self.get_cardinality() > 1:
+        if self.get_cardinality() > 1 and type_ != 'string':
             type_ += '[]'
 
         return type_, name
