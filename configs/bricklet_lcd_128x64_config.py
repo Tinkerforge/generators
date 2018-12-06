@@ -1647,7 +1647,7 @@ com['examples'].append({
 'name': 'GUI',
 'functions': [('callback', ('GUI Button Pressed', 'gui button pressed'), [(('Index', 'Index'), 'uint8', 1, None, None, None), (('Pressed', 'Pressed'), 'bool', 1, None, None, None)], None, None),
               ('callback', ('GUI Slider Value', 'gui slider value'), [(('Index', 'Index'), 'uint8', 1, None, None, None), (('Value', 'Value'), 'uint8', 1, None, None, None)], None, None),
-              ('callback', ('GUI Tab Selected', 'gui tab selected'), [(('Index', 'Index'), 'uint8', 1, None, None, None)], None, None),
+              ('callback', ('GUI Tab Selected', 'gui tab selected'), [(('Index', 'Index'), 'int8', 1, None, None, None)], None, None),
 
               ('setter', 'Clear Display', [], 'Clear display', None),
               ('setter', 'Remove All GUI', [], None, None),
