@@ -3072,8 +3072,8 @@ class Tester(object):
             for extra_path in self.extra_paths:
                 self.handle_source(extra_path, True)
 
-        self.pool.close()
-        self.pool.join()
+            self.pool.close()
+            self.pool.join()
 
         # report
         if self.comment != None:
