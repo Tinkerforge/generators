@@ -2017,6 +2017,8 @@ class ExampleParameter(ExampleItem):
         for packet in self.get_device().get_packets(type_=function_type):
             if packet.get_name().space == function_name:
                 return packet.get_elements(direction='in' if function_type == 'function' else 'out')[self.get_index()]
+            if "LowLevel" in packet.get_name().camel and packet.get_name(skip=-2).space == function_name:
+                return packet.get_elements(direction='in' if function_type == 'function' else 'out')[self.get_index()]
 
         return None
 
