@@ -240,6 +240,9 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
 
     def get_delphi_write_lns(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+                
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 

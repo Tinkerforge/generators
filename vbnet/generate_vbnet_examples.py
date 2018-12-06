@@ -184,6 +184,9 @@ class VBNETExampleParameter(common.ExampleParameter):
 
     def get_vbnet_write_lines(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
