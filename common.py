@@ -3025,12 +3025,21 @@ class Tester(object):
         if len(output) > 0:
             print(output)
 
-        if success:
-            self.success_count += 1
-            print('\033[01;32m>>> test succeded\033[0m\n')
+
+        if sys.stdout.isatty(): #Only print color codes if stdout is not piped
+            if success:
+                self.success_count += 1
+                print('\033[01;32m>>> test succeded\033[0m\n')
+            else:
+                self.failure_count += 1
+                print('\033[01;31m>>> test failed\033[0m\n')
         else:
-            self.failure_count += 1
-            print('\033[01;31m>>> test failed\033[0m\n')
+            if success:
+                self.success_count += 1
+                print('>>> test succeded\n')
+            else:
+                self.failure_count += 1
+                print('>>> test failed\n')
 
     def after_unzip(self):
         return True
