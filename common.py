@@ -521,7 +521,10 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 
     return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
 
-def format_function_id_constants(prefix, device, constants_name=None):
+def default_function_id_constant_format(prefix, func_name, value):
+    return '* {0}FUNCTION_{1} = {2}\n'.format(prefix, func_name.upper, value)
+
+def format_function_id_constants(prefix, device, constants_name=None, constant_format_func=default_function_id_constant_format):
     if constants_name == None:
         constants_name = {'en': 'constants', 'de': 'Konstanten'}
 
@@ -535,13 +538,12 @@ Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
 
 """
     }
-    str_constant = '* {0}FUNCTION_{1} = {2}\n'
     str_constants = select_lang(str_constants).format(select_lang(constants_name))
 
     for packet in device.get_packets('function'):
         if len(packet.get_elements(direction='out', high_level=True)) == 0 and packet.get_function_id() >= 0:
-            str_constants += str_constant.format(prefix,
-                                                 packet.get_name(skip=-2 if packet.has_high_level() else 0).upper,
+            str_constants += constant_format_func(prefix,
+                                                 packet.get_name(skip=-2 if packet.has_high_level() else 0),
                                                  packet.get_function_id())
 
     return str_constants
