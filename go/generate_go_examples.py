@@ -234,7 +234,7 @@ class GoExampleParameter(common.ExampleParameter):
 
             if ':bitmask:' in self.get_type():
                 fmt = '%b'
-            elif 'float' in self.get_type():
+            elif 'float' in self.get_type() or self.get_divisor() is not None:
                 fmt =  '%f'
             elif 'int' in self.get_type():
                 fmt = '%d'
