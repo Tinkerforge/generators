@@ -174,7 +174,9 @@ später deregistriert werden.
 API
 ---
 
-Nearly every method of the Go bindings can return an
+The {device_name_display}'s API is defined in the package ``tinkerforge/{device_name_under}``
+
+Nearly every function of the Go bindings can return an
 ``BrickletError``, implementing the error interface. The error can have one of the following values:
 
 * BrickletErrorSuccess = 0
@@ -184,7 +186,7 @@ Nearly every method of the Go bindings can return an
 
 which correspond to the values returned from Bricks and Bricklets.
 
-All functions listed below are thread-safe, those which return a receiver are lock-free.
+All functions listed below are thread-safe.
 
 {1}
 
@@ -195,16 +197,20 @@ All functions listed below are thread-safe, those which return a receiver are lo
 
 API
 ---
-Um eine nicht-blockierende Verwendung zu erlauben, gibt fast jede Funktion der Go-Bindings
-einen Wrapper um einen mpsc::Receiver zurück. Um das Ergebnis eines Funktionsaufrufs zu erhalten
-und zu blockieren, bis das Gerät die Anfrage verarbeitet hat, können die recv-Varianten des 
-Receivers verwendet werden. Diese geben entweder das vom Gerät gesendete Ergebnis, oder einen
-aufgetretenen Fehler zurück.
 
-Funktionen die direkt ein Result zurückgeben, blockieren bis das Gerät die Anfrage verarbeitet hat.
+Die API des {device_name_display}s ist im Package ``tinkerforge/{device_name_under}`` definiert.
 
-Alle folgend aufgelisteten Funktionen sind Thread-sicher, diese, die einen Receiver zurückgeben, sind
-Lock-frei.
+Fast alle Funktionen der Go Bindings können einen ``BrickletError``, der das error-Interface implementiert,
+zurückgeben. Dieser kann folgende Werte annehmen:
+
+* BrickletErrorSuccess = 0
+* BrickletErrorInvalidParameter = 1
+* BrickletErrorFunctionNotSupported = 2
+* BrickletErrorUnknownError = 3
+
+welche den Werten entsprechen, die der Brick oder das Bricklet zurückgeben.
+
+Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
 {1}
 
@@ -219,7 +225,7 @@ Lock-frei.
 Constants
 ^^^^^^^^^
 
-.. go:constant:: {device_name_camel}DeviceIdentifier
+.. go:constant:: {device_name_under}.DeviceIdentifier
 
  This constant is used to identify a {device_name_display}.
 
@@ -227,7 +233,7 @@ Constants
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
-.. go:constant:: {device_name_camel}DeviceDisplayName
+.. go:constant:: {device_name_under}.DeviceDisplayName
 
  This constant represents the human readable name of a {device_name_display}.
 """,
@@ -237,7 +243,7 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. go:constant:: {device_name_camel}DeviceIdentifier
+.. go:constant:: {device_name_under}.DeviceIdentifier
 
  Diese Konstante wird verwendet um {article} {device_name_display} zu identifizieren.
 
@@ -245,7 +251,7 @@ Konstanten
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. go:constant:: {device_name_camel}DeviceDisplayName
+.. go:constant:: {device_name_under}.DeviceDisplayName
 
  Diese Konstante stellt den Anzeigenamen eines {device_name_display} dar.
 """
@@ -275,12 +281,15 @@ Konstanten
         api_str += common.select_lang(const_str).format(device_name_ref=self.get_doc_rst_ref_name(),
                                                         #device_name_upper=self.get_name().upper,
                                                         device_name_camel=self.get_go_name(),
+                                                        device_name_under=self.get_go_package(),
                                                         article=article,
                                                         device_name_display=self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
                                               self.specialize_go_doc_function_links(common.select_lang(self.get_doc())),
-                                              api_str)
+                                              api_str,
+                                              device_name_display=self.get_long_display_name(),
+                                              device_name_under = self.get_go_package())
 
     def get_go_doc(self):
         docs_rs = {'en': 'Additional documentation can be found on `docs.go <https://docs.go/tinkerforge/latest/tinkerforge/{device_name_under}/index.html>`_.\n',
