@@ -5,7 +5,8 @@ package ipconnection
 import (
 	"encoding/binary"
 	"time"
-	"github.com/tinkerforge/go-api-bindings/internal"
+
+	"github.com/Tinkerforge/go-api-bindings/internal"
 )
 
 // The IP Connection manages the communication between the API bindings and the Brick Daemon or a WIFI/Ethernet Extension.
@@ -40,7 +41,6 @@ func (ipcon *IPConnection) Connect(addr string) error {
 func (ipcon *IPConnection) Disconnect() {
 	ipcon.handle.Disconnect()
 }
-
 
 // Callbacks registered to this event are called whenever the IP Connection got connected to a Brick Daemon or to a WIFI/Ethernet Extension.
 // This function returns a callback ID which is used to deregister the callback when it should not be called anymore.
@@ -134,7 +134,7 @@ func (ipcon *IPConnection) Authenticate(secret string) error {
 type ConnectReason uint8
 
 const (
-    // Connection established after request from user.
+	// Connection established after request from user.
 	ConnectReasonRequest ConnectReason = iota
 	// Connection after auto-reconnect.
 	ConnectReasonAutoReconnect
@@ -145,7 +145,7 @@ const (
 type DisconnectReason uint8
 
 const (
-    // Disconnect was requested by user.
+	// Disconnect was requested by user.
 	DisconnectReasonRequest DisconnectReason = iota
 	// Disconnect because of an unresolvable error.
 	DisconnectReasonError
@@ -157,11 +157,11 @@ const (
 type EnumerationType = uint8
 
 const (
-    // Device is available (enumeration triggered by user).
-    // This enumeration type can occur multiple times for the same device.
+	// Device is available (enumeration triggered by user).
+	// This enumeration type can occur multiple times for the same device.
 	EnumerationTypeAvailable EnumerationType = iota
 	// Device is newly connected (automatically send by Brick after establishing a communication connection).
-    // This indicates that the device has potentially lost its previous configuration and needs to be reconfigured.
+	// This indicates that the device has potentially lost its previous configuration and needs to be reconfigured.
 	EnumerationTypeConnected
 	// Device is disconnected (only possible for USB connection). In this case only uid and enumerationType are valid.
 	EnumerationTypeDisconnected
@@ -170,30 +170,30 @@ const (
 // Devices send `EnumerateResponse`s when they are connected, disconnected or when an enumeration was
 // triggered by the user using the enumerate method.
 type EnumerateResponse struct {
-    // The UID of the device.
-	UID              string
-	 // UID where the device is connected to.
-    // For a Bricklet this will be a UID of the Brick where it is connected to.
-    // For a Brick it will be the UID of the bottom Master Brick in the stack.
-    // For the bottom Master Brick in a stack this will be "0".
-    // With this information it is possible to reconstruct the complete network topology.
-	ConnectedUID     string
+	// The UID of the device.
+	UID string
+	// UID where the device is connected to.
+	// For a Bricklet this will be a UID of the Brick where it is connected to.
+	// For a Brick it will be the UID of the bottom Master Brick in the stack.
+	// For the bottom Master Brick in a stack this will be "0".
+	// With this information it is possible to reconstruct the complete network topology.
+	ConnectedUID string
 	// For Bricks: '0' - '8' (position in stack). For Bricklets: 'a' - 'd' (position on Brick).
-	Position         rune
+	Position rune
 	// Major, minor and release number for hardware version.
-	HardwareVersion  [3]uint8
+	HardwareVersion [3]uint8
 	// Major, minor and release number for firmware version.
-	FirmwareVersion  [3]uint8
+	FirmwareVersion [3]uint8
 	// A number that represents the device.
-    // The device identifier numbers can be found here: https://www.tinkerforge.com/en/doc/Software/Device_Identifier.html
-    // There are also constants for these numbers named following this pattern:
-    //
-    // <device-package>.DeviceIdentifier
-    //
-    // For example: master_brick.DeviceIdentifier or ambient_light_bricklet.DeviceIdentifier.
+	// The device identifier numbers can be found here: https://www.tinkerforge.com/en/doc/Software/Device_Identifier.html
+	// There are also constants for these numbers named following this pattern:
+	//
+	// <device-package>.DeviceIdentifier
+	//
+	// For example: master_brick.DeviceIdentifier or ambient_light_bricklet.DeviceIdentifier.
 	DeviceIdentifier uint16
 	// Type of enumeration.
-	EnumerationType  EnumerationType
+	EnumerationType EnumerationType
 }
 
 func fillFromLeBytes(resp *EnumerateResponse, bytes []byte) {

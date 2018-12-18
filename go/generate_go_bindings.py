@@ -57,8 +57,8 @@ package {device}
 import (
 	"encoding/binary"
 	"bytes"
-    . "github.com/tinkerforge/go-api-bindings/internal"
-    "github.com/tinkerforge/go-api-bindings/ipconnection"
+    . "github.com/Tinkerforge/go-api-bindings/internal"
+    "github.com/Tinkerforge/go-api-bindings/ipconnection"
 )
 """.format(header=self.get_generator().get_header_comment(kind='asterisk'), description=description, device=self.get_go_package())
 
