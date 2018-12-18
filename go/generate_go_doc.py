@@ -174,7 +174,7 @@ später deregistriert werden.
 API
 ---
 
-The {device_name_display}'s API is defined in the package ``tinkerforge/{device_name_under}``
+The {device_name_display}'s API is defined in the package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}``
 
 Nearly every function of the Go bindings can return an
 ``BrickletError``, implementing the error interface. The error can have one of the following values:
@@ -198,7 +198,7 @@ All functions listed below are thread-safe.
 API
 ---
 
-Die API des {device_name_display}s ist im Package ``tinkerforge/{device_name_under}`` definiert.
+Die API des {device_name_display}s ist im Package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}`` definiert.
 
 Fast alle Funktionen der Go Bindings können einen ``BrickletError``, der das error-Interface implementiert,
 zurückgeben. Dieser kann folgende Werte annehmen:
@@ -292,8 +292,8 @@ Konstanten
                                               device_name_under = self.get_go_package())
 
     def get_go_doc(self):
-        docs_rs = {'en': 'Additional documentation can be found on `docs.go <https://docs.go/tinkerforge/latest/tinkerforge/{device_name_under}/index.html>`_.\n',
-                   'de': 'Zusätzliche Dokumentation findet sich auf `docs.go <https://docs.go/tinkerforge/latest/tinkerforge/{device_name_under}/index.html>`_.\n'}
+        docs_rs = {'en': 'Additional documentation can be found on `godoc.org <https://godoc.org/github.com/Tinkerforge/go-api-bindings/{device_name_under}>`_.\n',
+                   'de': 'Zusätzliche Dokumentation findet sich auf `godoc.org <https://godoc.org/github.com/Tinkerforge/go-api-bindings/{device_name_under}>`_.\n'}
 
         doc  = common.make_rst_header(self)
         doc += common.make_rst_summary(self)
