@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -51,6 +52,7 @@ type IPConnection struct {
 	timeout               int64
 	autoReconnect         chan bool
 	autoReconnectCache    bool
+	authenticateMutex     sync.Mutex
 }
 
 func NewIPConnection() IPConnection {
@@ -69,7 +71,8 @@ func NewIPConnection() IPConnection {
 		make(chan IPConCallbackDeregistration, ChannelSize),
 		(time.Millisecond * 2500).Nanoseconds(),
 		make(chan bool, ChannelSize),
-		true}
+		true,
+		sync.Mutex{}}
 
 	callbackConnection := make(chan callbackConnectionState, ChannelSize)
 	callback := make(chan [80]byte, ChannelSize)
@@ -185,6 +188,8 @@ func (ipcon *IPConnection) Enumerate() {
 }
 
 func (ipcon *IPConnection) Authenticate(secret string) error {
+	ipcon.authenticateMutex.Lock()
+	defer ipcon.authenticateMutex.Unlock()
 	//Get server nonce
 	header := PacketHeader{1, PacketHeaderSize, 1, 0, true, 0}
 	payload := header.ToLeBytes()
