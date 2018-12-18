@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"tinkerforge/ipconnection"
+	"github.com/tinkerforge/go-api-bindings/ipconnection"
 )
 
 const ADDR string = "localhost:4223"

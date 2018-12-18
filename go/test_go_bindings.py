@@ -42,8 +42,8 @@ class GoExamplesTester(common.Tester):
         if not ("example_enumerate.go" in path or "example_authenticate.go" in path):
             root_dir = os.path.join(root_dir, "..")
         if self.firstRun:
-            shutil.rmtree(os.path.join(root_dir, "src", "tinkerforge"), ignore_errors=True)
-            shutil.move(os.path.join(root_dir, "tinkerforge"), os.path.join(root_dir, "src", "tinkerforge"))
+            shutil.rmtree(os.path.join(root_dir, "src", "github.com"), ignore_errors=True)
+            shutil.move(os.path.join(root_dir, "github.com"), os.path.join(root_dir, "src", "github.com"))
             self.firstRun = False
         
         

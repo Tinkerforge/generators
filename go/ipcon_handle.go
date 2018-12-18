@@ -5,7 +5,7 @@ package ipconnection
 import (
 	"encoding/binary"
 	"time"
-	"tinkerforge/internal"
+	"github.com/tinkerforge/go-api-bindings/internal"
 )
 
 // The IP Connection manages the communication between the API bindings and the Brick Daemon or a WIFI/Ethernet Extension.

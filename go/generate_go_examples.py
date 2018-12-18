@@ -48,8 +48,8 @@ class GoExample(common.Example):
 
 import (
     "fmt"
-    "tinkerforge/ipconnection"
-    "tinkerforge/{dev_package}"
+    "github.com/tinkerforge/go-api-bindings/ipconnection"
+    "github.com/tinkerforge/go-api-bindings/{dev_package}"
     {imports}
 )
 {incomplete}{description}
