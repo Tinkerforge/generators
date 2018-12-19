@@ -17,7 +17,7 @@ for arg in sys.argv[1:]:
 
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if d not in ['configs', '.git', '__pycache__']:
+        if d not in ['configs', '.git', '__pycache__', '.vscode']:
             bindings.add(d)
 
 if not positive <= bindings or not negative <= bindings:
