@@ -60,13 +60,15 @@ class RustDocDevice(rust_common.RustDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).under
             plist = common.wrap_non_empty(', ', packet.get_rust_parameters(high_level=True), '')
-            returns = packet.get_rust_return_type()
+            returns = packet.get_rust_return_type(high_level = packet.has_high_level())
+            if not packet.has_high_level():
+                returns = "ConvertingReceiver<" + returns + ">"
             if "et_response_expected" in name:
                 params = '&mut self{}'.format(plist)    
             else:
                 params = '&self{}'.format(plist)
             desc = packet.get_rust_formatted_doc()
-            func = '{start}{struct_name}::{func_name}({params})-> ConvertingReceiver<{returns}>\n{desc}'.format(start=func_start, struct_name=self.get_rust_name(), func_name=name, params=params, returns = returns, desc=desc)
+            func = '{start}{struct_name}::{func_name}({params})-> {returns}\n{desc}'.format(start=func_start, struct_name=self.get_rust_name(), func_name=name, params=params, returns = returns, desc=desc)
             methods += func + '\n'
 
         return methods

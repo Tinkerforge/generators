@@ -48,7 +48,40 @@ class RustDevice(common.Device):
         return result
 
 class RustPacket(common.Packet):
-    def get_rust_return_type(self):
+    def get_rust_return_type(self, high_level=False):
+        if high_level:
+            results = [x for x in self.get_elements(direction='out') if x.get_level() != 'low']
+            if self.get_high_level('stream_out') != None:
+                template = "Result<{open_parenthesis}Vec<{payload_type}>{result_type}{close_parenthesis}, BrickletRecvTimeoutError>"
+                # stream_out_getter
+                if len(results) == 0:
+                    return template.format(open_parenthesis='', payload_type=self.get_high_level_payload_type(), result_type='', close_parenthesis='')
+                if len(results) == 1:
+                    return template.format(open_parenthesis='(', payload_type=self.get_high_level_payload_type(), result_type=', ' + results[0].get_rust_type(), close_parenthesis=')')
+                return template.format(open_parenthesis='(', payload_type=self.get_high_level_payload_type(), result_type=', ' + self.get_rust_type_name(skip=-2) + "Result", close_parenthesis=')')
+
+            if self.get_high_level('stream_in') != None:
+                if len(self.get_elements(direction='out')) == 0:
+                    #stream_in_setter
+                    return "Result<(), BrickletRecvTimeoutError>"
+                #stream_in_getter
+                template = "Result<{result_type}, BrickletRecvTimeoutError>"
+                stream = self.get_high_level('stream_in')
+                short_write = stream.has_short_write()
+                if short_write:
+                    if len(results) == 0:
+                        return template.format(result_type="usize")
+                    if len(results) == 1:
+                        return template.format(result_type="(usize, " + results[0].get_rust_type() + ")")
+                    return template.format(result_type="(usize, " + self.get_rust_type_name(skip=-2) + "Result)")
+                else:
+                    if len(results) == 0:
+                        return template.format(result_type="()")
+                    if len(results) == 1:
+                        return template.format(result_type=results[0].get_rust_type())
+                    return template.format(result_type=self.get_rust_type_name(skip=-2) + "Result")
+
+
         returns = self.get_elements(direction='out')            
         name = self.get_rust_type_name() + ("Event" if self.get_type() == 'callback' else "")
         if len(returns) == 0 and not self.has_high_level():
