@@ -33,7 +33,7 @@ impl From<bool> for ResponseExpectedFlag {
 
 #[derive(Clone)]
 pub(crate) struct Device {
-    pub api_version: [u16; 3],
+    pub api_version: [u8; 3],
     pub response_expected: [ResponseExpectedFlag; 256],
     pub internal_uid: u32,
     pub req_tx: Sender<SocketThreadRequest>,
@@ -73,7 +73,7 @@ impl std::fmt::Display for SetResponseExpectedError {
 }
 
 impl Device {
-    pub(crate) fn new(api_version: [u16; 3], uid: &str, ip_connection: &IpConnection, high_level_function_count: u8) -> Device {
+    pub(crate) fn new(api_version: [u8; 3], uid: &str, ip_connection: &IpConnection, high_level_function_count: u8) -> Device {
         Device {
             api_version,
             internal_uid: uid.base58_to_u32().unwrap(),

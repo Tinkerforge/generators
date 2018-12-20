@@ -339,6 +339,12 @@ pub struct {name} {{
         self.device.set_response_expected_all(response_expected)
     }}
 
+    /// Returns the version of the API definition (major, minor, revision) implemented by this API bindings.
+    /// This is neither the release version of this API bindings nor does it tell you anything about the represented Brick or Bricklet.
+    pub fn get_api_version(&self) -> [u8; 3] {{
+        self.device.api_version
+    }}
+
     {functions}
 }}"""
         resp_expct_template = "result.device.response_expected[u8::from({function}::{name}) as usize] = {value};"
