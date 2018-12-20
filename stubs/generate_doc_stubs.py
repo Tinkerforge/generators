@@ -35,7 +35,7 @@ import c.c_common as c_common
 
 class DocStubGenerator(common.Generator):
     template_en = """
-:DISABLED_shoplink: ../../../shop/{6}/{4}.html
+:DISABLED_shoplink: ../../../shop/{6}s/{4}.html
 
 .. include:: {3}.substitutions
    :start-after: >>>substitutions
@@ -166,7 +166,7 @@ See :ref:`Programming Interface <programming_interface>` for a detailed descript
 """
 
     template_de = """
-:DISABLED_shoplink: ../../../shop/{6}/{4}.html
+:DISABLED_shoplink: ../../../shop/{6}s/{4}.html
 
 .. include:: {3}.substitutions
    :start-after: >>>substitutions
