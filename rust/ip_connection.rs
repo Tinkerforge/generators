@@ -58,9 +58,9 @@ impl PacketHeader {
 }
 
 impl FromByteSlice for PacketHeader {
-    fn from_le_bytes(bytes: &[u8]) -> PacketHeader {
+    fn from_le_byte_slice(bytes: &[u8]) -> PacketHeader {
         PacketHeader {
-            uid: u32::from_le_bytes(bytes),
+            uid: u32::from_le_byte_slice(bytes),
             length: bytes[4],
             function_id: bytes[5],
             sequence_number: (bytes[6] & 0xf0) >> 4,
@@ -73,9 +73,9 @@ impl FromByteSlice for PacketHeader {
 }
 
 impl ToBytes for PacketHeader {
-    fn to_le_bytes(header: PacketHeader) -> Vec<u8> {
+    fn to_le_byte_vec(header: PacketHeader) -> Vec<u8> {
         let mut result = vec![0u8; 8];
-        result[0..4].copy_from_slice(&u32::to_le_bytes(header.uid));
+        result[0..4].copy_from_slice(&u32::to_le_byte_vec(header.uid));
         result[4] = header.length;
         result[5] = header.function_id;
         result[6] = header.sequence_number << 4 | (header.response_expected as u8) << 3;
@@ -127,7 +127,7 @@ fn socket_read_thread_fn(mut tcp_stream: TcpStream, response_tx: Sender<SocketTh
             //Read header
             if packet_buffer.is_empty() {
                 read_into_packet_buffer(&mut read_buffer, &mut packet_buffer, PacketHeader::SIZE, &mut read_buffer_level);
-                let header = PacketHeader::from_le_bytes(&packet_buffer);
+                let header = PacketHeader::from_le_byte_slice(&packet_buffer);
                 //if header.sequence_number != 0 {
                 //    println!("Read header for uid {}, fid {}, seq_num {}", header.uid, header.function_id, header.sequence_number);
                 // }
@@ -143,7 +143,7 @@ fn socket_read_thread_fn(mut tcp_stream: TcpStream, response_tx: Sender<SocketTh
 
             //Packet complete
             if packet_buffer_pending_bytes == 0 {
-                let header = PacketHeader::from_le_bytes(&packet_buffer);
+                let header = PacketHeader::from_le_byte_slice(&packet_buffer);
 
                 response_tx
                     .send(SocketThreadRequest::Response(header, packet_buffer[PacketHeader::SIZE..header.length as usize].to_vec()))
@@ -213,7 +213,7 @@ pub struct EnumerateResponse {
 }
 
 impl FromByteSlice for EnumerateResponse {
-    fn from_le_bytes(bytes: &[u8]) -> EnumerateResponse {
+    fn from_le_byte_slice(bytes: &[u8]) -> EnumerateResponse {
         EnumerateResponse {
             uid: str::from_utf8(&bytes[0..8])
                 .expect("Could not convert to string. This is a bug in the rust bindings.")
@@ -224,7 +224,7 @@ impl FromByteSlice for EnumerateResponse {
             position: bytes[16] as char,
             hardware_version: [bytes[17], bytes[18], bytes[19]],
             firmware_version: [bytes[20], bytes[21], bytes[22]],
-            device_identifier: u16::from_le_bytes(&bytes[23..25]),
+            device_identifier: u16::from_le_byte_slice(&bytes[23..25]),
             enumeration_type: EnumerationType::from(bytes[25]),
         }
     }
@@ -490,7 +490,7 @@ fn socket_thread_fn(
                                 seq_num = 1;
                             }
                             send_buffer.clear();
-                            send_buffer.extend_from_slice(&PacketHeader::to_le_bytes(header));
+                            send_buffer.extend_from_slice(&PacketHeader::to_le_byte_vec(header));
 
                             let (uid, function_id, payload, response_sender_opt) = match req {
                                 Request::Set { uid, function_id, payload, response_sender } => (uid, function_id, payload, response_sender),
@@ -691,7 +691,7 @@ impl From<usize> for ConnectionState {
 struct ServerNonce([u8; 4]);
 
 impl FromByteSlice for ServerNonce {
-    fn from_le_bytes(bytes: &[u8]) -> ServerNonce { ServerNonce([bytes[0], bytes[1], bytes[2], bytes[3]]) }
+    fn from_le_byte_slice(bytes: &[u8]) -> ServerNonce { ServerNonce([bytes[0], bytes[1], bytes[2], bytes[3]]) }
 
     fn bytes_expected() -> usize { 4 }
 }

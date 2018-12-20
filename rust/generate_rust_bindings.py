@@ -139,7 +139,7 @@ pub struct {name} {{
 """
         from_bytes_template = """impl FromByteSlice for {name} {{
     fn bytes_expected() -> usize {{ {size_in_bytes} }}
-    fn from_le_bytes({unused_bytes}bytes: &[u8]) -> {name} {{
+    fn from_le_byte_slice({unused_bytes}bytes: &[u8]) -> {name} {{
         {name} {{ {init_string} }}
     }}
 }}
@@ -211,7 +211,7 @@ pub struct {name} {{
             byte_offset = 0
             for ret in returns:
                 size = ret.get_size()
-                init_exprs.append("{name}: <{type}>::from_le_bytes(&bytes[{first_byte}..{to}])".format(name=ret.get_rust_name(), type=ret.get_rust_type(), first_byte=byte_offset, to=byte_offset + size))
+                init_exprs.append("{name}: <{type}>::from_le_byte_slice(&bytes[{first_byte}..{to}])".format(name=ret.get_rust_name(), type=ret.get_rust_type(), first_byte=byte_offset, to=byte_offset + size))
                 byte_offset += size
             
             init_string = ",".join(init_exprs)
@@ -435,7 +435,7 @@ pub struct {name} {{
             fill_payload = []
             byte_offset = 0
 
-            string_param_template = """match <String>::try_to_le_bytes({param_name}, {max_len}) {{
+            string_param_template = """match <String>::try_to_le_byte_vec({param_name}, {max_len}) {{
             Err(e) => {{
                 let (tx, rx) = std::sync::mpsc::channel::<Result<Vec<u8>, BrickletError>>();
                 let _ = tx.send(Err(e));
@@ -450,7 +450,7 @@ pub struct {name} {{
                 if "String" in param.get_rust_type():
                     fill_payload.append(string_param_template.format(param_name=param.get_rust_name(), max_len=size, type=param.get_rust_type(), first_byte=byte_offset, to=byte_offset + size))
                 else:
-                    fill_payload.append("payload[{first_byte}..{to}].copy_from_slice(&<{type}>::to_le_bytes({param_name}));".format(param_name=param.get_rust_name(), type=param.get_rust_type(), first_byte=byte_offset, to=byte_offset + size))
+                    fill_payload.append("payload[{first_byte}..{to}].copy_from_slice(&<{type}>::to_le_byte_vec({param_name}));".format(param_name=param.get_rust_name(), type=param.get_rust_type(), first_byte=byte_offset, to=byte_offset + size))
                 byte_offset += size
             
             if len(packet.get_constant_groups()) > 0:
@@ -658,13 +658,13 @@ class RustBindingsGenerator(common.BindingsGenerator):
             primitive_type_impl = f.read()
         array_impl = []
         one_byte_template = """impl ToBytes for [u8; {count}] {{
-    fn to_le_bytes(arr: [u8; {count}]) -> Vec<u8> {{
+    fn to_le_byte_vec(arr: [u8; {count}]) -> Vec<u8> {{
         arr.to_vec()
     }}
 }}
 
 impl FromByteSlice for [u8; {count}] {{
-    fn from_le_bytes(bytes: &[u8]) -> [u8; {count}] {{
+    fn from_le_byte_slice(bytes: &[u8]) -> [u8; {count}] {{
         let mut buf = [0u8; {count}];
         buf.copy_from_slice(bytes);
         buf
@@ -672,19 +672,19 @@ impl FromByteSlice for [u8; {count}] {{
     fn bytes_expected() -> usize {{ {count} }}
 }}"""
         i8_char_template = """impl ToBytes for [{type}; {count}] {{
-    fn to_le_bytes(arr: [{type}; {count}]) -> Vec<u8> {{
+    fn to_le_byte_vec(arr: [{type}; {count}]) -> Vec<u8> {{
         vec![{to_u8}]
     }}
 }}
 
 impl FromByteSlice for [{type}; {count}] {{
-    fn from_le_bytes(bytes: &[u8]) -> [{type}; {count}] {{
+    fn from_le_byte_slice(bytes: &[u8]) -> [{type}; {count}] {{
         [{to_i8}]
     }}
     fn bytes_expected() -> usize {{ {count} }}
 }}"""
         template = """impl ToBytes for [{type}; {count}] {{
-    fn to_le_bytes(arr: [{type}; {count}]) -> Vec<u8> {{
+    fn to_le_byte_vec(arr: [{type}; {count}]) -> Vec<u8> {{
         let mut buf = vec![0,{count_in_bytes}];
         LittleEndian::write_{type}_into(&arr, &mut buf);
         buf
@@ -692,7 +692,7 @@ impl FromByteSlice for [{type}; {count}] {{
 }}
 
 impl FromByteSlice for [{type}; {count}] {{
-    fn from_le_bytes(bytes: &[u8]) -> [{type}; {count}] {{
+    fn from_le_byte_slice(bytes: &[u8]) -> [{type}; {count}] {{
         let mut buf = [0{type}; {count}];
         LittleEndian::read_{type}_into{unchecked}(&bytes, &mut buf);
         buf
@@ -701,7 +701,7 @@ impl FromByteSlice for [{type}; {count}] {{
 }}"""
 
         bool_template = """impl ToBytes for [bool; {count}] {{
-    fn to_le_bytes(arr: [bool; {count}]) -> Vec<u8> {{
+    fn to_le_byte_vec(arr: [bool; {count}]) -> Vec<u8> {{
         let mut buf = vec![0u8; arr.len() / 8 + if arr.len() % 8 == 0 {{0}} else {{1}}];
         for (i, b) in arr.into_iter().enumerate() {{
             buf[i / 8] |= (*b as u8) << (i % 8);
@@ -711,7 +711,7 @@ impl FromByteSlice for [{type}; {count}] {{
 }}
 
 impl FromByteSlice for [bool; {count}] {{
-    fn from_le_bytes(bytes: &[u8]) -> [bool; {count}] {{
+    fn from_le_byte_slice(bytes: &[u8]) -> [bool; {count}] {{
         let mut result = [false; {count}];
         for (byte, elem) in bytes.into_iter().enumerate() {{            
             for i in 0..8 {{

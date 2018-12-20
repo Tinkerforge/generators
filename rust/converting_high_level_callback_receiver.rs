@@ -145,7 +145,7 @@ impl<PayloadT: Default + Copy + Clone, ResultT, T: FromByteSlice + LowLevelRead<
     /* uncomment if https://github.com/rust-lang/rust/issues/46316 has landed
         pub fn recv_deadline(&self, deadline: Instant) -> Result<T, RecvTimeoutError> {
            let bytes = self.receiver.recv_deadline(deadline)?;
-            Ok(T::from_le_bytes(bytes))        
+            Ok(T::from_le_byte_slice(bytes))        
         }
     */
 }

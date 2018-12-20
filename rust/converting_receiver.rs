@@ -193,7 +193,7 @@ impl<T: FromByteSlice> ConvertingReceiver<T> {
         match recv_result {
             Ok(Ok(bytes)) =>
                 if T::bytes_expected() == bytes.len() {
-                    Ok(T::from_le_bytes(&bytes))
+                    Ok(T::from_le_byte_slice(&bytes))
                 } else {
                     Err(BrickletTryRecvError::MalformedPacket)
                 },
@@ -223,7 +223,7 @@ impl<T: FromByteSlice> ConvertingReceiver<T> {
         match recv_result {
             Ok(Ok(bytes)) =>
                 if T::bytes_expected() == bytes.len() {
-                    Ok(T::from_le_bytes(&bytes))
+                    Ok(T::from_le_byte_slice(&bytes))
                 } else {
                     Err(BrickletRecvTimeoutError::MalformedPacket)
                 },
@@ -242,7 +242,7 @@ impl<T: FromByteSlice> ConvertingReceiver<T> {
             let recv_result = self.receiver.recv_timeout(timeout);
             match recv_result {
                 Ok(Ok(bytes))                 => if T::bytes_expected() == bytes.len() 
-                                                    {Ok(T::from_le_bytes(bytes))}
+                                                    {Ok(T::from_le_byte_slice(bytes))}
                                                  else 
                                                     {Err(BrickletRecvTimeoutError::MalformedPacket)},
                 Ok(Err(BrickletError::InvalidParameter))     => Err(BrickletRecvTimeoutError::InvalidParameter),
@@ -258,7 +258,7 @@ impl<T: FromByteSlice> ConvertingReceiver<T> {
         pub fn recv_deadline(&self, deadline: Instant) -> Result<T, BrickletRecvTimeoutError> {
             let recv_result = self.receiver.recv_deadline(deadline);
             match recv_result {
-                Ok(Ok(bytes))                 => Ok(T::from_le_bytes(bytes)),
+                Ok(Ok(bytes))                 => Ok(T::from_le_byte_slice(bytes)),
                 Ok(Err(InvalidParameter))     => Err(BrickletRecvTimeoutError::InvalidParameter),
                 Ok(Err(FunctionNotSupported)) => Err(BrickletRecvTimeoutError::FunctionNotSupported),
                 Ok(Err(UnknownError))         => Err(BrickletRecvTimeoutError::UnknownError),

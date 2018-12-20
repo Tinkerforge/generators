@@ -129,7 +129,7 @@ impl<T: FromByteSlice> ConvertingCallbackReceiver<T> {
         match recv_result {
             Ok(bytes) =>
                 if T::bytes_expected() == bytes.len() {
-                    Ok(T::from_le_bytes(&bytes))
+                    Ok(T::from_le_byte_slice(&bytes))
                 } else {
                     Err(CallbackTryRecvError::MalformedPacket)
                 },
@@ -148,7 +148,7 @@ impl<T: FromByteSlice> ConvertingCallbackReceiver<T> {
         match recv_result {
             Ok(bytes) =>
                 if T::bytes_expected() == bytes.len() {
-                    Ok(T::from_le_bytes(&bytes))
+                    Ok(T::from_le_byte_slice(&bytes))
                 } else {
                     Err(CallbackRecvError::MalformedPacket)
                 },
@@ -170,7 +170,7 @@ impl<T: FromByteSlice> ConvertingCallbackReceiver<T> {
         match recv_result {
             Ok(bytes) =>
                 if T::bytes_expected() == bytes.len() {
-                    Ok(T::from_le_bytes(&bytes))
+                    Ok(T::from_le_byte_slice(&bytes))
                 } else {
                     Err(CallbackRecvTimeoutError::MalformedPacket)
                 },
@@ -182,7 +182,7 @@ impl<T: FromByteSlice> ConvertingCallbackReceiver<T> {
     /* uncomment if https://github.com/rust-lang/rust/issues/46316 has landed
         pub fn recv_deadline(&self, deadline: Instant) -> Result<T, RecvTimeoutError> {
            let bytes = self.receiver.recv_deadline(deadline)?;
-            Ok(T::from_le_bytes(bytes))        
+            Ok(T::from_le_byte_slice(bytes))        
         }
     */
     pub fn iter(&self) -> Iter<T> { Iter { rx: self } }
