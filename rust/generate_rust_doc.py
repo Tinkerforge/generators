@@ -53,6 +53,8 @@ class RustDocDevice(rust_common.RustDevice):
         methods = ''
         func_start = '.. rust:function:: '
 
+        synchronous_methods = ["get_api_version", "get_response_expected", "set_response_expected", "set_response_expected_all"]
+
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
                 continue
@@ -61,7 +63,8 @@ class RustDocDevice(rust_common.RustDevice):
             name = packet.get_name(skip=skip).under
             plist = common.wrap_non_empty(', ', packet.get_rust_parameters(high_level=True), '')
             returns = packet.get_rust_return_type(high_level = packet.has_high_level())
-            if not packet.has_high_level():
+
+            if not packet.has_high_level() and name not in synchronous_methods:
                 returns = "ConvertingReceiver<" + returns + ">"
             if "et_response_expected" in name:
                 params = '&mut self{}'.format(plist)    
