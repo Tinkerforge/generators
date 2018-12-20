@@ -6,7 +6,7 @@ use std::{
     net::{Shutdown, SocketAddr, TcpStream, ToSocketAddrs},
     str,
     sync::{
-        atomic::{AtomicBool, AtomicUsize, Ordering},
+        atomic::{AtomicUsize, Ordering},
         mpsc::{Receiver, Sender, *},
         Arc,
     },
@@ -34,9 +34,7 @@ pub struct IpConnection {
 #[derive(Debug, Clone)]
 pub struct IpConnectionRequestSender {
     pub(crate) socket_thread_tx: Sender<SocketThreadRequest>,
-    connection_state: Arc<AtomicUsize>,
-    auto_reconnect_enabled: Arc<AtomicBool>,
-    current_timeout_ms: Arc<AtomicUsize>,
+    connection_state: Arc<AtomicUsize>
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
@@ -418,6 +416,7 @@ fn socket_thread_fn(
                 Ok(SocketThreadRequest::SocketWasClosed(_, _)) => {} //Ignore: There is no socket that could be closed yet.
                 Ok(SocketThreadRequest::Response(_, _)) => {}        //ignore network data, the thread creating it is not running yet
                 Ok(SocketThreadRequest::SetTimeout(t)) => timeout = t,
+                Ok(SocketThreadRequest::GetTimeout(tx)) => tx.send(timeout).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
                 Ok(SocketThreadRequest::TriggerAutoReconnect(addrs)) => {
                     if !auto_reconnect_allowed {
                         continue 'wait_for_connect;
@@ -426,6 +425,7 @@ fn socket_thread_fn(
                     break 'wait_for_connect (addrs, None);
                 }
                 Ok(SocketThreadRequest::SetAutoReconnect(ar_enabled)) => auto_reconnect_enabled = ar_enabled,
+                Ok(SocketThreadRequest::GetAutoReconnect(ar_tx)) => ar_tx.send(auto_reconnect_enabled).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
                 Err(_) => {
                     println!("Disconnected from Queue.");
                     break 'thread;
@@ -577,7 +577,9 @@ fn socket_thread_fn(
                     }
                 }
                 Ok(SocketThreadRequest::SetTimeout(t)) => timeout = t,
+                Ok(SocketThreadRequest::GetTimeout(tx)) => tx.send(timeout).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
                 Ok(SocketThreadRequest::SetAutoReconnect(ar_enabled)) => auto_reconnect_enabled = ar_enabled,
+                Ok(SocketThreadRequest::GetAutoReconnect(ar_tx)) => ar_tx.send(auto_reconnect_enabled).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
                 Err(RecvTimeoutError::Timeout) => {
                     let (_tx, _rx) = channel();
                     let _ = work_queue_tx.send(SocketThreadRequest::Request(
@@ -662,8 +664,10 @@ pub(crate) enum SocketThreadRequest {
     SocketWasClosed(u64, bool),
     Response(PacketHeader, Vec<u8>),
     SetTimeout(Duration),
+    GetTimeout(Sender<Duration>),
     TriggerAutoReconnect(Vec<SocketAddr>),
     SetAutoReconnect(bool),
+    GetAutoReconnect(Sender<bool>),
     Terminate,
 }
 
@@ -716,9 +720,7 @@ impl Default for IpConnection {
         IpConnection {
             req: IpConnectionRequestSender {
                 socket_thread_tx,
-                connection_state: Arc::clone(&atomic),
-                auto_reconnect_enabled: Arc::new(AtomicBool::new(false)),
-                current_timeout_ms: Arc::new(AtomicUsize::new(2500)),
+                connection_state: Arc::clone(&atomic)
             },
             socket_thread: Some(thread::spawn(move || {
                 socket_thread_fn(socket_thread_rx, copy, Arc::clone(&atomic));
@@ -790,7 +792,11 @@ impl IpConnectionRequestSender {
     }
 
     /// Returns the timeout as set by [`set_timeout`](crate::ip_connection::IpConnection::set_timeout)
-    pub fn get_timeout(&self) -> Duration { Duration::from_millis(self.current_timeout_ms.load(Ordering::SeqCst) as u64) }
+    pub fn get_timeout(&self) -> Duration { 
+        let (tx, rx) = channel();
+        self.socket_thread_tx.send(SocketThreadRequest::GetTimeout(tx)).expect("Socket thread has crashed. This is a bug in the rust bindings.");
+        rx.recv().expect("The auto reconnect queue was dropped. This is a bug in the rust bindings.")
+    }
 
     /// Sets the timeout for getters and for setters for which the response expected flag is activated.
     ///
@@ -799,15 +805,18 @@ impl IpConnectionRequestSender {
         self.socket_thread_tx
             .send(SocketThreadRequest::SetTimeout(timeout))
             .expect("Socket thread has crashed. This is a bug in the rust bindings.");
-        let millis = (timeout.as_secs() as usize).saturating_mul(1000).saturating_add(timeout.subsec_nanos() as usize / 1_000_000);
-        self.current_timeout_ms.store(millis, Ordering::SeqCst);
     }
 
     /// Queries the current connection state.
     pub fn get_connection_state(&self) -> ConnectionState { ConnectionState::from(self.connection_state.load(Ordering::SeqCst)) }
 
     /// Returns true if auto-reconnect is enabled, false otherwise.
-    pub fn get_auto_reconnect(&self) -> bool { self.auto_reconnect_enabled.load(Ordering::SeqCst) }
+    pub fn get_auto_reconnect(&self) -> bool { 
+        let (tx, rx) = channel();
+        self.socket_thread_tx.send(SocketThreadRequest::GetAutoReconnect(tx))
+            .expect("Socket thread has crashed. This is a bug in the rust bindings.");
+        rx.recv().expect("The auto reconnect queue was dropped. This is a bug in the rust bindings.")
+    }
 
     /// Enables or disables auto-reconnect. If auto-reconnect is enabled, the IP Connection will try to reconnect to
     /// the previously given host and port, if the currently existing connection is lost.
@@ -817,8 +826,7 @@ impl IpConnectionRequestSender {
     pub fn set_auto_reconnect(&mut self, auto_reconnect_enabled: bool) {
         self.socket_thread_tx
             .send(SocketThreadRequest::SetAutoReconnect(auto_reconnect_enabled))
-            .expect("Socket thread has crashed. This is a bug in the rust bindings.");
-        self.auto_reconnect_enabled.store(auto_reconnect_enabled, Ordering::SeqCst);
+            .expect("Socket thread has crashed. This is a bug in the rust bindings.");        
     }
 
     /// Broadcasts an enumerate request. All devices will respond with an enumerate event.
