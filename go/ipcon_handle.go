@@ -154,7 +154,7 @@ const (
 )
 
 // Type of enumeration of a device.
-type EnumerationType = uint8
+type EnumerationType uint8
 
 const (
 	// Device is available (enumeration triggered by user).
@@ -210,7 +210,7 @@ func bytesExpected(resp *EnumerateResponse) int {
 	return 26
 }
 
-type ConnectionState = uint8
+type ConnectionState uint8
 
 const (
 	ConnectionStateDisconnected ConnectionState = iota
