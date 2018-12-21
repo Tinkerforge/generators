@@ -19,6 +19,9 @@
 2018-11-21: 2.0.5 (db2bfdc)
 - Module description and link to tinkerforge docs had no separating newline.
 
-unknown: 2.0.6 (<unknown>)
+2018-12-21: 2.0.6 (<unknown>)
 - Removed duplicated assignment in Device::set_response_expected_all
 - Fixed infinite loop when stream reading out of sync
+- Implemented get_api_version
+- Fixed name collision with stabilized (from/to)_le_byte methods.
+- Fixed race condition in IpConnection setters.
