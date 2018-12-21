@@ -323,16 +323,16 @@ class GoDocPacket(go_common.GoPacket):
             text = common.handle_rst_word(text, constants=constants)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = self.get_device().get_go_name()
+        prefix = ''
 
         const_fmt_func = lambda prefix, constant_group, constant, value: '* {0}{1}{2} = {3}\n'.format(
                                                                 prefix, constant_group.get_name().camel,
                                                                 constant.get_name().camel, value)
         const_func_id_fmt_func = lambda prefix, func_name, value: '* {0}Function{1} = {2}\n'.format(
-                                                                  prefix, func_name, value)
+                                                                  prefix, func_name.camel, value)
 
         if self.get_name().space == 'Set Response Expected':
-            text += common.format_function_id_constants(prefix, self.get_device(), constants)
+            text += common.format_function_id_constants(prefix, self.get_device(), constants, constant_format_func=const_func_id_fmt_func)
         else:
             text += common.format_constants(prefix, self, constants, constant_format_func=const_fmt_func)
 
