@@ -847,7 +847,7 @@ type DisconnectCallbackContainer struct {
 	Callback func(uint8)
 }
 
-type ConnectionState = uint8
+type ConnectionState uint8
 
 const (
 	ConnectionStateDisconnected ConnectionState = iota
