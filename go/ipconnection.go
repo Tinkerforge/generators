@@ -356,7 +356,7 @@ const (
 	DisconnectReasonShutdown
 )
 
-type EnumerationType = uint8
+type EnumerationType uint8
 
 const (
 	EnumerationTypeAvailable EnumerationType = iota
