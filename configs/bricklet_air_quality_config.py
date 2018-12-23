@@ -95,8 +95,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets a temperature offset in 1/100°C. A offset of 10 will decrease the measured
-temperature by 0.1°C.
+Sets a temperature offset with resolution 1/100°C. A offset of 10 will decrease 
+the measured temperature by 0.1°C.
 
 If you install this Bricklet into an enclosure and you want to measure the ambient
 temperature, you may have to decrease the measured temperature by some value to
@@ -113,8 +113,8 @@ the measurements.
 """,
 'de':
 """
-Setzt ein Temperatur-Offset 1/100°C. Ein Offset von 10 verringert die gemessene
-Temperatur um 0,1°C.
+Setzt ein Temperatur-Offset mit Auflösung 1/100°C. Ein Offset von 10 verringert
+die gemessene Temperatur um 0,1°C.
 
 Wenn das Bricklet in einem Gehäuse verbaut wird, aber die Umgebungstemperatur
 außerhalb des Gehäuses gemessen werden soll, dann muss vom gemessenen Temperatur
