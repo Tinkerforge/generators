@@ -37,8 +37,10 @@ func (e BrickletError) Error() string {
 }
 
 type IPConnection struct {
-	connection            net.Conn
-	connectionState       int32
+	//When reordering this struct, keep timeout at the top, as it needs to be 64-bit aligned for atomic operations.
+	timeout               int64	
+	connection            net.Conn	
+	connectionState       int32	
 	terminate             chan struct{}
 	connReq               chan connectRequest
 	disconnReq            chan chan<- struct{}
@@ -48,8 +50,7 @@ type IPConnection struct {
 	connectCallbackReg    chan ConnectCallbackRegistration
 	disconnectCallbackReg chan DisconnectCallbackRegistration
 	enumerateCallbackReg  chan CallbackRegistration
-	ipconCallbackDereg    chan IPConCallbackDeregistration
-	timeout               int64
+	ipconCallbackDereg    chan IPConCallbackDeregistration	
 	autoReconnect         chan bool
 	autoReconnectCache    bool
 	authenticateMutex     sync.Mutex
@@ -57,6 +58,7 @@ type IPConnection struct {
 
 func NewIPConnection() IPConnection {
 	ipcon := IPConnection{
+		(time.Millisecond * 2500).Nanoseconds(),
 		nil,
 		0,
 		make(chan struct{}, ChannelSize),
@@ -68,8 +70,7 @@ func NewIPConnection() IPConnection {
 		make(chan ConnectCallbackRegistration, ChannelSize),
 		make(chan DisconnectCallbackRegistration, ChannelSize),
 		make(chan CallbackRegistration, ChannelSize),
-		make(chan IPConCallbackDeregistration, ChannelSize),
-		(time.Millisecond * 2500).Nanoseconds(),
+		make(chan IPConCallbackDeregistration, ChannelSize),		
 		make(chan bool, ChannelSize),
 		true,
 		sync.Mutex{}}
