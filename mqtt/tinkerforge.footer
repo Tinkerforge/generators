@@ -100,7 +100,7 @@ class MQTTBindings:
 
         self.mqttc.subscribe(self.global_prefix + "request/#")
         self.mqttc.subscribe(self.global_prefix + "register/#")
-        self.mqttc.publish(self.global_prefix + "mqtt_reset", "null")
+        self.mqttc.publish(self.global_prefix + "callback/bindings/restart", "null")
 
     def run(self):
         self.mqttc.loop_start()
