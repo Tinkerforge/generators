@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+#
+# Version <<VERSION>>
+#
+# Redistribution and use in source and binary forms of this file,
+# with or without modification, are permitted. See the Creative
+# Commons Zero (CC0 1.0) License for more details.
+
+import sys
+import os
+import signal
+import time
+import shlex
+import socket
+import select
+import threading
+import subprocess
+import textwrap
+from collections import namedtuple
+import json
+import logging
+import paho.mqtt.client as mqtt
+import traceback
+import argparse
+
+# error codes are also used as exit codes, valid values are [1..255]
+ERROR_INTERRUPTED = 1
+ERROR_SYNTAX_ERROR = 2
+ERROR_PYTHON_VERSION = 21
+ERROR_ARGPARSE_MISSING = 22
+ERROR_SOCKET_ERROR = 23
+ERROR_OTHER_EXCEPTION = 24
+ERROR_INVALID_PLACEHOLDER = 25
+ERROR_AUTHENTICATION_ERROR = 26
+ERROR_OUTPUT_NOT_ESCAPABLE_ERROR = 27
+IPCONNECTION_ERROR_OFFSET = 200
+
+def fatal_error(message, exit_code):
+    #sys.stderr.write('tinkerforge: error: {0}\n'.format(message))
+    logging.critical(message)
+    sys.exit(exit_code)
+
+if sys.hexversion < 0x02050000:
+    fatal_error('requiring python 2.5 or newer', ERROR_PYTHON_VERSION)
+
+try:
+    import argparse
+except ImportError:
+    fatal_error('requiring python argparse module', ERROR_ARGPARSE_MISSING)
+
+FunctionInfo = namedtuple('FunctionInfo', ['id', 'arg_names', 'arg_symbols', 'payload_fmt', 'result_names', 'result_symbols', 'response_fmt'])
+HighLevelFunctionInfo = namedtuple('HighLevelFunctionInfo',
+    ['low_level_id', 'direction', 
+     'high_level_roles_in', 'high_level_roles_out', 'low_level_roles_in', 'low_level_roles_out', 
+     'arg_names','arg_symbols', 'format_in', 'result_names', 'result_symbols', 'format_out',
+     'chunk_padding', 'chunk_cardinality', 'chunk_max_offset',
+     'short_write', 'single_read', 'fixed_length'])
+CallbackInfo = namedtuple('CallbackInfo', ['id', 'names', 'symbols', 'fmt', 'high_level_info'])
