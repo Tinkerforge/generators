@@ -22,7 +22,6 @@ import textwrap
 from collections import namedtuple
 import json
 import logging
-import paho.mqtt.client as mqtt
 import traceback
 import argparse
 
@@ -36,12 +35,25 @@ ERROR_OTHER_EXCEPTION = 24
 ERROR_INVALID_PLACEHOLDER = 25
 ERROR_AUTHENTICATION_ERROR = 26
 ERROR_OUTPUT_NOT_ESCAPABLE_ERROR = 27
+ERROR_PAHO_MISSING = 28
+ERROR_PAHO_VERSION = 29
 IPCONNECTION_ERROR_OFFSET = 200
 
-def fatal_error(message, exit_code):
-    #sys.stderr.write('tinkerforge: error: {0}\n'.format(message))
+def fatal_error(message, exit_code):    
     logging.critical(message)
     sys.exit(exit_code)
+
+try:
+    import paho.mqtt
+except ImportError:
+    fatal_error("requiring paho 1.3.1 or newer.", ERROR_PAHO_MISSING)
+
+from distutils.version import LooseVersion, StrictVersion
+if paho.mqtt.__version__ < StrictVersion("1.3.1"):
+    fatal_error("Paho version has to be at lease 1.3.1, but was " + str(paho.mqtt.__version__), ERROR_PAHO_VERSION)
+
+import paho.mqtt.client as mqtt
+
 
 if sys.hexversion < 0x02050000:
     fatal_error('requiring python 2.5 or newer', ERROR_PYTHON_VERSION)
