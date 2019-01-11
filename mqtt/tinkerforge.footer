@@ -57,7 +57,7 @@ class MQTTBindings:
                 logging.root.name = 'mqtt bindings'
             except:
                 pass
-            self.mqttc.enable_logger()        
+            self.mqttc.enable_logger()                    
         
         if broker_username is not None:
             self.mqttc.username_pw_set(broker_username, broker_password)
@@ -152,7 +152,12 @@ class MQTTBindings:
             if function not in self.ip_connection_callbacks.keys():
                 return json_error("Unknown ip connection callback " + function)
             callback_id = self.ip_connection_callbacks[function]
-            should_register = json.loads(json_args)
+            
+            try:
+                should_register = json.loads(json_args)
+            except json.JSONDecodeError as e:
+                return json_error("Could not parse payload for {} callback registration as JSON encoding a boolean: {}".format(function, str(e)))
+
             if not isinstance(should_register, bool):
                 return json_error("Expected bool as parameter of callback registration, but got " + json_args)
                     
@@ -280,7 +285,11 @@ class MQTTBindings:
     def device_stream_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Starting stream call {} for device {} of type {}.".format(fnName, uid, device_name))
         if len(json_args) > 0:
-            obj = json.loads(json_args)   
+            try:
+                obj = json.loads(json_args)
+            except json.JSONDecodeError as e:
+                return json_error("Could not parse payload for {} call of {} {} as JSON: {}".format(fnName, device_name, uid, str(e)))
+            
 
         function_id, direction, high_level_roles_in, high_level_roles_out, \
             low_level_roles_in, low_level_roles_out, arg_names, arg_symbols, \
@@ -485,7 +494,11 @@ class MQTTBindings:
             return self.device_callback_registration(device_class, device_class_name, uid, fnName, fnInfo, json_args, response_path)
 
     def device_callback_registration(self, device_class, device_name, uid, callbackName, callbackInfo, json_args, path):
-        should_register = json.loads(json_args)
+        try:
+            should_register = json.loads(json_args)
+        except json.JSONDecodeError as e:
+            return json_error("Could not parse payload for {} callback registration of {} {} as JSON encoding a boolean: {}".format(callbackName, device_class, device_name, str(e)))
+
         if not isinstance(should_register, bool):
             return json_error("Expected bool as parameter of callback registration, but got " + json_args)
         
@@ -510,7 +523,10 @@ class MQTTBindings:
     def device_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Calling function {} for device {} of type {}.".format(fnName, uid, device_name))
         if len(json_args) > 0:
-            obj = json.loads(json_args)    
+            try:
+                obj = json.loads(json_args)
+            except json.JSONDecodeError as e:
+                return json_error("Could not parse payload for {} call of {} {} as JSON: {}".format(fnName, device_name, uid, str(e)))
         args = []
 
         missing_args = []
