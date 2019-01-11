@@ -48,7 +48,7 @@ def json_error(message, resultDict=None):
 class MQTTBindings:
     def __init__(self, debug, global_prefix, ipcon_timeout, broker_username, broker_password, broker_certificate, broker_tls_insecure):
         self.ipcon = IPConnection()
-        self.ipcon.set_timeout(ipcon_timeout)
+        self.handle_ipcon_exceptions(lambda i: i.set_timeout(ipcon_timeout))
         
         self.mqttc = mqtt.Client(userdata=len(global_prefix))
         if debug:
@@ -93,9 +93,11 @@ class MQTTBindings:
         self.global_prefix = global_prefix
         
     def connect(self, ipcon_host, ipcon_port,ipcon_auth_secret, broker_host, broker_port):
-        self.ipcon.connect(ipcon_host, ipcon_port)      
+        logging.debug("Connecting to brickd at {}:{}".format(ipcon_host, ipcon_port))
+        self.handle_ipcon_exceptions(lambda i: i.connect(ipcon_host, ipcon_port))  
+        logging.debug("Connected to brickd at {}:{}".format(ipcon_host, ipcon_port))
         if ipcon_auth_secret != "":
-            self.ipcon.authenticate(ipcon_auth_secret) 
+            self.authenticate(ipcon_auth_secret, "Could not authenticate.")
         self.mqttc.connect(broker_host, broker_port)
 
         self.mqttc.subscribe(self.global_prefix + "request/#")
@@ -108,7 +110,11 @@ class MQTTBindings:
             while(True):
                 time.sleep(1)
         except KeyboardInterrupt:
-            self.ipcon.disconnect()
+            logging.debug("Keyboard interrupt, disconnecting from brickd and mqtt broker.")
+            try:
+                self.ipcon.disconnect()
+            except:
+                pass
             time.sleep(0.2)                    
             self.mqttc.disconnect()
             self.mqttc.loop_stop()
@@ -252,11 +258,6 @@ class MQTTBindings:
             fatal_error(str(e).lower(), ERROR_SOCKET_ERROR)
         except Exception as e:
             fatal_error(str(e).lower(), ERROR_OTHER_EXCEPTION)
-        finally:
-            try:
-                self.ipcon.disconnect()
-            except:
-                pass
 
     def authenticate(self, secret, message):
         logging.debug("Authenticating. Disabling auto-reconnect")
@@ -336,7 +337,7 @@ class MQTTBindings:
                 stream_chunk_data = [chunk_padding] * chunk_cardinality
                 low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
 
-                response = self.ipcon.send_request(device, function_id, low_level_request_data, format_in, format_out)
+                response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, low_level_request_data, format_in, format_out))
 
                 if short_write:
                     if stream_chunk_written_index == None:
@@ -348,7 +349,7 @@ class MQTTBindings:
                     stream_chunk_data = create_chunk_data(stream_data, stream_chunk_offset, chunk_cardinality, chunk_padding)
                     low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
 
-                    response = self.ipcon.send_request(device, function_id, low_level_request_data, format_in, format_out)
+                    response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, low_level_request_data, format_in, format_out))
 
                     if short_write:
                         if stream_chunk_written_index == None:
@@ -381,7 +382,7 @@ class MQTTBindings:
                 else:
                     response = tuple(high_level_response)
         else: # out
-            low_level_response = self.ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+            low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out))
 
             if fixed_length == None:
                 stream_length_index = low_level_roles_out.index('stream_length')
@@ -409,7 +410,7 @@ class MQTTBindings:
                 stream_data = stream_chunk_data
 
             while not stream_out_of_sync and len(stream_data) < stream_length:
-                low_level_response = self.ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+                low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out))
 
                 if stream_length_index != None:
                     stream_length = low_level_response[stream_length_index]
@@ -423,7 +424,7 @@ class MQTTBindings:
 
             if stream_out_of_sync: # discard remaining stream to bring it back in-sync
                 while stream_chunk_offset + chunk_cardinality < stream_length:
-                    low_level_response = self.ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+                    low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out))
 
                     if stream_length_index != None:
                         stream_length = low_level_response[stream_length_index]
@@ -528,7 +529,7 @@ class MQTTBindings:
             else:
                 logging.debug("Ignoring _response_expected, it was not of boolean type. (Call of {} of device {} of type {}.)".format(fnName, uid, device_name))
         
-        response = self.ipcon.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_fmt)
+        response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_fmt))
         logging.debug("Calling function {} for device {} of type {} succedded.".format(fnName, uid, device_name))
         if response != None:
             if len(fnInfo.result_names) == 1:
