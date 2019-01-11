@@ -147,7 +147,7 @@ class MQTTBindings:
             if function != "enumerate":
                 return json_error("Unknown ip connection function " + function)
             logging.debug("Enumerating devices.")
-            self.ipcon.enumerate()            
+            self.handle_ipcon_exceptions(lambda i: i.enumerate())
         elif request_type == "register":            
             if function not in self.ip_connection_callbacks.keys():
                 return json_error("Unknown ip connection callback " + function)
