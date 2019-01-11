@@ -53,6 +53,10 @@ class MQTTBindings:
         self.mqttc = mqtt.Client(userdata=len(global_prefix))
         if debug:
             logging.basicConfig(level=logging.DEBUG)
+            try:
+                logging.root.name = 'mqtt bindings'
+            except:
+                pass
             self.mqttc.enable_logger()        
         
         if broker_username is not None:
