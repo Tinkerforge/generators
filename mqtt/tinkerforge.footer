@@ -283,6 +283,34 @@ class MQTTBindings:
         logging.debug("Authentication succeded. Re-enabling auto-reconnect")
         self.ipcon.set_auto_reconnect(True)
         
+    @staticmethod
+    def type_check_args(args, arg_names, arg_types):
+        type_map = {
+            'int': int,
+            'float': float,
+            'char': str,
+            'string': str,
+            'bool': bool,
+        }
+
+        for a, n, t in zip(args, arg_names, arg_types):
+            if isinstance(t, tuple):
+                t_name, t_len = t  
+                t = type_map[t_name]              
+                if not isinstance(a, list):
+                    return "Argument {name} was not of expected type list of {type}.".format(name=n, type=t_name)
+                if t_len < 0 and len(a) > abs(t_len):
+                    return "Argument {name} was a list of length {have}, but max length of {want} is allowed.".format(name=n, have=len(a), want=abs(t_len))
+                if t_len > 0 and not len(a) == t_len:
+                    return "Argument {name} was a list of length {have}, but length {want} was expected.".format(name=n, have=len(a), want=t_len)
+
+                for idx, a_elem in enumerate(a):                    
+                    if type(a_elem) != t:
+                        return "Argument {name}[{idx}] was not of expected type {type}.".format(name=n, idx=idx, type=t_name)
+            else:
+                if type(a) != type_map[t]:
+                    return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                
 
     def device_stream_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Starting stream call {} for device {} of type {}.".format(fnName, uid, device_name))
@@ -294,7 +322,7 @@ class MQTTBindings:
             
 
         function_id, direction, high_level_roles_in, high_level_roles_out, \
-            low_level_roles_in, low_level_roles_out, arg_names, arg_symbols, \
+            low_level_roles_in, low_level_roles_out, arg_names, arg_types, arg_symbols, \
             format_in, result_names, result_symbols, format_out, chunk_padding, \
             chunk_cardinality, chunk_max_offset, short_write, single_read, fixed_length = fnInfo
 
@@ -315,6 +343,10 @@ class MQTTBindings:
         reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
         normal_level_request_data = [symbols[data] if data in symbols else data for symbols, data in zip(reversed_symbols, normal_level_request_data)]    
         
+        type_error = MQTTBindings.type_check_args(request_data, arg_names, arg_types)
+        if type_error is not None:
+            return json_error("Call {} of {} {}: {}".format(fnName, device_name, uid, type_error),  dict([(name, None) for name in result_names]))
+
         if device.response_expected[function_id] != 1 and "_response_expected" in obj:
             re = obj["_response_expected"]
             if isinstance(re, bool):
@@ -545,6 +577,10 @@ class MQTTBindings:
         reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
         args = [symbols[data] if data in symbols else data for symbols, data in zip(reversed_symbols, args)]
         
+        type_error = MQTTBindings.type_check_args(args, fnInfo.arg_names, fnInfo.arg_types)
+        if type_error is not None:
+            return json_error("Call {} of {} {}: {}".format(fnName, device_name, uid, type_error),  dict([(name, None) for name in fnInfo.result_names]))
+
         if device.response_expected[fnInfo.id] != 1 and "_response_expected" in obj:
             re = obj["_response_expected"]
             if isinstance(re, bool):

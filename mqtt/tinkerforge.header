@@ -63,11 +63,11 @@ try:
 except ImportError:
     fatal_error('requiring python argparse module', ERROR_ARGPARSE_MISSING)
 
-FunctionInfo = namedtuple('FunctionInfo', ['id', 'arg_names', 'arg_symbols', 'payload_fmt', 'result_names', 'result_symbols', 'response_fmt'])
+FunctionInfo = namedtuple('FunctionInfo', ['id', 'arg_names', 'arg_types', 'arg_symbols', 'payload_fmt', 'result_names', 'result_symbols', 'response_fmt'])
 HighLevelFunctionInfo = namedtuple('HighLevelFunctionInfo',
     ['low_level_id', 'direction', 
      'high_level_roles_in', 'high_level_roles_out', 'low_level_roles_in', 'low_level_roles_out', 
-     'arg_names','arg_symbols', 'format_in', 'result_names', 'result_symbols', 'format_out',
+     'arg_names', 'arg_types', 'arg_symbols', 'format_in', 'result_names', 'result_symbols', 'format_out',
      'chunk_padding', 'chunk_cardinality', 'chunk_max_offset',
      'short_write', 'single_read', 'fixed_length'])
 CallbackInfo = namedtuple('CallbackInfo', ['id', 'names', 'symbols', 'fmt', 'high_level_info'])

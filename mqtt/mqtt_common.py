@@ -123,7 +123,7 @@ class MQTTElement(common.Element):
         if for_doc and self.get_cardinality() > 5:
             return '{0},{0},..{1}x..,{0}'.format(t, self.get_cardinality() - 3)
         else:
-            return ','.join([t]*self.get_cardinality())
+            return (t, self.get_cardinality())
 
     def get_mqtt_struct_format(self):
         f = MQTTElement.mqtt_struct_formats[self.get_type()]

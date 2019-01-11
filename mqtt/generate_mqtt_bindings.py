@@ -76,10 +76,11 @@ class {0}(Device):
         template = "\tfunctions = {{\n\t\t{entries}\n\t}}\n"
         entries = []
         for packet in self.get_packets('function'):
-            entries.append("'{mqtt_name}': FunctionInfo({id}, {arg_names}, {arg_symbols}, '{payload_fmt}', {result_names}, {result_symbols}, '{response_fmt}')".format(
+            entries.append("'{mqtt_name}': FunctionInfo({id}, {arg_names}, {arg_types}, {arg_symbols}, '{payload_fmt}', {result_names}, {result_symbols}, '{response_fmt}')".format(
                  mqtt_name=packet.get_mqtt_name(), 
                  id=packet.get_function_id(),
                  arg_names=[elem.get_name().under for elem in packet.get_elements(direction='in')],
+                 arg_types=[elem.get_mqtt_type() for elem in packet.get_elements(direction='in')],
                  arg_symbols=[elem.get_symbols() for elem in packet.get_elements(direction='in')],
                  result_names=[elem.get_name().under for elem in packet.get_elements(direction='out')],
                  result_symbols=[elem.get_symbols() for elem in packet.get_elements(direction='out')],
@@ -99,12 +100,14 @@ class {0}(Device):
                     direction = 'out'
 
                 input_names = []
+                input_types = []
                 input_symbols = []
                 high_level_roles_in = []
                 low_level_roles_in = []
 
                 for element in packet.get_elements(direction='in', high_level=True):
                     input_names.append('{0}'.format(element.get_name().under))
+                    input_types.append(element.get_mqtt_type())
                     high_level_roles_in.append(element.get_role())                    
                     constant_group = element.get_constant_group()
 
@@ -165,7 +168,7 @@ class {0}(Device):
                     single_read = stream_out.has_single_chunk()
                     fixed_length = stream_out.get_fixed_length()
 
-                entries.append("'{mqtt_name}': HighLevelFunctionInfo({low_level_id}, '{direction}', {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, {arg_names}, {arg_symbols}, '{format_in}', {result_names}, {result_symbols}, '{format_out}',{chunk_padding}, {chunk_cardinality}, {chunk_max_offset},{short_write}, {single_read}, {fixed_length})".format(                    
+                entries.append("'{mqtt_name}': HighLevelFunctionInfo({low_level_id}, '{direction}', {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, {arg_names}, {arg_types}, {arg_symbols}, '{format_in}', {result_names}, {result_symbols}, '{format_out}',{chunk_padding}, {chunk_cardinality}, {chunk_max_offset},{short_write}, {single_read}, {fixed_length})".format(                    
                     mqtt_name=packet.get_mqtt_name(skip=-2), 
                     low_level_id=packet.get_function_id(),
                     direction=direction,
@@ -174,6 +177,7 @@ class {0}(Device):
                     low_level_roles_in=low_level_roles_in,
                     low_level_roles_out=low_level_roles_out,
                     arg_names=input_names,
+                    arg_types=input_types,
                     arg_symbols=input_symbols,
                     format_in=packet.get_mqtt_format_list('in'),
                     result_names=output_names,
@@ -706,8 +710,8 @@ class MQTTBindingsGenerator(common.BindingsGenerator):
         return mqtt_common.MQTTElement
 
     def generate(self, device):
-        if not device.is_released():
-            return
+        #if not device.is_released():
+        #    return
 
         self.devices.append("'{mqtt_dev_name}': {py_dev_name}".format(mqtt_dev_name=device.get_mqtt_device_name(), py_dev_name=device.get_python_class_name()))
 
