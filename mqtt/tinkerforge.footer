@@ -46,7 +46,9 @@ def json_error(message, resultDict=None):
     return json.dumps({'_ERROR': message})
 
 class MQTTBindings:
-    def __init__(self, debug, global_prefix, ipcon_timeout, broker_username, broker_password, broker_certificate, broker_tls_insecure):
+    def __init__(self, debug, no_symbolic_response, global_prefix, ipcon_timeout, broker_username, broker_password, broker_certificate, broker_tls_insecure):
+        self.no_symbolic_response = no_symbolic_response
+        
         self.ipcon = IPConnection()
         self.handle_ipcon_exceptions(lambda i: i.set_timeout(ipcon_timeout))
         
@@ -467,7 +469,8 @@ class MQTTBindings:
             if len(result_symbols) == 1:
                 response = (response,)
 
-            response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
+            if not self.no_symbolic_response:
+                response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
             response = json.dumps(dict(zip(result_names, response)))
             logging.debug("Stream call {} for device {} of type {} succeded.".format(fnName, uid, device_name))
             return response
@@ -555,7 +558,8 @@ class MQTTBindings:
             if len(fnInfo.result_names) == 1:
                 response = (response,)
 
-            response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
+            if not self.no_symbolic_response:
+                response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
             response = json.dumps(dict(zip(fnInfo.result_names, response)))        
             return response
 
@@ -610,6 +614,7 @@ def main():
     parser.add_argument('--global-topic-prefix', dest='global_topic_prefix', type=str, default=GLOBAL_TOPIC_PREFIX,
                         help='global MQTT topic prefix for this proxy instance (default: {0})'.format(GLOBAL_TOPIC_PREFIX))
     parser.add_argument('--debug', dest='debug', action='store_true', help='enable debug output')
+    parser.add_argument('--no-symbolic-response', dest='no_symbolic_response', action='store_true', help='disable translation into string constants for responses')
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -621,7 +626,7 @@ def main():
     if len(global_topic_prefix) > 0 and not global_topic_prefix.endswith('/'):
         global_topic_prefix += '/'
 
-    bindings = MQTTBindings(args.debug, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
+    bindings = MQTTBindings(args.debug, args.no_symbolic_response, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
     bindings.connect(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret,args.broker_host, args.broker_port)
     bindings.run()
 
