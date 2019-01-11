@@ -260,7 +260,7 @@ class MQTTBindings:
 
     def handle_ipcon_exceptions(self, function):
         try:
-            function(self.ipcon)
+            return function(self.ipcon)
         except Error as e:
             fatal_error(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
         except socket.error as e:
