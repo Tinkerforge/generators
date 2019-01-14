@@ -46,9 +46,10 @@ def json_error(message, resultDict=None):
     return json.dumps({'_ERROR': message})
 
 class MQTTBindings:
-    def __init__(self, debug, no_symbolic_response, global_prefix, ipcon_timeout, broker_username, broker_password, broker_certificate, broker_tls_insecure):
+    def __init__(self, debug, no_symbolic_response, show_payload, global_prefix, ipcon_timeout, broker_username, broker_password, broker_certificate, broker_tls_insecure):
         self.no_symbolic_response = no_symbolic_response
-        
+        self.show_payload = show_payload
+
         self.ipcon = IPConnection()
         self.handle_ipcon_exceptions(lambda i: i.set_timeout(ipcon_timeout))
         
@@ -158,7 +159,10 @@ class MQTTBindings:
             try:
                 should_register = json.loads(json_args)
             except json.JSONDecodeError as e:
-                return json_error("Could not parse payload for {} callback registration as JSON encoding a boolean: {}".format(function, str(e)))
+                payload = ""
+                if self.show_payload:
+                    payload = ". \n\tPayload was: " + str(json_args)
+                return json_error("Could not parse payload for {} callback registration as JSON encoding a boolean: {}{}".format(function, str(e), payload))
 
             if not isinstance(should_register, bool):
                 return json_error("Expected bool as parameter of callback registration, but got " + json_args)
@@ -318,7 +322,10 @@ class MQTTBindings:
             try:
                 obj = json.loads(json_args)
             except json.JSONDecodeError as e:
-                return json_error("Could not parse payload for {} call of {} {} as JSON: {}".format(fnName, device_name, uid, str(e)))
+                payload = ""
+                if self.show_payload:
+                    payload = ". \n\tPayload was: " + str(json_args)
+                return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
             
 
         function_id, direction, high_level_roles_in, high_level_roles_out, \
@@ -532,7 +539,10 @@ class MQTTBindings:
         try:
             should_register = json.loads(json_args)
         except json.JSONDecodeError as e:
-            return json_error("Could not parse payload for {} callback registration of {} {} as JSON encoding a boolean: {}".format(callbackName, device_class, device_name, str(e)))
+            payload = ""
+            if self.show_payload:
+                payload = ". \n\tPayload was: " + str(json_args)
+            return json_error("Could not parse payload for {} callback registration of {} {} as JSON encoding a boolean: {}{}".format(callbackName, device_class, device_name, str(e), payload))
 
         if not isinstance(should_register, bool):
             return json_error("Expected bool as parameter of callback registration, but got " + json_args)
@@ -561,7 +571,10 @@ class MQTTBindings:
             try:
                 obj = json.loads(json_args)
             except json.JSONDecodeError as e:
-                return json_error("Could not parse payload for {} call of {} {} as JSON: {}".format(fnName, device_name, uid, str(e)))
+                payload = ""
+                if self.show_payload:
+                    payload = ". \n\tPayload was: " + str(json_args)
+                return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
         args = []
 
         missing_args = []
@@ -652,6 +665,8 @@ def main():
     parser.add_argument('--debug', dest='debug', action='store_true', help='enable debug output')
     parser.add_argument('--no-symbolic-response', dest='no_symbolic_response', action='store_true', help='disable translation into string constants for responses')
 
+    parser.add_argument('--show-payload', dest='show_payload', action='store_true', help='show received payload if JSON parsing fails.')
+
     args = parser.parse_args(sys.argv[1:])
 
     if args.broker_username is None and args.broker_password is not None:
@@ -662,7 +677,7 @@ def main():
     if len(global_topic_prefix) > 0 and not global_topic_prefix.endswith('/'):
         global_topic_prefix += '/'
 
-    bindings = MQTTBindings(args.debug, args.no_symbolic_response, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
+    bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
     bindings.connect(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret,args.broker_host, args.broker_port)
     bindings.run()
 
