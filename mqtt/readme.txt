@@ -1,49 +1,70 @@
 Tinkerforge MQTT Bindings
-==========================
+=========================
 
 The MQTT bindings allow you to control Tinkerforge Bricks and Bricklets over a MQTT broker.
 
-The bindings act as a proxy which translates between a MQTT broker and a BrickDaemon instance, all Bricks and Bricklets are supported.
+The bindings act as a proxy which translates between a MQTT broker and a Brick Daemon instance, 
+all Bricks and Bricklets are supported.
 
 Usage
 =====
 
-Run the bindings after starting a MQTT broker and a BrickDaemon, an ethernet extension or a WiFi extension. Command line parameters can be used to connect to brokers and BrickDaemon instances on other machines (see below).
+Run the bindings after starting a MQTT broker and a Brick Daemon, an Ethernet Extension or 
+a WIFI Extension. Command line parameters can be used to connect to a broker and to a Brick Daemon
+instance on another computer (see below).
 
-Note: The following examples assume, that you have installed the mosquitto_pub and mosquitto_sub tools. Other methods of communicating with a MQTT broker can be used, for example the PAHO library.
+Note: The following examples assume, that you have installed the mosquitto_pub and mosquitto_sub tools.
+Other methods of communicating with a MQTT broker can be used, for example the Paho library.
 
 To call a Bricklet function, publish a JSON encoded message under the corresponding 'request' topic:
 
 [GLOBAL_PREFIX]/request/[DEVICE_TYPE]/[UID]/[FUNCTION]/[OPTIONAL_SUFFIX]
 
-For example to set the color of a RGB LED button Bricklet with UID Enx to yellow using the mosquitto_pub tool:
-    mosquitto_pub -t "tinkerforge/request/rgb_led_button_bricklet/Enx/set_color" -m '{"red":255, "green":127, "blue":0}'
+For example to set the color of a RGB LED Button Bricklet with UID Enx to yellow using
+the mosquitto_pub tool:
+    
+  mosquitto_pub -t tinkerforge/request/rgb_led_button_bricklet/Enx/set_color -m '{"red":255, "green":127, "blue":0}'
 
-Functions which return values do so under the corresponding 'response' topic. To query the current color of the same bricklet use:
-    mosquitto_sub -t "tinkerforge/response/rgb_led_button_bricklet/Enx/get_color"
-    mosquitto_pub -t "tinkerforge/request/rgb_led_button_bricklet/Enx/get_color" -m ''
+Functions which return values do so under the corresponding 'response' topic.
+To query the current color of the same Bricklet use:
+    
+  mosquitto_sub -t tinkerforge/response/rgb_led_button_bricklet/Enx/get_color
+  mosquitto_pub -t tinkerforge/request/rgb_led_button_bricklet/Enx/get_color -m ''
 
 Occured errors are published under the 'response' topic. If for example a parameter is missing:
-    mosquitto_sub -t "tinkerforge/response/rgb_led_button_bricklet/Enx/set_color" #Note that we register on the set_color topic here
-    mosquitto_pub -t "tinkerforge/request/rgb_led_button_bricklet/Enx/set_color" -m '{"red":255, "green":127, "blue":0}'
-the message {"_ERROR": "The arguments ['green'] where missing for a call of set_color of device Enx of type rgb_led_button_bricklet."} is published.
+    
+  mosquitto_sub -t tinkerforge/response/rgb_led_button_bricklet/Enx/set_color # Note that we register on the set_color topic here
+  mosquitto_pub -t tinkerforge/request/rgb_led_button_bricklet/Enx/set_color -m '{"red":255, "green":127, "blue":0}'
+   
+The message 
+    
+  {"_ERROR": "The arguments ['green'] where missing for a call of set_color of device Enx of type rgb_led_button_bricklet."} 
+    
+is published under tinkerforge/response/rgb_led_button_bricklet/Enx/set_color.
 Error messages are also printed to the binding's stdout. 
 
 Callbacks
 =========
 
 Callbacks can be registered under the 'register' topic:
-    mosquitto_pub -t "tinkerforge/register/rgb_led_button_bricklet/Enx/button_state_changed" -m 'true'
+  
+  mosquitto_pub -t tinkerforge/register/rgb_led_button_bricklet/Enx/button_state_changed -m 'true'
+  
 and will be published under the 'callback' topic:
-    mosquitto_sub -t "tinkerforge/callback/rgb_led_button_bricklet/Enx/button_state_changed"
+
+  mosquitto_sub -t tinkerforge/callback/rgb_led_button_bricklet/Enx/button_state_changed
+  
 returns:
+    
     {"state": 0}
     {"state": 1}
+
 whenever the button is pressed and released.
 
 To deregister a callback, pass 'false' as payload instead of 'true'.
 
-Callback configuration functions work exactly like in other bindings, so if a callback has to be enabled you need to:
+Callback configuration functions work exactly like in other bindings,
+so if a callback has to be enabled you need to:
 - subscribe to the 'callback' topic
 - register to the callback using the 'register' topic
 - enable the callback with the corresponding 'request' topic
@@ -51,29 +72,38 @@ Callback configuration functions work exactly like in other bindings, so if a ca
 Topic prefix
 ============
 
-The bindings can be configured to use another global prefix for all topics using the '--global-topic-prefix' parameter. The prefix can be used to disambiguate between two or more binding instances connected to the same broker. The prefix can be as long as needed, for example tf/instance/1/foo/bar.
+The bindings can be configured to use another global prefix for all topics
+using the '--global-topic-prefix' parameter. The prefix can be used to disambiguate
+between two or more binding instances connected to the same broker.
+The prefix can be as long as needed, for example tf/instance/1/foo/bar.
 
 Topic suffixes
 ==============
 
-The bindings support arbitrary suffixes per topic. For example you can tag all messages of devices located in one room with the suffix /room/1.
-    mosquitto_pub -t "tinkerforge/register/rgb_led_button_bricklet/Enx/button_state_changed/room/1" -m 'true'
-    mosquitto_pub -t "tinkerforge/register/rgb_led_button_bricklet/gBs/button_state_changed/room/2" -m 'true'
-    mosquitto_pub -t "tinkerforge/register/rgb_led_button_bricklet/Dod/button_state_changed/room/1" -m 'true'
+The bindings support arbitrary suffixes per topic. For example you can tag all messages
+of devices located in one room with the suffix /room/1.
+  
+  mosquitto_pub -t tinkerforge/register/rgb_led_button_bricklet/Enx/button_state_changed/room/1 -m 'true'
+  mosquitto_pub -t tinkerforge/register/rgb_led_button_bricklet/gBs/button_state_changed/room/2 -m 'true'
+  mosquitto_pub -t tinkerforge/register/rgb_led_button_bricklet/Dod/button_state_changed/room/1 -m 'true'
     
 To receive all callbacks sent from devices in this room subscribe to:
-     mosquitto_sub -t "tinkerforge/callback/+/+/+/room/1"
-This subscribtion whill receive callback events generated by 'Enx' and 'Dod' but not 'gBs'.
-          
+  
+  mosquitto_sub -t tinkerforge/callback/+/+/+/room/1
+
+This subscription will receive callback events generated by 'Enx' and 'Dod' but not 'gBs'.
+
 To receive all messages subscribe to:
-    mosquitto_sub -t "tinkerforge/callback/#"
-    mosquitto_sub -t "tinkerforge/response/#"
+
+  mosquitto_sub -t tinkerforge/callback/#
+  mosquitto_sub -t tinkerforge/response/#
 
 
 Start up
 ========
 
-The bindings will publish a message to "[GLOBAL_PREFIX]/callback/bindings/restart" with 'null' as payload. This message can be used as a signal that the bindings where restarted. You then need to re-register all required callbacks.
+The bindings will publish a message to "[GLOBAL_PREFIX]/callback/bindings/restart" with 'null' as payload.
+This message can be used as a signal that the bindings where restarted. You then need to re-register all required callbacks.
 
 
 Command line parameters
