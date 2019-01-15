@@ -55,13 +55,14 @@ class MQTTBindings:
         
         self.mqttc = mqtt.Client(userdata=len(global_prefix))
         if debug:
-            logging.basicConfig(level=logging.DEBUG)
-            try:
-                logging.root.name = 'mqtt bindings'
-            except:
-                pass
+            logging.basicConfig(level=logging.DEBUG)           
             self.mqttc.enable_logger()                    
-        
+
+        try:
+            logging.root.name = 'MQTT bindings'
+        except:
+            pass
+    
         if broker_username is not None:
             self.mqttc.username_pw_set(broker_username, broker_password)
 
@@ -110,6 +111,7 @@ class MQTTBindings:
         self.mqttc.subscribe(self.global_prefix + "request/#")
         self.mqttc.subscribe(self.global_prefix + "register/#")
         self.mqttc.publish(self.global_prefix + "callback/bindings/restart", "null")
+        self.mqttc.subscribe(self.global_prefix + "callback/bindings/restart")
 
     def run(self):
         self.mqttc.loop_start()
@@ -175,11 +177,15 @@ class MQTTBindings:
             return json_error("Unknown ip connection request {}", request_type)
 
     def handle_bindings_call(self, request_type, device, function, json_args, response_path):
+        if request_type == "callback" and function == "restart":
+            logging.warning("Another MQTT bindings instance started on this broker with the same global prefix. This is not recommended as both bindings instances will receive requests and send responses.")
+            return
+
         if request_type != "request":
-            return json_error("Unknown bindings request {}", request_type)
+            return json_error("Unknown bindings request {}".format(request_type))
         
         if function != "reset_callbacks":
-            return json_error("Unknown bindings function {}", function)
+            return json_error("Unknown bindings function {}".format(function))
         
         logging.debug("Resetting callbacks")
 
