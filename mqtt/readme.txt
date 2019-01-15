@@ -146,5 +146,3 @@ The following optional parameters are supported:
                     disable translation into string constants for
                     responses
 --show-payload      show received payload if JSON parsing fails.
-
-
