@@ -3,8 +3,7 @@
 
 """
 MQTT Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
 
 mqtt_common.py: Common Library for generation of MQTT bindings and documentation
 
@@ -83,7 +82,7 @@ class MQTTElement(common.Element):
         'char':   'c',
         'string': 's'
     }
-
+   
     def get_mqtt_type(self, for_doc=False):
         t = MQTTElement.mqtt_types[self.get_type()]
 
