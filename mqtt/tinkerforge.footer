@@ -560,7 +560,10 @@ class MQTTBindings:
             if fnName not in device_class.functions:
                 return json_error("Unknown function {} for device {} of type {}".format(fnName, uid, device_class_name),)
             fnInfo = device_class.functions[fnName]
-            device = device_class(uid, self.ipcon)
+            try:
+                device = device_class(uid, self.ipcon)
+            except ValueError as e:
+                return json_error("Could not create device object, maybe the UID {} was wrong?".format(uid))
             if isinstance(fnInfo, HighLevelFunctionInfo):
                 return self.device_stream_call(device, device_class_name, uid, fnName, fnInfo, json_args)
             else:
