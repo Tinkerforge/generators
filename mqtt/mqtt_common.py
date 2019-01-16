@@ -84,36 +84,6 @@ class MQTTElement(common.Element):
         'string': 's'
     }
 
-    mqtt_type_converters = {
-        'int8':   'convert_int',
-        'uint8':  'convert_int',
-        'int16':  'convert_int',
-        'uint16': 'convert_int',
-        'int32':  'convert_int',
-        'uint32': 'convert_int',
-        'int64':  'convert_int',
-        'uint64': 'convert_int',
-        'float':  'float',
-        'bool':   'convert_bool',
-        'char':   'create_char_converter(ctx)',
-        'string': 'string'
-    }
-
-    mqtt_default_items = {
-        'int8':   "'0'",
-        'uint8':  "'0'",
-        'int16':  "'0'",
-        'uint16': "'0'",
-        'int32':  "'0'",
-        'uint32': "'0'",
-        'int64':  "'0'",
-        'uint64': "'0'",
-        'float':  "'0.0'",
-        'bool':   "'false'",
-        'char':   "'\\0'",
-        'string': None
-    }
-
     def get_mqtt_type(self, for_doc=False):
         t = MQTTElement.mqtt_types[self.get_type()]
 
@@ -133,74 +103,6 @@ class MQTTElement(common.Element):
             f = str(cardinality) + f
 
         return f
-
-    def get_mqtt_help(self):
-        symbols_doc = ''
-        constant_group = self.get_constant_group()
-
-        if constant_group != None:
-            symbols = []
-
-            for constant in constant_group.get_constants():
-                if constant_group.get_type() == 'bool':
-                    value = str(constant.get_value()).lower()
-                else:
-                    value = constant.get_value()
-
-                symbols.append('{0}-{1}: {2}'.format(constant_group.get_name().dash, constant.get_name().dash, value))
-
-            symbols_doc = ' (' + ', '.join(symbols) + ')'
-
-        t = MQTTElement.mqtt_types[self.get_type()]
-
-        if self.get_cardinality() == 1 or t == 'string':
-            help_ = "'{0}{1}'".format(t, symbols_doc)
-        else:
-            help_ = "get_array_type_name(ctx, '{0}', {1})".format(t, self.get_cardinality())
-
-            if len(symbols_doc) > 0:
-                help_ += "+ '{0}'".format(symbols_doc)
-
-        return help_
-
-    def get_mqtt_type_converter(self):
-        type_converter = MQTTElement.mqtt_type_converters[self.get_type()]
-        default_item = MQTTElement.mqtt_default_items[self.get_type()]
-        constant_group = self.get_constant_group()
-
-        if constant_group != None:
-            symbols = {}
-
-            for constant in constant_group.get_constants():
-                symbols['{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)] = constant.get_value()
-
-            if self.get_cardinality() != 1 and type_converter != 'string':
-                if self.get_cardinality() < 0:
-                    default_item = None
-
-                return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_item, self.get_cardinality())
-            elif type_converter == 'string':
-                return 'create_string_converter(ctx, create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, self.get_cardinality())
-            else:
-                return 'create_symbol_converter(ctx, {0}, {1})'.format(type_converter, symbols)
-        else:
-            if self.get_cardinality() != 1 and type_converter != 'string':
-                if self.get_cardinality() < 0:
-                    default_item = None
-
-                return 'create_array_converter(ctx, {0}, {1}, {2})'.format(type_converter, default_item, self.get_cardinality())
-            elif type_converter == 'string':
-                return 'create_string_converter(ctx, str, {0})'.format(self.get_cardinality())
-            else:
-                return type_converter
-
-    def get_mqtt_default_item_value(self):
-        value = MQTTElement.mqtt_default_items[self.get_type()]
-
-        if value == None:
-            common.GeneratorError('Invalid array item type: ' + self.get_type())
-
-        return value
 
     def get_symbols(self):
         symbols = {}

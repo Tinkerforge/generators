@@ -138,7 +138,7 @@ class {0}(Device):
                     low_level_roles_out.append(element.get_role())
 
                 if stream_in != None:
-                    chunk_padding = stream_in.get_chunk_data_element().get_mqtt_default_item_value()
+                    chunk_padding = "'0'"
                     chunk_cardinality = stream_in.get_chunk_data_element().get_cardinality()
 
                     if stream_in.get_fixed_length() != None:
