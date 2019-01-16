@@ -130,8 +130,20 @@ class MQTTBindings:
         
 
 
-    def ip_connection_callback_fn(self, callback_id, *args):          
-        payload = json.dumps(dict(zip(self.ip_connection_callback_names[callback_id], args)))
+    def ip_connection_callback_fn(self, callback_id, *args):
+        logging.error(str(callback_id) + " " + str(args))
+        d = dict(zip(self.ip_connection_callback_names[callback_id], args))
+        if "enumeration_type" in d and d["enumeration_type"] != 2 and "device_identifier" in d:            
+            dev_id = d["device_identifier"]            
+            d["_display_name"] = display_names[dev_id]
+            if not self.no_symbolic_response:
+                d["device_identifier"] = mqtt_names[dev_id]
+
+        if not self.no_symbolic_response and "enumeration_type" in d:
+            symbols = {0: "available", 1: "connected", 2: "disconnected"}
+            d["enumeration_type"] = symbols[d["enumeration_type"]]
+
+        payload = json.dumps(d)
         for path in self.ip_connection_response_paths[callback_id]:
             self.mqttc.publish(path, payload)
 
@@ -637,7 +649,13 @@ class MQTTBindings:
 
             if not self.no_symbolic_response:
                 response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
-            response = json.dumps(dict(zip(fnInfo.result_names, response)))        
+
+            d = dict(zip(fnInfo.result_names, response))
+            if not self.no_symbolic_response and fnName == "get_identity" and "device_identifier" in d:
+                dev_id = d["device_identifier"]
+                d["device_identifier"] = mqtt_names[dev_id]
+                d["_display_name"] = display_names[dev_id]
+            response = json.dumps(d)        
             return response
 
     def callback_function(self, mqtt_callback_device, callback_id, *args):    

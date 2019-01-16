@@ -228,6 +228,8 @@ class MQTTBindingsGenerator(common.BindingsGenerator):
         
         self.part_files = []
         self.devices = []
+        self.device_mqtt_names = []
+        self.device_display_names = []
 
     def get_bindings_name(self):
         return 'mqtt'
@@ -252,6 +254,8 @@ class MQTTBindingsGenerator(common.BindingsGenerator):
 
         if device.is_released():
             self.devices.append("'{mqtt_dev_name}': {py_dev_name}".format(mqtt_dev_name=device.get_mqtt_device_name(), py_dev_name=device.get_python_class_name()))
+            self.device_mqtt_names.append("{dev_id} : '{mqtt_dev_name}'".format(dev_id = device.get_device_identifier(), mqtt_dev_name=device.get_mqtt_device_name()))
+            self.device_display_names.append("{dev_id} : '{display_name}'".format(dev_id = device.get_device_identifier(), display_name=device.get_long_display_name()))
             self.part_files.append(filename)
 
     def finish(self):
@@ -281,6 +285,8 @@ class MQTTBindingsGenerator(common.BindingsGenerator):
                     mqtt.write(f.read())
 
         mqtt.write('\n\n\ndevices = {\n\t' + ',\n\t'.join(self.devices) + '\n}\n\n\n')
+        mqtt.write('\n\n\nmqtt_names = {\n\t' + ',\n\t'.join(self.device_mqtt_names) + '\n}\n\n\n')
+        mqtt.write('\n\n\ndisplay_names = {\n\t' + ',\n\t'.join(self.device_display_names) + '\n}\n\n\n')
         mqtt.write(footer)
         mqtt.close()
 
