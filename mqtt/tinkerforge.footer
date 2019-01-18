@@ -179,7 +179,11 @@ class MQTTBindings:
                 return json_error("Could not parse payload for {} callback registration as JSON encoding a boolean: {}{}".format(function, str(e), payload))
 
             if not isinstance(should_register, bool):
-                return json_error("Expected bool as parameter of callback registration, but got " + json_args)
+                #also support {"register": true/false} in addition to a top-level boolean
+                if isinstance(should_register, dict) and 'register' in should_register and type(should_register['register']) == bool: 
+                    should_register = should_register['register']
+                else:
+                    return json_error("Expected bool as parameter of callback registration, but got " + str(json_args))
                     
             if should_register:                    
                 self.register_ip_connection_callback(callback_id, response_path)
@@ -585,7 +589,11 @@ class MQTTBindings:
             return json_error("Could not parse payload for {} callback registration of {} {} as JSON encoding a boolean: {}{}".format(callbackName, device_class, device_name, str(e), payload))
 
         if not isinstance(should_register, bool):
-            return json_error("Expected bool as parameter of callback registration, but got " + json_args)
+            #also support {"register": true/false} in addition to a top-level boolean
+            if isinstance(should_register, dict) and 'register' in should_register: 
+                should_register = should_register['register']
+            else:
+                return json_error("Expected bool as parameter of callback registration, but got " + str(json_args))
         
         if should_register:
             if uid not in self.callback_devices or self.callback_devices[uid].device_class != device_class:
