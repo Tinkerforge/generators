@@ -670,12 +670,12 @@ class MQTTBindings:
             if not self.no_symbolic_response:
                 response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
 
-            d = dict(zip(fnInfo.result_names, response))
+            d = dict(zip(fnInfo.result_names, response))            
             if fnName == "get_identity" and "device_identifier" in d:
-                dev_id = d["device_identifier"]
+                dev_id = d["device_identifier"]            
                 d["_display_name"] = display_names[dev_id]
                 if not self.no_symbolic_response:
-                d["device_identifier"] = mqtt_names[dev_id]
+                    d["device_identifier"] = mqtt_names[dev_id]
             response = json.dumps(d)        
             return response
 
