@@ -411,6 +411,13 @@ class MQTTBindings:
 
             stream_data_index = high_level_roles_in.index('stream_data')
             stream_data = request_data[stream_data_index]
+            
+            if sys.hexversion < 0x03000000:
+                if isinstance(stream_data, basestring):
+                    stream_data = create_char_list(stream_data)
+            else:
+                if isinstance(stream_data, str):
+                    stream_data = create_char_list(stream_data)
             stream_length = len(stream_data)
             stream_chunk_offset = 0
 
