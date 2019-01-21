@@ -630,6 +630,8 @@ class MQTTBindings:
                 if self.show_payload:
                     payload = ". \n\tPayload was: " + str(json_args)
                 return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
+        else:
+            obj = {}
         args = []
 
         missing_args = []
