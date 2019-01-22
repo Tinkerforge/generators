@@ -74,8 +74,6 @@ class MQTTBindings:
 
         self.mqttc.on_message = self.on_message
         self.mqttc.on_connect = self.on_connect
-        self.mqttc.on_publish = self.on_publish
-        self.mqttc.on_subscribe = self.on_subscribe  
 
         self.callback_devices = {}
         self.enumerate_response_paths = set()
@@ -256,7 +254,7 @@ class MQTTBindings:
 
     def on_message(self, mqttc, global_prefix_len, msg):
         try:
-            logging.debug("Got message from mqtt broker. Topic: {}".format(msg.topic))
+            logging.debug("\n")
             path_info = self.parse_path(global_prefix_len, msg.topic)
             if path_info is None:
                 return
@@ -274,16 +272,9 @@ class MQTTBindings:
                 return
             logging.debug("Publishing response to {}".format(response_path))
             self.mqttc.publish(response_path, response)
+            logging.debug("\n")
         except:
             traceback.print_exc()
-
-    @staticmethod
-    def on_publish(mqttc, obj, mid):
-        logging.debug("on_publish(); message ID: " + str(mid))
-
-    @staticmethod
-    def on_subscribe(mqttc, obj, mid, granted_qos):
-        logging.debug("on_subscribe(); message ID: {}, granted QoS: {}".format(str(mid), str(granted_qos)))
 
 
     def handle_ipcon_exceptions(self, function, resultDict=None, infoString = None):
