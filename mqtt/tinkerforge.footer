@@ -1,42 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-class MQTTCallbackDevice(Device):
-    def __init__(self, uid, ipcon, device_class, mqttc):
-        Device.__init__(self, uid, ipcon)
-        self.publish_paths = {}
-        self.callback_names = {}
-        self.device_class = device_class
-        self.mqttc = mqttc
-
-    def add_callback(self, callback_id, callback_format, callback_names, high_level_info):
-        self.callback_formats[callback_id] = callback_format
-        self.callback_names[callback_id] = callback_names
-        if high_level_info is not None:
-            self.high_level_callbacks[-callback_id] = high_level_info
-       
-
-    def register_callback(self, bindings, callback_id, path):
-        if -callback_id in self.high_level_callbacks:
-            cid = -callback_id
-        else:
-            cid = callback_id
-
-        if callback_id not in self.publish_paths:
-            self.publish_paths[callback_id] = set()
-
-        self.publish_paths[callback_id].add(path)
-        self.registered_callbacks[cid] = lambda *args: bindings.callback_function(self, callback_id, *args)
-
-    def deregister_callback(self, callback_id, path):
-        if callback_id not in self.publish_paths:
-            logging.debug("Got callback deregistration request, but no registration for topic {} was found. Ignoring the request.".format(path))
-            return
-        self.publish_paths[callback_id].discard(path)
-        if len(self.publish_paths[callback_id]) == 0:
-            self.publish_paths.pop(callback_id)
-            self.callback_names.pop(callback_id)
-            self.registered_callbacks.pop(callback_id, None)
 
 def json_error(message, resultDict=None):
     logging.error(message)
@@ -74,7 +38,7 @@ class MQTTBindings:
 
         self.mqttc.on_message = self.on_message
         self.mqttc.on_connect = self.on_connect
-
+        
         self.callback_devices = {}
         self.enumerate_response_paths = set()
 
@@ -315,7 +279,7 @@ class MQTTBindings:
             'int': int,
             'float': float,
             'bool': bool,
-        }
+        }        
 
         for a, n, t in zip(args, arg_names, arg_types):
             if isinstance(t, tuple):
@@ -334,7 +298,7 @@ class MQTTBindings:
             else:
                 if t == 'char' or t == 'string':
                     if sys.hexversion < 0x03000000 and not isinstance(a, basestring):
-                    return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                        return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
                     elif sys.hexversion >= 0x03000000 and not isinstance(a, str):
                         return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
                 elif type(a) != type_map[t]:
@@ -555,7 +519,26 @@ class MQTTBindings:
             response = json.dumps(dict(zip(result_names, response)))
             logging.debug("Stream call {} for device {} of type {} succeded.".format(fnName, uid, device_name))
             return response
+    @staticmethod
+    def parse_uid(uid):
+        uid_ = base58decode(uid)
 
+        if uid_ > 0xFFFFFFFF:
+            uid_ = uid64_to_uid32(uid_)
+        return uid_
+
+    def ensure_dev_exists(self, uid, device_class, device_class_name, mqttc):
+        uid_ = self.parse_uid(uid)
+
+        if uid_ in self.ipcon.devices and isinstance(self.ipcon.devices[uid_], device_class):
+            print("Reusing {} of class {}", uid, device_class_name, mqttc)
+            device = self.ipcon.devices[uid_]
+        else:
+            try:
+                device = device_class(uid, self.ipcon, device_class, mqttc)
+            except ValueError as e:
+                return False, json_error("Could not create device object, maybe the UID {} was wrong?".format(uid))
+        return True, device
 
     def dispatch_call(self, call_type, device_class_name, uid, fnName, json_args, response_path):
         if device_class_name not in devices:
@@ -565,10 +548,11 @@ class MQTTBindings:
             if fnName not in device_class.functions:
                 return json_error("Unknown function {} for device {} of type {}".format(fnName, uid, device_class_name),)
             fnInfo = device_class.functions[fnName]
-            try:
-                device = device_class(uid, self.ipcon)
-            except ValueError as e:
-                return json_error("Could not create device object, maybe the UID {} was wrong?".format(uid))
+
+            success, device = self.ensure_dev_exists(uid, device_class, device_class_name, self.mqttc)
+            if not success:
+                return device
+            
             if isinstance(fnInfo, HighLevelFunctionInfo):
                 return self.device_stream_call(device, device_class_name, uid, fnName, fnInfo, json_args)
             else:
@@ -597,22 +581,24 @@ class MQTTBindings:
                 return json_error("Expected bool as parameter of callback registration, but got " + str(json_args))
         
         if should_register:
-            if uid not in self.callback_devices or self.callback_devices[uid].device_class != device_class:
-                callback_device = MQTTCallbackDevice(uid, self.ipcon, device_class, self.mqttc)
-                self.callback_devices[uid] = callback_device
-            else:
-                callback_device = self.callback_devices[uid]
+            success, callback_device = self.ensure_dev_exists(uid, device_class, device_name, self.mqttc)
+            if not success:
+                return callback_device
+            
             callback_device.add_callback(callbackInfo.id, callbackInfo.fmt, callbackInfo.names, callbackInfo.high_level_info)
             callback_device.register_callback(self, callbackInfo.id, path)
             
             logging.debug("Registered callback {} for device {} of type {}. Will publish messages to {}.".format(callbackName, uid, device_name, path))
         else:
-            if uid not in self.callback_devices or self.callback_devices[uid].device_class != device_class:
-                reason = "no callbacks where registered for this device" if uid not in self.callback_devices else "a device of type {} with the same UID has callbacks registered".format(self.callback_devices[uid].device_class)
+            uid_ = self.parse_uid(uid)
+
+            if uid_ not in self.ipcon.devices or not isinstance(self.ipcon.devices[uid_], device_class):            
+                reason = "no callbacks where registered for this device" if uid_ not in self.ipcon.devices else "a device of type {} with the same UID has callbacks registered".format(self.callback_devices[uid].device_class)
                 logging.debug("Got callback deregistration request for device {} of type {}, but {}. Ignoring the request.".format(uid, device_name, reason))
                 return None
-            self.callback_devices[uid].deregister_callback(callbackInfo.id, path)
-            logging.debug("Deregistered callback {} for device {} of type {}. Will stop publishing messages to {}.".format(callbackName, uid, device_name, path))
+            reg_found = self.ipcon.devices[uid_].deregister_callback(callbackInfo.id, path)
+            if reg_found:
+                logging.debug("Deregistered callback {} for device {} of type {}. Will stop publishing messages to {}.".format(callbackName, uid, device_name, path))
 
     def device_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Calling function {} for device {} of type {}.".format(fnName, uid, device_name))

@@ -42,15 +42,15 @@ class MQTTBindingsPacket(mqtt_common.MQTTPacket):
 class MQTTBindingsDevice(mqtt_common.MQTTDevice):
     def get_mqtt_class(self):
         template = """
-class {0}(Device):
+class {0}(MQTTCallbackDevice):
 """
 
         return template.format(self.get_python_class_name())
 
     def get_mqtt_init_method(self):
         template = """
-	def __init__(self, uid, ipcon):
-		Device.__init__(self, uid, ipcon)
+	def __init__(self, uid, ipcon, device_class, mqttc):
+		MQTTCallbackDevice.__init__(self, uid, ipcon, device_class, mqttc)
 
 {0}
 """
@@ -269,6 +269,9 @@ class MQTTBindingsGenerator(common.BindingsGenerator):
         with open(os.path.join(root_dir, 'tinkerforge.header'), 'r') as f:
             header = f.read().replace('<<VERSION>>', '.'.join(version))
 
+        with open(os.path.join(root_dir, 'tinkerforge.middle'), 'r') as f:
+            middle = f.read().replace('<<VERSION>>', '.'.join(version))
+
         with open(os.path.join(root_dir, 'tinkerforge.footer'), 'r') as f:
             footer = f.read().replace('<<VERSION>>', '.'.join(version))
 
@@ -278,6 +281,7 @@ class MQTTBindingsGenerator(common.BindingsGenerator):
             ipcon = f.read()
 
         mqtt.write('\n\n\n' + ipcon + '\n\n\n')
+        mqtt.write(middle + '\n\n\n')
 
         for filename in sorted(self.part_files):
             if filename.endswith('.part'):
