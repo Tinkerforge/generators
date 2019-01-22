@@ -530,8 +530,7 @@ class MQTTBindings:
     def ensure_dev_exists(self, uid, device_class, device_class_name, mqttc):
         uid_ = self.parse_uid(uid)
 
-        if uid_ in self.ipcon.devices and isinstance(self.ipcon.devices[uid_], device_class):
-            print("Reusing {} of class {}", uid, device_class_name, mqttc)
+        if uid_ in self.ipcon.devices and isinstance(self.ipcon.devices[uid_], device_class):            
             device = self.ipcon.devices[uid_]
         else:
             try:
