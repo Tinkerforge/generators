@@ -314,8 +314,6 @@ class MQTTBindings:
         type_map = {
             'int': int,
             'float': float,
-            'char': str,
-            'string': str,
             'bool': bool,
         }
 
@@ -334,7 +332,12 @@ class MQTTBindings:
                     if type(a_elem) != t:
                         return "Argument {name}[{idx}] was not of expected type {type}.".format(name=n, idx=idx, type=t_name)
             else:
-                if type(a) != type_map[t]:
+                if t == 'char' or t == 'string':
+                    if sys.hexversion < 0x03000000 and not isinstance(a, basestring):
+                    return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                    elif sys.hexversion >= 0x03000000 and not isinstance(a, str):
+                        return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                elif type(a) != type_map[t]:
                     return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
                 
 
