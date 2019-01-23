@@ -46,8 +46,8 @@ def fatal_error(message, exit_code):
 	sys.stderr.write('tinkerforge: error: {0}\n'.format(message))
 	sys.exit(exit_code)
 
-if sys.hexversion < 0x02050000:
-	fatal_error('requiring python 2.5 or newer', ERROR_PYTHON_VERSION)
+if sys.hexversion < 0x02060000:
+	fatal_error('requiring python 2.6 or newer', ERROR_PYTHON_VERSION)
 
 try:
 	import argparse
