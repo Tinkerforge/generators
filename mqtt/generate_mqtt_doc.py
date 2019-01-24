@@ -35,10 +35,10 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
     def specialize_mqtt_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return ':mqtt:func:`register/{0}/[UID]/{1}`'.format(packet.get_device().get_mqtt_device_name(),
+                return ':mqtt:func:`register/{0}/<UID>/{1}`'.format(packet.get_device().get_mqtt_device_name(),
                                                             packet.get_mqtt_name(skip=-2 if high_level else 0))
             else:
-                return ':mqtt:func:`request/{0}/[UID]/{1}`'.format(packet.get_device().get_mqtt_device_name(),
+                return ':mqtt:func:`request/{0}/<UID>/{1}`'.format(packet.get_device().get_mqtt_device_name(),
                                                    packet.get_mqtt_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='mqtt')
@@ -80,7 +80,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
  Der display name enthält den Anzeigenamen des {}."""}
                 desc += common.select_lang(get_id_desc).format(self.get_short_display_name())
 
-            func = '{start}request/{struct_name}/[UID]/{func_name}\n\n {params}{returns}{desc}'.format(start=func_start, struct_name=self.get_mqtt_device_name(), func_name=name, params=params, returns = returns, desc=desc)
+            func = '{start}request/{struct_name}/<UID>/{func_name}\n\n {params}{returns}{desc}'.format(start=func_start, struct_name=self.get_mqtt_device_name(), func_name=name, params=params, returns = returns, desc=desc)
             methods += func + '\n'
 
         return methods
@@ -88,24 +88,24 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
     def get_mqtt_callbacks(self):
         cb = {
         'en': """
-.. mqtt:function:: register/{device}/[UID]/{callback_name_under}[/SUFFIX]\n\n :register register: bool\n {result_type}\n
+.. mqtt:function:: register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]\n\n :register register: bool\n {result_type}\n
 
- A callback can be registered for this event by publishing to the ``.../register/{device}/[UID]/{callback_name_under}[/SUFFIX]`` topic with the payload "true".
+ A callback can be registered for this event by publishing to the ``.../register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]`` topic with the payload "true".
  An added callback can be removed by publishing to the same topic with the payload "false".
  To support multiple (de)registrations, e.g. for message filtering, an optional suffix can be used.
 
- If the callback is triggered, a message with it's payload is published under the corresponding ``.../callback/{device}/[UID]/{callback_name_under}[/SUFFIX]`` topic for each registered suffix.
+ If the callback is triggered, a message with it's payload is published under the corresponding ``.../callback/{device}/<UID>/{callback_name_under}[/<SUFFIX>]`` topic for each registered suffix.
 
 {desc}
 """,
             'de': """
-.. mqtt:function:: register/{device}/[UID]/{callback_name_under}[/SUFFIX]\n\n :register register: bool\n {result_type}\n
+.. mqtt:function:: register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]\n\n :register register: bool\n {result_type}\n
 
- Ein Callback für dieses Event kann durch Senden des Payloads "true" an das ``.../register/{device}/[UID]/{callback_name_under}[/SUFFIX]``-Topic hinzugefügt werden.
+ Ein Callback für dieses Event kann durch Senden des Payloads "true" an das ``.../register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]``-Topic hinzugefügt werden.
  Ein hinzugefügtes Callback kann durch Senden des Payloads "false" an das selbe Topic wieder entfernt werden.
  Um mehrere (De-)Registrierungen zu unterstützen, z.B. um Nachrichten filtern zu können, kann ein optionaler Suffix verwendet werden.
 
- Wenn das Callback ausgelöst wird, wird dessen Payload für jeden Suffix auf dem entsprechenden ``.../callback/{device}/[UID]/{callback_name_under}[/SUFFIX]``-Topic veröffentlicht.
+ Wenn das Callback ausgelöst wird, wird dessen Payload für jeden Suffix auf dem entsprechenden ``.../callback/{device}/<UID>/{callback_name_under}[/<SUFFIX>]``-Topic veröffentlicht.
 
 {desc}
 """
@@ -135,7 +135,7 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the corresponding `.../register/...` topic and an optional suffix.
+with the corresponding ``.../register/...`` topic and an optional suffix.
 This suffix can be used to deregister the callback later.
 
 .. note::
@@ -153,7 +153,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit dem entsprechenden `.../register/...`-Topic und einem optionalen Suffix durchgeführt werden.
+mit dem entsprechenden ``.../register/...``-Topic und einem optionalen Suffix durchgeführt werden.
 Mit diesem Suffix kann das Callback später deregistriert werden.
 
 .. note::
