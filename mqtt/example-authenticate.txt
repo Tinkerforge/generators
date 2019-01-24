@@ -1,0 +1,8 @@
+# Start the MQTT-Bindings executable with the --ipcon-auth-secret "[YOUR SECRET HERE]" flag to use authentication.
+
+setup:
+	# Handle incoming enumerate callbacks
+	subscribe to tinkerforge/callback/ip_connection/enumerate
+	publish '{"register": true}' to tinkerforge/register/ip_connection/enumerate # Register enumerate callback 
+	
+	publish '' to tinkerforge/request/ip_connection/enumerate # Trigger enumeration
