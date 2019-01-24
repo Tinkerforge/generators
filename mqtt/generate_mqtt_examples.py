@@ -33,9 +33,7 @@ global_line_prefix = ''
 
 class MQTTExample(common.Example):
     def get_mqtt_source(self):
-        template = r"""{incomplete}{description}
-
-# Change {dummy_uid} to the UID of your {device_long_display_name}
+        template = r"""{incomplete}{description}# Change {dummy_uid} to the UID of your {device_long_display_name}
 {sources}{cleanups}"""
 
         if self.is_incomplete():
@@ -44,7 +42,7 @@ class MQTTExample(common.Example):
             incomplete = ''
 
         if self.get_description() != None:
-            description = '# {0}'.format(self.get_description().replace('\n', '\n# '))
+            description = '# {0}\n'.format(self.get_description().replace('\n', '\n# '))
         else:
             description = ''
 
