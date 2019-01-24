@@ -487,7 +487,9 @@ def format_constants(prefix, packet,
                      char_format_func="'{0}'".format,
                      bool_format_func=str,
                      constant_format_func=default_constant_format,
-                     constants_intro=None):
+                     constants_intro=None,
+                     show_constant_group=False,
+                     group_format_func=lambda g: "\n" + g.get_name().space + "\n"):
     if constants_name == None:
         constants_name = {'en': 'constants', 'de': 'Konstanten'}
 
@@ -506,6 +508,8 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     constants = []
 
     for constant_group in packet.get_constant_groups():
+        if show_constant_group:
+            constants.append(group_format_func(constant_group))
         for constant in constant_group.get_constants():
             if constant_group.get_type() == 'char':
                 value = char_format_func(constant.get_value())
@@ -518,8 +522,10 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 
     if len(constants) == 0:
         return ''
-
-    return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
+    result = select_lang(constants_intro).format(select_lang(constants_name))
+    if show_constant_group: # newline before first constant group is redundant
+        result = result[:-1]
+    return result + ''.join(constants)
 
 def default_function_id_constant_format(prefix, func_name, value):
     return '* {0}FUNCTION_{1} = {2}\n'.format(prefix, func_name.upper, value)
