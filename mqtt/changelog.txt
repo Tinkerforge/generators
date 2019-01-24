@@ -1,2 +1,2 @@
-<unknown>: 2.0.0 (unknown)
+2019-01-24: 2.0.0 (unknown)
 - Initial release
