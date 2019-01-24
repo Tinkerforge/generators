@@ -7,7 +7,7 @@
 2018-11-08: 2.0.2 (2ee80c5)
 - Fixed readme link in Cargo.toml
 
-2018-11-08: 2.0.3 (ede6832)
+2018-11-08: 2.0.3 (bb98b1e)
 - Fixed github links in readme.md
 
 2018-11-21: 2.0.4 (1e56121)
@@ -16,10 +16,10 @@
 - Fixed some documentation
 - Added link to Tinkerforge docs and logo
 
-2018-11-21: 2.0.5 (db2bfdc)
+2018-11-21: 2.0.5 (b98a86f)
 - Module description and link to tinkerforge docs had no separating newline.
 
-2018-12-21: 2.0.6 (52efbfc)
+2018-12-21: 2.0.6 (e18c208)
 - Removed duplicated assignment in Device::set_response_expected_all
 - Fixed infinite loop when stream reading out of sync
 - Implemented get_api_version
