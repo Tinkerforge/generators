@@ -67,8 +67,7 @@ func main() {{
     // Don't use device before ipcon is connected.
 {sources}
     fmt.Print("Press enter to exit.")
-    fmt.Scanln()
-    {cleanups}
+    fmt.Scanln(){cleanups}
 }}
 """
         if self.is_incomplete():
