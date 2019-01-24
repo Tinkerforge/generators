@@ -484,8 +484,6 @@ class MQTTExamplesGenerator(common.ExamplesGenerator):
             with open(filepath, 'w') as f:
                 f.write(example.get_mqtt_source())
 
-            os.chmod(filepath, 0o755)
-
 def generate(root_dir):
     common.generate(root_dir, 'en', MQTTExamplesGenerator)
 
