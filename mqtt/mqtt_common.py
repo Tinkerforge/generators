@@ -29,10 +29,8 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class MQTTDevice(common.Device):
-    def get_mqtt_class_name(self):
-        return self.get_name().under + '_' + self.get_category().under
 
+class MQTTDevice(common.Device):
     def get_mqtt_device_name(self):
         return self.get_name().under + '_' + self.get_category().under
 
@@ -40,13 +38,6 @@ class MQTTDevice(common.Device):
         return self.get_name().camel + self.get_category().camel
 
 class MQTTPacket(common.Packet):
-    def get_mqtt_parameter_list(self):
-        params = []
-
-        for element in self.get_elements(direction='in'):
-            params.append('<{0}>'.format(element.get_name().dash))
-
-        return ' '.join(params)
     def get_mqtt_name(self, skip=0):
         return self.get_name(skip).under
     def get_python_name(self, skip=0):
@@ -64,7 +55,7 @@ class MQTTElement(common.Element):
         'uint64': 'int',
         'float':  'float',
         'bool':   'bool',
-        'char':   'char',
+        'char':   'string',
         'string': 'string'
     }
 
@@ -85,12 +76,16 @@ class MQTTElement(common.Element):
    
     def get_mqtt_type(self, for_doc=False):
         t = MQTTElement.mqtt_types[self.get_type()]
-
+        
         if self.get_cardinality() == 1 or t == 'string':
             return t
 
-        if for_doc and self.get_cardinality() > 5:
-            return '{0},{0},..{1}x..,{0}'.format(t, self.get_cardinality() - 3)
+        if for_doc and self.get_cardinality() < 0:
+            return '[{0},...]'.format(t)
+        elif for_doc and self.get_cardinality() > 4:
+            return '[{0},... (x{1})]'.format(t, self.get_cardinality())
+        elif for_doc:
+            return '[{0}]'.format(",".join([t] * self.get_cardinality()))
         else:
             return (t, self.get_cardinality())
 
