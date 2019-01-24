@@ -312,8 +312,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
 {3}
 
-.. literalinclude:: {2}
- :language: {4}
+.. literalinclude:: {2}{language} {4}
  :linenos:
  :tab-width: 4
 """
@@ -406,7 +405,9 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
             downloads.append('`Test ({0}) <https://www.tinkerforge.com/{1}/tvpl/editor.html?example={2}/{3}/{4}>`__'
                              .format(display_name, lang, device.get_category().under, device.get_name().under, f[0]))
 
-        examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)
+        lang_placeholder = "\n :language:" if language is not None else ""
+
+        examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language if language is not None else "", language=lang_placeholder)
 
     copy_examples(copy_files, device.get_generator().get_root_dir())
 
