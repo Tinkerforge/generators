@@ -134,7 +134,7 @@ class MQTTBindings:
             
             try:
                 should_register = json.loads(json_args)
-            except json.JSONDecodeError as e:
+            except Exception as e:
                 payload = ""
                 if self.show_payload:
                     payload = ". \n\tPayload was: " + str(json_args)
@@ -243,7 +243,7 @@ class MQTTBindings:
 
     def handle_ipcon_exceptions(self, function, resultDict=None, infoString = None):
         try:
-            return function(self.ipcon)
+            return function(self.ipcon)        
         except Error as e:
             if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC]:
                 if infoString is not None:
@@ -258,6 +258,10 @@ class MQTTBindings:
         except socket.error as e:
             fatal_error(str(e).lower(), ERROR_SOCKET_ERROR)
         except Exception as e:
+            if sys.hexversion < 0x03000000 and isinstance(e, ValueError) and "JSON" in str(e):
+                return json_error(str(e), resultDict)
+            if sys.hexversion >= 0x03000000 and isinstance(e, json.JSONDecodeError):
+                return json_error(str(e), resultDict)
             fatal_error(str(e).lower(), ERROR_OTHER_EXCEPTION)
 
     def authenticate(self, secret, message):
@@ -310,7 +314,7 @@ class MQTTBindings:
         if len(json_args) > 0:
             try:
                 obj = json.loads(json_args)
-            except json.JSONDecodeError as e:
+            except Exception as e:
                 payload = ""
                 if self.show_payload:
                     payload = ". \n\tPayload was: " + str(json_args)
@@ -566,7 +570,7 @@ class MQTTBindings:
     def device_callback_registration(self, device_class, device_name, uid, callbackName, callbackInfo, json_args, path):
         try:
             should_register = json.loads(json_args)
-        except json.JSONDecodeError as e:
+        except Exception as e:
             payload = ""
             if self.show_payload:
                 payload = ". \n\tPayload was: " + str(json_args)
@@ -604,7 +608,7 @@ class MQTTBindings:
         if len(json_args) > 0:
             try:
                 obj = json.loads(json_args)
-            except json.JSONDecodeError as e:
+            except Exception as e:
                 payload = ""
                 if self.show_payload:
                     payload = ". \n\tPayload was: " + str(json_args)
