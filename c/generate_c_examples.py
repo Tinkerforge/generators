@@ -641,12 +641,12 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
 
     def get_c_source(self):
         template = r"""	// Configure threshold for {function_name_comment} "{option_comment}"
-	{device_name_under}_set_{function_name_under}_callback_threshold(&{device_name_initial}{arguments}, '{option_char}', {mininum_maximums});
+	{device_name_under}_set_{function_name_under}_callback_threshold(&{device_name_initial}{arguments}, '{option_char}', {minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_c_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_c_source())
 
         return template.format(device_name_under=self.get_device().get_name().under,
                                device_name_initial=self.get_device().get_initial_name(),
@@ -655,7 +655,7 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
                                arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, CExampleArgumentsMixin):
     def get_c_defines(self):
@@ -672,11 +672,11 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
 	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change});
 """
         templateB = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
         templateC = r"""	// Configure threshold for {function_name_comment} "{option_comment}"
 	// with a debounce period of {period_sec_short} ({period_msec}ms)
-	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -686,12 +686,12 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         else:
             template = templateC
 
-        mininum_maximums = []
+        minimum_maximums = []
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_c_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_c_source())
 
         return template.format(device_name_under=self.get_device().get_name().under,
                                device_name_initial=self.get_device().get_initial_name(),
@@ -703,7 +703,7 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class CExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_c_defines(self):

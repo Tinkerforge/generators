@@ -537,17 +537,17 @@ class TVPLExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
 
     def get_tvpl_source(self):
         template = r"""    # Configure threshold for {function_name_comment} "{option_comment}"
-    {device_name}.set_{function_name_under}_callback_threshold({arguments}"{option_char}", {mininum_maximums})
+    {device_name}.set_{function_name_under}_callback_threshold({arguments}"{option_char}", {minimum_maximums})
 """
         arguments = []
 
         for argument in self.get_arguments():
             arguments.append(argument.get_tvpl_source())
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_tvpl_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_tvpl_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
@@ -555,7 +555,7 @@ class TVPLExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
                                arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class TVPLExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_tvpl_imports(self):

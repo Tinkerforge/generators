@@ -490,12 +490,12 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
 
     def get_java_source(self):
         template = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
-		{device_name}.set{function_name_camel}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackThreshold({arguments}'{option_char}',<BP>{minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_java_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_java_source())
 
         result = template.format(device_name=self.get_device().get_initial_name(),
                                  function_name_camel=self.get_name().camel,
@@ -503,7 +503,7 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
                                  arguments=common.wrap_non_empty('', ',<BP>'.join(self.get_java_arguments()), ',<BP>'),
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
-                                 mininum_maximums=',<BP>'.join(mininum_maximums))
+                                 minimum_maximums=',<BP>'.join(minimum_maximums))
 
         return common.break_string(result, 'CallbackThreshold(')
 
@@ -516,11 +516,11 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
 		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {minimum_maximums});
 """
         templateC = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
 		// with a debounce period of {period_sec_short} ({period_msec}ms)
-		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -532,10 +532,10 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_java_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_java_source())
 
         result = template.format(device_name=self.get_device().get_initial_name(),
                                  function_name_camel=self.get_name().camel,
@@ -547,7 +547,7 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
                                  value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
-                                 mininum_maximums=',<BP>'.join(mininum_maximums))
+                                 minimum_maximums=',<BP>'.join(minimum_maximums))
 
         return common.break_string(result, 'CallbackConfiguration(')
 

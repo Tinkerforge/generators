@@ -460,12 +460,12 @@ class PHPExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunctio
 
     def get_php_source(self):
         template = r"""// Configure threshold for {function_name_comment} "{option_comment}"
-${device_name}->set{function_name_camel}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
+${device_name}->set{function_name_camel}CallbackThreshold({arguments}'{option_char}', {minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_php_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_php_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_camel=self.get_name().camel,
@@ -473,7 +473,7 @@ ${device_name}->set{function_name_camel}CallbackThreshold({arguments}'{option_ch
                                arguments=common.wrap_non_empty('', ', '.join(self.get_php_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class PHPExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, PHPExampleArgumentsMixin):
     def get_php_subroutine(self):
@@ -484,11 +484,11 @@ class PHPExampleCallbackConfigurationFunction(common.ExampleCallbackConfiguratio
 ${device_name_initial}->set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-${device_name_initial}->set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+${device_name_initial}->set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
         templateC = r"""// Configure threshold for {function_name_comment} "{option_comment}"
 // with a debounce period of {period_sec_short} ({period_msec}ms)
-${device_name_initial}->set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+${device_name_initial}->set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -500,10 +500,10 @@ ${device_name_initial}->set{function_name_camel}CallbackConfiguration({arguments
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_php_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_php_source())
 
         return template.format(device_name_initial=self.get_device().get_initial_name(),
                                function_name_camel=self.get_name().camel,
@@ -515,7 +515,7 @@ ${device_name_initial}->set{function_name_camel}CallbackConfiguration({arguments
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('TRUE', 'FALSE', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class PHPExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_php_subroutine(self):

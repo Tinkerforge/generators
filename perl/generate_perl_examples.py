@@ -456,12 +456,12 @@ class PerlExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
 
     def get_perl_source(self):
         template = r"""# Configure threshold for {function_name_comment} "{option_comment}"
-${device_name}->set_{function_name_under}_callback_threshold({arguments}'{option_char}', {mininum_maximums});
+${device_name}->set_{function_name_under}_callback_threshold({arguments}'{option_char}', {minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_perl_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_perl_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
@@ -469,7 +469,7 @@ ${device_name}->set_{function_name_under}_callback_threshold({arguments}'{option
                                arguments=common.wrap_non_empty('', ', '.join(self.get_perl_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class PerlExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, PerlExampleArgumentsMixin):
     def get_perl_subroutine(self):
@@ -480,11 +480,11 @@ class PerlExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
 ${device_name}->set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""# Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-${device_name}->set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+${device_name}->set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
         templateC = r"""# Configure threshold for {function_name_comment} "{option_comment}"
 # with a debounce period of {period_sec_short} ({period_msec}ms)
-${device_name}->set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+${device_name}->set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -496,10 +496,10 @@ ${device_name}->set_{function_name_under}_callback_configuration({arguments}{per
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_perl_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_perl_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
@@ -511,7 +511,7 @@ ${device_name}->set_{function_name_under}_callback_configuration({arguments}{per
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('1', '0', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class PerlExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_perl_subroutine(self):

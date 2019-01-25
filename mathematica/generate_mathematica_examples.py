@@ -501,12 +501,12 @@ class MathematicaExampleCallbackThresholdFunction(common.ExampleCallbackThreshol
     def get_mathematica_source(self):
         template = r"""(*Configure threshold for {function_name_comment} "{option_comment}"*)
 option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option_name_upper}
-{device_name_initial}@Set{function_name_camel}CallbackThreshold[{arguments}option,{mininum_maximums}]
+{device_name_initial}@Set{function_name_camel}CallbackThreshold[{arguments}option,{minimum_maximums}]
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_mathematica_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_mathematica_source())
 
         option_name_uppers = {'o' : 'OUTSIDE', '<': 'SMALLER', '>': 'GREATER'}
 
@@ -519,7 +519,7 @@ option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option
                                option_name_upper=option_name_uppers[self.get_option_char()],
                                option_comment=self.get_option_comment(),
                                arguments=common.wrap_non_empty('', ','.join(self.get_mathematica_arguments()), ','),
-                               mininum_maximums=','.join(mininum_maximums))
+                               minimum_maximums=','.join(minimum_maximums))
 
 class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
@@ -528,12 +528,12 @@ class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConf
 """
         templateB = r"""(*Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold*)
 option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option_name}
-{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{mininum_maximums}]
+{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{minimum_maximums}]
 """
         templateC = r"""(*Configure threshold for {function_name_comment} "{option_comment}"*)
 (*with a debounce period of {period_sec_short} ({period_msec}ms)*)
 option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option_name}
-{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{mininum_maximums}]
+{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{minimum_maximums}]
 """
 
         if self.get_option_char() == None:
@@ -545,10 +545,10 @@ option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_mathematica_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_mathematica_source())
 
         option_names = {None: '', 'x': 'OFF', 'o' : 'OUTSIDE', '<': 'SMALLER', '>': 'GREATER'}
 
@@ -565,7 +565,7 @@ option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,
                                value_has_to_change=common.wrap_non_empty(',', self.get_value_has_to_change('True', 'False', ''), ''),
-                               mininum_maximums=','.join(mininum_maximums))
+                               minimum_maximums=','.join(minimum_maximums))
 
 class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_mathematica_source(self):
