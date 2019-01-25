@@ -169,7 +169,7 @@ publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{ui
                                uid=self.get_example().get_dummy_uid(), 
                                function_name_comment=self.get_comment_name(),
                                function_name_under=self.get_name().under,
-                               arguments=common.wrap_non_empty('{ ', ', '.join(self.get_mqtt_arguments()), '}'))
+                               arguments=common.wrap_non_empty('{', ', '.join(self.get_mqtt_arguments()), '}'))
  
 class MQTTExampleSetterFunction(common.ExampleSetterFunction, MQTTExampleArgumentsMixin):
     def get_mqtt_source(self):
