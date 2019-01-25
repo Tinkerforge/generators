@@ -23,6 +23,9 @@ Module ExampleAuthenticate
             Exit Sub
         End Try
 
+        ' ...reenable auto reconnect mechanism, as described below...
+        sender.SetAutoReconnect(true)
+        
         ' ...then trigger enumerate
         sender.Enumerate()
     End Sub
@@ -47,7 +50,10 @@ Module ExampleAuthenticate
 
         ' Register Enumerate Callback
         AddHandler ipcon.EnumerateCallback, AddressOf EnumerateCB
-
+        
+        ' Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+        ipcon.SetAutoReconnect(false)
+        
         ' Connect to brickd
         ipcon.Connect(HOST, PORT)
 

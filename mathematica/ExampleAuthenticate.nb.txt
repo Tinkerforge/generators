@@ -8,6 +8,9 @@ secret="My Authentication Secret!"
 (* Create IPConnection *)
 ipcon=NETNew["Tinkerforge.IPConnection"]
 
+(* Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.*)
+ipcon@SetAutoReconnect[False]
+
 (* Authenticate each time the connection got (re-)established *)
 ConnectedCB[sender_,connectReason_]:=
  Module[{},
@@ -15,6 +18,10 @@ ConnectedCB[sender_,connectReason_]:=
   If[connectReason==Tinkerforge`IPConnection`CONNECTUREASONUAUTOURECONNECT,Print["Auto-Reconnect"]];
   (* Authenticate first... *)
   sender@Authenticate[secret];
+  
+  (* ...reenable auto reconnect mechanism, as described below... *)
+  sender@SetAutoReconnect[False];
+  
   (* ...then trigger enumerate *)
   sender@Enumerate[]
  ]

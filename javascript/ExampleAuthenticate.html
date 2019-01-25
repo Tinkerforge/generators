@@ -31,6 +31,10 @@
                     ipcon.disconnect();
                 }
                 ipcon = new Tinkerforge.IPConnection(); // Create IP connection
+                
+                // Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+                ipcon.setAutoReconnect(false);
+                
                 ipcon.connect(HOST, PORT,
                     function(error) {
                         textArea.value += 'Error: '+error+ '\n';
@@ -54,6 +58,9 @@
                             function() {
                                 textArea.value += 'Authentication succeeded\n';
 
+                                // ...reenable auto reconnect mechanism, as described below...
+                                ipcon.setAutoReconnect(true);
+                                
                                 // ...then trigger Enumerate
                                 ipcon.enumerate();
                             },

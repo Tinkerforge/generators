@@ -11,6 +11,9 @@ ipcon.connect(HOST, PORT,
     }
 ); // Connect to brickd
 
+// Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+ipcon.setAutoReconnect(false);
+
 // Register Connected Callback
 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
     // Authenticate each time the connection got (re-)established
@@ -27,6 +30,9 @@ ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
             function() {
                 console.log('Authentication succeeded');
 
+                // ...reenable auto reconnect mechanism, as described below...
+                ipcon.setAutoReconnect(true);
+                
                 // ...then trigger Enumerate
                 ipcon.enumerate();
             },

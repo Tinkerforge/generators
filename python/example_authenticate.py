@@ -22,6 +22,9 @@ def cb_connected(connect_reason):
         print("Could not authenticate")
         return
 
+    # ...reenable auto reconnect mechanism, as described below...
+    ipcon.set_auto_reconnect(True)
+
     # ...then trigger enumerate
     ipcon.enumerate()
 
@@ -33,6 +36,9 @@ def cb_enumerate(uid, connected_uid, position, hardware_version, firmware_versio
 if __name__ == "__main__":
     # Create IPConnection
     ipcon = IPConnection()
+
+    # Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+    ipcon.set_auto_reconnect(False)
 
     # Register Connected Callback
     ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, cb_connected)
