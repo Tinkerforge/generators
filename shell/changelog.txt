@@ -138,4 +138,6 @@
 2018-11-28: 2.1.20 (0e3b130)
 - Add get/set-samples-per-second functions to Humidity Bricklet 2.0 API
 - Add button, slider, graph and tab functions to LCD 128x64 Bricklet API
-- Check for python 2.6 instead of 2.5
+
+<unknown>: 2.1.21 (<unknown>)
+- Check for Python 2.6 instead of 2.5 to match Python API bindings requirements
