@@ -18,10 +18,10 @@ ConnectedCB[sender_,connectReason_]:=
   If[connectReason==Tinkerforge`IPConnection`CONNECTUREASONUAUTOURECONNECT,Print["Auto-Reconnect"]];
   (* Authenticate first... *)
   sender@Authenticate[secret];
-  
-  (* ...reenable auto reconnect mechanism, as described below... *)
+
+  (* ...reenable auto reconnect mechanism, as described above... *)
   sender@SetAutoReconnect[False];
-  
+
   (* ...then trigger enumerate *)
   sender@Enumerate[]
  ]

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/Tinkerforge/go-api-bindings/ipconnection"
 )
 
@@ -31,7 +30,7 @@ func main() {
 		}
 
 		fmt.Println("Authentication succeded")
-		ipcon.SetAutoReconnect(true) //...reenable auto reconnect mechanism, as described below,
+		ipcon.SetAutoReconnect(true) // ...reenable auto reconnect mechanism, as described above,
 		ipcon.Enumerate()            // then trigger enumerate.
 	})
 

@@ -17,7 +17,7 @@ fn authenticate(reason: ConnectReason, request_sender: &mut IpConnectionRequestS
             if let Ok(_) = rx.recv() {
                 println!("Authentication succeded");
 
-                //Reenable auto reconnect mechanism, as described below.
+                // ...reenable auto reconnect mechanism, as described below...
                 request_sender.set_auto_reconnect(true);
 
                 // ...then trigger enumerate
@@ -55,7 +55,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let connect_receiver = ipcon.get_connect_callback_receiver();
 
-    // Spawn thread to react to connect callback messages. 
+    // Spawn thread to react to connect callback messages.
     // This thread must not be terminated or joined,
     // as it will end when the IP connection (and the receiver's sender) is dropped.
     let mut request_sender = ipcon.get_request_sender();

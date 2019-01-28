@@ -23,9 +23,9 @@ void cb_connected(uint8_t connect_reason, void *user_data) {
 		printf("Authentication succeeded\n");
 	}
 
-	//...reenable auto reconnect mechanism, as described below...
-	ipcon_set_auto_reconnect(ipcon, true) 
-	
+	// ...reenable auto reconnect mechanism, as described below...
+	ipcon_set_auto_reconnect(ipcon, true)
+
 	// ...then trigger enumerate
 	ipcon_enumerate(ipcon);
 }
@@ -46,8 +46,9 @@ int main(void) {
 	// Create IP Connection
 	IPConnection ipcon;
 	ipcon_create(&ipcon);
-    
-    // Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+
+	// Disable auto reconnect mechanism, in case we have the wrong secret.
+	// If the authentication is successful, reenable it.
 	ipcon_set_auto_reconnect(&ipcon, false);
 
 	// Register connected callback to "cb_connected"

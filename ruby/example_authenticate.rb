@@ -12,7 +12,8 @@ SECRET = 'My Authentication Secret!'
 # Create IP connection
 ipcon = IPConnection.new
 
-# Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+# Disable auto reconnect mechanism, in case we have the wrong secret.
+# If the authentication is successful, reenable it.
 ipcon.set_auto_reconnect false
 
 # Authenticate each time the connection got (re-)established
@@ -29,9 +30,9 @@ ipcon.register_callback(IPConnection::CALLBACK_CONNECTED) do |connect_reason|
     ipcon.authenticate SECRET
     puts 'Authentication succeeded'
 
-    # ...reenable auto reconnect mechanism, as described below...
+    # ...reenable auto reconnect mechanism, as described above...
     ipcon.set_auto_reconnect true
-    
+
     # ...then trigger enumerate
     ipcon.enumerate
   rescue

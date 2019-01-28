@@ -13,9 +13,10 @@ public class ExampleAuthenticate {
 		// Note: Declare ipcon final, so the listener can access it
 		final IPConnection ipcon = new IPConnection(); // Create IP Connection
 
-		// Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+		// Disable auto reconnect mechanism, in case we have the wrong secret.
+		// If the authentication is successful, reenable it.
 		ipcon.setAutoReconnect(false);
-		
+
 		// Register enumerate listener and print incoming information
 		ipcon.addConnectedListener(new IPConnection.ConnectedListener() {
 			public void connected(short connectReason) {
@@ -40,7 +41,7 @@ public class ExampleAuthenticate {
 
 				// ...reenable auto reconnect mechanism, as described below...
 				ipcon.setAutoReconnect(true);
-				
+
 				// ...then trigger enumerate
 				try {
 					ipcon.enumerate();

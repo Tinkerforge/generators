@@ -10,7 +10,8 @@ use constant SECRET => 'My Authentication Secret!';
 # Create IPConnection
 our $ipcon = Tinkerforge::IPConnection->new();
 
-# Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+# Disable auto reconnect mechanism, in case we have the wrong secret.
+# If the authentication is successful, reenable it.
 $ipcon->set_auto_reconnect(0);
 
 # Authenticate each time the connection got (re-)established
@@ -39,9 +40,9 @@ sub cb_connected
 		return;
 	}
 
-	# ...reenable auto reconnect mechanism, as described below...
+	# ...reenable auto reconnect mechanism, as described above...
 	$ipcon->set_auto_reconnect(1);
-	
+
 	# ...then trigger Enumerate
 	$ipcon->enumerate();
 }

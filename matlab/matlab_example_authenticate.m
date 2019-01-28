@@ -9,9 +9,10 @@ function matlab_example_authenticate()
 
     ipcon = handle(IPConnection(), 'CallbackProperties'); % Create IP connection
 
-    % Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+    % Disable auto reconnect mechanism, in case we have the wrong secret.
+    % If the authentication is successful, reenable it.
     ipcon.setAutoReconnect(false)
-    
+
     % Register Connected Callback
     set(ipcon, 'ConnectedCallback', @(h, e) cb_connected(e));
 
@@ -45,9 +46,9 @@ function cb_connected(e)
         return
     end
 
-    % ...reenable auto reconnect mechanism, as described below...
+    % ...reenable auto reconnect mechanism, as described above...
     ipcon.setAutoReconnect(true)
-    
+
     % ...then trigger enumerate
     ipcon.enumerate();
 end

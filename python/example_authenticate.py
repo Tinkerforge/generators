@@ -37,7 +37,8 @@ if __name__ == "__main__":
     # Create IPConnection
     ipcon = IPConnection()
 
-    # Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.
+    # Disable auto reconnect mechanism, in case we have the wrong secret.
+    # If the authentication is successful, reenable it.
     ipcon.set_auto_reconnect(False)
 
     # Register Connected Callback

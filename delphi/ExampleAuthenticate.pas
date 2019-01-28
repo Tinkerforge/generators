@@ -70,7 +70,8 @@ begin
   { Create IP Connection }
   ipcon := TIPConnection.Create;
 
-  { Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it. }
+  { Disable auto reconnect mechanism, in case we have the wrong secret.
+    If the authentication is successful, reenable it. }
   ipcon.SetAutoReconnect(false);
 
   { Register connected callback to "ConnectedCB" }
