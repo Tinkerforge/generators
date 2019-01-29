@@ -28,3 +28,6 @@
 
 2018-12-21: 2.0.7 (506e8dc)
 - Documented changed compiler requirements.
+
+2019-01-29: 2.0.8 (<unknown>)
+- Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
