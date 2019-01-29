@@ -221,6 +221,8 @@ class CExampleArgument(common.ExampleArgument, CTypeMixin):
         value = self.get_value()
 
         if isinstance(value, list):
+            if self.get_element().get_cardinality() < 0:
+                return '({0}[]){{{1}}}, {2}'.format(self.get_c_type(), ', '.join([helper(item) for item in value]), len(value))
             # FIXME: this fails in G++ with "error: taking address of temporary array"
             return '({0}[]){{{1}}}'.format(self.get_c_type(), ', '.join([helper(item) for item in value]))
 
