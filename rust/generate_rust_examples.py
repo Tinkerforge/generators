@@ -46,7 +46,7 @@ class RustExample(common.Example):
     def get_rust_source(self):
         template = r"""use std::{{io, error::Error}};
 {imports}
-use tinkerforge::{{ip_connection::IpConnection, 
+use tinkerforge::{{ip_connection::IpConnection,
                   {device_name_under}_{device_category_under}::*}};
 {incomplete}{description}
 
@@ -121,7 +121,7 @@ fn main() -> Result<(), Box<dyn Error>> {{
                                device_category_under=self.get_device().get_category().under,
                                device_category_camel=self.get_device().get_category().camel_abbrv,
                                device_name_under=self.get_device().get_name().under,
-                               device_name_camel=self.get_device().get_name().camel_abbrv,                               
+                               device_name_camel=self.get_device().get_name().camel_abbrv,
                                device_name_initials=self.get_device().get_initial_name(),
                                device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
@@ -154,9 +154,9 @@ class RustExampleArgument(common.ExampleArgument):
 
         value = self.get_value()
 
-        if isinstance(value, list):            
+        if isinstance(value, list):
             fn = self.get_function()
-            packets_of_function = [packet for packet in self.get_device().get_packets()  
+            packets_of_function = [packet for packet in self.get_device().get_packets()
                                             if (packet.get_name().under == fn.get_name().under) # compare name directly
                                             or (len(packet.get_name().under.split("_")) > 2 and packet.get_name(skip=-2).under == fn.get_name().under)] # or try without "low level"
             assert len(packets_of_function) == 1, "Found not exactly one packet in device %s for function %s. Maybe the example's configuration is wrong? (Found %d packets)" % (self.get_device().get_name().under, fn.get_name().under, len(packets_of_function))
@@ -194,7 +194,7 @@ class RustExampleParameter(common.ExampleParameter):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -323,7 +323,7 @@ class RustExampleResult(common.ExampleResult):
                                               binary=binary,
                                               unit_param=unit_param,
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                              divisor=self.get_formatted_divisor(' as f32 /{0}'),                                              
+                                              divisor=self.get_formatted_divisor(' as f32 /{0}'),
                                               comment=self.get_formatted_comment(' // {0}')))
 
         return result
@@ -343,7 +343,7 @@ class RustExampleGetterFunction(common.ExampleGetterFunction, RustExampleArgumen
         else:
             return self.get_results()[0].get_name().under
 
-    def get_rust_source(self):        
+    def get_rust_source(self):
         template = r"""{global_line_prefix}		// Get current {function_name_comment}.
 {global_line_prefix}let {result_name} = {device_name_initials}.{function_name_under}({arguments}).recv()?;
 {write_lines}
@@ -355,7 +355,7 @@ class RustExampleGetterFunction(common.ExampleGetterFunction, RustExampleArgumen
         #    result_name = self.get_name().under+"_result"
         #else:
         #    result_name = self.get_results()[0].get_name().under
-        
+
         write_lines = []
         for result in self.get_results():
             write_lines += result.get_rust_write_lines()
@@ -371,9 +371,9 @@ class RustExampleGetterFunction(common.ExampleGetterFunction, RustExampleArgumen
         result = template.format(device_name_under=self.get_device().get_name().under,
                                  device_name_initials=self.get_device().get_initial_name(),
                                  device_category_under = self.get_device().get_category().under,
-                                 result_name = result_name,                                 
+                                 result_name = result_name,
                                  function_name_under=self.get_name().under,
-                                 function_name_comment=self.get_comment_name(),                                 
+                                 function_name_comment=self.get_comment_name(),
                                  write_lines='\n'.join(write_lines).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                  arguments=',<BP>'.join(arguments),
                                  global_line_prefix=global_line_prefix)
@@ -412,11 +412,11 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
         #TODO: high level callback receivers send Option<Result>, so we need to match them here. OTOH streaming examples are incomplete anyway, so this can be done manually.
         template = r"""     let {function_name_under}_receiver = {device_name_initials}.get_{function_name_under}_callback_receiver();
 
-        // Spawn thread to handle received callback messages. 
+        // Spawn thread to handle received callback messages.
         // This thread ends when the `{device_name_initials}` object
         // is dropped, so there is no need for manual cleanup.
         thread::spawn(move || {{
-            for {function_name_under} in {function_name_under}_receiver {{{match_expr}           
+            for {function_name_under} in {function_name_under}_receiver {{{match_expr}
                 {write_lines}{extra_message}
             {match_expr_end}}}
         }});
@@ -449,7 +449,7 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(write_lines) > 0:
             extra_message = '\n' + extra_message
 
-        result = template.format(match_expr = match_expr, 
+        result = template.format(match_expr = match_expr,
                                  match_expr_end = match_expr_end,
                                  device_name_under=self.get_device().get_name().under,
                                  device_name_initials=self.get_device().get_initial_name(),
@@ -615,7 +615,7 @@ class RustExampleSpecialFunction(common.ExampleSpecialFunction):
         elif type_ == 'wait':
             return None
         elif type_ == 'loop_header':
-            template = '{comment}\t\tfor i in 0..{limit}{{\n'
+            template = '{comment}\t\tfor _i in 0..{limit}{{\n'
             global_line_prefix = '\t'
 
             return template.format(limit=self.get_loop_header_limit(),
