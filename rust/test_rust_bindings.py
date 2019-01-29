@@ -41,8 +41,22 @@ class RustExamplesTester(common.Tester):
             for file in filenames:
                 shutil.move(os.path.join(dirpath, file), os.path.join(example_path, dirpath+'_'+file))
 
+        cargo_folder = os.path.join(os.path.dirname(path), ".cargo")
+
+        os.makedirs(cargo_folder)
+        with open(os.path.join(cargo_folder, "config"), 'w+') as f:
+            f.write("""[target.x86_64-unknown-linux-gnu]
+runner = ["/tmp/tester/rust/nothing.sh"]""")
+
+        with open(os.path.join(os.path.dirname(path), "nothing.sh"), 'w+') as f:
+            f.write("#!/bin/sh\n")
+
+        os.chmod(os.path.join(os.path.dirname(path), "nothing.sh"), 0o777)
+
         args = ['cargo',
                 'test',
+                '-q',
+                '--target=x86_64-unknown-linux-gnu',
                 '--release',
                 '--examples',
                 '--manifest-path',
