@@ -94,7 +94,6 @@ den :cb:`Analog Value` Callback zu nutzen und die Periode mit
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Position Callback Period',

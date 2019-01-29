@@ -34,7 +34,7 @@ class RubyTester(common.Tester):
         common.Tester.__init__(self, 'ruby', '.rb', root_dir, subdirs=['examples', 'source'], extra_paths=extra_paths)
 
     def test(self, cookie, path, extra):
-        args = ['/usr/bin/ruby',
+        args = ['ruby',
                 '-wc',
                 path]
 

@@ -268,8 +268,6 @@ The default value is (0, false).
 """,
 'de':
 """
-Dieser Callback kann pro Kanal konfiguriert werden.
-
 Die Periode in ms ist die Periode mit der der :cb:`All Input Value`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
@@ -439,7 +437,7 @@ Default values: 0 (edge type) and 100ms (debounce time)
 Konfiguriert den Flankenzähler für einen bestimmten Kanal.
 
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
-steigende, fallende oder beide Flanken gezählt werden für Channels die als Eingang
+steigende, fallende oder beide Flanken gezählt werden für Kanäle die als Eingang
 konfiguriert sind. Mögliche Flankentypen sind:
 
 * 0 = steigend (Standard)
@@ -475,7 +473,7 @@ Returns the edge type and debounce time for the selected channel as set by
 """,
 'de':
 """
-Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Channel zurück,
+Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Kanal zurück,
 wie von :func:`Set Edge Count Configuration` gesetzt.
 """
 }]
@@ -485,8 +483,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'in'),   # 1/10 Hz
-             ('Duty Cycle', 'uint16', 1, 'in')], # 1/100 %
+             ('Frequency', 'uint32', 1, 'in'),
+             ('Duty Cycle', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -498,7 +496,7 @@ You need to set the channel to output before you call this function, otherwise i
 be ignored. To turn the PWM off again, you can set the frequency to 0 or any other
 function that changes a value of the channel (e.g. :func:`Set Selected Value`).
 
-The maximum frequency value is 320000000 (32MHz). The maximum duty cycle value is 
+The maximum frequency value is 320000000 (32MHz). The maximum duty cycle value is
 10000 (100%).
 
 The default values are 0, 0.
@@ -525,9 +523,9 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'out'),   # 1/10 Hz
-             ('Duty Cycle', 'uint16', 1, 'out')], # 1/100 %
-'since_firmware': [1, 0, 0], 
+             ('Frequency', 'uint32', 1, 'out'),
+             ('Duty Cycle', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -616,4 +614,21 @@ Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 Zustand des Kanals (der Zustand nach dem Monoflop).
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Output',
+'functions': [('setter', 'Set Configuration', [('uint8', 3), ('char', 'o'), ('bool', False)], 'Configure channel 3 as output low', None),
+              ('loop_header', 10, 'Set channel 3 alternating high/low 10 times with 100 ms delay'),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Selected Value', [('uint8', 3), ('bool', True)], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Selected Value', [('uint8', 3), ('bool', False)], None, None),
+              ('loop_footer',)]
+})
+
+com['examples'].append({
+'name': 'Interrupt',
+'functions': [('callback', ('Input Value', 'input value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
+              ('callback_configuration', ('Input Value', 'input value (channel 1)'), [('uint8', 1)], 500, False, None, [])]
 })

@@ -1,0 +1,30 @@
+2018-11-08: 2.0.0 (78e2e85)
+- Initial version
+
+2018-11-08: 2.0.1 (54b1772)
+- Added readme.md and licenses
+
+2018-11-08: 2.0.2 (2ee80c5)
+- Fixed readme link in Cargo.toml
+
+2018-11-08: 2.0.3 (bb98b1e)
+- Fixed github links in readme.md
+
+2018-11-21: 2.0.4 (1e56121)
+- Fixed :func: links
+- Relaxed IpConnection::connect type parameter requirements
+- Fixed some documentation
+- Added link to Tinkerforge docs and logo
+
+2018-11-21: 2.0.5 (b98a86f)
+- Module description and link to tinkerforge docs had no separating newline.
+
+2018-12-21: 2.0.6 (e18c208)
+- Removed duplicated assignment in Device::set_response_expected_all
+- Fixed infinite loop when stream reading out of sync
+- Implemented get_api_version
+- Fixed name collision with stabilized (from/to)_le_byte methods.
+- Fixed race condition in IpConnection setters.
+
+2018-12-21: 2.0.7 (506e8dc)
+- Documented changed compiler requirements.

@@ -74,15 +74,15 @@ class CExamplesTester(common.Tester):
         args = []
 
         if self.compiler == 'gcc':
-            args += ['/usr/bin/gcc', '-std=c99', '-pthread']
+            args += ['gcc', '-std=c99', '-pthread']
         elif self.compiler == 'g++':
-            args += ['/usr/bin/g++', '-std=c++98', '-pthread']
+            args += ['g++', '-std=c++98', '-pthread']
         elif self.compiler == 'mingw32-gcc':
-            args += ['/usr/bin/x86_64-w64-mingw32-gcc', '-Wno-error=return-type']
+            args += ['x86_64-w64-mingw32-gcc', '-Wno-error=return-type']
         elif self.compiler == 'mingw32-g++':
-            args += ['/usr/bin/x86_64-w64-mingw32-g++', '-Wno-error=return-type']
+            args += ['x86_64-w64-mingw32-g++', '-Wno-error=return-type']
         elif self.compiler == 'scan-build clang':
-            args += ['/usr/bin/scan-build', '/usr/bin/clang', '-std=c99', '-pthread']
+            args += ['scan-build', 'clang', '-std=c99', '-pthread']
         else:
             raise common.GeneratorError('Invalid compiler ' + self.compiler)
 

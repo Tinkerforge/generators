@@ -108,7 +108,7 @@ class LabVIEWZipGenerator(common.ZipGenerator):
             os.makedirs(os.path.join(self.tmp_dir, 'net{0}0'.format(sdk)))
 
             with common.ChangedDirectory(self.tmp_dir):
-                common.execute(['/usr/bin/mcs',
+                common.execute(['mcs',
                                 '/optimize+',
                                 '/warn:4',
                                 '/sdk:{0}'.format(sdk),

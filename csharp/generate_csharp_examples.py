@@ -174,15 +174,19 @@ class CSharpExampleParameter(common.ExampleParameter):
 
     def get_csharp_write_lines(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '\t\t{else_}if({name} == {constant_name})\n\t\t{{\n\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n\t\t}}'
+            template = '{global_line_prefix}\t\t{else_}if({name} == {constant_name})\n{global_line_prefix}\t\t{{\n{global_line_prefix}\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t}}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='else ' if len(result) > 0 else '',
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_csharp_source(),
@@ -191,7 +195,7 @@ class CSharpExampleParameter(common.ExampleParameter):
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+            template = '{global_line_prefix}\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -211,7 +215,8 @@ class CSharpExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().headless,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().headless,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -229,7 +234,12 @@ class CSharpExampleResult(common.ExampleResult):
         if name == self.get_device().get_initial_name():
             name += '_'
 
-        return csharp_common.get_csharp_type(self.get_type().split(':')[0], 1), name
+        type_ = csharp_common.get_csharp_type(self.get_type().split(':')[0], 1)
+
+        if self.get_cardinality() > 1 and type_ != 'string':
+            type_ += '[]'
+
+        return type_, name
 
     def get_csharp_variable_reference(self):
         template = 'out {name}'
@@ -245,12 +255,13 @@ class CSharpExampleResult(common.ExampleResult):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '\t\t{else_}if({name} == {constant_name})\n\t\t{{\n\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n\t\t}}'
+            template = '{global_line_prefix}\t\t{else_}if({name} == {constant_name})\n{global_line_prefix}\t\t{{\n\t\t\tConsole.WriteLine("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t}}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='else ' if len(result) > 0 else '',
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_csharp_source(),
@@ -259,7 +270,7 @@ class CSharpExampleResult(common.ExampleResult):
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+            template = '{global_line_prefix}\t\tConsole.WriteLine("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -284,7 +295,8 @@ class CSharpExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -303,13 +315,13 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
         return None
 
     def get_csharp_source(self):
-        templateA = r"""		// Get current {function_name_comment}
-{variable_declarations} = {device_name}.{function_name_camel}({arguments});
+        templateA = r"""{global_line_prefix}		// Get current {function_name_comment}
+{global_line_prefix}{variable_declarations} = {device_name}.{function_name_camel}({arguments});
 {write_lines}
 """
-        templateB = r"""		// Get current {function_name_comment}
-{variable_declarations};
-		{device_name}.{function_name_camel}({arguments});
+        templateB = r"""{global_line_prefix}		// Get current {function_name_comment}
+{global_line_prefix}{variable_declarations};
+{global_line_prefix}		{device_name}.{function_name_camel}({arguments});
 {write_lines}
 """
         variable_declarations = []
@@ -365,7 +377,8 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction, CSharpExampleArg
                                  function_name_comment=self.get_comment_name(),
                                  variable_declarations=variable_declarations,
                                  write_lines='\n'.join(write_lines).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
-                                 arguments=',<BP>'.join(arguments))
+                                 arguments=',<BP>'.join(arguments),
+                                 global_line_prefix=global_line_prefix)
 
         return common.break_string(result, '{}('.format(self.get_name().camel))
 
@@ -500,12 +513,12 @@ class CSharpExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
 
     def get_csharp_source(self):
         template = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
-		{device_name}.Set{function_name_camel}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
+		{device_name}.Set{function_name_camel}CallbackThreshold({arguments}'{option_char}', {minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_csharp_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_csharp_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_camel=self.get_name().camel,
@@ -513,7 +526,7 @@ class CSharpExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
                                arguments=common.wrap_non_empty('', ', '.join(self.get_csharp_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, CSharpExampleArgumentsMixin):
     def get_csharp_imports(self):
@@ -527,11 +540,11 @@ class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
 		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
         templateC = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
 		// with a debounce period of {period_sec_short} ({period_msec}ms)
-		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+		{device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -543,10 +556,10 @@ class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_csharp_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_csharp_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_camel=self.get_name().camel,
@@ -557,7 +570,7 @@ class CSharpExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class CSharpExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_csharp_imports(self):

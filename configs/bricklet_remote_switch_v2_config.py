@@ -572,7 +572,7 @@ com['examples'].append({
               ('callback', ('Remote Status A', 'remote status a'), [
                 (('House Code', 'House Code'), 'uint8', 1, None, None, None),
                 (('Receiver Code', 'Receiver Code'), 'uint8', 1, None, None, None),
-                (('Switch To', 'Switch To'), 'uint8', 1, None, None, None),
+                (('Switch To', 'Switch To'), 'uint8:constant', 1, None, None, None),
                 (('Repeats', 'Repeats'), 'uint16', 1, None, None, None)
               ],
               None, None)]

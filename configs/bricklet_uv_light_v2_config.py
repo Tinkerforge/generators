@@ -18,12 +18,12 @@ com = {
     'display_name': 'UV Light 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Measures UV light',
-        'de': 'Misst UV-Licht'
+        'en': 'Measures UV-A, UV-B and UV index',
+        'de': 'Misst UV-A, UV-B und UV Index'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []
@@ -204,4 +204,23 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration`
 gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get UVA', 'UV-A'), [(('UVA', 'UV-A'), 'int32', 1, 10.0, 'mW/m²', None)], []),
+              ('getter', ('Get UVB', 'UV-B'), [(('UVB', 'UV-B'), 'int32', 1, 10.0, 'mW/m²', None)], []),
+              ('getter', ('Get UVI', 'UV index'), [(('UVI', 'UV Index'), 'int32', 1, 10.0, None, None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('UVI', 'UV index'), [(('UVI', 'UV Index'), 'int32', 1, 10.0, None, None)], None, None),
+              ('callback_configuration', ('UVI', 'UVI'), [], 1000, False, 'x', [(0, 0)])]
+})
+
+com['examples'].append({
+'name': 'Threshold',
+'functions': [('callback', ('UVI', 'UV index'), [(('UVI', 'UV Index'), 'int32', 1, 10.0, None, None)], None, 'UV index > 3. Use sunscreen!'),
+              ('callback_configuration', ('UVI', 'UV index'), [], 1000, False, '>', [(3, 0)])]
 })

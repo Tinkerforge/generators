@@ -36,7 +36,9 @@ class CTypeMixin(object):
     def get_c_type(self):
         type_ = self.get_type().split(':')[0]
 
-        if 'int' in type_:
+        if type_ == 'string':
+            type_ = 'char'
+        elif 'int' in type_:
             type_ += '_t'
 
         return type_
@@ -219,6 +221,7 @@ class CExampleArgument(common.ExampleArgument, CTypeMixin):
         value = self.get_value()
 
         if isinstance(value, list):
+            # FIXME: this fails in G++ with "error: taking address of temporary array"
             return '({0}[]){{{1}}}'.format(self.get_c_type(), ', '.join([helper(item) for item in value]))
 
         return helper(value)
@@ -259,15 +262,19 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
 
     def get_c_printfs(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+                
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse ' if len(result) > 0 else global_line_prefix + '\t',
                                               name=self.get_name().under,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_c_source(),
@@ -281,7 +288,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
             #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
-            template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+            template = '{global_line_prefix}\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -292,7 +299,8 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().under,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().under,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -337,12 +345,13 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\tprintf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse ' if len(result) > 0 else global_line_prefix + '\t',
                                               name=self.get_name().under,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_c_source(),
@@ -356,7 +365,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
             #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
-            template = '\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+            template = '{global_line_prefix}\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -372,7 +381,8 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -405,12 +415,12 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         return None
 
     def get_c_source(self):
-        template = r"""	// Get current {function_name_comment}
-{variable_declarations};
-	if({device_name_under}_{function_name_under}(&{device_name_initial}{arguments}{variable_references}) < 0) {{
-		fprintf(stderr, "Could not get {function_name_comment}, probably timeout\n");
-		return 1;
-	}}
+        template = r"""{global_line_prefix}	// Get current {function_name_comment}
+{global_line_prefix}{variable_declarations};
+{global_line_prefix}	if({device_name_under}_{function_name_under}(&{device_name_initial}{arguments}{variable_references}) < 0) {{
+{global_line_prefix}		fprintf(stderr, "Could not get {function_name_comment}, probably timeout\n");
+{global_line_prefix}		return 1;
+{global_line_prefix}	}}
 
 {printfs}
 """
@@ -450,7 +460,8 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         while None in printfs:
             printfs.remove(None)
 
-        result = template.format(device_name_under=self.get_device().get_name().under,
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_name_under=self.get_device().get_name().under,
                                  device_name_initial=self.get_device().get_initial_name(),
                                  function_name_comment=self.get_comment_name(),
                                  function_name_under=self.get_name().under,
@@ -630,12 +641,12 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
 
     def get_c_source(self):
         template = r"""	// Configure threshold for {function_name_comment} "{option_comment}"
-	{device_name_under}_set_{function_name_under}_callback_threshold(&{device_name_initial}{arguments}, '{option_char}', {mininum_maximums});
+	{device_name_under}_set_{function_name_under}_callback_threshold(&{device_name_initial}{arguments}, '{option_char}', {minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_c_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_c_source())
 
         return template.format(device_name_under=self.get_device().get_name().under,
                                device_name_initial=self.get_device().get_initial_name(),
@@ -644,7 +655,7 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
                                arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, CExampleArgumentsMixin):
     def get_c_defines(self):
@@ -661,11 +672,11 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
 	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change});
 """
         templateB = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
         templateC = r"""	// Configure threshold for {function_name_comment} "{option_comment}"
 	// with a debounce period of {period_sec_short} ({period_msec}ms)
-	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -675,12 +686,12 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         else:
             template = templateC
 
-        mininum_maximums = []
+        minimum_maximums = []
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_c_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_c_source())
 
         return template.format(device_name_under=self.get_device().get_name().under,
                                device_name_initial=self.get_device().get_initial_name(),
@@ -692,7 +703,7 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class CExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_c_defines(self):

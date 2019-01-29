@@ -55,8 +55,8 @@ den :cb:`Ambient Temperature` Callback zu nutzen und die Periode mit
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Ambient Temperature', 
+    packets   = com['packets'],
+    name      = 'Get Ambient Temperature',
     data_name = 'Temperature',
     data_type = 'int16',
     doc       = ambient_temperature_doc
@@ -98,8 +98,8 @@ den :cb:`Object Temperature` Callback zu nutzen und die Periode mit
 }
 
 add_callback_value_function(
-    packets   = com['packets'], 
-    name      = 'Get Object Temperature', 
+    packets   = com['packets'],
+    name      = 'Get Object Temperature',
     data_name = 'Temperature',
     data_type = 'int16',
     doc       = object_temperature_doc

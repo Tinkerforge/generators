@@ -148,10 +148,13 @@ class RubyExampleParameter(common.ExampleParameter):
 
     def get_ruby_puts(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+                
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '  {else_}if {name} == {constant_name}\n    puts "{label}: {constant_title}"{comment}'
+            template = '{global_line_prefix}  {else_}if {name} == {constant_name}\n{global_line_prefix}    puts "{label}: {constant_title}"{comment}'
             constant_group = self.get_constant_group()
             name = self.get_name().under
 
@@ -161,7 +164,8 @@ class RubyExampleParameter(common.ExampleParameter):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='els' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='els' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_ruby_source(),
@@ -170,7 +174,7 @@ class RubyExampleParameter(common.ExampleParameter):
 
             result = ['\r' + '\n'.join(result) + '\n  end\r']
         else:
-            template = '  puts "{label}: #{{{printf_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
+            template = '{global_line_prefix}  puts "{label}: #{{{printf_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -198,7 +202,8 @@ class RubyExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
@@ -223,7 +228,7 @@ class RubyExampleResult(common.ExampleResult):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if {array_prefix}{name} == {constant_name}\n  puts "{label}: {constant_title}"{comment}'
+            template = '{global_line_prefix}{else_}if {array_prefix}{name} == {constant_name}\n{global_line_prefix}  puts "{label}: {constant_title}"{comment}'
             constant_group = self.get_constant_group()
 
             if len(self.get_function().get_results()) > 1:
@@ -240,7 +245,8 @@ class RubyExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='els' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='els' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name(),
                                               array_prefix=array_prefix,
@@ -250,7 +256,7 @@ class RubyExampleResult(common.ExampleResult):
 
             result = ['\r' + '\n'.join(result) + '\nend\r']
         else:
-            template = 'puts "{label}: #{{{printf_prefix}{array_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
+            template = '{global_line_prefix}puts "{label}: #{{{printf_prefix}{array_prefix}{name}{index}{divisor}{printf_suffix}}}{unit}"{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -284,7 +290,8 @@ class RubyExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               array_prefix=array_prefix,
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
@@ -298,8 +305,8 @@ class RubyExampleResult(common.ExampleResult):
 
 class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
-        template = r"""# Get current {function_name_comment}{array_content}
-{variables} = {device_name}.{function_name_under}{arguments}
+        template = r"""{global_line_prefix}# Get current {function_name_comment}{array_content}
+{global_line_prefix}{variables} = {device_name}.{function_name_under}{arguments}
 {puts}
 """
         comments = []
@@ -327,7 +334,8 @@ class RubyExampleGetterFunction(common.ExampleGetterFunction, RubyExampleArgumen
         if arguments.strip().startswith('('):
             arguments = '({0})'.format(arguments.strip())
 
-        result = template.format(device_name=self.get_device().get_initial_name(),
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_name=self.get_device().get_initial_name(),
                                  function_name_under=self.get_name().under,
                                  function_name_comment=self.get_comment_name(),
                                  array_content=array_content,
@@ -440,12 +448,12 @@ class RubyExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshold
 class RubyExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
         template = r"""# Configure threshold for {function_name_comment} "{option_comment}"
-{device_name}.set_{function_name_under}_callback_threshold {arguments}'{option_char}', {mininum_maximums}
+{device_name}.set_{function_name_under}_callback_threshold {arguments}'{option_char}', {minimum_maximums}
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_ruby_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_ruby_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
@@ -453,7 +461,7 @@ class RubyExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
                                arguments=common.wrap_non_empty('', ', '.join(self.get_ruby_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, RubyExampleArgumentsMixin):
     def get_ruby_source(self):
@@ -461,11 +469,11 @@ class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
 {device_name}.set_{function_name_under}_callback_configuration {arguments}{period_msec}{value_has_to_change}
 """
         templateB = r"""# Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-{device_name}.set_{function_name_under}_callback_configuration {arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums}
+{device_name}.set_{function_name_under}_callback_configuration {arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums}
 """
         templateC = r"""# Configure threshold for {function_name_comment} "{option_comment}"
 # with a debounce period of {period_sec_short} ({period_msec}ms)
-{device_name}.set_{function_name_under}_callback_configuration {arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums}
+{device_name}.set_{function_name_under}_callback_configuration {arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums}
 """
 
         if self.get_option_char() == None:
@@ -477,10 +485,10 @@ class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_ruby_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_ruby_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
@@ -492,7 +500,7 @@ class RubyExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class RubyExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_ruby_source(self):

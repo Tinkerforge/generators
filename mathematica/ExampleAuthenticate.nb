@@ -1,150 +1,49 @@
-(*CacheID: 234*)
-(* Internal cache information:
-NotebookFileLineBreakTest
-NotebookFileLineBreakTest
-NotebookDataPosition[         0,          0]
-NotebookDataLength[      5462,        149]
-NotebookOptionsPosition[      5031,        128]
-NotebookOutlinePosition[      5369,        143]
-CellTagsIndexPosition[      5326,        140]
-WindowFrame->Normal*)
-
-(* Beginning of Notebook Content *)
 Notebook[{
-Cell[BoxData[{
- RowBox[{"Needs", "[", "\"\<NETLink`\>\"", "]"}], "\n", 
- RowBox[{"LoadNETAssembly", "[", 
-  RowBox[{"\"\<Tinkerforge\>\"", ",", 
-   RowBox[{
-    RowBox[{"NotebookDirectory", "[", "]"}], "<>", "\"\<..\>\""}]}], 
-  "]"}]}], "Input",
- CellChangeTimes->{{3.605533753948743*^9, 3.605533754226322*^9}, 
-   3.605935110340149*^9, {3.605935214159247*^9, 3.605935214594624*^9}, {
-   3.605935304897544*^9, 3.605935307777445*^9}}],
-
-Cell[BoxData[{
- RowBox[{"host", "=", "\"\<localhost\>\""}], "\n", 
- RowBox[{"port", "=", "4223"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"secret", "=", "\"\<My Authentication Secret!\>\""}], 
-  "\[IndentingNewLine]", "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{"Create", " ", "IPConnection"}], " ", 
-   "*)"}]}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"ipcon", "=", 
-   RowBox[{"NETNew", "[", "\"\<Tinkerforge.IPConnection\>\"", "]"}]}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  RowBox[{"(*", " ", 
-   RowBox[{
-   "Authenticate", " ", "each", " ", "time", " ", "the", " ", "connection", 
-    " ", "got", " ", 
-    RowBox[{"(", 
-     RowBox[{"re", "-"}], ")"}], "established"}], " ", "*)"}]}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"ConnectedCB", "[", 
-    RowBox[{"sender_", ",", "connectReason_"}], "]"}], ":=", 
-   "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"If", "[", 
-       RowBox[{
-        RowBox[{
-        "connectReason", "\[Equal]", 
-         "Tinkerforge`IPConnection`CONNECTUREASONUREQUEST"}], ",", 
-        RowBox[{"Print", "[", "\"\<Connected by request\>\"", "]"}]}], "]"}], 
-      ";", "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{
-        RowBox[{
-        "connectReason", "\[Equal]", 
-         "Tinkerforge`IPConnection`CONNECTUREASONUAUTOURECONNECT"}], ",", 
-        RowBox[{"Print", "[", "\"\<Auto-Reconnect\>\"", "]"}]}], "]"}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"(*", " ", 
-       RowBox[{
-        RowBox[{"Authenticate", " ", "first"}], "..."}], " ", "*)"}], 
-      "\[IndentingNewLine]", 
-      RowBox[{"sender", "@", 
-       RowBox[{"Authenticate", "[", "secret", "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"(*", " ", 
-       RowBox[{"...", "then", " ", "trigger", " ", "enumerate"}], " ", "*)"}],
-       "\[IndentingNewLine]", 
-      RowBox[{"sender", "@", 
-       RowBox[{"Enumerate", "[", "]"}]}]}]}], "\[IndentingNewLine]", "]"}]}], 
-  "\n"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"AddEventHandler", "[", 
-   RowBox[{
-    RowBox[{"ipcon", "@", "Connected"}], ",", "ConnectedCB"}], "]"}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  RowBox[{"(*", " ", 
-   RowBox[{"Print", " ", "incoming", " ", "enumeration", " ", "information"}],
-    " ", "*)"}]}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"EnumerateCB", "[", 
-    RowBox[{
-    "sender_", ",", "uid_", ",", "connectedUid_", ",", "position_", ",", 
-     "hardwareVersion_", ",", "firmwareVersion_", ",", "\[IndentingNewLine]", 
-     "                      ", "deviceIdentifier_", ",", "enumerationType_"}],
-     "]"}], ":=", "\[IndentingNewLine]", 
-   RowBox[{"Print", "[", 
-    RowBox[{
-    "\"\<UID: \>\"", "<>", "uid", "<>", "\"\<, Enumeration Type: \>\"", "<>", 
-     
-     RowBox[{"ToString", "[", "enumerationType", "]"}]}], "]"}]}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"AddEventHandler", "[", 
-   RowBox[{
-    RowBox[{"ipcon", "@", "EnumerateCallback"}], ",", "EnumerateCB"}], "]"}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  RowBox[{"(*", " ", 
-   RowBox[{"Connect", " ", "to", " ", "brickd"}], " ", "*)"}]}], "\n", 
- RowBox[{
-  RowBox[{"ipcon", "@", 
-   RowBox[{"Connect", "[", 
-    RowBox[{"host", ",", "port"}], "]"}]}], "\n"}], "\n", 
- RowBox[{
-  RowBox[{"Input", "[", "\"\<Click OK to exit\>\"", "]"}], 
-  "\[IndentingNewLine]", "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{"Clean", " ", "up"}], " ", "*)"}]}], "\[IndentingNewLine]", 
- RowBox[{"ipcon", "@", 
-  RowBox[{"Disconnect", "[", "]"}]}], "\n", 
- RowBox[{"ReleaseNETObject", "[", "ipcon", "]"}]}], "Input",
- CellChangeTimes->{{3.605533769312714*^9, 3.605533799192195*^9}, {
-   3.605533855646306*^9, 3.60553396786145*^9}, {3.605534006504216*^9, 
-   3.605534118469757*^9}, {3.6055341598067093`*^9, 3.605534257262924*^9}, {
-   3.60553429776966*^9, 3.605534533176559*^9}, {3.6055346008694887`*^9, 
-   3.6055346118521347`*^9}, {3.605935023487055*^9, 3.605935033889661*^9}, {
-   3.6059352124058657`*^9, 3.6059352130425034`*^9}, 3.605935278837904*^9, {
-   3.6059356102318783`*^9, 3.605935610915814*^9}}]
-},
-WindowSize->{1444, 911},
-WindowMargins->{{Automatic, 79}, {Automatic, 65}},
-FrontEndVersion->"9.0 for Linux x86 (64-bit) (November 20, 2012)",
-StyleDefinitions->"Default.nb"
-]
-(* End of Notebook Content *)
-
-(* Internal cache information *)
-(*CellTagsOutline
-CellTagsIndex->{}
-*)
-(*CellTagsIndex
-CellTagsIndex->{}
-*)
-(*NotebookFileOutline
-Notebook[{
-Cell[400, 13, 434, 9, 55, "Input"],
-Cell[837, 24, 4190, 102, 781, "Input"]
-}
-]
-*)
-
+ Cell[
+  BoxData[{
+   RowBox[{"Needs", "[", "\"\<NETLink`\>\"", "]"}],
+   RowBox[{"LoadNETAssembly", "[", RowBox[{"\"\<Tinkerforge\>\"", ",", RowBox[{RowBox[{"NotebookDirectory", "[", "]"}], "<>", "\"\<..\>\""}]}], "]"}]
+  }], "Input"
+ ],
+ Cell[
+  BoxData[{
+   RowBox[{"host", "=", "\"\<localhost\>\""}],
+   RowBox[{"port", "=", "4223"}],
+   RowBox[{"secret", "=", "\"\<My Authentication Secret!\>\""}],
+   RowBox[{"
+"}],
+   RowBox[{"(*", " Create IPConnection ", "*)"}],
+   RowBox[{"ipcon", "=", RowBox[{"NETNew", "[", "\"\<Tinkerforge.IPConnection\>\"", "]"}]}],
+   RowBox[{"
+"}],
+   RowBox[{"(*", " Disable auto reconnect mechanism, in case we have the wrong secret. If the authentication is successful, reenable it.", "*)"}],
+   RowBox[{"ipcon", "@", RowBox[{"SetAutoReconnect", "[", "False", "]"}]}],
+   RowBox[{"
+"}],
+   RowBox[{"(*", " Authenticate each time the connection got (re-)established ", "*)"}],
+   RowBox[{RowBox[{"ConnectedCB", "[", RowBox[{"sender_", ",", "connectReason_"}], "]"}], ":=", "\[IndentingNewLine]", RowBox[{"Module", "[", RowBox[{RowBox[{"{", "}"}], ",", RowBox[{"\[IndentingNewLine]", RowBox[{"If", "[", RowBox[{RowBox[{"connectReason", "==", "Tinkerforge`IPConnection`CONNECTUREASONUREQUEST"}], ",", RowBox[{"Print", "[", "\"\<Connected by request\>\"", "]"}]}], "]"}], ";", "\[IndentingNewLine]", RowBox[{"If", "[", RowBox[{RowBox[{"connectReason", "==", "Tinkerforge`IPConnection`CONNECTUREASONUAUTOURECONNECT"}], ",", RowBox[{"Print", "[", "\"\<Auto-Reconnect\>\"", "]"}]}], "]"}], ";", "\[IndentingNewLine]", RowBox[{"(*", " Authenticate first... ", "*)"}], "\[IndentingNewLine]", "sender", "@", RowBox[{"Authenticate", "[", "secret", "]"}], ";", "\n", "\[IndentingNewLine]", RowBox[{"(*", " ...reenable auto reconnect mechanism, as described above... ", "*)"}], "\[IndentingNewLine]", "sender", "@", RowBox[{"SetAutoReconnect", "[", "False", "]"}], ";", "\n", "\[IndentingNewLine]", RowBox[{"(*", " ...then trigger enumerate ", "*)"}], "\[IndentingNewLine]", "sender", "@", RowBox[{"Enumerate", "[", "]"}], "\[IndentingNewLine]"}]}], "]"}]}],
+   RowBox[{"
+"}],
+   RowBox[{"AddEventHandler", "[", RowBox[{RowBox[{"ipcon", "@", "Connected"}], ",", "ConnectedCB"}], "]"}],
+   RowBox[{"
+"}],
+   RowBox[{"(*", " Print incoming enumeration information ", "*)"}],
+   RowBox[{RowBox[{"EnumerateCB", "[", RowBox[{"sender_", ",", "uid_", ",", "connectedUid_", ",", "position_", ",", "hardwareVersion_", ",", "firmwareVersion_", ",", RowBox[{"\[IndentingNewLine]", "deviceIdentifier_"}], ",", "enumerationType_"}], "]"}], ":=", "\[IndentingNewLine]", RowBox[{"Print", "[", RowBox[{"\"\<UID: \>\"", "<>", "uid", "<>", "\"\<, Enumeration Type: \>\"", "<>", RowBox[{"ToString", "[", "enumerationType", "]"}]}], "]"}]}],
+   RowBox[{"
+"}],
+   RowBox[{"AddEventHandler", "[", RowBox[{RowBox[{"ipcon", "@", "EnumerateCallback"}], ",", "EnumerateCB"}], "]"}],
+   RowBox[{"
+"}],
+   RowBox[{"(*", " Connect to brickd ", "*)"}],
+   RowBox[{"ipcon", "@", RowBox[{"Connect", "[", RowBox[{"host", ",", "port"}], "]"}]}],
+   RowBox[{"
+"}],
+   RowBox[{"Input", "[", "\"\<Click OK to exit\>\"", "]"}],
+   RowBox[{"
+"}],
+   RowBox[{"(*", " Clean up ", "*)"}],
+   RowBox[{"ipcon", "@", RowBox[{"Disconnect", "[", "]"}]}],
+   RowBox[{"ReleaseNETObject", "[", "ipcon", "]"}]
+  }], "Input"
+ ]
+}]

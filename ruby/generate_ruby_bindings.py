@@ -99,7 +99,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     def get_ruby_constants(self):
         constant_format = '    {constant_group_name_upper}_{constant_name_upper} = {constant_value} # :nodoc:\n'
 
-        return '\n' + self.get_formatted_constants(constant_format)
+        return '\n' + self.get_formatted_constants(constant_format, bool_format_func=lambda value: str(value).lower())
 
     def get_ruby_initialize_method(self):
         template = """

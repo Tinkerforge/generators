@@ -140,7 +140,7 @@ class MATLABZipGenerator(common.ZipGenerator):
                 else:
                     classpath = ''
 
-                common.execute('/usr/bin/javac ' +
+                common.execute('javac ' +
                                classpath +
                                '-Xlint ' +
                                '-source 1.6 ' +
@@ -149,7 +149,7 @@ class MATLABZipGenerator(common.ZipGenerator):
                                shell=True)
 
             with common.ChangedDirectory(tmp_source_dir):
-                common.execute(['/usr/bin/jar',
+                common.execute(['jar',
                                 'cfm',
                                 os.path.join(tmp_dir, self.get_config_name().camel + '.jar'),
                                 os.path.join(tmp_dir, 'manifest.txt'),

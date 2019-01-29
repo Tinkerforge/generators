@@ -171,15 +171,19 @@ class MathematicaExampleParameter(common.ExampleParameter):
 
     def get_mathematica_prints(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+                
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = ' {else_}If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
+            template = '{global_line_prefix} {else_}If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_=' ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_=' ' if len(result) > 0 else '',
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_mathematica_source(),
@@ -188,11 +192,12 @@ class MathematicaExampleParameter(common.ExampleParameter):
 
             result = ['\n'.join(result)]
         else:
-            templateA = ' Print["{label}: "<>ToString[N[Quantity[{name}{index},"{quantity}"]]]]{comment}'
-            templateB = ' Print["{label}: "<>ToString[N[{name}{index}/{divisor}]]]{comment}'
-            templateC = ' Print["{label}: "<>FromCharacterCode[{name}{index}]]{comment}'
-            templateD = ' Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{name}{index},2,{bitmask_length}]]]]{comment}'
-            templateE = ' Print["{label}: "<>ToString[{name}{index}]]{comment}'
+            templateA = '{global_line_prefix} Print["{label}: "<>{name}{index}]{comment}'
+            templateB = '{global_line_prefix} Print["{label}: "<>ToString[N[Quantity[{name}{index},"{quantity}"]]]]{comment}'
+            templateC = '{global_line_prefix} Print["{label}: "<>ToString[N[{name}{index}/{divisor}]]]{comment}'
+            templateD = '{global_line_prefix} Print["{label}: "<>FromCharacterCode[{name}{index}]]{comment}'
+            templateE = '{global_line_prefix} Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{name}{index},2,{bitmask_length}]]]]{comment}'
+            templateF = '{global_line_prefix} Print["{label}: "<>ToString[{name}{index}]]{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -205,22 +210,25 @@ class MathematicaExampleParameter(common.ExampleParameter):
             divisor = self.get_formatted_divisor('{0}')
             bitmask_length = 0
 
-            if len(quantity) > 0:
+            if type_ == 'string':
                 template = templateA
-            elif len(divisor) > 0:
+            elif len(quantity) > 0:
                 template = templateB
-            elif type_ == 'char':
+            elif len(divisor) > 0:
                 template = templateC
-            elif ':bitmask:' in type_:
+            elif type_ == 'char':
                 template = templateD
+            elif ':bitmask:' in type_:
+                template = templateE
                 bitmask_length = int(type_.split(':')[2])
             else:
-                template = templateE
+                template = templateF
 
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().headless,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().headless,
                                               label=self.get_label_name(index=index),
                                               quantity=quantity,
                                               index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
@@ -246,12 +254,14 @@ class MathematicaExampleResult(common.ExampleResult):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = 'If[{name}=={constant_name},Print["{label}: {constant_title}"]]{comment}'
+            template = '{global_line_prefix}If[{name}=={constant_name},Print["{label}: {constant_title}"]]{global_line_suffix}{comment}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(name=self.get_name().headless,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_line_suffix=global_line_suffix,
+                                              name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_mathematica_source(),
                                               constant_title=constant.get_name().space,
@@ -259,11 +269,12 @@ class MathematicaExampleResult(common.ExampleResult):
 
             result = ['\n'.join(result)]
         else:
-            templateA = 'Print["{label}: "<>ToString[N[Quantity[{value}{index},"{quantity}"]]]]{comment}'
-            templateB = 'Print["{label}: "<>ToString[N[{value}{index}/{divisor}]]]{comment}'
-            templateC = 'Print["{label}: "<>FromCharacterCode[{value}{index}]]{comment}'
-            templateD = 'Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{comment}'
-            templateE = 'Print["{label}: "<>ToString[{value}{index}]]{comment}'
+            templateA = '{global_line_prefix}Print["{label}: "<>{value}{index}]{global_line_suffix}{comment}'
+            templateB = '{global_line_prefix}Print["{label}: "<>ToString[N[Quantity[{value}{index},"{quantity}"]]]]{global_line_suffix}{comment}'
+            templateC = '{global_line_prefix}Print["{label}: "<>ToString[N[{value}{index}/{divisor}]]]{global_line_suffix}{comment}'
+            templateD = '{global_line_prefix}Print["{label}: "<>FromCharacterCode[{value}{index}]]{global_line_suffix}{comment}'
+            templateE = '{global_line_prefix}Print["{label}: "<>StringJoin[Map[ToString,IntegerDigits[{value}{index},2,{bitmask_length}]]]]{global_line_suffix}{comment}'
+            templateF = '{global_line_prefix}Print["{label}: "<>ToString[{value}{index}]]{global_line_suffix}{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -286,22 +297,26 @@ class MathematicaExampleResult(common.ExampleResult):
             divisor = self.get_formatted_divisor('{0}')
             bitmask_length = 0
 
-            if len(quantity) > 0:
+            if type_ == 'string':
                 template = templateA
-            elif len(divisor) > 0:
+            elif len(quantity) > 0:
                 template = templateB
-            elif type_ == 'char':
+            elif len(divisor) > 0:
                 template = templateC
-            elif ':bitmask:' in type_:
+            elif type_ == 'char':
                 template = templateD
+            elif ':bitmask:' in type_:
+                template = templateE
                 bitmask_length = int(type_.split(':')[2])
             else:
-                template = templateE
+                template = templateF
 
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(value=value,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_line_suffix=global_line_suffix,
+                                              value=value,
                                               label=self.get_label_name(index=index),
                                               quantity=quantity,
                                               index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
@@ -314,24 +329,25 @@ class MathematicaExampleResult(common.ExampleResult):
 class MathematicaExampleGetterFunction(common.ExampleGetterFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
         template1 = '{device_name}@{function_name}[{arguments}]'
-        template2A = r"""(*Get current {function_name_comment}*)
-{variable_declarations}={device_name}@{function_name_camel}[{arguments}]
+        template2A = r"""{global_line_prefix}(*Get current {function_name_comment}*)
+{global_line_prefix}{variable_declarations}={device_name}@{function_name_camel}[{arguments}]{global_line_suffix}
 
 {prints}
 """
-        template2B = r"""(*Get current {function_name_comment}*)
+        template2B = r"""{global_line_prefix}(*Get current {function_name_comment}*)
 {prints}
 """
-        template2C = r"""(*Get current {function_name_comment}*)
-{variable_declarations}
-{device_name}@{function_name_camel}[{arguments}]
+        template2C = r"""{global_line_prefix}(*Get current {function_name_comment}*)
+{global_line_prefix}{variable_declarations}{global_line_suffix}
+{global_line_prefix}{device_name}@{function_name_camel}[{arguments}]{global_line_suffix}
 {prints}
 """
         arguments = self.get_mathematica_arguments()
         results = self.get_results()
 
         if len(results) == 1 and results[0].get_type().split(':')[-1] != 'constant':
-            getter_call = template1.format(device_name=self.get_device().get_initial_name(),
+            getter_call = template1.format(global_line_prefix=global_line_prefix,
+                                           device_name=self.get_device().get_initial_name(),
                                            function_name=self.get_name().camel,
                                            arguments=','.join(arguments))
         else:
@@ -364,7 +380,9 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
         if len(variable_names) > 1:
             arguments += variable_names
 
-        return template2.format(device_name=self.get_device().get_initial_name(),
+        return template2.format(global_line_prefix=global_line_prefix,
+                                global_line_suffix=global_line_suffix,
+                                device_name=self.get_device().get_initial_name(),
                                 function_name_camel=self.get_name().camel,
                                 function_name_headless=self.get_name().headless,
                                 function_name_comment=self.get_comment_name(),
@@ -483,12 +501,12 @@ class MathematicaExampleCallbackThresholdFunction(common.ExampleCallbackThreshol
     def get_mathematica_source(self):
         template = r"""(*Configure threshold for {function_name_comment} "{option_comment}"*)
 option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option_name_upper}
-{device_name_initial}@Set{function_name_camel}CallbackThreshold[{arguments}option,{mininum_maximums}]
+{device_name_initial}@Set{function_name_camel}CallbackThreshold[{arguments}option,{minimum_maximums}]
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_mathematica_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_mathematica_source())
 
         option_name_uppers = {'o' : 'OUTSIDE', '<': 'SMALLER', '>': 'GREATER'}
 
@@ -501,7 +519,7 @@ option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option
                                option_name_upper=option_name_uppers[self.get_option_char()],
                                option_comment=self.get_option_comment(),
                                arguments=common.wrap_non_empty('', ','.join(self.get_mathematica_arguments()), ','),
-                               mininum_maximums=','.join(mininum_maximums))
+                               minimum_maximums=','.join(minimum_maximums))
 
 class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, MathematicaExampleArgumentsMixin):
     def get_mathematica_source(self):
@@ -510,12 +528,12 @@ class MathematicaExampleCallbackConfigurationFunction(common.ExampleCallbackConf
 """
         templateB = r"""(*Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold*)
 option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option_name}
-{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{mininum_maximums}]
+{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{minimum_maximums}]
 """
         templateC = r"""(*Configure threshold for {function_name_comment} "{option_comment}"*)
 (*with a debounce period of {period_sec_short} ({period_msec}ms)*)
 option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option_name}
-{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{mininum_maximums}]
+{device_name_initial}@Set{function_name_camel}CallbackConfiguration[{arguments}{period_msec}{value_has_to_change},option,{minimum_maximums}]
 """
 
         if self.get_option_char() == None:
@@ -527,10 +545,10 @@ option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_mathematica_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_mathematica_source())
 
         option_names = {None: '', 'x': 'OFF', 'o' : 'OUTSIDE', '<': 'SMALLER', '>': 'GREATER'}
 
@@ -547,7 +565,7 @@ option=Tinkerforge`{device_category}{device_name_camel}`THRESHOLDUOPTIONU{option
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long,
                                value_has_to_change=common.wrap_non_empty(',', self.get_value_has_to_change('True', 'False', ''), ''),
-                               mininum_maximums=','.join(mininum_maximums))
+                               minimum_maximums=','.join(minimum_maximums))
 
 class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_mathematica_source(self):
@@ -656,7 +674,8 @@ class MathematicaExamplesGenerator(common.ExamplesGenerator):
 
         blacklist = [
             'lcd-16x2-bricklet/unicode',
-            'lcd-20x4-bricklet/unicode'
+            'lcd-20x4-bricklet/unicode',
+            'nfc-bricklet/emulate-ndef'
         ]
 
         for example in examples:

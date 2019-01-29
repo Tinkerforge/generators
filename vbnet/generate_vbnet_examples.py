@@ -184,10 +184,13 @@ class VBNETExampleParameter(common.ExampleParameter):
 
     def get_vbnet_write_lines(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '        {else_}If {name} = {constant_name} Then\n            Console.WriteLine("{label}: {constant_title}"){comment}'
+            template = '{global_line_prefix}        {else_}If {name} = {constant_name} Then\n{global_line_prefix}            Console.WriteLine("{label}: {constant_title}"){comment}'
             constant_group = self.get_constant_group()
             name = self.get_name().headless
 
@@ -197,7 +200,8 @@ class VBNETExampleParameter(common.ExampleParameter):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='Else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='Else ' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_vbnet_source(),
@@ -206,7 +210,7 @@ class VBNETExampleParameter(common.ExampleParameter):
 
             result = ['\r' + '\n'.join(result) + '\n        End If\r']
         else:
-            template = '        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
+            template = '{global_line_prefix}        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -235,7 +239,8 @@ class VBNETExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().headless,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().headless,
                                               label=self.get_label_name(index=index),
                                               index='({0})'.format(index) if self.get_label_count() > 1 else '',
                                               to_string_prefix=to_string_prefix,
@@ -254,7 +259,12 @@ class VBNETExampleResult(common.ExampleResult):
         if name == self.get_device().get_initial_name():
             name += '_'
 
-        return get_vbnet_type(self.get_type().split(':')[0]), name
+        type_ = get_vbnet_type(self.get_type().split(':')[0])
+
+        if self.get_cardinality() > 1 and type_ != 'String':
+            type_ += '()'
+
+        return type_, name
 
     def get_vbnet_variable_reference(self):
         name = self.get_name().headless
@@ -269,7 +279,7 @@ class VBNETExampleResult(common.ExampleResult):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '        {else_}If {name} = {constant_name} Then\n            Console.WriteLine("{label}: {constant_title}"){comment}'
+            template = '{global_line_prefix}        {else_}If {name} = {constant_name} Then\n{global_line_prefix}            Console.WriteLine("{label}: {constant_title}"){comment}'
             constant_group = self.get_constant_group()
             name = self.get_name().headless
 
@@ -279,7 +289,8 @@ class VBNETExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='Else ' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='Else ' if len(result) > 0 else '',
                                               name=name,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_vbnet_source(),
@@ -288,7 +299,7 @@ class VBNETExampleResult(common.ExampleResult):
 
             result = ['\r' + '\n'.join(result) + '\n        End If\r']
         else:
-            template = '        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
+            template = '{global_line_prefix}        Console.WriteLine("{label}: " + {to_string_prefix}{name}{index}{divisor}{to_string_suffix}{unit}){comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -322,7 +333,8 @@ class VBNETExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='({0})'.format(index) if self.get_label_count() > 1 else '',
                                               to_string_prefix=to_string_prefix,
@@ -341,14 +353,14 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
         return None
 
     def get_vbnet_source(self):
-        templateA = r"""        ' Get current {function_name_comment}
-{variable_declarations} = {device_name}.{function_name_camel}({arguments})
+        templateA = r"""{global_line_prefix}        ' Get current {function_name_comment}
+{global_line_prefix}{variable_declarations} = {device_name}.{function_name_camel}({arguments})
 {write_lines}
 """
-        templateB = r"""        ' Get current {function_name_comment}
-{variable_declarations}
+        templateB = r"""{global_line_prefix}        ' Get current {function_name_comment}
+{global_line_prefix}{variable_declarations}
 
-        {device_name}.{function_name_camel}({arguments})
+{global_line_prefix}        {device_name}.{function_name_camel}({arguments})
 {write_lines}
 """
         variable_declarations = []
@@ -396,7 +408,8 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction, VBNETExampleArgum
         if len(variable_references) > 1:
             arguments += variable_references
 
-        result = template.format(device_name=self.get_device().get_initial_name(),
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_name=self.get_device().get_initial_name(),
                                  function_name_camel=self.get_name().camel,
                                  function_name_headless=self.get_name().headless,
                                  function_name_comment=self.get_comment_name(),
@@ -536,20 +549,20 @@ class VBNETExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunct
 
     def get_vbnet_source(self):
         template = r"""        ' Configure threshold for {function_name_comment} "{option_comment}"
-        {device_name}.Set{function_name_camel}CallbackThreshold({arguments}"{option_char}"C, {mininum_maximums})
+        {device_name}.Set{function_name_camel}CallbackThreshold({arguments}"{option_char}"C, {minimum_maximums})
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_vbnet_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_vbnet_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_camel=self.get_name().camel,
-                               function_name_comment=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, VBNETExampleArgumentsMixin):
     def get_vbnet_imports(self):
@@ -563,11 +576,11 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
         {device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change})
 """
         templateB = r"""        ' Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-        {device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, "{option_char}"C, {mininum_maximums})
+        {device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, "{option_char}"C, {minimum_maximums})
 """
         templateC = r"""        ' Configure threshold for {function_name_comment} "{option_comment}"
         ' with a debounce period of {period_sec_short} ({period_msec}ms)
-        {device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, "{option_char}"C, {mininum_maximums})
+        {device_name}.Set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, "{option_char}"C, {minimum_maximums})
 """
 
         if self.get_option_char() == None:
@@ -579,14 +592,14 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_vbnet_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_vbnet_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_camel=self.get_name().camel,
-                               function_name_comment=self.get_name().under,
+                               function_name_comment=self.get_comment_name(),
                                arguments=common.wrap_non_empty('', ', '.join(self.get_vbnet_arguments()), ', '),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
@@ -594,7 +607,7 @@ class VBNETExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurat
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('True', 'False', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class VBNETExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_vbnet_imports(self):

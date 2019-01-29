@@ -40,7 +40,7 @@ class JavaExamplesTester(common.Tester):
             shutil.copy(path, '/tmp/tester/java')
             path = os.path.join('/tmp/tester/java', os.path.split(path)[1])
 
-        args = ['/usr/bin/javac',
+        args = ['javac',
                 '-Xlint:all',
                 '-Werror',
                 '-cp',
@@ -56,7 +56,7 @@ class JavaDocTester(common.Tester):
     def after_unzip(self):
         print('>>> generating javadoc')
 
-        args = ['/usr/bin/javadoc',
+        args = ['javadoc',
                 '-quiet',
                 '-d',
                 '/tmp/tester/java/javadoc',
@@ -74,7 +74,7 @@ class JavaDocTester(common.Tester):
         return rc == 0
 
     def test(self, cookie, path, extra):
-        args = ['/usr/bin/xmllint',
+        args = ['xmllint',
                 '--noout',
                 '--valid',
                 '--html',

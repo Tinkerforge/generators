@@ -236,9 +236,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the send and receive buffer size in byte. In sum there is
-10240 byte (10kb) buffer available and the minimum buffer size
-is 1024 byte (1kb) for both.
+Sets the send and receive buffer size in byte. In total the buffers have to be
+10240 byte (10kb) in size, the minimum buffer size is 1024 byte (1kb) for each.
 
 The current buffer content is lost if this function is called.
 
@@ -251,13 +250,13 @@ The default configuration is 5120 byte (5kb) per buffer.
 """,
 'de':
 """
-Setzt die Größe des Senden- und Empfangsbuffers. In Summe können
-die Buffer eine Größe von 10240 Byte (10kb) haben, die Minimumalgröße
-ist 1024 byte (1kb) für beide.
+Setzt die Größe des Sende- und Empfangsbuffers. In Summe müssen
+die Buffer eine Größe von 10240 Byte (10kb) haben, die Minimalgröße
+ist 1024 Byte (1kb) für beide.
 
 Der aktuelle Bufferinhalt geht bei einem Aufruf dieser Funktion verloren.
 
-Der Sendenbuffer hält die Daten welche über :func:`Write` übergeben und noch
+Der Sendebuffer hält die Daten welche über :func:`Write` übergeben und noch
 nicht geschrieben werden konnten. Der Empfangsbuffer hält Daten welche
 über RS232 empfangen wurden aber noch nicht über :func:`Read` oder
 :cb:`Read` Callback an ein Nutzerprogramm übertragen werden konnten.

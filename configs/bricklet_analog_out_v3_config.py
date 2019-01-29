@@ -19,8 +19,8 @@ com = {
         'de': 'Erzeugt konfigurierbare Gleichspannung zwischen 0V und 12V'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []
@@ -55,8 +55,7 @@ Returns the voltage as set by :func:`Set Output Voltage`.
 """,
 'de':
 """
-Gibt die Spannung zurück, wie von :func:`Set Output Voltage`
-gesetzt.
+Gibt die Spannung zurück, wie von :func:`Set Output Voltage` gesetzt.
 """
 }]
 })

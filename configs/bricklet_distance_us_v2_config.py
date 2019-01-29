@@ -22,7 +22,7 @@ com = {
         'de': ''
     },
     'comcu': True,
-    'released': False,
+    'released': False, # FIXME: update Distance US Bricklet (1.0) replacement recommendation, once this Bricklet is released
     'documented': False,
     'discontinued': False,
     'packets': [],

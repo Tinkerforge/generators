@@ -170,7 +170,7 @@ zu beeinflussen.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
                                                                   ('On', 1),
                                                                   ('Show Heartbeat', 2),
@@ -179,7 +179,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Each channel has a corresponding LED. You can turn the LED Off, On or show a
+Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
 
@@ -187,12 +187,12 @@ By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
-Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
-aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanalstatus
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
+ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
 angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
-Standardmäßig sind die LEDs für alle Kanäle auf "Kanalstatus" konfiguriert.
+Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -200,7 +200,7 @@ Standardmäßig sind die LEDs für alle Kanäle auf "Kanalstatus" konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
                                                                    ('On', 1),
                                                                    ('Show Heartbeat', 2),
@@ -209,11 +209,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })

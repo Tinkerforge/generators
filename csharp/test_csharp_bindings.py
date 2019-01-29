@@ -41,7 +41,7 @@ class CSharpExamplesTester(common.Tester):
 
         output = path[:-3] + '.exe'
 
-        args = ['/usr/bin/mcs',
+        args = ['mcs',
                 '/warn:4',
                 '/optimize',
                 '/target:exe',

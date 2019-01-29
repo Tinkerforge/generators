@@ -318,7 +318,6 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Light On',

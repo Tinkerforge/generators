@@ -1,0 +1,25 @@
+[package]
+name = "tinkerforge"
+version = {version}
+authors = ["Erik Fleckstein <erik@tinkerforge.com>"]
+edition = "2018"
+description = "Rust API bindings for https://www.tinkerforge.com Bricks and Bricklets."
+license = "CC0-1.0 OR MIT OR Apache-2.0"
+homepage = "https://tinkerforge.com"
+repository = "https://github.com/Tinkerforge/generators"
+readme = "readme.md"
+keywords = ["api", "tinkerforge" ,"bindings"]
+categories = ["api-bindings"] 
+exclude = [
+    "examples/*",
+    "readme.txt"
+]
+
+[dependencies]
+sha-1 = "0.8"
+hmac = "0.7"
+byteorder = "1.2"
+rand = "0.5"
+
+[features]
+fail-on-warnings = []

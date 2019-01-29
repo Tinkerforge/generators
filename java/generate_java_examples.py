@@ -183,15 +183,19 @@ class JavaExampleParameter(common.ExampleParameter):
 
     def get_java_printlns(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+                
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n\t\t\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n\t\t\t\t}}'
+            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\t\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t\t\t}}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t\t\t\t',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse ' if len(result) > 0 else global_line_prefix + '\t\t\t\t',
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_java_source(),
@@ -200,7 +204,7 @@ class JavaExampleParameter(common.ExampleParameter):
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
-            template = '\t\t\t\tSystem.out.println("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+            template = '{global_line_prefix}\t\t\t\tSystem.out.println("{label}: " + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -220,7 +224,8 @@ class JavaExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().headless,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().headless,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -239,7 +244,7 @@ class JavaExampleResult(common.ExampleResult):
         if name == self.get_device().get_initial_name():
             name += '_'
 
-        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], 1, legacy=self.get_device().has_java_legacy_types()),
+        return template.format(type_=java_common.get_java_type(self.get_type().split(':')[0], self.get_cardinality(), legacy=self.get_device().has_java_legacy_types()),
                                name=name)
 
     def get_java_printlns(self):
@@ -247,7 +252,7 @@ class JavaExampleResult(common.ExampleResult):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({object_prefix}{name} == {constant_name}) {{\n\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n\t\t}}'
+            template = '{else_}if({object_prefix}{name} == {constant_name}) {{\n{global_line_prefix}\t\t\tSystem.out.println("{label}: {constant_title}");{comment}\n{global_line_prefix}\t\t}}'
             constant_group = self.get_constant_group()
             name = self.get_name().headless
 
@@ -262,7 +267,8 @@ class JavaExampleResult(common.ExampleResult):
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='\belse ' if len(result) > 0 else '\t\t',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='\belse ' if len(result) > 0 else global_line_prefix + '\t\t',
                                               object_prefix=object_prefix,
                                               name=self.get_name().headless,
                                               label=self.get_label_name(),
@@ -272,7 +278,7 @@ class JavaExampleResult(common.ExampleResult):
 
             result = ['\r' + '\n'.join(result).replace('\n\b', ' ') + '\r']
         else:
-            template = '\t\tSystem.out.println("{label}: " + {to_binary_prefix}{object_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
+            template = '{global_line_prefix}\t\tSystem.out.println("{label}: " + {to_binary_prefix}{object_prefix}{name}{index}{divisor}{to_binary_suffix}{unit});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -302,9 +308,10 @@ class JavaExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(object_prefix=object_prefix,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              object_prefix=object_prefix,
                                               name=name,
-                                              label=self.get_label_name(),
+                                              label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' + " {0}"'),
@@ -326,8 +333,8 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
             return []
 
     def get_java_source(self):
-        template = r"""		// Get current {function_name_comment}
-		{variable} = {device_name}.{function_name_headless}({arguments}); // Can throw com.tinkerforge.TimeoutException
+        template = r"""{global_line_prefix}		// Get current {function_name_comment}
+{global_line_prefix}		{variable} = {device_name}.{function_name_headless}({arguments}); // Can throw com.tinkerforge.TimeoutException
 {printlns}
 """
         variables = []
@@ -348,7 +355,8 @@ class JavaExampleGetterFunction(common.ExampleGetterFunction, JavaExampleArgumen
         if len(printlns) > 1:
             printlns.insert(0, '\b')
 
-        return template.format(device_name=self.get_device().get_initial_name(),
+        return template.format(global_line_prefix=global_line_prefix,
+                               device_name=self.get_device().get_initial_name(),
                                function_name_headless=self.get_name().headless,
                                function_name_comment=self.get_comment_name(),
                                variable=variable,
@@ -482,12 +490,12 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
 
     def get_java_source(self):
         template = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
-		{device_name}.set{function_name_camel}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackThreshold({arguments}'{option_char}',<BP>{minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_java_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_java_source())
 
         result = template.format(device_name=self.get_device().get_initial_name(),
                                  function_name_camel=self.get_name().camel,
@@ -495,7 +503,7 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
                                  arguments=common.wrap_non_empty('', ',<BP>'.join(self.get_java_arguments()), ',<BP>'),
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
-                                 mininum_maximums=',<BP>'.join(mininum_maximums))
+                                 minimum_maximums=',<BP>'.join(minimum_maximums))
 
         return common.break_string(result, 'CallbackThreshold(')
 
@@ -508,11 +516,11 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
 		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""		// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {minimum_maximums});
 """
         templateC = r"""		// Configure threshold for {function_name_comment} "{option_comment}"
 		// with a debounce period of {period_sec_short} ({period_msec}ms)
-		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {mininum_maximums});
+		{device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change},<BP>'{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -524,10 +532,10 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_java_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_java_source())
 
         result = template.format(device_name=self.get_device().get_initial_name(),
                                  function_name_camel=self.get_name().camel,
@@ -539,7 +547,7 @@ class JavaExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
                                  value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                  option_char=self.get_option_char(),
                                  option_comment=self.get_option_comment(),
-                                 mininum_maximums=',<BP>'.join(mininum_maximums))
+                                 minimum_maximums=',<BP>'.join(minimum_maximums))
 
         return common.break_string(result, 'CallbackConfiguration(')
 

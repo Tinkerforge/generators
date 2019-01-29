@@ -1,0 +1,5 @@
+2019-01-24: 2.0.0 (19f0616)
+- Initial release
+
+2019-01-25: 2.0.1 (c31e828)
+- Fix handling of JSON errors for python2

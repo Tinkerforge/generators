@@ -135,7 +135,12 @@ class ShellElement(common.Element):
             symbols = []
 
             for constant in constant_group.get_constants():
-                symbols.append('{0}-{1}: {2}'.format(constant_group.get_name().dash, constant.get_name().dash, constant.get_value()))
+                if constant_group.get_type() == 'bool':
+                    value = str(constant.get_value()).lower()
+                else:
+                    value = constant.get_value()
+
+                symbols.append('{0}-{1}: {2}'.format(constant_group.get_name().dash, constant.get_name().dash, value))
 
             symbols_doc = ' (' + ', '.join(symbols) + ')'
 

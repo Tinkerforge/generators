@@ -46,7 +46,7 @@ def generate(root_dir):
     # Unzip
     version = common.get_changelog_version(root_dir)
 
-    common.execute(['/usr/bin/unzip',
+    common.execute(['unzip',
                     '-q',
                     os.path.join(root_dir, 'tinkerforge_perl_bindings_{0}_{1}_{2}.zip'.format(*version)),
                     '-d',
@@ -83,7 +83,7 @@ def generate(root_dir):
 
     # Make package
     with common.ChangedDirectory(tmp_cpan_dir):
-        common.execute(['/usr/bin/perl', 'Makefile.PL'])
+        common.execute(['perl', 'Makefile.PL'])
         common.execute(['make', 'dist'])
 
     shutil.copy(os.path.join(tmp_cpan_dir, 'Tinkerforge-{0}.{1}.{2}.tar.gz'.format(*version)), root_dir)

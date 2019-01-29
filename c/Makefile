@@ -62,7 +62,7 @@ libtinkerforge.a: $(OBJECTS) Makefile
 
 tinkerforge.dll: $(OBJECTS) Makefile
 	@echo LD $@
-	$(E)$(CC) -shared -o $@ *.o tinkerforge.def -lws2_32 -ladvapi32
+	$(E)$(CC) -shared -o $@ *.o *.def -lws2_32 -ladvapi32
 
 clean: Makefile
 	$(E)$(RM) $(OBJECTS) libtinkerforge.so libtinkerforge.a tinkerforge.dll

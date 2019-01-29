@@ -43,7 +43,7 @@ def generate(root_dir):
     # Unzip
     version = common.get_changelog_version(root_dir)
 
-    common.execute(['/usr/bin/unzip',
+    common.execute(['unzip',
                     '-q',
                     os.path.join(root_dir, 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)),
                     '-d',
@@ -60,7 +60,7 @@ def generate(root_dir):
 
     # Make package
     with common.ChangedDirectory(tmp_dir):
-        common.execute(['/usr/bin/mvn', 'clean', 'verify'])
+        common.execute(['mvn', 'clean', 'verify'])
 
 if __name__ == "__main__":
     generate(os.getcwd())

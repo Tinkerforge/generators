@@ -19,8 +19,8 @@ com = {
         'de': 'Trennt Verbindung zwischen Bricklets und Bricks galvanisch'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []
@@ -61,8 +61,7 @@ enabled, the Isolator Bricklet will try to adapt the baudrate for the communicat
 between Bricks and Bricklets according to the amount of data that is transferred.
 
 The baudrate for communication config between
-Brick and Isolator Bricklet can be set thorugh the API of the Brick.
-
+Brick and Isolator Bricklet can be set through the API of the Brick.
 
 The baudrate will be increased exponentially if lots of data is send/received and
 decreased linearly if little data is send/received.
@@ -75,7 +74,7 @@ In cases where some data has to transferred as fast as possible every few second
 (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn
 the dynamic baudrate off to get the highest possible performance.
 
-The maximum value of the baudrate can be set per port with the function 
+The maximum value of the baudrate can be set per port with the function
 :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
 as set by :func:`Set SPITFP Baudrate` will be used statically.
 
@@ -93,7 +92,7 @@ Die Baudratenkonfiguration für die Kommunikation zwischen
 Brick und Isolator Bricklet kann in der API des Bricks eingestellt werden.
 
 Die Baudrate wird exponentiell erhöht wenn viele Daten gesendet/empfangen werden
-und linear verringert wenn wenig daten gesendet/empfangen werden.
+und linear verringert wenn wenig Daten gesendet/empfangen werden.
 
 Diese Vorgehensweise verringert die Baudrate in Anwendungen wo nur wenig Daten
 ausgetauscht werden müssen (z.B. eine Wetterstation) und erhöht die Robustheit.
@@ -105,7 +104,7 @@ sollen (z.B. RS485 Bricklet mit hoher Baudrate aber kleinem Payload) kann die
 dynamische Baudrate zum maximieren der Performance ausgestellt werden.
 
 Die maximale Baudrate kann pro Port mit der Funktion :func:`Set SPITFP Baudrate`.
-gesetzt werden. Falls die dynamsiche Baudrate nicht aktiviert ist, wird die Baudrate
+gesetzt werden. Falls die dynamische Baudrate nicht aktiviert ist, wird die Baudrate
 wie von :func:`Set SPITFP Baudrate` gesetzt statisch verwendet.
 
 Die minimale dynamische Baudrate hat einen Wertebereich von 400000 bis 2000000 Baud.
@@ -144,7 +143,7 @@ com['packets'].append({
 """
 Sets the baudrate for a the communication between Isolator Bricklet
 and the connected Bricklet. The baudrate for communication between
-Brick and Isolator Bricklet can be set thorugh the API of the Brick.
+Brick and Isolator Bricklet can be set through the API of the Brick.
 
 The baudrate can be in the range 400000 to 2000000.
 
@@ -164,7 +163,7 @@ The default baudrate for all ports is 1400000.
 """,
 'de':
 """
-Setzt die Baudrate für die Kommunikation zwsischen Isolator Bricklet
+Setzt die Baudrate für die Kommunikation zwischen Isolator Bricklet
 und angeschlossenem Bricklet. Die Baudrate für die Kommunikation zwischen
 Brick und Isolator Bricklet kann in der API des Bricks eingestellt werden.
 
@@ -203,7 +202,6 @@ Gibt die Baudrate zurück, siehe :func:`Set SPITFP Baudrate`.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Isolator SPITFP Error Count',
@@ -216,7 +214,7 @@ com['packets'].append({
 'en':
 """
 Returns the error count for the communication between Isolator Bricklet and
-the connected Bricklet. Call :func:`Get SPITFP Error Count` to get the 
+the connected Bricklet. Call :func:`Get SPITFP Error Count` to get the
 error count between Isolator Bricklet and Brick.
 
 The errors are divided into
@@ -240,4 +238,9 @@ Die Fehler sind aufgeteilt in
 * Overflow Fehler.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Statistics', 'statistics'), [(('Messages From Brick', 'Messages From Brick'), 'uint32', 1, None, None, None), (('Messages From Bricklet', 'Messages From Bricklet'), 'uint32', 1, None, None, None), (('Connected Bricklet Device Identifier', 'Connected Bricklet Device Identifier'), 'uint16', 1, None, None, None), (('Connected Bricklet UID', 'Connected Bricklet UID'), 'string', 8, None, None, None)], [])]
 })

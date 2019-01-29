@@ -11,7 +11,8 @@ from commonconstants import add_callback_value_function
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
+    'api_version_extra': 1, # +1 for "Break API to fix wrong moving-average-length type [ec51349]"
     'category': 'Bricklet',
     'device_identifier': 2125,
     'name': 'Distance IR V2',
@@ -22,13 +23,12 @@ com = {
         'de': 'Misst Entfernung bis zu 150cm mit Infrarot-Licht'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []
 }
-
 
 distance_doc = {
 'en':
@@ -72,7 +72,7 @@ Gibt den Analogwert des Analog/Digital-Wandler zurück.
 Der Wert hat 21 Bit und einen Wertebereich von 0 bis 2097151.
 
 Dieser Wert ist ein unverarbeiteter Rohwert. Wir haben sichergestellt,
-dass die Integrationszeit des ADCs kleinerist als das Messintervall des
+dass die Integrationszeit des ADCs kleiner ist als das Messintervall des
 Sensors (10ms vs 16,5ms). Dadurch ist sichergestellt das keine Informationen
 verloren gehen können.
 
@@ -92,7 +92,7 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average Configuration',
-'elements': [('Moving Average Length', 'uint8', 1, 'in')],
+'elements': [('Moving Average Length', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -100,14 +100,14 @@ com['packets'].append({
 Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
 for the resistance and temperature.
 
-Setting the length to 1 will turn the averaging off. With less
-averaging, there is more noise on the data.
+Setting the length to 1 will turn the averaging off. With less averaging, there
+is more noise on the data.
 
 The range for the averaging is 1-1000.
 
-New data is gathered every ~10ms. With a moving average of length 1000 the resulting
-averaging window has a length of aproximately 10s. If you want to do long term measurements the longest
-moving average will give the cleanest results.
+New data is gathered every ~10ms. With a moving average of length 1000 the
+resulting averaging window has a length of approximately 10s. If you want to do
+long term measurements the longest moving average will give the cleanest results.
 
 The default value is 25.
 """,
@@ -133,8 +133,7 @@ Der Standardwert ist 25.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average Configuration',
-'elements': [('Moving Average Length', 'uint8', 1, 'out')],
-
+'elements': [('Moving Average Length', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -238,11 +237,28 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the sensor type as set by :func:`Set Sensor Type`
+Returns the sensor type as set by :func:`Set Sensor Type`.
 """,
 'de':
 """
 Gibt den Sensor-Typ zurück, wie von :func:`Set Sensor Type` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, 10.0, 'cm', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, 10.0, 'cm', None)], None, None),
+              ('callback_configuration', ('Distance', 'distance'), [], 1000, False, 'x', [(0, 0)])]
+})
+
+com['examples'].append({
+'name': 'Threshold',
+'functions': [('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, 10.0, 'cm', None)], None, None),
+              ('callback_configuration', ('Distance', 'distance'), [], 1000, False, '<', [(30, 0)])]
 })

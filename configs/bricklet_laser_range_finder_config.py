@@ -583,7 +583,6 @@ Gibt *true* zurück wenn der Laser aktiviert ist, *false* sonst.
 }]
 })
 
-
 com['packets'].append({
 'type': 'callback',
 'name': 'Distance',

@@ -23,7 +23,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True, # replaced by Distance US Bricklet 2.0, FIXME: documentation currently suggests Distance IR Bricklet and Laser Range Bricklet
     'packets': [],
     'examples': []
 }

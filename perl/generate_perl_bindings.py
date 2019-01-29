@@ -146,19 +146,8 @@ use constant FUNCTION_{0} => {1};"""
         for packet in self.get_packets('function'):
             function_ids.append(template.format(packet.get_name().upper, packet.get_function_id()))
 
-        constants = '\n'
-        template = 'use constant {0}_{1} => {2};\n'
-
-        for constant_group in self.get_constant_groups():
-            for constant in constant_group.get_constants():
-                if constant_group.get_type() == 'char':
-                    value = "'{0}'".format(constant.get_value())
-                else:
-                    value = str(constant.get_value())
-
-                constants += template.format(constant_group.get_name().upper,
-                                             constant.get_name().upper,
-                                             value)
+        constant_format = 'use constant {constant_group_name_upper}_{constant_name_upper} => {constant_value};\n'
+        constants = '\n' + self.get_formatted_constants(constant_format, bool_format_func=lambda value: str(int(value)))
 
         return '\n'.join(callbacks) + '\n' + '\n'.join(function_ids) + constants + "\n\n=back\n"
 

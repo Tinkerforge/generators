@@ -42,7 +42,7 @@ In cases where some data has to transferred as fast as possible every few second
 (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn
 the dynamic baudrate off to get the highest possible performance.
 
-The maximum value of the baudrate can be set per port with the function 
+The maximum value of the baudrate can be set per port with the function
 :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
 as set by :func:`Set SPITFP Baudrate` will be used statically.
 
@@ -57,7 +57,7 @@ Baudrate aktiviert ist, versucht der Brick die Baudrate anhand des Datenaufkomme
 zwischen Brick und Bricklet anzupassen.
 
 Die Baudrate wird exponentiell erhöht wenn viele Daten gesendet/empfangen werden
-und linear verringert wenn wenig daten gesendet/empfangen werden.
+und linear verringert wenn wenig Daten gesendet/empfangen werden.
 
 Diese Vorgehensweise verringert die Baudrate in Anwendungen wo nur wenig Daten
 ausgetauscht werden müssen (z.B. eine Wetterstation) und erhöht die Robustheit.
@@ -69,7 +69,7 @@ sollen (z.B. RS485 Bricklet mit hoher Baudrate aber kleinem Payload) kann die
 dynamische Baudrate zum maximieren der Performance ausgestellt werden.
 
 Die maximale Baudrate kann pro Port mit der Funktion :func:`Set SPITFP Baudrate`.
-gesetzt werden. Falls die dynamsiche Baudrate nicht aktiviert ist, wird die Baudrate
+gesetzt werden. Falls die dynamische Baudrate nicht aktiviert ist, wird die Baudrate
 wie von :func:`Set SPITFP Baudrate` gesetzt statisch verwendet.
 
 Die minimale dynamische Baudrate hat einen Wertebereich von 400000 bis 2000000 Baud.

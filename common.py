@@ -312,8 +312,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
 {3}
 
-.. literalinclude:: {2}
- :language: {4}
+.. literalinclude:: {2}{language} {4}
  :linenos:
  :tab-width: 4
 """
@@ -406,7 +405,9 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
             downloads.append('`Test ({0}) <https://www.tinkerforge.com/{1}/tvpl/editor.html?example={2}/{3}/{4}>`__'
                              .format(display_name, lang, device.get_category().under, device.get_name().under, f[0]))
 
-        examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)
+        lang_placeholder = "\n :language:" if language is not None else ""
+
+        examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language if language is not None else "", language=lang_placeholder)
 
     copy_examples(copy_files, device.get_generator().get_root_dir())
 
@@ -484,9 +485,12 @@ def default_constant_format(prefix, constant_group, constant, value):
 
 def format_constants(prefix, packet,
                      constants_name=None,
-                     char_format="'{0}'",
+                     char_format_func="'{0}'".format,
+                     bool_format_func=str,
                      constant_format_func=default_constant_format,
-                     constants_intro=None):
+                     constants_intro=None,
+                     show_constant_group=False,
+                     group_format_func=lambda g: "\n" + g.get_name().space + "\n"):
     if constants_name == None:
         constants_name = {'en': 'constants', 'de': 'Konstanten'}
 
@@ -505,9 +509,13 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     constants = []
 
     for constant_group in packet.get_constant_groups():
+        if show_constant_group:
+            constants.append(group_format_func(constant_group))
         for constant in constant_group.get_constants():
             if constant_group.get_type() == 'char':
-                value = char_format.format(constant.get_value())
+                value = char_format_func(constant.get_value())
+            elif constant_group.get_type() == 'bool':
+                value = bool_format_func(constant.get_value())
             else:
                 value = str(constant.get_value())
 
@@ -515,10 +523,15 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 
     if len(constants) == 0:
         return ''
+    result = select_lang(constants_intro).format(select_lang(constants_name))
+    if show_constant_group: # newline before first constant group is redundant
+        result = result[:-1]
+    return result + ''.join(constants)
 
-    return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
+def default_function_id_constant_format(prefix, func_name, value):
+    return '* {0}FUNCTION_{1} = {2}\n'.format(prefix, func_name.upper, value)
 
-def format_function_id_constants(prefix, device, constants_name=None):
+def format_function_id_constants(prefix, device, constants_name=None, constant_format_func=default_function_id_constant_format):
     if constants_name == None:
         constants_name = {'en': 'constants', 'de': 'Konstanten'}
 
@@ -532,13 +545,12 @@ Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
 
 """
     }
-    str_constant = '* {0}FUNCTION_{1} = {2}\n'
     str_constants = select_lang(str_constants).format(select_lang(constants_name))
 
     for packet in device.get_packets('function'):
         if len(packet.get_elements(direction='out', high_level=True)) == 0 and packet.get_function_id() >= 0:
-            str_constants += str_constant.format(prefix,
-                                                 packet.get_name(skip=-2 if packet.has_high_level() else 0).upper,
+            str_constants += constant_format_func(prefix,
+                                                 packet.get_name(skip=-2 if packet.has_high_level() else 0),
                                                  packet.get_function_id())
 
     return str_constants
@@ -923,7 +935,7 @@ def check_output_and_error(*popenargs, **kwargs):
 class GeneratorError(Exception):
     pass
 
-NameFlavors = namedtuple('NameFlavors', 'space lower camel headless under upper dash')
+NameFlavors = namedtuple('NameFlavors', 'space lower camel headless under upper dash camel_abbrv')
 
 class FlavoredName(object):
     def __init__(self, name):
@@ -949,7 +961,8 @@ class FlavoredName(object):
                                           ''.join([words[0].lower()] + words[1:]), # headless
                                           '_'.join(words).lower(), # under
                                           '_'.join(words).upper(), # upper
-                                          '-'.join(words).lower()) # dash
+                                          '-'.join(words).lower(), # dash
+                                          ''.join([word.capitalize() for word in words])) # camel_abbrv; like camel, but produces GetSpiTfp... instead of GetSPITFP...
 
             return self.cache[key]
 
@@ -1514,13 +1527,15 @@ class Packet(object):
     def get_constant_groups(self):
         return self.constant_groups
 
-    def get_formatted_constants(self, constant_format, char_format="'{0}'", **extra_value):
+    def get_formatted_constants(self, constant_format, char_format_func="'{0}'".format, bool_format_func=str, **extra_value):
         constants = []
 
         for constant_group in self.get_constant_groups():
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = char_format.format(constant.get_value())
+                    value = char_format_func(constant.get_value())
+                elif constant_group.get_type() == 'bool':
+                    value = bool_format_func(constant.get_value())
                 else:
                     value = str(constant.get_value())
 
@@ -1594,10 +1609,10 @@ class Device(object):
 
         for packet in self.all_packets:
             if packet.get_type() == 'function':
-                if packet.get_name().space in function_names:
+                if packet.get_name().lower in function_names:
                     raise GeneratorError('Function name is not unique: ' + packet.get_name().space)
                 else:
-                    function_names.add(packet.get_name().space)
+                    function_names.add(packet.get_name().lower)
 
                 self.all_function_packets.append(packet)
 
@@ -1607,10 +1622,10 @@ class Device(object):
                 if 'Callback' in packet.get_name().space:
                     raise GeneratorError("Callback name cannot contain 'Callback': " + packet.get_name().space)
 
-                if packet.get_name().space in callback_names:
+                if packet.get_name().lower in callback_names:
                     raise GeneratorError('Callback name is not unique: ' + packet.get_name().space)
                 else:
-                    callback_names.add(packet.get_name().space)
+                    callback_names.add(packet.get_name().lower)
 
                 self.callback_packets.append(packet)
             else:
@@ -1707,11 +1722,14 @@ class Device(object):
 
         if name.endswith(' V2'):
             name = name[:-3]
-        elif name.endswith(' V3'):
+
+        if name.endswith(' V3'):
             name = name[:-3]
-        elif name.endswith('mA'):
+
+        if name.endswith('mA'):
             name = name[:-2]
-        elif name in ['IO4', 'IO16']:
+
+        if name in ['IO4', 'IO16']:
             name = 'IO'
 
         name = re.sub('[0-9]+x[0-9]+', '', name).replace('  ', ' ').strip()
@@ -1784,13 +1802,15 @@ class Device(object):
     def get_constant_groups(self):
         return self.constant_groups
 
-    def get_formatted_constants(self, constant_format, char_format="'{0}'", **extra_value):
+    def get_formatted_constants(self, constant_format, char_format_func="'{0}'".format, bool_format_func=str, **extra_value):
         constants = []
 
         for constant_group in self.get_constant_groups():
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = char_format.format(constant.get_value())
+                    value = char_format_func(constant.get_value())
+                elif constant_group.get_type() == 'bool':
+                    value = bool_format_func(constant.get_value())
                 else:
                     value = str(constant.get_value())
 
@@ -2005,6 +2025,8 @@ class ExampleParameter(ExampleItem):
 
         for packet in self.get_device().get_packets(type_=function_type):
             if packet.get_name().space == function_name:
+                return packet.get_elements(direction='in' if function_type == 'function' else 'out')[self.get_index()]
+            if "LowLevel" in packet.get_name().camel and packet.get_name(skip=-2).space == function_name:
                 return packet.get_elements(direction='in' if function_type == 'function' else 'out')[self.get_index()]
 
         return None
@@ -2938,7 +2960,7 @@ class ZipGenerator(Generator):
         zipname = '{0}_{1}_bindings_{2}_{3}_{4}.zip'.format(self.get_config_name().under, self.get_bindings_name(), *version)
 
         with ChangedDirectory(source_path):
-            execute(['/usr/bin/zip', '-q', '-r', zipname, '.'])
+            execute(['zip', '-q', '-r', zipname, '.'])
             shutil.copy(zipname, self.get_root_dir())
 
 class ExamplesGenerator(Generator):
@@ -2951,8 +2973,12 @@ class ExamplesGenerator(Generator):
         if self.forbid_execution:
             raise GeneratorError('ExamplesGenerator execution is forbidden')
 
-    def get_examples_dir(self, device):
-        return os.path.join(device.get_git_dir(), 'software', 'examples', self.get_bindings_name())
+    def get_examples_dir(self, device, override_git_dir=None):
+        if override_git_dir is None:
+            git_dir = device.get_git_dir()
+        else:
+            git_dir = os.path.join(override_git_dir, device.get_git_name())
+        return os.path.join(git_dir, 'software', 'examples', self.get_bindings_name())
 
 def tester_worker(cookie, args, env):
     try:
@@ -3006,12 +3032,21 @@ class Tester(object):
         if len(output) > 0:
             print(output)
 
-        if success:
-            self.success_count += 1
-            print('\033[01;32m>>> test succeded\033[0m\n')
+
+        if sys.stdout.isatty(): #Only print color codes if stdout is not piped
+            if success:
+                self.success_count += 1
+                print('\033[01;32m>>> test succeded\033[0m\n')
+            else:
+                self.failure_count += 1
+                print('\033[01;31m>>> test failed\033[0m\n')
         else:
-            self.failure_count += 1
-            print('\033[01;31m>>> test failed\033[0m\n')
+            if success:
+                self.success_count += 1
+                print('>>> test succeded\n')
+            else:
+                self.failure_count += 1
+                print('>>> test failed\n')
 
     def after_unzip(self):
         return True
@@ -3034,7 +3069,7 @@ class Tester(object):
             # unzip
             print('>>> unpacking {0} to {1}'.format(self.zipname, tmp_dir))
 
-            args = ['/usr/bin/unzip',
+            args = ['unzip',
                     '-q',
                     os.path.join(tmp_dir, self.zipname)]
 
@@ -3061,8 +3096,8 @@ class Tester(object):
             for extra_path in self.extra_paths:
                 self.handle_source(extra_path, True)
 
-        self.pool.close()
-        self.pool.join()
+            self.pool.close()
+            self.pool.join()
 
         # report
         if self.comment != None:

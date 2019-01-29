@@ -422,7 +422,6 @@ gesetzt
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Threshold',
@@ -624,7 +623,6 @@ gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
@@ -768,7 +766,6 @@ letzten Auslösung geändert hat.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',

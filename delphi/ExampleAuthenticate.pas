@@ -48,6 +48,10 @@ begin
     WriteLn('Could not authenticate');
     exit;
   end;
+
+  { ...reenable auto reconnect mechanism, as described below... }
+  sender.SetAutoReconnect(true);
+
   { ...then trigger enumerate }
   sender.Enumerate;
 end;
@@ -65,6 +69,10 @@ procedure TExample.Execute;
 begin
   { Create IP Connection }
   ipcon := TIPConnection.Create;
+
+  { Disable auto reconnect mechanism, in case we have the wrong secret.
+    If the authentication is successful, reenable it. }
+  ipcon.SetAutoReconnect(false);
 
   { Register connected callback to "ConnectedCB" }
   ipcon.OnConnected := {$ifdef FPC}@{$endif}ConnectedCB;

@@ -111,7 +111,7 @@ class CSharpZipGenerator(common.ZipGenerator):
 
         # Make dll
         with common.ChangedDirectory(self.tmp_dir):
-            common.execute(['/usr/bin/mcs',
+            common.execute(['mcs',
                             '/debug:full',
                             '/optimize+',
                             '/warn:4',

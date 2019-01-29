@@ -278,27 +278,35 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
 
     def get_matlab_fprintfs(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+                
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {java2int_prefix}e.{name}{java2int_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
+            template = '{global_line_prefix}    {else_}if {cast_prefix}e.{name}{cast_suffix} == {constant_name}\n{global_line_prefix}        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
             constant_group = self.get_constant_group()
+            type_ = self.get_type()
 
             if self.needs_octave_java2int():
-                java2int_prefix = 'java2int('
-                java2int_suffix = ')'
+                cast_prefix = 'java2int('
+                cast_suffix = ')'
+            elif not global_is_octave and type_ == 'string':
+                cast_prefix = 'char('
+                cast_suffix = ')'
             else:
-                java2int_prefix = ''
-                java2int_suffix = ''
+                cast_prefix = ''
+                cast_suffix = ''
 
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(global_quote=global_quote,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_quote=global_quote,
                                               else_='else' if len(result) > 0 else '',
                                               name=self.get_name().headless,
-                                              java2int_prefix=java2int_prefix,
-                                              java2int_suffix=java2int_suffix,
+                                              cast_prefix=cast_prefix,
+                                              cast_suffix=cast_suffix,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_value() if global_is_octave else 'com.tinkerforge.' + constant.get_matlab_source(),
                                               constant_title=constant.get_name().space,
@@ -306,7 +314,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
 
             result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
-            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{java2int_prefix}e.{name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
+            template = r"{global_line_prefix}    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{cast_prefix}e.{name}{index}{cast_suffix}{divisor}{to_binary_suffix});{comment}"
 
             if self.get_label_name() == None:
                 return []
@@ -314,14 +322,17 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
             if self.get_cardinality() < 0:
                 return [] # FIXME: streaming
 
-            if self.needs_octave_java2int():
-                java2int_prefix = 'java2int('
-                java2int_suffix = ')'
-            else:
-                java2int_prefix = ''
-                java2int_suffix = ''
-
             type_ = self.get_type()
+
+            if self.needs_octave_java2int():
+                cast_prefix = 'java2int('
+                cast_suffix = ')'
+            elif not global_is_octave and type_ == 'string':
+                cast_prefix = 'char('
+                cast_suffix = ')'
+            else:
+                cast_prefix = ''
+                cast_suffix = ''
 
             # FIXME: dec2bin doesn't support leading zeros. therefore,
             #        the result is not padded to the requested number of digits
@@ -335,15 +346,16 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(global_quote=global_quote,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_quote=global_quote,
                                               name=self.get_name().headless,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               fprintf_format=self.get_matlab_fprintf_format(),
                                               index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              java2int_prefix=java2int_prefix,
-                                              java2int_suffix=java2int_suffix,
+                                              cast_prefix=cast_prefix,
+                                              cast_suffix=cast_suffix,
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
                                               comment=self.get_formatted_comment(' % {0}')))
@@ -373,7 +385,7 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {java2int_prefix}{object_prefix}{name}{java2int_suffix} == {constant_name}\n        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
+            template = '{global_line_prefix}    {else_}if {cast_prefix}{object_prefix}{name}{cast_suffix} == {constant_name}\n{global_line_prefix}        fprintf({global_quote}{label}: {constant_title}\\n{global_quote});{comment}'
             constant_group = self.get_constant_group()
             name = self.get_name().headless
 
@@ -385,30 +397,36 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
 
                 object_prefix = ''
 
+            type_ = self.get_type()
+
             if self.needs_octave_java2int():
-                java2int_prefix = 'java2int('
-                java2int_suffix = ')'
+                cast_prefix = 'java2int('
+                cast_suffix = ')'
+            elif not global_is_octave and type_ == 'string':
+                cast_prefix = 'char('
+                cast_suffix = ')'
             else:
-                java2int_prefix = ''
-                java2int_suffix = ''
+                cast_prefix = ''
+                cast_suffix = ''
 
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(global_quote=global_quote,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_quote=global_quote,
                                               else_='else' if len(result) > 0 else '',
                                               object_prefix=object_prefix,
                                               name=name,
                                               label=self.get_label_name().replace('%', '%%'),
                                               constant_name=constant.get_value() if global_is_octave else constant.get_matlab_source(),
                                               constant_title=constant.get_name().space,
-                                              java2int_prefix=java2int_prefix,
-                                              java2int_suffix=java2int_suffix,
+                                              cast_prefix=cast_prefix,
+                                              cast_suffix=cast_suffix,
                                               comment=self.get_formatted_comment(' % {0}')))
 
             result = ['\r' + '\n'.join(result) + '\n    end\r']
         else:
-            template = r"    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{java2int_prefix}{object_prefix}{name}{index}{java2int_suffix}{divisor}{to_binary_suffix});{comment}"
+            template = r"{global_line_prefix}    fprintf({global_quote}{label}: {fprintf_format}{unit}\n{global_quote}, {to_binary_prefix}{cast_prefix}{object_prefix}{name}{index}{cast_suffix}{divisor}{to_binary_suffix});{comment}"
 
             if self.get_label_name() == None:
                 return []
@@ -426,14 +444,17 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
 
                 object_prefix = ''
 
-            if self.needs_octave_java2int():
-                java2int_prefix = 'java2int('
-                java2int_suffix = ')'
-            else:
-                java2int_prefix = ''
-                java2int_suffix = ''
-
             type_ = self.get_type()
+
+            if self.needs_octave_java2int():
+                cast_prefix = 'java2int('
+                cast_suffix = ')'
+            elif not global_is_octave and type_ == 'string':
+                cast_prefix = 'char('
+                cast_suffix = ')'
+            else:
+                cast_prefix = ''
+                cast_suffix = ''
 
             # FIXME: dec2bin doesn't support leading zeros. therefore,
             #        the result is not padded to the requested number of digits
@@ -447,7 +468,8 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(global_quote=global_quote,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              global_quote=global_quote,
                                               object_prefix=object_prefix,
                                               name=name,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
@@ -455,8 +477,8 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                               index='({0})'.format(index + 1) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
-                                              java2int_prefix=java2int_prefix,
-                                              java2int_suffix=java2int_suffix,
+                                              cast_prefix=cast_prefix,
+                                              cast_suffix=cast_suffix,
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
                                               comment=self.get_formatted_comment(' % {0}')))
@@ -473,8 +495,8 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
         return []
 
     def get_matlab_source(self):
-        template = r"""    % Get current {function_name_comment}
-    {variable} = {device_name_initial}.{function_name_headless}({arguments});
+        template = r"""{global_line_prefix}    % Get current {function_name_comment}
+{global_line_prefix}    {variable} = {device_name_initial}.{function_name_headless}({arguments});
 {fprintfs}
 """
         variables = []
@@ -495,7 +517,8 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction, MATLABExampleArg
         if len(fprintfs) > 1:
             fprintfs.insert(0, '\b')
 
-        return template.format(device_name_initial=self.get_device().get_initial_name(),
+        return template.format(global_line_prefix=global_line_prefix,
+                               device_name_initial=self.get_device().get_initial_name(),
                                function_name_headless=self.get_name().headless,
                                function_name_comment=self.get_comment_name(),
                                variable=variable,
@@ -631,12 +654,12 @@ class MATLABExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
 
     def get_matlab_source(self):
         template = r"""    % Configure threshold for {function_name_comment} "{option_comment}"
-    {device_name}.set{function_name_camel}CallbackThreshold({arguments}{global_quote}{option_char}{global_quote}, {mininum_maximums});
+    {device_name}.set{function_name_camel}CallbackThreshold({arguments}{global_quote}{option_char}{global_quote}, {minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_matlab_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_matlab_source())
 
         return template.format(global_quote=global_quote,
                                device_name=self.get_device().get_initial_name(),
@@ -645,7 +668,7 @@ class MATLABExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
                                arguments=common.wrap_non_empty('', ', '.join(self.get_matlab_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class MATLABExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, MATLABExampleArgumentsMixin):
     def get_matlab_functions(self, phase):
@@ -656,11 +679,11 @@ class MATLABExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
     {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""    % Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-    {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, {global_quote}{option_char}{global_quote}, {mininum_maximums});
+    {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, {global_quote}{option_char}{global_quote}, {minimum_maximums});
 """
         templateC = r"""    % Configure threshold for {function_name_comment} "{option_comment}"
     % with a debounce period of {period_sec_short} ({period_msec}ms)
-    {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, {global_quote}{option_char}{global_quote}, {mininum_maximums});
+    {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, {global_quote}{option_char}{global_quote}, {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -672,10 +695,10 @@ class MATLABExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_matlab_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_matlab_source())
 
         return template.format(global_quote=global_quote,
                                device_name=self.get_device().get_initial_name(),
@@ -688,7 +711,7 @@ class MATLABExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class MATLABExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_matlab_functions(self, phase):

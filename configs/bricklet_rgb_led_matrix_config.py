@@ -21,7 +21,7 @@ com = {
     'comcu': True,
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True, # currently no replacement available
     'packets': [],
     'examples': []
 }
@@ -199,7 +199,6 @@ Gibt die *Frame Duration* (Dauer des Frames) in ms zurück, wie von
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

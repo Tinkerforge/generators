@@ -321,6 +321,9 @@ class JavaScriptExampleParameter(common.ExampleParameter):
 
     def get_javascript_outputs(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+                
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -596,12 +599,12 @@ class JavaScriptExampleCallbackThresholdFunction(common.ExampleCallbackThreshold
 
     def get_javascript_source(self):
         template = r"""{global_line_prefix}        // Configure threshold for {function_name_comment} "{option_comment}"
-{global_line_prefix}        {device_name}.set{function_name_camel}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackThreshold({arguments}'{option_char}', {minimum_maximums});
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_javascript_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_javascript_source())
 
         return template.format(global_line_prefix=global_line_prefix,
                                device_name=self.get_device().get_initial_name(),
@@ -610,7 +613,7 @@ class JavaScriptExampleCallbackThresholdFunction(common.ExampleCallbackThreshold
                                arguments=common.wrap_non_empty('', ', '.join(self.get_javascript_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, JavaScriptExampleArgumentsMixin):
     def get_javascript_function(self):
@@ -621,11 +624,11 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
 {global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change});
 """
         templateB = r"""{global_line_prefix}        // Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
         templateC = r"""{global_line_prefix}        // Configure threshold for {function_name_comment} "{option_comment}"
 {global_line_prefix}        // with a debounce period of {period_sec_short} ({period_msec}ms)
-{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {mininum_maximums});
+{global_line_prefix}        {device_name}.set{function_name_camel}CallbackConfiguration({arguments}{period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
 
         if self.get_option_char() == None:
@@ -637,10 +640,10 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_javascript_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_javascript_source())
 
         return template.format(global_line_prefix=global_line_prefix,
                                device_name=self.get_device().get_initial_name(),
@@ -653,7 +656,7 @@ class JavaScriptExampleCallbackConfigurationFunction(common.ExampleCallbackConfi
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class JavaScriptExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_javascript_function(self):

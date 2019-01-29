@@ -25,3 +25,4 @@ ruby/tinkerforge-*.gem
 tvpl/build_deploy_tvpl.py
 *.sublime-project
 *.sublime-workspace
+.vscode/*

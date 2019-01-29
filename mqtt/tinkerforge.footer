@@ -1,0 +1,735 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
+def json_error(message, resultDict=None):
+    logging.error(message)
+    if resultDict is not None:
+        resultDict['_ERROR'] = message
+        return json.dumps(resultDict)
+    return json.dumps({'_ERROR': message})
+
+class MQTTBindings:
+    def __init__(self, debug, no_symbolic_response, show_payload, global_prefix, ipcon_timeout, broker_username, broker_password, broker_certificate, broker_tls_insecure):
+        self.no_symbolic_response = no_symbolic_response
+        self.show_payload = show_payload
+
+        self.ipcon = IPConnection()
+        self.handle_ipcon_exceptions(lambda i: i.set_timeout(ipcon_timeout))
+        
+        self.mqttc = mqtt.Client(userdata=len(global_prefix))
+        if debug:
+            logging.basicConfig(level=logging.DEBUG)           
+            self.mqttc.enable_logger()                    
+
+        try:
+            logging.root.name = 'MQTT bindings'
+        except:
+            pass
+    
+        if broker_username is not None:
+            self.mqttc.username_pw_set(broker_username, broker_password)
+
+        if broker_certificate is not None:
+            self.mqttc.tls_set(broker_certificate)
+
+        if broker_tls_insecure:
+            self.mqttc.tls_insecure_set(True)
+
+        self.mqttc.on_message = self.on_message
+        self.mqttc.on_connect = self.on_connect
+        
+        self.callback_devices = {}
+        self.enumerate_response_paths = set()
+
+        self.ip_connection_callbacks = {
+            "enumerate": IPConnection.CALLBACK_ENUMERATE,
+            "connected": IPConnection.CALLBACK_CONNECTED,
+            "disconnected": IPConnection.CALLBACK_DISCONNECTED
+        }
+
+        self.ip_connection_callback_names = {
+            IPConnection.CALLBACK_ENUMERATE: ["uid", "connected_uid", "position", "hardware_version", "firmware_version", "device_identifier", "enumeration_type"],
+            IPConnection.CALLBACK_CONNECTED: ["connect_reason"],
+            IPConnection.CALLBACK_DISCONNECTED: ["disconnect_reason"]
+        }
+
+        self.ip_connection_response_paths = {
+            IPConnection.CALLBACK_ENUMERATE: set(),
+            IPConnection.CALLBACK_CONNECTED: set(),
+            IPConnection.CALLBACK_DISCONNECTED: set()
+        }
+        
+        self.global_prefix = global_prefix
+        
+    def connect(self, ipcon_host, ipcon_port,ipcon_auth_secret, broker_host, broker_port):
+        logging.debug("Connecting to brickd at {}:{}".format(ipcon_host, ipcon_port))
+        self.handle_ipcon_exceptions(lambda i: i.connect(ipcon_host, ipcon_port))  
+        logging.debug("Connected to brickd at {}:{}".format(ipcon_host, ipcon_port))
+        if ipcon_auth_secret != "":
+            self.authenticate(ipcon_auth_secret, "Could not authenticate.")
+        self.mqttc.connect(broker_host, broker_port)
+
+        self.mqttc.subscribe(self.global_prefix + "request/#")
+        self.mqttc.subscribe(self.global_prefix + "register/#")
+        self.mqttc.publish(self.global_prefix + "callback/bindings/restart", "null")
+        self.mqttc.subscribe(self.global_prefix + "callback/bindings/restart")
+
+    def run(self):
+        self.mqttc.loop_start()
+        try:
+            while(True):
+                time.sleep(1)
+        except KeyboardInterrupt:
+            logging.debug("Keyboard interrupt, disconnecting from brickd and mqtt broker.")
+            try:
+                self.ipcon.disconnect()
+            except:
+                pass
+            time.sleep(0.2)                    
+            self.mqttc.disconnect()
+            self.mqttc.loop_stop()
+        
+
+
+    def ip_connection_callback_fn(self, callback_id, *args):
+        logging.error(str(callback_id) + " " + str(args))
+        d = dict(zip(self.ip_connection_callback_names[callback_id], args))
+        if "enumeration_type" in d and d["enumeration_type"] != 2 and "device_identifier" in d:            
+            dev_id = d["device_identifier"]            
+            d["_display_name"] = display_names[dev_id]
+            if not self.no_symbolic_response:
+                d["device_identifier"] = mqtt_names[dev_id]
+
+        if not self.no_symbolic_response and "enumeration_type" in d:
+            symbols = {0: "available", 1: "connected", 2: "disconnected"}
+            d["enumeration_type"] = symbols[d["enumeration_type"]]
+
+        payload = json.dumps(d)
+        for path in self.ip_connection_response_paths[callback_id]:
+            self.mqttc.publish(path, payload)
+
+    def register_ip_connection_callback(self, callback_id, response_path):
+        if len(self.ip_connection_response_paths[callback_id]) == 0:                
+            self.ipcon.register_callback(callback_id, lambda *args: self.ip_connection_callback_fn(callback_id, *args))
+        self.ip_connection_response_paths[callback_id].add(response_path)
+        logging.debug("Registered ip connection callback {} under topic {}.".format(callback_id, response_path))
+
+    def deregister_ip_connection_callback(self, callback_id, response_path):
+        self.ip_connection_response_paths[callback_id].discard(response_path)
+        logging.debug("Deregistered ip connection callback {} for topic {}.".format(callback_id, response_path))
+        if len(self.ip_connection_response_paths[callback_id]) == 0:
+            self.ipcon.register_callback(callback_id, None)
+
+    def handle_ip_connection_call(self, request_type, device, function, json_args, response_path):
+        if request_type == "request":
+            if function != "enumerate":
+                return json_error("Unknown ip connection function " + function)
+            logging.debug("Enumerating devices.")
+            self.handle_ipcon_exceptions(lambda i: i.enumerate())
+        elif request_type == "register":            
+            if function not in self.ip_connection_callbacks.keys():
+                return json_error("Unknown ip connection callback " + function)
+            callback_id = self.ip_connection_callbacks[function]
+            
+            try:
+                should_register = json.loads(json_args)
+            except Exception as e:
+                payload = ""
+                if self.show_payload:
+                    payload = ". \n\tPayload was: " + str(json_args)
+                return json_error("Could not parse payload for {} callback registration as JSON encoding a boolean: {}{}".format(function, str(e), payload))
+
+            if not isinstance(should_register, bool):
+                #also support {"register": true/false} in addition to a top-level boolean
+                if isinstance(should_register, dict) and 'register' in should_register and type(should_register['register']) == bool: 
+                    should_register = should_register['register']
+                else:
+                    return json_error("Expected bool as parameter of callback registration, but got " + str(json_args))
+                    
+            if should_register:                    
+                self.register_ip_connection_callback(callback_id, response_path)
+            else:
+                self.deregister_ip_connection_callback(callback_id, response_path)
+        else:
+            return json_error("Unknown ip connection request {}", request_type)
+
+    def handle_bindings_call(self, request_type, device, function, json_args, response_path):
+        if request_type == "callback" and function == "restart":
+            logging.warning("Another MQTT bindings instance started on this broker with the same global prefix. This is not recommended as both bindings instances will receive requests and send responses.")
+            return
+
+        if request_type != "request":
+            return json_error("Unknown bindings request {}".format(request_type))
+        
+        if function != "reset_callbacks":
+            return json_error("Unknown bindings function {}".format(function))
+        
+        logging.debug("Resetting callbacks")
+
+        self.enumerate_response_paths = set()
+        self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, None)
+
+        self.callback_devices = {}
+        self.ipcon.devices = {}
+
+
+    @staticmethod
+    def on_connect(mqttc, obj, flags, rc):
+        logging.debug("Connecting to mqtt broker: " + mqtt.connack_string(rc))
+
+    @staticmethod
+    def parse_path(global_prefix_len, path):
+        if global_prefix_len > 0:
+            global_prefix = path[:global_prefix_len - 1] #main ensures that the prefix ends with a '/'
+        else:
+            global_prefix = None
+
+        splt = path[global_prefix_len:].split("/")
+        
+        if len(splt) < 3:
+            logging.error("malformed topic: Expected at least [request_type]/[device_type]/(uid if device_type is not 'ip_connection'/)[function], but got: " + path)
+            return
+
+        request_type = splt.pop(0)
+        device = splt.pop(0)
+        uid_less_device = device in ["ip_connection", "bindings"]
+        if not uid_less_device and len(splt) < 2:
+            logging.error("malformed topic: Expected at least [request_type; was: {}]/[device_type; was: {}]/[uid]/[function], but got: {}".format(request_type, device, path))
+            return
+
+        uid = splt.pop(0) if not uid_less_device else None    
+        function = splt.pop(0)
+        suffix = '/'.join(splt) if len(splt) > 0 else None
+        
+        response_type = "response" if request_type == "request" else "callback"
+
+        to_join = [global_prefix, response_type, device] if global_prefix_len > 0 else [response_type, device]
+        
+        if uid is not None:
+            to_join.append(uid)
+        to_join.append(function)
+        if suffix is not None:
+            to_join.append(suffix)
+
+        response_path = '/'.join(to_join)
+
+        return global_prefix, request_type, device, uid, function, suffix, response_path
+
+    def on_message(self, mqttc, global_prefix_len, msg):
+        try:
+            logging.debug("\n")
+            path_info = self.parse_path(global_prefix_len, msg.topic)
+            if path_info is None:
+                return
+            
+            global_prefix, request_type, device, uid, function, suffix, response_path = path_info
+
+            if device == "ip_connection":
+                response = self.handle_ip_connection_call(request_type, device, function, msg.payload, response_path)
+            elif device == "bindings":
+                response = self.handle_bindings_call(request_type, device, function, msg.payload, response_path)
+            else:                        
+                response = self.dispatch_call(request_type, device, uid, function, msg.payload, response_path)
+
+            if response is None:
+                return
+            logging.debug("Publishing response to {}".format(response_path))
+            self.mqttc.publish(response_path, response)
+            logging.debug("\n")
+        except:
+            traceback.print_exc()
+
+
+    def handle_ipcon_exceptions(self, function, resultDict=None, infoString = None):
+        try:
+            return function(self.ipcon)        
+        except Error as e:
+            if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC]:
+                if infoString is not None:
+                    return json_error(e.description + " " + infoString, resultDict)
+                return json_error(e.description, resultDict)
+
+            fatal_error(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
+        except struct.error as e:
+            if infoString is not None:
+                return json_error(e.args[0] + " " + infoString, resultDict)
+            return json_error(e.args[0], resultDict)
+        except socket.error as e:
+            fatal_error(str(e).lower(), ERROR_SOCKET_ERROR)
+        except Exception as e:
+            if sys.hexversion < 0x03000000 and isinstance(e, ValueError) and "JSON" in str(e):
+                return json_error(str(e), resultDict)
+            if sys.hexversion >= 0x03000000 and isinstance(e, json.JSONDecodeError):
+                return json_error(str(e), resultDict)
+            fatal_error(str(e).lower(), ERROR_OTHER_EXCEPTION)
+
+    def authenticate(self, secret, message):
+        logging.debug("Authenticating. Disabling auto-reconnect")
+        # don't auto-reconnect on authentication error
+        self.ipcon.set_auto_reconnect(False)
+
+        try:
+            self.ipcon.authenticate(secret)
+        except:
+            fatal_error(message, ERROR_AUTHENTICATION_ERROR)
+
+        logging.debug("Authentication succeded. Re-enabling auto-reconnect")
+        self.ipcon.set_auto_reconnect(True)
+        
+    @staticmethod
+    def type_check_args(args, arg_names, arg_types):
+        type_map = {
+            'int': int,
+            'float': float,
+            'bool': bool,
+        }        
+
+        for a, n, t in zip(args, arg_names, arg_types):
+            if isinstance(t, tuple):
+                t_name, t_len = t  
+                t = type_map[t_name]              
+                if not isinstance(a, list):
+                    return "Argument {name} was not of expected type list of {type}.".format(name=n, type=t_name)
+                if t_len < 0 and len(a) > abs(t_len):
+                    return "Argument {name} was a list of length {have}, but max length of {want} is allowed.".format(name=n, have=len(a), want=abs(t_len))
+                if t_len > 0 and not len(a) == t_len:
+                    return "Argument {name} was a list of length {have}, but length {want} was expected.".format(name=n, have=len(a), want=t_len)
+
+                for idx, a_elem in enumerate(a):                    
+                    if type(a_elem) != t:
+                        return "Argument {name}[{idx}] was not of expected type {type}.".format(name=n, idx=idx, type=t_name)
+            else:
+                if t == 'char' or t == 'string':
+                    if sys.hexversion < 0x03000000 and not isinstance(a, basestring):
+                        return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                    elif sys.hexversion >= 0x03000000 and not isinstance(a, str):
+                        return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                elif type(a) != type_map[t]:
+                    return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                
+
+    def device_stream_call(self, device, device_name, uid, fnName, fnInfo, json_args):
+        logging.debug("Starting stream call {} for device {} of type {}.".format(fnName, uid, device_name))
+        if len(json_args) > 0:
+            try:
+                obj = json.loads(json_args)
+            except Exception as e:
+                payload = ""
+                if self.show_payload:
+                    payload = ". \n\tPayload was: " + str(json_args)
+                return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
+            
+
+        function_id, direction, high_level_roles_in, high_level_roles_out, \
+            low_level_roles_in, low_level_roles_out, arg_names, arg_types, arg_symbols, \
+            format_in, result_names, result_symbols, format_out, chunk_padding, \
+            chunk_cardinality, chunk_max_offset, short_write, single_read, fixed_length = fnInfo
+
+        request_data = []
+        missing_args = []
+        for a in arg_names:
+            if a not in obj:
+                missing_args.append(a)
+            else:
+                request_data.append(obj[a])
+        
+        if len(missing_args) > 0:
+            return json_error("The arguments {} where missing for a call of {} of device {} of type {}.".format(str(missing_args), fnName, uid, device_name), dict([(name, None) for name in fnInfo.result_names]))
+        
+        
+        normal_level_request_data = [data for role, data in zip(high_level_roles_in, request_data) if role == None]
+        
+        reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
+        normal_level_request_data = [symbols[data] if data in symbols else data for symbols, data in zip(reversed_symbols, normal_level_request_data)]    
+        
+        type_error = MQTTBindings.type_check_args(request_data, arg_names, arg_types)
+        if type_error is not None:
+            return json_error("Call {} of {} {}: {}".format(fnName, device_name, uid, type_error),  dict([(name, None) for name in result_names]))
+
+        if device.response_expected[function_id] != 1 and "_response_expected" in obj:
+            re = obj["_response_expected"]
+            if isinstance(re, bool):
+                device.set_response_expected(function_id, re)
+            else:
+                logging.debug("Ignoring _response_expected, it was not of boolean type. (Call of {} of device {} of type {}.)".format(fnName, uid, device_name))
+
+        if direction == 'in':
+            def create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data):
+                low_level_request_data = []
+                normal_level_request_data_iter = iter(normal_level_request_data)
+
+                for role in low_level_roles_in:
+                    if role == None:
+                        low_level_request_data.append(next(normal_level_request_data_iter))
+                    elif role == 'stream_length':
+                        low_level_request_data.append(stream_length)
+                    elif role == 'stream_chunk_offset':
+                        low_level_request_data.append(stream_chunk_offset)
+                    elif role == 'stream_chunk_data':
+                        low_level_request_data.append(stream_chunk_data)
+
+                return low_level_request_data
+
+            stream_data_index = high_level_roles_in.index('stream_data')
+            stream_data = request_data[stream_data_index]
+            
+            if sys.hexversion < 0x03000000:
+                if isinstance(stream_data, basestring):
+                    stream_data = create_char_list(stream_data)
+            else:
+                if isinstance(stream_data, str):
+                    stream_data = create_char_list(stream_data)
+            stream_length = len(stream_data)
+            stream_chunk_offset = 0
+
+            if short_write:
+                stream_chunk_written_index = None if len(low_level_roles_out) == 1 else low_level_roles_out.index('stream_chunk_written')
+                stream_written = 0
+
+            if stream_length == 0:
+                stream_chunk_data = [chunk_padding] * chunk_cardinality
+                low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
+
+                response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, low_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+                if isinstance(response, dict) and "_ERROR" in response:                    
+                    return response
+
+                if short_write:
+                    if stream_chunk_written_index == None:
+                        stream_written = response
+                    else:
+                        stream_written = response[stream_chunk_written_index]
+            else:
+                while stream_chunk_offset < stream_length:
+                    stream_chunk_data = create_chunk_data(stream_data, stream_chunk_offset, chunk_cardinality, chunk_padding)
+                    low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
+
+                    response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, low_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+                    if isinstance(response, dict) and "_ERROR" in response:                        
+                        return response
+
+                    if short_write:
+                        if stream_chunk_written_index == None:
+                            stream_chunk_written = response
+                        else:
+                            stream_chunk_written = response[stream_chunk_written_index]
+
+                        stream_written += stream_chunk_written
+
+                        if stream_chunk_written < chunk_cardinality:
+                            break # either last chunk or short write
+
+                    stream_chunk_offset += chunk_cardinality
+
+            if short_write:
+                if not isinstance(response, tuple):
+                    response = (response,)
+
+                normal_level_response_iter = (data for role, data in zip(low_level_roles_out, response) if role == None)
+                high_level_response = []
+
+                for role in high_level_roles_out:
+                    if role == None:
+                        high_level_response.append(next(normal_level_response_iter))
+                    elif role == 'stream_written':
+                        high_level_response.append(stream_written)
+
+                if len(high_level_response) == 1:
+                    response = high_level_response[0]
+                else:
+                    response = tuple(high_level_response)
+        else: # out
+            low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+            if isinstance(response, dict) and "_ERROR" in response:                
+                return response
+
+            if fixed_length == None:
+                stream_length_index = low_level_roles_out.index('stream_length')
+                stream_length = low_level_response[stream_length_index]
+            else:
+                stream_length_index = None
+                stream_length = fixed_length
+
+            if not single_read:
+                stream_chunk_offset_index = low_level_roles_out.index('stream_chunk_offset')
+                stream_chunk_offset = low_level_response[stream_chunk_offset_index]
+            else:
+                stream_chunk_offset_index = None
+                stream_chunk_offset = 0
+
+            stream_chunk_data_index = low_level_roles_out.index('stream_chunk_data')
+            stream_chunk_data = low_level_response[stream_chunk_data_index]
+
+            if fixed_length != None and stream_chunk_offset == chunk_max_offset:
+                stream_length = 0
+                stream_out_of_sync = False
+                stream_data = ()
+            else:
+                stream_out_of_sync = stream_chunk_offset != 0
+                stream_data = stream_chunk_data
+
+            while not stream_out_of_sync and len(stream_data) < stream_length:
+                low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+                if isinstance(response, dict) and "_ERROR" in response:                    
+                    return response
+
+                if stream_length_index != None:
+                    stream_length = low_level_response[stream_length_index]
+
+                if stream_chunk_offset_index != None:
+                    stream_chunk_offset = low_level_response[stream_chunk_offset_index]
+
+                stream_chunk_data = low_level_response[stream_chunk_data_index]
+                stream_out_of_sync = stream_chunk_offset != len(stream_data)
+                stream_data += stream_chunk_data
+
+            if stream_out_of_sync: # discard remaining stream to bring it back in-sync
+                while stream_chunk_offset + chunk_cardinality < stream_length:
+                    low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+                    if isinstance(response, dict) and "_ERROR" in response:                        
+                        return response
+
+                    if stream_length_index != None:
+                        stream_length = low_level_response[stream_length_index]
+
+                    if stream_chunk_offset_index != None:
+                        stream_chunk_offset = low_level_response[stream_chunk_offset_index]
+
+                    stream_chunk_data = low_level_response[stream_chunk_data_index]
+
+                return json_error("Stream is out-of-sync", dict([(name, None) for name in result_names]))
+
+            normal_level_response_iter = (data for role, data in zip(low_level_roles_out, low_level_response) if role == None)
+            high_level_response = []
+
+            for role in high_level_roles_out:
+                if role == None:
+                    high_level_response.append(next(normal_level_response_iter))
+                elif role == 'stream_data':
+                    high_level_response.append(stream_data[:stream_length])
+
+            if len(high_level_response) == 1:
+                response = high_level_response[0]
+            else:
+                response = tuple(high_level_response)
+
+        if response != None:
+            if len(result_symbols) == 1:
+                response = (response,)
+
+            if not self.no_symbolic_response:
+                response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
+            response = json.dumps(dict(zip(result_names, response)))
+            logging.debug("Stream call {} for device {} of type {} succeded.".format(fnName, uid, device_name))
+            return response
+    @staticmethod
+    def parse_uid(uid):
+        uid_ = base58decode(uid)
+
+        if uid_ > 0xFFFFFFFF:
+            uid_ = uid64_to_uid32(uid_)
+        return uid_
+
+    def ensure_dev_exists(self, uid, device_class, device_class_name, mqttc):
+        uid_ = self.parse_uid(uid)
+
+        if uid_ in self.ipcon.devices and isinstance(self.ipcon.devices[uid_], device_class):            
+            device = self.ipcon.devices[uid_]
+        else:
+            try:
+                device = device_class(uid, self.ipcon, device_class, mqttc)
+            except ValueError as e:
+                return False, json_error("Could not create device object, maybe the UID {} was wrong?".format(uid))
+        return True, device
+
+    def dispatch_call(self, call_type, device_class_name, uid, fnName, json_args, response_path):
+        if device_class_name not in devices:
+            return json_error("Unknown device type " + device_class_name,)
+        device_class = devices[device_class_name]
+        if call_type == 'request':                
+            if fnName not in device_class.functions:
+                return json_error("Unknown function {} for device {} of type {}".format(fnName, uid, device_class_name),)
+            fnInfo = device_class.functions[fnName]
+
+            success, device = self.ensure_dev_exists(uid, device_class, device_class_name, self.mqttc)
+            if not success:
+                return device
+            
+            if isinstance(fnInfo, HighLevelFunctionInfo):
+                return self.device_stream_call(device, device_class_name, uid, fnName, fnInfo, json_args)
+            else:
+                return self.device_call(device, device_class_name, uid, fnName, fnInfo, json_args)
+        elif call_type == 'register':
+            if fnName not in device_class.callbacks:
+                return json_error("Unknown callback {} for device {} of type {}".format(fnName, uid, device_class_name),)
+            fnInfo = device_class.callbacks[fnName]
+
+            return self.device_callback_registration(device_class, device_class_name, uid, fnName, fnInfo, json_args, response_path)
+
+    def device_callback_registration(self, device_class, device_name, uid, callbackName, callbackInfo, json_args, path):
+        try:
+            should_register = json.loads(json_args)
+        except Exception as e:
+            payload = ""
+            if self.show_payload:
+                payload = ". \n\tPayload was: " + str(json_args)
+            return json_error("Could not parse payload for {} callback registration of {} {} as JSON encoding a boolean: {}{}".format(callbackName, device_class, device_name, str(e), payload))
+
+        if not isinstance(should_register, bool):
+            #also support {"register": true/false} in addition to a top-level boolean
+            if isinstance(should_register, dict) and 'register' in should_register: 
+                should_register = should_register['register']
+            else:
+                return json_error("Expected bool as parameter of callback registration, but got " + str(json_args))
+        
+        if should_register:
+            success, callback_device = self.ensure_dev_exists(uid, device_class, device_name, self.mqttc)
+            if not success:
+                return callback_device
+            
+            callback_device.add_callback(callbackInfo.id, callbackInfo.fmt, callbackInfo.names, callbackInfo.high_level_info)
+            callback_device.register_callback(self, callbackInfo.id, path)
+            
+            logging.debug("Registered callback {} for device {} of type {}. Will publish messages to {}.".format(callbackName, uid, device_name, path))
+        else:
+            uid_ = self.parse_uid(uid)
+
+            if uid_ not in self.ipcon.devices or not isinstance(self.ipcon.devices[uid_], device_class):            
+                reason = "no callbacks where registered for this device" if uid_ not in self.ipcon.devices else "a device of type {} with the same UID has callbacks registered".format(self.callback_devices[uid].device_class)
+                logging.debug("Got callback deregistration request for device {} of type {}, but {}. Ignoring the request.".format(uid, device_name, reason))
+                return None
+            reg_found = self.ipcon.devices[uid_].deregister_callback(callbackInfo.id, path)
+            if reg_found:
+                logging.debug("Deregistered callback {} for device {} of type {}. Will stop publishing messages to {}.".format(callbackName, uid, device_name, path))
+
+    def device_call(self, device, device_name, uid, fnName, fnInfo, json_args):
+        logging.debug("Calling function {} for device {} of type {}.".format(fnName, uid, device_name))
+        if len(json_args) > 0:
+            try:
+                obj = json.loads(json_args)
+            except Exception as e:
+                payload = ""
+                if self.show_payload:
+                    payload = ". \n\tPayload was: " + str(json_args)
+                return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
+        else:
+            obj = {}
+        args = []
+
+        missing_args = []
+        for a in fnInfo.arg_names:
+            if a not in obj:
+                missing_args.append(a)
+            else:
+                args.append(obj[a])
+        
+        if len(missing_args) > 0:
+            return json_error("The arguments {} where missing for a call of {} of device {} of type {}.".format(str(missing_args), fnName, uid, device_name), dict([(name, None) for name in fnInfo.result_names]))
+
+        reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
+        args = [symbols[data] if data in symbols else data for symbols, data in zip(reversed_symbols, args)]
+        
+        type_error = MQTTBindings.type_check_args(args, fnInfo.arg_names, fnInfo.arg_types)
+        if type_error is not None:
+            return json_error("Call {} of {} {}: {}".format(fnName, device_name, uid, type_error),  dict([(name, None) for name in fnInfo.result_names]))
+
+        if device.response_expected[fnInfo.id] != 1 and "_response_expected" in obj:
+            re = obj["_response_expected"]
+            if isinstance(re, bool):
+                device.set_response_expected(fnInfo.id, re)
+            else:
+                logging.debug("Ignoring _response_expected, it was not of boolean type. (Call of {} of device {} of type {}.)".format(fnName, uid, device_name))
+        
+        response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_fmt), dict([(name, None) for name in fnInfo.result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+        if isinstance(response, dict) and "_ERROR" in response:            
+            return response
+
+        logging.debug("Calling function {} for device {} of type {} succedded.".format(fnName, uid, device_name))
+        if response != None:
+            if len(fnInfo.result_names) == 1:
+                response = (response,)
+
+            if not self.no_symbolic_response:
+                response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
+
+            d = dict(zip(fnInfo.result_names, response))            
+            if fnName == "get_identity" and "device_identifier" in d:
+                dev_id = d["device_identifier"]            
+                d["_display_name"] = display_names[dev_id]
+                if not self.no_symbolic_response:
+                    d["device_identifier"] = mqtt_names[dev_id]
+            response = json.dumps(d)        
+            return response
+
+    def callback_function(self, mqtt_callback_device, callback_id, *args):    
+        names = mqtt_callback_device.callback_names[callback_id]
+        paths = mqtt_callback_device.publish_paths[callback_id]
+        payload = json.dumps(dict(zip(names, args)))
+        for path in paths:
+            self.mqttc.publish(path, payload)
+
+
+def parse_positive_int(value):
+    value = int(value)
+
+    if value < 0:
+        raise ValueError()
+
+    return value
+
+parse_positive_int.__name__ = 'positive-int'
+
+IPCON_HOST = 'localhost'
+IPCON_PORT = 4223
+IPCON_TIMEOUT = 2500
+IPCON_AUTH_SECRET = ''
+BROKER_HOST = 'localhost'
+BROKER_PORT = 1883 # 8883 for TLS
+GLOBAL_TOPIC_PREFIX = 'tinkerforge/'
+
+def main():
+    parser = argparse.ArgumentParser(description='Brick MQTT Proxy')
+    parser.add_argument('--ipcon-host', dest='ipcon_host', type=str, default=IPCON_HOST,
+                        help='hostname or IP address of Brick Daemon, WIFI or Ethernet Extension (default: {0})'.format(IPCON_HOST))
+    parser.add_argument('--ipcon-port', dest='ipcon_port', type=int, default=IPCON_PORT,
+                        help='port number of Brick Daemon, WIFI or Ethernet Extension (default: {0})'.format(IPCON_PORT))
+    parser.add_argument('--ipcon-auth-secret', dest='ipcon_auth_secret', type=str, default=IPCON_AUTH_SECRET,
+                        help='authentication secret of Brick Daemon, WIFI or Ethernet Extension (default: {0})'.format(IPCON_AUTH_SECRET))
+    parser.add_argument('--ipcon-timeout', dest='ipcon_timeout', type=int, default=IPCON_TIMEOUT,
+                        help='timeout in milliseconds for communication with Brick Daemon, WIFI or Ethernet Extension (default: {0})'.format(IPCON_TIMEOUT))
+    parser.add_argument('--broker-host', dest='broker_host', type=str, default=BROKER_HOST,
+                        help='hostname or IP address of MQTT broker (default: {0})'.format(BROKER_HOST))
+    parser.add_argument('--broker-port', dest='broker_port', type=int, default=BROKER_PORT,
+                        help='port number of MQTT broker (default: {0})'.format(BROKER_PORT))
+    parser.add_argument('--broker-username', dest='broker_username', type=str, default=None,
+                        help='username for the MQTT broker connection')
+    parser.add_argument('--broker-password', dest='broker_password', type=str, default=None,
+                        help='password for the MQTT broker connection')
+    parser.add_argument('--broker-certificate', dest='broker_certificate', type=str, default=None,
+                        help='Certificate Authority certificate file used for SSL/TLS connections')
+    parser.add_argument('--broker-tls-insecure', dest='broker_tls_insecure', action='store_true',
+                        help='disable verification of the server hostname in the server certificate for the MQTT broker connection')
+    parser.add_argument('--global-topic-prefix', dest='global_topic_prefix', type=str, default=GLOBAL_TOPIC_PREFIX,
+                        help='global MQTT topic prefix for this proxy instance (default: {0})'.format(GLOBAL_TOPIC_PREFIX))
+    parser.add_argument('--debug', dest='debug', action='store_true', help='enable debug output')
+    parser.add_argument('--no-symbolic-response', dest='no_symbolic_response', action='store_true', help='disable translation into string constants for responses')
+
+    parser.add_argument('--show-payload', dest='show_payload', action='store_true', help='show received payload if JSON parsing fails.')
+
+    args = parser.parse_args(sys.argv[1:])
+
+    if args.broker_username is None and args.broker_password is not None:
+        parser.error('--broker-password cannot be used without --broker-username')
+
+    global_topic_prefix = args.global_topic_prefix
+
+    if len(global_topic_prefix) > 0 and not global_topic_prefix.endswith('/'):
+        global_topic_prefix += '/'
+
+    bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
+    bindings.connect(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret,args.broker_host, args.broker_port)
+    bindings.run()
+
+if __name__ == '__main__':
+    main()

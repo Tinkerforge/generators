@@ -114,8 +114,12 @@ com['packets'].append({
 Enables/Disables the fan and the laser diode of the sensors. The sensor is
 enabled by default.
 
-The sensor takes about 30 after it is enabled to settle and produce stable
+The sensor takes about 30 seconds after it is enabled to settle and produce stable
 values.
+
+The laser diode has a lifetime of about 8000 hours. If you want to measure in
+an interval with a long idle time (e.g. hourly) you should turn the
+laser diode off between the measurements.
 """,
 'de':
 """
@@ -124,6 +128,10 @@ ist standardmäßig aktiv.
 
 Der Sensor benötigt ca. 30 Sekunden nach der Aktivierung um sich einzuschwingen
 und stabile Werte zu produzieren.
+
+Die Lebensdauer der Laserdiode beträgt ca. 8000 Stunden. Wenn Messungen in
+größeren Abständen stattfinden sollen (z.B. stündlich) lohnt es sich die
+Laserdiode zwischen den Messungen auszumachen.
 """
 }]
 })

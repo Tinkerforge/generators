@@ -104,7 +104,8 @@ This function can only be called in master mode.
 """,
 'de':
 """
-Schreibt ein DMX Frame. Die maximale Framegröße ist 512 Byte. Jedes Byte stellt dabei einen Channel dar.
+Schreibt ein DMX Frame. Die maximale Framegröße ist 512 Byte. Jedes Byte stellt
+dabei einen Kanal dar.
 
 Das nächste Frame kann geschrieben werden nachdem der :cb:`Frame Started` Callback aufgerufen wurde.
 Das Frame verfügt über einen Doublebuffer, so dass ein neues Frame geschrieben werden kann, sobald das
@@ -117,9 +118,9 @@ Genereller Ansatz:
 
 * Setze *Frame Duration* auf einen Wert welcher der Anzahl der
   Bilder pro Sekunde entspricht die erreicht werden sollen.
-* Setze alle Channels für den ersten Frame.
+* Setze alle Kanäle für den ersten Frame.
 * Warte auf :cb:`Frame Started` Callback.
-* Setze alle Channels für den nächsten Frame.
+* Setze alle Kanäle für den nächsten Frame.
 * Warte auf :cb:`Frame Started` Callback.
 * Und so weiter.
 
@@ -165,8 +166,8 @@ This function can only be called in slave mode.
 'de':
 """
 Gibt das letzte Frame zurück, dass von dem DMX Master geschrieben wurde. Die Größe des
-Arrays ist identisch zu der Anzahl von Channels in dem Frame. Jedes Byte repräsentiert
-ein Channel.
+Arrays ist identisch zu der Anzahl der Kanäle im Frame. Jedes Byte repräsentiert
+ein Kanal.
 
 Das nächste Frame ist verfügbar nachdem der :cb:`Frame Available` Callback aufgerufen
 wurde.
@@ -370,7 +371,6 @@ Gibt die Konfiguration zurück, wie von :func:`Set Error LED Config` gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Callback Config',
@@ -517,8 +517,8 @@ This callback can only be triggered in slave mode.
 Dieser Callback wird aufgerufen sobald ein neuer Frame verfügbar ist
 (vim DMX Master geschrieben).
 
-Die Größe des Arrays ist gleichbedeutend zu der Anzahl an Channels in
-dem Frame. Jedes Byte stellt einen Channel dar.
+Die Größe des Arrays ist gleichbedeutend zu der Anzahl an Kanälen in
+dem Frame. Jedes Byte stellt einen Kanal dar.
 
 Der Callback kann mittels :func:`Set Frame Callback Config` aktiviert werden.
 
@@ -545,4 +545,10 @@ Dieser Callback wird aufgerufen wenn ein neuer Fehler auftritt.
 Er gibt die Anzahl der aufgetreten Overrun und Framing Fehler zurück.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('setter', 'Set DMX Mode', [('uint8:constant', 0)], 'Configure Bricklet as DMX master', None),
+              ('setter', 'Write Frame', [('uint8', [255, 128, 0])], 'Write DMX frame with 3 channels', None)]
 })

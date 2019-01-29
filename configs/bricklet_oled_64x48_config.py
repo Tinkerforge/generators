@@ -15,8 +15,8 @@ com = {
     'display_name': 'OLED 64x48',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '1.68cm (0.66") OLED with 64x48 pixels',
-        'de': '1,68cm (0,66") OLED mit 64x48 Pixel'
+        'en': '1.68cm (0.66") OLED display with 64x48 pixels',
+        'de': '1,68cm (0,66") OLED Display mit 64x48 Pixel'
     },
     'released': True,
     'documented': True,

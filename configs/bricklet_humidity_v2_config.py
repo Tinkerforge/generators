@@ -11,7 +11,7 @@ from commonconstants import add_callback_value_function
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 2],
     'api_version_extra': 1, # +1 for "Fix min/max types in add_callback_value_function logic [aff5bfc]"
     'category': 'Bricklet',
     'device_identifier': 283,
@@ -136,11 +136,16 @@ averaging, there is more noise on the data.
 
 The range for the averaging is 1-1000.
 
-New data is gathered every 50ms. With a moving average of length 1000 the resulting
+New data is gathered every 50ms*. With a moving average of length 1000 the resulting
 averaging window has a length of 50s. If you want to do long term measurements the longest
 moving average will give the cleanest results.
 
-The default value is 100.
+The default value is 5.
+
+\* In firmware version 2.0.3 we added the :func:`Set Samples Per Second` function. It
+configures the measurement frequency. Since high frequencies can result in self-heating
+of th IC, changed the default value from 20 samples per second to 1. With 1 sample per second
+a moving average length of 1000 would result in an averaging window of 1000 seconds!
 """,
 'de':
 """
@@ -152,11 +157,17 @@ Desto kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Da
 
 Der Wertebereich liegt bei 1-1000.
 
-Einer neue Wert wird alle 50ms gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
+Einer neue Wert wird alle 50ms* gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
 resultierende gleitende Fenster eine Zeitspanne von 50s. Bei Langzeitmessungen gibt
 ein langer Mittelwert die saubersten Resultate.
 
-Der Standardwert ist 100.
+Der Standardwert ist 5.
+
+\* In Firmware Version 2.0.3 haben wir die Funktion :func:`Set Samples Per Second`
+hinzugefügt. Diese konfiguriert die Messfrequenz. Da eine hohe Messfrequenz zu
+Selbsterhitzung führen kann haben wir die Standardeinstellung von 20 SPS auf 1 SPS
+geändert. Mit einer Messung pro Sekunde entspricht eine Mittelwert-Länge von 1000
+einem Zeitfenster von 1000 Sekunden!
 """
 }]
 })
@@ -176,6 +187,66 @@ Returns the moving average configuration as set by :func:`Set Moving Average Con
 'de':
 """
 Gibt die Moving Average-Konfiguration zurück, wie von :func:`Set Moving Average Configuration` gesetzt.
+"""
+}]
+})
+
+SPS_CONFIG_CONSTANT = ('SPS', [('20', 0),
+                               ('10', 1),
+                               ('5',  2),
+                               ('1',  3),
+                               ('02', 4),
+                               ('01', 5)])
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Samples Per Second',
+'elements': [('SPS', 'uint8', 1, 'in', SPS_CONFIG_CONSTANT)],
+'since_firmware': [2, 0, 3],
+'doc': ['bf', {
+'en':
+"""
+Sets the samples per second that are gathered by the humidity/temperature sensor HDC1080.
+
+We added this function since we found out that a high measurement frequency can lead to
+self-heating of the sensor. Which can distort the temperature measurement. 
+
+If you don't need a lot of measurements, you can use the lowest available measurement
+frequency of 0.1 samples per second for the least amount of self-heating.
+
+Before version 2.0.3 the default was 20 samples per second. The new default is 1 sample per second.
+""",
+'de':
+"""
+Setzt die Messungen pro Sekunde mit denen neue Luftfeuchte/Temperatur-Werte vom
+HDC1080 Sensor gelesen werden.
+
+Wir haben diese Funktion hinzugefügt, da eine hohe Messfrequenz zu einer Selbsterhitzung 
+des Sensors führen kann. Diese kann die Temperaturmessung verfälschen.
+
+Wenn wenig Messwerte benötigt werden kann die Frequenz auf bis zu 0,1 Messungen pro
+Sekunde verringert werden um einen Fehler durch Selbsterhitzung möglichst weit zu
+minimieren.
+
+Vor Version 2.0.3 wurden 30 Messungen pro Sekunde gemacht. Der neue Standardwert seit
+2.0.3 ist 1 Messung pro Sekunde.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Samples Per Second',
+'elements': [('SPS', 'uint8', 1, 'out', SPS_CONFIG_CONSTANT)],
+'since_firmware': [2, 0, 3],
+'doc': ['bf', {
+'en':
+"""
+Returnes the samples per second, as set by :func:`Set Samples Per Second`.
+""",
+'de':
+"""
+Gibt die Messwerte pro Sekunde zurück, wie von :func:`Set Samples Per Second` gesetzt.
 """
 }]
 })

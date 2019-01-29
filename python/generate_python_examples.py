@@ -163,15 +163,19 @@ class PythonExampleParameter(common.ExampleParameter):
 
     def get_python_prints(self):
         if self.get_type().split(':')[-1] == 'constant':
+            if self.get_label_name() == None:
+                return []
+                
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {name} == {constant_name}:\n        print("{label}: {constant_title}"){comment}'
+            template = '{global_line_prefix}    {else_}if {name} == {constant_name}:\n{global_line_prefix}        print("{label}: {constant_title}"){comment}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='el' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='el' if len(result) > 0 else '',
                                               name=self.get_name().under,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_python_source(callback=True),
@@ -180,7 +184,7 @@ class PythonExampleParameter(common.ExampleParameter):
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
+            template = '{global_line_prefix}    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -203,7 +207,8 @@ class PythonExampleParameter(common.ExampleParameter):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=self.get_name().under,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=self.get_name().under,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -228,12 +233,13 @@ class PythonExampleResult(common.ExampleResult):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '    {else_}if {name} == {constant_name}:\n        print("{label}: {constant_title}"){comment}'
+            template = '{global_line_prefix}    {else_}if {name} == {constant_name}:\n{global_line_prefix}        print("{label}: {constant_title}"){comment}'
             constant_group = self.get_constant_group()
             result = []
 
             for constant in constant_group.get_constants():
-                result.append(template.format(else_='el' if len(result) > 0 else '',
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              else_='el' if len(result) > 0 else '',
                                               name=self.get_name().under,
                                               label=self.get_label_name(),
                                               constant_name=constant.get_python_source(),
@@ -242,7 +248,7 @@ class PythonExampleResult(common.ExampleResult):
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
-            template = '    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
+            template = '{global_line_prefix}    print("{label}: " + {format_prefix}{name}{index}{divisor}{format_suffix}{unit}){comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -270,7 +276,8 @@ class PythonExampleResult(common.ExampleResult):
             result = []
 
             for index in range(self.get_label_count()):
-                result.append(template.format(name=name,
+                result.append(template.format(global_line_prefix=global_line_prefix,
+                                              name=name,
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor('/{0}'),
@@ -289,8 +296,8 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         return None
 
     def get_python_source(self):
-        template = r"""    # Get current {function_name_comment}
-    {variables} = {device_name}.{function_name_under}({arguments})
+        template = r"""{global_line_prefix}    # Get current {function_name_comment}
+{global_line_prefix}    {variables} = {device_name}.{function_name_under}({arguments})
 {prints}
 """
         variables = []
@@ -306,7 +313,8 @@ class PythonExampleGetterFunction(common.ExampleGetterFunction, PythonExampleArg
         if len(prints) > 1:
             prints.insert(0, '\b')
 
-        result = template.format(device_name=self.get_device().get_initial_name(),
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_name=self.get_device().get_initial_name(),
                                  function_name_under=self.get_name().under,
                                  function_name_comment=self.get_comment_name(),
                                  variables=',<BP>'.join(variables),
@@ -443,12 +451,12 @@ class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
 
     def get_python_source(self):
         template = r"""    # Configure threshold for {function_name_comment} "{option_comment}"
-    {device_name}.set_{function_name_under}_callback_threshold({arguments}"{option_char}", {mininum_maximums})
+    {device_name}.set_{function_name_under}_callback_threshold({arguments}"{option_char}", {minimum_maximums})
 """
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_python_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_python_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
@@ -456,7 +464,7 @@ class PythonExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
                                arguments=common.wrap_non_empty('', ', '.join(self.get_python_arguments()), ', '),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, PythonExampleArgumentsMixin):
     def get_python_imports(self):
@@ -470,11 +478,11 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
     {device_name}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change})
 """
         templateB = r"""    # Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-    {device_name}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, "{option_char}", {mininum_maximums})
+    {device_name}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, "{option_char}", {minimum_maximums})
 """
         templateC = r"""    # Configure threshold for {function_name_comment} "{option_comment}"
     # with a debounce period of {period_sec_short} ({period_msec}ms)
-    {device_name}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, "{option_char}", {mininum_maximums})
+    {device_name}.set_{function_name_under}_callback_configuration({arguments}{period_msec}{value_has_to_change}, "{option_char}", {minimum_maximums})
 """
 
         if self.get_option_char() == None:
@@ -486,10 +494,10 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        mininum_maximums = []
+        minimum_maximums = []
 
-        for mininum_maximum in self.get_minimum_maximums():
-            mininum_maximums.append(mininum_maximum.get_python_source())
+        for minimum_maximum in self.get_minimum_maximums():
+            minimum_maximums.append(minimum_maximum.get_python_source())
 
         return template.format(device_name=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
@@ -501,7 +509,7 @@ class PythonExampleCallbackConfigurationFunction(common.ExampleCallbackConfigura
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('True', 'False', ''), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums))
+                               minimum_maximums=', '.join(minimum_maximums))
 
 class PythonExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_python_imports(self):

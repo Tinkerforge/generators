@@ -6,8 +6,6 @@
 
 # Industrial Digital Out 4 Bricklet 2.0 communication config
 
-# TODO: Documentation and examples.
-
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -21,8 +19,8 @@ com = {
         'de': '4 galvanisch getrennte digitale Ausgänge'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []
@@ -36,7 +34,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value of all four Channels. A value of *true* or *false* outputs
+Sets the output value of all four channels. A value of *true* or *false* outputs
 logic 1 or logic 0 respectively on the corresponding channel.
 
 Use :func:`Set Selected Value` to change only one output channel state.
@@ -46,8 +44,13 @@ channels 2-3 low.
 """,
 'de':
 """
-Beispiel: (True, True, False, False) setzt die Channels 0-1 auf logisch 1 und die
-Channels 2-3 auf logisch 0.
+Setzt den Zustand aller vier Kanäle. Der Wert *true* bzw. *false* erzeugen
+logisch 1 bzw. logisch 0 auf dem entsprechenden Kanal.
+
+Mittels :func:`Set Selected Value` können auch einzelnen Kanäle gesetzt werden.
+
+Beispiel: (True, True, False, False) setzt die Kanäle 0-1 auf logisch 1 und die
+Kanäle 2-3 auf logisch 0.
 """
 }]
 })
@@ -60,11 +63,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the logic levels that are currently measured on the channels.
+Returns the logic levels that are currently output on the channels.
 """,
 'de':
 """
-Gibt die aktuell gemessenen Zustände zurück.
+Gibt die aktuellen Zustände der Kanäle zurück.
 """
 }]
 })
@@ -82,7 +85,7 @@ Sets the output value of a specific channel without affecting the other channels
 """,
 'de':
 """
-Setzt den Ausgabewert des spezifizierte Channel ohne die anderen Channele zu
+Setzt den Ausgabewert des spezifizierten Kanals ohne die anderen Kanäle zu
 beeinflussen.
 """
 }]
@@ -106,7 +109,7 @@ If this function is called with the parameters (true, 1500):
 The channel will turn on and in 1.5s it will turn off again.
 
 A monoflop can be used as a failsafe mechanism. For example: Lets assume you
-have a RS485 bus and a IO4 Bricklet is connected to one of the slave
+have a RS485 bus and a IO-4 Bricklet is connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
 of two seconds. The channel will be *high* all the time. If now the RS485
 connection is lost, the channel will turn *low* in at most two seconds.
@@ -121,7 +124,7 @@ Wenn diese Funktion mit den Parametern (true, 1500) aufgerufen wird:
 Der Kanal wird angeschaltet und nach 1,5s wieder ausgeschaltet.
 
 Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
-Angenommen ein RS485 Bus und ein IO4 Bricklet ist an ein Slave Stapel
+Angenommen ein RS485 Bus und ein IO-4 Bricklet ist an ein Slave Stapel
 verbunden. Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter
 von 2 Sekunden, aufgerufen werden.
 Der Kanal wird die gesamte Zeit eingeschaltet sein. Wenn jetzt die RS485 Verbindung
@@ -149,7 +152,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für den angegebenen Channel) den aktuellen Zustand und die Zeit, wie von
+Gibt (für den angegebenen Kanal) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
@@ -174,8 +177,8 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
-:word:`parameters` enthalten den Channel und den aktuellen
-Zustand des Channels (der Zustand nach dem Monoflop).
+:word:`parameters` enthalten den Kanal und den aktuellen Zustand des Kanals
+(der Zustand nach dem Monoflop).
 """
 }]
 })
@@ -183,7 +186,7 @@ Zustand des Channels (der Zustand nach dem Monoflop).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
                                                                   ('On', 1),
                                                                   ('Show Heartbeat', 2),
@@ -192,7 +195,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Each channel has a corresponding LED. You can turn the LED Off, On or show a
+Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
 
@@ -200,12 +203,12 @@ By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
-Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
-aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanal-Status
-angezeigt werden. Falls Kanal-Status gewählt wird ist die LED an wenn
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
+ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
+angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
-Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
+Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -213,7 +216,7 @@ Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('LED', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in'),
              ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
                                                                    ('On', 1),
                                                                    ('Show Heartbeat', 2),
@@ -222,11 +225,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })
@@ -235,8 +238,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'in'),   # 1/10 Hz
-             ('Duty Cycle', 'uint16', 1, 'in')], # 1/100 %
+             ('Frequency', 'uint32', 1, 'in'),
+             ('Duty Cycle', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -276,8 +279,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'out'),   # 1/10 Hz
-             ('Duty Cycle', 'uint16', 1, 'out')], # 1/100 %
+             ('Frequency', 'uint32', 1, 'out'),
+             ('Duty Cycle', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -289,4 +292,18 @@ Returns the PWM configuration as set by :func:`Set PWM Configuration`.
 Gibt die PWM Konfiguration zurück, wie von :func:`Set PWM Configuration` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('loop_header', 10, 'Set channels alternating high/low 10 times with 100 ms delay'),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Value', [('bool', [True, False, False, False])], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Value', [('bool', [False, True, False, False])], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Value', [('bool', [False, False, True, False])], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Value', [('bool', [False, False, False, True])], None, None),
+              ('loop_footer',)]
 })

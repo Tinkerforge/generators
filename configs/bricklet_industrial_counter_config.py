@@ -67,8 +67,6 @@ CONSTANT_FREQUENCY_INTEGRATION_TIME = ('Frequency Integration Time', [('128 MS',
                                                                       ('16384 MS', 7),
                                                                       ('32768 MS', 8)])
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter',
@@ -231,7 +229,7 @@ com['packets'].append({
 """
 Activates/deactivates the counter of the given channel.
 
-true = activate, false = deactivate. 
+true = activate, false = deactivate.
 
 By default all channels are activated.
 """,
@@ -256,7 +254,7 @@ com['packets'].append({
 """
 Activates/deactivates the counter of all four channels.
 
-true = activate, false = deactivate. 
+true = activate, false = deactivate.
 
 By default all channels are activated.
 """,
@@ -329,15 +327,15 @@ com['packets'].append({
 Sets the counter configuration for the given channel.
 
 * Count Edge: Counter can count on rising, falling or both edges.
-* Count Direction: Counter can count up or down. You can also use 
-  another channel as direction input, see 
+* Count Direction: Counter can count up or down. You can also use
+  another channel as direction input, see
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
   for details.
 * Duty Cycle Prescaler: Sets a divider for the internal clock. See
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
   for details.
 * Frequency Integration Time: Sets the integration time for the
-  frequency measurement. See 
+  frequency measurement. See
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
   for details.
 """,
@@ -350,7 +348,7 @@ Setzt die Zähler-Konfiguration für den gegebenen Kanal.
   Kanal als Richtungseingang genutzt werden. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
   für weitere Details.
-* Tastverhältnis Prescaler: Setzt einen Teiler für die interne Clock. Siehe 
+* Tastverhältnis Prescaler: Setzt einen Teiler für die interne Clock. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__
   für weitere Details.
 * Frequenz-Integration: Setzt die Integrationszeit für die Frequenzmessung. Siehe
@@ -512,7 +510,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Each channel has a corresponding LED. You can turn the LED Off, On or show a
+Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
 
@@ -521,11 +519,11 @@ By default all channel LEDs are configured as "Channel Status".
 'de':
 """
 Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
-ausgeschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanalstatus
+ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
 angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
-Standardmäßig sind die LEDs für alle Kanäle auf "Kanal-Status" konfiguriert.
+Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -542,11 +540,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })
@@ -599,3 +597,11 @@ Die :word:`parameters` sind der gleiche wie :func:`Get All Signal Data`.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Counter', 'counter from channel 0'), [(('Counter', 'Counter (Channel 0)'), 'int64', 1, None, None, None)], [('uint8:constant', 0)]),
+              ('getter', ('Get Signal Data', 'signal data from channel 0'), [(('Duty Cycle', 'Duty Cycle (Channel 0)'), 'uint16', 1, 100.0, '%', None), (('Period', 'Period (Channel 0)'), 'uint64', 1, None, 'ns', None), (('Frequency', 'Frequency (Channel 0)'), 'uint32', 1, 1000.0, 'Hz', None), (('Value', 'Value (Channel 0)'), 'bool', 1, None, None, None)], [('uint8:constant', 0)])]
+})
+
+# FIXME: add all-counter / all-signal-data callback example

@@ -156,7 +156,7 @@ Pt100 oder Pt1000 Sensor verbunden, der Sensor ist inkorrekt
 verbunden oder der Sensor selbst ist fehlerhaft.
 
 Zum automatischen übertragen des Status kann auch der
-:cb:`Sensor Connected` Callback verwendet werden. 
+:cb:`Sensor Connected` Callback verwendet werden.
 Der Callback wird mit der Funktion
 :func:`Set Sensor Connected Callback Configuration` konfiguriert.
 """

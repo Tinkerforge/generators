@@ -1921,7 +1921,7 @@ com['examples'].append({
 'name': 'Modbus Master',
 'functions': [('setter', 'Set Mode', [('uint8:constant', 1)], 'Set operating mode to Modbus RTU master', None),
               ('setter', 'Set Modbus Configuration', [('uint8', 1), ('uint32', 1000)], 'Modbus specific configuration:\n- slave address = 1 (unused in master mode)\n- master request timeout = 1000ms', None),
-              ('callback', ('Modbus Master Write Single Register Response', 'Modbus master write single register response'), [(('Request ID', 'Request ID'), 'uint8', 1, None, None, None), (('Exception Code', 'Exception Code'), 'int8', 1, None, None, None)], None, None),
+              ('callback', ('Modbus Master Write Single Register Response', 'Modbus master write single register response'), [(('Request ID', 'Request ID'), 'uint8', 1, None, None, None), (('Exception Code', 'Exception Code'), 'int8:constant', 1, None, None, None)], None, None),
               ('setter', 'Modbus Master Write Single Register', [('uint8', 17), ('uint32', 42), ('uint16', 65535)], 'Write 65535 to register 42 of slave 17', None)],
 'incomplete': True # because of special callback logic and missing return value handling of the write call
 })

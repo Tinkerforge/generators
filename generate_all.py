@@ -36,7 +36,7 @@ bindings = []
 
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if d not in ['configs', 'stubs', '.git', '__pycache__']:
+        if d not in ['configs', 'stubs', '.git', '__pycache__', '.vscode']:
             bindings.append(d)
             sys.path.append(os.path.join(path, d))
 

@@ -89,7 +89,7 @@ class MathematicaZipGenerator(common.ZipGenerator):
 
         # Make dll
         with common.ChangedDirectory(self.tmp_dir):
-            common.execute(['/usr/bin/mcs',
+            common.execute(['mcs',
                             '/optimize+',
                             '/warn:4',
                             '/sdk:2',

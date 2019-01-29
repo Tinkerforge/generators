@@ -74,7 +74,7 @@ richtig Chip Type (siehe :func:`Set Chip Type`) und das richtige Channel Mapping
 (siehe :func:`Set Channel Mapping`) eingestellt werden.
 
 Wenn das Channel Mapping 3 Farben hat, müssen die Werte in der Sequenz
-RGBRGBRGB... übergeben werden. Hat das Mapping 4 Farben, müssen die Werte in 
+RGBRGBRGB... übergeben werden. Hat das Mapping 4 Farben, müssen die Werte in
 der Sequenz RGBWRGBWRGBW... übergeben werden.
 
 Die Daten werden Zwischengespeichert und die Farben werden auf die LEDs
@@ -382,9 +382,9 @@ Sets the channel mapping for the connected LEDs.
 If the mapping has 4 colors, the function :func:`Set LED Values` expects 4
 values per pixel and if the mapping has 3 colors it expects 3 values per pixel.
 
-The function always expects the order RGB(W). The connected LED driver chips 
-might have their 3 or 4 channels in a different order. For example, the WS2801 
-chips typically use BGR order, then WS2812 chips typically use GRB order and 
+The function always expects the order RGB(W). The connected LED driver chips
+might have their 3 or 4 channels in a different order. For example, the WS2801
+chips typically use BGR order, then WS2812 chips typically use GRB order and
 the APA102 chips typically use WBGR order.
 
 The APA102 chips are special. They have three 8-bit channels for RGB
@@ -403,8 +403,8 @@ Falls das Mapping 4 Farben hat, erwartet die Funktion :func:`Set LED Values`
 4 Werte pro Pixel. Bei einem Mapping mit 3 Farben werden 3 Werte pro Pixel
 erwartet.
 
-Die Funktion erwartet immer die Reihenfolge RGB(W). 
-Die angeschlossenen LED-Treiber-Chips können die Daten für ihre 
+Die Funktion erwartet immer die Reihenfolge RGB(W).
+Die angeschlossenen LED-Treiber-Chips können die Daten für ihre
 3 oder 4 Kanäle in einer anderen Reihenfolge erwarten. Zum Beispiel
 verwenden WS2801 Chips typischerweise BGR Reihenfolge, WS2812 Chips
 verwenden typischerweise GRB Reihenfolge und APA102 verwenden typischerweise
@@ -510,7 +510,7 @@ Gibt die Konfiguration zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'incomplete': True # because of array parameters
+'functions': [('setter', 'Set LED Values', [('uint16', 0), ('uint8', [255, 0, 0, 0, 255, 0, 0, 0, 255])], 'Set first 3 LEDs to red, green and blue', None)]
 })
 
 com['examples'].append({

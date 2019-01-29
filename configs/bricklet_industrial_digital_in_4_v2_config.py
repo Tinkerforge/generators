@@ -273,7 +273,7 @@ Returns the edge type and debounce time for the selected channel as set by
 """,
 'de':
 """
-Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Channel zurück,
+Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Kanals zurück,
 wie von :func:`Set Edge Count Configuration` gesetzt.
 """
 }]
@@ -291,7 +291,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Each channel has a corresponding LED. You can turn the LED Off, On or show a
+Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
 
@@ -300,11 +300,11 @@ By default all channel LEDs are configured as "Channel Status".
 'de':
 """
 Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder
-aus-geschaltet werden. Zusätzlich kann ein Hearbeat oder der Kanalstatus
+ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
 angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
 
-Standardmäßig sind die LEDs für alle Kanäle auf "Kanalstatus" konfiguriert.
+Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -321,11 +321,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the Channel LED configuration as set by :func:`Set Channel LED Config`
+Returns the channel LED configuration as set by :func:`Set Channel LED Config`
 """,
 'de':
 """
-Gibt die LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })
@@ -383,4 +383,24 @@ Die :word:`parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist d
 `changed`-Parameter True wenn sich der Wert seit dem letzten Callback geändert hat.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Value', 'value'), [(('Value', ['Channel 0', 'Channel 1', 'Channel 2', 'Channel 3']), 'bool', 4, None, None, None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Value', 'value'), [(('Channel', 'Channel'), 'uint8:constant', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
+              ('callback_configuration', ('Value', 'value (channel 1)'), [('uint8', 1)], 100, False, None, [])]
+})
+
+com['examples'].append({
+'name': 'Edge Count',
+'functions': [('setter', 'Set Edge Count Configuration', [('uint8', 3), ('uint8', 0), ('uint8', 10)], 'Configure rising edge count (channel 3) with 10ms debounce', None),
+              ('loop_header', 10, 'Get edge count 10 times with 1s delay'),
+              ('sleep', 1000, None, None),
+              ('getter', ('Get Edge Count', 'edge count'), [(('Count', 'Count'), 'uint32', 1, None, None, None)], [('uint8', 3), ('bool', False)]),
+              ('loop_footer',)]
 })

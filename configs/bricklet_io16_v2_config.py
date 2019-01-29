@@ -6,8 +6,6 @@
 
 # IO-16 Bricklet 2.0 communication config
 
-# TODO: Documentation.
-
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -21,11 +19,26 @@ com = {
         'de': '16 digitale Ein- und Ausgänge'
     },
     'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'packets': [],
     'examples': []
+}
+
+com['doc'] = {
+'en':
+"""
+The Bricklet has sixteen channels that are named 0 to 15 in the API. The
+corresponding connectors on the Bricklet are labeled A0 to A7 for channel 0 to 7
+and B0 to B7 for channels 8 to 15.
+""",
+'de':
+"""
+Das Bricklet hat sechzehn Kanäle die in der API von 0 bis 15 benannt sind. Die
+entsprechenden Anschlüsse auf dem Bricklet sind mit A0 bis A7 für die Kanäle 0
+bis 7 und B0 bis B7 für die Kanäle 8 bis 15 benannt.
+"""
 }
 
 com['packets'].append({
@@ -36,13 +49,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value of all four Channels. A value of *true* or *false* outputs
+Sets the output value of all sixteen channels. A value of *true* or *false* outputs
 logic 1 or logic 0 respectively on the corresponding channel.
 
 Use :func:`Set Selected Value` to change only one output channel state.
 
-For example: (True, True, False, False, ..., False) will turn the channels 0-1 high and the
-channels 2-15 low.
+For example: (True, True, False, False, ..., False) will turn the channels 0-1
+high and the channels 2-15 low.
 
 .. note::
  This function does nothing for channels that are configured as input. Pull-up
@@ -50,11 +63,16 @@ channels 2-15 low.
 """,
 'de':
 """
-Beispiel: (True, True, False, False, ..., False) setzt die Channels 0-1 auf logisch 1 und die
-Channels 2-15 auf logisch 0.
+Setzt den Zustand aller sechzehn Kanäle. Der Wert *true* bzw. *false* erzeugen
+logisch 1 bzw. logisch 0 auf dem entsprechenden Kanal.
+
+Mittels :func:`Set Selected Value` können auch einzelnen Kanäle gesetzt werden.
+
+Beispiel: (True, True, False, False, ..., False) setzt die Kanäle 0-1 auf logisch 1 und die
+Kanäle 2-15 auf logisch 0.
 
 .. note::
- Diese Funktion bewirkt keine Änderung an Channels die als Eingang konfiguriert
+ Diese Funktion bewirkt keine Änderung an Kanälen die als Eingang konfiguriert
  sind. Pull-Up Widerstände können mit :func:`Set Configuration` zugeschaltet
  werden.
 """
@@ -76,7 +94,7 @@ configured as output.
 'de':
 """
 Gibt die aktuell gemessenen Zustände zurück. Diese Funktion gibt die Zustände
-aller Channels zurück, unabhängig ob diese als Ein- oder Ausgang konfiguriert
+aller Kanäle zurück, unabhängig ob diese als Ein- oder Ausgang konfiguriert
 sind.
 """
 }]
@@ -99,11 +117,11 @@ Sets the output value of a specific channel without affecting the other channels
 """,
 'de':
 """
-Setzt den Ausgabewert des spezifizierte Channel ohne die anderen Channele zu
+Setzt den Ausgabewert des spezifizierten Kanals ohne die anderen Kanäle zu
 beeinflussen.
 
 .. note::
- Diese Funktion bewirkt keine Änderung an Channels die als Eingang konfiguriert
+ Diese Funktion bewirkt keine Änderung an Kanälen die als Eingang konfiguriert
  sind. Pull-Up Widerstände können mit :func:`Set Configuration` zugeschaltet
  werden.
 """
@@ -141,7 +159,7 @@ The default configuration is input with pull-up.
 """,
 'de':
 """
-Konfiguriert den Zustand und die Richtung eines angegebenen Channels. Mögliche
+Konfiguriert den Zustand und die Richtung eines angegebenen Kanals. Mögliche
 Richtungen sind 'i' und 'o' für Ein- und Ausgang.
 
 Wenn die Richtung als Ausgang konfiguriert ist, ist der Zustand entweder
@@ -152,10 +170,10 @@ Pull-Up oder Standard (gesetzt als *true* oder *false*).
 
 Beispiele:
 
-* (0, 'i', true) setzt Channel-0 als Eingang mit Pull-Up.
-* (1, 'i', false) setzt Channel-1 als Standard Eingang (potentialfrei wenn nicht verbunden).
-* (2, 'o', true) setzt Channel-2 als Ausgang im Zustand logisch 1.
-* (3, 'o', false) setzt Channel-3 als Ausgang im Zustand logisch 0.
+* (0, 'i', true) setzt Kanal-0 als Eingang mit Pull-Up.
+* (1, 'i', false) setzt Kanal-1 als Standard Eingang (potentialfrei wenn nicht verbunden).
+* (2, 'o', true) setzt Kanal-2 als Ausgang im Zustand logisch 1.
+* (3, 'o', false) setzt Kanal-3 als Ausgang im Zustand logisch 0.
 
 Die Standardkonfiguration ist Eingang mit Pull-Up.
 """
@@ -177,7 +195,7 @@ Returns the channel configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Channel konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
+Gibt die Kanal-Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -192,11 +210,36 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+This callback can be configured per channel.
 
+The period in ms is the period with which the :cb:`Input Value`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
 """,
 'de':
 """
+Dieser Callback kann pro Kanal konfiguriert werden.
 
+Die Periode in ms ist die Periode mit der der :cb:`Input Value`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
 """
 }]
 })
@@ -211,11 +254,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-
+Returns the callback configuration as set by
+:func:`Set Input Value Callback Configuration`.
 """,
 'de':
 """
-
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Input Value Callback Configuration` gesetzt.
 """
 }]
 })
@@ -229,11 +274,32 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+The period in ms is the period with which the :cb:`All Input Value`
+callback is triggered periodically. A value of 0 turns the callback off.
 
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
 """,
 'de':
 """
+Die Periode in ms ist die Periode mit der der :cb:`All Input Value`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
 """
 }]
 })
@@ -247,11 +313,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-
+Returns the callback configuration as set by
+:func:`Set All Input Value Callback Configuration`.
 """,
 'de':
 """
-
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set All Input Value Callback Configuration` gesetzt.
 """
 }]
 })
@@ -266,11 +334,45 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Configures a monoflop of the specified channel.
 
+The second parameter is the desired value of the specified
+channel. A *true* means relay closed and a *false* means relay open.
+
+The third parameter indicates the time (in ms) that the channels should hold
+the value.
+
+If this function is called with the parameters (0, 1, 1500) channel 0 will
+close and in 1.5s channel 0 will open again
+
+A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
+have a RS485 bus and a IO-16 Bricklet 2.0 connected to one of
+the slave stacks. You can now call this function every second, with a time
+parameter of two seconds and channel 0 closed. Channel 0 will be closed all the
+time. If now the RS485 connection is lost, then channel 0 will be opened in at
+most two seconds.
 """,
 'de':
 """
+Konfiguriert einen Monoflop für den angegebenen Kanal.
 
+Der zweite Parameter ist eine der gewünschten Zustände des
+festgelegten Kanals. Eine *true bedeutet Relais geschlossen und
+ein *false* bedeutet Relais offen.
+
+Der dritte Parameter ist die Zeit (in ms) die der Kanal den Zustand
+halten sollen.
+
+Wenn diese Funktion mit den Parametern (0, 1, 1500) aufgerufen wird,
+wird Kanal 0 geschlossen und nach 1,5s wieder geöffnet.
+
+Ein Monoflop kann zur Ausfallsicherung verwendet werden. Beispiel:
+Angenommen ein RS485 Bus und ein IO-16 Bricklet 2.0 ist an ein
+Slave Stapel verbunden.
+Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden,
+aufgerufen werden. Der Kanal wird die gesamte Zeit im Zustand geschlossen sein.
+Wenn jetzt die RS485 Verbindung getrennt wird, wird der Kanal nach spätestens
+zwei Sekunden in den Zustand geöffnet wechseln.
 """
 }]
 })
@@ -294,7 +396,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für den angegebenen Channel) den aktuellen Zustand und die Zeit, wie von
+Gibt (für den angegebenen Kanal) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
@@ -321,10 +423,10 @@ directly after it is read.
 """,
 'de':
 """
-Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Channel zurück. Die
+Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Kanal zurück. Die
 zu zählenden Flanken können mit :func:`Set Edge Count Configuration` konfiguriert werden.
 
-Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
+Wenn `reset counter` auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
 """
 }]
@@ -365,7 +467,7 @@ Default values: 0 (edge type) and 100ms (debounce time)
 Konfiguriert den Flankenzähler für einen bestimmten Kanal.
 
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
-steigende, fallende oder beide Flanken gezählt werden für Channels die als Eingang
+steigende, fallende oder beide Flanken gezählt werden für Kanäle die als Eingang
 konfiguriert sind. Mögliche Flankentypen sind:
 
 * 0 = steigend (Standard)
@@ -401,7 +503,7 @@ Returns the edge type and debounce time for the selected channel as set by
 """,
 'de':
 """
-Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Channel zurück,
+Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Kanals zurück,
 wie von :func:`Set Edge Count Configuration` gesetzt.
 """
 }]
@@ -417,11 +519,20 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically according to the configuration set by
+:func:`Set Input Value Callback Configuration`.
 
+The parameters are the channel, a value-changed indicator and the actual value
+for the channel. The `changed` parameter is true if the value has changed since
+the last callback.
 """,
 'de':
 """
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set Input Value Callback Configuration` gesetzten Konfiguration
 
+Die Parameter sind der Kanal, Changed und der Wert. Der `changed`-Parameter
+ist True wenn sich der Wert seit dem letzten Callback geändert hat.
 """
 }]
 })
@@ -435,11 +546,21 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically according to the configuration set by
+:func:`Set All Input Value Callback Configuration`.
+
+The :word:`parameters` are the same as :func:`Get Value`. Additional the
+`changed` parameter is true if the value has changed since
+the last callback.
 
 """,
 'de':
 """
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set All Input Value Callback Configuration` gesetzten Konfiguration
 
+Die :word:`parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist der
+`changed`-Parameter True wenn sich der Wert seit dem letzten Callback geändert hat.
 """
 }]
 })
@@ -460,8 +581,25 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
-:word:`parameters` enthalten den Channel und den aktuellen
-Zustand des Channels (der Zustand nach dem Monoflop).
+:word:`parameters` enthalten den Kanal und den aktuellen Zustand des Kanals
+(der Zustand nach dem Monoflop).
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Output',
+'functions': [('setter', 'Set Configuration', [('uint8', 7), ('char', 'o'), ('bool', False)], 'Configure channel 7 as output low', None),
+              ('loop_header', 10, 'Set channel 7 alternating high/low 10 times with 100 ms delay'),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Selected Value', [('uint8', 7), ('bool', True)], None, None),
+              ('sleep', 100, None, None),
+              ('setter', 'Set Selected Value', [('uint8', 7), ('bool', False)], None, None),
+              ('loop_footer',)]
+})
+
+com['examples'].append({
+'name': 'Interrupt',
+'functions': [('callback', ('Input Value', 'input value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
+              ('callback_configuration', ('Input Value', 'input value (channel 4)'), [('uint8', 4)], 500, False, None, [])]
 })

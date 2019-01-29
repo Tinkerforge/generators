@@ -28,6 +28,7 @@ import sys
 import os
 import datetime
 import shutil
+import math
 from sets import Set
 
 sys.path.append(os.path.split(os.getcwd())[0])
@@ -37,7 +38,6 @@ import c.c_common as c_common
 class CoMCUStubDevice(common.Device):
     def get_h_constants(self):
         constant_format = '#define {device_name}_{constant_group_name}_{constant_name} {constant_value}'
-        char_format="'{0}'"
         constants = []
 
         for i, constant_group in enumerate(self.get_constant_groups()):
@@ -46,7 +46,9 @@ class CoMCUStubDevice(common.Device):
 
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = char_format.format(constant.get_value())
+                    value = "'{0}'".format(constant.get_value())
+                elif constant_group.get_type() == 'bool':
+                    value = str(constant.get_value()).lower()
                 else:
                     value = str(constant.get_value())
 
@@ -86,10 +88,14 @@ class CoMCUStubDevice(common.Device):
                     struct_body = ''
                     for element in packet.get_elements():
                         c_type = element.get_c_type('default')
-                        if element.get_cardinality() > 1:
+                        cardinality = element.get_cardinality()
+                        if cardinality > 1:
+                            if c_type == 'bool':
+                                c_type = 'uint8_t'
+                                cardinality = int(math.ceil(cardinality/8.0))
                             struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                                       element.get_name().under,
-                                                                      element.get_cardinality());
+                                                                      cardinality);
                         else:
                             struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
 
@@ -101,10 +107,14 @@ class CoMCUStubDevice(common.Device):
                 for element in packet.get_elements(direction='in'):
                     c_type = element.get_c_type('default')
 
-                    if element.get_cardinality() > 1:
+                    cardinality = element.get_cardinality()
+                    if cardinality > 1:
+                        if c_type == 'bool':
+                            c_type = 'uint8_t'
+                            cardinality = int(math.ceil(cardinality/8.0))
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                                   element.get_name().under,
-                                                                  element.get_cardinality());
+                                                                  cardinality);
                     else:
                         struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
 
@@ -118,10 +128,15 @@ class CoMCUStubDevice(common.Device):
                 for element in packet.get_elements(direction='out'):
                     c_type = element.get_c_type('default')
 
-                    if element.get_cardinality() > 1:
+                    cardinality = element.get_cardinality()
+                    if cardinality > 1:
+                        if c_type == 'bool':
+                            c_type = 'uint8_t'
+                            cardinality = int(math.ceil(cardinality/8.0))
+
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                                   element.get_name().under,
-                                                                  element.get_cardinality());
+                                                                  cardinality);
                     else:
                         struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
 

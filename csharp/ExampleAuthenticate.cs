@@ -32,6 +32,9 @@ class ExampleAuthenticate
 			return;
 		}
 
+		// ...reenable auto reconnect mechanism, as described below...
+		sender.SetAutoReconnect(true);
+
 		// ...then trigger enumerate
 		sender.Enumerate();
 	}
@@ -49,6 +52,10 @@ class ExampleAuthenticate
 	{
 		// Create IP Connection
 		IPConnection ipcon = new IPConnection();
+
+		// Disable auto reconnect mechanism, in case we have the wrong secret.
+		// If the authentication is successful, reenable it.
+		ipcon.SetAutoReconnect(false);
 
 		// Register Connected Callback
 		ipcon.Connected += ConnectedCB;

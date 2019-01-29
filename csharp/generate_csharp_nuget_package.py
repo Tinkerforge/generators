@@ -60,7 +60,7 @@ def generate(root_dir):
     # Unzip
     version = common.get_changelog_version(root_dir)
 
-    common.execute(['/usr/bin/unzip',
+    common.execute(['unzip',
                     '-q',
                     os.path.join(root_dir, 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)),
                     '-d',
@@ -71,7 +71,7 @@ def generate(root_dir):
 
     # Make DLL for NET 4.0
     with common.ChangedDirectory(tmp_unzipped_net40_dir):
-        common.execute(['/usr/bin/mcs',
+        common.execute(['mcs',
                         '/debug:full',
                         '/optimize+',
                         '/warn:4',
@@ -86,7 +86,7 @@ def generate(root_dir):
         f.write(NETCORE_CSPROJ)
 
     with common.ChangedDirectory(tmp_unzipped_netcoreapp20_source_tinkerforge_dir):
-        common.execute(['/usr/bin/dotnet',
+        common.execute(['dotnet',
                         'build',
                         '-c',
                         'Release'])
