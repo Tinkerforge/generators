@@ -244,7 +244,7 @@
 - Add general streaming support
 - Add SPITFP configuration and diagnostics methods to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
-- Remove unused getCurrentConsumption method from Slient Stepper Brick API
+- Remove unused getCurrentConsumption method from Silent Stepper Brick API
 
 2017-11-20: 2.1.15 (f235e3f)
 - Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB

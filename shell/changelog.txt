@@ -102,7 +102,7 @@
 - Add support for RS485 Bricklet
 - Add SPITFP configuration and diagnostics functions to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
-- Remove unused get-current-consumption function from Slient Stepper Brick API
+- Remove unused get-current-consumption function from Silent Stepper Brick API
 - Increase minimum Python version to 2.6
 
 2017-11-20: 2.1.15 (f235e3f)

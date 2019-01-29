@@ -72,7 +72,7 @@
 - Add general streaming support
 - Add SPITFP configuration and diagnostics methods to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
-- Remove unused getCurrentConsumption method from Slient Stepper Brick API
+- Remove unused getCurrentConsumption method from Silent Stepper Brick API
 - Add workaround for the listener problem in Octave >= 3.8
 
 2017-11-20: 2.0.15 (f235e3f)

@@ -198,7 +198,7 @@
 - Add support for RS485 Bricklet
 - Add SPITFP configuration and diagnostics functions to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
-- Remove unused GetCurrentConsumption function from Slient Stepper Brick API
+- Remove unused GetCurrentConsumption function from Silent Stepper Brick API
 - Break PTC Bricklet API to fix type for resistance value
 
 2017-11-20: 2.1.17 (f235e3f)

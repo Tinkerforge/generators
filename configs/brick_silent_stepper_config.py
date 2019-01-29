@@ -505,7 +505,7 @@ com['packets'].append({
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
-given via the black power input connector on the Slient Stepper Brick.
+given via the black power input connector on the Silent Stepper Brick.
 
 If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack
@@ -520,7 +520,7 @@ voltage present, the motor will be driven by this voltage.
 'de':
 """
 Gibt die externe Eingangsspannung (in mV) zurück. Die externe Eingangsspannung
-wird über die schwarze Stromversorgungsbuchse, in den Slient Stepper Brick,
+wird über die schwarze Stromversorgungsbuchse, in den Silent Stepper Brick,
 eingespeist.
 
 Sobald eine externe Eingangsspannung und die Spannungsversorgung des Stapels anliegt,
@@ -1374,7 +1374,7 @@ com['packets'].append({
 'en':
 """
 Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
-is triggered. The minimum possible value that works with the Slient Stepper
+is triggered. The minimum possible value that works with the Silent Stepper
 Brick is 8V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do
@@ -1385,7 +1385,7 @@ The default value is 8V.
 'de':
 """
 Setzt die minimale Spannung in mV, bei welcher der :cb:`Under Voltage` Callback
-ausgelöst wird. Der kleinste mögliche Wert mit dem der Slient Stepper Brick noch
+ausgelöst wird. Der kleinste mögliche Wert mit dem der Silent Stepper Brick noch
 funktioniert,
 ist 8V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
@@ -1646,12 +1646,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered whenever the Slient Stepper Brick enters a new state.
+This callback is triggered whenever the Silent Stepper Brick enters a new state.
 It returns the new state as well as the previous state.
 """,
 'de':
 """
-Dieser Callback wird immer dann ausgelöst wenn der Slient Stepper Brick einen
+Dieser Callback wird immer dann ausgelöst wenn der Silent Stepper Brick einen
 neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand
 zurückgegeben.
 """
