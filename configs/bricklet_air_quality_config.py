@@ -95,7 +95,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets a temperature offset with resolution 1/100°C. A offset of 10 will decrease 
+Sets a temperature offset with resolution 1/100°C. A offset of 10 will decrease
 the measured temperature by 0.1°C.
 
 If you install this Bricklet into an enclosure and you want to measure the ambient

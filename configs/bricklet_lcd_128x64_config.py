@@ -552,7 +552,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Draws a white or black line from (x, y)-start to (x, y)-end. 
+Draws a white or black line from (x, y)-start to (x, y)-end.
 The x values have to be within the range of 0 to 127 and the y
 values have t be within the range of 0 to 63.
 """,
@@ -652,7 +652,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Draws a clickable button at position (x, y) with the given text 
+Draws a clickable button at position (x, y) with the given text
 of up to 16 characters.
 
 You can use up to 12 buttons (index 0-11).
@@ -662,7 +662,7 @@ position + height has to be within the range of 1 to 64.
 
 The minimum useful width/height of a button is 3.
 
-You can enable a callback for a button press with 
+You can enable a callback for a button press with
 :func:`Set GUI Button Pressed Callback Configuration`. The callback will
 be triggered for press and release-events.
 
@@ -685,13 +685,13 @@ y-Position+Height muss im Wertebereich von 1 bis 64 liegen.
 
 Die minimale nützliche Breite/Höhe eines Buttons ist 3.
 
-Der Callback für Button-Events kann mit der Funktion 
+Der Callback für Button-Events kann mit der Funktion
 :func:`Set GUI Button Pressed Callback Configuration` eingestellt werden.
 Der Callback wird sowohl für gedrückt als auch losgelassen Events ausgelöst.
 
 Der Button wird in einem separaten GUI-Buffer gezeichnet und der Rahmen des
 Buttons wird immer über den Grafiken bleiben die mit :func:`Write Pixels`
-gezeichnet werden. Um einen Button zu entfernen kann die Funktion 
+gezeichnet werden. Um einen Button zu entfernen kann die Funktion
 :func:`Remove GUI Button` genutzt werden.
 
 Wenn anstatt des Textes ein Icon verwendet werden soll, kann dieses innerhalb
@@ -872,8 +872,8 @@ Draws a slider at position (x, y) with the given length.
 
 You can use up to 6 sliders (index 0-5).
 
-If you use the horizontal direction, the x position + length has to be 
-within the range of 1 to 128 and the y position has to be within 
+If you use the horizontal direction, the x position + length has to be
+within the range of 1 to 128 and the y position has to be within
 the range of 0 to 46.
 
 If you use the vertical direction, the y position + length has to be
@@ -882,11 +882,11 @@ the range of 0 to 110.
 
 The minimum length of a slider is 8.
 
-The :word:`parameter` value is the start-position of the slider, it can 
+The :word:`parameter` value is the start-position of the slider, it can
 be between 0 and length-8.
 
-You can enable a callback for the slider value with 
-:func:`Set GUI Slider Value Callback Configuration`. 
+You can enable a callback for the slider value with
+:func:`Set GUI Slider Value Callback Configuration`.
 
 The slider is drawn in a separate GUI buffer and it will
 always stay on top of the graphics drawn with :func:`Write Pixels`. To
@@ -911,12 +911,12 @@ Die minimale Länge des Sliders ist 8.
 Das :word:`parameter` value ist die Startposition des Sliders. Diese kann
 zwischen 0 und length-8 liegen.
 
-Der Callback für Slider-Events kann mit der Funktion 
+Der Callback für Slider-Events kann mit der Funktion
 :func:`Set GUI Slider Value Callback Configuration` eingestellt werden.
 
 Der Slider wird in einem separaten GUI-Buffer gezeichnet und der Rahmen des
 Buttons wrd immer über den Grafiken bleiben die mit :func:`Write Pixels`
-gezeichnet werden. Um einen Button zu entfernen kann die Funktion 
+gezeichnet werden. Um einen Button zu entfernen kann die Funktion
 :func:`Remove GUI Slider` genutzt werden.
 """
 }]
@@ -1087,14 +1087,14 @@ com['packets'].append({
 Sets the general configuration for tabs. You can configure the tabs to only
 accept clicks or only swipes (gesture left/right and right/left) or both.
 
-Additionally, if you set `Clear GUI` to true, all of the GUI elements (buttons, 
+Additionally, if you set `Clear GUI` to true, all of the GUI elements (buttons,
 slider, graphs) will automatically be removed on every tab change.
 
 By default click and swipe as well as automatic GUI clear is enabled.
 """,
 'de':
 """
-Setzt die generelle Konfiguration für Tabs. Tabs können auf klicken, wischen 
+Setzt die generelle Konfiguration für Tabs. Tabs können auf klicken, wischen
 (links/rechts und rechts/links) oder beides reagieren.
 
 Zusätzlich kann `Clear GUI` auf true gesetzt werden. In diesem Fall werden
@@ -1171,7 +1171,7 @@ or not.
 """,
 'de':
 """
-Gibt den Text für den gegebenen Index zurück, wie von :func:`Set GUI Tab Text` 
+Gibt den Text für den gegebenen Index zurück, wie von :func:`Set GUI Tab Text`
 gesetzt.
 
 Zusätzlich gibt der `Active`-Parameter an ob der Tab aktuell aktiv/sichtbar ist
@@ -1226,7 +1226,7 @@ or not.
 """,
 'de':
 """
-Gibt das Icon für den gegebenen Index zurück, wie von :func:`Set GUI Tab Icon` 
+Gibt das Icon für den gegebenen Index zurück, wie von :func:`Set GUI Tab Icon`
 gesetzt.
 
 Zusätzlich gibt der `Active`-Parameter an ob der Tab aktuell aktiv/sichtbar ist
@@ -1431,7 +1431,7 @@ gesetzt und aktualisiert werden.
 
 Der Graph wird in einem separaten GUI-Buffer gezeichnet und der Rahmen sowie die
 Datenpunkte des Graphen werden immer über den Grafiken bleiben die mit
-:func:`Write Pixels` gezeichnet werden. Um einen Graphen zu entfernen kann die 
+:func:`Write Pixels` gezeichnet werden. Um einen Graphen zu entfernen kann die
 Funktion :func:`Remove GUI Graph` genutzt werden.
 """
 }]
@@ -1483,7 +1483,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the data for a graph with the given index. You have to configure the graph with 
+Sets the data for a graph with the given index. You have to configure the graph with
 :func:`Set GUI Graph Configuration` before you can set the first data.
 
 The graph will show the first n values of the data that you set, where
@@ -1531,7 +1531,7 @@ Returns the graph data for a given index as set by :func:`Set GUI Graph Data`.
 """,
 'de':
 """
-Gibt die Datenpunkte des Graphen mit dem gegebenen Index zurück, wie von 
+Gibt die Datenpunkte des Graphen mit dem gegebenen Index zurück, wie von
 :func:`Set GUI Graph Data` gesetzt.
 """
 }]

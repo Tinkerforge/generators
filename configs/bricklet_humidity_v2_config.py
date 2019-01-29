@@ -209,7 +209,7 @@ com['packets'].append({
 Sets the samples per second that are gathered by the humidity/temperature sensor HDC1080.
 
 We added this function since we found out that a high measurement frequency can lead to
-self-heating of the sensor. Which can distort the temperature measurement. 
+self-heating of the sensor. Which can distort the temperature measurement.
 
 If you don't need a lot of measurements, you can use the lowest available measurement
 frequency of 0.1 samples per second for the least amount of self-heating.
@@ -221,7 +221,7 @@ Before version 2.0.3 the default was 20 samples per second. The new default is 1
 Setzt die Messungen pro Sekunde mit denen neue Luftfeuchte/Temperatur-Werte vom
 HDC1080 Sensor gelesen werden.
 
-Wir haben diese Funktion hinzugefügt, da eine hohe Messfrequenz zu einer Selbsterhitzung 
+Wir haben diese Funktion hinzugefügt, da eine hohe Messfrequenz zu einer Selbsterhitzung
 des Sensors führen kann. Diese kann die Temperaturmessung verfälschen.
 
 Wenn wenig Messwerte benötigt werden kann die Frequenz auf bis zu 0,1 Messungen pro
