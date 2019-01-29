@@ -699,7 +699,7 @@ class RustExamplesGenerator(common.ExamplesGenerator):
             with open(filepath, 'w') as f:
                 f.write(example.get_rust_source())
             if not example.is_incomplete():
-                p = subprocess.Popen(["rustfmt", filename, "--config-path", os.getcwd()], cwd=examples_dir, stdout = subprocess.PIPE)
+                p = subprocess.Popen(["rustfmt", filename, "--config-path", self.root_dir], cwd=examples_dir, stdout = subprocess.PIPE)
                 out, err = p.communicate() #block until rustfmt has finished
                 if out != "" or err is not None:
                     print("Got the following output from rustfmt:")
