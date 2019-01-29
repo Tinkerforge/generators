@@ -435,3 +435,15 @@ von den aktivierten Achsen. Beispiele:
 """
 }]
 })
+
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Acceleration', 'acceleration'), [(('X', 'Acceleration [X]'), 'int32', 1, 10000.0, 'g', None), (('Y', 'Acceleration [Y]'), 'int32', 1, 10000.0, 'g', None), (('Z', 'Acceleration [Z]'), 'int32', 1, 10000.0, 'g', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Acceleration', 'acceleration'), [(('X', 'Acceleration [X]'), 'int32', 1, 10000.0, 'g', None), (('Y', 'Acceleration [Y]'), 'int32', 1, 10000.0, 'g', None), (('Z', 'Acceleration [Z]'), 'int32', 1, 10000.0, 'g', None)], None, None),
+              ('callback_configuration', ('Acceleration', 'acceleration'), [], 1000, False, None, [])]
+})
