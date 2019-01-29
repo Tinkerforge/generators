@@ -294,5 +294,5 @@
 - Add get/set_samples_per_second functions to Humidity Bricklet 2.0 API
 - Add button, slider, graph and tab functions to LCD 128x64 Bricklet API
 
-2019-01-29: 2.1.24 (<unknown>)
+2019-01-29: 2.1.24 (2617875)
 - Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
