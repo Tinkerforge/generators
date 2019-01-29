@@ -297,7 +297,7 @@ callbacks is enabled, the :cb:`Acceleration` callback is disabled.
 The maximum throughput depends on the exact configuration:
 
 .. csv-table::
- :header: "Number of axis enabled", "throughput 8 bit", "throughout 16 bit"
+ :header: "Number of axis enabled", "Throughput 8 bit", "Throughout 16 bit"
  :widths: 20, 20, 20
 
  "1", "25600Hz", "25600Hz"
@@ -388,7 +388,7 @@ der Callback kann per :func:`Set Continuous Acceleration Configuration`
 aktiviert werden.
 
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig 
-von den aktivierten Achsen . Beispiele:
+von den aktivierten Achsen. Beispiele:
 
 * x, y, z aktiviert: "x, y, z, ... 10x ..., x, y, z"
 * x, z aktiviert: "x, z, ... 15x ..., x, z"
@@ -426,7 +426,7 @@ der Callback kann per :func:`Set Continuous Acceleration Configuration`
 aktiviert werden.
 
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig 
-von den aktivierten Achsen . Beispiele:
+von den aktivierten Achsen. Beispiele:
 
 * x, y, z aktiviert: "x, y, z, ... 20x ..., x, y, z"
 * x, z aktiviert: "x, z, ... 30x ..., x, z"
