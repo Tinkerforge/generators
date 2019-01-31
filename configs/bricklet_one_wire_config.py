@@ -204,7 +204,7 @@ gesetzt.
     ow.write_command(0, 0x4E) # WRITE SCRATCHPAD
     ow.write(0x00) # ALARM H (unused)
     ow.write(0x00) # ALARM L (unused)
-    ow.write(0x7F) # CONFIGURATION: 12 bit mode
+    ow.write(0x7F) # CONFIGURATION: 12-bit mode
 
     while True:
         ow.write_command(0, 0x44) # CONVERT T (start temperature conversion)
@@ -221,7 +221,7 @@ com['examples'].append({
 'functions': [('setter', 'Write Command', [('uint64', 0), ('uint8', 0x4E)], None, 'WRITE SCRATCHPAD'),
               ('setter', 'Write', [('uint8', 0x00)], None, 'ALARM H (unused)'),
               ('setter', 'Write', [('uint8', 0x00)], None, 'ALARM L (unused)'),
-              ('setter', 'Write', [('uint8', 0x7F)], None, 'CONFIGURATION: 12 bit mode'),
+              ('setter', 'Write', [('uint8', 0x7F)], None, 'CONFIGURATION: 12-bit mode'),
               ('loop_header', 10, 'Read temperature 10 times'),
               ('setter', 'Write Command', [('uint64', 0), ('uint8', 0x44)], None, 'CONVERT T (start temperature conversion)'),
               ('sleep', 1000, None, 'Wait for conversion to finish'),

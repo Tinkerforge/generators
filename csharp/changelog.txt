@@ -251,7 +251,7 @@
 - Add general streaming support
 - Add SPITFP configuration and diagnostics methods to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
-- Remove unused GetCurrentConsumption method from Slient Stepper Brick API
+- Remove unused GetCurrentConsumption method from Silent Stepper Brick API
 - Fix int8 unpacking
 
 2017-11-20: 2.1.16 (f235e3f)
@@ -286,3 +286,6 @@
 2018-11-28: 2.1.21 (0e3b130)
 - Add Get/SetSamplesPerSecond functions to Humidity Bricklet 2.0 API
 - Add button, slider, graph and tab functions to LCD 128x64 Bricklet API
+
+2019-01-29: 2.1.22 (2617875)
+- Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet

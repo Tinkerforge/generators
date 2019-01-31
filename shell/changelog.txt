@@ -102,7 +102,7 @@
 - Add support for RS485 Bricklet
 - Add SPITFP configuration and diagnostics functions to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
-- Remove unused get-current-consumption function from Slient Stepper Brick API
+- Remove unused get-current-consumption function from Silent Stepper Brick API
 - Increase minimum Python version to 2.6
 
 2017-11-20: 2.1.15 (f235e3f)
@@ -139,5 +139,6 @@
 - Add get/set-samples-per-second functions to Humidity Bricklet 2.0 API
 - Add button, slider, graph and tab functions to LCD 128x64 Bricklet API
 
-<unknown>: 2.1.21 (<unknown>)
+2019-01-29: 2.1.21 (2617875)
 - Check for Python 2.6 instead of 2.5 to match Python API bindings requirements
+- Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet

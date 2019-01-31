@@ -23,7 +23,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': False, # selling remaining stock, replaced by Accelerometer Bricklet 2.0
     'packets': [],
     'examples': []
 }

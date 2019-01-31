@@ -55,7 +55,7 @@ class RustZipGenerator(common.ZipGenerator):
 
         # Copy device examples
         tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
-                                               device.get_name().camel_abbrv + device.get_category().camel_abbrv)
+                                               device.get_name().under + "_" + device.get_category().under)
 
         if not os.path.exists(tmp_examples_device_dir):
             os.makedirs(tmp_examples_device_dir)

@@ -75,7 +75,7 @@
 - Add support for RS485 Bricklet
 - Add SPITFP configuration and diagnostics functions to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
-- Remove unused getCurrentConsumption function from Slient Stepper Brick API
+- Remove unused getCurrentConsumption function from Silent Stepper Brick API
 
 2017-11-20: 2.0.16 (f235e3f)
 - Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
@@ -110,3 +110,6 @@
 2018-11-28: 2.1.21 (0e3b130)
 - Add get/setSamplesPerSecond functions to Humidity Bricklet 2.0 API
 - Add button, slider, graph and tab functions to LCD 128x64 Bricklet API
+
+2019-01-29: 2.1.22 (2617875)
+- Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet

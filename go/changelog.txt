@@ -1,5 +1,8 @@
 2018-12-21: 2.0.0 (aee40cd)
 - Initial version
 
-2019-07-01: 2.0.1 (cb824af)
+2019-01-07: 2.0.1 (cb824af)
 - Fixed alignment of atomic timeout member in IP connection.
+
+2019-01-29: 2.0.2 (2617875)
+- Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
