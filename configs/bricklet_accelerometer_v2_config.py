@@ -162,6 +162,9 @@ period, the callback is triggered immediately on change.
 If it is set to false, the callback is continuously triggered with the period,
 independent of the value.
 
+If this callback is enabled, the :cb:`Continuous Acceleration 16 Bit` and
+:cb:`Continuous Acceleration 8 Bit` will automatically be disabled.
+
 The default value is (0, false).
 """,
 'de':
@@ -176,6 +179,10 @@ sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
 
 Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
 festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Wenn dieser Callback aktiviert ist, werden die Callbacks
+:cb:`Continuous Acceleration 16 Bit` und
+:cb:`Continuous Acceleration 8 Bit` automatisch deaktiviert.
 
 Der Standardwert ist (0, false).
 """
