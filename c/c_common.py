@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import math
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -137,3 +138,9 @@ class CElement(common.Element):
             return 'uint8_t'
 
         return type_
+
+    def get_c_array_length(self):
+        if self.get_type() == 'bool':
+            return int(math.ceil(self.get_cardinality() / 8.0))
+
+        return self.get_cardinality()
