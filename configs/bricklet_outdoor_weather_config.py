@@ -62,6 +62,9 @@ Returns the identifiers (number between 0 and 255) of all `stations
 that have been seen since the startup of the Bricklet.
 
 Each station gives itself a random identifier on first startup.
+
+Since firmware version 2.0.2 a station is removed from the list if no data was received for
+12 hours.
 """,
 'de':
 """
@@ -70,6 +73,9 @@ Gibt die Identifier (Zahl zwischen 0 und 255) von allen 'Stationen
 die seit dem Start des Bricklets entdeckt wurden.
 
 Jede Station gibt sich selbst einen zufälligen Identifier beim ersten Start.
+
+Seit Firmware-Version 2.0.2 wird eine Station von der Liste wieder entfernt wenn für 12
+Stunden am Stück keine Daten empfangen werden.
 """
 }]
 })
@@ -90,6 +96,9 @@ Returns the identifiers (number between 0 and 255) of all `sensors
 that have been seen since the startup of the Bricklet.
 
 Each sensor gives itself a random identifier on first startup.
+
+Since firmware version 2.0.2 a sensor is removed from the list if no data was received for
+12 hours.
 """,
 'de':
 """
@@ -98,6 +107,9 @@ Gibt die Identifier (Zahl zwischen 0 und 255) von allen 'Sensoren
 die seit dem Start des Bricklets entdeckt wurden.
 
 Jede Sensor gibt sich selbst einen zufälligen Identifier beim ersten Start.
+
+Seit Firmware-Version 2.0.2 wird ein Sensor von der Liste wieder entfernt wenn für 12
+Stunden am Stück keine Daten empfangen werden.
 """
 }]
 })

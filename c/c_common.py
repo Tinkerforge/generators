@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import math
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -33,52 +34,52 @@ import common
 class CPacket(common.Packet):
     def get_c_parameters(self, high_level=False):
         parameters = []
+        packet_type = self.get_type()
 
         for element in self.get_elements(high_level=high_level):
-            c_type = element.get_c_type('signature')
+            element_type = element.get_c_type('signature')
             modifier = ''
             name = element.get_name().under
             direction = element.get_direction()
             role = element.get_role()
             array = ''
 
-            if direction == 'out' and self.get_type() == 'function':
+            if direction == 'out' and packet_type == 'function':
                 modifier = '*'
                 name = 'ret_{0}'.format(name)
 
             if role == 'stream_data':
-                if direction == 'in' and self.get_type() == 'function':
-                    if c_type == 'char':
-                        c_type = 'const ' + c_type
+                if direction == 'in' and packet_type == 'function':
+                    if element_type == 'char':
+                        element_type = 'const ' + element_type
 
                     modifier = '*'
-                elif direction == 'out' and self.get_type() == 'callback':
+                elif direction == 'out' and packet_type == 'callback':
                     modifier = '*'
 
             if role != 'stream_data' and element.get_cardinality() > 1:
                 modifier = ''
                 array = '[{0}]'.format(element.get_cardinality())
 
-            parameters.append('{0} {1}{2}{3}'.format(c_type, modifier, name, array))
+            parameters.append('{0} {1}{2}{3}'.format(element_type, modifier, name, array))
 
             length_elements = self.get_elements(role='stream_length')
             chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
 
-            if role == 'stream_data' and \
-               (direction == 'out' or len(length_elements) > 0):
-                if direction == 'out' and self.get_type() == 'function':
+            if role == 'stream_data' and (direction == 'out' or len(length_elements) > 0):
+                if direction == 'out' and packet_type == 'function':
                     modifier = '*'
                 else:
                     modifier = ''
 
                 if len(length_elements) > 0:
-                    c_type = length_elements[0].get_c_type('signature')
+                    element_type = length_elements[0].get_c_type('signature')
                 elif len(chunk_offset_elements) > 0:
-                    c_type = chunk_offset_elements[0].get_c_type('signature')
+                    element_type = chunk_offset_elements[0].get_c_type('signature')
                 else:
                     raise common.GeneratorError('Malformed stream config')
 
-                parameters.append('{0} {1}{2}_length'.format(c_type, modifier, name))
+                parameters.append('{0} {1}{2}_length'.format(element_type, modifier, name))
 
         return ', '.join(parameters)
 
@@ -110,8 +111,7 @@ class CPacket(common.Packet):
             length_elements = self.get_elements(role='stream_length')
             chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
 
-            if role == 'stream_data' and \
-               (direction == 'out' or len(length_elements) > 0):
+            if role == 'stream_data' and (direction == 'out' or len(length_elements) > 0):
                 if context == 'callback_wrapper' and not single_chunk:
                     arguments.append('high_level_callback->length')
                 else:
@@ -123,14 +123,24 @@ class CElement(common.Element):
     def get_c_type(self, context):
         assert context in ['default', 'signature', 'struct']
 
-        if self.get_type() == 'string':
+        type_ = self.get_type()
+
+        if type_ == 'string':
             if self.get_direction() == 'in' and context == 'signature':
                 return 'const char'
-            else:
-                return 'char'
-        elif self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
-            return '{0}_t'.format(self.get_type())
-        elif self.get_type() == 'bool' and context == 'struct':
+
+            return 'char'
+
+        if type_ in ['int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64']:
+            return type_ + '_t'
+
+        if type_ == 'bool' and context == 'struct':
             return 'uint8_t'
-        else:
-            return self.get_type()
+
+        return type_
+
+    def get_c_array_length(self):
+        if self.get_type() == 'bool':
+            return int(math.ceil(self.get_cardinality() / 8.0))
+
+        return self.get_cardinality()

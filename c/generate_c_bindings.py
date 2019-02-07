@@ -224,66 +224,15 @@ typedef struct {{
 
         for packet in self.get_packets():
             if packet.get_type() == 'callback':
-                struct_body = ''
-
-                for element in packet.get_elements():
-                    c_type = element.get_c_type('struct')
-
-                    if element.get_cardinality() > 1:
-                        if element.get_type() == 'bool':
-                            length = int(math.ceil(element.get_cardinality() / 8.0))
-                        else:
-                            length = element.get_cardinality()
-
-                        struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                                  element.get_name().under,
-                                                                  length)
-                    else:
-                        struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
-
-                structs += struct_template.format(struct_body, packet.get_name().camel, 'Callback')
+                structs += struct_template.format(packet.get_c_struct_body(), packet.get_name().camel, 'Callback')
                 continue
 
-            struct_body = ''
-
-            for element in packet.get_elements(direction='in'):
-                c_type = element.get_c_type('struct')
-
-                if element.get_cardinality() > 1:
-                    if element.get_type() == 'bool':
-                        length = int(math.ceil(element.get_cardinality() / 8.0))
-                    else:
-                        length = element.get_cardinality()
-
-                    struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                              element.get_name().under,
-                                                              length)
-                else:
-                    struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
-
-            structs += struct_template.format(struct_body, packet.get_name().camel, 'Request')
+            structs += struct_template.format(packet.get_c_struct_body(direction='in'), packet.get_name().camel, 'Request')
 
             if len(packet.get_elements(direction='out')) == 0:
                 continue
 
-            struct_body = ''
-
-            for element in packet.get_elements(direction='out'):
-                c_type = element.get_c_type('struct')
-
-                if element.get_cardinality() > 1:
-                    if element.get_type() == 'bool':
-                        length = int(math.ceil(element.get_cardinality() / 8.0))
-                    else:
-                        length = element.get_cardinality()
-
-                    struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                              element.get_name().under,
-                                                              length)
-                else:
-                    struct_body += '\t{0} {1};\n'.format(c_type, element.get_name().under)
-
-            structs += struct_template.format(struct_body, packet.get_name().camel, 'Response')
+            structs += struct_template.format(packet.get_c_struct_body(direction='out'), packet.get_name().camel, 'Response')
 
         structs += """
 #if defined _MSC_VER || defined __BORLANDC__
@@ -1290,6 +1239,20 @@ class CBindingsPacket(c_common.CPacket):
 
         return '\n * '.join(text.strip().split('\n'))
 
+    def get_c_struct_body(self, direction=None):
+        struct_body = []
+
+        for element in self.get_elements(direction=direction):
+            c_type = element.get_c_type('struct')
+            name = element.get_name().under
+
+            if element.get_cardinality() > 1:
+                struct_body.append('\t{0} {1}[{2}];\n'.format(c_type, name, element.get_c_array_length()))
+            else:
+                struct_body.append('\t{0} {1};\n'.format(c_type, name))
+
+        return ''.join(struct_body)
+
     def get_c_struct_list(self):
         struct_list = ''
         needs_i = False
@@ -1315,7 +1278,7 @@ class CBindingsPacket(c_common.CPacket):
                     needs_i = True
                     struct_list += '\n\tmemset({0}.{1}, 0, {3}); for (i = 0; i < {2}; i++) {0}.{1}[i / 8] |= ({1}[i] ? 1 : 0) << (i % 8);' \
                                    .format(sf, element.get_name().under, element.get_cardinality(),
-                                           int(math.ceil(element.get_cardinality() / 8.0)))
+                                           element.get_c_array_length())
                 else:
                     struct_list += '\n\t{0}.{1} = {1} ? 1 : 0;'.format(sf, element.get_name().under)
             elif element.get_cardinality() > 1:

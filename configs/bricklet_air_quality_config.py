@@ -11,7 +11,7 @@ from commonconstants import add_callback_value_function
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 297,
     'name': 'Air Quality',
@@ -418,6 +418,38 @@ add_callback_value_function(
     data_type = 'int32',
     doc       = air_pressure_doc
 )
+
+com['packets'].append({
+'type': 'function',
+'name': 'Remove Calibration',
+'elements': [],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Deletes the calibration from flash. After you call this function,
+you need to power cycle the Air Quality Bricklet.
+
+On the next power up the Bricklet will start a new calibration, as
+if it was started for the very first time.
+
+The calibration is based on the data of the last four days, so it takes
+four days until a full calibration is re-established.
+""",
+'de':
+"""
+Löscht die Kalibrierung auf dem Flash. Nach dem diese Funktion aufgerufen wird
+muss das Air Quality Bricklet vom Strom getrennt werden.
+
+Beim nächsten starten des Bricklet wird eine komplett neue Kalibrierung
+gestartet, wie beim allerersten Starten des Bricklets.
+
+Die Kalibrierung basiert auf den Daten der letzten vier Tage, daher dauert
+es vier Tage bis eine volle Kalibrierung wieder hergestellt ist.
+"""
+}]
+})
+
 
 com['examples'].append({
 'name': 'Simple',

@@ -35,10 +35,10 @@ class DelphiDevice(common.Device):
         return 'T' + self.get_category().camel + self.get_name().camel
 
 class DelphiPacket(common.Packet):
-    def get_delphi_return_type(self, context):
+    def get_delphi_return_type(self, context, high_level=False):
         assert context in ['signature', 'doc']
 
-        elements = self.get_elements(direction='out')
+        elements = self.get_elements(direction='out', high_level=high_level)
 
         if len(elements) != 1:
             return ''
@@ -46,7 +46,12 @@ class DelphiPacket(common.Packet):
         first = elements[0]
         delphi_type = first.get_delphi_type()
 
-        if first.get_cardinality() > 1 and first.get_type() != 'string':
+        if first.get_cardinality() < 0:
+            if context == 'doc':
+                final_type = 'array of {0}'.format(delphi_type[0])
+            else:
+                final_type = 'TArrayOf{0}'.format(delphi_type[1])
+        elif first.get_cardinality() > 1 and first.get_type() != 'string':
             if context == 'doc':
                 final_type = 'array [0..{0}] of {1}'.format(first.get_cardinality() - 1, delphi_type[0])
             else:
@@ -56,13 +61,13 @@ class DelphiPacket(common.Packet):
 
         return final_type
 
-    def get_delphi_parameters(self, context):
+    def get_delphi_parameters(self, context, high_level=False):
         assert context in ['signature', 'variables', 'doc']
 
         param = []
 
-        if len(self.get_elements(direction='out')) > 1 or self.get_type() == 'callback':
-            for element in self.get_elements():
+        if len(self.get_elements(direction='out', high_level=high_level)) > 1 or self.get_type() == 'callback':
+            for element in self.get_elements(high_level=high_level):
                 delphi_type = element.get_delphi_type()
 
                 if context.endswith('variables'):
@@ -73,26 +78,34 @@ class DelphiPacket(common.Packet):
                     else:
                         modifier = 'out '
 
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if element.get_cardinality() != 1 and element.get_type() != 'string':
                     if context == 'signature':
                         if element.get_direction() == 'in' and element.get_level() != 'low':
                             final_type = 'array of {0}'.format(delphi_type[0])
-                        else:
+                        elif element.get_cardinality() > 0:
                             final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
 
                             # special case for GetIdentity to avoid redefinition of TArray0To2OfUInt8 and signature mismatch
                             if self.get_name().camel == 'GetIdentity' and final_type == 'TArray0To2OfUInt8':
                                 final_type = 'TVersionNumber'
+                        else:
+                            final_type = 'TArrayOf{0}'.format(delphi_type[1])
                     elif context == 'variables':
-                        final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
-                    else:
-                        final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
+                        if element.get_cardinality() > 0:
+                            final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+                        else:
+                            final_type = 'TArrayOf{0}'.format(delphi_type[1])
+                    else: # doc
+                        if element.get_cardinality() > 0:
+                            final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
+                        else:
+                            final_type = 'array of {0}'.format(delphi_type[0])
                 else:
                     final_type = delphi_type[0]
 
                 param.append('{0}{1}: {2}'.format(modifier, element.get_name().headless, final_type))
         else:
-            for element in self.get_elements(direction='in'):
+            for element in self.get_elements(direction='in', high_level=high_level):
                 delphi_type = element.get_delphi_type()
 
                 if context.endswith('variables'):
@@ -100,16 +113,24 @@ class DelphiPacket(common.Packet):
                 else:
                     modifier = 'const '
 
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if element.get_cardinality() != 1 and element.get_type() != 'string':
                     if context == 'signature':
                         if element.get_level() != 'low':
                             final_type = 'array of {0}'.format(delphi_type[0])
-                        else:
+                        elif element.get_cardinality() > 0:
                             final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+                        else:
+                            final_type = 'TArrayOf{0}'.format(delphi_type[1])
                     elif context == 'variables':
-                        final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
-                    else:
-                        final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
+                        if element.get_cardinality() > 0:
+                            final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+                        else:
+                            final_type = 'TArrayOf{0}'.format(delphi_type[1])
+                    else: # doc
+                        if element.get_cardinality() > 0:
+                            final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
+                        else:
+                            final_type = 'array of {0}'.format(delphi_type[0])
                 else:
                     final_type = delphi_type[0]
 
