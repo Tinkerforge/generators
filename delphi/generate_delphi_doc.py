@@ -60,9 +60,10 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             if packet.get_doc_type() != type_:
                 continue
 
-            ret_type = packet.get_delphi_return_type('doc')
-            name = packet.get_name().camel
-            params = '; '.join(packet.get_delphi_parameters('doc'))
+            ret_type = packet.get_delphi_return_type('doc', high_level=True)
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_name(skip=skip).camel
+            params = '; '.join(packet.get_delphi_parameters('doc', high_level=True))
             desc = packet.get_delphi_formatted_doc()
 
             if len(ret_type) > 0:
@@ -97,8 +98,9 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
         cls = self.get_delphi_class_name()
         for packet in self.get_packets('callback'):
-            name = packet.get_name().camel
-            params = '; '.join(packet.get_delphi_parameters('doc'))
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_name(skip=skip).camel
+            params = '; '.join(packet.get_delphi_parameters('doc', high_level=True))
             desc = packet.get_delphi_formatted_doc()
             semi = ''
             if len(params) > 0:
