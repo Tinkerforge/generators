@@ -450,6 +450,83 @@ es vier Tage bis eine volle Kalibrierung wieder hergestellt ist.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Background Calibration Duration',
+'elements': [('Duration', 'uint8', 1, 'in', ('Duration', [('4 Days', 0),
+                                                          ('28 Days', 1)]))],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+The Air Quality Bricklet uses an automatic background calibration mechanism to
+calculate the IAQ Index. This calibration mechanism considers a history of
+measured data. The duration of this history can be configured to either be
+4 days or 28 days.
+
+If you keep the Bricklet mostly at one place and it does not get moved around
+to different environments, we recommend that you use a duration of 28 days.
+
+If you change the duration, the current calibration will be discarded and
+the calibration will start from beginning again. The configuration of the
+duration is saved in flash, so you should only have to call this function
+once in the lifetime of the Bricklet.
+
+The Bricklet has to be power cycled after this function is called 
+for a duration change to take effect.
+
+Before firmware version 2.0.3 this was not configurable and the duration was
+4 days.
+
+The default value (since firmware version 2.0.3) is 28 days.
+""",
+'de':
+"""
+Das Air Quality Bricklet nutzt eine automatische Hintergrundkalibrierung um
+den IAQ-Index zu bestimmen. Der Kalibrierungsmechanismus nutzt eine Historie
+von gemessenen Werte. Die Länge dieser Historie kann zwischen 4 und 28 Tagen
+konfiguriert werden.
+
+Wenn das Bricklet hauptsächlich am gleichen Ort bleibt und die Umgebung nicht
+oft verändert wird, empfehlen wir eine Länge von 28 Tagen zu verwenden.
+
+Wenn die Länge geändert wird,wird die aktuelle Kalibrierung verworfen und die
+Kalibrierung beginnt von vorne. Die Konfiguration der Länge wird im Flash
+gespeichert, diese Funktion sollte also nur einmal in der Lebenszeit des
+Bricklets aufgerufen werden müssen.
+
+Eine Änderung der Kalibrierungslänge wird beim nächsten Start des Bricklets
+übernommen.
+
+Vor Firmware-Version 2.0.3 war die Hintergrundkalibrierungslänge 4 Tage und
+nicht konfigurierbare.
+
+Der Standardwert (seit Firmware-Version 2.0.3) beträgt 28 Tage.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Background Calibration Duration',
+'elements': [('Duration', 'uint8', 1, 'out', ('Duration', [('4 Days', 0),
+                                                           ('28 Days', 1)]))],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Returns the background calibration duration as set by 
+:func:`Set Background Calibration Duration`.
+""",
+'de':
+"""
+Gibt die Länge der Hintergrundkalibrierung zurück, wie von 
+:func:`Set Background Calibration Duration` gesetzt.
+"""
+}]
+})
+
+
 
 com['examples'].append({
 'name': 'Simple',
