@@ -26,3 +26,45 @@ com = {
     'examples': []
 }
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set RGB Value',
+'elements': [('R', 'uint8', 1, 'in'),
+             ('G', 'uint8', 1, 'in'),
+             ('B', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the *rgb* value for the LED. The value can be between 0 and 255.
+""",
+'de':
+"""
+Setzt den *rgb* Wert für die LED. Der Wert kann zwischen 0 und 255 liegen.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get RGB Value',
+'elements': [('R', 'uint8', 1, 'out'),
+             ('G', 'uint8', 1, 'out'),
+             ('B', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the *rgb* value of the LED as set by :func:`Set RGB Value`.
+""",
+'de':
+"""
+Gibt den *rgb* Wert der LED zurück, wie von :func:`Set RGB Value` gesetzt.
+"""
+}]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('setter', 'Set RGB Value', [('uint8', 0), ('uint8', 170), ('uint8', 234)], 'Set light blue color', None)]
+})
