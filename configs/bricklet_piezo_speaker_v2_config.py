@@ -313,3 +313,13 @@ beendet wurde.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Beep',
+'functions': [('setter', 'Set Beep', [('uint16', 1000), ('uint8', 0), ('uint32', 2000)], 'Make 2 second beep with a frequency of 1kHz', None)]
+})
+
+com['examples'].append({
+'name': 'Alarm',
+'functions': [('setter', 'Set Alarm', [('uint16', 800), ('uint16', 2000), ('uint16', 10), ('uint16', 1), ('uint8', 10), ('uint32', 10000)], '10 seconds of loud annoying fast alarm', None)]
+})
