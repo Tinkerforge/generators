@@ -134,6 +134,9 @@ This temperature offset is used to calculate the relative humidity and
 CO2 concentration. In case the Bricklet is installed in an enclosure, we
 recommend to measure and set the temperature offset to imporve the accuracy of
 the measurements.
+
+It is sufficient to set the temperature offset once. The offset is saved in
+non-volatile memory and is applied again after a power loss.
 """,
 'de':
 """
@@ -154,6 +157,10 @@ Dieses Temperatur-Offset geht in die Berechnung der Luftfeuchte und der
 CO2-Konzentration mit ein. Um die Genauigkeit der Messwerte innerhalb eines 
 Gehäuses zu verbessern sollte der Temperatur-Offset bestimmt und
 eingestellt werden.
+
+Es ist hinreichend den Temperatur-Offset einmal zu setzen. Der Offset wird
+in einem nicht-flüchtigen Speicher gespeichert und auch nach einem
+neustart wieder angewendet.
 """
 }]
 })
