@@ -105,7 +105,7 @@ Returns the ambient air pressure as set by :func:`Set Air Pressure`.
 """,
 'de':
 """
-Gibt den Umgebungs-Luftdruch zurück, wie von :func:`Set Aire Pressure` gesetzt.
+Gibt den Umgebungs-Luftdruch zurück, wie von :func:`Set Air Pressure` gesetzt.
 """
 }]
 })
