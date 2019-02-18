@@ -63,7 +63,8 @@ com['packets'].append({
 The CO2 concentration (among other things) depends on the ambient air pressure.
 
 To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure.
-You use the Barometer Bricklet 2.0 or the Air Quality Bricklet to get the current air pressure.
+You use the :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` or the 
+:ref:`Air Quality Bricklet <air_quality_bricklet>` to get the current air pressure.
 
 The expected unit of the ambient air pressure value is mbar.
 
@@ -78,8 +79,8 @@ It is sufficient to update the value every few minutes.
 Die CO2-Konzentration hängt (unter anderem) von dem Umgebungs-Luftdruck ab.
 
 Um die Genauigkeit des CO2 Bricklet 2.0 zu verbessern ist es möglich den aktuellen
-Luftdruck zu setzen. Dazu kann das Barometer Bricklet 2.0 oder auch das Air Quality Bricklet
-genutzt werden.
+Luftdruck zu setzen. Dazu kann das :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` 
+oder auch das :ref:`Air Quality Bricklet <air_quality_bricklet>` genutzt werden.
 
 Die erwartete Einheit des Umgebungs-Luftdrucks ist mbar.
 
