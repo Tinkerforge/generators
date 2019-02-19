@@ -6,6 +6,9 @@
 
 # Rotary Poti Bricklet 2.0 communication config
 
+from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import add_callback_value_function
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -15,8 +18,8 @@ com = {
     'display_name': 'Rotary Poti 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': '300° rotary potentiometer',
+        'de': '300° Drehpotentiometer'
     },
     'comcu': True,
     'released': False,
@@ -26,3 +29,23 @@ com = {
     'examples': []
 }
 
+position_doc = {
+'en':
+"""
+Returns the position of the rotary potentiometer. The value is in degree
+and between -150° (turned left) and 150° (turned right).
+""",
+'de':
+"""
+Gibt die Position des Drehpotentiometers zurück. Der Wertebereich ist in Grad
+und ist von -150° (links gedreht) und 150° (rechts gedreht).
+"""
+}
+
+add_callback_value_function(
+    packets   = com['packets'],
+    name      = 'Get Position',
+    data_name = 'Position',
+    data_type = 'int16',
+    doc       = position_doc
+)
