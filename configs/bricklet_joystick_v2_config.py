@@ -273,3 +273,14 @@ Der :word:`parameters` ist der gleiche wie bei :func:`Is Pressed`.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Position', 'position'), [(('X', 'Position [X]'), 'int16', 1, None, None, None), (('Y', 'Position [Y]'), 'int16', 1, None, None, None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Pressed', 'pressed'), [(('Pressed', 'Pressed'), 'bool', 1, None, None, None)], None, None),
+              ('callback_configuration', ('Pressed', 'pressed'), [], 10, True, None, [])]
+})
