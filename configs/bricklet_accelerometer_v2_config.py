@@ -15,8 +15,8 @@ com = {
     'display_name': 'Accelerometer 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Measures acceleration in three axis',
+        'de': 'Misst Beschleunigung in drei Achsen'
     },
     'comcu': True,
     'released': True,

@@ -131,6 +131,9 @@ value 6553, an emissivity of 0.5 with the value 32767 and so on.
 
 The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
 sensor can handle is 0.1 (value of 6553).
+
+The emissivity is stored in non-volatile memory and will still be
+used after a restart or power cycle of the Bricklet.
 """,
 'de':
 """
@@ -152,6 +155,9 @@ vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert
 
 Der Standard Emissionsgrad ist 1,0 (Wert von 65535) und der minimale
 Emissionsgrad welcher der Sensor verarbeiten kann ist 0,1 (Wert von 6553).
+
+Der Emissionsgrad wird in nicht-flüchtigem Speicher gespeichert und wird
+auch noch einem Neustart weiter genutzt.
 """
 }]
 })

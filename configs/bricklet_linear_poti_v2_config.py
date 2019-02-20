@@ -6,6 +6,9 @@
 
 # Linear Poti Bricklet 2.0 communication config
 
+from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import add_callback_value_function
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -15,8 +18,8 @@ com = {
     'display_name': 'Linear Poti 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': '59mm linear potentiometer',
+        'de': '59mm Linearpotentiometer'
     },
     'comcu': True,
     'released': False,
@@ -26,3 +29,23 @@ com = {
     'examples': []
 }
 
+position_doc = {
+'en':
+"""
+Returns the position of the linear potentiometer. The value is
+between 0 (slider down) and 100 (slider up).
+""",
+'de':
+"""
+Gibt die Position des Linearpotentiometers zurück. Der Wertebereich
+ist von 0 (Schieberegler unten) und 100 (Schieberegler oben).
+"""
+}
+
+add_callback_value_function(
+    packets   = com['packets'],
+    name      = 'Get Position',
+    data_name = 'Position',
+    data_type = 'uint8',
+    doc       = position_doc
+)
