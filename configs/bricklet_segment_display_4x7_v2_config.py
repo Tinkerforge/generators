@@ -45,7 +45,7 @@ The data is split into the four digits, two colon dots and the tick mark.
 
 The indices of the segments in the digit and colon parameters are as follows:
 
-.. image:: /Images/Bricklets/bricklet_segment_display_4x7_segment_index.png
+.. image:: /Images/Bricklets/bricklet_segment_display_4x7_v2_segment_index.png
    :scale: 100 %
    :alt: Indices of segments
    :align: center
@@ -59,7 +59,7 @@ Die Daten sind aufgeteilt in die vier Ziffern (digit0-3), dem Doppelpunkt (colon
 
 Die Indizes der Segmente in den Ziffern und dem Doppelpunkt sind wie folgt aufgeteilt:
 
-.. image:: /Images/Bricklets/bricklet_segment_display_4x7_segment_index.png
+.. image:: /Images/Bricklets/bricklet_segment_display_4x7_v2_segment_index.png
    :scale: 100 %
    :alt: Indizes der Segmente
    :align: center
@@ -184,7 +184,7 @@ Turns one specified segment on or off.
 
 The indices of the segments are as follows:
 
-.. image:: /Images/Bricklets/bricklet_segment_display_4x7_selected_segment_index.png
+.. image:: /Images/Bricklets/bricklet_segment_display_4x7_v2_selected_segment_index.png
    :scale: 100 %
    :alt: Indices of selected segments
    :align: center
@@ -196,7 +196,7 @@ Aktiviert/deaktiviert ein selektiertes Segment.
 
 Die Indizes sind wie folgt aufgeteilt:
 
-.. image:: /Images/Bricklets/bricklet_segment_display_4x7_selected_segment_index.png
+.. image:: /Images/Bricklets/bricklet_segment_display_4x7_v2_selected_segment_index.png
    :scale: 100 %
    :alt: Indizes für einzeln selektierte Segmente
    :align: center
