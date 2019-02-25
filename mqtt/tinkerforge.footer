@@ -73,7 +73,7 @@ class MQTTBindings:
 
         logging.debug("Connecting to MQTT broker at {}:{}".format(broker_host, broker_port))
         try:
-        self.mqttc.connect(broker_host, broker_port)
+            self.mqttc.connect(broker_host, broker_port)
         except Exception as e:
             fatal_error("Connecting to MQTT broker failed: " + str(e), ERROR_NO_CONNECTION_TO_BROKER)
         logging.debug("Connected to MQTT broker at {}:{}".format(broker_host, broker_port))
