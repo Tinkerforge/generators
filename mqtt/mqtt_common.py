@@ -73,10 +73,13 @@ class MQTTElement(common.Element):
         'char':   'c',
         'string': 's'
     }
-   
+
     def get_mqtt_type(self, for_doc=False):
         t = MQTTElement.mqtt_types[self.get_type()]
-        
+
+        if self.get_type() == 'char' and not for_doc:
+            return 'char'
+
         if self.get_cardinality() == 1 or t == 'string':
             return t
 

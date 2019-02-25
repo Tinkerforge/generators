@@ -305,9 +305,11 @@ class MQTTBindings:
                         return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
                     elif sys.hexversion >= 0x03000000 and not isinstance(a, str):
                         return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                    if t == 'char' and len(a) > 1:
+                        return "Argument {name} was a string of length {len}, but a single character was expected.".format(name=n, len=len(a))
                 elif type(a) != type_map[t]:
                     return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
-                
+
 
     def device_stream_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Starting stream call {} for device {} of type {}.".format(fnName, uid, device_name))
