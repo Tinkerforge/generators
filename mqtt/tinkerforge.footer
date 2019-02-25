@@ -68,7 +68,13 @@ class MQTTBindings:
         logging.debug("Connected to brickd at {}:{}".format(ipcon_host, ipcon_port))
         if ipcon_auth_secret != "":
             self.authenticate(ipcon_auth_secret, "Could not authenticate.")
+
+        logging.debug("Connecting to MQTT broker at {}:{}".format(broker_host, broker_port))
+        try:
         self.mqttc.connect(broker_host, broker_port)
+        except Exception as e:
+            fatal_error("Connecting to MQTT broker failed: " + str(e), ERROR_NO_CONNECTION_TO_BROKER)
+        logging.debug("Connected to MQTT broker at {}:{}".format(broker_host, broker_port))
 
         self.mqttc.subscribe(self.global_prefix + "request/#")
         self.mqttc.subscribe(self.global_prefix + "register/#")
