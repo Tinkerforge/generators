@@ -744,8 +744,9 @@ def main():
         try:
             with open(args.init_file) as f:
                 initial_config = json.load(f)
-        except:
-            traceback.print_exc()
+        except IOError as e:
+            print("Could not read init file: {}".format(str(e)))
+            sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
     else:
         initial_config = None
     bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
