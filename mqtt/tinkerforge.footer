@@ -9,6 +9,8 @@ def json_error(message, resultDict=None):
         return json.dumps(resultDict)
     return json.dumps({'_ERROR': message})
 
+message_tup = namedtuple('message_tup', ['topic', 'payload'])
+
 class MQTTBindings:
     def __init__(self, debug, no_symbolic_response, show_payload, global_prefix, ipcon_timeout, broker_username, broker_password, broker_certificate, broker_tls_insecure):
         self.no_symbolic_response = no_symbolic_response
@@ -81,9 +83,11 @@ class MQTTBindings:
         self.mqttc.publish(self.global_prefix + "callback/bindings/restart", "null")
         self.mqttc.subscribe(self.global_prefix + "callback/bindings/restart")
 
-    def run(self):
+    def run(self, initial_config):
         self.mqttc.loop_start()
         try:
+            for topic, payload in initial_config.items():
+                self.on_message(self.mqttc, len(self.global_prefix), message_tup(topic, json.dumps(payload)))
             while(True):
                 time.sleep(1)
         except KeyboardInterrupt:
@@ -722,8 +726,9 @@ def main():
                         help='global MQTT topic prefix for this proxy instance (default: {0})'.format(GLOBAL_TOPIC_PREFIX))
     parser.add_argument('--debug', dest='debug', action='store_true', help='enable debug output')
     parser.add_argument('--no-symbolic-response', dest='no_symbolic_response', action='store_true', help='disable translation into string constants for responses')
-
-    parser.add_argument('--show-payload', dest='show_payload', action='store_true', help='show received payload if JSON parsing fails.')
+    parser.add_argument('--show-payload', dest='show_payload', action='store_true', help='show received payload if JSON parsing fails')
+    parser.add_argument('--init-file', dest='init_file', type=str, default=None,
+                        help='file from where to load initial messages to publish')
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -735,9 +740,17 @@ def main():
     if len(global_topic_prefix) > 0 and not global_topic_prefix.endswith('/'):
         global_topic_prefix += '/'
 
+    if args.init_file is not None:
+        try:
+            with open(args.init_file) as f:
+                initial_config = json.load(f)
+        except:
+            traceback.print_exc()
+    else:
+        initial_config = None
     bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
     bindings.connect(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret,args.broker_host, args.broker_port)
-    bindings.run()
+    bindings.run(initial_config)
 
 if __name__ == '__main__':
     main()
