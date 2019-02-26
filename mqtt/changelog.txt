@@ -4,7 +4,7 @@
 2019-01-25: 2.0.1 (c31e828)
 - Fix handling of JSON errors for Python 2
 
-2019-02-26: 2.0.2 (unknown)
+2019-02-26: 2.0.2 (9b00366)
 - Add support for --init-file option
 - Check length of char parameters
 - Log broker connections
