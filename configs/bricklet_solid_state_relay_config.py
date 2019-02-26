@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False, # selling remaining stock, replaced by Solid State Relay Bricklet 2.0
+    'discontinued': True, # replaced by Solid State Relay Bricklet 2.0
     'packets': [],
     'examples': []
 }
