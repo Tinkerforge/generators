@@ -49,3 +49,14 @@ add_callback_value_function(
     data_type = 'uint8',
     doc       = position_doc
 )
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'uint8', 1, None, '°', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint8', 1, None, '°', None)], None, None),
+              ('callback_configuration', ('Position', 'position'), [], 250, False, 'x', [(0, 0)])]
+})

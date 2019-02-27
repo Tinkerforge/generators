@@ -37,9 +37,11 @@ ERROR_AUTHENTICATION_ERROR = 26
 ERROR_OUTPUT_NOT_ESCAPABLE_ERROR = 27
 ERROR_PAHO_MISSING = 28
 ERROR_PAHO_VERSION = 29
+ERROR_NO_CONNECTION_TO_BROKER = 30
+ERROR_COULD_NOT_READ_INIT_FILE = 31
 IPCONNECTION_ERROR_OFFSET = 200
 
-def fatal_error(message, exit_code):    
+def fatal_error(message, exit_code):
     logging.critical(message)
     sys.exit(exit_code)
 
@@ -68,8 +70,8 @@ except ImportError:
 
 FunctionInfo = namedtuple('FunctionInfo', ['id', 'arg_names', 'arg_types', 'arg_symbols', 'payload_fmt', 'result_names', 'result_symbols', 'response_fmt'])
 HighLevelFunctionInfo = namedtuple('HighLevelFunctionInfo',
-    ['low_level_id', 'direction', 
-     'high_level_roles_in', 'high_level_roles_out', 'low_level_roles_in', 'low_level_roles_out', 
+    ['low_level_id', 'direction',
+     'high_level_roles_in', 'high_level_roles_out', 'low_level_roles_in', 'low_level_roles_out',
      'arg_names', 'arg_types', 'arg_symbols', 'format_in', 'result_names', 'result_symbols', 'format_out',
      'chunk_padding', 'chunk_cardinality', 'chunk_max_offset',
      'short_write', 'single_read', 'fixed_length'])
