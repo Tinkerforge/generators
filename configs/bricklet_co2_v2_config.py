@@ -264,7 +264,7 @@ The :word:`parameters` are the same as :func:`Get All Values`.
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set All Values Callback Configuration` gesetzten Konfiguration
 
-Die :word:`parameters` sind der gleiche wie :func:`Get All Values`.
+Die :word:`parameters` sind die gleichen wie :func:`Get All Values`.
 """
 }]
 })
