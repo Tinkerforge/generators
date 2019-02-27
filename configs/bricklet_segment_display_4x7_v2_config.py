@@ -175,7 +175,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Segment',
 'elements': [('Segment', 'uint8', 1, 'in'),
-             ('Value', 'uint8', 1, 'in')],
+             ('Value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -209,7 +209,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Selected Segments',
 'elements': [('Segment', 'uint8', 1, 'in'),
-             ('Value', 'uint8', 1, 'out')],
+             ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
