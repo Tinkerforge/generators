@@ -311,3 +311,28 @@ fertig ist.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Blink Colon',
+'functions': [('setter', 'Set Brightness', [('uint8', 7)], None, 'Set to full brightness'),
+              ('loop_header', 10, 'Blink colon 10 times'),
+              ('setter', 'Set Selected Segment', [('uint8', 32), ('bool', True)], 'Activate segments of colon', None),
+              ('setter', 'Set Selected Segment', [('uint8', 33), ('bool', True)], None, None),
+              ('empty',),
+              ('sleep', 250, None, None),
+              ('setter', 'Set Selected Segment', [('uint8', 32), ('bool', False)], 'Deactivate segments of colon', None),
+              ('setter', 'Set Selected Segment', [('uint8', 33), ('bool', False)], None, None),
+              ('loop_footer',)],
+})
+
+com['examples'].append({
+'name': 'Numeric Value',
+'functions': [('setter', 'Set Brightness', [('uint8', 7)], None, 'Set to full brightness'),
+              ('setter', 'Set Numeric Value', [('int8', [-2, -1, 4, 2])], 'Show "- 42" on the Display', None)],
+})
+
+com['examples'].append({
+'name': 'Set Segments',
+'functions': [('setter', 'Set Brightness', [('uint8', 7)], None, 'Set to full brightness'),
+              ('setter', 'Set Segments', [('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*2), ('bool', True)], 'Activate all segments', None)],
+})
