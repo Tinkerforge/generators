@@ -42,12 +42,20 @@ com['packets'].append({
 Returns all values measured by the CO2 Bricklet 2.0. The values are
 CO2 concentration (in ppm), Temperature (in 0.01 °C) 
 and Humidity (in 0.01 %RH).
+
+If you want to get the values periodically, it is recommended to use the
+:cb:`All Values` callback. You can set the callback configuration
+with :func:`Set All Values Callback Configuration`.
 """,
 'de':
 """
 Gibt alle Werte zurück, die das CO2 Bricklet 2.0 misst. Diese Werte umfassen:
 CO2-Konzentraion (in ppm), Temperatur (in 0,01 °C) und 
 Luftfeuchte (in 0,01 %RH).
+
+Wenn der Wert periodisch benötigt wird, kann auch der :cb:`All Values` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set All Values Callback Configuration` konfiguriert.
 """
 }]
 })
@@ -264,7 +272,7 @@ The :word:`parameters` are the same as :func:`Get All Values`.
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set All Values Callback Configuration` gesetzten Konfiguration
 
-Die :word:`parameters` sind der gleiche wie :func:`Get All Values`.
+Die :word:`parameters` sind die gleichen wie :func:`Get All Values`.
 """
 }]
 })
