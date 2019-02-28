@@ -18,8 +18,8 @@ com = {
     'display_name': 'Hall Effect 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Measures magnetic flux density between -7mT and 7mT',
+        'de': 'Misst magnetische Flussdichte zwischen -7mT und 7mT'
     },
     'comcu': True,
     'released': False,
@@ -32,12 +32,13 @@ com = {
 magnetic_flux_density_doc = {
 'en':
 """
-Returns the magnetic flux density (magnetic induction) in uT (micro Tesla).
-
-TBD: Range etc?
+Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
+in `uT (micro Tesla) <https://en.wikipedia.org/wiki/Tesla_(unit)>`__.
 """,
 'de':
 """
+Gibt die `magnetische Flussdichte (magnetische Induktion) <https://de.wikipedia.org/wiki/Magnetische_Flussdichte>`__
+in `uT (Microtesla) <https://de.wikipedia.org/wiki/Tesla_(Einheit)>`__ zurück.
 """
 }
 
@@ -58,13 +59,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Counter works up to 10kHz.
+Returns the current value of the counter. 
 
-Returns the current value of the edge counter. You can configure
-edge type (rising, falling, both) that is counted with
-:func:`Set Counter Config`.
+You can configure the low/high thresholds in uT and the debounce time
+in us with :func:`Set Counter Config`.
 
-If you set the reset counter to *true*, the count is set back to 0
+If you set reset counter to *true*, the count is set back to 0
 directly after it is read.
 
 If you want to get the count periodically, it is recommended to use the
@@ -73,9 +73,10 @@ with :func:`Set Counter Callback Configuration`.
 """,
 'de':
 """
-Gibt den aktuellen Wert des Flankenzählers zurück. Die zu
-zählenden Flanken (steigend, fallend, beide) können mit
-:func:`Set Counter Config` konfiguriert werden.
+Gibt den aktuellen Wert des Zählers zurück. 
+
+Die Schwellwerte (low/high) in uT und Entprellzeit in us können per
+:func:`Set Counter Config` eingestellt werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
@@ -97,12 +98,35 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets a high and a low threshold in uT as well as a debounce time in us.
 
-debounce in us, max 1s
+If the measured magnetic flux density goes above the high threshold or 
+below the low threshold, the count of the counter is increased by 1.
+
+The debounce time is the minimum time between two count increments.
+
+The default values are
+
+* High Threshold: 2000uT
+* Low Threshold: -2000uT
+* Debounce: 100000us (100ms)
 """,
 'de':
 """
+Setzt einen niedrigen und einen hohen Schwellwert (threshold) in uT sowie 
+eine Entprellzeit (debounce) in us.
 
+Wenn die gemessene magnetische Flussdichte über den hohen Schwellwert
+oder unter den niedrigen Schwellwert wandert, wird der Zählerstand des Zählers
+(siehe :func:`Get Counter`) um 1 erhöht.
+
+Die Entprellzeit ist die Minimalzeit zwischen zwei Zählerinkrementierungen.
+
+Die Standardwerte sind
+
+* High Threshold: 2000uT
+* Low Threshold: -2000uT
+* Debounce: 100000us (100ms)
 """
 }]
 })
@@ -117,11 +141,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Returns the counter config as set by :func:`Set Counter Config`.
 """,
 'de':
 """
-
+Gibt die Zähler-Konfiguration zurück, wie von :func:`Set Counter Config` gesetzt.
 """
 }]
 })
@@ -207,4 +231,21 @@ Der Zählerstand ist der gleiche, der auch per :func:`Get Counter`
 abgefragt werden kann.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Magnetic Flux Density',
+'functions': [('getter', ('Get Magnetic Flux Density', 'Magnetic Flux Density'), [(('Magnetic Flux Density', 'Magnetic Flux Density'), 'int16', 1, None, 'uT', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Counter',
+'functions': [('getter', ('Get Counter', 'count without counter reset'), [(('Count', 'Count'), 'uint32', 1, None, None, None)], [('bool', False)])]
+})
+
+com['examples'].append({
+'name': 'Counter Callback',
+'functions': [('setter', 'Set Counter Config', [('int16', 3000), ('int16', -3000), ('uint32', 10000)], 'Configure counter with +-3000uT threshold and 10ms debounce', None),
+              ('callback', ('Counter', 'counter'), [(('Counter', 'Counter'), 'uint16', 1, None, None, None)], None, None),
+              ('callback_configuration', ('Counter', 'counter'), [], 100, True, None, [])]
 })
