@@ -113,3 +113,6 @@
 
 2019-01-29: 2.1.22 (2617875)
 - Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
+
+<UNKNOWN>: <UNKNOWN> (<UNKNOWN>)
+- Fix disconnect probe handling

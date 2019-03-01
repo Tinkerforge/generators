@@ -118,16 +118,25 @@ function TFSocket(PORT, HOST, ipcon) {
             this.socket.setNoDelay(value);
         }
     };
-    this.write = function (data) {
+    this.write = function (data, reset_disconnect_probe = true) {
         if (process.browser) {
             // Some browers can't send a nodejs Buffer through a websocket,
             // we copy it into an ArrayBuffer
             var arrayBuffer = new Uint8Array(data).buffer;
+
             this.socket.send(arrayBuffer);
-            ipcon.resetDisconnectProbe();
+
+            if (reset_disconnect_probe) {
+                ipcon.resetDisconnectProbe();
+            }
         }
         else {
-            this.socket.write(data, ipcon.resetDisconnectProbe());
+            if (reset_disconnect_probe) {
+                this.socket.write(data, ipcon.resetDisconnectProbe);
+            }
+            else {
+                this.socket.write(data);
+            }
         }
     };
     this.end = function () {
@@ -191,7 +200,13 @@ function IPConnection() {
 
     this.disconnectProbe = function () {
         if (this.socket !== undefined) {
-            this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), this.resetDisconnectProbe());
+            try {
+                this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), reset_disconnect_probe = false);
+            }
+            catch(e) {
+                // Initiating a normal disconnect will ensure autoreconnect decision and connection management
+                this.disconnect(undefined);
+            }
         }
     };
     this.pushTask = function (handler, kind) {
@@ -278,6 +293,7 @@ function IPConnection() {
         // Saving the user provided error callback function for future use
         this.connectErrorCallback = errorCallback;
         clearInterval(this.disconnectProbeIID);
+        this.disconnectProbeIID = undefined;
         this.host = host;
         this.port = port;
         this.socket = new TFSocket(this.port, this.host, this);
@@ -296,6 +312,7 @@ function IPConnection() {
         }
 
         clearInterval(this.disconnectProbeIID);
+        this.disconnectProbeIID = undefined;
         this.isConnected = true;
 
         // Check and call functions if registered for callback connected
@@ -365,6 +382,7 @@ function IPConnection() {
 
             this.isConnected = false;
             clearInterval(this.disconnectProbeIID);
+            this.disconnectProbeIID = undefined;
 
             if (this.socket !== undefined) {
                 this.socket.end();
@@ -384,6 +402,7 @@ function IPConnection() {
         if (this.isConnected) {
             this.isConnected = false;
             clearInterval(this.disconnectProbeIID);
+            this.disconnectProbeIID = undefined;
 
             if (this.socket !== undefined) {
                 this.socket.end();
@@ -417,8 +436,9 @@ function IPConnection() {
             return;
         }
         clearInterval(this.disconnectProbeIID);
+        this.disconnectProbeIID = undefined;
         this.disconnectProbeIID = setInterval(this.disconnectProbe.bind(this),
-                                                   IPConnection.DISCONNECT_PROBE_INTERVAL);
+                                              IPConnection.DISCONNECT_PROBE_INTERVAL);
     };
     this.getUIDFromPacket = function (packetUID){
         return packetUID.readUInt32LE(0);
@@ -911,7 +931,7 @@ function IPConnection() {
                 }
             }
         }
-        this.socket.write(sendRequestPacket, this.resetDisconnectProbe());
+        this.socket.write(sendRequestPacket, reset_disconnect_probe = true);
     };
     this.sendRequestTimeout = function (timeoutDevice, timeoutDeviceOID, timeoutErrorCB) {
         for (var i=0; i<timeoutDevice.expectedResponses.length; ++i) {
@@ -1222,7 +1242,7 @@ function IPConnection() {
             }
             return;
         }
-        this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE), this.resetDisconnectProbe());
+        this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE), reset_disconnect_probe = true);
     };
     this.getRandomUInt32 = function (returnCallback) {
         if (process.browser) {
