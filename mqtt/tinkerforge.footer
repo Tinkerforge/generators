@@ -103,7 +103,6 @@ class MQTTBindings:
 
 
     def ip_connection_callback_fn(self, callback_id, *args):
-        logging.error(str(callback_id) + " " + str(args))
         d = dict(zip(self.ip_connection_callback_names[callback_id], args))
         if "enumeration_type" in d and d["enumeration_type"] != 2 and "device_identifier" in d:
             dev_id = d["device_identifier"]
