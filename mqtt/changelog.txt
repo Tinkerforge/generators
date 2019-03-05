@@ -13,3 +13,4 @@
 - Fix crash on start without init-file.
 - Remove unnecessary callback error message.
 - Fix handling of timeouts.
+- Translate symbols in callback responses.
