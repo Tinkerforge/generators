@@ -20,8 +20,8 @@ class MQTTBindings:
         self.handle_ipcon_exceptions(lambda i: i.set_timeout(ipcon_timeout))
 
         self.mqttc = mqtt.Client(userdata=len(global_prefix))
+        logging.basicConfig(format='%(asctime)s <%(levelname)s> %(name)s: %(message)s', level=logging.DEBUG if debug else logging.INFO)
         if debug:
-            logging.basicConfig(level=logging.DEBUG)
             self.mqttc.enable_logger()
 
         try:
@@ -254,7 +254,7 @@ class MQTTBindings:
         try:
             return function(self.ipcon)
         except Error as e:
-            if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC]:
+            if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC, Error.TIMEOUT]:
                 if infoString is not None:
                     return json_error(e.description + " " + infoString, resultDict)
                 return json_error(e.description, resultDict)
@@ -319,6 +319,11 @@ class MQTTBindings:
                 elif type(a) != type_map[t]:
                     return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
 
+    def is_error(self, response):
+        if isinstance(response, str) or isinstance(response, basestring):
+            d = json.loads(response)
+            return "_ERROR" in d
+        return False
 
     def device_stream_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Starting stream call {} for device {} of type {}.".format(fnName, uid, device_name))
@@ -452,8 +457,8 @@ class MQTTBindings:
                     response = tuple(high_level_response)
         else: # out
             low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
-            if isinstance(response, dict) and "_ERROR" in response:
-                return response
+            if self.is_error(low_level_response):
+                return low_level_response
 
             if fixed_length == None:
                 stream_length_index = low_level_roles_out.index('stream_length')
@@ -482,8 +487,9 @@ class MQTTBindings:
 
             while not stream_out_of_sync and len(stream_data) < stream_length:
                 low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
-                if isinstance(response, dict) and "_ERROR" in response:
-                    return response
+
+                if self.is_error(low_level_response):
+                    return low_level_response
 
                 if stream_length_index != None:
                     stream_length = low_level_response[stream_length_index]
@@ -498,8 +504,8 @@ class MQTTBindings:
             if stream_out_of_sync: # discard remaining stream to bring it back in-sync
                 while stream_chunk_offset + chunk_cardinality < stream_length:
                     low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
-                    if isinstance(response, dict) and "_ERROR" in response:
-                        return response
+                    if self.is_error(low_level_response):
+                        return low_level_response
 
                     if stream_length_index != None:
                         stream_length = low_level_response[stream_length_index]
