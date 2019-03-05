@@ -1,17 +1,19 @@
 class MQTTCallbackDevice(Device):
-    def __init__(self, uid, ipcon, device_class, mqttc):        
+    def __init__(self, uid, ipcon, device_class, mqttc):
         Device.__init__(self, uid, ipcon)
         self.publish_paths = {}
         self.callback_names = {}
+        self.callback_symbols = {}
         self.device_class = device_class
         self.mqttc = mqttc
 
-    def add_callback(self, callback_id, callback_format, callback_names, high_level_info):
+    def add_callback(self, callback_id, callback_format, callback_names, callback_symbols, high_level_info):
         self.callback_formats[callback_id] = callback_format
         self.callback_names[callback_id] = callback_names
+        self.callback_symbols[callback_id] = callback_symbols
         if high_level_info is not None:
             self.high_level_callbacks[-callback_id] = high_level_info
-       
+
 
     def register_callback(self, bindings, callback_id, path):
         if -callback_id in self.high_level_callbacks:
@@ -33,5 +35,6 @@ class MQTTCallbackDevice(Device):
         if len(self.publish_paths[callback_id]) == 0:
             self.publish_paths.pop(callback_id)
             self.callback_names.pop(callback_id)
+            self.callback_symbols.pop(callback_id)
             self.registered_callbacks.pop(callback_id, None)
         return True

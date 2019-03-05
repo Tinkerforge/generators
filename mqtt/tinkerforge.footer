@@ -605,7 +605,7 @@ class MQTTBindings:
             if not success:
                 return callback_device
 
-            callback_device.add_callback(callbackInfo.id, callbackInfo.fmt, callbackInfo.names, callbackInfo.high_level_info)
+            callback_device.add_callback(callbackInfo.id, callbackInfo.fmt, callbackInfo.names, callbackInfo.symbols, callbackInfo.high_level_info)
             callback_device.register_callback(self, callbackInfo.id, path)
 
             logging.debug("Registered callback {} for device {} of type {}. Will publish messages to {}.".format(callbackName, uid, device_name, path))
@@ -682,7 +682,12 @@ class MQTTBindings:
     def callback_function(self, mqtt_callback_device, callback_id, *args):
         names = mqtt_callback_device.callback_names[callback_id]
         paths = mqtt_callback_device.publish_paths[callback_id]
-        payload = json.dumps(dict(zip(names, args)))
+        symbols = mqtt_callback_device.callback_symbols[callback_id]
+        if not self.no_symbolic_response:
+            response = [symbols[data] if data in symbols else data for symbols, data in zip(symbols, args)]
+        else:
+            response = args
+        payload = json.dumps(dict(zip(names, response)))
         for path in paths:
             self.mqttc.publish(path, payload)
 
