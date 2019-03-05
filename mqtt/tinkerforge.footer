@@ -748,7 +748,7 @@ def main():
             print("Could not read init file: {}".format(str(e)))
             sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
     else:
-        initial_config = None
+        initial_config = {}
     bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
     bindings.connect(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret,args.broker_host, args.broker_port)
     bindings.run(initial_config)
