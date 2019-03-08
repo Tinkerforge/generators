@@ -325,6 +325,10 @@ class MQTTBindings:
             return "_ERROR" in d
         return False
 
+    def translate_symbols(self, symbol_list, data_list):
+        return [(symbols[data] if isinstance(data, Hashable) and data in symbols else data)
+                 for symbols, data in zip(symbol_list, data_list)]
+
     def device_stream_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Starting stream call {} for device {} of type {}.".format(fnName, uid, device_name))
         if len(json_args) > 0:
@@ -357,7 +361,7 @@ class MQTTBindings:
         normal_level_request_data = [data for role, data in zip(high_level_roles_in, request_data) if role == None]
 
         reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
-        normal_level_request_data = [symbols[data] if data in symbols else data for symbols, data in zip(reversed_symbols, normal_level_request_data)]
+        normal_level_request_data = self.translate_symbols(reversed_symbols, normal_level_request_data)
 
         type_error = MQTTBindings.type_check_args(request_data, arg_names, arg_types)
         if type_error is not None:
@@ -536,7 +540,7 @@ class MQTTBindings:
                 response = (response,)
 
             if not self.no_symbolic_response:
-                response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
+                response = self.translate_symbols(fnInfo.result_symbols, response)
             response = json.dumps(dict(zip(result_names, response)))
             logging.debug("Stream call {} for device {} of type {} succeded.".format(fnName, uid, device_name))
             return response
@@ -645,7 +649,7 @@ class MQTTBindings:
             return json_error("The arguments {} where missing for a call of {} of device {} of type {}.".format(str(missing_args), fnName, uid, device_name), dict([(name, None) for name in fnInfo.result_names]))
 
         reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
-        args = [symbols[data] if data in symbols else data for symbols, data in zip(reversed_symbols, args)]
+        args = self.translate_symbols(reversed_symbols, args)
 
         type_error = MQTTBindings.type_check_args(args, fnInfo.arg_names, fnInfo.arg_types)
         if type_error is not None:
@@ -668,7 +672,7 @@ class MQTTBindings:
                 response = (response,)
 
             if not self.no_symbolic_response:
-                response = [symbols[data] if data in symbols else data for symbols, data in zip(fnInfo.result_symbols, response)]
+                response = self.translate_symbols(fnInfo.result_symbols, response)
 
             d = dict(zip(fnInfo.result_names, response))
             if fnName == "get_identity" and "device_identifier" in d:
@@ -684,7 +688,7 @@ class MQTTBindings:
         paths = mqtt_callback_device.publish_paths[callback_id]
         symbols = mqtt_callback_device.callback_symbols[callback_id]
         if not self.no_symbolic_response:
-            response = [symbols[data] if data in symbols else data for symbols, data in zip(symbols, args)]
+            response = self.translate_symbols(symbols, args)
         else:
             response = args
         payload = json.dumps(dict(zip(names, response)))
