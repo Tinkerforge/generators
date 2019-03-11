@@ -14,3 +14,6 @@
 - Remove unnecessary callback error message.
 - Fix handling of timeouts.
 - Translate symbols in callback responses.
+
+2019-03-11: 2.0.4 (TBD)
+- Don't try to translate lists
