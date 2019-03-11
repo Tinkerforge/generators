@@ -15,5 +15,5 @@
 - Fix handling of timeouts.
 - Translate symbols in callback responses.
 
-2019-03-11: 2.0.4 (TBD)
+2019-03-11: 2.0.4 (b6f211c)
 - Don't try to translate lists
