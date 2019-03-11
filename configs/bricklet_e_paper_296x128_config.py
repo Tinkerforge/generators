@@ -567,3 +567,10 @@ schwarz/weiß/rot oder schwarz/weiß/grau sein.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Hello World',
+'functions': [('setter', 'Fill Display', [('uint8:constant', 0)], 'Use black background', None),
+              ('setter', 'Draw Text', [('uint8', 16), ('uint8', 48), ('uint8:constant', 9), ('uint8:constant', 1), ('uint8:constant', 0), ('string', 'Hello World')], 'Write big white "Hello World" in the middle of the screen', None),
+              ('setter', 'Draw', [], None, None)]
+})
