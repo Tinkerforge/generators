@@ -330,7 +330,7 @@ Wenn keine Achse aktiviert is, sind beide Callbacks deaktiviert. Wenn einer der
 "Continuous Callbacks" genutzt wird, wird der :cb:`Acceleration`-Callback
 automatisch deaktiviert.
 
-Der maximale Durchsatz hängt von der Konfiguraiton ab:
+Der maximale Durchsatz hängt von der Konfiguration ab:
 
 .. csv-table::
  :header: "Anzahl aktiviert Achsen", "Durchsatz 8-Bit", "Durchsatz 16-Bit"
