@@ -317,7 +317,7 @@ Returns the custom character for a given index, as set with
 'de':
 """
 Gibt den benutzerdefinierten Buchstaben für den gegebenen
-Index zurück, wie von :func:`Get Custom Character` gesetzt.
+Index zurück, wie von :func:`Set Custom Character` gesetzt.
 """
 }]
 })
