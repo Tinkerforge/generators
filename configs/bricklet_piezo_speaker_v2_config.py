@@ -252,11 +252,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Updates the volume of an ongoing beep or alarm.
+Updates the volume of an ongoing beep or alarm. The range of the volume is 0 to 10.
 """,
 'de':
 """
-Aktualisiert die Lautstärke eines aktuell laufenden Beep oder Alarm.
+Aktualisiert die Lautstärke eines aktuell laufenden Beep oder Alarm. Der
+Wertebereicht der Lautstärke ist 0 bis 10.
 """
 }]
 })
@@ -269,11 +270,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Updates the frequency of an ongoing beep.
+Updates the frequency of an ongoing beep. The range of the frequency is 50Hz to 15000Hz.
 """,
 'de':
 """
-Aktualisiert die Frequenz eines aktuell laufenden Beeps.
+Aktualisiert die Frequenz eines aktuell laufenden Beeps. Der Wertebereich der
+Frequenz ist 50Hz bis 15000Hz.
 """
 }]
 })
