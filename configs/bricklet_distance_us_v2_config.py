@@ -32,11 +32,11 @@ com = {
 distance_doc = {
 'en':
 """
-TBD
+Returns the distance in cm.
 """,
 'de':
 """
-TBD
+Gibt die Distanz in cm zurück.
 """
 }
 
