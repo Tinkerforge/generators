@@ -299,3 +299,13 @@ add_callback_value_function(
     data_type = 'uint32',
     doc       = count_doc
 )
+
+com['examples'].append({
+'name': 'GPIO',
+'functions': [('loop_header', 5, 'Set Port 1, Pin 0 alternating high/low for 5 times with 1s delay'),
+              ('sleep', 1000, None, None),
+              ('setter', 'Set GPIO Config', [('uint8', 1), ('uint8', 0), ('uint8:constant', 8), ('uint8', 0), ('bool', False)], None, None),
+              ('sleep', 1000, None, None),
+              ('setter', 'Set GPIO Config', [('uint8', 1), ('uint8', 0), ('uint8:constant', 8), ('uint8', 0), ('bool', True)], None, None),
+              ('loop_footer',)]
+})
