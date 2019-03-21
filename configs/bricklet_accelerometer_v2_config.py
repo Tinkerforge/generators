@@ -81,7 +81,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Configures the data rate, full scale range and filter bandwidth.
+Configures the data rate and full scale range.
 Possible values are:
 
 * Data rate of 0.781Hz to 25600Hz.
@@ -94,7 +94,7 @@ The default values are 100Hz data rate and -2g to +2g range.
 """,
 'de':
 """
-Konfiguriert die Datenrate, den Wertebereich und die Filterbandbreite.
+Konfiguriert die Datenrate und den Wertebereich.
 Mögliche Konfigurationswerte sind:
 
 * Datenrate zwischen 0,781Hz und 25600Hz.
