@@ -387,7 +387,7 @@ The :word:`parameters` are the same as :func:`Get Measurements`.
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
-:func:`Set Measurements Configuration` gesetzten Konfiguration
+:func:`Set Measurements Callback Configuration` gesetzten Konfiguration
 
 Die :word:`parameters` sind der gleiche wie :func:`Get Measurements`.
 """
