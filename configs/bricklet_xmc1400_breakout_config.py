@@ -178,7 +178,7 @@ Returns the values for all 8 ADC channels of the adc driver example.
 
 This example function also has a corresponding callback.
 
-See :func:`Set ADC Values Callback Configuration` and :cb:`ADC Values`.
+See :func:`Set ADC Values Callback Configuration` and :cb:`ADC Values` callback.
 """,
 'de':
 """
@@ -186,7 +186,7 @@ Gibt die Werte aller 8 ADC-Kanäle des ADC-Treiber-Beispiels zurück.
 
 Diese Beispiel-Funktion hat auch einen korrespondierenden Callback.
 
-Siehe :func:`Set ADC Values Callback Configuration` und :cb:`ADC Values`.
+Siehe :func:`Set ADC Values Callback Configuration` und :cb:`ADC Values` Callback.
 """
 }]
 })
@@ -266,7 +266,7 @@ The :word:`parameters` are the same as :func:`Get ADC Values`.
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
-:func:`Set PM Concentration Callback Configuration` gesetzten Konfiguration
+:func:`Set ADC Values Callback Configuration` gesetzten Konfiguration
 
 Die :word:`parameters` sind der gleiche wie :func:`Get ADC Values`.
 """
