@@ -684,7 +684,7 @@ def create_device(device_identifier, uid, ipcon):
 
             for import_name, class_name in sorted(device_factory_classes):
                 imports.append(template_import.format(import_name, class_name))
-                classes.append('{0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
+                classes.append('    {0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
 
             with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
                 f.write(template.format(self.get_header_comment('hash'),
