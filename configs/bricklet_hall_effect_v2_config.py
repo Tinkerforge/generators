@@ -59,9 +59,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current value of the counter. 
+Returns the current value of the counter.
 
-You can configure the low/high thresholds in uT and the debounce time
+You can configure the low/high thresholds in µT and the debounce time
 in us with :func:`Set Counter Config`.
 
 If you set reset counter to *true*, the count is set back to 0
@@ -73,9 +73,9 @@ with :func:`Set Counter Callback Configuration`.
 """,
 'de':
 """
-Gibt den aktuellen Wert des Zählers zurück. 
+Gibt den aktuellen Wert des Zählers zurück.
 
-Die Schwellwerte (low/high) in uT und Entprellzeit in us können per
+Die Schwellwerte (low/high) in µT und Entprellzeit in µs können per
 :func:`Set Counter Config` eingestellt werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
@@ -98,22 +98,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets a high and a low threshold in uT as well as a debounce time in us.
+Sets a high and a low threshold in µT as well as a debounce time in µs.
 
-If the measured magnetic flux density goes above the high threshold or 
+If the measured magnetic flux density goes above the high threshold or
 below the low threshold, the count of the counter is increased by 1.
 
 The debounce time is the minimum time between two count increments.
 
 The default values are
 
-* High Threshold: 2000uT
-* Low Threshold: -2000uT
+* High Threshold: 2000µT
+* Low Threshold: -2000µT
 * Debounce: 100000us (100ms)
 """,
 'de':
 """
-Setzt einen niedrigen und einen hohen Schwellwert (threshold) in uT sowie 
+Setzt einen niedrigen und einen hohen Schwellwert (threshold) in µT sowie
 eine Entprellzeit (debounce) in us.
 
 Wenn die gemessene magnetische Flussdichte über den hohen Schwellwert
@@ -124,8 +124,8 @@ Die Entprellzeit ist die Minimalzeit zwischen zwei Zählerinkrementierungen.
 
 Die Standardwerte sind
 
-* High Threshold: 2000uT
-* Low Threshold: -2000uT
+* High Threshold: 2000µT
+* Low Threshold: -2000µT
 * Debounce: 100000us (100ms)
 """
 }]
@@ -235,7 +235,7 @@ abgefragt werden kann.
 
 com['examples'].append({
 'name': 'Magnetic Flux Density',
-'functions': [('getter', ('Get Magnetic Flux Density', 'Magnetic Flux Density'), [(('Magnetic Flux Density', 'Magnetic Flux Density'), 'int16', 1, None, 'uT', None)], [])]
+'functions': [('getter', ('Get Magnetic Flux Density', 'Magnetic Flux Density'), [(('Magnetic Flux Density', 'Magnetic Flux Density'), 'int16', 1, None, 'µT', None)], [])]
 })
 
 com['examples'].append({
@@ -245,7 +245,7 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Counter Callback',
-'functions': [('setter', 'Set Counter Config', [('int16', 3000), ('int16', -3000), ('uint32', 10000)], 'Configure counter with +-3000uT threshold and 10ms debounce', None),
+'functions': [('setter', 'Set Counter Config', [('int16', 3000), ('int16', -3000), ('uint32', 10000)], 'Configure counter with ±3000µT threshold and 10ms debounce', None),
               ('callback', ('Counter', 'counter'), [(('Counter', 'Counter'), 'uint16', 1, None, None, None)], None, None),
               ('callback_configuration', ('Counter', 'counter'), [], 100, True, None, [])]
 })
