@@ -238,7 +238,7 @@ Gibt die letzten Alarm-Einstellungen zurück, wie von :func:`Set Alarm` gesetzt.
 Alarm aktuell läuft, wird auch die verbleibende Zeit des Alarms in ms sowie die aktuelle
 Frequenz in Hz zurück gegeben.
 
-Wenn die Lautstärke während eines Alarms aktualisiert wird (mit:func:`Update Volume`), 
+Wenn die Lautstärke während eines Alarms aktualisiert wird (mit :func:`Update Volume`),
 gibt diese Funktion die aktualisierten Werte zurück.
 """
 }]

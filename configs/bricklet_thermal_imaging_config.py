@@ -91,7 +91,7 @@ a one-dimensional array. The data is arranged line by line from top left to
 bottom right.
 
 Each 16-bit value represents one temperature measurement in either
-Kelvin/10 or Kelvin/100 (depending on the resolution set with:func:`Set Resolution`).
+Kelvin/10 or Kelvin/100 (depending on the resolution set with :func:`Set Resolution`).
 
 Before you can use this function you have to enable it with
 :func:`Set Image Transfer Config`.
