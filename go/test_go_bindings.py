@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
+import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -34,7 +35,8 @@ class GoExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
         common.Tester.__init__(self, 'go', '.go', root_dir, subdirs=["examples"])#, subdirs=["src"])
         self.firstRun = True
-        
+        self.go_cache_dir = subprocess.check_output(['go', 'env', 'GOCACHE']).strip()
+
 
     def test(self, cookie, path, extra):
         root_dir = os.path.join(os.path.dirname(path), '..')
@@ -45,12 +47,12 @@ class GoExamplesTester(common.Tester):
             shutil.rmtree(os.path.join(root_dir, "src", "github.com"), ignore_errors=True)
             shutil.move(os.path.join(root_dir, "github.com"), os.path.join(root_dir, "src", "github.com"))
             self.firstRun = False
-        
-        
+
+
         args = ['go', 'build', '-o', 'example', path]
         #args = ['pwd']
         #print(">>> Compiling examples, this will take a while...")
-        self.execute(cookie, args, env={'GOPATH': os.path.normpath(root_dir)})
+        self.execute(cookie, args, env={'GOPATH': os.path.normpath(root_dir), 'GOCACHE': self.go_cache_dir})
 
 def run(root_dir):
     return GoExamplesTester(root_dir, None).run()
