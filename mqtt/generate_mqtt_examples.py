@@ -49,8 +49,8 @@ class MQTTExample(common.Example):
             description = ''
 
         sources = []
-        
-        for function in self.get_functions():            
+
+        for function in self.get_functions():
             sources.append(function.get_mqtt_source())
 
         while None in sources:
@@ -58,7 +58,7 @@ class MQTTExample(common.Example):
 
         if len(sources) == 0:
             sources = ['# TODO: Add example code here\n']
-        
+
         cleanups = []
 
         for cleanup in self.get_cleanups():
@@ -68,14 +68,14 @@ class MQTTExample(common.Example):
             cleanups.remove(None)
 
         sources = [s.lstrip('\r').rstrip('\n').split('\n') for s in sources]
-        sources = reduce(lambda l, r: l + [''] + r, sources[1:], sources[0]) # Insert empty list between source blocks later generate a newline between blocks (so before comments). This also flattens the sublists
-        
+        sources = functools.reduce(lambda l, r: l + [''] + r, sources[1:], sources[0]) # Insert empty list between source blocks later generate a newline between blocks (so before comments). This also flattens the sublists
+
         cleanups = [s.lstrip('\r').rstrip('\n').split('\n') for s in cleanups]
         if len(cleanups) > 1:
-            cleanups = reduce(lambda l, r: l + [''] + r, cleanups[1:], cleanups[0]) # Insert empty list between source blocks later generate a newline between blocks (so before comments). This also flattens the sublists
+            cleanups = functools.reduce(lambda l, r: l + [''] + r, cleanups[1:], cleanups[0]) # Insert empty list between source blocks later generate a newline between blocks (so before comments). This also flattens the sublists
         else:
             cleanups = sum(cleanups, []) # Only flatten the list
-        
+
         return template.format(incomplete=incomplete,
                                description=description,
                                device_long_display_name=self.get_device().get_long_display_name(),
@@ -130,9 +130,6 @@ class MQTTExampleArgument(common.ExampleArgument):
         return name + ": " + helper(value)
 
 class MQTTExampleArgumentsMixin(object):
-    def __init__(self):
-        print self.__class__
-
     def get_mqtt_arguments(self, callback_fn=""):
         arguments = []
 
@@ -160,17 +157,17 @@ class MQTTExampleGetterFunction(common.ExampleGetterFunction, MQTTExampleArgumen
     def get_mqtt_source(self):
         template = r"""{global_line_prefix}# Get current {function_name_comment}
 subscribe to tinkerforge/response/{device_name}_{device_category}/{uid}/{function_name_under}
-publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{function_name_under} 
+publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{function_name_under}
 """
 
         return template.format(global_line_prefix=global_line_prefix,
                                device_name=self.get_device().get_name().under,
                                device_category=self.get_device().get_category().under,
-                               uid=self.get_example().get_dummy_uid(), 
+                               uid=self.get_example().get_dummy_uid(),
                                function_name_comment=self.get_comment_name(),
                                function_name_under=self.get_name().under,
                                arguments=common.wrap_non_empty('{', ', '.join(self.get_mqtt_arguments()), '}'))
- 
+
 class MQTTExampleSetterFunction(common.ExampleSetterFunction, MQTTExampleArgumentsMixin):
     def get_mqtt_source(self):
         template = "{comment1}{global_line_prefix}publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{function_name} {comment2}\n"
@@ -227,12 +224,12 @@ publish '{{"register": true}}' to tinkerforge/register/{device_name}_{device_cat
         while None in parameters:
             parameters.remove(None)
 
-        
+
         return template1.format(function_name_comment=self.get_comment_name(),
                                 override_comment=override_comment) + \
                template2.format(device_name=self.get_device().get_name().under,
                                 device_category=self.get_device().get_category().under,
-                                uid=self.get_example().get_dummy_uid(), 
+                                uid=self.get_example().get_dummy_uid(),
                                 function_name_under=self.get_name().under)
 
 class MQTTExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, MQTTExampleArgumentsMixin):
@@ -260,7 +257,7 @@ publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{ui
         args = self.get_mqtt_arguments(callback_fn) + ['"period": ' + str(period_msec)]
 
         return template.format(device_name=self.get_device().get_name().under,
-                               uid=self.get_example().get_dummy_uid(), 
+                               uid=self.get_example().get_dummy_uid(),
                                device_category=self.get_device().get_category().under,
                                callback_fn=callback_fn,
                                function_name_comment=self.get_comment_name(),
@@ -291,7 +288,7 @@ publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{ui
 
         packet_min_max_names = [elem.get_name().under[3:] for elem in packet.get_elements(direction='in') if elem.get_name().under.startswith('min') ]
         minimum_maximums = []
-        
+
         for mm_name, minimum_maximum in zip(packet_min_max_names, self.get_minimum_maximums()):
             minimum_maximums.append(minimum_maximum.get_mqtt_source().format(mm_name=mm_name))
 
@@ -303,7 +300,7 @@ publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{ui
                                device_category=self.get_device().get_category().under,
                                callback_fn=callback_fn,
                                function_name_comment=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('{', ', '.join(args), '}'),                               
+                               arguments=common.wrap_non_empty('{', ', '.join(args), '}'),
                                option_comment=self.get_option_comment(),
                                uid=self.get_example().get_dummy_uid())
 
@@ -312,14 +309,14 @@ class MQTTExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurati
         callback_fn = "set_{function_name_under}_callback_configuration".format(function_name_under=self.get_name().under)
 
         templateA = r"""# Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
-publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{callback_fn} 
+publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{callback_fn}
 """
         templateB = r"""# Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
-publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{callback_fn}  
+publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{callback_fn}
 """
         templateC = r"""# Configure threshold for {function_name_comment} "{option_comment}"
 # with a debounce period of {period_sec_short} ({period_msec}ms)
-publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{callback_fn}  
+publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{callback_fn}
 """
 
         if self.get_option_char() == None:
@@ -341,7 +338,7 @@ publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{ui
 
         packet_min_max_names = [elem.get_name().under[3:] for elem in packet.get_elements(direction='in') if elem.get_name().under.startswith('min') ]
         minimum_maximums = []
-        
+
         for mm_name, minimum_maximum in zip(packet_min_max_names, self.get_minimum_maximums()):
             minimum_maximums.append(minimum_maximum.get_mqtt_source().format(mm_name=mm_name))
 
@@ -353,7 +350,7 @@ publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{ui
         args += minimum_maximums
 
         return template.format(device_name=self.get_device().get_name().under,
-                               uid=self.get_example().get_dummy_uid(), 
+                               uid=self.get_example().get_dummy_uid(),
                                device_category=self.get_device().get_category().under,
                                callback_fn=callback_fn,
                                function_name_comment=self.get_comment_name(),
@@ -363,7 +360,7 @@ publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{ui
                                period_sec_long=period_sec_long,
                                option_comment=self.get_option_comment())
 
-    
+
 class MQTTExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_mqtt_defines(self):
         return []
@@ -385,7 +382,7 @@ publish '{{"debounce": {period_msec}}}' to tinkerforge/request/{device_name}_{de
             period_msec, period_sec = self.get_formatted_debounce_period()
 
             return template.format(device_name=self.get_device().get_name().dash,
-                                   uid=self.get_example().get_dummy_uid(), 
+                                   uid=self.get_example().get_dummy_uid(),
                                    device_category=self.get_device().get_category().dash,
                                    period_msec=period_msec,
                                    period_sec=period_sec)
