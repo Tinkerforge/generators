@@ -61,6 +61,10 @@ The frequency is recalculated every 6s.
 All other values are integrated over 10 zero-crossings of the voltage sine wave.
 With a standard AC mains voltage frequecy of 50Hz this results in a 5 measurements
 per second (or an integration time of 200ms per measurement).
+
+If no voltage transformer is connected, the Bricklet will use the current waveform
+to calculate the frequency and it will use an integration time of
+10 zero-crossings of the current waveform.
 """,
 'de':
 """
