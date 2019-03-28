@@ -97,6 +97,10 @@ class CConstant(common.Constant):
                                constant_name=self.get_name().upper)
 
 class CExample(common.Example):
+    def __init__(self, raw_data, device):
+        common.Example.__init__(self, raw_data, device)
+        self.used_argument_decl_names = {}
+
     def get_c_source(self):
         template = r"""{defines}#include <stdio.h>{includes}{incomplete}{description}
 
@@ -221,16 +225,34 @@ class CExampleArgument(common.ExampleArgument, CTypeMixin):
         value = self.get_value()
 
         if isinstance(value, list):
-            if self.get_element().get_cardinality() < 0:
-                return '({0}[]){{{1}}}, {2}'.format(self.get_c_type(), ', '.join([helper(item) for item in value]), len(value))
-            # FIXME: this fails in G++ with "error: taking address of temporary array"
-            return '({0}[]){{{1}}}'.format(self.get_c_type(), ', '.join([helper(item) for item in value]))
+            name = self.get_element().get_name().under
+            if name in self.get_example().used_argument_decl_names:
+                suffix = self.get_example().used_argument_decl_names[name]
+                suffix += 1
+                self.get_example().used_argument_decl_names[name] = suffix
+                name += '_' + str(suffix)
+            else:
+                self.get_example().used_argument_decl_names[name] = 0
 
-        return helper(value)
+            declaration = '{type} {name}[{size}] = {{{data}}};'.format(type=self.get_c_type(),
+                                                                       name=name,
+                                                                       size=len(value),
+                                                                       data=', '.join([helper(item) for item in value]))
+            if self.get_element().get_cardinality() < 0:
+                return (declaration, '{name}, {size}'.format(name=name,
+                                                             size=len(value)))
+            return (declaration, '{name}'.format(name=name))
+
+        return (None, helper(value))
 
 class CExampleArgumentsMixin(object):
     def get_c_arguments(self):
-        return [argument.get_c_source() for argument in self.get_arguments()]
+        args = self.get_arguments()
+        if len(args) == 0:
+            return ([], [])
+        definitions, arguments = zip(*(argument.get_c_source() for argument in self.get_arguments()))
+        definitions = [d for d in definitions if d is not None]
+        return (definitions, arguments)
 
 class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin):
     def get_c_source(self):
@@ -266,7 +288,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -435,6 +457,9 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
             variable_references.append(result.get_c_variable_reference())
             printfs += result.get_c_printfs()
 
+        arg_declarations, arguments = self.get_c_arguments()
+        variable_declarations += arg_declarations
+
         merged_variable_declarations = []
 
         for variable_declaration in variable_declarations:
@@ -462,6 +487,8 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
         while None in printfs:
             printfs.remove(None)
 
+
+
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_name_under=self.get_device().get_name().under,
                                  device_name_initial=self.get_device().get_initial_name(),
@@ -470,7 +497,7 @@ class CExampleGetterFunction(common.ExampleGetterFunction, CExampleArgumentsMixi
                                  variable_declarations=variable_declarations,
                                  variable_references=',<BP>' + ',<BP>'.join(variable_references),
                                  printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
-                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''))
+                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''))
 
         return common.break_string(result, '_{}('.format(self.get_name().under))
 
@@ -485,13 +512,17 @@ class CExampleSetterFunction(common.ExampleSetterFunction, CExampleArgumentsMixi
         return None
 
     def get_c_source(self):
-        template = '{comment1}{global_line_prefix}\t{device_name_under}_{function_name}(&{device_name_initial}{arguments});{comment2}\n'
+        template = '{comment1}{declarations}{global_line_prefix}\t{device_name_under}_{function_name}(&{device_name_initial}{arguments});{comment2}\n'
+
+        arg_declarations, arguments = self.get_c_arguments()
+        declarations = common.wrap_non_empty('', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '\n')
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_name_under=self.get_device().get_name().under,
                                  device_name_initial=self.get_device().get_initial_name(),
                                  function_name=self.get_name().under,
-                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(self.get_c_arguments()), ''),
+                                 declarations=declarations,
+                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''),
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t// {0}\n', '\r', '\n' + global_line_prefix + '\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
@@ -599,12 +630,12 @@ class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, CExam
         return None
 
     def get_c_source(self):
-        templateA = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+        templateA = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms){declarations}
 	{device_name_under}_set_{function_name_under}_period(&{device_name_initial}{arguments}, {period_msec});
 """
         templateB = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
 	// Note: The {function_name_comment} callback is only called every {period_sec_long}
-	//       if the {function_name_comment} has changed since the last call!
+	//       if the {function_name_comment} has changed since the last call!{declarations}
 	{device_name_under}_set_{function_name_under}_callback_period(&{device_name_initial}{arguments}, {period_msec});
 """
 
@@ -615,11 +646,15 @@ class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, CExam
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
+        arg_declarations, arguments = self.get_c_arguments()
+        declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
+
         return template.format(device_name_under=self.get_device().get_name().under,
                                device_name_initial=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
                                function_name_comment=self.get_comment_name(),
-                               arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
+                               declarations=declarations,
+                               arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                period_sec_long=period_sec_long)
@@ -642,7 +677,7 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
         return None
 
     def get_c_source(self):
-        template = r"""	// Configure threshold for {function_name_comment} "{option_comment}"
+        template = r"""	// Configure threshold for {function_name_comment} "{option_comment}"{declarations}
 	{device_name_under}_set_{function_name_under}_callback_threshold(&{device_name_initial}{arguments}, '{option_char}', {minimum_maximums});
 """
         minimum_maximums = []
@@ -650,11 +685,15 @@ class CExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction,
         for minimum_maximum in self.get_minimum_maximums():
             minimum_maximums.append(minimum_maximum.get_c_source())
 
+        arg_declarations, arguments = self.get_c_arguments()
+        declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
+
         return template.format(device_name_under=self.get_device().get_name().under,
                                device_name_initial=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
                                function_name_comment=self.get_comment_name(),
-                               arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
+                               declarations=declarations,
+                               arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
                                minimum_maximums=', '.join(minimum_maximums))
@@ -670,14 +709,14 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         return None
 
     def get_c_source(self):
-        templateA = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms)
+        templateA = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms){declarations}
 	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change});
 """
-        templateB = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold
+        templateB = r"""	// Set period for {function_name_comment} callback to {period_sec_short} ({period_msec}ms) without a threshold{declarations}
 	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
         templateC = r"""	// Configure threshold for {function_name_comment} "{option_comment}"
-	// with a debounce period of {period_sec_short} ({period_msec}ms)
+	// with a debounce period of {period_sec_short} ({period_msec}ms){declarations}
 	{device_name_under}_set_{function_name_under}_callback_configuration(&{device_name_initial}{arguments}, {period_msec}{value_has_to_change}, '{option_char}', {minimum_maximums});
 """
 
@@ -695,11 +734,15 @@ class CExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationF
         for minimum_maximum in self.get_minimum_maximums():
             minimum_maximums.append(minimum_maximum.get_c_source())
 
+        arg_declarations, arguments = self.get_c_arguments()
+        declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
+
         return template.format(device_name_under=self.get_device().get_name().under,
                                device_name_initial=self.get_device().get_initial_name(),
                                function_name_under=self.get_name().under,
                                function_name_comment=self.get_comment_name(),
-                               arguments=common.wrap_non_empty(', ', ', '.join(self.get_c_arguments()), ''),
+                               declarations=declarations,
+                               arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
                                period_msec=period_msec,
                                period_sec_short=period_sec_short,
                                value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
