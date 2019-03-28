@@ -759,7 +759,7 @@ sonst.
 
 com['examples'].append({
 'name': 'Simple',
-'incomplete': True # because of array parameters
+'functions': [('setter', 'Set RGB Values', [('uint16', 0), ('uint8', 10),('uint8', [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), ('uint8', [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0]), ('uint8', [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])], 'Set first 10 LEDs to green', None)]
 })
 
 com['examples'].append({
