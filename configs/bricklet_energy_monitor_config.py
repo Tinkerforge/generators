@@ -18,8 +18,8 @@ com = {
     'display_name': 'Energy Monitor',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': 'Measures Voltage, Current, Energy, Real/Apparent/Reactive Power, Power Factor and Frequency',
+        'de': 'Misst Spannung, Strom, Energie, Wirk-/Schein-/Blindleistung, Leistungsfactor und Frequenz'
     },
     'comcu': True,
     'released': False,
