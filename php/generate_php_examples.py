@@ -160,7 +160,7 @@ class PHPExampleParameter(common.ExampleParameter):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -543,7 +543,7 @@ ${device_name_initial}->setDebouncePeriod({period_msec});
             duration = self.get_sleep_duration()
 
             if duration % 1000 == 0:
-                duration /= 1000
+                duration //= 1000
                 template = templateA
             else:
                 template = templateB
