@@ -91,6 +91,22 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': 'Get Transformer Status',
+'elements': [('Voltage Transformer Connected', 'bool', 1, 'out'),
+             ('Current Transformer Connected', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Set Transformer Calibration',
 'elements': [('Voltage Ratio', 'uint16', 1, 'in'),
              ('Current Ratio', 'uint16', 1, 'in'),
