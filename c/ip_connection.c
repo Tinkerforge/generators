@@ -14,6 +14,9 @@
 	#ifndef _GNU_SOURCE
 		#define _GNU_SOURCE
 	#endif
+	#ifndef _DEFAULT_SOURCE
+		#define _DEFAULT_SOURCE
+	#endif
 #endif
 
 #include <errno.h>
