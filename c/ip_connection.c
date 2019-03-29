@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2016, 2019 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -77,7 +77,7 @@ extern "C" {
 
 typedef struct {
 	PacketHeader header;
-} ATTRIBUTE_PACKED Enumerate;
+} ATTRIBUTE_PACKED DeviceEnumerate_Broadcast;
 
 typedef struct {
 	PacketHeader header;
@@ -88,22 +88,22 @@ typedef struct {
 	uint8_t firmware_version[3];
 	uint16_t device_identifier;
 	uint8_t enumeration_type;
-} ATTRIBUTE_PACKED EnumerateCallback;
+} ATTRIBUTE_PACKED DeviceEnumerate_Callback;
 
 typedef struct {
 	PacketHeader header;
-} ATTRIBUTE_PACKED GetAuthenticationNonce;
+} ATTRIBUTE_PACKED BrickDaemonGetAuthenticationNonce_Request;
 
 typedef struct {
 	PacketHeader header;
 	uint8_t server_nonce[4];
-} ATTRIBUTE_PACKED GetAuthenticationNonceResponse;
+} ATTRIBUTE_PACKED BrickDaemonGetAuthenticationNonce_Response;
 
 typedef struct {
 	PacketHeader header;
 	uint8_t client_nonce[4];
 	uint8_t digest[20];
-} ATTRIBUTE_PACKED Authenticate;
+} ATTRIBUTE_PACKED BrickDaemonAuthenticate_Request;
 
 #if defined _MSC_VER || defined __BORLANDC__
 	#pragma pack(pop)
@@ -128,10 +128,13 @@ typedef struct {
 
 	STATIC_ASSERT(sizeof(PacketHeader) == 8, "PacketHeader has invalid size");
 	STATIC_ASSERT(sizeof(Packet) == 80, "Packet has invalid size");
-	STATIC_ASSERT(sizeof(EnumerateCallback) == 34, "EnumerateCallback has invalid size");
-	STATIC_ASSERT(sizeof(GetAuthenticationNonce) == 8, "GetAuthenticationNonce has invalid size");
-	STATIC_ASSERT(sizeof(GetAuthenticationNonceResponse) == 12, "GetAuthenticationNonceResponse has invalid size");
-	STATIC_ASSERT(sizeof(Authenticate) == 32, "Authenticate has invalid size");
+	STATIC_ASSERT(sizeof(DeviceEnumerate_Broadcast) == 8, "DeviceEnumerate_Broadcast has invalid size");
+	STATIC_ASSERT(sizeof(DeviceEnumerate_Callback) == 34, "DeviceEnumerate_Callback has invalid size");
+	STATIC_ASSERT(sizeof(DeviceGetIdentity_Request) == 8, "DeviceGetIdentity_Request has invalid size");
+	STATIC_ASSERT(sizeof(DeviceGetIdentity_Response) == 33, "DeviceGetIdentity_Response has invalid size");
+	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Request) == 8, "BrickDaemonGetAuthenticationNonce_Request has invalid size");
+	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Response) == 12, "BrickDaemonGetAuthenticationNonce_Response has invalid size");
+	STATIC_ASSERT(sizeof(BrickDaemonAuthenticate_Request) == 32, "BrickDaemonAuthenticate_Request has invalid size");
 #endif
 
 void millisleep(uint32_t msec) {
@@ -1427,8 +1430,8 @@ static void brickd_destroy(BrickDaemon *brickd) {
 
 static int brickd_get_authentication_nonce(BrickDaemon *brickd, uint8_t ret_server_nonce[4]) {
 	DevicePrivate *device_p = brickd->p;
-	GetAuthenticationNonce request;
-	GetAuthenticationNonceResponse response;
+	BrickDaemonGetAuthenticationNonce_Request request;
+	BrickDaemonGetAuthenticationNonce_Response response;
 	int ret;
 
 	ret = packet_header_create(&request.header, sizeof(request), BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE, device_p->ipcon_p, device_p);
@@ -1450,7 +1453,7 @@ static int brickd_get_authentication_nonce(BrickDaemon *brickd, uint8_t ret_serv
 
 static int brickd_authenticate(BrickDaemon *brickd, uint8_t client_nonce[4], uint8_t digest[20]) {
 	DevicePrivate *device_p = brickd->p;
-	Authenticate request;
+	BrickDaemonAuthenticate_Request request;
 	int ret;
 
 	ret = packet_header_create(&request.header, sizeof(request), BRICK_DAEMON_FUNCTION_AUTHENTICATE, device_p->ipcon_p, device_p);
@@ -1584,7 +1587,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) {
 	EnumerateCallbackFunction enumerate_callback_function;
 	void *user_data;
-	EnumerateCallback *enumerate_callback;
+	DeviceEnumerate_Callback *enumerate_callback;
 	DevicePrivate *device_p;
 	CallbackWrapperFunction callback_wrapper_function;
 
@@ -1592,7 +1595,7 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
 			*(void **)(&enumerate_callback_function) = ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
 			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_ENUMERATE];
-			enumerate_callback = (EnumerateCallback *)packet;
+			enumerate_callback = (DeviceEnumerate_Callback *)packet;
 
 			enumerate_callback_function(enumerate_callback->uid,
 			                            enumerate_callback->connected_uid,
@@ -2293,10 +2296,10 @@ uint32_t ipcon_get_timeout(IPConnection *ipcon) { // in msec
 
 int ipcon_enumerate(IPConnection *ipcon) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
-	Enumerate enumerate;
+	DeviceEnumerate_Broadcast enumerate;
 	int ret;
 
-	ret = packet_header_create(&enumerate.header, sizeof(Enumerate),
+	ret = packet_header_create(&enumerate.header, sizeof(DeviceEnumerate_Broadcast),
 	                           IPCON_FUNCTION_ENUMERATE, ipcon_p, NULL);
 
 	if (ret < 0) {
