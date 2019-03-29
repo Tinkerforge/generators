@@ -22,10 +22,13 @@ com = {
         'en': 'Measures relative humidity',
         'de': 'Misst relative Luftfeuchtigkeit'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

@@ -18,10 +18,13 @@ com = {
         'en': 'DMX master and slave',
         'de': 'DMX Master und Slave'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

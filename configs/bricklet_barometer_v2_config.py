@@ -21,10 +21,13 @@ com = {
         'en': 'Measures air pressure and altitude changes',
         'de': 'Misst Luftdruck und Höhenänderungen'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

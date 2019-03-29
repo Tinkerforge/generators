@@ -18,10 +18,13 @@ com = {
         'en': 'Three color 296x128 e-paper display',
         'de': 'Dreifarbiges 296x128 E-Paper-Display'
     },
-    'comcu': True,
     'released': False,
     'documented': False,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

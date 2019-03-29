@@ -150,6 +150,9 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'brick_get_identity'
+     ],
     'packets': [],
     'examples': []
 }

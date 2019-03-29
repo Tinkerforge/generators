@@ -18,10 +18,13 @@ com = {
         'en': 'Communicates with up 64 1-Wire devices',
         'de': 'Kommuniziert mit bis zu 64 1-Wire Geräten'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

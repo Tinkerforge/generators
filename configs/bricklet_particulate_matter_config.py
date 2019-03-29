@@ -18,10 +18,13 @@ com = {
         'en': 'Measures Particulate Matter concentration (PM1.0, PM2.5 and PM10)',
         'de': 'Misst Feinstaub concentration (PM1.0, PM2.5 und PM10)'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

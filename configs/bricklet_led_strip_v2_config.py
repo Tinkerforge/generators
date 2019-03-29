@@ -18,10 +18,13 @@ com = {
         'en': 'Controls up to 2048 RGB(W) LEDs',
         'de': 'Steuert bis zu 2048 RGB(W) LEDs'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

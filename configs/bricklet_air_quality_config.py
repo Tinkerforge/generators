@@ -21,10 +21,13 @@ com = {
         'en': 'Measures IAQ index, temperature, humidity and air pressure',
         'de': 'Misst IAQ Index, Temperatur, relative Luftfeuchtigkeit und Luftdruck'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

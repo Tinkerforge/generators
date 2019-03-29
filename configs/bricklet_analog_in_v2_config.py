@@ -24,6 +24,9 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': True, # replaced by Analog In Bricklet 3.0
+    'features': [
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

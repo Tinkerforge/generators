@@ -18,10 +18,13 @@ com = {
         'en': '4 galvanically isolated digital outputs',
         'de': '4 galvanisch getrennte digitale Ausgänge'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

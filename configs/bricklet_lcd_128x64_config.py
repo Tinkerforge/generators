@@ -18,10 +18,13 @@ com = {
         'en': '7.1cm (2.8") display with 128x64 pixel and touch screen',
         'de': '7,1cm (2,8") Display mit 128x64 Pixel und Touchscreen'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

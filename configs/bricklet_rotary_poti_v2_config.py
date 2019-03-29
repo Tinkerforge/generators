@@ -21,10 +21,13 @@ com = {
         'en': '300° rotary potentiometer',
         'de': '300° Drehpotentiometer'
     },
-    'comcu': True,
     'released': False,
     'documented': False,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

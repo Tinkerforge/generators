@@ -18,10 +18,13 @@ com = {
         'en': 'RGB LED Matrix with 8x8 pixel',
         'de': 'RGB LED Matrix mit 8x8 Pixel'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': True, # currently no replacement available
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

@@ -24,6 +24,9 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': False, # selling remaining stock, replaced by Distance IR Bricklet 2.0
+    'features': [
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

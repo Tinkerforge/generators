@@ -38,10 +38,13 @@ com = {
         'en': '433MHz receiver for outdoor weather station',
         'de': '433MHz Empfänger für Außen-Wetterstation'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

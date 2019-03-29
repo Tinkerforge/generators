@@ -21,10 +21,13 @@ com = {
         'en': 'Measures ambient temperature with 0.2°C accuracy',
         'de': 'Misst Umgebungstemperatur mit 0,2°C Genauigkeit'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

@@ -21,10 +21,13 @@ com = {
         'en': 'Measures UV-A, UV-B and UV index',
         'de': 'Misst UV-A, UV-B und UV Index'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

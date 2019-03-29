@@ -21,10 +21,13 @@ com = {
         'en': 'Measures Voltage, Current, Energy, Real/Apparent/Reactive Power, Power Factor and Frequency',
         'de': 'Misst Spannung, Strom, Energie, Wirk-/Schein-/Blindleistung, Leistungsfactor und Frequenz'
     },
-    'comcu': True,
     'released': False,
     'documented': False,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

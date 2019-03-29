@@ -22,10 +22,13 @@ com = {
         'en': 'Measures distance up to 150cm with infrared light',
         'de': 'Misst Entfernung bis zu 150cm mit Infrarot-Licht'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

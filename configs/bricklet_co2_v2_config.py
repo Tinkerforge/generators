@@ -21,10 +21,13 @@ com = {
         'en': 'Measures CO2 concentration, temperature and humidity',
         'de': 'Misst CO2-Konzentration, Temperatur und Luftfeuchte'
     },
-    'comcu': True,
     'released': False,
     'documented': False,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

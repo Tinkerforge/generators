@@ -18,10 +18,13 @@ com = {
         'en': '4-channel digital input/output',
         'de': '4 digitale Ein- und Ausgänge'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

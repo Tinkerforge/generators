@@ -18,10 +18,13 @@ com = {
         'en': 'Communicates with CAN bus devices',
         'de': 'Kommuniziert mit CAN-Bus Geräten'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

@@ -18,10 +18,13 @@ com = {
         'en': 'Communicates with RS232 devices',
         'de': 'Kommuniziert mit RS232 Geräten'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

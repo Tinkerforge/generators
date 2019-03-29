@@ -18,10 +18,13 @@ com = {
         'en': 'Push button with built-in RGB LED',
         'de': 'Taster mit eingebauter RGB LED'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

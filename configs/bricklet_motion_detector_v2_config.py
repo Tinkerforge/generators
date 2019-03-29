@@ -18,10 +18,13 @@ com = {
         'en': 'Passive infrared (PIR) motion sensor, 12m range',
         'de': 'Passiver Infrarot (PIR) Bewegungssensor, 12m Reichweite'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

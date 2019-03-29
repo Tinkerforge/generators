@@ -21,10 +21,13 @@ com = {
         'en': 'Measures two DC currents between 0mA and 20mA (IEC 60381-1)',
         'de': 'Misst zwei Gleichströme zwischen 0mA und 20mA (IEC 60381-1)'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

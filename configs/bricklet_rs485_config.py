@@ -30,10 +30,13 @@ com = {
         'en': 'Communicates with RS485/Modbus devices with full- or half-duplex',
         'de': 'Kommuniziert mit RS485/Modbus Geräten mit voll- oder halb-duplex'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

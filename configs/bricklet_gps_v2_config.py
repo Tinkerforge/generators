@@ -18,10 +18,13 @@ com = {
         'en': 'Determine position, velocity and altitude using GPS',
         'de': 'Bestimmt Position, Geschwindigkeit und Höhe mittels GPS'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

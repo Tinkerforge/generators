@@ -18,10 +18,13 @@ com = {
         'en': 'Two tactile buttons with built-in blue LEDs',
         'de': 'Zwei Taster mit eingebauten blauen LEDs'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

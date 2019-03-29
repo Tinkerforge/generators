@@ -21,6 +21,9 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': False, # selling off remaining stock, replaced by Industrial Dual Relay Bricklet
+    'features': [
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

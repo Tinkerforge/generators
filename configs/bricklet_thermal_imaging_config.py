@@ -18,10 +18,13 @@ com = {
         'en': '80x60 pixel thermal imaging camera',
         'de': '80x60 Pixel Wärmebildkamera'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

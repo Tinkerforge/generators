@@ -18,10 +18,13 @@ com = {
         'en': 'Generates configurable DC voltage between 0V and 12V',
         'de': 'Erzeugt konfigurierbare Gleichspannung zwischen 0V und 12V'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

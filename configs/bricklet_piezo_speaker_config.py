@@ -21,6 +21,9 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

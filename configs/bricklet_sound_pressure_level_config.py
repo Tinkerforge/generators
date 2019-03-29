@@ -21,10 +21,13 @@ com = {
         'en': 'Measures Sound Pressure Level in dB(A/B/C/D/Z)',
         'de': 'Misst Schalldruck in dB(A/B/C/D/Z)'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

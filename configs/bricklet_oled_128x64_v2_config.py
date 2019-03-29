@@ -18,10 +18,13 @@ com = {
         'en': '3.3cm (1.3") OLED display with 128x64 pixels',
         'de': '3,3cm (1,3") OLED Display mit 128x64 Pixel'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

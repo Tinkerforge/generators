@@ -18,10 +18,13 @@ com = {
         'en': '4 galvanically isolated solid state relays',
         'de': '4 galvanisch getrennte Halbleiterrelais (Solid State Relais)'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

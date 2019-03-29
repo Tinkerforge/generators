@@ -21,10 +21,13 @@ com = {
         'en': 'Measures power, DC voltage and DC current up to 720W/36V/20A',
         'de': 'Misst Leistung, Gleichspannung und Gleichstrom bis zu 720W/36V/20A'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

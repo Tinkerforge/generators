@@ -21,10 +21,13 @@ com = {
         'en': 'Reads temperatures from Pt100 und Pt1000 sensors',
         'de': 'Liest Temperaturen von Pt100 und Pt1000 Sensoren'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

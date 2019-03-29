@@ -21,10 +21,13 @@ com = {
         'en': 'Measures temperature with thermocouples',
         'de': 'Misst Temperatur mit Thermoelementen'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

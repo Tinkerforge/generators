@@ -18,10 +18,13 @@ com = {
         'en': '4 channel counter up to 4MHz',
         'de': '4-Kanal Zähler bis zu 4MHz'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

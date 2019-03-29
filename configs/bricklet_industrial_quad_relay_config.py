@@ -21,6 +21,9 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': True, # replaced by Industrial Quad Relay Bricklet 2.0
+    'features': [
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

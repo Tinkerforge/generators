@@ -40,6 +40,9 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': True, # replaced by NFC Bricklet
+    'features': [
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

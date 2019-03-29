@@ -22,10 +22,13 @@ com = {
         'en': 'Measures contactless object temperature between -70°C and +380°C',
         'de': 'Kontaktlose Objekttemperaturmessung zwischen -70°C und +380°C'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

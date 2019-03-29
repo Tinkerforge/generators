@@ -21,6 +21,9 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': False, # selling remaining stock, replaced by Analog Out Bricklet 3.0
+    'features': [
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

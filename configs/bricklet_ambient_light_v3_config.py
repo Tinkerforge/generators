@@ -21,10 +21,13 @@ com = {
         'en': 'Measures ambient light up to 64000lux',
         'de': 'Misst Umgebungslicht bis zu 64000Lux'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

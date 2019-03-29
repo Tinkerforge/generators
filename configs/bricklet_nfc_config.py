@@ -105,10 +105,13 @@ com = {
         'en': 'NFC tag read/write, NFC P2P and Card Emulation',
         'de': 'NFC Tag Lesen/Schreiben, NFC P2P und Card Emulation'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

@@ -21,10 +21,13 @@ com = {
         'en': 'Measures DC voltage between 0V and 42V',
         'de': 'Misst Gleichspannung zwischen 0V und 42V'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

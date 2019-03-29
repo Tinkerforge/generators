@@ -18,10 +18,13 @@ com = {
         'en': 'Battery-backed real-time clock',
         'de': 'Batteriegepufferte Echtzeituhr'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

@@ -21,6 +21,15 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'brick_get_identity',
+        'brick_status_led',
+        'brick_reset',
+        'brick_chip_temperature',
+        'send_timeout_count',
+        'eeprom_bricklet_host',
+        'comcu_bricklet_host'
+    ],
     'packets': [],
     'examples': []
 }

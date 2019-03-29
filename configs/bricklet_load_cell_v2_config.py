@@ -21,10 +21,13 @@ com = {
         'en': 'Measures weight with a load cell',
         'de': 'Misst Gewicht mit einer Wägezelle'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

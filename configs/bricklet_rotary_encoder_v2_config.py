@@ -22,10 +22,13 @@ com = {
         'en': '360° rotary encoder with push-button',
         'de': '360° Drehgeber/Drehencoder mit Taster'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }

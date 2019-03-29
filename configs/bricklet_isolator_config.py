@@ -18,10 +18,13 @@ com = {
         'en': 'Galvanically isolates any Bricklet from any Brick',
         'de': 'Trennt Verbindung zwischen Bricklets und Bricks galvanisch'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }
@@ -47,7 +50,6 @@ Gibt Statistken des Isolator Bricklets zurück.
 })
 
 com['packets'].append({
-'feature': 'bricklet_comcu',
 'type': 'function',
 'name': 'Set SPITFP Baudrate Config',
 'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'in'),
@@ -115,7 +117,6 @@ Standardmäßig ist die dynamische Baudrate aktiviert und die minimale dynamisch
 })
 
 com['packets'].append({
-'feature': 'bricklet_comcu',
 'type': 'function',
 'name': 'Get SPITFP Baudrate Config',
 'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'out'),

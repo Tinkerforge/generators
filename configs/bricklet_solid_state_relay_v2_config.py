@@ -20,10 +20,13 @@ com = {
         'en': 'Controls AC and DC Solid State Relays',
         'de': 'Schaltet AC und DC Halbleiterrelais (Solid State Relais)'
     },
-    'comcu': True,
     'released': True,
     'documented': True,
     'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
     'packets': [],
     'examples': []
 }
