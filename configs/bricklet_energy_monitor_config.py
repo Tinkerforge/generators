@@ -54,7 +54,7 @@ Returns all of the measurements that are done by the Energy Monitor Bricklet.
 * Apparent Power (VA): Apparent Power with a resolution of 10mVA (example: 1234.56VA = 123456)
 * Reactive Power (VAR): Reactive Power with a resolution of 10mVAR (example: 1234.56VAR = 123456)
 * Power Factor: Power Factor with a resolution of 1/1000 (example: PF 0.995 = 995)
-* Frequency (Hz): AC Frequency of the mains voltage in 1/100 Hz (example: 50Hz = 5000)
+* Frequency (Hz): AC Frequency of the mains voltage with a resolution of 1/100 Hz (example: 50Hz = 5000)
 
 The frequency is recalculated every 6s.
 
@@ -68,6 +68,26 @@ to calculate the frequency and it will use an integration time of
 """,
 'de':
 """
+Gibt alle Messdaten des Energy Monitor Bricklets zurück.
+
+* Voltage (V): RMS-Spannung (Effektivwert) mit einer Auflösung von 10mV (Beispiel: 230,05V = 23005)
+* Current (A): RMS-Strom (Effektivwert) mit einer Auflösung von 10mA (Beispiel: 1,42A = 142)
+* Energy (Wh): Energie (integriert über Zeit) mit einer Auflösung von 10mWh (Beispiel: 1,1kWh = 110000)
+* Real Power (W): Wirkleistung mit einer Auflösung von 10mW (Beispiel: 1234,56W = 123456)
+* Apparent Power (VA): Scheinleistung mit einer Auflösung von 10mVA (Beispiel: 1234,56VA = 123456)
+* Reactive Power (VAR): Blindleistung mit einer Auflösung von 10mVAR (Beispiel: 1234,56VAR = 123456)
+* Power Factor: Leistungsfaktor mit einer Auflösung von 1/1000 (Beispiel: PF 0,995 = 995)
+* Frequency (Hz): AC-Frequenz der Netzspannung mit einer Auflösung von 1/100 Hz (Beispiel: 50Hz = 5000)
+
+Die Frequenz wird alle 6s neu berechnet.
+
+Alle anderen Werte werden integriert über 10 Nulldurchgänge der Spannungs-Sinuskurve.
+Mit einer Standard AC-Netzspannungsfrequenz von 50Hz entspricht das 5 Messungen pro Sekunde
+(oder eine Integrationszeit von 200ms pro Messung).
+
+Wenn kein Spannungstransformator angeschlossen ist, nutzt das Bricklet den Kurvenverlauf
+des Stroms um die Frequenz zu bestimmen und die Integrationszeit beträgt 10 Nulldurchläufe
+der Strom-Sinuskurve.
 """
 }]
 })
