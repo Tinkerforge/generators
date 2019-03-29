@@ -299,7 +299,7 @@ com['packets'].append({
              ('Energy', 'int32', 1, 'out'),
              ('Real Power', 'int32', 1, 'out'),
              ('Apparent Power', 'int32', 1, 'out'),
-             ('Reactive Power', 'int32', 1, 'out')
+             ('Reactive Power', 'int32', 1, 'out'),
              ('Power Factor', 'uint16', 1, 'out'),
              ('Frequency', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
