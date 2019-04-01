@@ -38,20 +38,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns 1 if a motion was detected. How long this returns 1 after a motion
-was detected can be adjusted with one of the small potentiometers on the
-Motion Detector Bricklet, see :ref:`here
-<motion_detector_bricklet_sensitivity_delay_block_time>`.
+Returns 1 if a motion was detected. It returns 1 approx. for 1.8 seconds
+until the sensor checks for a new movement.
 
 There is also a blue LED on the Bricklet that is on as long as the Bricklet is
 in the "motion detected" state.
 """,
 'de':
 """
-Gibt 1 zurück wenn eine Bewegung detektiert wurde. Wie lange 1 zurückgegeben
-wird nachdem eine Bewegung detektiert wurde kann mit einem kleinen Poti auf
-dem Motion Detector Bricklet eingestellt werden, siehe :ref:`hier
-<motion_detector_bricklet_sensitivity_delay_block_time>`.
+Gibt 1 zurück wenn eine Bewegung detektiert wurde. 1 wird für ca. 1,8 Sekunden 
+zurückgegeben bevor der Sensor wieder erneut eine Bewegung detektieren kann.
 
 Auf dem Bricklet selbst ist eine blaue LED, die leuchtet solange das Bricklet
 im "Bewegung detektiert" Zustand ist.
