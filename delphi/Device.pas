@@ -39,7 +39,7 @@ type
     callbackWrappers: array [0..255] of TCallbackWrapper;
 
     /// <summary>
-    ///  Creates the device objectwith the unique device ID *uid* and adds
+    ///  Creates the device object with the unique device ID *uid* and adds
     ///  it to the IPConnection *ipcon*.
     /// </summary>
     constructor Create(const uid__: string; ipcon_: TObject);
