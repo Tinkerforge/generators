@@ -1385,9 +1385,9 @@ namespace Tinkerforge
 
 		public BrickDaemon(string uid, IPConnection ipcon) : base(uid, ipcon)
 		{
-			this.apiVersion[0] = 2;
-			this.apiVersion[1] = 0;
-			this.apiVersion[2] = 0;
+			apiVersion[0] = 2;
+			apiVersion[1] = 0;
+			apiVersion[2] = 0;
 
 			responseExpected[FUNCTION_GET_AUTHENTICATION_NONCE] = ResponseExpectedFlag.ALWAYS_TRUE;
 			responseExpected[FUNCTION_AUTHENTICATE] = ResponseExpectedFlag.TRUE;
