@@ -688,7 +688,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	 * For more information about authentication see
 	 * http://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
 	 */
-	public void authenticate(String secret) throws TimeoutException, NotConnectedException, CryptoException {
+	public void authenticate(String secret) throws TinkerforgeException {
 		synchronized (authenticationMutex) {
 			if (nextAuthenticationNonce == 0) {
 				byte[] seed = new SecureRandom().generateSeed(4);

@@ -49,7 +49,13 @@ module Tinkerforge
   class NotConnectedException < TinkerforgeException
   end
 
+  class InvalidParameterException < TinkerforgeException
+  end
+
   class NotSupportedException < TinkerforgeException
+  end
+
+  class UnknownErrorCodeException < TinkerforgeException
   end
 
   class StreamOutOfSyncException < TinkerforgeException
@@ -387,11 +393,11 @@ module Tinkerforge
         if error_code == 0
           # no error
         elsif error_code == 1
-          raise NotSupportedException, "Got invalid parameter for function ID #{function_id}"
+          raise InvalidParameterException, "Got invalid parameter for function ID #{function_id}"
         elsif error_code == 2
           raise NotSupportedException, "Function ID #{function_id} is not supported"
         else
-          raise NotSupportedException, "Function ID #{function_id} returned an unknown error"
+          raise UnknownErrorCodeException, "Function ID #{function_id} returned an unknown error"
         end
 
         if response_length > 0

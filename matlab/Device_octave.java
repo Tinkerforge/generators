@@ -37,5 +37,5 @@ public abstract class Device extends DeviceBase {
 		ipcon.devices.put(this.uid, this); // FIXME: use weakref here
 	}
 
-	public abstract Identity getIdentity() throws TimeoutException, NotConnectedException;
+	public abstract Identity getIdentity() throws TinkerforgeException;
 }

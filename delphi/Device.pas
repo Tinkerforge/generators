@@ -257,16 +257,14 @@ begin
     if (errorCode = 0) then begin
       { No error }
     end
+    else if (errorCode = 1) then begin
+      raise EInvalidParameterException.Create('Got invalid parameter for function ID ' + IntToStr(functionID));
+    end
+    else if (errorCode = 2) then begin
+      raise ENotSupportedException.Create('Function ID ' + IntToStr(functionID) + ' is not supported');
+    end
     else begin
-      if (errorCode = 1) then begin
-        raise ENotSupportedException.Create('Got invalid parameter for function ID ' + IntToStr(functionID));
-      end
-      else if (errorCode = 2) then begin
-        raise ENotSupportedException.Create('Function ID ' + IntToStr(functionID) + ' is not supported');
-      end
-      else begin
-        raise ENotSupportedException.Create('Function ID ' + IntToStr(functionID) + ' returned an unknown error');
-      end;
+      raise EUnknownErrorCodeException.Create('Function ID ' + IntToStr(functionID) + ' returned an unknown error');
     end;
   end
   else begin

@@ -27,7 +27,7 @@ class BrickDaemon extends Device {
 		responseExpected[IPConnection.unsignedByte(FUNCTION_AUTHENTICATE)] = RESPONSE_EXPECTED_FLAG_TRUE;
 	}
 
-	public byte[] getAuthenticationNonce() throws TimeoutException, NotConnectedException {
+	public byte[] getAuthenticationNonce() throws TinkerforgeException {
 		ByteBuffer bb = ipcon.createRequestPacket((byte)8, FUNCTION_GET_AUTHENTICATION_NONCE, this);
 
 		byte[] response = sendRequest(bb.array());
@@ -44,7 +44,7 @@ class BrickDaemon extends Device {
 		return server_nonce;
 	}
 
-	public void authenticate(byte[] client_nonce, byte[] digest) throws TimeoutException, NotConnectedException {
+	public void authenticate(byte[] client_nonce, byte[] digest) throws TinkerforgeException {
 		ByteBuffer bb = ipcon.createRequestPacket((byte)32, FUNCTION_AUTHENTICATE, this);
 
 		for (int i = 0; i < 4; i++) {
@@ -58,7 +58,7 @@ class BrickDaemon extends Device {
 		sendRequest(bb.array());
 	}
 
-	public Identity getIdentity() throws TimeoutException, NotConnectedException {
+	public Identity getIdentity() throws TinkerforgeException {
 		return null;
 	}
 }

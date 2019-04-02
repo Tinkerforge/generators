@@ -141,7 +141,7 @@ public abstract class DeviceBase {
 		}
 	}
 
-	byte[] sendRequest(byte[] request) throws TimeoutException, NotConnectedException {
+	byte[] sendRequest(byte[] request) throws TinkerforgeException {
 		byte[] response = null;
 
 		if (IPConnection.getResponseExpectedFromData(request)) {
@@ -186,11 +186,11 @@ public abstract class DeviceBase {
 				case 0:
 					break;
 				case 1:
-					throw new UnsupportedOperationException("Got invalid parameter for function ID " + functionID);
+					throw new InvalidParameterException("Got invalid parameter for function ID " + functionID);
 				case 2:
-					throw new UnsupportedOperationException("Function ID " + functionID + " is not supported");
+					throw new NotSupportedException("Function ID " + functionID + " is not supported");
 				default:
-					throw new UnsupportedOperationException("Function ID " + functionID + " returned an unknown error");
+					throw new UnknownErrorCodeException("Function ID " + functionID + " returned an unknown error");
 			}
 		} else {
 			ipcon.sendRequest(request);

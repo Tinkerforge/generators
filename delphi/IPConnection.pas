@@ -96,17 +96,21 @@ type
   ENotConnectedException = class(ETinkerforgeException)
   end;
 
+  { EInvalidParameterException }
+  EInvalidParameterException = class(ETinkerforgeException)
+  end;
+
   { ENotSupportedException }
   ENotSupportedException = class(ETinkerforgeException)
   end;
   NotSupportedException = ENotSupportedException; { for backward compatibility }
 
-  { EStreamOutOfSyncException }
-  EStreamOutOfSyncException = class(ETinkerforgeException)
+  { EUnknownErrorCodeException }
+  EUnknownErrorCodeException = class(ETinkerforgeException)
   end;
 
-  { EInvalidParameterException }
-  EInvalidParameterException = class(ETinkerforgeException)
+  { EStreamOutOfSyncException }
+  EStreamOutOfSyncException = class(ETinkerforgeException)
   end;
 
   { TThreadWrapper }

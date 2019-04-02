@@ -166,7 +166,19 @@ class NotConnectedException extends TinkerforgeException
 }
 
 
+class InvalidParameterException extends TinkerforgeException
+{
+
+}
+
+
 class NotSupportedException extends TinkerforgeException
+{
+
+}
+
+
+class UnknownErrorCodeException extends TinkerforgeException
 {
 
 }
@@ -412,11 +424,11 @@ abstract class Device
             if ($error_code === 0) {
                 // no error
             } else if ($error_code === 1) {
-                throw new NotSupportedException("Got invalid parameter for function ID $function_id");
+                throw new InvalidParameterException("Got invalid parameter for function ID $function_id");
             } else if ($error_code === 2) {
                 throw new NotSupportedException("Function ID $function_id is not supported");
             } else {
-                throw new NotSupportedException("Function ID $function_id returned an unknown error");
+                throw new UnknownErrorCodeException("Function ID $function_id returned an unknown error");
             }
 
             $payload = $response[1];
