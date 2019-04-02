@@ -95,7 +95,13 @@ class CExamplesTester(common.Tester):
         if path.endswith('example_scribble.c'):
             args += ['-lm', '-lgd']
 
-        self.execute(cookie, args)
+        retcode, output = common.check_output_and_error(args)
+        success = retcode == 0
+
+        if self.compiler == 'scan-build clang' and success and 'scan-build: No bugs found.\n' not in output:
+            success = False
+
+        self.handle_result(cookie, output, success)
 
 def run(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/c/weather_station.c'),
