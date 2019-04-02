@@ -37,22 +37,6 @@ class CExamplesTester(common.Tester):
 
         self.compiler = compiler
 
-    def after_unzip(self):
-        print('>>> patching ip_connection.c')
-
-        with open('/tmp/tester/c/source/ip_connection.c', 'r') as f:
-            code = f.read()
-
-        # GCC 7 complains that _BSD_SOURCE is deprecated, patch the code to
-        # avoid the warning, but keep using _BSD_SOURCE in the actual code for
-        # backwards compatibility
-        code = code.replace(' _BSD_SOURCE', ' _DEFAULT_SOURCE')
-
-        with open('/tmp/tester/c/source/ip_connection.c', 'w') as f:
-            f.write(code)
-
-        return True
-
     def test(self, cookie, path, extra):
         # skip OLED scribble example because mingw32 has no libgd package
         if self.compiler.startswith('mingw32-') and path.endswith('example_scribble.c'):
