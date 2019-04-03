@@ -29,3 +29,19 @@ com = {
     'examples': []
 }
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get USB Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the USB supply voltage of the Raspberry Pi in mv.
+""",
+'de':
+"""
+Gibt die USB-Versorgungsspannung des Raspberry Pi in mv zurück.
+"""
+}]
+})
