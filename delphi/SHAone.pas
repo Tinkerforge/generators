@@ -39,9 +39,9 @@ type
     1: (total: longword);
   end;
 
-  procedure SHAoneInit(var sha1: TSHAone);
-  procedure SHAoneUpdate(var sha1: TSHAone; const data: array of byte);
-  function SHAoneFinal(var sha1: TSHAone): TSHAoneDigest;
+procedure SHAoneInit(var sha1: TSHAone);
+procedure SHAoneUpdate(var sha1: TSHAone; const data: array of byte);
+function SHAoneFinal(var sha1: TSHAone): TSHAoneDigest;
 
 implementation
 

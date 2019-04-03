@@ -11,11 +11,13 @@ unit Base58;
 {$ifdef FPC}{$mode OBJFPC}{$endif}
 
 interface
-  function Base58Encode(const value: uint64): string;
-  function Base58Decode(const encoded: string): uint64;
+
+function Base58Encode(const value: uint64): string;
+function Base58Decode(const encoded: string): uint64;
 
 const
-  BASE58_ALPHABET = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+
+BASE58_ALPHABET = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 
 implementation
 

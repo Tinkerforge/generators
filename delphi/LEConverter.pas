@@ -23,31 +23,31 @@ type
       false: (float : single);
   end;
 
-  procedure LEConvertInt8To(const value: shortint; const offset: longint; var data: TByteArray);
-  procedure LEConvertUInt8To(const value: byte; const offset: longint; var data: TByteArray);
-  procedure LEConvertInt16To(const value: smallint; const offset: longint; var data: TByteArray);
-  procedure LEConvertUInt16To(const value: word; const offset: longint; var data: TByteArray);
-  procedure LEConvertInt32To(const value: longint; const offset: longint; var data: TByteArray);
-  procedure LEConvertUInt32To(const value: longword; const offset: longint; var data: TByteArray);
-  procedure LEConvertInt64To(const value: int64; const offset: longint; var data: TByteArray);
-  procedure LEConvertUInt64To(const value: uint64; const offset: longint; var data: TByteArray);
-  procedure LEConvertFloatTo(const value: single; const offset: longint; var data: TByteArray);
-  procedure LEConvertBooleanTo(const value: boolean; const offset: longint; var data: TByteArray);
-  procedure LEConvertStringTo(const value: string; const offset: longint; const len: longint; var data: TByteArray);
-  procedure LEConvertCharTo(const value: char; const offset: longint; var data: TByteArray);
+procedure LEConvertInt8To(const value: shortint; const offset: longint; var data: TByteArray);
+procedure LEConvertUInt8To(const value: byte; const offset: longint; var data: TByteArray);
+procedure LEConvertInt16To(const value: smallint; const offset: longint; var data: TByteArray);
+procedure LEConvertUInt16To(const value: word; const offset: longint; var data: TByteArray);
+procedure LEConvertInt32To(const value: longint; const offset: longint; var data: TByteArray);
+procedure LEConvertUInt32To(const value: longword; const offset: longint; var data: TByteArray);
+procedure LEConvertInt64To(const value: int64; const offset: longint; var data: TByteArray);
+procedure LEConvertUInt64To(const value: uint64; const offset: longint; var data: TByteArray);
+procedure LEConvertFloatTo(const value: single; const offset: longint; var data: TByteArray);
+procedure LEConvertBooleanTo(const value: boolean; const offset: longint; var data: TByteArray);
+procedure LEConvertStringTo(const value: string; const offset: longint; const len: longint; var data: TByteArray);
+procedure LEConvertCharTo(const value: char; const offset: longint; var data: TByteArray);
 
-  function LEConvertInt8From(const offset: longint; const data: TByteArray): shortint;
-  function LEConvertUInt8From(const offset: longint; const data: TByteArray): byte;
-  function LEConvertInt16From(const offset: longint; const data: TByteArray): smallint;
-  function LEConvertUInt16From(const offset: longint; const data: TByteArray): word;
-  function LEConvertInt32From(const offset: longint; const data: TByteArray): longint;
-  function LEConvertUInt32From(const offset: longint; const data: TByteArray): longword;
-  function LEConvertInt64From(const offset: longint; const data: TByteArray): int64;
-  function LEConvertUInt64From(const offset: longint; const data: TByteArray): uint64;
-  function LEConvertFloatFrom(const offset: longint; const data: TByteArray): single;
-  function LEConvertBooleanFrom(const offset: longint; const data: TByteArray): boolean;
-  function LEConvertStringFrom(const offset: longint; const len: longint; const data: TByteArray): string;
-  function LEConvertCharFrom(const offset: longint; const data: TByteArray): char;
+function LEConvertInt8From(const offset: longint; const data: TByteArray): shortint;
+function LEConvertUInt8From(const offset: longint; const data: TByteArray): byte;
+function LEConvertInt16From(const offset: longint; const data: TByteArray): smallint;
+function LEConvertUInt16From(const offset: longint; const data: TByteArray): word;
+function LEConvertInt32From(const offset: longint; const data: TByteArray): longint;
+function LEConvertUInt32From(const offset: longint; const data: TByteArray): longword;
+function LEConvertInt64From(const offset: longint; const data: TByteArray): int64;
+function LEConvertUInt64From(const offset: longint; const data: TByteArray): uint64;
+function LEConvertFloatFrom(const offset: longint; const data: TByteArray): single;
+function LEConvertBooleanFrom(const offset: longint; const data: TByteArray): boolean;
+function LEConvertStringFrom(const offset: longint; const len: longint; const data: TByteArray): string;
+function LEConvertCharFrom(const offset: longint; const data: TByteArray): char;
 
 implementation
 

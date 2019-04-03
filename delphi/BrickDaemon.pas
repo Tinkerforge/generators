@@ -28,7 +28,9 @@ type
     constructor Create(const uid__: string; ipcon_: TObject);
     function GetAuthenticationNonce: TArray0To3OfUInt8; virtual;
     procedure Authenticate(const clientNonce: TArray0To3OfUInt8; const digest: TArray0To19OfUInt8); virtual;
-    procedure GetIdentity(out uid: string; out connectedUid: string; out position: char; out hardwareVersion: TVersionNumber; out firmwareVersion: TVersionNumber; out deviceIdentifier: word); override;
+    procedure GetIdentity(out uid: string; out connectedUid: string; out position: char;
+                          out hardwareVersion: TVersionNumber; out firmwareVersion: TVersionNumber;
+                          out deviceIdentifier: word); override;
   end;
 
 implementation
@@ -63,7 +65,9 @@ begin
   SendRequest(request);
 end;
 
-procedure TBrickDaemon.GetIdentity(out uid: string; out connectedUid: string; out position: char; out hardwareVersion: TVersionNumber; out firmwareVersion: TVersionNumber; out deviceIdentifier: word);
+procedure TBrickDaemon.GetIdentity(out uid: string; out connectedUid: string; out position: char;
+                                   out hardwareVersion: TVersionNumber; out firmwareVersion: TVersionNumber;
+                                   out deviceIdentifier: word);
 var i: longint;
 begin
   uid := '';

@@ -314,12 +314,12 @@ type
     procedure SendRequest(const request: TByteArray);
   end;
 
-  function GetUIDFromData(const data: TByteArray): longword;
-  function GetLengthFromData(const data: TByteArray): byte;
-  function GetFunctionIDFromData(const data: TByteArray): byte;
-  function GetSequenceNumberFromData(const data: TByteArray): byte;
-  function GetResponseExpectedFromData(const data: TByteArray): boolean;
-  function GetErrorCodeFromData(const data: TByteArray): byte;
+function GetUIDFromData(const data: TByteArray): longword;
+function GetLengthFromData(const data: TByteArray): byte;
+function GetFunctionIDFromData(const data: TByteArray): byte;
+function GetSequenceNumberFromData(const data: TByteArray): byte;
+function GetResponseExpectedFromData(const data: TByteArray): boolean;
+function GetErrorCodeFromData(const data: TByteArray): byte;
 
 implementation
 
