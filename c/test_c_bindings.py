@@ -40,7 +40,7 @@ class CExamplesTester(common.Tester):
     def test(self, cookie, path, extra):
         # skip OLED scribble example because mingw32 has no libgd package
         if self.compiler.startswith('mingw32-') and path.endswith('example_scribble.c'):
-            self.execute(cookie, ['true'])
+            self.handle_result(cookie, '>>> skipping', True)
             return
 
         if extra:
