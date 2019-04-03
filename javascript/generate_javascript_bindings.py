@@ -330,7 +330,8 @@ var IPConnection = require('./IPConnection');
                                                     unpack_format)
 
         # High-level
-        no_param_method_code = """	this.{name} = function(returnCallback, errorCallback) {{
+        no_param_method_code = """
+	this.{name} = function(returnCallback, errorCallback) {{
 		/*
 		{doc}
 		*/
@@ -362,7 +363,8 @@ var IPConnection = require('./IPConnection');
 		}}
 	}};
 """
-        param_method_code = """	this.{name} = function({param_list}, returnCallback, errorCallback) {{
+        param_method_code = """
+	this.{name} = function({param_list}, returnCallback, errorCallback) {{
 		/*
 		{doc}
 		*/
