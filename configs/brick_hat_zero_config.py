@@ -4,13 +4,13 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# HAT Zero Bricklet communication config
+# HAT Zero Brick communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
-    'category': 'Bricklet',
-    'device_identifier': 2141,
+    'category': 'Brick',
+    'device_identifier': 112,
     'name': 'HAT Zero',
     'display_name': 'HAT Zero',
     'manufacturer': 'Tinkerforge',
