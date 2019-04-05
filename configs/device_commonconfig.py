@@ -902,10 +902,10 @@ undefined behavior!
 'de':
 """
 Ein Aufruf dieser Funktion setzt das Bricklet zurück. Nach einem
-neustart sind alle Konfiguration verloren.
+Neustart sind alle Konfiguration verloren.
 
 Nach dem Zurücksetzen ist es notwendig neue Objekte zu erzeugen,
-Funktionsaufrufe auf bestehende führt zu undefiniertem Verhalten.
+Funktionsaufrufe auf bestehenden führen zu undefiniertem Verhalten.
 """
 }]
 })
