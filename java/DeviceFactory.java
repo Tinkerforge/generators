@@ -20,24 +20,22 @@ public class DeviceFactory {
 		}
 	}
 
-	public static Class<? extends Device> getDeviceClass(int deviceIdentifier) {
+	private static DeviceProvider getDeviceProvider(int deviceIdentifier) {
 		DeviceProvider deviceProvider = deviceProviders.get(deviceIdentifier);
 
 		if (deviceProvider == null) {
 			throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
 		}
 
-		return deviceProvider.getDeviceClass();
+		return deviceProvider;
+	}
+
+	public static Class<? extends Device> getDeviceClass(int deviceIdentifier) {
+		return getDeviceProvider(deviceIdentifier).getDeviceClass();
 	}
 
 	public static String getDeviceDisplayName(int deviceIdentifier) {
-		DeviceProvider deviceProvider = deviceProviders.get(deviceIdentifier);
-
-		if (deviceProvider == null) {
-			throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
-		}
-
-		return deviceProvider.getDeviceDisplayName();
+		return getDeviceProvider(deviceIdentifier).getDeviceDisplayName();
 	}
 
 	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {
