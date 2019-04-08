@@ -715,7 +715,7 @@ BROKER_PORT = 1883 # 8883 for TLS
 GLOBAL_TOPIC_PREFIX = 'tinkerforge/'
 
 def main():
-    parser = argparse.ArgumentParser(description='Brick MQTT Proxy')
+    parser = argparse.ArgumentParser(description='Tinkerforge MQTT Bindings')
     parser.add_argument('--ipcon-host', dest='ipcon_host', type=str, default=IPCON_HOST,
                         help='hostname or IP address of Brick Daemon, WIFI or Ethernet Extension (default: {0})'.format(IPCON_HOST))
     parser.add_argument('--ipcon-port', dest='ipcon_port', type=int, default=IPCON_PORT,
