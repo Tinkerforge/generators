@@ -743,6 +743,7 @@ def main():
     parser.add_argument('--show-payload', dest='show_payload', action='store_true', help='show received payload if JSON parsing fails')
     parser.add_argument('--init-file', dest='init_file', type=str, default=None,
                         help='file from where to load initial messages to publish')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s <<VERSION>>')
 
     args = parser.parse_args(sys.argv[1:])
 
