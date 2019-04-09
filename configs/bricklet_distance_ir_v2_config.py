@@ -101,7 +101,7 @@ com['packets'].append({
 'en':
 """
 Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-for the resistance and temperature.
+for the distance.
 
 Setting the length to 1 will turn the averaging off. With less averaging, there
 is more noise on the data.
@@ -117,7 +117,7 @@ The default value is 25.
 'de':
 """
 Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
-für den Widerstand und die Temperatur.
+für die Distanz.
 
 Wenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert.
 Desto kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
