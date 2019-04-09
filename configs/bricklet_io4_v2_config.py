@@ -171,7 +171,7 @@ com['packets'].append({
                                                             ('Out', 'o')])),
              ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['ccf', {
+'doc': ['bf', {
 'en':
 """
 Returns the channel configuration as set by :func:`Set Configuration`.
