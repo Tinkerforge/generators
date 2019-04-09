@@ -20,7 +20,10 @@ import threading
 import subprocess
 import textwrap
 from collections import namedtuple
-from collections.abc import Hashable
+if sys.version_info < (3,3):
+    from collections import Hashable
+else:
+    from collections.abc import Hashable
 import json
 import logging
 import traceback
