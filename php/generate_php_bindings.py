@@ -360,7 +360,7 @@ class {0} extends Device
         ${stream_name_under}_chunk_offset = 0;
 
         if (${stream_name_under}_length === 0) {{
-            ${stream_name_under}_chunk_data = array_fill({chunk_padding}, {chunk_cardinality});
+            ${stream_name_under}_chunk_data = array_fill(0, {chunk_cardinality}, {chunk_padding});
             $ret = $this->{name}LowLevel({parameters});
         }} else {{
             while (${stream_name_under}_chunk_offset < ${stream_name_under}_length) {{
@@ -409,7 +409,7 @@ class {0} extends Device
         ${stream_name_under}_chunk_offset = 0;
 
         if (${stream_name_under}_length === 0) {{
-            ${stream_name_under}_chunk_data = array_fill({chunk_padding}, {chunk_cardinality});
+            ${stream_name_under}_chunk_data = array_fill(0, {chunk_cardinality}, {chunk_padding});
             $ret = $this->{name}LowLevel({parameters});
             {chunk_written_0}
         }} else {{
