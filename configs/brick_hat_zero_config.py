@@ -37,11 +37,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the USB supply voltage of the Raspberry Pi in mv.
+Returns the USB supply voltage of the Raspberry Pi in mV.
 """,
 'de':
 """
-Gibt die USB-Versorgungsspannung des Raspberry Pi in mv zurück.
+Gibt die USB-Versorgungsspannung des Raspberry Pi in mV zurück.
 """
 }]
 })
