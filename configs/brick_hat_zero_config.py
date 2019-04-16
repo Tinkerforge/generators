@@ -15,8 +15,8 @@ com = {
     'display_name': 'HAT Zero',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'HAT for Raspberry Pi Zero with 4 Bricklets ports',
+        'de': 'HAT für Raspberry Pi Zero mit 4 Bricklet-Ports'
     },
     'released': False,
     'documented': False,
