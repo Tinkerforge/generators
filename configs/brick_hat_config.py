@@ -15,8 +15,8 @@ com = {
     'display_name': 'HAT',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'HAT for Raspberry Pi with 8 Bricklets ports',
+        'de': 'HAT für Raspberry Pi mit 8 Bricklet-Ports'
     },
     'released': False,
     'documented': False,
@@ -41,10 +41,46 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Enable Sleep Indicator => status led blinks in 1s interval => ~0.3mA
+Sets the sleep mode.
+
+Parameters:
+
+* Power Off Delay: Time before the RPi/Bricklets are powered off in seconds.
+* Power Off Duration: Duration that the RPi/Bricklets are powered off in seconds.
+* Raspberry Pi Off: RPi if powereed off if set to true.
+* Bricklets Off: Bricklets are powered off if set to true.
+* Enable Sleep Indicator: If set to true, the LED will blink in a 1s interval
+  during the whole power off duration. This will draw an additional 0.3mA.
+
+Example: To turn RPi and Bricklets off in 5 seconds for 10 minutes with sleep
+indicator enabled call (5, 60*10, true, true, true).
+
+This function can also be used to implement a watchdog. To do this you can
+write a program that calls this function once per second in a loop with
+(10, 2, true, false, false). If the RPi crashes or gets stuck
+the HAT will reset the RPi after 10 seconds.
 """,
 'de':
 """
+Setzt den Schlaf-Modus.
+
+Parameter:
+
+* Power Off Delay: Zeit bis der RPi/die Bricklets ausgeschaltet werden in Sekunden.
+* Power Off Duration: Dauer für die der RPi/die Bricklets ausgeschaltet werden in Sekunden.
+* Raspberry Pi Off: RPi wird ausgeschaltet falls auf *true* gesetzt.
+* Bricklets Off: Bricklets werden ausgeschaltet falls auf *true* gesetzt.
+* Enable Sleep Indicator: Wenn dieser Parameter auf *true* gesetzt wird, blinkt
+  die LED während der Schlafdauer mit einem Intervall von 1s. Dies verbraucht
+  zusätzliche 0,3mA.
+
+Beispiel: Um den RPi und die Bricklets in 5 Sekunden für 10 Minuten mit aktivierter
+Indicator-LED auszuschalten, rufe (5, 60*10, *true*, *true*, *true*) auf.
+
+Diese Funktion kann auch genutzt werden um einen Watchdog zu implementieren. Dazu
+kann ein Programm geschrieben werden welches in einer Schleife einmal pro Sekunde folgendes
+aufruft: (10, 2, *true*, *false*, *false*). Dies führt dazu, dass das HAT
+den RPi nach 10 Sekunden neustartet wenn dieser abgestürzt oder stecken geblieben ist.
 """
 }]
 })
@@ -61,9 +97,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the sleep mode settings as set by :func:`Set Sleep Mode`.
 """,
 'de':
 """
+Gibt die Sleep-Mode-Einstellungen zurück, wie von :func:`Set Sleep Mode` gesetzt.
 """
 }]
 })
@@ -77,9 +115,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Set to true/false to turn the power supply of the Bricklets on/off.
+
+By default the Bricklets are on.
 """,
 'de':
 """
+Kann auf true/false gesetzt werden um die Spannungsversorgung der Bricklets
+an/aus zu stellen.
+
+Standardmäßig sind die Bricklets an.
 """
 }]
 })
@@ -92,9 +137,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the bricklet power status as set by :func:`Set Bricklet Power`.
 """,
 'de':
 """
+Gibt den Status der Stromversorgung der Bricklets zurück, wie von
+:func:`Set Bricklet Power` gesetzt.
 """
 }]
 })
@@ -109,9 +157,37 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the USB supply voltage and the DC input supply voltage in mV.
+
+There are three possible combinations:
+
+* Only USB connected: The USB supply voltage will be fed back to the
+  DC input connector. You will reed the USB voltage and a slightly lower
+  voltage on the DC input.
+* Only DC input connected: The DC voltage will not be fed back to the
+  USB connector. You will read the DC input voltage and the USB voltage
+  will be 0.
+* USB and DC input connected: You will read both voltages. In this case
+  the USB supply will be without load, but it will work as backup if you
+  disconnect the DC input (or if the DC input voltage falls below the
+  USB voltage).
 """,
 'de':
 """
+Gibt die USB- und DC-Input-Versorgungsspannung in mV zurück.
+
+Es gibt drei mögliche Kombinationen:
+
+* Nur USB verbunden: Die USB-Versorgungsspannung wird auf den DC-Input-Stecker
+  rückgespeist. Die USB-Spannung wird angezeigt und die DC-Input-Spannung ist
+  etwas niedriger als die USB-Spannung.
+* Nur DC-Input verbunden: Die DC-Versorgungsspannung wird nicht auf den
+  USB-Stecker rückgespeist. Die DC-Versorgungsspannung wird angezeigt und die
+  USB-Spannung ist 0.
+* USB und DC-Input verbunden: Beide Spannungn werden angezeigt. In diesem Fall
+  ist die USB-Versorgungsspannung ohne Last, sie wird als Backup verwendet wenn
+  der DC-Input getrennt wird (oder die DC-Input-Versorgungsspannung unter die
+  USB-Spannung fällt).
 """
 }]
 })
