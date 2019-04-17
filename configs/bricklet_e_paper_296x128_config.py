@@ -33,7 +33,7 @@ COLOR = ('Color', [('Black', 0), ('White', 1), ('Red', 2), ('Gray', 2)])
 ORIENTATION = ('Orientation', [('Horizontal', 0), ('Vertical', 1)])
 DRAW_STATUS = ('Draw Status', [('Idle', 0), ('Copying', 1), ('Drawing', 2)])
 UPDATE_MODE = ('Update Mode', [('Default', 0), ('Black White', 1), ('Delta', 2)])
-DISPLAY = ('Display', [('Black White Red', 0), ('Black White Gray', 1)])
+DISPLAY_TYPE = ('Display Type', [('Black White Red', 0), ('Black White Gray', 1)])
 
 com['packets'].append({
 'type': 'function',
@@ -523,8 +523,8 @@ Gibt den Update Mode zurück, wie von :func:`Set Update Mode` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Display',
-'elements': [('Display', 'uint8', 1, 'in', DISPLAY)],
+'name': 'Set Display Type',
+'elements': [('Display Type', 'uint8', 1, 'in', DISPLAY_TYPE)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -547,8 +547,8 @@ bleibt bei einem Neustart unverändert.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Display',
-'elements': [('Display', 'uint8', 1, 'out', DISPLAY)],
+'name': 'Get Display Type',
+'elements': [('Display Type', 'uint8', 1, 'out', DISPLAY_TYPE)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
