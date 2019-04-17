@@ -18,8 +18,8 @@ com = {
     'display_name': 'Hall Effect 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Measures magnetic flux density between -7mT and 7mT',
-        'de': 'Misst magnetische Flussdichte zwischen -7mT und 7mT'
+        'en': 'Measures magnetic flux density between -7mT and +7mT',
+        'de': 'Misst magnetische Flussdichte zwischen -7mT und +7mT'
     },
     'released': False,
     'documented': False,
@@ -36,12 +36,12 @@ magnetic_flux_density_doc = {
 'en':
 """
 Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
-in `uT (micro Tesla) <https://en.wikipedia.org/wiki/Tesla_(unit)>`__.
+in `µT (micro Tesla) <https://en.wikipedia.org/wiki/Tesla_(unit)>`__.
 """,
 'de':
 """
 Gibt die `magnetische Flussdichte (magnetische Induktion) <https://de.wikipedia.org/wiki/Magnetische_Flussdichte>`__
-in `uT (Microtesla) <https://de.wikipedia.org/wiki/Tesla_(Einheit)>`__ zurück.
+in `µT (Microtesla) <https://de.wikipedia.org/wiki/Tesla_(Einheit)>`__ zurück.
 """
 }
 
@@ -82,7 +82,7 @@ Die Schwellwerte (low/high) in µT und Entprellzeit in µs können per
 :func:`Set Counter Config` eingestellt werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
-nach dem auslesen auf 0 zurückgesetzt.
+nach dem Auslesen auf 0 zurückgesetzt.
 
 Wenn der Zähler periodisch benötigt wird, kann auch der :cb:`Counter` Callback
 verwendet werden. Der Callback wird mit der Funktion
@@ -112,24 +112,24 @@ The default values are
 
 * High Threshold: 2000µT
 * Low Threshold: -2000µT
-* Debounce: 100000us (100ms)
+* Debounce: 100000µs (100ms)
 """,
 'de':
 """
-Setzt einen niedrigen und einen hohen Schwellwert (threshold) in µT sowie
-eine Entprellzeit (debounce) in us.
+Setzt einen unteren und einen oberen Schwellwert (threshold) in µT sowie
+eine Entprellzeit (debounce) in µs.
 
-Wenn die gemessene magnetische Flussdichte über den hohen Schwellwert
-oder unter den niedrigen Schwellwert wandert, wird der Zählerstand des Zählers
+Wenn die gemessene magnetische Flussdichte über den oberen Schwellwert
+oder unter den unteren Schwellwert wandert, wird der Zählerstand des Zählers
 (siehe :func:`Get Counter`) um 1 erhöht.
 
-Die Entprellzeit ist die Minimalzeit zwischen zwei Zählerinkrementierungen.
+Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.
 
 Die Standardwerte sind
 
-* High Threshold: 2000µT
-* Low Threshold: -2000µT
-* Debounce: 100000us (100ms)
+* Unterer Schwellwert: 2000µT
+* Oberer Schwellwert: -2000µT
+* Entprellzeit: 100000µs (100ms)
 """
 }]
 })
