@@ -39,7 +39,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the position of the Joystick. The value ranges between -100 and
+Returns the position of the joystick. The value ranges between -100 and
 100 for both axis. The middle position of the joystick is x=0, y=0. The
 returned values are averaged and calibrated (see :func:`Calibrate`).
 
@@ -131,9 +131,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Calibrates the middle position of the Joystick. If your Joystick Bricklet
+Calibrates the middle position of the joystick. If your Joystick Bricklet
 does not return x=0 and y=0 in the middle position, call this function
-while the Joystick is standing still in the middle position.
+while the joystick is standing still in the middle position.
 
 The resulting calibration will be saved on the EEPROM of the Joystick
 Bricklet, thus you only have to calibrate it once.
@@ -456,7 +456,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`Set Position Callback Period`. The :word:`parameter` is the position of the
-Joystick.
+joystick.
 
 The :cb:`Position` callback is only triggered if the position has changed since the
 last triggering.
@@ -483,7 +483,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`Set Analog Value Callback Period`. The :word:`parameters` are the
-analog values of the Joystick.
+analog values of the joystick.
 
 The :cb:`Analog Value` callback is only triggered if the values have changed
 since the last triggering.
@@ -510,7 +510,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`Set Position Callback Threshold` is reached.
-The :word:`parameters` are the position of the Joystick.
+The :word:`parameters` are the position of the joystick.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`Set Debounce Period`.
@@ -538,7 +538,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`Set Analog Value Callback Threshold` is reached.
-The :word:`parameters` are the analog values of the Joystick.
+The :word:`parameters` are the analog values of the joystick.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`Set Debounce Period`.

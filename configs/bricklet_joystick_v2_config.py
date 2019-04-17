@@ -38,7 +38,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the position of the Joystick. The value ranges between -100 and
+Returns the position of the joystick. The value ranges between -100 and
 100 for both axis. The middle position of the joystick is x=0, y=0. The
 returned values are averaged and calibrated (see :func:`Calibrate`).
 
@@ -92,16 +92,16 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Calibrates the middle position of the Joystick. If your Joystick Bricklet
+Calibrates the middle position of the joystick. If your Joystick Bricklet 2.0
 does not return x=0 and y=0 in the middle position, call this function
-while the Joystick is standing still in the middle position.
+while the joystick is standing still in the middle position.
 
-The resulting calibration will be saved in non-volatile memory, 
+The resulting calibration will be saved in non-volatile memory,
 thus you only have to calibrate it once.
 """,
 'de':
 """
-Kalibriert die Mittelposition des Joysticks. Sollte der Joystick Bricklet
+Kalibriert die Mittelposition des Joysticks. Sollte der Joystick Bricklet 2.0
 nicht x=0 und y=0 in der Mittelposition zurückgeben, kann diese Funktion
 aufgerufen werden wenn der Joystick sich unbewegt in der Mittelposition befindet.
 
@@ -137,12 +137,12 @@ The default value is (0, false).
 Die Periode in ms ist die Periode mit der der :cb:`Position`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
-Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Wenn der `value has to change`-Parameter auf true gesetzt wird, wird der
 Callback nur ausgelöst, wenn sich mindestens ein Wert im Vergleich zum letzten mal geändert
 hat. Ändert sich kein Wert innerhalb der Periode, so wird der Callback
 sofort ausgelöst, wenn ein Wert sich das nächste mal ändert.
 
-Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+Wird der Parameter auf false gesetzt, so wird der Callback dauerhaft mit der
 festen Periode ausgelöst unabhängig von den Änderungen der Werte.
 
 Der Standardwert ist (0, false).
@@ -221,12 +221,12 @@ The default value is (0, false).
 Die Periode in ms ist die Periode mit der der :cb:`Pressed`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
-Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Wenn der `value has to change`-Parameter auf true gesetzt wird, wird der
 Callback nur ausgelöst, wenn sich mindestens ein Wert im Vergleich zum letzten mal geändert
 hat. Ändert sich kein Wert innerhalb der Periode, so wird der Callback
 sofort ausgelöst, wenn ein Wert sich das nächste mal ändert.
 
-Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+Wird der Parameter auf false gesetzt, so wird der Callback dauerhaft mit der
 festen Periode ausgelöst unabhängig von den Änderungen der Werte.
 
 Der Standardwert ist (0, false).
