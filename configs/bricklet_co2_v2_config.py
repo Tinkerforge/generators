@@ -43,8 +43,8 @@ com['packets'].append({
 'en':
 """
 Returns all values measured by the CO2 Bricklet 2.0. The values are
-CO2 concentration (in ppm), Temperature (in 0.01 °C) 
-and Humidity (in 0.01 %RH).
+CO2 concentration (in ppm), temperature (in 0.01 °C)
+and humidity (in 0.01 %RH).
 
 If you want to get the values periodically, it is recommended to use the
 :cb:`All Values` callback. You can set the callback configuration
@@ -53,7 +53,7 @@ with :func:`Set All Values Callback Configuration`.
 'de':
 """
 Gibt alle Werte zurück, die das CO2 Bricklet 2.0 misst. Diese Werte umfassen:
-CO2-Konzentraion (in ppm), Temperatur (in 0,01 °C) und 
+CO2-Konzentration (in ppm), Temperatur (in 0,01 °C) und
 Luftfeuchte (in 0,01 %RH).
 
 Wenn der Wert periodisch benötigt wird, kann auch der :cb:`All Values` Callback
@@ -74,29 +74,29 @@ com['packets'].append({
 The CO2 concentration (among other things) depends on the ambient air pressure.
 
 To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure.
-You use the :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` or the 
+You use the :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` or the
 :ref:`Air Quality Bricklet <air_quality_bricklet>` to get the current air pressure.
 
 The expected unit of the ambient air pressure value is mbar.
 
 By default air pressure compensation is disabled. Once you set a value it
-will be used for compensation. You can turn the compensation off again by 
+will be used for compensation. You can turn the compensation off again by
 setting the value to 0.
 
 It is sufficient to update the value every few minutes.
 """,
 'de':
 """
-Die CO2-Konzentration hängt (unter anderem) von dem Umgebungs-Luftdruck ab.
+Die CO2-Konzentration hängt (unter anderem) vom Umgebungs-Luftdruck ab.
 
 Um die Genauigkeit des CO2 Bricklet 2.0 zu verbessern ist es möglich den aktuellen
-Luftdruck zu setzen. Dazu kann das :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` 
+Luftdruck zu setzen. Dazu kann das :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>`
 oder auch das :ref:`Air Quality Bricklet <air_quality_bricklet>` genutzt werden.
 
 Die erwartete Einheit des Umgebungs-Luftdrucks ist mbar.
 
-Standardmäßg ist die Luftdruck-Kompensation deaktiviert. Sobald ein Wert gesetzt
-wird, wird dieser zur Kompensation verwerndet. Die Kompensation kann wieder
+Standardmäßig ist die Luftdruck-Kompensation deaktiviert. Sobald ein Wert gesetzt
+wird, wird dieser zur Kompensation verwendet. Die Kompensation kann wieder
 ausgestellt werden in dem der Wert zurück auf 0 gesetzt wird.
 
 Es ist hinreichend den Wert alle paar Minuten zu aktualisieren.
@@ -143,7 +143,7 @@ the temperature directly outside of enclosure and set the difference as offset.
 
 This temperature offset is used to calculate the relative humidity and
 CO2 concentration. In case the Bricklet is installed in an enclosure, we
-recommend to measure and set the temperature offset to imporve the accuracy of
+recommend to measure and set the temperature offset to improve the accuracy of
 the measurements.
 
 It is sufficient to set the temperature offset once. The offset is saved in
@@ -165,13 +165,13 @@ außerhalb des Gehäuses gemessen werden und die Differenz zur Temperatur innerh
 des Gehäuses als Offset eingestellt werden.
 
 Dieses Temperatur-Offset geht in die Berechnung der Luftfeuchte und der
-CO2-Konzentration mit ein. Um die Genauigkeit der Messwerte innerhalb eines 
+CO2-Konzentration mit ein. Um die Genauigkeit der Messwerte innerhalb eines
 Gehäuses zu verbessern sollte der Temperatur-Offset bestimmt und
 eingestellt werden.
 
 Es ist hinreichend den Temperatur-Offset einmal zu setzen. Der Offset wird
 in einem nicht-flüchtigen Speicher gespeichert und auch nach einem
-neustart wieder angewendet.
+Neustart wieder angewendet.
 """
 }]
 })
@@ -194,7 +194,6 @@ Gibt das Temperatur-Offset zurück, wie mittels
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -222,12 +221,12 @@ The default value is (0, false).
 Die Periode in ms ist die Periode mit der der :cb:`All Values`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
-Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Wenn der `value has to change`-Parameter auf true gesetzt wird, wird der
 Callback nur ausgelöst, wenn sich mindestens ein Wert im Vergleich zum letzten mal geändert
 hat. Ändert sich kein Wert innerhalb der Periode, so wird der Callback
 sofort ausgelöst, wenn ein Wert sich das nächste mal ändert.
 
-Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+Wird der Parameter auf false gesetzt, so wird der Callback dauerhaft mit der
 festen Periode ausgelöst unabhängig von den Änderungen der Werte.
 
 Der Standardwert ist (0, false).
@@ -279,7 +278,6 @@ Die :word:`parameters` sind die gleichen wie :func:`Get All Values`.
 """
 }]
 })
-
 
 co2_concentration_doc = {
 'en':
