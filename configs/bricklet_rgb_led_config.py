@@ -38,11 +38,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the *rgb* value for the LED. The value can be between 0 and 255.
+Sets the *r*, *g* and *b* values for the LED. Each value can be between 0 and 255.
 """,
 'de':
 """
-Setzt den *rgb* Wert für die LED. Der Wert kann zwischen 0 und 255 liegen.
+Setzt die *r*, *g* und *b* Werte für die LED. Jeder Wert kann zwischen 0 und 255 liegen.
 """
 }]
 })
@@ -57,11 +57,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the *rgb* value of the LED as set by :func:`Set RGB Value`.
+Returns the *r*, *g* and *b* values of the LED as set by :func:`Set RGB Value`.
 """,
 'de':
 """
-Gibt den *rgb* Wert der LED zurück, wie von :func:`Set RGB Value` gesetzt.
+Gibt die *r*, *g* und *b* Werte der LED zurück, wie von :func:`Set RGB Value` gesetzt.
 """
 }]
 })
