@@ -35,9 +35,17 @@ com = {
 heading_doc = {
 'en':
 """
+Returns the heading in 1/10 degree (north = 0 degree).
+
+Alternatively you can use :func:`Get Magnetic Flux Density` and calculate the heading
+with ``heading = atan2(y, x)*180/PI``.
 """,
 'de':
 """
+Gibt die Richtung in 1/10 grad zurück (Norden = 0 Grad).
+
+Alternativ kann die Funktion :func:`Get Magnetic Flux Density` genutzt werden um
+die Richtung per ``heading = atan2(y, x)*180/PI`` zu bestimmen.
 """
 }
 
@@ -59,11 +67,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
+for all three axis in 1/10 `mG (milli Gauss) <https://en.wikipedia.org/wiki/Gauss_(unit)>`__.
 """,
 'de':
 """
-
+Gibt die `magnetische Flussdichte (magnetische Induktion) <https://de.wikipedia.org/wiki/Magnetische_Flussdichte>`__
+für alle drei Achsen in 1/10 `mG (Milligauß) <https://de.wikipedia.org/wiki/Gau%C3%9F_(Einheit)>`__ zurück.
 """
 }]
 })
@@ -164,11 +174,37 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Configuration:
 
+* Data Rate: Sets the data rate that is used by the magnetometer.
+  The lower the data rate, the lower is the noise on the data.
+* Background Calibration: Set to *true* to enable the background
+  calibration and *false* to turn it off. If the background calibration
+  is enabled the sensing polarity is flipped once per second to automatically
+  calculate and remove offset that is caused by temperature changes.
+  This polarity flipping takes about 20ms. This means that once a second
+  you will not get new data for a period of 20ms. We highly recommend that
+  you keep the background calibration enabled and only disable it if the 20ms
+  off-time is a problem in you application.
+
+
+Default values: Data rate of 100Hz and background calibration enabled.
 """,
 'de':
 """
+Konfigurationen:
 
+* Data Rate: Setzt die Datenrate des eingesetzten Magnetometers.
+  Desto niedriger die Datenrate ist desto weniger Rauschen befindet sich auf den Daten.
+* Background Calibration: Aktiviert die automatische Hintergrundkalibrierung wenn
+  auf *true* gesetzt. Wenn die Hintergrundkalibrierung aktiviert ist, ändert
+  das Bricklet einmal pro Sekunde die Erfassungs-Polarität um damit automatisch
+  temperaturabhängige Offsets zu entfernen. Das ändern der Polarität dauert ungefähr
+  20ms. Daher werden einmal pro Sekunde für 20ms keine neuen Daten generiert wenn
+  die Kalibrierung aktiviert ist. Wir empfehlen die Kalibrierung nur zu deaktivieren
+  falls diese 20ms Auszeit ein großes Problem in der Anwendung des Bricklets darstellen.
+
+Standardwerte: Datenrate 100Hz und Hintergrundkalibrierung aktiviert.
 """
 }]
 })
@@ -186,11 +222,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -204,12 +240,23 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-saved in non-volatile memory
+Sets offset and multiplier coefficent for each of the three axis.
 
+The Bricklet is factory calibrated. If you want to re-calibrate the
+Bricklet we recommend that you do the calibration through Brick Viewer.
+
+The calibration is saved in non-voltile memory and only has to be
+done once.
 """,
 'de':
 """
+Setzt den Offset und Multiplikator-Koeffizienten für alle drei Achsen.
 
+Das Bricklet ist Werkskalibriert. Wenn eine re-kalibrierung durchgeführt
+werden sollen empfehlen wir dafür den Brick Viewer zu nutzen.
+
+Die Kalibrierung wird in nicht-flüchtigem Speicher gespeichert und muss
+nur einmal durchgeführt werden.
 """
 }]
 })
@@ -223,11 +270,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-
+Returns the calibration parameters as set by :func:`Set Calibration`.
 """,
 'de':
 """
-
+Gibt die Kalibrierungs-Parameter zurück, wie von :func:`Set Calibration` gesetzt.
 """
 }]
 })
