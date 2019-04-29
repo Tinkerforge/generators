@@ -89,11 +89,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the sensor type as set by :func:`Set Update Rate`.
+Returns the update rate as set by :func:`Set Update Rate`.
 """,
 'de':
 """
-Gibt den Sensor-Typ zurück, wie von :func:`Set Update Rate` gesetzt.
+Gibt die Aktualisierungsrate zurück, wie von :func:`Set Update Rate` gesetzt.
 """
 }]
 })
