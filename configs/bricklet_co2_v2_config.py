@@ -282,7 +282,7 @@ Die :word:`parameters` sind die gleichen wie :func:`Get All Values`.
 co2_concentration_doc = {
 'en':
 """
-Returns co2 concentration in ppm.
+Returns CO2 concentration in ppm.
 """,
 'de':
 """

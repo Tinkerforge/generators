@@ -42,7 +42,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Beeps with the given frequency and volume for the duration in ms with. 
+Beeps with the given frequency and volume for the duration in ms. 
 
 For example: If you set a duration of 1000, with a volume of 10 and a frequency
 value of 2000 the piezo buzzer will beep with maximum loudness for one 
@@ -178,7 +178,7 @@ Die folgenden Parameter können genutzt werden:
 * *Step Delay*: Zeit zwischen zwei Schritten (Dauer eines Tons im Frequenzdurchlauf) in ms.
 * *Duration*: Dauer des Alarm in ms
 
-Im weiteren gibt es zwei Beispiele zum ausprobieren. Diese Beispiele können
+Nachfolgend gibt es zwei Beispiele zum ausprobieren. Diese Beispiele können
 als Startpunkt genutzt werden um ein Alarm-Signal passend für die eigene Anwendung
 zu entwerfen.
 
