@@ -84,7 +84,7 @@ Gibt einen von drei möglichen Status zurück:
 
 * Idle
 * Copying: Daten werden vom Buffer des Bricklets in den Buffer des Displays kopiert.
-* Drawing: Das Display aktualisiert den Inhalt (während dieser Phase flickert das Display).
+* Drawing: Das Display aktualisiert den Inhalt (während dieser Phase flackert das Display).
 
 Der Buffer kann beschrieben werden (durch eine der *write*- oder *draw*-Funktionen) wenn der
 Status entweder *idle* oder *drawing* ist. Der Buffer sollte nicht beschrieben werden während
@@ -451,7 +451,7 @@ Currently there are three update modes available:
   the changes are not applied for a whole buffer but only for the delta between the last
   and the next buffer. With this mode the display will not flicker during an update and
   it takes about 900-950ms. Compared to the other two settings there is more ghosting. This
-  mode can be used for something like a flicker-free live update of a temperature.
+  mode can be used for something like a flicker-free live update of a text.
 
 With the black/white/red display if you use either the black/white or the delta mode,
 after a while of going back and forth between black and white the white color will
@@ -473,8 +473,8 @@ go back to the delta mode with flicker-free updates.
  das exzellente Video von Ben Krasnow empfehlen:
  `https://www.youtube.com/watch?v=MsbiO8EAsGw <https://www.youtube.com/watch?v=MsbiO8EAsGw>`__.
 
- Falls es nicht klar ist was diese Optionen bedeuten, würden wir empfehlen den
- Update-Modus auf *Default* zu lassen.
+ Falls es nicht klar ist was diese Optionen bedeuten, empfehlen wir den
+ Update-Modus auf *Default* zu belassen.
 
 Aktuell gibt es drei unterschiedliche Update-Modi:
 
@@ -490,7 +490,7 @@ Aktuell gibt es drei unterschiedliche Update-Modi:
   Buffer angewendet, sondern nur auf dem Unterschied (Delta) zwischen dem letzten und dem nächsten
   Buffer. Mit diesem Modus flackert das Display nicht und eine Aktualisierung dauert 900-950ms.
   Verglichen zu den anderen beiden Modi gibt es mehr Ghosting. Dieser Modus ist gut geeignet um z.B.
-  flickerfrei eine regelmäßig aktualisierte Temperatur darzustellen.
+  flackerfrei einen regelmäßig aktualisierten Text darzustellen.
 
 Wenn der Black/White- oder Delta-Modus zusammen mit dem schwarz/weiß/rot-Bildschirm verwendet wird,
 bekommt die weiße Farbe nach mehrmaligem Wechsel zwischen schwarz und weiß einen rötlichen Stich.
@@ -499,7 +499,7 @@ Wenn der Delta-Modus mit schnell Aktualisierungen verwendet wird, empfehlen wir 
 Abständen zurück zum Default-Modus zu wechseln um dort vollflächig zwischen den drei Farben hin
 und her zu wechseln. Dadurch wird das Ghosting welches durch die Verwendung des Delta-Modus
 entsteht wieder entfernt. Danach kann dann wieder in den Delta-Modus gewechselt werden für
-flickerfreie Aktualisierungen.
+flackerfreie Aktualisierungen.
 """
 }]
 })
