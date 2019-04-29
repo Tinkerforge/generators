@@ -255,7 +255,7 @@ or :func:`Set Numeric Value`.
 """,
 'de':
 """
-Starter einen Zähler mit dem *from* Wert der bis zum *to* Wert Zählt
+Starter einen Zähler mit dem *from* Wert der bis zum *to* Wert zählt
 mit einer Schrittweite von *increment*. Das Argument *length* gibt die
 Pause zwischen den Erhöhungen in ms an.
 
