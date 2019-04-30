@@ -37,7 +37,7 @@ com['packets'].append({
 'elements': [('Frequency', 'uint16', 1, 'in'),
              ('Volume', 'uint8', 1, 'in'),
              ('Duration', 'uint32', 1, 'in', ('Beep Duration', [('Off', 0),
-                                                                ('Infinite', 4294967295)])),],
+                                                                ('Infinite', 4294967295)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -138,7 +138,7 @@ A duration of 4294967295 results in an infinite alarm.
 Below you can find two sets of example settings that you can try out. You can use
 these as a starting point to find an alarm signal that suits your application.
 
-*Example 1: 10 seconds of loud annoying fast alarm*
+Example 1: 10 seconds of loud annoying fast alarm
 
 * Start Frequency = 800
 * End Frequency = 2000
@@ -147,7 +147,7 @@ these as a starting point to find an alarm signal that suits your application.
 * Volume = 10
 * Duration = 10000
 
-*Example 2: 10 seconds of soft siren sound with slow build-up*
+Example 2: 10 seconds of soft siren sound with slow build-up
 
 * Start Frequency = 250
 * End Frequency = 750
@@ -162,7 +162,7 @@ The ranges are:
 * End Frequency: 51Hz - 15000Hz (has to be bigger than start frequency)
 * Step Size: 1Hz - 65535Hz (has to be small enough to fit into the frequency range)
 * Step Delay: 1ms - 65535ms (has to be small enough to fit into the duration)
-* Volume: 0-10
+* Volume: 0 - 10
 * Duration: 0ms - 4294967295ms
 """,
 'de':
@@ -206,7 +206,7 @@ Die Wertebereiche sind:
 * *End Frequency*: 51Hz - 15000Hz (muss größer als *Start Frequency* sein)
 * *Step Size*: 1Hz - 65535Hz (muss klein genug sein um in den Frequenzbereich zu passen)
 * *Step Delay*: 1ms - 65535ms (muss kleiner als *Duration* sein)
-* *Volume*: 0-10
+* *Volume*: 0 - 10
 * *Duration*: 0ms - 4294967295ms
 """
 }]
@@ -260,7 +260,7 @@ Updates the volume of an ongoing beep or alarm. The range of the volume is 0 to 
 'de':
 """
 Aktualisiert die Lautstärke eines aktuell laufenden Beep oder Alarm. Der
-Wertebereicht der Lautstärke ist 0 bis 10.
+Wertebereich der Lautstärke ist 0 bis 10.
 """
 }]
 })
