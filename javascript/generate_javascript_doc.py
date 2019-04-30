@@ -66,15 +66,18 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
                                         language_from_filename=language_from_filename,
                                         add_html_test_link=True)
 
-    def get_javascript_methods(self, typ):
+    def get_javascript_methods(self, type_):
         methods = ''
         func_start = '.. javascript:function:: '
         cls = self.get_javascript_class_name()
+
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
-            name = packet.get_name().headless
-            params = packet.get_javascript_parameter_list()
+
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_name(skip=skip).headless
+            params = packet.get_javascript_parameter_list(high_level=True)
             pd = packet.get_javascript_parameter_desc('in')
             r = packet.get_javascript_return_desc()
 
@@ -118,13 +121,15 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
         cbs = ''
         func_start = '.. javascript:attribute:: '
         cls = self.get_javascript_class_name()
+
         for packet in self.get_packets('callback'):
+            skip = -2 if packet.has_high_level() else 0
             param_desc = packet.get_javascript_parameter_desc('out')
             desc = packet.get_javascript_formatted_doc()
 
             func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                           cls,
-                                                          packet.get_name().upper,
+                                                          packet.get_name(skip=skip).upper,
                                                           param_desc,
                                                           desc)
             cbs += func + '\n'
@@ -276,6 +281,7 @@ of the following values:
 * IPConnection.ERROR_INVALID_PARAMETER = 41
 * IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42
 * IPConnection.ERROR_UNKNOWN_ERROR = 43
+* IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51
 
 The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 
@@ -304,6 +310,7 @@ folgenden Werte sein:
 * IPConnection.ERROR_INVALID_PARAMETER = 41
 * IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42
 * IPConnection.ERROR_UNKNOWN_ERROR = 43
+* IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51
 
 Der Namespace der JavaScript Bindings ist ``Tinkerforge.*``.
 
@@ -423,7 +430,7 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
         desc = '\n'
         param = ' :param {0}: {1}\n'
 
-        for element in self.get_elements(direction=io):
+        for element in self.get_elements(direction=io, high_level=True):
             t = element.get_javascript_type()
             desc += param.format(element.get_name().headless, t)
 
@@ -433,7 +440,7 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
         desc = []
         param = ' :return {0}: {1}'
 
-        for element in self.get_elements(direction='out'):
+        for element in self.get_elements(direction='out', high_level=True):
             t = element.get_javascript_type()
             desc.append(param.format(element.get_name().headless, t))
 

@@ -35,10 +35,10 @@ class JavaScriptDevice(common.Device):
         return self.get_category().camel + self.get_name().camel
 
 class JavaScriptPacket(common.Packet):
-    def get_javascript_parameter_list(self):
+    def get_javascript_parameter_list(self, high_level=False):
         params = []
 
-        for element in self.get_elements(direction='in'):
+        for element in self.get_elements(direction='in', high_level=high_level):
             params.append(element.get_name().headless)
 
         return ', '.join(params)
