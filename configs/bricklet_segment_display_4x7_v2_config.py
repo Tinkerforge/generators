@@ -15,8 +15,8 @@ com = {
     'display_name': 'Segment Display 4x7 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Four 7-segment displays with switchable dots',
+        'de': 'Vier 7-Segment-Anzeigen mit schaltbare Punkten'
     },
     'released': False,
     'documented': False,
@@ -126,7 +126,7 @@ Returns the brightness as set by :func:`Set Brightness`.
 """,
 'de':
 """
-Gibt die Brightness zurück, wie von :func:`Set Brightness` gesetzt.
+Gibt die Helligkeit zurück, wie von :func:`Set Brightness` gesetzt.
 """
 }]
 })
@@ -143,7 +143,7 @@ Sets a numeric value for each of the digits. The values can be between
 -2 and 15. They represent:
 
 * -2: minus sign
-* -1: empty space
+* -1: blank
 * 0-9: 0-9
 * 10: A
 * 11: b
@@ -157,7 +157,7 @@ Example: A call with [-2, -1, 4, 2] will result in a display of "- 42".
 'de':
 """
 Setzt einen numerischen Wert für jede Ziffer. Die Werte können zwischen
--2 und 15 seien. Die Werte reprenstieren:
+-2 und 15 seien. Die Werte repräsentieren:
 
 * -2: Minuszeichen
 * -1: Leerstelle
@@ -248,7 +248,7 @@ pause between each increment will be started.
 The maximum values for *from*, *to* and *increment* is 9999,
 the minimum value is -999.
 
-Using a negative increment allows to count backwards.
+Using a negative *increment* allows to count backwards.
 
 You can stop the counter at every time by calling :func:`Set Segments`
 or :func:`Set Numeric Value`.
@@ -266,7 +266,7 @@ Beispiel: Wenn *from* auf 0, *to* auf 100, *increment* auf 1 und
 Der Maximalwert für *from*, *to* und *increment* ist 9999, der Minimalwert
 ist -999.
 
-Wenn das increment negativ ist läuft der Zähler rückwärts.
+Wenn *increment* negativ ist läuft der Zähler rückwärts.
 
 Der Zähler kann jederzeit durch einen Aufruf von :func:`Set Segments` oder
 :func:`Set Numeric Value` gestoppt werden.
@@ -291,7 +291,7 @@ If there is no counter running a 0 will be returned.
 Gibt den aktuellen Zählerstand zurück der auf der Anzeige
 angezeigt wird.
 
-Wenn kein Zähler am laufen ist wird eine 0 zurückgegeben.
+Wenn kein Zähler läuft wird eine 0 zurückgegeben.
 """
 }]
 })
