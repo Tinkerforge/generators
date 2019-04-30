@@ -210,7 +210,7 @@ Die Indizes sind wie folgt aufgeteilt:
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Selected Segments',
+'name': 'Get Selected Segment',
 'elements': [('Segment', 'uint8', 1, 'in'),
              ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
