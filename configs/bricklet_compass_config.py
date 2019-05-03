@@ -278,3 +278,14 @@ Gibt die Kalibrierungs-Parameter zurück, wie von :func:`Set Calibration` gesetz
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Heading', 'heading'), [(('Heading', 'Heading'), 'int16', 1, 10.0, '°', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Heading', 'heading'), [(('Heading', 'Heading'), 'int16', 1, 10.0, '°', None)], None, None),
+              ('callback_configuration', ('Heading', 'heading'), [], 100, False, 'x', [(0, 0)])]
+})

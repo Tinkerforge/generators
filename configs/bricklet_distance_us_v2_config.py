@@ -144,3 +144,20 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Distance LED Config` gese
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, 10.0, 'cm', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, 10.0, 'cm', None)], None, None),
+              ('callback_configuration', ('Distance', 'distance'), [], 100, False, 'x', [(0, 0)])]
+})
+
+com['examples'].append({
+'name': 'Threshold',
+'functions': [('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, 10.0, 'cm', None)], None, None),
+              ('callback_configuration', ('Distance', 'distance'), [], 100, False, '>', [(100, 0)])]
+})
