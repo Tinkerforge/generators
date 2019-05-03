@@ -137,7 +137,16 @@ the voltage and current waveforms.
 """,
 'de':
 """
+Gibt eine Momentaufnahme des Spannungs- und Stromkurvenverlaufs zurück. Die
+Werte im zurückgegebenen Array alternieren zwischen Spannung und Strom. Die
+Daten eines Getter-Aufrufs beinhalten 768 Datenpunkte für Spannnung und Strom,
+diese korrespondieren zu ungefähr 3 vollen Sinuskurven.
 
+Die Spannung hat eine Auflösung von 100mV und der Strom hat eine Auflösung
+von 10mA.
+
+Die Daten können für eine grafische Repräsentation (nicht-realzeit) der 
+Kurvenverläufe genutzt werden.
 """
 }]
 })
@@ -181,12 +190,28 @@ ratio.
 
 The calibration is saved in non-volatile memory, you only have to set it once.
 
-By default the voltage ratio is set to TODO and the current ratio is set to TODO.
+By default the voltage ratio is set to 1923 and the current ratio is set to 3000.
 
 Set the phase shift to 0. It is for future use and currently not supported by the Bricklet.
 """,
 'de':
 """
+Setzt das Transformer-Verhältnis für Strom und Spanning in hunderstel.
+
+Beispiel: Wenn die Netzspannung 230V beträgt und ein 9V Spannungstransformer sowie
+eine 1V:30A Spannungszange verwendet wird, ergibt das ein Spannungsverhältnis von
+230/9 = 25,56 und ein Stromverhältnis von 30/1 = 30.
+
+In diesem Fall müssten also die Werte 2556 und 3000 gesetzt werden.
+
+Die Kalibrierung wird in nicht-flüchtigen Speicher gespeichert und muss nur einmal
+gesetzt werden.
+
+Im Auslieferungszustand ist das Spanungsverhältnis auf 1923 und das Stromverhältnis auf 3000
+gesetzt.
+
+Der Parameter *Phase Shift* muss auf 0 gesetzt werden. Dieser Parameter wird
+aktuell von der Firmware nicht genutzt.
 """
 }]
 })
@@ -231,6 +256,16 @@ short both inputs.
 """,
 'de':
 """
+Ein Aufruf dieser Funktion startet eine Offset-Kalibrierung. Dazu werden die
+Spannungs- und Stromkurvenverläufe über einen längeren Zeitraum aufsummiert um
+den Nulldurchgangspunkt der Sinuskurve zu finden.
+
+Der Offset wird für das Bricklet von Tinkerforge werkskalibriert. Ein Aufruf dieser
+Funktion sollte also nicht notwendig sein.
+
+Wenn der Offset re-kalibriert werden soll empfehlen wir entweder eine Last
+anzuschließen die eine glatte Sinuskurve für Spannung und Strom erzeugt oder
+die beiden Eingänge kurzzuschließen.
 """
 }]
 })
