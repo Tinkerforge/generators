@@ -18,8 +18,8 @@ com = {
     'display_name': 'Color 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Measures color (RGB value), illuminance and color temperature',
+        'de': 'Misst Farbe (RGB Wert), Beleuchtungsstärke und Farbtemperatur'
     },
     'released': False,
     'documented': False,

@@ -18,8 +18,8 @@ com = {
     'display_name': 'Distance US 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Measures distance between 30cm and 500cm with ultrasound',
+        'de': 'Misst Entfernung zwischen 30cm und 500cm mit Ultraschall'
     },
     'released': False, # FIXME: update Distance US Bricklet (1.0) replacement recommendation, once this Bricklet is released
     'documented': False,

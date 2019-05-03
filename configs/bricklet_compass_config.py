@@ -18,8 +18,8 @@ com = {
     'display_name': 'Compass',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': '3D compass with 0.1° resolution',
+        'de': '3D-Kompass mit 0,1° Auflösung'
     },
     'released': False,
     'documented': False,
