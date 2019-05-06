@@ -43,7 +43,7 @@ For example: The value 3 or 0b0011 means that pins 0-1 are high and the other
 pins are low.
 
 If no groups are used (see :func:`Set Group`), the pins correspond to the
-markings on the Digital In 4 Bricklet.
+markings on the IndustrialDigital In 4 Bricklet.
 
 If groups are used, the pins correspond to the element in the group.
 Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
@@ -58,7 +58,7 @@ Zum Beispiel: Der Wert 3 bzw. 0b0011 bedeutet, dass die Pins 0-1 auf logisch 1
 und alle anderen auf logisch 0 sind.
 
 Falls keine Gruppen verwendet werden (siehe :func:`Set Group`), entsprechen
-die Pins der Beschriftung auf dem Digital In 4 Bricklet.
+die Pins der Beschriftung auf dem Industrial Digital In 4 Bricklet.
 
 Falls Gruppen verwendet werden, entsprechen die Pins den Elementen der
 Gruppe. Element 1 in der Gruppe bekommt Pins 0-3,
