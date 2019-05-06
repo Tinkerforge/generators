@@ -51,6 +51,12 @@ channels 2-3 low.
 """,
 'de':
 """
+Setzt den Zustand aller vier Kanäle. Der Wert *true* bzw. *false* erzeugen
+logisch 1 bzw. logisch 0 auf dem entsprechenden Kanal.
+
+Mit der Funktionen :func:`Set Selected Value` können einzelnen Kanäle gesetzt
+werden.
+
 Beispiel: (True, True, False, False) setzt die Kanäle 0-1 auf logisch 1 und die
 Kanäle 2-3 auf logisch 0.
 
