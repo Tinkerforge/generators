@@ -157,7 +157,7 @@ The :word:`parameters` are the same as :func:`Get Magnetic Flux Density`.
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set Magnetic Flux Density Callback Configuration` gesetzten Konfiguration
 
-Die :word:`Parameter` sind der gleichen wie :func:`Get Magnetic Flux Density`.
+Die :word:`parameters` sind der gleichen wie :func:`Get Magnetic Flux Density`.
 """
 }]
 })
