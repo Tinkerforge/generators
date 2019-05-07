@@ -18,8 +18,8 @@ com = {
     'display_name': 'Compass',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '3D compass with 0.1° resolution',
-        'de': '3D-Kompass mit 0,1° Auflösung'
+        'en': '3-axis compass with 0.1mG (milli Gauss) und 0.1° resolution',
+        'de': '3-Achs Kompass mit 0,1mG (Milligauß) und 0,1° Auflösung'
     },
     'released': False,
     'documented': False,
