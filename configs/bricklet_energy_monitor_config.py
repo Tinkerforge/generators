@@ -374,12 +374,12 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Energy Data', 'Energy Data'), [(('Voltage', 'Voltage'), 'int32', 1, 100, 'V', None),
-                                                                (('Current', 'Current'), 'int32', 1, 100, 'A', None),
-                                                                (('Energy', 'Energy'), 'int32', 1, 100, 'Wh', None),
-                                                                (('Real Power', 'Real Power'), 'int32', 1, 100, 'h', None),
-                                                                (('Apparent Power', 'Apparent Power'), 'int32', 1, 100, 'VA', None),
-                                                                (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'VAR', None),
-                                                                (('Power Factor', 'Power Factor'), 'uint16', 1, 1000, None, None),
-                                                                (('Frequecy', 'Frequency'), 'uint16', 1, 100, 'Hz', None)], None, None),
+                                                            (('Current', 'Current'), 'int32', 1, 100, 'A', None),
+                                                            (('Energy', 'Energy'), 'int32', 1, 100, 'Wh', None),
+                                                            (('Real Power', 'Real Power'), 'int32', 1, 100, 'h', None),
+                                                            (('Apparent Power', 'Apparent Power'), 'int32', 1, 100, 'VA', None),
+                                                            (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'VAR', None),
+                                                            (('Power Factor', 'Power Factor'), 'uint16', 1, 1000, None, None),
+                                                            (('Frequecy', 'Frequency'), 'uint16', 1, 100, 'Hz', None)], None, None),
               ('callback_configuration', ('Energy Data', 'Energy Data'), [], 1000, False, None, [])]
 })
