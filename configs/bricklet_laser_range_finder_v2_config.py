@@ -39,14 +39,14 @@ distance_doc = {
 Returns the measured distance. The value has a range of 0 to 4000
 and is given in cm.
 
-The laser has to be enabled, see :func:`Enable Laser`.
+The laser has to be enabled, see :func:`Set Enable`.
 """,
 'de':
 """
 Gibt die gemessene Distanz zurück. Der Wertebereich ist 0 bis 4000
 und die Werte haben die Einheit cm.
 
-Der Laser aktiviert werden, siehe :func:`Enable Laser`.
+Der Laser aktiviert werden, siehe :func:`Set Enable`.
 """
 }
 
@@ -66,7 +66,7 @@ and is given in 1/100 m/s.
 
 the velocity measurement only produces stables results if a fixed
 measurement rate (see :func:`Set Configuration`) is configured. Also the laser
-has to be enabled, see :func:`Enable Laser`.
+has to be enabled, see :func:`Set Enable`.
 """,
 'de':
 """
@@ -75,7 +75,7 @@ und die Werte haben die Einheit 1/100 m/s.
 
 Die Geschwindigkeitsmessung liefert nur dann stabile Werte,
 wenn eine feste Messfrequenz (siehe :func:`Set Configuration`) eingestellt ist.
-Zusätzlich muss der Laser aktiviert werden, siehe :func:`Enable Laser`.
+Zusätzlich muss der Laser aktiviert werden, siehe :func:`Set Enable`.
 """
 }
 
@@ -118,7 +118,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the value as set by :func:`Set Enbale`.
+Returns the value as set by :func:`Set Enable`.
 """,
 'de':
 """
