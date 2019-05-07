@@ -212,6 +212,8 @@ gesetzt.
 
 Der Parameter *Phase Shift* muss auf 0 gesetzt werden. Dieser Parameter wird
 aktuell von der Firmware nicht genutzt.
+
+
 """
 }]
 })
@@ -253,6 +255,8 @@ call this function.
 If you want to re-calibrate the offset we recommend that you connect a load that
 has a smooth sinusoidal voltage and current waveform. Alternatively you can also
 short both inputs.
+
+The calibration is saved in non-volatile memory, you only have to set it once.
 """,
 'de':
 """
@@ -266,6 +270,9 @@ Funktion sollte also nicht notwendig sein.
 Wenn der Offset re-kalibriert werden soll empfehlen wir entweder eine Last
 anzuschließen die eine glatte Sinuskurve für Spannung und Strom erzeugt oder
 die beiden Eingänge kurzzuschließen.
+
+Die Kalibrierung wird in nicht-flüchtigen Speicher gespeichert und muss nur einmal
+gesetzt werden.
 """
 }]
 })
