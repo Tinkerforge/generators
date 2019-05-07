@@ -48,6 +48,8 @@ markings on the Industrial Digital Out 4 Bricklet.
 If groups are used, the pins correspond to the element in the group.
 Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
 pins 8-11 and element 4 pins 12-15.
+
+All running monoflop timers will be aborted if this function is called.
 """,
 'de':
 """
@@ -63,6 +65,9 @@ die Pins der Beschriftung auf dem Industrial Digital Out 4 Bricklet.
 Falls Gruppen verwendet werden, entsprechen die Pins den Elementen der
 Gruppe. Element 1 in der Gruppe bekommt Pins 0-3,
 Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
+
+Alle laufenden Monoflop Timer werden abgebrochen, wenn diese Funktion aufgerufen
+wird.
 """
 }]
 })
@@ -302,6 +307,9 @@ markings on the Industrial Digital Out 4 Bricklet.
 If groups are used, the pins correspond to the element in the group.
 Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
 pins 8-11 and element 4 pins 12-15.
+
+Running monoflop timers for the selected pins will be aborted if this function
+is called.
 """,
 'de':
 """
@@ -318,6 +326,9 @@ die Pins der Beschriftung auf dem Industrial Digital Out 4 Bricklet.
 Falls Gruppen verwendet werden, entsprechen die Pins den Elementen der
 Gruppe. Element 1 in der Gruppe bekommt Pins 0-3,
 Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
+
+Laufende Monoflop Timer für die ausgewählten Pins werden abgebrochen, wenn
+diese Funktion aufgerufen wird.
 """
 }]
 })

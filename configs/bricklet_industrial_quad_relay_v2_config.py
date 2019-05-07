@@ -41,6 +41,8 @@ Sets the value of all four relays. A value of *true* closes the
 relay and a value of *false* opens the relay.
 
 Use :func:`Set Selected Value` to only change one relay.
+
+All running monoflop timers will be aborted if this function is called.
 """,
 'de':
 """
@@ -48,6 +50,9 @@ Setzt den Wert der vier Relais. Ein Wert von *true* schließt das Relais
 und ein Wert von *False* öffnet das Relais.
 
 Nutze :func:`Set Selected Value` um einzelne Relais zu schalten.
+
+Alle laufenden Monoflop Timer werden abgebrochen, wenn diese Funktion aufgerufen
+wird.
 """
 }]
 })
@@ -161,11 +166,17 @@ com['packets'].append({
 """
 Sets the output value of the specified channel without affecting the other
 channels.
+
+A running monoflop timer for the specified channel will be aborted if this
+function is called.
 """,
 'de':
 """
 Setzt den Ausgabewert des spezifizierten Kanals ohne die anderen Kanäle
 zu beeinflussen.
+
+Ein laufender Monoflop Timer für den spezifizierten Kanal wird abgebrochen, wenn
+diese Funktion aufgerufen wird.
 """
 }]
 })

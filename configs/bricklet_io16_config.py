@@ -43,6 +43,9 @@ Sets the output value (high or low) for a port ("a" or "b") with a bitmask
 For example: The value 15 or 0b00001111 will turn the pins 0-3 high and the
 pins 4-7 low for the specified port.
 
+All running monoflop timers of the given port will be aborted if this function
+is called.
+
 .. note::
  This function does nothing for pins that are configured as input.
  Pull-up resistors can be switched on with :func:`Set Port Configuration`.
@@ -55,6 +58,9 @@ und eine 0 in der Bitmaske bedeutet logisch 0.
 
 Beispiel: Der Wert 15 bzw. 0b00001111 setzt die Pins 0-3 auf logisch 1 und die
 Pins 4-7 auf logisch 0.
+
+Alle laufenden Monoflop Timer für den angegebenen Port werden abgebrochen, wenn
+diese Funktion aufgerufen wird.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
@@ -113,6 +119,9 @@ For example:
 * ('b', 3, 'o', false) or ('b', 0b00000011, 'o', false) will set pins 0 and 1 of port B as output low.
 * ('b', 4, 'o', true) or ('b', 0b00000100, 'o', true) will set pin 2 of port B as output high.
 
+Running monoflop timers for the selected pins will be aborted if this
+function is called.
+
 The default configuration is input with pull-up.
 """,
 'de':
@@ -132,6 +141,9 @@ Beispiele:
 * ('a', 128, 'i', false) bzw. ('a', 0b10000000, 'i', false) setzt Pin 7 des Ports A als Standard Eingang (potentialfrei wenn nicht verbunden).
 * ('b', 3, 'o', false) bzw. ('b', 0b00000011, 'o', false) setzt die Pins 0 und 1 des Ports B als Ausgang im Zustand logisch 0.
 * ('b', 4, 'o', true) bzw. ('b', 0b00000100, 'o', true) setzt Pin 2 des Ports B als Ausgang im Zustand logisch 1.
+
+Laufende Monoflop Timer für die ausgewählten Pins werden abgebrochen, wenn
+diese Funktion aufgerufen wird.
 
 Die Standardkonfiguration ist Eingang mit Pull-Up.
 """
@@ -448,6 +460,9 @@ bitmask means high and a 0 in the bitmask means low.
 For example: The parameters ('a', 192, 128) or ('a', 0b11000000, 0b10000000)
 will turn pin 7 high and pin 6 low on port A, pins 0-6 will remain untouched.
 
+Running monoflop timers for the selected pins will be aborted if this
+function is called.
+
 .. note::
  This function does nothing for pins that are configured as input.
  Pull-up resistors can be switched on with :func:`Set Port Configuration`.
@@ -462,6 +477,9 @@ logisch 0.
 Beispiel: Die Parameter ('a', 192, 128) bzw. ('a', 0b11000000, 0b10000000)
 setzen den Pin 7 auf logisch 1 und den Pin 6 auf logisch 0 an Port A. Die Pins
 0-6 bleiben unangetastet.
+
+Laufende Monoflop Timer für die ausgewählten Pins werden abgebrochen, wenn
+diese Funktion aufgerufen wird.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.

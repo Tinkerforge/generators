@@ -42,6 +42,8 @@ logic 1 or logic 0 respectively on the corresponding channel.
 
 Use :func:`Set Selected Value` to change only one output channel state.
 
+All running monoflop timers and PWMs will be aborted if this function is called.
+
 For example: (True, True, False, False) will turn the channels 0-1 high and the
 channels 2-3 low.
 """,
@@ -51,6 +53,9 @@ Setzt den Zustand aller vier Kanäle. Der Wert *true* bzw. *false* erzeugen
 logisch 1 bzw. logisch 0 auf dem entsprechenden Kanal.
 
 Mittels :func:`Set Selected Value` können auch einzelnen Kanäle gesetzt werden.
+
+Alle laufenden Monoflop Timer und PWMs werden abgebrochen, wenn diese Funktion
+aufgerufen wird.
 
 Beispiel: (True, True, False, False) setzt die Kanäle 0-1 auf logisch 1 und die
 Kanäle 2-3 auf logisch 0.
@@ -102,11 +107,17 @@ com['packets'].append({
 'en':
 """
 Sets the output value of a specific channel without affecting the other channels.
+
+A running monoflop timer or PWM for the specific channel will be aborted if this
+function is called.
 """,
 'de':
 """
 Setzt den Ausgabewert des spezifizierten Kanals ohne die anderen Kanäle zu
 beeinflussen.
+
+Ein laufender Monoflop Timer oder PWM für den spezifizierten Kanal wird
+abgebrochen, wenn diese Funktion aufgerufen wird.
 """
 }]
 })
@@ -128,6 +139,8 @@ the channel should hold the state.
 If this function is called with the parameters (true, 1500):
 The channel will turn on and in 1.5s it will turn off again.
 
+A PWM for the selected channel will be aborted if this function is called.
+
 A monoflop can be used as a failsafe mechanism. For example: Lets assume you
 have a RS485 bus and a IO-4 Bricklet is connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
@@ -142,6 +155,9 @@ Der erste Parameter ist der gewünschte Zustand des Kanals
 
 Wenn diese Funktion mit den Parametern (true, 1500) aufgerufen wird:
 Der Kanal wird angeschaltet und nach 1,5s wieder ausgeschaltet.
+
+Ein PWM für den ausgewählten Kanal wird abgebrochen, wenn diese Funktion
+aufgerufen wird.
 
 Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
 Angenommen ein RS485 Bus und ein IO-4 Bricklet ist an ein Slave Stapel
@@ -274,6 +290,9 @@ The maximum duty cycle value is 10000 (100%). The optocoupler of the Industrial 
 Out 4 Bricklet 2.0 has a rise time and fall time of 11.5us (each) at 24V. So the maximum
 useful frequency value is about 400000 (40kHz).
 
+A running monoflop timer for the given channel will be aborted if this function
+is called.
+
 The default values are 0, 0.
 """,
 'de':
@@ -289,6 +308,9 @@ Der Maximale Duty Cycle-Wert beträgt 10000 (100%). Der auf dem Industrial Digit
 Out 4 Bricklet 2.0 verwendete Optokoppler hat eine Anstiegszeit und Abfallzeit von
 jeweils 11.5us bei einer Spannung von 24V. Dadurch ist ergibt sich ein maximaler Frequenzwert
 von ca. 400000 (40kHz).
+
+Ein laufender Monoflop Timer für den angegebenen Kanal wird abgebrochen, wenn
+diese Funktion aufgerufen wird.
 
 Die Standardwerte sind 0, 0.
 """

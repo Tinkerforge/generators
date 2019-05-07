@@ -60,6 +60,8 @@ Use :func:`Set Selected Value` to change only one output channel state.
 For example: (True, True, False, False, ..., False) will turn the channels 0-1
 high and the channels 2-15 low.
 
+All running monoflop timers will be aborted if this function is called.
+
 .. note::
  This function does nothing for channels that are configured as input. Pull-up
  resistors can be switched on with :func:`Set Configuration`.
@@ -73,6 +75,9 @@ Mittels :func:`Set Selected Value` können auch einzelnen Kanäle gesetzt werden
 
 Beispiel: (True, True, False, False, ..., False) setzt die Kanäle 0-1 auf logisch 1 und die
 Kanäle 2-15 auf logisch 0.
+
+Alle laufenden Monoflop Timer werden abgebrochen, wenn diese Funktion
+aufgerufen wird.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Kanälen die als Eingang konfiguriert
@@ -114,14 +119,20 @@ com['packets'].append({
 """
 Sets the output value of a specific channel without affecting the other channels.
 
+A running monoflop timer for the specific channel will be aborted if this
+function is called.
+
 .. note::
  This function does nothing for channels that are configured as input. Pull-up
  resistors can be switched on with :func:`Set Configuration`.
 """,
 'de':
 """
-Setzt den Ausgabewert des spezifizierten Kanals ohne die anderen Kanäle zu
+Setzt den Ausgabewert des ausgewählten Kanals ohne die anderen Kanäle zu
 beeinflussen.
+
+Ein laufender Monoflop Timer für den ausgewählten Kanal wird abgebrochen,
+wenn diese Funktion aufgerufen wird.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Kanälen die als Eingang konfiguriert
@@ -158,6 +169,9 @@ For example:
 * (2, 'o', true) will set channel-2 as output high.
 * (3, 'o', false) will set channel-3 as output low.
 
+A running monoflop timer for the specific channel will be aborted if this
+function is called.
+
 The default configuration is input with pull-up.
 """,
 'de':
@@ -177,6 +191,9 @@ Beispiele:
 * (1, 'i', false) setzt Kanal-1 als Standard Eingang (potentialfrei wenn nicht verbunden).
 * (2, 'o', true) setzt Kanal-2 als Ausgang im Zustand logisch 1.
 * (3, 'o', false) setzt Kanal-3 als Ausgang im Zustand logisch 0.
+
+Ein laufender Monoflop Timer für den angegebenen Kanal wird abgebrochen,
+wenn diese Funktion aufgerufen wird.
 
 Die Standardkonfiguration ist Eingang mit Pull-Up.
 """

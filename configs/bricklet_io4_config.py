@@ -42,6 +42,8 @@ means high and a 0 in the bitmask means low.
 For example: The value 3 or 0b0011 will turn the pins 0-1 high and the
 pins 2-3 low.
 
+All running monoflop timers will be aborted if this function is called.
+
 .. note::
  This function does nothing for pins that are configured as input.
  Pull-up resistors can be switched on with :func:`Set Configuration`.
@@ -54,6 +56,9 @@ bedeutet logisch 0.
 
 Beispiel: Der Wert 3 bzw. 0b0011 setzt die Pins 0-1 auf logisch 1 und die
 Pins 2-3 auf logisch 0.
+
+Alle laufenden Monoflop Timer werden abgebrochen, wenn diese Funktion aufgerufen
+wird.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
@@ -110,6 +115,9 @@ For example:
 * (3, 'o', false) or (0b0011, 'o', false) will set pins 0 and 1 as output low.
 * (4, 'o', true) or (0b0100, 'o', true) will set pin 2 of as output high.
 
+Running monoflop timers for the specified pins will be aborted if this
+function is called.
+
 The default configuration is input with pull-up.
 """,
 'de':
@@ -129,6 +137,9 @@ Beispiele:
 * (8, 'i', false) bzw. (0b1000, 'i', false) setzt Pin 3 als Standard Eingang (potentialfrei wenn nicht verbunden).
 * (3, 'o', false) bzw. (0b0011, 'o', false) setzt die Pins 0 und 1 als Ausgang im Zustand logisch 0.
 * (4, 'o', true) bzw. (0b0100, 'o', true) setzt Pin 2 als Ausgang im Zustand logisch 1.
+
+Laufende Monoflop Timer für die angegebenen Pins werden abgebrochen, wenn
+diese Funktion aufgerufen wird.
 
 Die Standardkonfiguration ist Eingang mit Pull-Up.
 """
@@ -431,6 +442,9 @@ and *false* refers to low.
 For example: The parameters (9, 4) or (0b0110, 0b0100) will turn
 pin 1 low and pin 2 high, pin 0 and 3 will remain untouched.
 
+Running monoflop timers for the selected pins will be aborted if this
+function is called.
+
 .. note::
  This function does nothing for pins that are configured as input.
  Pull-up resistors can be switched on with :func:`Set Configuration`.
@@ -444,6 +458,9 @@ logisch 0.
 
 Beispiel: Die Parameter (9, 4) bzw (0b0110, 0b0100) setzen den Pin 1 auf
 logisch 0 und den Pin 2 auf logisch 1. Die Pins 0 und 3 bleiben unangetastet.
+
+Laufende Monoflop Timer für die ausgewählten Pins werden abgebrochen, wenn
+diese Funktion aufgerufen wird.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.

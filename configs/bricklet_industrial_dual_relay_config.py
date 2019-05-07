@@ -45,7 +45,7 @@ If you just want to set one of the relays and don't know the current state
 of the other relay, you can get the state with :func:`Get Value` or you
 can use :func:`Set Selected Value`.
 
-Running monoflop timers will be overwritten if this function is called.
+All running monoflop timers will be aborted if this function is called.
 
 The default value is (*false*, *false*).
 """,
@@ -58,7 +58,8 @@ Wenn nur eines der Relais gesetzt werden soll und der aktuelle Zustand des
 anderen Relais nicht bekannt ist, dann kann der Zustand mit :func:`Get Value`
 ausgelesen werden oder es kann :func:`Set Selected Value` genutzt werden.
 
-Laufende Monoflop Timer werden überschrieben wenn diese Funktion aufgerufen wird.
+Alle laufenden Monoflop Timer werden abgebrochen, wenn diese Funktion aufgerufen
+wird.
 
 Der Standardwert ist (*false*, *false*).
 """
@@ -189,12 +190,18 @@ com['packets'].append({
 Sets the state of the selected relay (0 or 1), *true* means on and *false*
 means off.
 
+A running monoflop timer for the selected relay will be aborted if this function
+is called.
+
 The other relay remains untouched.
 """,
 'de':
 """
-Setzt den Zustand des gewählten Relais (0 oder 1), *true* bedeutet ein und
+Setzt den Zustand des ausgewählten Relais (0 oder 1), *true* bedeutet ein und
 *false* aus.
+
+Ein laufender Monoflop Timer für das ausgewählte Relais wird abgebrochen, wenn
+diese Funktion aufgerufen wird.
 
 Das andere Relais bleibt unverändert.
 """
