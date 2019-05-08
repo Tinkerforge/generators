@@ -323,3 +323,50 @@ Gibt den Offset-Wert zurück, wie von :func:`Set Offset Calibration` gesetzt.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Distance LED Config',
+'elements': [('Config', 'uint8', 1, 'in', ('Distance LED Config', [('Off', 0),
+                                                                   ('On', 1),
+                                                                   ('Show Heartbeat', 2),
+                                                                   ('Show Distance', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Configures the distance LED to be either turned off, turned on, blink in
+heartbeat mode or show the distance (brighter = object is nearer).
+
+The default value is 3 (show distance).
+""",
+'de':
+"""
+Konfiguriert die Distanz-LED. Die LED kann ausgeschaltet, eingeschaltet,
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
+mit der LED die Distanz anzuzeigen (heller = Objekt näher).
+
+Der Standardwert ist 3 (Distanzanzeige).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Distance LED Config',
+'elements': [('Config', 'uint8', 1, 'out', ('Distance LED Config', [('Off', 0),
+                                                                    ('On', 1),
+                                                                    ('Show Heartbeat', 2),
+                                                                    ('Show Distance', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the LED configuration as set by :func:`Set Distance LED Config`
+""",
+'de':
+"""
+Gibt die LED-Konfiguration zurück, wie von :func:`Set Distance LED Config` gesetzt.
+"""
+}]
+})
