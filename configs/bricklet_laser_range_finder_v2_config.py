@@ -46,7 +46,7 @@ The laser has to be enabled, see :func:`Set Enable`.
 Gibt die gemessene Distanz zurück. Der Wertebereich ist 0 bis 4000
 und die Werte haben die Einheit cm.
 
-Der Laser aktiviert werden, siehe :func:`Set Enable`.
+Der Laser muss aktiviert werden, siehe :func:`Set Enable`.
 """
 }
 
@@ -64,7 +64,7 @@ velocity_doc = {
 Returns the measured velocity. The value has a range of -12800 to 12700
 and is given in 1/100 m/s.
 
-the velocity measurement only produces stables results if a fixed
+The velocity measurement only produces stables results if a fixed
 measurement rate (see :func:`Set Configuration`) is configured. Also the laser
 has to be enabled, see :func:`Set Enable`.
 """,
@@ -82,9 +82,9 @@ Zusätzlich muss der Laser aktiviert werden, siehe :func:`Set Enable`.
 add_callback_value_function(
     packets   = com['packets'],
     name      = 'Get Velocity',
-    data_name = 'Distance',
+    data_name = 'Velocity',
     data_type = 'int16',
-    doc       = distance_doc
+    doc       = velocity_doc
 )
 
 com['packets'].append({
@@ -95,7 +95,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Activates the laser of the LIDAR if set to *true*.
+Enables the laser of the LIDAR if set to *true*.
 
 We recommend that you wait 250ms after enabling the laser before
 the first call of :func:`Get Distance` to ensure stable measurements.
@@ -104,7 +104,7 @@ the first call of :func:`Get Distance` to ensure stable measurements.
 """
 Aktiviert den Laser des LIDAR wenn auf *true* gesetzt.
 
-Wir empfehlen nach dem aktivieren des Lasers 250ms zu warten bis zum
+Wir empfehlen nach dem Aktivieren des Lasers 250ms zu warten bis zum
 ersten Aufruf von :func:`Get Distance` um stabile Messwerte zu garantieren.
 """
 }]
@@ -127,7 +127,6 @@ Gibt den Wert zurück wie von :func:`Set Enable` gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
@@ -139,7 +138,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
+The **Acquisition Count** defines the number of times the Laser Range Finder Bricklet
 will integrate acquisitions to find a correlation record peak. With a higher count,
 the Bricklet can measure longer distances. With a lower count, the rate increases. The
 allowed values are 1-255.
@@ -169,7 +168,7 @@ Measurement Frequency are 128, false, 0 and 0.
 """,
 'de':
 """
-Der Parameter **Aquisition Count** definiert die Anzahl der Datenerfassungen die integriert
+Der Parameter **Acquisition Count** definiert die Anzahl der Datenerfassungen die integriert
 werden, um eine Korrelation zu finden. Mit einer größeren Anzahl kann das Bricklet höhere
 Distanzen messen, mit einer kleineren Anzahl ist die Messrate höher. Erlaubte Werte sind 1-255.
 

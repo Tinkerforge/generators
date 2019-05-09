@@ -726,7 +726,7 @@ com['packets'].append({
  version 3. Use :func:`Set Mode` for hardware version 1. You can check
  the sensor hardware version using :func:`Get Sensor Hardware Version`.
 
-The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
+The **Acquisition Count** defines the number of times the Laser Range Finder Bricklet
 will integrate acquisitions to find a correlation record peak. With a higher count,
 the Bricklet can measure longer distances. With a lower count, the rate increases. The
 allowed values are 1-255.
@@ -762,7 +762,7 @@ Measurement Frequency are 128, false, 0 and 0.
  Die Hardware Version des Sensors kann mittels :func:`Get Sensor Hardware Version`
  abgefragt werden.
 
-Der Parameter **Aquisition Count** definiert die Anzahl der Datenerfassungen die integriert
+Der Parameter **Acquisition Count** definiert die Anzahl der Datenerfassungen die integriert
 werden, um eine Korrelation zu finden. Mit einer größeren Anzahl kann das Bricklet höhere
 Distanzen messen, mit einer kleineren Anzahl ist die Messrate höher. Erlaubte Werte sind 1-255.
 

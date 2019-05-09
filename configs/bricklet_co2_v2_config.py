@@ -121,7 +121,6 @@ Gibt den Umgebungs-Luftdruch zurück, wie von :func:`Set Air Pressure` gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Offset',

@@ -141,7 +141,6 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 }]
 })
 
-
 com['packets'].append({
 'type': 'callback',
 'name': 'Color',
@@ -270,7 +269,6 @@ Gibt den Wert zurück, wie von :func:`Set Light` gesetzt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
