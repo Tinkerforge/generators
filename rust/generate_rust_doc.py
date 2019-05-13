@@ -67,7 +67,7 @@ class RustDocDevice(rust_common.RustDevice):
             if not packet.has_high_level() and name not in synchronous_methods:
                 returns = "ConvertingReceiver<" + returns + ">"
             if "et_response_expected" in name:
-                params = '&mut self{}'.format(plist)    
+                params = '&mut self{}'.format(plist)
             else:
                 params = '&self{}'.format(plist)
             desc = packet.get_rust_formatted_doc()
@@ -134,7 +134,7 @@ Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space
  wurde (siehe Beispiele :ref:`oben <{rst_ref_name}_rust_examples>`).
 """
         }
-                
+
         c_str = {
             'en': """
 .. _{0}_rust_callbacks:
@@ -145,7 +145,7 @@ Callbacks
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
 with the corresponding `get_*_callback_receiver` function, which returns a receiver
-for callback events. 
+for callback events.
 
 .. note::
  Using callbacks for recurring events is *always* preferred
@@ -184,10 +184,10 @@ API
 
 To allow non-blocking usage, nearly every function of the Rust bindings returns
 a wrapper around a mpsc::Receiver. To block until the function has finished and
-get your result, call one of the receiver's recv variants. Those return either 
+get your result, call one of the receiver's recv variants. Those return either
 the result sent by the device, or any error occured.
 
-Functions returning a result directly will block until the device has finished 
+Functions returning a result directly will block until the device has finished
 processing the request.
 
 All functions listed below are thread-safe, those which return a receiver are lock-free.
@@ -203,7 +203,7 @@ API
 ---
 Um eine nicht-blockierende Verwendung zu erlauben, gibt fast jede Funktion der Rust-Bindings
 einen Wrapper um einen mpsc::Receiver zurück. Um das Ergebnis eines Funktionsaufrufs zu erhalten
-und zu blockieren, bis das Gerät die Anfrage verarbeitet hat, können die recv-Varianten des 
+und zu blockieren, bis das Gerät die Anfrage verarbeitet hat, können die recv-Varianten des
 Receivers verwendet werden. Diese geben entweder das vom Gerät gesendete Ergebnis, oder einen
 aufgetretenen Fehler zurück.
 
@@ -269,7 +269,8 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
         if c:
-            api_str += common.select_lang(common.ccf_str).format("", ccf)
+            if len(ccf) > 0:
+                api_str += common.select_lang(common.ccf_str).format("", ccf)
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,
                                                         self.get_name().upper,
@@ -315,7 +316,7 @@ class RustDocPacket(rust_common.RustPacket):
 
         text = common.handle_rst_param(text, format_parameter)
         if self.get_type() == 'callback':
-            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)            
+            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)
         else:
             text = common.handle_rst_word(text, constants=constants)
         text = common.handle_rst_substitutions(text, self)

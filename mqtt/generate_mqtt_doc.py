@@ -42,7 +42,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
                                                    packet.get_mqtt_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='mqtt')
-            
+
     def get_mqtt_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example-', '').replace('.txt', '').replace('-','_')
@@ -73,10 +73,10 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
             if packet.get_name().under == 'get_identity':
                 get_id_desc = {
                     'en': """If symbolic output is not disabled, the device identifier is mapped to the corresponding name in the format used in topics.
- 
+
  The display name contains the {}'s name in a human readable form.""",
                     'de': """Falls die symbolische Ausgabe nicht deaktiviert wurde, wird der device identifier auf den entsprechenden Namen im Format, welches die Topics verwenden, abgebildet.
- 
+
  Der display name enthält den Anzeigenamen des {}."""}
                 desc += common.select_lang(get_id_desc).format(self.get_short_display_name())
 
@@ -121,7 +121,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
             else:
                 skip = 0
             cbs += common.select_lang(cb).format(device=device,
-                                                    callback_name_under=packet.get_mqtt_name(skip=skip),                                                    
+                                                    callback_name_under=packet.get_mqtt_name(skip=skip),
                                                     result_type=result_type,
                                                     desc=desc)
         return cbs
@@ -208,7 +208,8 @@ Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../respon
         if af:
             api_str += common.select_lang(common.af_str).format(af)
         if c:
-            api_str += common.select_lang(common.ccf_str).format("", ccf)
+            if len(ccf) > 0:
+                api_str += common.select_lang(common.ccf_str).format("", ccf)
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,
                                                         self.get_name().upper,
@@ -217,7 +218,7 @@ Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../respon
         article = 'ein'
         if self.is_brick():
             article = 'einen'
-        
+
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
                                               self.specialize_mqtt_doc_function_links(common.select_lang(self.get_doc())),
                                               api_str,
@@ -254,9 +255,9 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
         show_symbols = lambda elem: elem.get_constant_group() != None \
                                     or (self.get_name().under == 'get_identity' and elem.get_name().under == 'device_identifier')
 
-        for element in self.get_elements(direction=direction, high_level=high_level):            
+        for element in self.get_elements(direction=direction, high_level=high_level):
             params.append('{param_str} {name}: {type}{symbols}'.format(
-                    param_str=param_str, 
+                    param_str=param_str,
                     name=element.get_name().under,
                     type=element.get_mqtt_type(for_doc=True),
                     symbols=common.select_lang(has_symbols) if show_symbols(element) else ''))
@@ -285,7 +286,7 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
 
         text = common.handle_rst_param(text, format_parameter)
         if self.get_type() == 'callback':
-            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)            
+            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)
         else:
             text = common.handle_rst_word(text, constants=constants)
         text = common.handle_rst_substitutions(text, self)

@@ -41,7 +41,7 @@ class GoDocDevice(go_common.GoDevice):
                                                    packet.get_name(skip=-2 if high_level else 0).camel)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='go')
-            
+
     def get_go_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example_', '').replace('.go', '')
@@ -124,7 +124,7 @@ class GoDocDevice(go_common.GoDevice):
  wurde (siehe Beispiele :ref:`oben <{rst_ref_name}_go_examples>`).
 """
         }
-                
+
         c_str = {
             'en': """
 .. _{0}_go_callbacks:
@@ -268,7 +268,8 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
         if c:
-            api_str += common.select_lang(common.ccf_str).format("", ccf)
+            if len(ccf) > 0:
+                api_str += common.select_lang(common.ccf_str).format("", ccf)
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,
                                                         self.get_name().upper,
@@ -317,7 +318,7 @@ class GoDocPacket(go_common.GoPacket):
 
         text = common.handle_rst_param(text, format_parameter)
         if self.get_type() == 'callback':
-            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)            
+            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)
         else:
             text = common.handle_rst_word(text, constants=constants)
         text = common.handle_rst_substitutions(text, self)

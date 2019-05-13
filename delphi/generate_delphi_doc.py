@@ -286,7 +286,8 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
         if c:
-            api_str += common.select_lang(common.ccf_str).format(ccf, '')
+            if len(ccf) > 0:
+                api_str += common.select_lang(common.ccf_str).format(ccf, '')
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_delphi_class_name(),
                                                         self.get_name().headless,
