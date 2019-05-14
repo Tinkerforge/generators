@@ -388,7 +388,9 @@ class RustExampleSetterFunction(common.ExampleSetterFunction, RustExampleArgumen
         return None
 
     def get_rust_source(self):
-        template = '{comment1}{global_line_prefix}\t\t{device_name_initials}.{function_name}({arguments});{comment2}\n'
+        template = '{comment1}{global_line_prefix}\t\t{device_name_initials}.{function_name}({arguments}){propagate_errors};{comment2}\n'
+
+        has_high_level = [packet for packet in self.get_device().get_packets(type_='function') if (packet.get_name().under == self.get_name().under) or (len(packet.get_name().under.split("_")) > 2 and packet.get_name(skip=-2).under == self.get_name().under)][0].has_high_level()
 
         result = template.format(global_line_prefix=global_line_prefix,
                                  device_name_under=self.get_device().get_name().under,
@@ -396,6 +398,7 @@ class RustExampleSetterFunction(common.ExampleSetterFunction, RustExampleArgumen
                                  device_category_under = self.get_device().get_category().under,
                                  function_name=self.get_name().under,
                                  arguments=',<BP>'.join(self.get_rust_arguments()),
+                                 propagate_errors = '?' if has_high_level else '',
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
@@ -416,7 +419,7 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
         // This thread ends when the `{device_name_initials}` object
         // is dropped, so there is no need for manual cleanup.
         thread::spawn(move || {{
-            for {function_name_under} in {function_name_under}_receiver {{{match_expr}
+            for {unused_marker}{function_name_under} in {function_name_under}_receiver {{{match_expr}
                 {write_lines}{extra_message}
             {match_expr_end}}}
         }});
@@ -454,6 +457,7 @@ class RustExampleCallbackFunction(common.ExampleCallbackFunction):
                                  device_name_under=self.get_device().get_name().under,
                                  device_name_initials=self.get_device().get_initial_name(),
                                  device_category_under=self.get_device().get_category().under,
+                                 unused_marker='' if len(write_lines) > 0 else '_',
                                  function_name_under=self.get_name().under,
                                  function_name_comment=self.get_comment_name(),
                                  write_lines='\n'.join(write_lines).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
@@ -701,7 +705,7 @@ class RustExamplesGenerator(common.ExamplesGenerator):
             if not example.is_incomplete():
                 p = subprocess.Popen(["rustfmt", filename, "--config-path", self.root_dir], cwd=examples_dir, stdout = subprocess.PIPE)
                 out, err = p.communicate() #block until rustfmt has finished
-                if out != "" or err is not None:
+                if len(out) > 0 or err is not None:
                     print("Got the following output from rustfmt:")
                     print(out)
                     print(err)
