@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -589,8 +589,7 @@ uint8_t packet_header_get_sequence_number(PacketHeader *header);
 /**
  * \internal
  */
-void packet_header_set_sequence_number(PacketHeader *header,
-                                       uint8_t sequence_number);
+void packet_header_set_sequence_number(PacketHeader *header, uint8_t sequence_number);
 
 /**
  * \internal
@@ -600,8 +599,7 @@ uint8_t packet_header_get_response_expected(PacketHeader *header);
 /**
  * \internal
  */
-void packet_header_set_response_expected(PacketHeader *header,
-                                         uint8_t response_expected);
+void packet_header_set_response_expected(PacketHeader *header, bool response_expected);
 
 /**
  * \internal

@@ -2356,7 +2356,7 @@ int packet_header_create(PacketHeader *header, uint8_t length,
 
 	if (device_p != NULL) {
 		ret = device_get_response_expected(device_p, function_id, &response_expected);
-		packet_header_set_response_expected(header, response_expected ? 1 : 0);
+		packet_header_set_response_expected(header, response_expected);
 	}
 
 	return ret;
@@ -2366,8 +2366,8 @@ uint8_t packet_header_get_sequence_number(PacketHeader *header) {
 	return (header->sequence_number_and_options >> 4) & 0x0F;
 }
 
-void packet_header_set_sequence_number(PacketHeader *header,
-                                       uint8_t sequence_number) {
+void packet_header_set_sequence_number(PacketHeader *header, uint8_t sequence_number) {
+	header->sequence_number_and_options &= ~0xF0;
 	header->sequence_number_and_options |= (sequence_number << 4) & 0xF0;
 }
 
@@ -2375,9 +2375,12 @@ uint8_t packet_header_get_response_expected(PacketHeader *header) {
 	return (header->sequence_number_and_options >> 3) & 0x01;
 }
 
-void packet_header_set_response_expected(PacketHeader *header,
-                                         uint8_t response_expected) {
-	header->sequence_number_and_options |= (response_expected << 3) & 0x08;
+void packet_header_set_response_expected(PacketHeader *header, bool response_expected) {
+	if (response_expected) {
+		header->sequence_number_and_options |= 0x01 << 3;
+	} else {
+		header->sequence_number_and_options &= ~(0x01 << 3);
+	}
 }
 
 uint8_t packet_header_get_error_code(PacketHeader *header) {
