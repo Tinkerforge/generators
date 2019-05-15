@@ -138,15 +138,13 @@ begin
     { Convert from 64bit to 32bit }
     value1 := longUid and $FFFFFFFF;
     value2 := longword((longUid shr 32) and $FFFFFFFF);
-    uid_ := (value1 and $00000FFF);
-    uid_ := uid_ or ((value1 and longword($0F000000)) shr 12);
-    uid_ := uid_ or ((value2 and longword($0000003F)) shl 16);
-    uid_ := uid_ or ((value2 and longword($000F0000)) shl 6);
-    uid_ := uid_ or ((value2 and longword($3F000000)) shl 2);
-  end
-  else begin
-    uid_ := longUid;
+    longUid := (value1 and $00000FFF);
+    longUid := longUid or ((value1 and longword($0F000000)) shr 12);
+    longUid := longUid or ((value2 and longword($0000003F)) shl 16);
+    longUid := longUid or ((value2 and longword($000F0000)) shl 6);
+    longUid := longUid or ((value2 and longword($3F000000)) shl 2);
   end;
+  uid_ := longUid;
   if (uid_ = 0) then begin
     uidValid := false; { broadcast UID is forbidden }
   end;
