@@ -166,12 +166,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a Chibi Extension is available to be used by the Master Brick.
+Returns *true* if the Master Brick is at position 0 in the stack and a Chibi
+Extension is available.
 """,
 'de':
 """
-Gibt zurück ob eine Chibi Extension zur Nutzung durch den Master Brick
-verfügbar ist.
+Gibt *true* zurück, wenn der Master Brick an Position 0 im Stapel und eine
+Chibi Extension verfügbar ist.
 """
 }]
 })
@@ -511,12 +512,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a RS485 Extension is available to be used by the Master Brick.
+Returns *true* if the Master Brick is at position 0 in the stack and a RS485
+Extension is available.
 """,
 'de':
 """
-Gibt zurück ob eine RS485 Extension zur Nutzung durch den Master Brick
-verfügbar ist.
+Gibt *true* zurück, wenn der Master Brick an Position 0 im Stapel und eine
+RS485 Extension verfügbar ist.
 """
 }]
 })
@@ -731,12 +733,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a WIFI Extension is available to be used by the Master Brick.
+Returns *true* if the Master Brick is at position 0 in the stack and a WIFI
+Extension is available.
 """,
 'de':
 """
-Gibt zurück ob eine WIFI Extension zur Nutzung durch den Master Brick verfügbar
-ist.
+Gibt *true* zurück, wenn der Master Brick an Position 0 im Stapel und eine
+WIFI Extension verfügbar ist.
 """
 }]
 })
@@ -2024,13 +2027,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a Ethernet Extension is available to be used by the Master
-Brick.
+Returns *true* if the Master Brick is at position 0 in the stack and an Ethernet
+Extension is available.
 """,
 'de':
 """
-Gibt zurück ob eine Ethernet Extension zur Nutzung durch den Master Brick
-verfügbar ist.
+Gibt *true* zurück, wenn der Master Brick an Position 0 im Stapel und eine
+Ethernet Extension verfügbar ist.
 """
 }]
 })
@@ -2437,13 +2440,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a WIFI Extension 2.0 is available to be used by the Master
-Brick.
+Returns *true* if the Master Brick is at position 0 in the stack and a WIFI
+Extension 2.0 is available.
 """,
 'de':
 """
-Gibt zurück ob eine WIFI Extension 2.0 zur Nutzung durch den Master Brick
-verfügbar ist.
+Gibt *true* zurück, wenn der Master Brick an Position 0 im Stapel und eine
+WIFI Extension 2.0 verfügbar ist.
 """
 }]
 })
