@@ -29,7 +29,7 @@ func Base58ToU32(str string) (uint32, error) {
 		r := rune(str[len(str)-idx-1])
 		i := strings.IndexRune(alphabet, r)
 		if i == -1 {
-			return uint32(result_u64), fmt.Errorf("UID %s contained an invalid character at position: %d", str, idx)
+			return uint32(result_u64), fmt.Errorf("UID %s contained an invalid character.", str)
 		}
 
 		pow_overflows := digit > 0 && pow(radix, digit-1) > (math.MaxUint64/radix)
