@@ -10,7 +10,7 @@ const ALPHABET: &str = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWX
 #[derive(Debug, Copy, Clone)]
 pub enum Base58Error {
     ///Is returned if the parse finds an invalid character. Contains the character and it's index in the string.
-    InvalidCharacter(usize, u8),
+    InvalidCharacter,
     UidToBig,
     UidEmpty
 }
@@ -18,8 +18,8 @@ pub enum Base58Error {
 impl Display for Base58Error {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match *self {
-            Base58Error::InvalidCharacter(idx, character) => write!(f, "Invalid character at index {}: {}", idx, character),
-            Base58Error::UidToBig => write!(f, "UID was to big to fit into a u64"),
+            Base58Error::InvalidCharacter => write!(f, "UID contained an invalid character."),
+            Base58Error::UidToBig => write!(f, "UID was too big to fit into a u64"),
             Base58Error::UidEmpty => write!(f, "UID was empty")
         }
     }
@@ -28,8 +28,8 @@ impl Display for Base58Error {
 impl Error for Base58Error {
     fn description(&self) -> &str {
         match *self {
-            Base58Error::InvalidCharacter(_, _) => "Invalid character",
-            Base58Error::UidToBig => "UID was to big to fit into a u64",
+            Base58Error::InvalidCharacter => "UID contained an invalid character.",
+            Base58Error::UidToBig => "UID was too big to fit into a u64",
             Base58Error::UidEmpty => "UID was empty or a value that mapped to zero"
         }
     }
@@ -50,7 +50,7 @@ impl Base58 for str {
         let filtered = self.as_bytes().iter().skip_while(|c| **c == '1' as u8).collect::<Vec<&u8>>();
         for (idx, &&character) in filtered.iter().enumerate().rev() {
             match ALPHABET.as_bytes().iter().enumerate().find(|(_i, c)| **c == character).map(|(i, _c)| i) {
-                None => return Err(Base58Error::InvalidCharacter(idx, character)),
+                None => return Err(Base58Error::InvalidCharacter),
                 Some(i) => {                    
                     if digit > 0 && radix.pow(digit - 1) > (u64::max_value() / radix) {
                         return Err(Base58Error::UidToBig); //pow overflow
@@ -78,10 +78,12 @@ impl Base58 for str {
                 |(value2 & 0x3F_00_00_00) << 2) as u32
             }
             else {
-                result as u32
+                result_u64 as u32
             };
         if result == 0 {
-            return Err(Base58Error::UidEmpty);
+            Err(Base58Error::UidEmpty)
+        } else {
+            Ok(result)
         }
     }
 }
