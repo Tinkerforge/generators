@@ -133,8 +133,6 @@ typedef struct {
 	STATIC_ASSERT(sizeof(Packet) == 80, "Packet has invalid size");
 	STATIC_ASSERT(sizeof(DeviceEnumerate_Broadcast) == 8, "DeviceEnumerate_Broadcast has invalid size");
 	STATIC_ASSERT(sizeof(DeviceEnumerate_Callback) == 34, "DeviceEnumerate_Callback has invalid size");
-	STATIC_ASSERT(sizeof(DeviceGetIdentity_Request) == 8, "DeviceGetIdentity_Request has invalid size");
-	STATIC_ASSERT(sizeof(DeviceGetIdentity_Response) == 33, "DeviceGetIdentity_Response has invalid size");
 	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Request) == 8, "BrickDaemonGetAuthenticationNonce_Request has invalid size");
 	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Response) == 12, "BrickDaemonGetAuthenticationNonce_Response has invalid size");
 	STATIC_ASSERT(sizeof(BrickDaemonAuthenticate_Request) == 32, "BrickDaemonAuthenticate_Request has invalid size");
