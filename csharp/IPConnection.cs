@@ -1135,6 +1135,10 @@ namespace Tinkerforge
 				uidTmp |= (value2 & 0x3F000000L) << 2;
 			}
 
+			if (uidTmp == 0) {
+				throw new ArgumentOutOfRangeException("Base58 value is empty or maps to zero: " + uid);
+			}
+
 			IntRepresentation = (int)uidTmp;
 		}
 
@@ -1496,17 +1500,41 @@ namespace Tinkerforge
 		{
 			long value = 0;
 			long columnMultiplier = 1;
+
 			for (int i = encoded.Length - 1; i >= 0; i--)
 			{
 				int column = IndexOf(encoded[i], BASE58);
 
 				if (column < 0)
 				{
-					throw new ArgumentOutOfRangeException("Invalid Base58 value: " + encoded);
+					throw new ArgumentOutOfRangeException("Base58 value contains invalid character: " + encoded);
 				}
 
-				value += column * columnMultiplier;
-				columnMultiplier *= 58;
+				try
+				{
+					checked
+					{
+						value += column * columnMultiplier;
+					}
+				}
+				catch (OverflowException)
+				{
+					throw new ArgumentOutOfRangeException("Base58 value is too big: " + encoded);
+				}
+
+				try
+				{
+					checked
+					{
+						columnMultiplier *= 58;
+					}
+				}
+				catch (OverflowException)
+				{
+					if (i > 0) {
+						throw new ArgumentOutOfRangeException("Base58 value is too big: " + encoded);
+					}
+				}
 			}
 
 			return value;
