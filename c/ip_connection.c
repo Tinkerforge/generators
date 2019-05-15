@@ -557,17 +557,13 @@ static bool uint64_multiply(uint64_t a, uint64_t b, uint64_t *c) {
 }
 
 static bool base58_decode(const char *str, uint64_t *ret_value) {
-	int i;
+	int i = strlen(str) - 1;
 	int k;
 	uint64_t next;
 	uint64_t value = 0;
 	uint64_t base = 1;
 
-	while (*str != '\0' && *str == '1') {
-		++str; // drop leading "1" (zeros)
-	}
-
-	i = strlen(str) - 1;
+	*ret_value = 0;
 
 	for (; i >= 0; --i) {
 		for (k = 0; k < 58; ++k) {
@@ -591,10 +587,6 @@ static bool base58_decode(const char *str, uint64_t *ret_value) {
 		if (i > 0 && !uint64_multiply(base, 58, &base))  {
 			return false; // overflow
 		}
-	}
-
-	if (value == 0) {
-		return false; // broadcast UID is forbidden
 	}
 
 	*ret_value = value;
@@ -1248,9 +1240,7 @@ void device_create(Device *device, const char *uid_str,
 
 	device_p->uid_valid = base58_decode(uid_str, &uid);
 
-	if (!device_p->uid_valid) {
-		uid = 0;
-	} else if (uid > 0xFFFFFFFF) {
+	if (device_p->uid_valid && uid > 0xFFFFFFFF) {
 		// convert from 64bit to 32bit
 		value1 = uid & 0xFFFFFFFF;
 		value2 = (uid >> 32) & 0xFFFFFFFF;
@@ -1260,15 +1250,15 @@ void device_create(Device *device, const char *uid_str,
 		uid |= (value2 & 0x0000003F) << 16;
 		uid |= (value2 & 0x000F0000) << 6;
 		uid |= (value2 & 0x3F000000) << 2;
+	}
 
-		if (uid == 0) {
-			device_p->uid_valid = false; // broadcast UID is forbidden
-		}
+	if (uid == 0) {
+		device_p->uid_valid = false; // broadcast UID is forbidden
 	}
 
 	device_p->ref_count = 1;
 
-	device_p->uid = uid & 0xFFFFFFFF;
+	device_p->uid = uid;
 
 	device_p->ipcon_p = ipcon_p;
 
