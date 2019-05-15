@@ -52,7 +52,8 @@ enum {
 	E_INVALID_PARAMETER = -9, // error response from device
 	E_NOT_SUPPORTED = -10, // error response from device
 	E_UNKNOWN_ERROR_CODE = -11, // error response from device
-	E_STREAM_OUT_OF_SYNC = -12
+	E_STREAM_OUT_OF_SYNC = -12,
+	E_UID_INVALID = -13
 };
 
 #ifdef IPCON_EXPOSE_MILLISLEEP
@@ -229,6 +230,7 @@ struct _DevicePrivate {
 	int ref_count;
 
 	uint32_t uid; // always host endian
+	bool uid_valid;
 
 	IPConnectionPrivate *ipcon_p;
 

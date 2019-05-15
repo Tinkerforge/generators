@@ -521,36 +521,85 @@ static void base58_encode(uint64_t value, char *str) {
 }
 #endif
 
-static uint64_t base58_decode(const char *str) {
+// https://www.fefe.de/intof.html
+static bool uint64_add(uint64_t a, uint64_t b, uint64_t *c) {
+	if (UINT64_MAX - a < b) {
+		return false;
+	}
+
+	*c = a + b;
+
+	return true;
+}
+
+static bool uint64_multiply(uint64_t a, uint64_t b, uint64_t *c) {
+	uint64_t a0 = a & UINT32_MAX;
+	uint64_t a1 = a >> 32;
+	uint64_t b0 = b & UINT32_MAX;
+	uint64_t b1 = b >> 32;
+	uint64_t c0;
+	uint64_t c1;
+
+	if (a1 > 0 && b1 > 0) {
+		return false;
+	}
+
+	c1 = a1 * b0 + a0 * b1;
+
+	if (c1 > UINT32_MAX) {
+		return false;
+	}
+
+	c0 = a0 * b0;
+	c1 <<= 32;
+
+	return uint64_add(c1, c0, c);
+}
+
+static bool base58_decode(const char *str, uint64_t *ret_value) {
 	int i;
 	int k;
+	uint64_t next;
 	uint64_t value = 0;
 	uint64_t base = 1;
 
-	for (i = 0; i < BASE58_MAX_STR_SIZE; i++) {
-		if (str[i] == '\0') {
-			break;
-		}
+	while (*str != '\0' && *str == '1') {
+		++str; // drop leading "1" (zeros)
 	}
 
-	--i;
+	i = strlen(str) - 1;
 
-	for (; i >= 0; i--) {
-		if (str[i] == '\0') {
-			continue;
-		}
-
-		for (k = 0; k < 58; k++) {
+	for (; i >= 0; --i) {
+		for (k = 0; k < 58; ++k) {
 			if (BASE58_ALPHABET[k] == str[i]) {
 				break;
 			}
 		}
 
-		value += k * base;
-		base *= 58;
+		if (k == 58) {
+			return false; // invalid char
+		}
+
+		if (!uint64_multiply(k, base, &next))  {
+			return false; // overflow
+		}
+
+		if (!uint64_add(value, next, &value))  {
+			return false; // overflow
+		}
+
+		if (i > 0 && !uint64_multiply(base, 58, &base))  {
+			return false; // overflow
+		}
 	}
 
-	return value;
+	if (value == 0) {
+		return false; // broadcast UID is forbidden
+	}
+
+	*ret_value = value;
+
+	return true;
 }
 
 /*****************************************************************************
@@ -1166,7 +1215,9 @@ static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request);
 static void device_destroy(DevicePrivate *device_p) {
 	int i;
 
-	table_remove(&device_p->ipcon_p->devices, device_p->uid);
+	if (device_p->uid_valid) {
+		table_remove(&device_p->ipcon_p->devices, device_p->uid);
+	}
 
 	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; i++) {
 		free(device_p->high_level_callbacks[i].data);
@@ -1195,9 +1246,11 @@ void device_create(Device *device, const char *uid_str,
 	device_p = (DevicePrivate *)malloc(sizeof(DevicePrivate));
 	device->p = device_p;
 
-	uid = base58_decode(uid_str);
+	device_p->uid_valid = base58_decode(uid_str, &uid);
 
-	if (uid > 0xFFFFFFFF) {
+	if (!device_p->uid_valid) {
+		uid = 0;
+	} else if (uid > 0xFFFFFFFF) {
 		// convert from 64bit to 32bit
 		value1 = uid & 0xFFFFFFFF;
 		value2 = (uid >> 32) & 0xFFFFFFFF;
@@ -1207,6 +1260,10 @@ void device_create(Device *device, const char *uid_str,
 		uid |= (value2 & 0x0000003F) << 16;
 		uid |= (value2 & 0x000F0000) << 6;
 		uid |= (value2 & 0x3F000000) << 2;
+
+		if (uid == 0) {
+			device_p->uid_valid = false; // broadcast UID is forbidden
+		}
 	}
 
 	device_p->ref_count = 1;
@@ -1253,7 +1310,9 @@ void device_create(Device *device, const char *uid_str,
 	}
 
 	// add to IPConnection
-	table_insert(&ipcon_p->devices, device_p->uid, device_p);
+	if (device_p->uid_valid) {
+		table_insert(&ipcon_p->devices, device_p->uid, device_p);
+	}
 }
 
 void device_release(DevicePrivate *device_p) {
@@ -1342,6 +1401,10 @@ int device_send_request(DevicePrivate *device_p, Packet *request, Packet *respon
 	uint8_t sequence_number = packet_header_get_sequence_number(&request->header);
 	uint8_t response_expected = packet_header_get_response_expected(&request->header);
 	uint8_t error_code;
+
+	if (!device_p->uid_valid) {
+		return E_UID_INVALID;
+	}
 
 	if (response_expected) {
 		mutex_lock(&device_p->request_mutex);
@@ -1490,6 +1553,10 @@ static void ipcon_disconnect_unlocked(IPConnectionPrivate *ipcon_p);
 
 static DevicePrivate *ipcon_acquire_device(IPConnectionPrivate *ipcon_p, uint32_t uid) {
 	DevicePrivate *device_p;
+
+	if (uid == 0) {
+		return NULL;
+	}
 
 	mutex_lock(&ipcon_p->devices_ref_mutex);
 
