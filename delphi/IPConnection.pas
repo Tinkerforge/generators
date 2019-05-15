@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2012-2015, 2019 Matthias Bolte <matthias@tinkerforge.com>
   Copyright (C) 2017 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
@@ -111,6 +111,10 @@ type
 
   { EStreamOutOfSyncException }
   EStreamOutOfSyncException = class(ETinkerforgeException)
+  end;
+
+  { EInvalidUIDException }
+  EInvalidUIDException = class(ETinkerforgeException)
   end;
 
   { TThreadWrapper }
