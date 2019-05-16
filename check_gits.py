@@ -5,6 +5,8 @@ import os
 import sys
 import glob
 import configparser
+import json
+import subprocess
 
 def error(message):
     print('\033[01;31m{0}\033[0m'.format(message))
@@ -61,6 +63,12 @@ config_header = '''# -*- coding: utf-8 -*-
 # {0} communication config
 '''
 
+if os.path.exists('github_token.txt'):
+    with open('github_token.txt', 'r') as f:
+        github_token = f.read().strip()
+else:
+    github_token = None
+
 for config_name in sorted(os.listdir('configs')):
     if not config_name.endswith('_config.py'):
         continue
@@ -99,11 +107,15 @@ for git_name in sorted(os.listdir('..')):
         continue
 
     if git_name in configs:
+        description = configs[git_name]['description']['en']
         released = configs[git_name]['released']
         category = configs[git_name]['category']
-        comcu = configs[git_name].get('comcu', False)
+        comcu = 'comcu_bricklet' in configs[git_name]['features']
 
         print('>>>', git_name, '(released)' if released else '(not released)')
+
+        if len(description.strip()) == 0 or 'FIXME' in description or 'TBD' in description or 'TODO' in description:
+            warning('invalid description: ' + description)
 
         if configs[git_name]['display_name'].endswith(' 2.0'):
             full_display_name = configs[git_name]['display_name'][:-4] + ' ' + configs[git_name]['category'] + ' 2.0'
@@ -115,6 +127,8 @@ for git_name in sorted(os.listdir('..')):
         if not config_contents[git_name].startswith(config_header.format(full_display_name)):
             error('wrong header comment in config')
     else:
+        description = None
+
         if (git_name.endswith('-brick') or git_name.endswith('-bricklet')) and \
            not git_name.startswith('breakout-') and not git_name.startswith('stack-breakout-') and \
            not git_name.startswith('debug-'):
@@ -136,6 +150,23 @@ for git_name in sorted(os.listdir('..')):
 
         print('>>>', git_name, '(no config)')
 
+    git_path = os.path.join('..', git_name)
+
+    if github_token != None:
+        if b'github.com' in subprocess.check_output('cd {0}; git remote get-url origin'.format(git_path), shell=True):
+            github = json.loads(subprocess.check_output(['curl', 'https://{0}@api.github.com/repos/Tinkerforge/{1}'.format(github_token, git_name)], stderr=subprocess.DEVNULL))
+
+            if description != None and github['description'] != description:
+                warning('github description mismatch: {0} (github) != {1} (config)'.format(github['description'], description))
+            else:
+                print('github description:', github['description'])
+
+            print('github homepage:', github['homepage'])
+        else:
+            print('not hosted on github')
+    else:
+        warning('no github token')
+
     base_name = '-'.join(git_name.split('-')[:-1])
 
     if not git_name.endswith('-extension'):
@@ -145,7 +176,6 @@ for git_name in sorted(os.listdir('..')):
             print('examples:', ', '.join(example_names[git_name]))
 
     # .gitignore
-    git_path = os.path.join('..', git_name)
     gitignore_path = os.path.join(git_path, '.gitignore')
 
     if not os.path.exists(gitignore_path):
@@ -232,7 +262,7 @@ for git_name in sorted(os.listdir('..')):
             if cp['eeschema']['LibDir'] != 'kicad-libraries':
                 error('invalid eeschema:LibDir in hardware/*.pro')
 
-            if 'eeschema/libraries' not in cp or cp['eeschema/libraries']['LibName1'] != 'tinkerforge':
+            if 'eeschema/libraries' not in cp or 'eeschema/libraries' not in cp['eeschema/libraries'] or cp['eeschema/libraries']['LibName1'] != 'tinkerforge':
                 error('invalid eeschema/libraries:LibName1 in hardware/*.pro')
 
     # software
