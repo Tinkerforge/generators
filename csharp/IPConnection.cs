@@ -1136,7 +1136,7 @@ namespace Tinkerforge
 			}
 
 			if (uidTmp == 0) {
-				throw new ArgumentOutOfRangeException("Base58 value is empty or maps to zero: " + uid);
+				throw new ArgumentOutOfRangeException("UID '" + uid + "' is empty or maps to zero");
 			}
 
 			IntRepresentation = (int)uidTmp;
@@ -1507,7 +1507,7 @@ namespace Tinkerforge
 
 				if (column < 0)
 				{
-					throw new ArgumentOutOfRangeException("Base58 value contains invalid character: " + encoded);
+					throw new ArgumentOutOfRangeException("UID '" + encoded + "' contains invalid character");
 				}
 
 				try
@@ -1519,7 +1519,7 @@ namespace Tinkerforge
 				}
 				catch (OverflowException)
 				{
-					throw new ArgumentOutOfRangeException("Base58 value is too big: " + encoded);
+					throw new ArgumentOutOfRangeException("UID '" + encoded + "' is too big");
 				}
 
 				try
@@ -1532,7 +1532,7 @@ namespace Tinkerforge
 				catch (OverflowException)
 				{
 					if (i > 0) {
-						throw new ArgumentOutOfRangeException("Base58 value is too big: " + encoded);
+						throw new ArgumentOutOfRangeException("UID '" + encoded + "' is too big");
 					}
 				}
 			}
