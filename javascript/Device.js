@@ -20,9 +20,12 @@ function base58Decode(str) {
     for (index = i = 0, len = ref.length; i < len; index = ++i) {
         char = ref[index];
         if ((char_index = alphabet.indexOf(char)) === -1) {
-            throw new Error('Value passed is not a valid Base58 string.');
+            throw new Error('UID "' + str + '" contains invalid character');
         }
         num += char_index * Math.pow(base, index);
+        if (!Number.isSafeInteger(num) || num > 0xFFFFFFFF) {
+            throw new Error('UID "' + str + '" is too big');
+        }
     }
     return num;
 }
@@ -30,6 +33,9 @@ function base58Decode(str) {
 function Device(deviceRegistering, uid, ipcon) {
     if (deviceRegistering !== undefined && uid !== undefined && ipcon !== undefined) {
         this.uid = base58Decode(uid);
+        if (this.uid === 0) {
+            throw new Error('UID "' + uid + '" is empty or maps to zero');
+        }
         this.responseExpected = {};
         this.callbackFormats = {};
         this.highLevelCallbacks = {};
