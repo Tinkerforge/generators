@@ -15,8 +15,8 @@ com = {
     'display_name': 'Joystick 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': '2-axis joystick with push-button',
+        'de': '2-Achsen Joystick mit Taster'
     },
     'released': False,
     'documented': False,

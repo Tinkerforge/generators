@@ -15,8 +15,8 @@ com = {
     'display_name': 'RGB LED 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Controls one RGB LED',
+        'de': 'Steuert eine RGB LED'
     },
     'released': False,
     'documented': False,

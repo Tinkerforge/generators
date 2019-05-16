@@ -17,8 +17,8 @@ com = {
     'display_name': 'Piezo Speaker 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '',
-        'de': ''
+        'en': 'Creates beep and alarm with configurable volume and frequency',
+        'de': 'Erzeugt Piepton und Alarm mit konfigurierbarer Lautstärke und Frequenz'
     },
     'released': False,
     'documented': False,

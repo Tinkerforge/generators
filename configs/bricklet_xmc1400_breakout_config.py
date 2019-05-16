@@ -18,8 +18,8 @@ com = {
     'display_name': 'XMC1400 Breakout',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Bricklet development board',
-        'de': 'Bricklet Entwicklungsboard'
+        'en': 'Breakout for Infineon XMC1400 microcontroller',
+        'de': 'Entwicklungsboard für Infineon XMC1400 Mikrocontroller'
     },
     'released': False,
     'documented': False,

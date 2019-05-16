@@ -15,8 +15,8 @@ com = {
     'display_name': 'Motion Detector 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Passive infrared (PIR) motion sensor, 12m range',
-        'de': 'Passiver Infrarot (PIR) Bewegungssensor, 12m Reichweite'
+        'en': 'Passive infrared (PIR) motion sensor with 12m range and dimmable backlight',
+        'de': 'Passiver Infrarot (PIR) Bewegungssensor mit 12m Reichweite und dimmbarer Beleuchtung'
     },
     'released': True,
     'documented': True,
