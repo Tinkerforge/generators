@@ -1,5 +1,5 @@
 # -*- ruby encoding: utf-8 -*-
-# Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
@@ -30,6 +30,9 @@ module Tinkerforge
       base = 1
       encoded.reverse.split(//).each do |c|
         index = ALPHABET.index c
+        if index == nil
+          raise ArgumentError, "UID '#{encoded}' contains invalid character"
+        end
         value += index * base
         base *= 58
       end
@@ -222,7 +225,11 @@ module Tinkerforge
     def initialize(uid, ipcon)
       @uid = Base58.decode uid
 
-      if @uid > 0xFFFFFFFF
+      if @uid > (1 << 64) - 1
+        raise ArgumentError, "UID '#{uid}' is too big"
+      end
+
+      if @uid > (1 << 32) - 1
         # convert from 64bit to 32bit
         value1 = @uid & 0xFFFFFFFF
         value2 = (@uid >> 32) & 0xFFFFFFFF
@@ -232,6 +239,10 @@ module Tinkerforge
         @uid |= (value2 & 0x0000003F) << 16
         @uid |= (value2 & 0x000F0000) << 6
         @uid |= (value2 & 0x3F000000) << 2
+      end
+
+      if @uid == 0
+        raise ArgumentError, "UID '#{uid}' is empty or maps to zero"
       end
 
       @api_version = [0, 0, 0]
