@@ -280,4 +280,14 @@ for git_name in sorted(os.listdir('..')):
             if len(existing_names) > 0 and bindings_name != 'labview':
                 info('unexpected {0} example files: {1}'.format(bindings_name, ', '.join(existing_names)))
 
+        if comcu:
+            # software/src/communication.c
+            communication_c_path = os.path.join(software_path, 'src/communication.c')
+
+            if os.path.exists(communication_c_path):
+                with open(communication_c_path, 'r') as f:
+                    for i, line in enumerate(f.readlines()):
+                        if 'header.length' in line and not '_Response' in line:
+                            error('wrong response length in line {0}'.format(i + 1))
+
     print('')
