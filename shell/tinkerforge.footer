@@ -190,9 +190,9 @@ def command_listen(ctx, argv):
 		server_socket.bind((args.address, args.port))
 		server_socket.listen(10)
 	except socket.error as e:
-		raise FatalError(str(e).lower(), ERROR_SOCKET_ERROR)
+		raise FatalError(str(e), ERROR_SOCKET_ERROR)
 	except Exception as e:
-		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
+		raise FatalError(str(e), ERROR_OTHER_EXCEPTION)
 
 	def client_loop():
 		pending_data = ''
@@ -208,10 +208,10 @@ def command_listen(ctx, argv):
 			try:
 				data = client_socket.recv(1024)
 			except socket.error as e:
-				print('{0} disconnected by socket error: {1}'.format(client_address[0], str(e).lower()))
+				print('{0} disconnected by socket error: {1}'.format(client_address[0], str(e)))
 				return
 			except Exception as e:
-				print('{0} disconnected by exception: {1}'.format(client_address[0], str(e).lower()))
+				print('{0} disconnected by exception: {1}'.format(client_address[0], str(e)))
 				return
 
 			if len(data) == 0:
@@ -222,7 +222,7 @@ def command_listen(ctx, argv):
 				try:
 					data = data.decode('utf-8')
 				except UnicodeDecodeError as e:
-					print('{0} sent invalid utf-8 data, disconnecting: {1}'.format(client_address[0], str(e).lower()))
+					print('{0} sent invalid utf-8 data, disconnecting: {1}'.format(client_address[0], str(e)))
 					return
 
 			pending_data += data
@@ -248,7 +248,7 @@ def command_listen(ctx, argv):
 						try:
 							string = string.encode('utf-8')
 						except UnicodeDecodeError as e:
-							print('utf-8 encoding error while sending {0} to {1}, disconnecting: {2}'.format(repr(string), client_address[0], str(e).lower()))
+							print('utf-8 encoding error while sending {0} to {1}, disconnecting: {2}'.format(repr(string), client_address[0], str(e)))
 
 							client_ctx.abort = True
 							return
@@ -256,12 +256,12 @@ def command_listen(ctx, argv):
 					try:
 						client_socket.sendall(string)
 					except socket.error as e:
-						print('socket error while sending {0} to {1}, disconnecting: {2}'.format(repr(string), client_address[0], str(e).lower()))
+						print('socket error while sending {0} to {1}, disconnecting: {2}'.format(repr(string), client_address[0], str(e)))
 
 						client_ctx.abort = True
 						return
 					except Exception as e:
-						print('exception while sending {0} to {1}, disconnecting: {2}'.format(repr(string), client_address[0], str(e).lower()))
+						print('exception while sending {0} to {1}, disconnecting: {2}'.format(repr(string), client_address[0], str(e)))
 
 						client_ctx.abort = True
 						return
@@ -291,7 +291,7 @@ def command_listen(ctx, argv):
 			client_thread.daemon = True
 			client_thread.start()
 		except Exception as e:
-			raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
+			raise FatalError(str(e), ERROR_OTHER_EXCEPTION)
 
 def parse(ctx, argv):
 	global dry_run

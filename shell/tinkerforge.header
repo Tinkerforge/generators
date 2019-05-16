@@ -175,11 +175,11 @@ def handle_ipcon_exceptions(ipcon, function):
 	try:
 		function(ipcon)
 	except Error as e:
-		raise FatalError(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
+		raise FatalError(e.description, IPCONNECTION_ERROR_OFFSET - e.value)
 	except socket.error as e:
-		raise FatalError(str(e).lower(), ERROR_SOCKET_ERROR)
+		raise FatalError(str(e), ERROR_SOCKET_ERROR)
 	except Exception as e:
-		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
+		raise FatalError(str(e), ERROR_OTHER_EXCEPTION)
 	finally:
 		try:
 			ipcon.disconnect()
@@ -771,10 +771,10 @@ def execute_response(ctx, command, names, values):
 	try:
 		formatted_command = command.format(**formatted_values)
 	except KeyError as e:
-		message = 'invalid placeholder %s in format: %s' % (str(e).lower(), command)
+		message = 'invalid placeholder %s in format: %s' % (str(e), command)
 		raise FatalError(message, ERROR_INVALID_PLACEHOLDER)
 	except Exception as e:
-		message = '%s: %s' % (str(e).lower(), command)
+		message = '%s: %s' % (str(e), command)
 		raise FatalError(message, ERROR_OTHER_EXCEPTION)
 
 	try:
@@ -788,7 +788,7 @@ def execute_response(ctx, command, names, values):
 		else:
 			subprocess.call(formatted_command, shell=True)
 	except Exception as e:
-		message = '%s: %s' % (str(e).lower(), formatted_command)
+		message = '%s: %s' % (str(e), formatted_command)
 		raise FatalError(message, ERROR_OTHER_EXCEPTION)
 
 def output_response(ctx, names, values):
