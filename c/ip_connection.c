@@ -1393,7 +1393,7 @@ int device_send_request(DevicePrivate *device_p, Packet *request, Packet *respon
 	uint8_t error_code;
 
 	if (!device_p->uid_valid) {
-		return E_UID_INVALID;
+		return E_INVALID_UID;
 	}
 
 	if (response_expected) {

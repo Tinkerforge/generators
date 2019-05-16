@@ -264,7 +264,7 @@ Possible error codes are:
 * E_NOT_SUPPORTED = -10
 * E_UNKNOWN_ERROR_CODE = -11
 * E_STREAM_OUT_OF_SYNC = -12
-* E_UID_INVALID = -13
+* E_INVALID_UID = -13
 
 as defined in :file:`ip_connection.h`.
 
@@ -300,7 +300,7 @@ Mögliche Fehlercodes sind:
 * E_NOT_SUPPORTED = -10
 * E_UNKNOWN_ERROR_CODE = -11
 * E_STREAM_OUT_OF_SYNC = -12
-* E_UID_INVALID = -13
+* E_INVALID_UID = -13
 
 wie in :file:`ip_connection.h` definiert.
 
