@@ -560,8 +560,8 @@ class MQTTBindings:
         else:
             try:
                 device = device_class(uid, self.ipcon, device_class, mqttc)
-            except ValueError as e:
-                return False, json_error("Could not create device object, maybe the UID {} was wrong?".format(uid))
+            except Exception as e:
+                return False, json_error("Could not create device object: {}".format(str(e)))
         return True, device
 
     def dispatch_call(self, call_type, device_class_name, uid, fnName, json_args, response_path):
