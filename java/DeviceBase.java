@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
- * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013, 2019 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -45,6 +45,10 @@ public abstract class DeviceBase {
 			uidTmp |= (value2 & 0x0000003FL) << 16;
 			uidTmp |= (value2 & 0x000F0000L) << 6;
 			uidTmp |= (value2 & 0x3F000000L) << 2;
+		}
+
+		if (uidTmp == 0) {
+			throw new IllegalArgumentException("UID '" + uid + "' is empty or maps to zero");
 		}
 
 		this.uid = uidTmp;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2015, 2019 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.Hashtable;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -1062,20 +1063,25 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	}
 
 	static long base58Decode(String encoded) {
-		long value = 0;
-		long columnMultiplier = 1;
+		BigInteger value = BigInteger.valueOf(0);
+		BigInteger columnMultiplier = BigInteger.valueOf(1);
 
 		for (int i = encoded.length() - 1; i >= 0; i--) {
 			int column = BASE58.indexOf(encoded.charAt(i));
 
 			if (column < 0) {
-				throw new IllegalArgumentException("Invalid Base58 value: " + encoded);
+				throw new IllegalArgumentException("UID '" + encoded + "' contains invalid character");
 			}
 
-			value += column * columnMultiplier;
-			columnMultiplier *= 58;
+			value = value.add(BigInteger.valueOf(column).multiply(columnMultiplier));
+
+			if (value.bitLength() > 64) {
+				throw new IllegalArgumentException("UID '" + encoded + "' is too big");
+			}
+
+			columnMultiplier = columnMultiplier.multiply(BigInteger.valueOf(58));
 		}
 
-		return value;
+		return value.longValue();
 	}
 }
