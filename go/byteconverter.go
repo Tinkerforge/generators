@@ -181,7 +181,7 @@ func StringToByteSlice(str string, maxLen uint64) ([]byte, error) {
 	bytes := make([]byte, maxLen, maxLen)
 
 	if uint64(len(runes)) > maxLen {
-		return nil, fmt.Errorf("invalid parameter: string was %d runes long, but only %d are allowed", len(runes), maxLen)
+		return nil, fmt.Errorf("invalid parameter: string is %d runes long, but only %d are allowed", len(runes), maxLen)
 	}
 
 	for i, r := range runes {

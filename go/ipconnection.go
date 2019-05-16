@@ -38,9 +38,9 @@ func (e BrickletError) Error() string {
 
 type IPConnection struct {
 	//When reordering this struct, keep timeout at the top, as it needs to be 64-bit aligned for atomic operations.
-	timeout               int64	
-	connection            net.Conn	
-	connectionState       int32	
+	timeout               int64
+	connection            net.Conn
+	connectionState       int32
 	terminate             chan struct{}
 	connReq               chan connectRequest
 	disconnReq            chan chan<- struct{}
@@ -50,7 +50,7 @@ type IPConnection struct {
 	connectCallbackReg    chan ConnectCallbackRegistration
 	disconnectCallbackReg chan DisconnectCallbackRegistration
 	enumerateCallbackReg  chan CallbackRegistration
-	ipconCallbackDereg    chan IPConCallbackDeregistration	
+	ipconCallbackDereg    chan IPConCallbackDeregistration
 	autoReconnect         chan bool
 	autoReconnectCache    bool
 	authenticateMutex     sync.Mutex
@@ -70,7 +70,7 @@ func NewIPConnection() IPConnection {
 		make(chan ConnectCallbackRegistration, ChannelSize),
 		make(chan DisconnectCallbackRegistration, ChannelSize),
 		make(chan CallbackRegistration, ChannelSize),
-		make(chan IPConCallbackDeregistration, ChannelSize),		
+		make(chan IPConCallbackDeregistration, ChannelSize),
 		make(chan bool, ChannelSize),
 		true,
 		sync.Mutex{}}
@@ -196,7 +196,7 @@ func (ipcon *IPConnection) Authenticate(secret string) error {
 	payload := header.ToLeBytes()
 	resp, err := ReqWithTimeout(payload, ipcon.Req)
 	if err != nil {
-		return fmt.Errorf("could not get server nonce: %s", err)
+		return fmt.Errorf("can not get server nonce: %s", err)
 	}
 
 	var respHeader PacketHeader

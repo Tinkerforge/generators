@@ -18,7 +18,7 @@ func pow(base, exp uint64) uint64 {
 
 func Base58ToU32(str string) (uint32, error) {
 	if len(str) == 0 {
-		return 0, fmt.Errorf("UID was empty.")
+		return 0, fmt.Errorf("UID is empty")
 	}
 
 	var result_u64 uint64
@@ -29,7 +29,7 @@ func Base58ToU32(str string) (uint32, error) {
 		r := rune(str[len(str)-idx-1])
 		i := strings.IndexRune(alphabet, r)
 		if i == -1 {
-			return uint32(result_u64), fmt.Errorf("UID %s contained an invalid character.", str)
+			return uint32(result_u64), fmt.Errorf("UID %s contains an invalid character", str)
 		}
 
 		pow_overflows := digit > 0 && pow(radix, digit-1) > (math.MaxUint64/radix)
@@ -37,7 +37,7 @@ func Base58ToU32(str string) (uint32, error) {
 		add_overflows := math.MaxUint64-pow(radix, digit)*uint64(i) < result_u64
 
 		if pow_overflows || mult_overflows || add_overflows {
-			return uint32(result_u64), fmt.Errorf("UID %s was too big to fit into an uint64.", str)
+			return uint32(result_u64), fmt.Errorf("UID %s is too big to fit into an uint64", str)
 		}
 		result_u64 += pow(radix, digit) * uint64(i)
 		digit++
@@ -57,7 +57,7 @@ func Base58ToU32(str string) (uint32, error) {
 	}
 
 	if result == 0 {
-		return result, fmt.Errorf("UID was empty or mapped to zero.")
+		return result, fmt.Errorf("UID is empty or mapped to zero")
 	}
 
 	return result, nil

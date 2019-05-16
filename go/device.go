@@ -90,7 +90,7 @@ func (device *Device) SetResponseExpectedAll(responseExpected bool) {
 
 func (device *Device) Set(functionID uint8, payload []byte) ([]byte, error) {
 	if !device.initialized {
-		return nil, fmt.Errorf("Device is not initialized.")
+		return nil, fmt.Errorf("device is not initialized")
 	}
 	responseExpected := !(device.ResponseExpected[functionID] == ResponseExpectedFlagFalse)
 
@@ -113,7 +113,7 @@ func (device *Device) Set(functionID uint8, payload []byte) ([]byte, error) {
 
 func (device *Device) Get(functionID uint8, payload []byte) ([]byte, error) {
 	if !device.initialized {
-		return nil, fmt.Errorf("Device is not initialized.")
+		return nil, fmt.Errorf("device is not initialized")
 	}
 	header := PacketHeader{
 		device.internalUID,
@@ -134,7 +134,7 @@ type LowLevelWriteResult struct {
 
 func (device *Device) SetHighLevel(lowLevelClosure func(uint64, uint64, []byte) (LowLevelWriteResult, error), highLevelFunctionIdx uint8, elementSizeInBit uint64, chunkLenInBit uint64, payload []byte) (LowLevelWriteResult, error) {
 	if !device.initialized {
-		return LowLevelWriteResult{}, fmt.Errorf("Device is not initialized.")
+		return LowLevelWriteResult{}, fmt.Errorf("device is not initialized")
 	}
 	length := uint64(len(payload)) * 8 / elementSizeInBit
 	chunkOffset := uint64(0) * 8 / elementSizeInBit
@@ -175,7 +175,7 @@ type LowLevelResult struct {
 
 func (device *Device) GetHighLevel(lowLevelClosure func() (LowLevelResult, error), highLevelFunctionIdx uint8, elementSizeInBit uint64) ([]byte, []byte, error) {
 	if !device.initialized {
-		return nil, nil, fmt.Errorf("Device is not initialized.")
+		return nil, nil, fmt.Errorf("device is not initialized")
 	}
 	chunkOffset := uint64(0) * elementSizeInBit
 	device.highLevelLocks[highLevelFunctionIdx].Lock()
@@ -216,7 +216,7 @@ func (device *Device) GetHighLevel(lowLevelClosure func() (LowLevelResult, error
 		chunkOffset += uint64(len(result.ChunkData) * 8)
 		result, _ = lowLevelClosure()
 	}
-	return nil, nil, fmt.Errorf("stream was out of sync, please retry")
+	return nil, nil, fmt.Errorf("stream is out of sync, please retry")
 }
 
 func (device *Device) RegisterCallback(functionID uint8, fn func([]byte)) uint64 {
