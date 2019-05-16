@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2012-2017, Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (c) 2012-2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -57,7 +57,13 @@ class Base58
         $base = '1';
 
         for ($i = $length - 1; $i >= 0; $i--) {
-            $index = strval(strpos(self::$alphabet, $encoded[$i]));
+            $index = strpos(self::$alphabet, $encoded[$i]);
+
+            if ($index === FALSE) {
+                throw new \InvalidArgumentException('UID "' . $encoded . '" contains invalid character');
+            }
+
+            $index = strval($index);
             $value = bcadd($value, bcmul($index, $base));
             $base = bcmul($base, '58');
         }
@@ -228,6 +234,10 @@ abstract class Device
     {
         $long_uid = Base58::decode($uid);
 
+        if (bccomp($long_uid, '18446744073709551615' /* 0xFFFFFFFFFFFFFFFF */) > 0) {
+            throw new \InvalidArgumentException('UID "' . $uid . '" is to big');
+        }
+
         if (bccomp($long_uid, '4294967295' /* 0xFFFFFFFF */) > 0) {
             // Convert from 64bit to 32bit
             $value1a = (int)bcmod($long_uid, '65536' /* 0x10000 */);
@@ -245,6 +255,10 @@ abstract class Device
             $this->uid = bcadd(bcmul($short_uid2, '65536' /* 0x10000 */), $short_uid1);
         } else {
             $this->uid = $long_uid;
+        }
+
+        if (bccomp($this->uid, '0') == 0) {
+            throw new \InvalidArgumentException('UID "' . $uid . '" is empty or maps to zero');
         }
 
         $this->ipcon = $ipcon;
