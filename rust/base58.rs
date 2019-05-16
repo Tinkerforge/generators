@@ -18,9 +18,9 @@ pub enum Base58Error {
 impl Display for Base58Error {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match *self {
-            Base58Error::InvalidCharacter => write!(f, "UID contained an invalid character."),
-            Base58Error::UidToBig => write!(f, "UID was too big to fit into a u64"),
-            Base58Error::UidEmpty => write!(f, "UID was empty")
+            Base58Error::InvalidCharacter => write!(f, "UID contains an invalid character."),
+            Base58Error::UidToBig => write!(f, "UID is too big to fit into a u64"),
+            Base58Error::UidEmpty => write!(f, "UID is empty")
         }
     }
 }
@@ -28,9 +28,9 @@ impl Display for Base58Error {
 impl Error for Base58Error {
     fn description(&self) -> &str {
         match *self {
-            Base58Error::InvalidCharacter => "UID contained an invalid character.",
-            Base58Error::UidToBig => "UID was too big to fit into a u64",
-            Base58Error::UidEmpty => "UID was empty or a value that mapped to zero"
+            Base58Error::InvalidCharacter => "UID contains an invalid character.",
+            Base58Error::UidToBig => "UID is too big to fit into a u64",
+            Base58Error::UidEmpty => "UID is empty or a value that mapped to zero"
         }
     }
 }
@@ -42,7 +42,7 @@ pub trait Base58 {
 }
 
 impl Base58 for str {
-    fn base58_to_u32(&self) -> Result<u32, Base58Error> {        
+    fn base58_to_u32(&self) -> Result<u32, Base58Error> {
         let mut result_u64: u64 = 0;
         let radix: u64 = ALPHABET.len() as u64;
         let mut digit: u32 = 0;
@@ -51,7 +51,7 @@ impl Base58 for str {
         for (idx, &&character) in filtered.iter().enumerate().rev() {
             match ALPHABET.as_bytes().iter().enumerate().find(|(_i, c)| **c == character).map(|(i, _c)| i) {
                 None => return Err(Base58Error::InvalidCharacter),
-                Some(i) => {                    
+                Some(i) => {
                     if digit > 0 && radix.pow(digit - 1) > (u64::max_value() / radix) {
                         return Err(Base58Error::UidToBig); //pow overflow
                     }
@@ -67,7 +67,7 @@ impl Base58 for str {
             }
             digit += 1;
         }
-        
+
         let result = if result_u64 > u32::max_value().into() {
                 let value1 = result_u64 & 0xFF_FF_FF_FF;
                 let value2 = (result_u64 >> 32) & 0xFF_FF_FF_FF;
