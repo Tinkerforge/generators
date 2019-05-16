@@ -83,7 +83,7 @@ example_name_formats = {
     'delphi': ['Example{camel}.pas'],
     'java': ['Example{camel}.java'],
     'javascript': ['Example{camel}.js', 'Example{camel}.html'],
-    'labview': ['Example {space}.vi'],
+    'labview': ['Example {space}.vi', 'Example {space}.vi.png', '10.0/Example {space}.vi'],
     'mathematica': ['Example{camel}.nb', 'Example{camel}.nb.txt'],
     'matlab': ['matlab_example_{under}.m', 'octave_example_{under}.m'],
     'perl': ['example_{under}.pl'],
