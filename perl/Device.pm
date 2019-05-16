@@ -1,5 +1,5 @@
 # Copyright (C) 2013 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-# Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
@@ -26,6 +26,7 @@ use Carp;
 use threads;
 use threads::shared;
 use Thread::Queue;
+use Math::BigInt;
 use Tinkerforge::IPConnection;
 use Tinkerforge::Error;
 
@@ -79,20 +80,40 @@ sub _base58_decode
 					M N P Q R S T U V
 					W X Y Z);
 
+	my $remaining = $encoded;
 	my $i = 0;
-	my %BASE58 = map{ $_ => $i++} @BASE58;
-	my $decoded = 0;
-	my $multi = 1;
-	my $base = @BASE58;
+	my %BASE58 = map {$_ => $i++} @BASE58;
+	my $value = Math::BigInt->new(0);
+	my $base = Math::BigInt->new(1);
 
-	while (length($encoded) > 0)
+	while (length($remaining) > 0)
 	{
-		my $digit = chop $encoded;
-		$decoded += $multi * $BASE58{$digit};
-		$multi *= $base;
+		my $digit = chop $remaining;
+		my $index = $BASE58{$digit};
+
+		if (!defined($index))
+		{
+			croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_UID, "UID '$encoded' contains invalid character"));
+		}
+
+		my $next = $base->copy();
+
+		$next->bmul($index);
+		$value->badd($next);
+		$base->bmul(58);
 	}
 
-	return $decoded;
+	if ($value->bgt(0xFFFFFFFF))
+	{
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_UID, "UID '$encoded' is too big"));
+	}
+
+	if ($value->is_zero())
+	{
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_UID, "UID '$encoded' is empty or maps to zero"));
+	}
+
+	return $value->numify();
 }
 
 sub _send_request

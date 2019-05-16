@@ -1,5 +1,5 @@
 # Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-# Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
@@ -108,6 +108,14 @@ Possible return value of the get_code() subroutine.
 =cut
 
 use constant STREAM_OUT_OF_SYNC => 51;
+
+=item INVALID_UID
+
+Possible return value of the get_code() subroutine.
+
+=cut
+
+use constant INVALID_UID => 61;
 
 =back
 =cut
