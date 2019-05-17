@@ -69,7 +69,7 @@ type IPConnection struct {
 func NewIPConnection() IPConnection {
 	timeoutStruct := TimeoutStruct{
 		(time.Millisecond * 2500).Nanoseconds(),
-		0,
+		1,
 		0}
 
 	ipcon := IPConnection{
