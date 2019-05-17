@@ -40,7 +40,7 @@ class GoDevice(common.Device):
     def specialize_go_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                name = 'Register{0}Callback'.format(packet.get_name(skip=-2 if high_level else 0).camel)                
+                name = 'Register{0}Callback'.format(packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 name = packet.get_name(skip=-2 if high_level else 0).camel
             result = name
@@ -58,19 +58,19 @@ class GoPacket(common.Packet):
                 written_elements = [elem for elem in self.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_written']
 
                 if stream.has_short_write():
-                    returns.append("{} {}".format(written_elements[0].get_go_name(),"uint64"))            
+                    returns.append("{} {}".format(written_elements[0].get_go_name(),"uint64"))
             elif self.get_high_level('stream_out') != None:
                 data = self.get_high_level('stream_out').get_data_element()
                 returns.insert(0, "{} []{}".format(data.get_go_name(), data.get_go_type(ignore_cardinality=True)))
-        
+
         if self.get_type() == 'callback':
             return ", ".join(returns)
-        
+
         return ", ".join(returns + ["err error"])
 
     def get_high_level_payload_type(self):
         return [elem.get_go_type(ignore_cardinality=True) for elem in self.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
-    
+
     def get_go_parameters(self, high_level=False):
         parameters = []
 
@@ -92,8 +92,8 @@ class GoPacket(common.Packet):
             if self.has_high_level():
                 return self.get_go_type_name()
             else:
-                return returns[0].get_go_type()            
-        
+                return returns[0].get_go_type()
+
         return self.get_go_type_name()
 
     def get_stream_info_return_type(self):
@@ -101,14 +101,14 @@ class GoPacket(common.Packet):
         if len(returns) == 0:
             return "()"
         if len(returns) == 1:
-            return returns[0].get_go_type()            
-        
+            return returns[0].get_go_type()
+
         return self.get_go_type_name()
 
     def get_go_name(self, skip=0):
         return self.get_name(skip=skip).camel
 
-    def get_go_type_name(self, skip=0):        
+    def get_go_type_name(self, skip=0):
         name = self.get_go_name(skip)
 
         if self.get_name(skip).under.startswith('get_'):
@@ -119,9 +119,9 @@ class GoPacket(common.Packet):
         return name
 
     def get_go_derivable_traits(self, high_level_only=False):
-        filtered_returns = self.get_elements(direction='out') if not high_level_only else [ret for ret in self.get_elements(direction='out') if ret.get_level() != 'low']        
+        filtered_returns = self.get_elements(direction='out') if not high_level_only else [ret for ret in self.get_elements(direction='out') if ret.get_level() != 'low']
         result = ["Clone"]
-        
+
         #String can be cloned, but not copied, so don't derive copy if the struct will contain strings
         if all("String" not in x.get_go_type() for x in filtered_returns):
             result.append("Copy")
@@ -138,8 +138,8 @@ class GoPacket(common.Packet):
     def get_go_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
 
-        # handle links      
-        text = text.replace(":ref:", "")       
+        # handle links
+        text = text.replace(":ref:", "")
 
         text = re.sub("`([^<]+) <([^>]+)>`__", r"\g<2>", text)
 
@@ -150,8 +150,8 @@ class GoPacket(common.Packet):
         in_table_head = False
         in_table_body = False
         col_count = 0
-        for line in lines:  
-            line = line.replace('"', '')          
+        for line in lines:
+            line = line.replace('"', '')
             if line.strip() == '.. csv-table::':
                 in_table_head = True
             elif line.strip().startswith(':header: ') and in_table_head:
@@ -190,7 +190,7 @@ class GoPacket(common.Packet):
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
-        return '// ' + '\n\t// '.join(text.strip().split('\n'))
+        return '// ' + '\n// '.join(text.strip().split('\n'))
 
 
 class GoElement(common.Element):
@@ -211,7 +211,7 @@ class GoElement(common.Element):
         elif self.get_type() == 'string':
             return 'string'
         #elif self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
-        #    element_type = self.get_type()          
+        #    element_type = self.get_type()
         elif self.get_type() == 'bool':
             element_type = 'bool'
         elif self.get_type() == 'float':

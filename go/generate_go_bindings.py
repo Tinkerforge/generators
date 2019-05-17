@@ -34,13 +34,13 @@ import go_common
 packet_param_types = set()
 packet_return_types = set()
 
-class GoBindingsDevice(go_common.GoDevice):    
+class GoBindingsDevice(go_common.GoDevice):
 
     def get_go_imports(self):
         tf_doc_link = {'en': '// See also the documentation here: https://www.tinkerforge.com/en/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Go.html.',
                        'de': '// Siehe auch die Dokumentation hier: https://www.tinkerforge.com/de/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Go.html.'
         }
-        
+
         desc = common.select_lang(self.get_description())
 
         plenk = "‍REPLACE_WITH_ZWJ" if len(desc) > 0 and desc[-1].isupper() else ""
@@ -62,7 +62,7 @@ import (
 )
 """.format(header=self.get_generator().get_header_comment(kind='asterisk'), description=description, device=self.get_go_package())
 
-    def get_go_constants(self):        
+    def get_go_constants(self):
         constants = []
 
         # Create function and callback constants for get/set response expected
@@ -70,7 +70,7 @@ import (
             constants.append((packet.get_name().camel, packet.get_function_id()))
         for packet in self.get_packets('callback'):
             constants.append(("Callback"+packet.get_name().camel, packet.get_function_id()))
-        
+
         const_prefix = "Function"
 
         template = """type {name} {type}
@@ -79,12 +79,12 @@ const (
     {values}
 )
 """
-        result = template.format(name=const_prefix, 
+        result = template.format(name=const_prefix,
                                  type="uint8",
                                  values="\n\t".join("{const_prefix}{name} {const_prefix} = {value}".format(const_prefix=const_prefix, name=name, value=value) for (name, value) in constants))
-        
+
         # Create constants used in function parameters
-        for constant_group in self.get_constant_groups():            
+        for constant_group in self.get_constant_groups():
             constant_type = constant_group.get_elements()[0].get_go_type(ignore_cardinality=True, ignore_constant_group=True)
             constant_group_name = constant_group.get_name().camel
             enum_values = []
@@ -96,7 +96,7 @@ const (
                 enum_values.append("{const_prefix}{name} {const_prefix} = {value}".format(const_prefix = constant_group_name, name=name, value=value))
             result += "\n" + template.format(name=constant_group_name, type=constant_type, values="\n\t".join(enum_values))
 
-        return result   
+        return result
 
     def get_go_response_expected(self, response_expected_str):
         if "always_true" in response_expected_str:
@@ -106,7 +106,7 @@ const (
         else:
             return "ResponseExpectedFlagFalse"
 
-    def get_go_device_definition(self):      
+    def get_go_device_definition(self):
         return "type {name} struct{{\n\tdevice Device\n}}".format(name=self.get_go_name())
 
 
@@ -116,12 +116,12 @@ const (
             if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data':
                 fill_payload.append("{buf}.Write({type}SliceToByteSlice({name}[:]))".format(buf=bufferName, type= elem.get_go_type(ignore_cardinality=True).title(), name=elem.get_go_name()))
                 continue
-            
-            if "string" in elem.get_go_type():                
+
+            if "string" in elem.get_go_type():
                 fill_payload.append("{elem_name}_byte_slice, err := StringToByteSlice({elem_name}, {max_len})".format( elem_name=elem.get_go_name(), max_len=elem.get_cardinality()))
                 fill_payload.append("if err != nil { return }")
-                fill_payload.append("{buf}.Write({elem_name}_byte_slice)".format(buf=bufferName, elem_name=elem.get_go_name()))            
-            else:                
+                fill_payload.append("{buf}.Write({elem_name}_byte_slice)".format(buf=bufferName, elem_name=elem.get_go_name()))
+            else:
                 fill_payload.append("binary.Write(&{buf}, binary.LittleEndian, {elem_name});".format(buf=bufferName, elem_name=elem.get_go_name()))
         return fill_payload
 
@@ -138,10 +138,10 @@ const (
                 read_results.append("{ret_name} = rune({buf}.Next(1)[0])".format(buf=bufferName, ret_name=elem.get_go_name()))
             elif "rune" in elem.get_go_type():
                 read_results.append("copy({ret_name}[:], ByteSliceTo{type}Slice({buf}.Next({len})))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=elem.get_cardinality()))
-            elif elem.get_go_type() == "string":                
-                read_results.append("{ret_name} = ByteSliceTo{type}({buf}.Next({len}))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=elem.get_cardinality()))                
+            elif elem.get_go_type() == "string":
+                read_results.append("{ret_name} = ByteSliceTo{type}({buf}.Next({len}))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=elem.get_cardinality()))
             else:
-                read_results.append("binary.Read({buf}, binary.LittleEndian, &{ret_name})".format(buf=bufferName, ret_name=elem.get_go_name()))     
+                read_results.append("binary.Read({buf}, binary.LittleEndian, &{ret_name})".format(buf=bufferName, ret_name=elem.get_go_name()))
         return read_results
 
     def get_go_device_implementation(self):
@@ -161,17 +161,17 @@ func New(uid string, ipcon *ipconnection.IPConnection) ({name}, error) {{
 
 // Returns the response expected flag for the function specified by the function ID parameter.
 // It is true if the function is expected to send a response, false otherwise.
-// 
-// For getter functions this is enabled by default and cannot be disabled, because those 
-// functions will always send a response. For callback configuration functions it is enabled 
-// by default too, but can be disabled by SetResponseExpected. 
+//
+// For getter functions this is enabled by default and cannot be disabled, because those
+// functions will always send a response. For callback configuration functions it is enabled
+// by default too, but can be disabled by SetResponseExpected.
 // For setter functions it is disabled by default and can be enabled.
-// 
-// Enabling the response expected flag for a setter function allows to detect timeouts 
+//
+// Enabling the response expected flag for a setter function allows to detect timeouts
 // and other error conditions calls of this setter as well. The device will then send a response
 // for this purpose. If this flag is disabled for a setter function then no response is send
 // and errors are silently ignored, because they cannot be detected.
-// 
+//
 // See SetResponseExpected for the list of function ID constants available for this function.
 func (device *{name}) GetResponseExpected(functionID {function}) (bool, error) {{
     return device.device.GetResponseExpected(uint8(functionID))
@@ -180,7 +180,7 @@ func (device *{name}) GetResponseExpected(functionID {function}) (bool, error) {
 // Changes the response expected flag of the function specified by the function ID parameter.
 // This flag can only be changed for setter (default value: false) and callback configuration
 // functions (default value: true). For getter functions it is always enabled.
-// 
+//
 // Enabling the response expected flag for a setter function allows to detect timeouts and
 // other error conditions calls of this setter as well. The device will then send a response
 // for this purpose. If this flag is disabled for a setter function then no response is send
@@ -203,9 +203,9 @@ func (device *{name}) GetAPIVersion() [3]uint8 {{
 """
         resp_expct_template = "dev.ResponseExpected[{function}{name}] = {value};"
         resp_expct_config = [resp_expct_template.format(function="Function", name=packet.get_name().camel, value=self.get_go_response_expected(packet.get_response_expected())) for packet in self.get_packets('function')]
-     
+
         functions = []
-        
+
         callback_template = """{description}\nfunc (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
             wrapper := func(byteSlice []byte) {{
                 {buf_decl}
@@ -234,12 +234,12 @@ func (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
         }}
         toRead := MinU(uint64({message_length}-{message_chunk_offset}), uint64(len({message_chunk_data}[:])))
         buf = append(buf, {message_chunk_data}[:toRead]...)
-        if len(buf) >= int({message_length}) {{            
+        if len(buf) >= int({message_length}) {{
             fn({high_level_params})
             buf = make([]{buf_type}, 0)
         }}
     }}
-    return device.Register{low_level_name}Callback(wrapper)    
+    return device.Register{low_level_name}Callback(wrapper)
 }}
 
 //Remove a registered {name_desc} callback.
@@ -248,8 +248,8 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
 }}
 """
 
-        for packet in self.get_packets('callback'):            
-            params = packet.get_elements(direction='out') 
+        for packet in self.get_packets('callback'):
+            params = packet.get_elements(direction='out')
 
             param_decls = ["var {} {}".format(param.get_go_name(), param.get_go_type()) for param in params]
             param_reads = self.go_read_results(params, "buf", low_level_in_bits=False)
@@ -287,7 +287,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
                                                       high_level_params = ", ".join([p.get_go_name() for p in high_level_params] + ["buf"]),
                                                       low_level_name=packet.get_name().camel))
 
-        function_template = """{description}\nfunc (device *{device_name}) {name}({params}) ({returnType}) {{    
+        function_template = """{description}\nfunc (device *{device_name}) {name}({params}) ({returnType}) {{
         var buf bytes.Buffer
     {fill_payload}
     resultBytes, err := device.device.{fn}(uint8({fun_enum}{fn_id}), buf.Bytes())
@@ -296,7 +296,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
     }}
     if len(resultBytes) > 0 {{
         var header PacketHeader
-        
+
         header.FillFromBytes(resultBytes)
         if header.ErrorCode != 0 {{
             return {return_results}BrickletError(header.ErrorCode)
@@ -305,11 +305,11 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
         {resultBufAssignment}bytes.NewBuffer(resultBytes[8:])
         {read_results}
     }}
-    
+
     return {return_results}nil
 }}"""
 
-        stream_in_setter_template = """{description}\n\tfunc (device *{device_name}) {name}({params}) ({returnType}) {{            
+        stream_in_setter_template = """{description}\n\tfunc (device *{device_name}) {name}({params}) ({returnType}) {{
         {lowLevelResult}, err {colon}= device.device.SetHighLevel(func({length} uint64, {chunkOffset} uint64, {payload} []byte) (LowLevelWriteResult, error) {{
             arr := [{chunk_size}]{chunk_data_type}{{}}
             copy(arr[:], ByteSliceTo{chunk_data_type_title}Slice({payload}))
@@ -322,7 +322,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
             return LowLevelWriteResult{{
                 uint64({written}),
                 lowLevelResults.Bytes()}}, err
-        }}, {high_level_function_idx}, {element_size_in_bit}, {chunk_len_in_bit}, {chunk_data_type_title}SliceToByteSlice({data_var}))   
+        }}, {high_level_function_idx}, {element_size_in_bit}, {chunk_len_in_bit}, {chunk_data_type_title}SliceToByteSlice({data_var}))
 
          if err != nil {{
             return
@@ -336,7 +336,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
 
         stream_out_getter_template = """{description}\n\tfunc (device *{device_name}) {name}({params}) ({return_type}) {{
         buf, {result}, err := device.device.GetHighLevel(func() (LowLevelResult, error) {{
-            {low_level_vars}, err := device.{name}LowLevel({params_without_type})            
+            {low_level_vars}, err := device.{name}LowLevel({params_without_type})
 
             if err != nil {{
                 return LowLevelResult{{}}, err
@@ -369,19 +369,19 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
             for p in packet_params:
                 packet_param_types.add(p.get_go_type())
             params = ["{name} {t}".format(name=param.get_go_name(), t=param.get_go_type()) for param in packet_params]
-            
-            if len(packet.get_elements(direction='out')) > 0:                
+
+            if len(packet.get_elements(direction='out')) > 0:
                 fn = "Get"
-            else:                
+            else:
                 fn = "Set"
-            
+
             byte_count = sum([param.get_size() for param in packet_params])
 
             fill_payload = self.go_fill_payload(packet_params, "buf")
 
             read_results = self.go_read_results(returns, "resultBuf")
             return_results = []
-            
+
             if len(packet.get_constant_groups()) > 0:
                 constant_doc = "\n//\n// Associated constants:\n//\n//\t{constants}".format(constants = "\n//\t".join(["* " + const_group.get_name().camel + const.get_name().camel for const_group in packet.get_constant_groups() for const in const_group.get_constants()]))
             else:
@@ -392,7 +392,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
             functions.append(function_template.format(name= packet.get_name().camel,
                                      description= packet.get_go_formatted_doc() + constant_doc,
                                      params= ", ".join(params),
-                                     returnType = packet.get_go_return_type(),                                  
+                                     returnType = packet.get_go_return_type(),
                                      byte_count = byte_count,
                                      device_name = self.get_go_name(),
                                      resultBufAssignment = "resultBuf := " if len(return_results) > 0 else "",
@@ -404,12 +404,12 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
                                      fn_id=packet.get_name().camel))
 
             if packet.get_high_level('stream_in') != None:
-                high_level_function_counter += 1                
+                high_level_function_counter += 1
                 stream = packet.get_high_level('stream_in')
-                name = packet.get_name(skip=-2).camel                
+                name = packet.get_name(skip=-2).camel
                 params = ", ".join(["{name} {type}".format(name=param.get_go_name(), type=param.get_go_type()) for param in packet_params if param.get_level() != 'low'] + [stream.get_data_element().get_go_name() +" []"+stream.get_data_element().get_go_type(ignore_cardinality=True)])
                 params_without_type = ", ".join([param.get_go_name() for param in packet_params if param.get_level() != 'low'])
-                
+
                 chunk_type = stream.get_chunk_data_element().get_go_type(ignore_cardinality=True)
                 chunk_size = stream.get_chunk_data_element().get_cardinality()
 
@@ -455,18 +455,18 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
                                                                    expand_low_level_results = "\n\t".join(self.go_read_results((ret for ret in returns if ret.get_level() != "low"), "resultBuf")),
                                                                    copy_written=written_elements[0].get_go_name() + " = lowLevelResult.Written" if stream.has_short_write() else ""))
 
-                                                                   
+
 
             if packet.get_high_level('stream_out') != None:
                 assert(fn == 'Get')
                 high_level_function_counter += 1
                 stream = packet.get_high_level('stream_out')
-                name = packet.get_name(skip=-2).camel                
+                name = packet.get_name(skip=-2).camel
                 params = ", ".join(["{name} {type}".format(name=param.get_go_name(), type=param.get_go_type()) for param in packet_params if param.get_level() != 'low'])
                 params_without_type = ", ".join([param.get_go_name() for param in packet_params if param.get_level() != 'low'])
                 return_results = ", ".join(["ByteSliceTo{type}Slice(buf)".format(type=stream.get_data_element().get_go_type(ignore_cardinality=True).title())]+[ret.get_go_name() for ret in returns if ret.get_level() != 'low'])
-                
-                low_level_params = []                
+
+                low_level_params = []
                 for param in packet_params:
                     if param.get_level() != 'low':
                         low_level_params.append(param.get_go_name())
@@ -474,7 +474,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
                        print("Unexpected low level parameter in stream_out-getter!")
 
 
-                if stream.get_fixed_length() is not None: 
+                if stream.get_fixed_length() is not None:
                     length = stream.get_fixed_length()
                 else:
                     length = stream.get_length_element().get_go_name()
@@ -486,8 +486,8 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
 
                 functions.append(stream_out_getter_template.format(description= packet.get_go_formatted_doc(),
                                                                    device_name=self.get_go_name(),
-                                                                   name=name,                                                                   
-                                                                   params=params, 
+                                                                   name=name,
+                                                                   params=params,
                                                                    result = "result" if any(ret for ret in returns if ret.get_level() != "low") else "_",
                                                                    resultBuf = "resultBuf := bytes.NewBuffer(result)" if any(ret for ret in returns if ret.get_level() != "low") else "",
                                                                    params_without_type = params_without_type,
@@ -504,7 +504,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
                                                                    return_results = return_results,
                                                                    expand_low_level_results = "\n\t".join(self.go_read_results((ret for ret in returns if ret.get_level() != "low"), "resultBuf"))
                                                                    ))
-        
+
         return template.format(name=self.get_go_name(),
                                device_identifier = self.get_device_identifier(),
                                device_display_name = self.get_long_display_name(),
@@ -515,7 +515,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
                                response_expected_config="\n\t".join(resp_expct_config),
                                function= "Function",
                                functions="\n\n".join(functions))
-    
+
     def get_go_source(self):
         return "\n".join([
             self.get_go_imports(),
@@ -547,7 +547,7 @@ class GoBindingsGenerator(common.BindingsGenerator):
             content = device.get_go_source().replace("‍REPLACE_WITH_ZWJ", "\u200d")
         else:
             content = device.get_go_source().replace("‍REPLACE_WITH_ZWJ", (u"\u200d").encode('utf-8'))
-        with open(os.path.join(self.get_bindings_dir(), filename + '.go'), 'w') as f:            
+        with open(os.path.join(self.get_bindings_dir(), filename + '.go'), 'w') as f:
             f.write(content)
 
         if device.is_released():

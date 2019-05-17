@@ -156,9 +156,9 @@ class GoExampleArgument(common.ExampleArgument):
 
         value = self.get_value()
         array = self.get_element().get_cardinality() > 1 if self.get_element() is not None else False # < 0 as slice, > 1 as array
-        if isinstance(value, list):            
+        if isinstance(value, list):
             return '{type}{{{values}}}'.format(type=go_common.get_go_type(type_, len(value), array=array), values=', '.join([helper(item) for item in value]))
-            
+
         return helper(value)
 
 class GoExampleArgumentsMixin(object):
@@ -173,7 +173,7 @@ class GoExampleParameter(common.ExampleParameter):
 
         if self.get_cardinality() == 1:
             template = templateA
-        elif self.get_cardinality() < 0:   
+        elif self.get_cardinality() < 0:
             template = templateB
         else:
             template = templateC
@@ -272,7 +272,7 @@ class GoExampleResult(common.ExampleResult):
 
     def get_go_write_lines(self):
         name = self.get_go_name()
-        
+
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -321,7 +321,7 @@ class GoExampleResult(common.ExampleResult):
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               float_cast = "float64(" if self.get_divisor() is not None else "",
                                               float_cast_end = ")" if self.get_divisor() is not None else "",
-                                              divisor=self.get_formatted_divisor(' /{0}'),                                              
+                                              divisor=self.get_formatted_divisor(' /{0}'),
                                               comment=self.get_formatted_comment(' // {0}')))
 
         return result
@@ -336,13 +336,13 @@ class GoExampleGetterFunction(common.ExampleGetterFunction, GoExampleArgumentsMi
     def get_go_result_prefix(self):
         return ", ".join(r.get_go_name() if r.get_label_count() > 0 else "_" for r in self.get_results() )
 
-    def get_go_source(self):        
+    def get_go_source(self):
         template = r"""{global_line_prefix}		// Get current {function_name_comment}.
 {global_line_prefix}{result_name}, _ := {device_name_initials}.{function_name_camel}({arguments})
 {write_lines}
 """
         result_name = self.get_go_result_prefix()
-        
+
         write_lines = []
         for result in self.get_results():
             write_lines += result.get_go_write_lines()
@@ -358,9 +358,9 @@ class GoExampleGetterFunction(common.ExampleGetterFunction, GoExampleArgumentsMi
         result = template.format(device_name_under=self.get_device().get_name().camel,
                                  device_name_initials=self.get_device().get_initial_name(),
                                  device_category_under = self.get_device().get_category().camel,
-                                 result_name = result_name,                                 
+                                 result_name = result_name,
                                  function_name_camel=self.get_name().camel,
-                                 function_name_comment=self.get_comment_name(),                                 
+                                 function_name_comment=self.get_comment_name(),
                                  write_lines='\n'.join(write_lines).replace('\b\n\r', '\n').replace('\b', '').replace('\r\n\r', '\n\n').rstrip('\r').replace('\r', '\n'),
                                  arguments=',<BP>'.join(arguments),
                                  global_line_prefix=global_line_prefix)
@@ -395,7 +395,7 @@ class GoExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_go_function(self):
         return ""
 
-    def get_go_source(self):        
+    def get_go_source(self):
         template = r"""{device_name_initials}.Register{function_name_camel}Callback(func({params}) {{
         {write_lines}{extra_message}
     }})
@@ -403,7 +403,7 @@ class GoExampleCallbackFunction(common.ExampleCallbackFunction):
         write_lines = []
         params = []
         packet = [packet for packet in self.get_device().get_packets(type_='callback') if (packet.get_name().under == self.get_name().under) or (len(packet.get_name().under.split("_")) > 2 and packet.get_name(skip=-2).under == self.get_name().under)][0]
-        
+
         for parameter in self.get_parameters():
             params.append(parameter.get_go_source())
             write_lines += parameter.get_go_write_lines()
@@ -419,7 +419,7 @@ class GoExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(write_lines) > 0:
             extra_message = '\n' + extra_message
 
-        result = template.format(device_name_initials=self.get_device().get_initial_name(),                                 
+        result = template.format(device_name_initials=self.get_device().get_initial_name(),
                                  params=", ".join(params),
                                  function_name_camel=self.get_name().camel,
                                  function_name_comment=self.get_comment_name(),
@@ -649,7 +649,7 @@ class GoExamplesGenerator(common.ExamplesGenerator):
             return
 
         if not os.path.exists(examples_dir):
-            os.makedirs(examples_dir) 
+            os.makedirs(examples_dir)
 
         for example in examples:
             filename = 'example_{0}.go'.format(example.get_name().under)
