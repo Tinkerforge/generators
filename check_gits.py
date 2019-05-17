@@ -154,14 +154,23 @@ for git_name in sorted(os.listdir('..')):
 
     if github_token != None:
         if b'github.com' in subprocess.check_output('cd {0}; git remote get-url origin'.format(git_path), shell=True):
-            github = json.loads(subprocess.check_output(['curl', 'https://{0}@api.github.com/repos/Tinkerforge/{1}'.format(github_token, git_name)], stderr=subprocess.DEVNULL))
+            github_repo = json.loads(subprocess.check_output(['curl', 'https://{0}@api.github.com/repos/Tinkerforge/{1}'.format(github_token, git_name)], stderr=subprocess.DEVNULL))
 
-            if description != None and github['description'] != description:
-                warning('github description mismatch: {0} (github) != {1} (config)'.format(github['description'], description))
+            if description != None and github_repo['description'] != description:
+                warning('github description mismatch: {0} (github) != {1} (config)'.format(github_repo['description'], description))
             else:
-                print('github description:', github['description'])
+                print('github description:', github_repo['description'])
 
-            print('github homepage:', github['homepage'])
+            print('github homepage:', github_repo['homepage'])
+
+            github_teams = json.loads(subprocess.check_output(['curl', 'https://{0}@api.github.com/repos/Tinkerforge/{1}/teams'.format(github_token, git_name)], stderr=subprocess.DEVNULL))
+            teams = sorted(['{0} [{1}]'.format(team['name'], team['permission']) for team in github_teams])
+            teams_expected = [['Admins [admin]', 'Owners [admin]'], ['Admins [admin]']]
+
+            if teams not in teams_expected:
+                warning('github teams mismatch: {0} (github) != {1} (expected)'.format(', '.join(teams), ', '.join(teams_expected[0])))
+            else:
+                print('github teams:', ', '.join(teams))
         else:
             print('not hosted on github')
     else:
