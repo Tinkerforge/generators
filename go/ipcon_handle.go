@@ -197,8 +197,8 @@ type EnumerateResponse struct {
 }
 
 func fillFromLeBytes(resp *EnumerateResponse, bytes []byte) {
-	resp.UID = string(bytes[0:8])
-	resp.ConnectedUID = string(bytes[8:16])
+	resp.UID = internal.ByteSliceToString(bytes[0:8])
+	resp.ConnectedUID = internal.ByteSliceToString(bytes[8:16])
 	resp.Position = rune(bytes[16])
 	resp.HardwareVersion = [3]uint8{bytes[17], bytes[18], bytes[19]}
 	resp.FirmwareVersion = [3]uint8{bytes[20], bytes[21], bytes[22]}
