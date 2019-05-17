@@ -616,7 +616,7 @@ pub enum ConnectError {
     /// Could not create tcp socket (Failed to clone tcp stream).
     CouldNotCloneTcpStream,
     /// Connect succeeded, but the socket was disconnected immediately.
-    /// This usually happens if the first auto-reconnect succeeds immediately, but should be handled within the reconnect logic.    
+    /// This usually happens if the first auto-reconnect succeeds immediately, but should be handled within the reconnect logic.
     NotReallyConnected,
 }
 
@@ -702,14 +702,21 @@ impl FromByteSlice for ServerNonce {
 
 /// This error is returned if the remote's server nonce could not be queried.
 #[derive(Debug, Copy, Clone)]
-pub struct AuthenticateError;
+pub enum AuthenticateError {
+    SecretInvalid,
+    CouldNotGetServerNonce
+}
 
 impl std::fmt::Display for AuthenticateError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result { write!(f, "{}", self.description()) }
 }
 
 impl std::error::Error for AuthenticateError {
-    fn description(&self) -> &str { "Could not get server nonce" }
+    fn description(&self) -> &str { match *self {
+            SecretInvalid => "Authentication secret contained non-ASCII characters",
+            CouldNotGetServerNonce => "Could not get server nonce"
+        }
+    }
 }
 
 impl Default for IpConnection {
@@ -792,7 +799,7 @@ impl IpConnectionRequestSender {
     }
 
     /// Returns the timeout as set by [`set_timeout`](crate::ip_connection::IpConnection::set_timeout)
-    pub fn get_timeout(&self) -> Duration { 
+    pub fn get_timeout(&self) -> Duration {
         let (tx, rx) = channel();
         self.socket_thread_tx.send(SocketThreadRequest::GetTimeout(tx)).expect("Socket thread has crashed. This is a bug in the rust bindings.");
         rx.recv().expect("The auto reconnect queue was dropped. This is a bug in the rust bindings.")
@@ -811,7 +818,7 @@ impl IpConnectionRequestSender {
     pub fn get_connection_state(&self) -> ConnectionState { ConnectionState::from(self.connection_state.load(Ordering::SeqCst)) }
 
     /// Returns true if auto-reconnect is enabled, false otherwise.
-    pub fn get_auto_reconnect(&self) -> bool { 
+    pub fn get_auto_reconnect(&self) -> bool {
         let (tx, rx) = channel();
         self.socket_thread_tx.send(SocketThreadRequest::GetAutoReconnect(tx))
             .expect("Socket thread has crashed. This is a bug in the rust bindings.");
@@ -826,7 +833,7 @@ impl IpConnectionRequestSender {
     pub fn set_auto_reconnect(&mut self, auto_reconnect_enabled: bool) {
         self.socket_thread_tx
             .send(SocketThreadRequest::SetAutoReconnect(auto_reconnect_enabled))
-            .expect("Socket thread has crashed. This is a bug in the rust bindings.");        
+            .expect("Socket thread has crashed. This is a bug in the rust bindings.");
     }
 
     /// Broadcasts an enumerate request. All devices will respond with an enumerate event.
@@ -860,6 +867,9 @@ impl IpConnectionRequestSender {
     ///
     /// New in version 2.1.0.
     pub fn authenticate(&self, secret: &str) -> Result<ConvertingReceiver<()>, AuthenticateError> {
+        if !secret.chars().all(|c| c.is_ascii()) {
+            return Err(AuthenticateError::SecretInvalid)
+        }
         let (tx, rx) = channel();
         let (sent_tx, sent_rx) = channel();
         self.socket_thread_tx
@@ -869,7 +879,7 @@ impl IpConnectionRequestSender {
         let recv = ConvertingReceiver::<ServerNonce>::new(rx, timeout);
         let server_nonce = match recv.recv() {
             Ok(nonce) => nonce,
-            Err(_) => return Err(AuthenticateError),
+            Err(_) => return Err(AuthenticateError::CouldNotGetServerNonce),
         };
 
         let mut rng = rand::prng::ChaChaRng::from_entropy();
