@@ -43,21 +43,21 @@ func (ipcon *IPConnection) Disconnect() {
 }
 
 // Callbacks registered to this event are called whenever the IP Connection got connected to a Brick Daemon or to a WIFI/Ethernet Extension.
-// This function returns a callback ID which is used to deregister the callback when it should not be called anymore.
+// This function returns a registration ID which is used to deregister the callback when it should not be called anymore.
 func (ipcon *IPConnection) RegisterConnectCallback(fn func(ConnectReason)) uint64 {
 	wrapper := func(reason uint8) { fn(ConnectReason(reason)) }
 	return ipcon.handle.RegisterConnectCallback(wrapper)
 }
 
 // Callbacks registered to this event are called whenever the IP Connection got disconnected from a Brick Daemon or to a WIFI/Ethernet Extension.
-// This function returns a callback ID which is used to deregister the callback when it should not be called anymore.
+// This function returns a registration ID which is used to deregister the callback when it should not be called anymore.
 func (ipcon *IPConnection) RegisterDisconnectCallback(fn func(DisconnectReason)) uint64 {
 	wrapper := func(reason uint8) { fn(DisconnectReason(reason)) }
 	return ipcon.handle.RegisterDisconnectCallback(wrapper)
 }
 
 // Callbacks registered to this event are called whenever a enumerate event is received.
-// This function returns a callback ID which is used to deregister the callback when it should not be called anymore.
+// This function returns a registration ID which is used to deregister the callback when it should not be called anymore.
 func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(EnumerateResponse)) uint64 {
 	wrapper := func(bytes []byte) {
 		var resp EnumerateResponse
@@ -67,19 +67,19 @@ func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(EnumerateResponse))
 	return ipcon.handle.RegisterEnumerateCallback(wrapper)
 }
 
-// Deregisters the connect callback with the given callback ID.
-func (ipcon *IPConnection) DeregisterConnectCallback(callbackID uint64) {
-	ipcon.handle.DeregisterConnectCallback(callbackID)
+// Deregisters the connect callback with the given registration ID.
+func (ipcon *IPConnection) DeregisterConnectCallback(registrationID uint64) {
+	ipcon.handle.DeregisterConnectCallback(registrationID)
 }
 
-// Deregisters the disconnect callback with the given callback ID.
-func (ipcon *IPConnection) DeregisterDisconnectCallback(callbackID uint64) {
-	ipcon.handle.DeregisterDisconnectCallback(callbackID)
+// Deregisters the disconnect callback with the given registration ID.
+func (ipcon *IPConnection) DeregisterDisconnectCallback(registrationID uint64) {
+	ipcon.handle.DeregisterDisconnectCallback(registrationID)
 }
 
-// Deregisters the enumerate callback with the given callback ID.
-func (ipcon *IPConnection) DeregisterEnumerateCallback(callbackID uint64) {
-	ipcon.handle.DeregisterEnumerateCallback(callbackID)
+// Deregisters the enumerate callback with the given registration ID.
+func (ipcon *IPConnection) DeregisterEnumerateCallback(registrationID uint64) {
+	ipcon.handle.DeregisterEnumerateCallback(registrationID)
 }
 
 // Sets the timeout for getters and for setters for which the response expected flag is activated.

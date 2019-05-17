@@ -130,19 +130,19 @@ func (ipcon *IPConnection) RegisterConnectCallback(fn func(uint8)) uint64 {
 	return <-idChan
 }
 
-func (ipcon *IPConnection) DeregisterConnectCallback(callbackID uint64) {
+func (ipcon *IPConnection) DeregisterConnectCallback(registrationID uint64) {
 	ipcon.ipconCallbackDereg <- IPConCallbackDeregistration{
-		callbackID}
+		registrationID}
 }
 
-func (ipcon *IPConnection) DeregisterDisconnectCallback(callbackID uint64) {
+func (ipcon *IPConnection) DeregisterDisconnectCallback(registrationID uint64) {
 	ipcon.ipconCallbackDereg <- IPConCallbackDeregistration{
-		callbackID}
+		registrationID}
 }
 
-func (ipcon *IPConnection) DeregisterEnumerateCallback(callbackID uint64) {
+func (ipcon *IPConnection) DeregisterEnumerateCallback(registrationID uint64) {
 	ipcon.ipconCallbackDereg <- IPConCallbackDeregistration{
-		callbackID}
+		registrationID}
 }
 
 func (ipcon *IPConnection) RegisterDisconnectCallback(fn func(uint8)) uint64 {
@@ -452,7 +452,7 @@ func callbackThreadFn(
 
 				idxToRemove := -1
 				for idx, callback := range registeredCallbacks[key] {
-					if callback.RegID == CallbackDereg.CallbackID {
+					if callback.RegID == CallbackDereg.RegistrationID {
 						idxToRemove = idx
 					}
 				}
@@ -478,7 +478,7 @@ func callbackThreadFn(
 				//Search in connect callbacks
 				idxToRemove := -1
 				for idx, callback := range connectCallbacks {
-					if callback.RegID == CallbackDereg.CallbackID {
+					if callback.RegID == CallbackDereg.RegistrationID {
 						idxToRemove = idx
 					}
 				}
@@ -490,7 +490,7 @@ func callbackThreadFn(
 
 				//Search in disconnect callbacks
 				for idx, callback := range disconnectCallbacks {
-					if callback.RegID == CallbackDereg.CallbackID {
+					if callback.RegID == CallbackDereg.RegistrationID {
 						idxToRemove = idx
 					}
 				}
@@ -502,7 +502,7 @@ func callbackThreadFn(
 
 				//Search in enumerate callbacks
 				for idx, callback := range enumerateCallbacks {
-					if callback.RegID == CallbackDereg.CallbackID {
+					if callback.RegID == CallbackDereg.RegistrationID {
 						idxToRemove = idx
 					}
 				}
@@ -816,7 +816,7 @@ type CallbackRegistration struct {
 type CallbackDeregistration struct {
 	UID        uint32
 	FunctionID uint8
-	CallbackID uint64
+	RegistrationID uint64
 }
 
 type ConnectCallbackRegistration struct {
@@ -830,7 +830,7 @@ type DisconnectCallbackRegistration struct {
 }
 
 type IPConCallbackDeregistration struct {
-	CallbackID uint64
+	RegistrationID uint64
 }
 
 type CallbackContainer struct {

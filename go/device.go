@@ -225,6 +225,6 @@ func (device *Device) RegisterCallback(functionID uint8, fn func([]byte)) uint64
 	return <-idChan
 }
 
-func (device *Device) DeregisterCallback(functionID uint8, callbackID uint64) {
-	device.callbackDeregTX <- CallbackDeregistration{device.internalUID, functionID, callbackID}
+func (device *Device) DeregisterCallback(functionID uint8, registrationID uint64) {
+	device.callbackDeregTX <- CallbackDeregistration{device.internalUID, functionID, registrationID}
 }
