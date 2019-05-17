@@ -82,7 +82,8 @@ impl Device {
                 response_expected: [ResponseExpectedFlag::InvalidFunctionId; 256],
                 high_level_locks: vec![Arc::new(Mutex::new(())); high_level_function_count as usize],
             },
-            Err(e) => panic!("UID {} could not be parsed: {}", uid, e.description())        
+            //FIXME: (breaking change) Don't panic here, return a Result instead.
+            Err(e) => panic!("UID {} could not be parsed: {}", uid, e.description())
         }
     }
 

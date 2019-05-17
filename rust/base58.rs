@@ -6,21 +6,25 @@ use std::{
 
 const ALPHABET: &str = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
+const ERROR_INVALID_CHAR: &str = "UID contains an invalid character.";
+const ERROR_TOO_BIG: &str = "UID is too big to fit into a u64";
+const ERROR_EMPTY: &str = "UID is empty or a value that mapped to zero";
+
 ///Error type of Base58 parser.
 #[derive(Debug, Copy, Clone)]
 pub enum Base58Error {
     ///Is returned if the parse finds an invalid character. Contains the character and it's index in the string.
     InvalidCharacter,
-    UidToBig,
+    UidToBig, //FIXME: (breaking change) Spelling
     UidEmpty
 }
 
 impl Display for Base58Error {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match *self {
-            Base58Error::InvalidCharacter => write!(f, "UID contains an invalid character."),
-            Base58Error::UidToBig => write!(f, "UID is too big to fit into a u64"),
-            Base58Error::UidEmpty => write!(f, "UID is empty")
+            Base58Error::InvalidCharacter => write!(f, "{}", ERROR_INVALID_CHAR),
+            Base58Error::UidToBig => write!(f, "{}", ERROR_TOO_BIG),
+            Base58Error::UidEmpty => write!(f, "{}", ERROR_EMPTY)
         }
     }
 }
@@ -28,9 +32,9 @@ impl Display for Base58Error {
 impl Error for Base58Error {
     fn description(&self) -> &str {
         match *self {
-            Base58Error::InvalidCharacter => "UID contains an invalid character.",
-            Base58Error::UidToBig => "UID is too big to fit into a u64",
-            Base58Error::UidEmpty => "UID is empty or a value that mapped to zero"
+            Base58Error::InvalidCharacter => ERROR_INVALID_CHAR,
+            Base58Error::UidToBig => ERROR_TOO_BIG,
+            Base58Error::UidEmpty => ERROR_EMPTY
         }
     }
 }
