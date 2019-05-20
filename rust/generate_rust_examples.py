@@ -703,6 +703,11 @@ class RustExamplesGenerator(common.ExamplesGenerator):
             with open(filepath, 'w') as f:
                 f.write(example.get_rust_source())
             if not example.is_incomplete():
+                version = subprocess.check_output(["rustfmt", "--version"])
+                if not 'nightly' in version.decode('utf-8'):
+                    print("Please set your rust toolchain to nightly (e.g. with 'rustup default nightly'), as the example generator currently depends on unstable rustfmt features.")
+                    return
+
                 p = subprocess.Popen(["rustfmt", filename, "--config-path", self.root_dir], cwd=examples_dir, stdout = subprocess.PIPE)
                 out, err = p.communicate() #block until rustfmt has finished
                 if len(out) > 0 or err is not None:
