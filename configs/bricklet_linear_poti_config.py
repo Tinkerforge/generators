@@ -23,7 +23,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': False, # selling remaining stock, replaced by Linear Poti Bricklet 2.0
     'features': [
         'bricklet_get_identity'
     ],

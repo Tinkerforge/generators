@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True,
+    'discontinued': True, # replaced by CO2 Bricklet 2.0
     'features': [
         'bricklet_get_identity'
     ],
