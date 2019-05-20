@@ -15,7 +15,7 @@ com = {
     'display_name': 'Motion Detector',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Passive infrared (PIR) motion sensor mit 7m range',
+        'en': 'Passive infrared (PIR) motion sensor with 7m range',
         'de': 'Passiver Infrarot (PIR) Bewegungssensor mit 7m Reichweite'
     },
     'released': True,
