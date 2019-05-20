@@ -20,8 +20,8 @@ com = {
         'en': 'Creates beep and alarm with configurable volume and frequency',
         'de': 'Erzeugt Piepton und Alarm mit konfigurierbarer Lautstärke und Frequenz'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',

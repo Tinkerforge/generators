@@ -19,8 +19,8 @@ com = {
         'de': 'Dreifarbiges 296x128 E-Paper-Display'
     },
     'released': False,
-    'documented': False,
-    'discontinued': False,
+    'documented': True,
+    'discontinued': True,
     'features': [
         'comcu_bricklet',
         'bricklet_get_identity'

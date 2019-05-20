@@ -21,9 +21,8 @@ com = {
         'en': 'Measures distance up to 40m with laser light',
         'de': 'Misst Entfernung bis zu 40m mit Laser-Licht'
     },
-    'comcu': True,
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',

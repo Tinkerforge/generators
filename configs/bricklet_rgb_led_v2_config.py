@@ -18,8 +18,8 @@ com = {
         'en': 'Controls one RGB LED',
         'de': 'Steuert eine RGB LED'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',

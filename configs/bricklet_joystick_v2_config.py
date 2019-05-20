@@ -18,8 +18,8 @@ com = {
         'en': '2-axis joystick with push-button',
         'de': '2-Achsen Joystick mit Taster'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',

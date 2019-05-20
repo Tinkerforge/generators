@@ -21,8 +21,8 @@ com = {
         'en': 'Measures magnetic flux density between -7mT and +7mT',
         'de': 'Misst magnetische Flussdichte zwischen -7mT und +7mT'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',

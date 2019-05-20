@@ -21,8 +21,8 @@ com = {
         'en': '59mm linear potentiometer',
         'de': '59mm Linearpotentiometer'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',
