@@ -18,9 +18,9 @@ com = {
         'en': 'Four 7-segment displays with switchable dots',
         'de': 'Vier 7-Segment-Anzeigen mit schaltbare Punkten'
     },
-    'released': False,
+    'released': True,
     'documented': True,
-    'discontinued': True,
+    'discontinued': False,
     'features': [
         'comcu_bricklet',
         'bricklet_get_identity'
