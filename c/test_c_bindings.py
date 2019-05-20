@@ -38,8 +38,13 @@ class CExamplesTester(common.Tester):
         self.compiler = compiler
 
     def test(self, cookie, path, extra):
+        uses_libgd = False
+
+        with open(path, 'r') as f:
+            uses_libgd = '#include <gd.h>' in f.read()
+
         # skip OLED scribble example because mingw32 has no libgd package
-        if self.compiler.startswith('mingw32-') and path.endswith('example_scribble.c'):
+        if self.compiler.startswith('mingw32-') and uses_libgd:
             self.handle_result(cookie, '>>> skipping', True)
             return
 
@@ -92,7 +97,7 @@ class CExamplesTester(common.Tester):
         if self.compiler.startswith('mingw32-'):
             args += ['-lws2_32']
 
-        if path.endswith('example_scribble.c'):
+        if uses_libgd:
             args += ['-lm', '-lgd']
 
         retcode, output = common.check_output_and_error(args)
