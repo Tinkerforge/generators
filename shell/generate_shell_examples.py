@@ -134,6 +134,11 @@ class ShellExampleArgumentsMixin(object):
         for argument in self.get_arguments():
             arguments.append(argument.get_shell_source())
 
+        # FIXME: argparse will pick up positional arguments that start with a
+        #        dash as options. workaround this by escaping them
+        if len(arguments) > 0 and arguments[0].startswith('-'):
+            arguments = ['--', '--'] + arguments
+
         return arguments
 
 class ShellExampleParameter(common.ExampleParameter):
