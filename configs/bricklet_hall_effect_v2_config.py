@@ -249,6 +249,6 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Counter Callback',
 'functions': [('setter', 'Set Counter Config', [('int16', 3000), ('int16', -3000), ('uint32', 10000)], 'Configure counter with ±3000µT threshold and 10ms debounce', None),
-              ('callback', ('Counter', 'counter'), [(('Counter', 'Counter'), 'uint16', 1, None, None, None)], None, None),
+              ('callback', ('Counter', 'counter'), [(('Counter', 'Counter'), 'uint32', 1, None, None, None)], None, None),
               ('callback_configuration', ('Counter', 'counter'), [], 100, True, None, [])]
 })
