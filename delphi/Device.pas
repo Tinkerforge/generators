@@ -134,7 +134,7 @@ begin
   inherited Create;
   uidString := uid__;
   uidValid := Base58Decode(uid__, longUid);
-  if (uidValid and longUid > $FFFFFFFF) then begin
+  if (uidValid and (longUid > $FFFFFFFF)) then begin
     { Convert from 64bit to 32bit }
     value1 := longUid and $FFFFFFFF;
     value2 := longword((longUid shr 32) and $FFFFFFFF);
