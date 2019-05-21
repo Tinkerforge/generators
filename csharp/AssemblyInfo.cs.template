@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tinkerforge GmbH")]
 [assembly: AssemblyProduct("<<BINDINGS>> API Bindings")]
-[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2018")]
+[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("<<VERSION>>.0")]
