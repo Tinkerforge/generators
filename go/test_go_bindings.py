@@ -37,7 +37,6 @@ class GoExamplesTester(common.Tester):
         self.firstRun = True
         self.go_cache_dir = subprocess.check_output(['go', 'env', 'GOCACHE']).strip()
 
-
     def test(self, cookie, path, extra):
         root_dir = os.path.join(os.path.dirname(path), '..')
         # ipconnection examples are one level higher than the rest.

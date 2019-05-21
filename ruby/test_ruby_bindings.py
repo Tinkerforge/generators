@@ -38,11 +38,12 @@ class RubyTester(common.Tester):
                 '-wc',
                 path]
 
-        retcode, output = common.check_output_and_error(args)
-        output = output.strip('\r\n')
-        success = retcode == 0 and len(output.split('\n')) == 1 and 'Syntax OK' in output
+        self.execute(cookie, args)
 
-        self.handle_result(cookie, output, success)
+    def check_success(self, exit_code, output):
+        output = output.strip('\r\n')
+
+        return exit_code == 0 and len(output.split('\n')) == 1 and 'Syntax OK' in output
 
 def run(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/ruby/weather_station.rb'),

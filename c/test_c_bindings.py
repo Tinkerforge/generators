@@ -45,7 +45,7 @@ class CExamplesTester(common.Tester):
 
         # skip OLED scribble example because mingw32 has no libgd package
         if self.compiler.startswith('mingw32-') and uses_libgd:
-            self.handle_result(cookie, '>>> skipping', True)
+            self.handle_result(cookie, 0, '>>> skipping')
             return
 
         if extra:
@@ -100,13 +100,13 @@ class CExamplesTester(common.Tester):
         if uses_libgd:
             args += ['-lm', '-lgd']
 
-        retcode, output = common.check_output_and_error(args)
-        success = retcode == 0
+        self.execute(cookie, args)
 
-        if self.compiler == 'scan-build clang' and success and 'scan-build: No bugs found.\n' not in output:
-            success = False
+    def check_success(self, exit_code, output):
+        if self.compiler == 'scan-build clang' and exit_code == 0 and 'scan-build: No bugs found.\n' not in output:
+            return False
 
-        self.handle_result(cookie, output, success)
+        return True
 
 def run(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/c/weather_station.c'),

@@ -46,14 +46,15 @@ class PerlCheckExamplesTester(common.Tester):
                 '-cWT',
                 path_check]
 
-        retcode, output = common.check_output_and_error(args)
+        self.execute(cookie, args)
+
+    def check_success(self, exit_code, output):
         output = output.strip('\r\n')
 
         # FIXME: filter out some internal Perl problems with the Math::Complex module
         filtered_output = [line for line in output.split('\n') if not line.startswith('Prototype mismatch: sub Math::Complex::')]
-        success = retcode == 0 and len(filtered_output) == 1 and 'syntax OK' in output
 
-        self.handle_result(cookie, output, success)
+        return exit_code == 0 and len(filtered_output) == 1 and 'syntax OK' in output
 
 class PerlLintExamplesTester(common.Tester):
     def __init__(self, root_dir):
@@ -72,12 +73,14 @@ class PerlLintExamplesTester(common.Tester):
                 '-MO=Lint,all',
                 path_lint]
 
-        retcode, output = common.check_output_and_error(args)
+        self.execute(cookie, args)
+
+    def check_success(self, exit_code, output):
         output = output.strip('\r\n')
 
-        if retcode != 0 and output == "Can't locate object method \"NAME\" via package \"B::IV\" at /usr/share/perl5/B/Lint.pm line 575.\nCHECK failed--call queue aborted.":
+        if exit_code != 0 and output == "Can't locate object method \"NAME\" via package \"B::IV\" at /usr/share/perl5/B/Lint.pm line 577.\nCHECK failed--call queue aborted.":
             # FIXME: ignore the Lint module having bugs
-            success = True
+            return True
         else:
             # FIXME: ignore the Lint module being confused about constants
             filtered_output = []
@@ -93,9 +96,7 @@ class PerlLintExamplesTester(common.Tester):
                    not line.startswith("Bare sub name 'HEIGHT' interpreted as string at"):
                     filtered_output.append(line)
 
-            success = retcode == 0 and len(filtered_output) == 1 and 'syntax OK' in output
-
-        self.handle_result(cookie, output, success)
+            return exit_code == 0 and len(filtered_output) == 1 and 'syntax OK' in output
 
 class PerlCriticExamplesTester(common.Tester):
     def __init__(self, root_dir):

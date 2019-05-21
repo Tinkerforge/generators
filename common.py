@@ -908,9 +908,9 @@ def break_string(string, indent_marker, space=' ', continuation='', indent_head=
 def check_output_and_error(*popenargs, **kwargs):
     process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE, *popenargs, **kwargs)
     output, error = process.communicate()
-    retcode = process.poll()
+    exit_code = process.poll()
 
-    return retcode, (output + error).decode('utf-8')
+    return exit_code, (output + error).decode('utf-8')
 
 class GeneratorError(Exception):
     pass
@@ -2962,14 +2962,11 @@ class ExamplesGenerator(Generator):
 
 def tester_worker(cookie, args, env):
     try:
-        with open(os.devnull) as f:
-            output = subprocess.check_output(args, env=env, stderr=subprocess.STDOUT, stdin=f).decode('utf-8')
-    except subprocess.CalledProcessError as e:
-        return cookie, e.output.decode('utf-8'), e.returncode == 0
+        exit_code, output = check_output_and_error(args, env=env)
     except Exception as e:
-        return cookie, 'Tester Exception: ' + str(e), False
+        return cookie, None, 'Tester Exception: ' + str(e)
 
-    return cookie, output, True
+    return cookie, exit_code, output
 
 class Tester(object):
     PROCESSES = 4
@@ -2999,8 +2996,15 @@ class Tester(object):
         self.test_count += 1
         self.test((path,), path, extra)
 
-    def handle_result(self, cookie, output, success):
+    def handle_result(self, cookie, exit_code, output):
+        if exit_code == None: # FIXME: add better handling
+            if len(output) > 0:
+                print(output)
+
+            sys.exit(1)
+
         path = cookie[0]
+        success = self.check_success(exit_code, output)
 
         if self.comment != None:
             print('>>> [{0}] testing {1}'.format(self.comment, path))
@@ -3012,8 +3016,7 @@ class Tester(object):
         if len(output) > 0:
             print(output)
 
-
-        if sys.stdout.isatty(): #Only print color codes if stdout is not piped
+        if sys.stdout.isatty(): # only print color codes if stdout is not piped
             if success:
                 self.success_count += 1
                 print('\033[01;32m>>> test succeded\033[0m\n')
@@ -3033,6 +3036,9 @@ class Tester(object):
 
     def test(self, cookie, path, extra):
         raise NotImplementedError()
+
+    def check_success(self, exit_code, output):
+        return exit_code == 0
 
     def run(self):
         tmp_dir = os.path.join('/tmp/tester', self.name)

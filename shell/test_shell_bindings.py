@@ -39,19 +39,20 @@ class ShellExamplesTester(common.Tester):
         with open(path, 'r') as f:
             code = f.read()
 
-        with open(path_check, 'w') as f:
+        with open(path_check + '.tmp', 'w') as f:
             f.write(code.replace('; read dummy', '').replace('kill -- -$$', 'kill $(jobs -p)'))
 
-        os.chmod(path_check, 0o755)
+        os.chmod(path_check + '.tmp', 0o755)
+        os.rename(path_check + '.tmp', path_check)
 
         args = [path_check]
         env = {'TINKERFORGE_SHELL_BINDINGS_DRY_RUN': '1',
                'PATH': '/tmp/tester/shell:{0}'.format(os.environ['PATH'])}
 
-        retcode, output = common.check_output_and_error(args, env=env)
-        success = retcode == 0 and output.strip() in ['', 'Press key to exit']
+        self.execute(cookie, args, env)
 
-        self.handle_result(cookie, output, success)
+    def check_success(self, exit_code, output):
+        return exit_code == 0 and output.strip() in ['', 'Press key to exit']
 
 def run(root_dir):
     return ShellExamplesTester(root_dir).run()
