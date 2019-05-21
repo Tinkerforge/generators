@@ -65,6 +65,7 @@ class PylintTester(common.Tester):
                 '-c',
                 'import sys; sys.path.insert(0, "/tmp/tester/python/source"); import pylint; pylint.run_pylint()',
                 '-E',
+                '--disable=no-name-in-module',
                 path]
 
         self.execute(cookie, args)
