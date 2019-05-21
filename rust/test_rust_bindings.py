@@ -52,6 +52,15 @@ runner = ["/tmp/tester/rust/nothing.sh"]""")
             f.write("#!/bin/sh\n")
 
         os.chmod(os.path.join(os.path.dirname(path), "nothing.sh"), 0o777)
+        
+        with open(os.path.join(os.path.dirname(path), 'Cargo.toml'), 'r') as f:
+            content = f.readlines()
+            
+        with open(os.path.join(os.path.dirname(path), 'Cargo.toml'), 'w') as f:
+            for line in content:
+                f.write(line)
+                if line.startswith('[dependencies]'):
+                    f.write('image = "0.20"\n')
 
         args = ['cargo',
                 'test',
