@@ -292,3 +292,7 @@
 - Add removeCalibration and get/setBackgroundCalibrationDuration methods to
   Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
+- Fix false-positive ArrayIndexOutOfBoundsExceptions in Industrial Counter
+  Bricklet setAllCounterActive, Industrial Digital Out 4 Bricklet 2.0 setValue,
+  Industrial Quad Relay Bricklet 2.0 setValue and IO-4 Bricklet 2.0 setValue
+  methods

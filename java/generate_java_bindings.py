@@ -845,11 +845,11 @@ public class {0} extends Device {{
                                                          bbput.format(put_suffix, cast, name + '[i].charAt(0)'))
                     elif element.get_type() == 'bool':
                         bbput_format = bool_loop.format(name + 'Bits',
-                                                        element.get_cardinality() // 8,
+                                                        int(math.ceil(element.get_cardinality() / 8.0)),
                                                         bool_loop_sub1.format(element.get_cardinality(),
                                                                               name,
                                                                               name + 'Bits'),
-                                                        bool_loop_sub2.format(element.get_cardinality() // 8,
+                                                        bool_loop_sub2.format(int(math.ceil(element.get_cardinality() / 8.0)),
                                                                               name + 'Bits'))
                     else:
                         bbput_format = plain_loop.format(element.get_cardinality(),
@@ -1466,7 +1466,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
                 if with_obj:
                     if element.get_type() == 'bool':
                         bbget_format = bbget.format(bbret + 'Bits',
-                                                    str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                    int(math.ceil(element.get_cardinality() / 8.0)),
                                                     loop.format(element.get_cardinality(),
                                                                 bool_array_unpack.format(obj,
                                                                                          bbret,
@@ -1480,7 +1480,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
 
                     if element.get_type() == 'bool':
                         bbget_format = bbget.format(bbret + 'Bits',
-                                                    str(int(math.ceil(element.get_cardinality() / 8.0))),
+                                                    int(math.ceil(element.get_cardinality() / 8.0)),
                                                     loop.format(element.get_cardinality(),
                                                                 bool_array_unpack.format(obj,
                                                                                          bbret,
