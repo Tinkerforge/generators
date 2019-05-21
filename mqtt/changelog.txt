@@ -18,7 +18,7 @@
 2019-03-11: 2.0.4 (b6f211c)
 - Don't try to translate lists
 
-2019-05-20: 2.0.5 (<unknown>)
+2019-05-21: 2.0.5 (<unknown>)
 - Add support for CO2 2.0, E-Paper 296x128, Hall Effect 2.0, Joystick 2.0,
   Laser Range Finder 2.0, Linear Poti 2.0, Piezo Speaker 2.0, RGB LED 2.0 and
   Segment Display 4x7 2.0 Bricklet and HAT and HAT Zero Brick
