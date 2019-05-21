@@ -93,7 +93,7 @@ def generate(root_dir):
 
     # Download nuget.exe
     with common.ChangedDirectory(tmp_dir):
-        common.execute(['wget', 'http://www.nuget.org/nuget.exe'])
+        common.execute(['wget', 'https://dist.nuget.org/win-x86-commandline/v5.0.2/nuget.exe'])
 
     # Make Tinkerforge.nuspec
     common.specialize_template(os.path.join(root_dir, 'Tinkerforge.nuspec.template'),

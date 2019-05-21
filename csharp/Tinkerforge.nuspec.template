@@ -6,7 +6,7 @@
     <title>Tinkerforge C# API Bindings</title>
     <authors>Tinkerforge GmbH</authors>
     <owners>Tinkerforge GmbH</owners>
-    <licenseUrl>http://creativecommons.org/publicdomain/zero/1.0/</licenseUrl>
+    <license type="expression">CC0-1.0</license>
     <projectUrl>http://www.tinkerforge.com</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/Tinkerforge/generators/master/csharp/package.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
