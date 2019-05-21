@@ -713,8 +713,8 @@ impl std::fmt::Display for AuthenticateError {
 
 impl std::error::Error for AuthenticateError {
     fn description(&self) -> &str { match *self {
-            SecretInvalid => "Authentication secret contained non-ASCII characters",
-            CouldNotGetServerNonce => "Could not get server nonce"
+            AuthenticateError::SecretInvalid => "Authentication secret contained non-ASCII characters",
+            AuthenticateError::CouldNotGetServerNonce => "Could not get server nonce"
         }
     }
 }

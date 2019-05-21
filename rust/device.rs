@@ -13,6 +13,8 @@ use std::sync::{
     Arc, Mutex,
 };
 
+use std::error::Error;
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub(crate) enum ResponseExpectedFlag {
     InvalidFunctionId,
@@ -77,7 +79,7 @@ impl Device {
         match uid.base58_to_u32() {
             Ok(internal_uid) => Device {
                 api_version,
-                internal_uid: uid.base58_to_u32().unwrap(),
+                internal_uid: internal_uid,
                 req_tx: ip_connection.req.socket_thread_tx.clone(),
                 response_expected: [ResponseExpectedFlag::InvalidFunctionId; 256],
                 high_level_locks: vec![Arc::new(Mutex::new(())); high_level_function_count as usize],

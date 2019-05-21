@@ -52,7 +52,7 @@ impl Base58 for str {
         let mut digit: u32 = 0;
         // Remove 1s from the left as they are leading zeros in base 58
         let filtered = self.as_bytes().iter().skip_while(|c| **c == '1' as u8).collect::<Vec<&u8>>();
-        for (idx, &&character) in filtered.iter().enumerate().rev() {
+        for (_idx, &&character) in filtered.iter().enumerate().rev() {
             match ALPHABET.as_bytes().iter().enumerate().find(|(_i, c)| **c == character).map(|(i, _c)| i) {
                 None => return Err(Base58Error::InvalidCharacter),
                 Some(i) => {
