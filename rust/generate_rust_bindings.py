@@ -34,7 +34,7 @@ import rust_common
 packet_param_types = set()
 packet_return_types = set()
 
-class RustBindingsDevice(rust_common.RustDevice):    
+class RustBindingsDevice(rust_common.RustDevice):
 
     def get_rust_imports(self):
         conv_receiver_imports = ["ConvertingReceiver"]
@@ -60,13 +60,13 @@ class RustBindingsDevice(rust_common.RustDevice):
                                                               device_name_camel = self.get_name().camel)
 
         return """{header}
-        
+
 //! {description}
 use crate::{{
     byte_converter::*,
     converting_receiver::{conv_receiver},{callback_recv}{high_level_callback_recv}
     device::*,
-    ip_connection::IpConnection,{low_level}    
+    ip_connection::IpConnection,{low_level}
 }};""".format(header=self.get_generator().get_header_comment(kind='asterisk'),
               description=description,
               callback_recv = "" if len(self.get_packets("callback")) == 0 else "\n\tconverting_callback_receiver::ConvertingCallbackReceiver,",
@@ -74,7 +74,7 @@ use crate::{{
               low_level = "" if all(not packet.has_high_level() for packet in self.get_packets()) else "\n\tlow_level_traits::*",
               conv_receiver = conv_receiver)
 
-    def get_rust_constants(self):        
+    def get_rust_constants(self):
         constants = []
 
         # Create function and callback constants for get/set response expected
@@ -82,12 +82,12 @@ use crate::{{
             constants.append((packet.get_name().camel_abbrv, packet.get_function_id()))
         for packet in self.get_packets('callback'):
             constants.append(("Callback"+packet.get_name().camel_abbrv, packet.get_function_id()))
-        
+
         function_enum_name = self.get_rust_name() + "Function"
 
         result = """pub enum {name} {{
     {values}
-}}""".format(name= function_enum_name, 
+}}""".format(name= function_enum_name,
              values = ",\n\t".join(name for (name, value) in constants))
 
         # Create mapping from enum values to integer constants
@@ -102,11 +102,11 @@ impl From<{function}> for u8 {{
         result += from_template.format(
             function=function_enum_name,
             patterns = ",\n\t\t\t".join("{function}::{name} => {value}".format(name=name, value=value, function=function_enum_name) for (name, value) in constants))
-        
+
         # Create constants used in function parameters
         for constant_group in self.get_constant_groups():
             constant_type = constant_group.get_elements()[0].get_rust_type(ignore_cardinality=True)
-            constant_name = self.get_name().upper + "_" + self.get_category().upper +'_'+ constant_group.get_name().upper + "_" 
+            constant_name = self.get_name().upper + "_" + self.get_category().upper +'_'+ constant_group.get_name().upper + "_"
             enum_values = []
             for constant in constant_group.get_constants():
                 name = constant_name + constant.get_name().upper
@@ -114,20 +114,20 @@ impl From<{function}> for u8 {{
 
                 # Bools are with a capital letter in python, but not in rust
                 if value == "False" or value == "True":
-                    value = value.lower()                
-                
+                    value = value.lower()
+
                 # clippy nags about number literals with a length > 5, so insert '_' after every three characters from the right:
                 # 4294967295 becomes 4_294_967_295
                 if len(value) > 5 and "32" in constant_type or "64" in constant_type:
-                    value = value[::-1]                  
+                    value = value[::-1]
                     value = "_".join(value[i:i+3] for i in range(0, len(value), 3))
                     value = value[::-1]
-                    
+
                 enum_values.append("pub const {name}: {type} = {value};".format(type=constant_type, name=name, value=value))
             result += "\n" + "\n".join(enum_values)
 
         return result
-    
+
 
     def get_rust_structs_and_trait_impls(self):
         result = ""
@@ -169,7 +169,7 @@ pub struct {name} {{
     fn ll_message_written(&self) -> usize {{
 		{written_var}
 	}}
-	
+
 	fn get_result(&self) -> {result_type} {{
 		{result_type} {{
 			{result_member_assignments}
@@ -178,11 +178,11 @@ pub struct {name} {{
 }}
 """
         self.returnTypes = {}
-        
+
         for packet in self.get_packets():
-            returns = packet.get_elements(direction='out')            
+            returns = packet.get_elements(direction='out')
             name = packet.get_rust_type_name() + ("Event" if packet.get_type() == 'callback' else "")
-            
+
             if name in self.returnTypes.values():
                 # Another function already created this struct.
                 self.returnTypes[packet] = name
@@ -258,7 +258,7 @@ pub struct {name} {{
                 hl_returns = [elem for elem in packet.get_elements(direction='out') if elem.get_level() != 'low']
                 member_assignment_template = "{name}: self.{name}"
                 member_assignments = ",\n\t\t\t".join([member_assignment_template.format(name=ret.get_rust_name()) for ret in hl_returns])
-                
+
                 result += low_level_read_template.format(data_type=ll_data.get_rust_type(ignore_cardinality=True),
                                                          result_type=packet.get_rust_type_name(skip=-2) + "Result",
                                                          low_level_type=packet.get_rust_type_name() + ("Event" if packet.get_type() == 'callback' else ""),
@@ -271,22 +271,22 @@ pub struct {name} {{
         self.returnTypesResult = {}
         self.returnTypesResultCardinality = {}
         low_level_packets = [packet for packet in self.get_packets() if packet.has_high_level()]
-        for packet in low_level_packets:            
+        for packet in low_level_packets:
             returns = [elem for elem in packet.get_elements(direction='out') if elem.get_level() != 'low']
-                    
+
             name = packet.get_rust_type_name(skip=-2) + "Result"
             if name in self.returnTypesResult.values():
                 self.returnTypesResult[packet] = name
                 self.returnTypesResultCardinality[packet] = len(returns)
-                continue            
-            
+                continue
+
             self.returnTypesResult[packet] = name
             self.returnTypesResultCardinality[packet] = len(returns)
 
             members = "\n\t".join([member_template.format(name=ret.get_rust_name(), type=ret.get_rust_type()) for ret in returns])
             result += struct_template.format(name=name,
                                              members = members,
-                                             derive_string = packet.get_rust_derive_string(high_level_only=True))           
+                                             derive_string = packet.get_rust_derive_string(high_level_only=True))
         return result
 
     def get_rust_response_expected(self, response_expected_str):
@@ -313,17 +313,17 @@ pub struct {name} {{
 
     /// Returns the response expected flag for the function specified by the function ID parameter.
     /// It is true if the function is expected to send a response, false otherwise.
-    /// 
-    /// For getter functions this is enabled by default and cannot be disabled, because those 
-    /// functions will always send a response. For callback configuration functions it is enabled 
-    /// by default too, but can be disabled by [`set_response_expected`](crate::{name_under}::{name_camel}::set_response_expected). 
+    ///
+    /// For getter functions this is enabled by default and cannot be disabled, because those
+    /// functions will always send a response. For callback configuration functions it is enabled
+    /// by default too, but can be disabled by [`set_response_expected`](crate::{name_under}::{name_camel}::set_response_expected).
     /// For setter functions it is disabled by default and can be enabled.
-    /// 
-    /// Enabling the response expected flag for a setter function allows to detect timeouts 
+    ///
+    /// Enabling the response expected flag for a setter function allows to detect timeouts
     /// and other error conditions calls of this setter as well. The device will then send a response
     /// for this purpose. If this flag is disabled for a setter function then no response is send
     /// and errors are silently ignored, because they cannot be detected.
-    /// 
+    ///
     /// See [`set_response_expected`](crate::{name_under}::{name_camel}::set_response_expected) for the list of function ID constants available for this function.
     pub fn get_response_expected(&mut self, fun: {function}) -> Result<bool, GetResponseExpectedError> {{
         self.device.get_response_expected(u8::from(fun))
@@ -332,7 +332,7 @@ pub struct {name} {{
     /// Changes the response expected flag of the function specified by the function ID parameter.
     /// This flag can only be changed for setter (default value: false) and callback configuration
     /// functions (default value: true). For getter functions it is always enabled.
-    /// 
+    ///
     /// Enabling the response expected flag for a setter function allows to detect timeouts and
     /// other error conditions calls of this setter as well. The device will then send a response
     /// for this purpose. If this flag is disabled for a setter function then no response is send
@@ -356,9 +356,9 @@ pub struct {name} {{
 }}"""
         resp_expct_template = "result.device.response_expected[u8::from({function}::{name}) as usize] = {value};"
         resp_expct_config = [resp_expct_template.format(function=self.get_rust_name() + "Function", name=packet.get_name().camel_abbrv, value=self.get_rust_response_expected(packet.get_response_expected())) for packet in self.get_packets('function')]
-     
+
         functions = []
-        
+
         callback_template = """{description}\n\tpub fn get_{name}_callback_receiver(&self) -> ConvertingCallbackReceiver<{type}> {{
         self.device.get_callback_receiver(u8::from({fun_enum}::Callback{fn_id}))
     }}"""
@@ -396,11 +396,11 @@ pub struct {name} {{
 
             let result = self.{low_level_function}({low_level_params}).recv();
             if let Err(BrickletRecvTimeoutError::SuccessButResponseExpectedIsDisabled) = result{{
-                Ok(Default::default())                
+                Ok(Default::default())
             }}
             else {{
                 result
-            }}        
+            }}
         }})?;
         Ok(())
     }}"""
@@ -432,11 +432,11 @@ pub struct {name} {{
 
             returnType = "ConvertingReceiver<{type}>".format(type=self.returnTypes[packet])
 
-            if len(packet.get_elements(direction='out')) > 0:                
+            if len(packet.get_elements(direction='out')) > 0:
                 fn = "get"
-            else:                
+            else:
                 fn = "set"
-            
+
             byte_count = sum([param.get_size() for param in packet_params])
 
             fill_payload = []
@@ -459,7 +459,7 @@ pub struct {name} {{
                 else:
                     fill_payload.append("payload[{first_byte}..{to}].copy_from_slice(&<{type}>::to_le_byte_vec({param_name}));".format(param_name=param.get_rust_name(), type=param.get_rust_type(), first_byte=byte_offset, to=byte_offset + size))
                 byte_offset += size
-            
+
             if len(packet.get_constant_groups()) > 0:
                 constant_doc = "\n\t///\n\t/// Associated constants:\n\t/// {constants}".format(constants = "\n\t///\t".join(["* " + self.get_name().upper + "_" + self.get_category().upper +'_'+ const_group.get_name().upper + "_" + const.get_name().upper for const_group in packet.get_constant_groups() for const in const_group.get_constants()]))
             else:
@@ -476,12 +476,12 @@ pub struct {name} {{
                                      fun_enum = self.get_rust_name() + "Function",
                                      fn_id=packet.get_name().camel_abbrv))
 
-            if packet.get_high_level('stream_in') != None:                
+            if packet.get_high_level('stream_in') != None:
                 high_level_function_counter += 1
                 stream = packet.get_high_level('stream_in')
                 name = packet.get_name(skip=-2).under
-                params = ", ".join(["{name}: {type}".format(name=param.get_rust_name(), type=param.get_rust_type()) for param in packet_params if param.get_level() != 'low'] + [stream.get_name().under +": &["+stream.get_data_element().get_rust_type(ignore_cardinality=True)+"]"])               
-                
+                params = ", ".join(["{name}: {type}".format(name=param.get_rust_name(), type=param.get_rust_type()) for param in packet_params if param.get_level() != 'low'] + [stream.get_name().under +": &["+stream.get_data_element().get_rust_type(ignore_cardinality=True)+"]"])
+
                 low_level_params = []
                 have_length = False
                 have_chunk_offset = False
@@ -503,10 +503,10 @@ pub struct {name} {{
 
                 if fn == 'get':
                     result_count = self.returnTypesResultCardinality[packet]
-                    short_write = stream.has_short_write()                    
+                    short_write = stream.has_short_write()
 
                     # Don't return structs without or with one member only. The decision tree is a bit more complicated than the one below because of short writes.
-                    #  
+                    #
                     # scenario                                     return                          result_type
                     # short write and no other results             Ok(ll_result.0)                 usize
                     # short write and one other result             Ok(ll_result.0, ll_result.1.0)  (usize, type of first item of ...result)
@@ -539,7 +539,7 @@ pub struct {name} {{
 
                     functions.append(stream_in_getter_template.format(name=name,
                                                      description= packet.get_rust_formatted_doc(),
-                                                     params=(", " + params) if len(params) > 0 else "",                                                     
+                                                     params=(", " + params) if len(params) > 0 else "",
                                                      result_type = fn_result_type,
                                                      high_level_function_idx = high_level_function_counter,
                                                      stream_data = stream.get_name().under,
@@ -570,17 +570,17 @@ pub struct {name} {{
                 high_level_function_counter += 1
                 stream = packet.get_high_level('stream_out')
                 name = packet.get_name(skip=-2).under
-                params = ", ".join(["{name}: {type}".format(name=param.get_rust_name(), type=param.get_rust_type()) for param in packet_params if param.get_level() != 'low'])               
-                
+                params = ", ".join(["{name}: {type}".format(name=param.get_rust_name(), type=param.get_rust_type()) for param in packet_params if param.get_level() != 'low'])
+
                 payload_type = packet.get_high_level_payload_type()
                 result_count = self.returnTypesResultCardinality[packet]
 
                 # Don't return structs without or with one member only.
-                #  
+                #
                 # scenario            return                          result_type
                 #no results:          ""                              ""
                 #one results:         , ll_result.1.0                 , type of first item of ...result
-                #two or more results: , ll_result.1                   , ...result            
+                #two or more results: , ll_result.1                   , ...result
                 if   result_count == 0:
                     fn_result = ""
                     fn_result_type = ""
@@ -592,7 +592,7 @@ pub struct {name} {{
                     fn_result = ", ll_result.1"
                     fn_result_type = ", " + packet.get_rust_type_name(skip=-2) + "Result"
 
-                low_level_params = []                
+                low_level_params = []
                 for param in packet_params:
                     if param.get_level() != 'low':
                         low_level_params.append(param.get_rust_name())
@@ -610,7 +610,7 @@ pub struct {name} {{
                                                                    high_level_function_idx = high_level_function_counter,
                                                                    low_level_function = packet.get_name().under,
                                                                    low_level_params = ", ".join(low_level_params)))
-        
+
         return template.format(name=self.get_rust_name(),
                                device_identifier = self.get_device_identifier(),
                                device_display_name = self.get_long_display_name(),
@@ -621,7 +621,7 @@ pub struct {name} {{
                                response_expected_config="\n\t\t".join(resp_expct_config),
                                function= self.get_rust_name() + "Function",
                                functions="\n\n\t".join(functions))
-    
+
     def get_rust_source(self):
         return "\n".join([
             self.get_rust_imports(),
@@ -661,7 +661,7 @@ class RustBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(filename + '.rs')
 
     def write_byte_converter(self):
-        with open(os.path.join(self.get_root_dir(), 'byte_converter_template.rs'), 'r') as f: 
+        with open(os.path.join(self.get_root_dir(), 'byte_converter_template.rs'), 'r') as f:
             primitive_type_impl = f.read()
         array_impl = []
         one_byte_template = """impl ToBytes for [u8; {count}] {{
@@ -720,7 +720,7 @@ impl FromByteSlice for [{type}; {count}] {{
 impl FromByteSlice for [bool; {count}] {{
     fn from_le_byte_slice(bytes: &[u8]) -> [bool; {count}] {{
         let mut result = [false; {count}];
-        for (byte, elem) in bytes.into_iter().enumerate() {{            
+        for (byte, elem) in bytes.into_iter().enumerate() {{
             for i in 0..8 {{
                 if byte * 8 + i >= result.len() {{
                     break;
@@ -742,7 +742,7 @@ impl FromByteSlice for [bool; {count}] {{
             typestring = "[u8; " + str(i) + "]"
             if typestring in packet_param_types or typestring in packet_return_types:
                 array_impl.append(one_byte_template.format(count=i))
-        
+
         for i in range(0,65):
             typestring = "[i8; " + str(i) + "]"
             if typestring in packet_param_types or typestring in packet_return_types:
@@ -756,7 +756,7 @@ impl FromByteSlice for [bool; {count}] {{
                 typestring = "["+primitive_type+"; " + str(i) + "]"
                 if typestring in packet_param_types or typestring in packet_return_types:
                     array_impl.append(template.format(type=primitive_type, count=i, count_in_bytes=size_in_bytes*i, unchecked=("" if "f" not in primitive_type else "_unchecked")))
-        
+
         with open(os.path.join(self.get_bindings_dir(), 'byte_converter.rs'), 'w') as f:
             f.write(primitive_type_impl)
             f.write("\n")
@@ -788,7 +788,7 @@ pub mod converting_receiver;
 pub mod device;
 pub mod ip_connection;
 pub mod low_level_traits;
-"""        
+"""
         with open(os.path.join(self.get_bindings_dir(), 'lib.rs'), 'w') as f:
             f.write(template.format(version=".".join(list(self.get_changelog_version()))))
 
@@ -798,7 +798,7 @@ pub mod low_level_traits;
             f.write("\n".join(decls))
 
     def finish(self):
-        self.write_cargo_toml()    
+        self.write_cargo_toml()
         self.write_lib_rs()
         self.write_byte_converter()
         common.BindingsGenerator.finish(self)
