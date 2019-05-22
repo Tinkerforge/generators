@@ -213,20 +213,26 @@ pub struct {name} {{
                 size = ret.get_size()
                 init_exprs.append("{name}: <{type}>::from_le_byte_slice(&bytes[{first_byte}..{to}])".format(name=ret.get_rust_name(), type=ret.get_rust_type(), first_byte=byte_offset, to=byte_offset + size))
                 byte_offset += size
-            
+
             init_string = ",".join(init_exprs)
-            
+
             result += struct_template.format(name=name,
                                              members = members,
                                              derive_string = packet.get_rust_derive_string())
             result += from_bytes_template.format(name=name,unused_bytes = "" if byte_size > 0 else "_", size_in_bytes=byte_size, init_string=init_string)
 
             if packet.get_high_level('stream_in') != None:
-                ll_data = [elem for elem in packet.get_elements(direction='in') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
-                written_var = ll_data.get_cardinality()
-                if packet.get_high_level('stream_in').has_short_write():                    
+                stream = packet.get_high_level('stream_in')
+                ll_data = stream.get_chunk_data_element()
+
+                written_var = stream.get_fixed_length()
+                if stream.has_short_write():
                     written_elem = [elem for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_written'][0]
                     written_var = "self.{name} as usize".format(name=written_elem.get_rust_name())
+                if written_var is None:
+                    assert(stream.has_single_chunk())
+                    written_var = ll_data.get_cardinality()
+
                 hl_returns = [elem for elem in packet.get_elements(direction='out') if elem.get_level() != 'low']
                 member_assignment_template = "{name}: self.{name}"
                 member_assignments = ",\n\t\t\t".join([member_assignment_template.format(name=ret.get_rust_name()) for ret in hl_returns])
@@ -236,29 +242,30 @@ pub struct {name} {{
                                                           written_var = written_var,
                                                           result_member_assignments=member_assignments)
             if packet.get_high_level('stream_out') != None:
-                ll_data = [elem for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
-                
-                length_var = ll_data.get_cardinality()
-                if any(elem.get_level() == 'low' and elem.get_role() == 'stream_length' for elem in packet.get_elements(direction='out')):
-                    length_var = "self.{name} as usize".format(name=[elem for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_length'][0].get_rust_name())
-                
+                stream = packet.get_high_level('stream_out')
+                ll_data = stream.get_chunk_data_element()
+
+                length_var = stream.get_fixed_length()
+                if length_var is None:
+                    length_var = "self.{} as usize".format(stream.get_length_element().get_rust_name())
+
                 chunk_offset_var = "0"
-                if any(elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_offset' for elem in packet.get_elements(direction='out')):
-                    chunk_offset_var = "self.{name} as usize".format(name=[elem for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_offset'][0].get_rust_name())
-                
-                chunk_data_var = "&self.{name}".format(name=[elem for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0].get_rust_name())
-                
+                if not stream.has_single_chunk():
+                    chunk_offset_var = "self.{} as usize".format(stream.get_chunk_offset_element().get_rust_name())
+
+                chunk_data_var = "&self.{name}".format(name=ll_data.get_rust_name())
+
                 hl_returns = [elem for elem in packet.get_elements(direction='out') if elem.get_level() != 'low']
                 member_assignment_template = "{name}: self.{name}"
                 member_assignments = ",\n\t\t\t".join([member_assignment_template.format(name=ret.get_rust_name()) for ret in hl_returns])
                 
                 result += low_level_read_template.format(data_type=ll_data.get_rust_type(ignore_cardinality=True),
-                                                         result_type = packet.get_rust_type_name(skip=-2) + "Result",
-                                                         low_level_type = packet.get_rust_type_name() + ("Event" if packet.get_type() == 'callback' else ""),
-                                                         length_var = length_var,
-                                                         chunk_offset_var = chunk_offset_var,
-                                                         chunk_data_var = chunk_data_var,
-                                                         result_member_assignments = member_assignments)
+                                                         result_type=packet.get_rust_type_name(skip=-2) + "Result",
+                                                         low_level_type=packet.get_rust_type_name() + ("Event" if packet.get_type() == 'callback' else ""),
+                                                         length_var=length_var,
+                                                         chunk_offset_var=chunk_offset_var,
+                                                         chunk_data_var=chunk_data_var,
+                                                         result_member_assignments=member_assignments)
 
         #generate low level result structs (for results created by the low level function, which are not stream info, but should be given to the user)
         self.returnTypesResult = {}
