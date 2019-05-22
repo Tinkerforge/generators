@@ -230,7 +230,6 @@ pub struct {name} {{
                     written_elem = [elem for elem in packet.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_written'][0]
                     written_var = "self.{name} as usize".format(name=written_elem.get_rust_name())
                 if written_var is None:
-                    assert(stream.has_single_chunk())
                     written_var = ll_data.get_cardinality()
 
                 hl_returns = [elem for elem in packet.get_elements(direction='out') if elem.get_level() != 'low']
