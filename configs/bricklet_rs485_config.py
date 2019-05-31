@@ -308,8 +308,8 @@ The default is: RS485 mode.
 Setzt den Modus des Bricklets. Verfügbare Optionen sind
 
 * RS485,
-* Modbus Master RTU und
-* Modbus Slave RTU.
+* Modbus-Master-RTU und
+* Modbus-Slave-RTU.
 
 Der Standardmodus ist RS485.
 """
@@ -718,7 +718,7 @@ In Modbus master mode this function can be used to read coils from a slave. This
 function creates a Modbus function code 1 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Starting address of the read.
+* Starting Address: Number of the first coil to read. For backwards compatibility reasons this parameter is called Starting Address. It is not an address, but instead a coil number in the range of 1 to 65536.
 * Count: Number of coils to read.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -735,11 +735,11 @@ is indeed for a particular request.
 Im Modbus-Master Modus kann diese Funktion genutzt werden um Coils vom Slave zu lesen.
 
 * Slave Addresss: Adresse des Modbus-Slave
-* Starting Address: Startadresse der Leseoperation
+* Starting Address: Nummer der ersten zu lesenden Coil. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
 * Count: Anzahl der zu lesenden Coils.
 
 Nach erfolgreichen ausführen der Leseoperation gibt diese funktion eine Request ID
-zurück die nicht Null ist. Im Falle eines Fehlers wird eine Null als Request ID
+zurück die nicht Null ist. Im Falle eines Fehlers wird eine 0 als Request ID
 zurückgegeben.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Coils Response` Callback
@@ -800,7 +800,7 @@ In Modbus master mode this function can be used to read holding registers from a
 This function creates a Modbus function code 3 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Starting address of the read.
+* Starting Address: Number of the first holding register to read. For backwards compatibility reasons this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is implicit and must be omitted.
 * Count: Number of holding registers to read.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -818,12 +818,16 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Holding R
 an einen Modbus-Slave zu senden (Modbus Funktionscode 3).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Startadresse der Leseeoperation.
-* Count: Anzahl der zu schreibenden Register.
+* Starting Address: Nummer des ersten zu lesenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 ist implizit und muss ausgelassen werden.
+* Count: Anzahl der zu lesenden Register.
+
+Nach erfolgreichem Ausführen der Leseoperation gibt diese Funktion eine Request ID
+zurück, die nicht Null ist. Im Falle eines Fehlers wird eine 0 als Request ID
+zurückgegeben.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Holding Registers Response` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
-eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
 zurückgegeben Request ID überein.
 """
 }]
@@ -873,7 +877,7 @@ In Modbus master mode this function can be used to write a single coil of a slav
 This function creates a Modbus function code 5 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Coil Address: Address of the coil.
+* Coil Address: Number of the coil to be written. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a coil number in the range of 1 to 65536.
 * Coil Value: Value to be written.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -891,10 +895,10 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un eine einzelne Coil 
 Modbus-Slave zu schreiben (Modbus Funktionscode 5).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Coil Address: Adresse der Coil
+* Coil Address: Nummer der zu schreibenden Coil. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
 * Coil Value: Zu schreibender Wert
 
-Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Holding Registers Response` Callback
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Single Coil` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
 eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
 zurückgegeben Request ID überein.
@@ -945,11 +949,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-In Modbus master mode this function can be used to write a single register of a
+In Modbus master mode this function can be used to write a single holding register of a
 slave. This function creates a Modbus function code 6 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Register Address: Address of the register.
+* Register Address: Number of the holding register to be written. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is implicit and must be omitted.
 * Register Value: Value to be written.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -967,7 +971,7 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un ein einzelnes Regis
 Modbus-Slave zu schreiben (Modbus Funktionscode 6).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Register Address: Adresse des Registers
+* Register Address: Nummer des zu schreibenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 ist implizit und muss ausgelassen werden.
 * Register Value: Zu schreibender Wert
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Single Register Response` Callback
@@ -1027,7 +1031,7 @@ In Modbus master mode this function can be used to write multiple coils of a sla
 This function creates a Modbus function code 15 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Starting address of the write.
+* Starting Address: Number of the first coil to write. For backwards compatibility reasons, this parameter is called Starting Address.It is not an address, but instead a coil number in the range of 1 to 65536.
 
 Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
@@ -1044,7 +1048,7 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un eine mehrere Coils 
 Modbus-Slave zu schreiben (Modbus Funktionscode 15).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Startadresse der Schreibeoperation
+* Starting Address: Nummer der ersten zu schreibenden Coil. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Multiple Coils Response` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
@@ -1103,7 +1107,7 @@ In Modbus master mode this function can be used to write multiple registers of a
 This function creates a Modbus function code 16 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Starting Address of the write.
+* Starting Address: Number of the first holding register to write. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is implicit and must be omitted.
 
 Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
@@ -1116,11 +1120,11 @@ particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un eine mehrere Register eines
+Im Modbus-Master Modus kann diese Funktion genutzt werden um ein oder mehrere Holding Register eines
 Modbus-Slave zu schreiben (Modbus Funktionscode 16).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Startadresse der Schreibeoperation
+* Starting Address: Nummer des ersten zu schreibenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 ist implizit und muss ausgelassen werden.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Multiple Registers Response` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
@@ -1183,7 +1187,7 @@ In Modbus master mode this function can be used to read discrete inputs from a s
 This function creates a Modbus function code 2 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Starting address of the read.
+* Starting Address: Number of the first discrete input to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a discrete input number in the range of 1 to 65536. The prefix digit 1 is implicit and must be omitted.
 * Count: Number of discrete inputs to read.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -1201,13 +1205,15 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Discrete 
 an einen Modbus-Slave zu senden (Modbus Funktionscode 2).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Startadresse der Leseeoperation.
+* Starting Address: Nummer des ersten zu lesenden Discrete Inputs. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Discrete-Input-Nummer zwischen 1 und 65536. Die Präfixziffer 1 ist implizit und muss ausgelassen werden.
 * Count: Anzahl der zu lesenden Register.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Discrete Inputs Response` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
 eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
 zurückgegeben Request ID überein.
+
+Im Falle eines Fehlers wird eine 0 als Request ID zurückgegeben.
 """
 }]
 })
@@ -1262,7 +1268,7 @@ In Modbus master mode this function can be used to read input registers from a s
 This function creates a Modbus function code 4 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Starting address of the read.
+* Starting Address: Number of the first input register to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead an input register number in the range of 1 to 65536. The prefix digit 3 is implicit and must be omitted.
 * Count: Number of input registers to read.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -1280,13 +1286,15 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Input-Anf
 an einen Modbus-Slave zu senden (Modbus Funktionscode 4).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Startadresse der Leseeoperation.
+* Starting Address: Nummer der ersten zu lesenden Input Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Input-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 3 ist implizit und muss ausgelassen werden.
 * Count: Anzahl der zu lesenden Register.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Input Registers Response` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
 eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
 zurückgegeben Request ID überein.
+
+Im Falle eines Fehlers wird eine 0 als Request ID zurückgegeben.
 """
 }]
 })
@@ -1347,8 +1355,9 @@ com['packets'].append({
 """
 This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read coils. The :word:`parameters` are
-request ID of the request, the starting address and the number of coils to
-be read as received by the request.
+request ID of the request, the number of the first coil to be read and the number of coils to
+be read as received by the request. The number of the first coil is called starting address for backwards compatibility reasons.
+It is not an address, but instead a coil number in the range of 1 to 65536.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Coils Request`.
 """,
@@ -1356,8 +1365,9 @@ To send a response of this request use :func:`Modbus Slave Answer Read Coils Req
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum lesen von Coils erhält. Die :word:`parameters`
-sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
-Coils.
+sind die Request ID der Anfrage, die Nummer der ersten zu lesenden Coil und die Anzahl der zu lesenden
+Coils. Die Nummer der ersten Coil heißt aus Rückwärtskompatiblitätsgründen starting address.
+Sie ist keine Adresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Read Coils Request` gesendet werden.
@@ -1421,8 +1431,9 @@ com['packets'].append({
 """
 This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read holding registers. The :word:`parameters`
-are request ID of the request, the starting address and the number of holding
-registers to be read as received by the request.
+are request ID of the request, the number of the first holding register to be read and the number of holding
+registers to be read as received by the request. The number of the first holding register is called starting address for backwards compatibility reasons.
+It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Holding Registers Request`.
 """,
@@ -1430,8 +1441,9 @@ To send a response of this request use :func:`Modbus Slave Answer Read Holding R
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum lesen von Holding Registern erhält. Die :word:`parameters`
-sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
-Register.
+sind die Request ID der Anfrage, die Nummer des ersten zu lesenden Holding Registers und die Anzahl der zu lesenden
+Register. Die Nummer des ersten Holding Registers heißt aus Rückwärtskompatiblitätsgründen starting address.
+Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Prefixziffer 4 wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Read Holding Registers Request` gesendet werden.
@@ -1495,8 +1507,9 @@ com['packets'].append({
 """
 This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write a single coil. The :word:`parameters`
-are request ID of the request, the coil address and the value of coil to be
-written as received by the request.
+are request ID of the request, the number of the coil and the value of coil to be
+written as received by the request. The number of the coil is called coil address for backwards compatibility reasons.
+It is not an address, but instead a coil number in the range of 1 to 65536.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Single Coil Request`.
 """,
@@ -1504,8 +1517,9 @@ To send a response of this request use :func:`Modbus Slave Answer Write Single C
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum schreiben einer einzelnen Coil erhält. Die :word:`parameters`
-sind die Request ID der Anfrage, die Adresse der Coil und der Wert der zu schreibenen
-Coil.
+sind die Request ID der Anfrage, die Nummer der Coil und der Wert der zu schreibenen
+Coil. Die Nummer der Coil heißt aus Rückwärtskompatiblitätsgründen starting address.
+Sie ist keine Adresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Write Single Coil Request` gesendet werden.
@@ -1563,18 +1577,20 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus slave mode when the slave receives a
-valid request from a Modbus master to write a single register. The :word:`parameters`
-are request ID of the request, the register address and the register value to
-be written as received by the request.
+valid request from a Modbus master to write a single holding register. The :word:`parameters`
+are request ID of the request, the number of the holding register and the register value to
+be written as received by the request. The number of the holding register is called starting address for backwards compatibility reasons.
+It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Single Register Request`.
 """,
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum schreiben einer einzelnen Registers erhält. Die :word:`parameters`
-sind die Request ID der Anfrage, die Adresse des Registers und der Wert des zuschreibenen
-Registers.
+gültige Anfrage eines Masters zum schreiben einer einzelnen Holding Registers erhält. Die :word:`parameters`
+sind die Request ID der Anfrage, die Nummer des Holding Registers und der Wert des zuschreibenen
+Registers. Die Nummer des Holding Registers heißt aus Rückwärtskompatiblitätsgründen starting address.
+Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Write Single Register Request` gesendet werden.
@@ -1636,8 +1652,9 @@ com['packets'].append({
 """
 This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write multiple coils. The :word:`parameters`
-are request ID of the request, the starting address and the data to be written as
-received by the request.
+are request ID of the request, the number of the first coil and the data to be written as
+received by the request. The number of the first coil is called starting address for backwards compatibility reasons.
+It is not an address, but instead a coil number in the range of 1 to 65536.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Multiple Coils Request`.
 """,
@@ -1645,7 +1662,8 @@ To send a response of this request use :func:`Modbus Slave Answer Write Multiple
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum schreiben einer mehrerer Coils erhält. Die :word:`parameters`
-sind die Request ID der Anfrage, die Startadresse der Coils und die zu schreibenen Daten.
+sind die Request ID der Anfrage, die Nummer der ersten Coil und die zu schreibenen Daten. Die Nummer der ersten Coil heißt aus Rückwärtskompatiblitätsgründen starting address.
+Sie ist keine Adresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Write Multiple Coils Request` gesendet werden.
@@ -1706,17 +1724,20 @@ com['packets'].append({
 'en':
 """
 This callback is called only in Modbus slave mode when the slave receives a
-valid request from a Modbus master to write multiple registers. The :word:`parameters`
-are request ID of the request, the starting address and the data to be written as
-received by the request.
+valid request from a Modbus master to write multiple holding registers. The :word:`parameters`
+are request ID of the request, the number of the first holding register and the data to be written as
+received by the request. The number of the first holding register is called starting address for backwards compatibility reasons.
+It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Multiple Registers Request`.
 """,
 'de':
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
-gültige Anfrage eines Masters zum schreiben einer mehrerer Register erhält. Die :word:`parameters`
-sind die Request ID der Anfrage, die Startadresse der Register und die zu schreibenen Daten.
+gültige Anfrage eines Masters zum schreiben einer mehrerer Holding Register erhält. Die :word:`parameters`
+sind die Request ID der Anfrage, die Nummer des ersten Holding Registers und die zu schreibenen Daten.
+Die Nummer des ersten Holding Registers heißt aus Rückwärtskompatiblitätsgründen starting address.
+Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Write Multiple Registers Request` gesendet werden.
@@ -1775,8 +1796,9 @@ com['packets'].append({
 """
 This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read discrete inputs. The :word:`parameters`
-are request ID of the request, the starting address and the number of discrete
-inputs to be read as received by the request.
+are request ID of the request, the number of the first discrete input and the number of discrete
+inputs to be read as received by the request. The number of the first discrete input is called starting address for backwards compatibility reasons.
+It is not an address, but instead a discrete input number in the range of 1 to 65536. The prefix digit 1 is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Discrete Inputs Request`.
 """,
@@ -1784,8 +1806,9 @@ To send a response of this request use :func:`Modbus Slave Answer Read Discrete 
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum lesen von Discrete Inputs erhält. Die :word:`parameters`
-sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
-Discrete Inputs.
+sind die Request ID der Anfrage, die Nummer des ersten Discrete Inputs und die Anzahl der zu lesenden
+Discrete Inputs. Die Nummer des ersten Discrete Inputs heißt aus Rückwärtskompatiblitätsgründen starting address.
+Sie ist keine Adresse, sondern eine eins-basierte Discrete Input-Nummer zwischen 1 und 65536. Die Präfixziffer 1 wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Read Discrete Inputs Request` gesendet werden.
@@ -1849,8 +1872,9 @@ com['packets'].append({
 """
 This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read input registers. The :word:`parameters`
-are request ID of the request, the starting address and the number of input
-registers to be read as received by the request.
+are request ID of the request, the number of the first input register and the number of input
+registers to be read as received by the request. The number of the first input register is called starting address for backwards compatibility reasons.
+It is not an address, but instead a input register number in the range of 1 to 65536. The prefix digit 3 is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Input Registers Request`.
 """,
@@ -1858,8 +1882,9 @@ To send a response of this request use :func:`Modbus Slave Answer Read Input Reg
 """
 Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum lesen von Input Registern erhält. Die :word:`parameters`
-sind die Request ID der Anfrage, die Startadresse und die Anzahl der zu lesenden
-Register.
+sind die Request ID der Anfrage, die Nummer des ersten Input Registers und die Anzahl der zu lesenden
+Register. Die Nummer des ersten Input Registers heißt aus Rückwärtskompatiblitätsgründen starting address.
+Sie ist keine Adresse, sondern eine eins-basierte Input Register-Nummer zwischen 1 und 65536. Die Präfixziffer 3 wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Read Input Registers Request` gesendet werden.
