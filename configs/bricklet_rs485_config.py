@@ -739,7 +739,7 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden um Coils vom Slave zu 
 * Count: Anzahl der zu lesenden Coils.
 
 Nach erfolgreichen ausführen der Leseoperation gibt diese funktion eine Request ID
-zurück die nicht Null ist. Im Falle eines Fehlers wird eine 0 als Request ID
+zurück die nicht 0 ist. Im Falle eines Fehlers wird eine 0 als Request ID
 zurückgegeben.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Coils Response` Callback
@@ -800,7 +800,7 @@ In Modbus master mode this function can be used to read holding registers from a
 This function creates a Modbus function code 3 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Number of the first holding register to read. For backwards compatibility reasons this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is implicit and must be omitted.
+* Starting Address: Number of the first holding register to read. For backwards compatibility reasons this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
 * Count: Number of holding registers to read.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -818,11 +818,11 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Holding R
 an einen Modbus-Slave zu senden (Modbus Funktionscode 3).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Nummer des ersten zu lesenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 ist implizit und muss ausgelassen werden.
+* Starting Address: Nummer des ersten zu lesenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 (für Holding Register) ist implizit und muss ausgelassen werden.
 * Count: Anzahl der zu lesenden Register.
 
 Nach erfolgreichem Ausführen der Leseoperation gibt diese Funktion eine Request ID
-zurück, die nicht Null ist. Im Falle eines Fehlers wird eine 0 als Request ID
+zurück, die nicht 0 ist. Im Falle eines Fehlers wird eine 0 als Request ID
 zurückgegeben.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Holding Registers Response` Callback
@@ -953,7 +953,7 @@ In Modbus master mode this function can be used to write a single holding regist
 slave. This function creates a Modbus function code 6 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Register Address: Number of the holding register to be written. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is implicit and must be omitted.
+* Register Address: Number of the holding register to be written. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
 * Register Value: Value to be written.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -971,7 +971,7 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un ein einzelnes Regis
 Modbus-Slave zu schreiben (Modbus Funktionscode 6).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Register Address: Nummer des zu schreibenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 ist implizit und muss ausgelassen werden.
+* Register Address: Nummer des zu schreibenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 (für Holding Register) ist implizit und muss ausgelassen werden.
 * Register Value: Zu schreibender Wert
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Single Register Response` Callback
@@ -1107,7 +1107,7 @@ In Modbus master mode this function can be used to write multiple registers of a
 This function creates a Modbus function code 16 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Number of the first holding register to write. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is implicit and must be omitted.
+* Starting Address: Number of the first holding register to write. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
 
 Upon success the function will return a non-zero request ID which will represent
 the current request initiated by the Modbus master. In case of failure the returned
@@ -1124,7 +1124,7 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden um ein oder mehrere Ho
 Modbus-Slave zu schreiben (Modbus Funktionscode 16).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Nummer des ersten zu schreibenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 ist implizit und muss ausgelassen werden.
+* Starting Address: Nummer des ersten zu schreibenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 (für Holding Register) ist implizit und muss ausgelassen werden.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Multiple Registers Response` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
@@ -1187,7 +1187,7 @@ In Modbus master mode this function can be used to read discrete inputs from a s
 This function creates a Modbus function code 2 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Number of the first discrete input to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a discrete input number in the range of 1 to 65536. The prefix digit 1 is implicit and must be omitted.
+* Starting Address: Number of the first discrete input to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a discrete input number in the range of 1 to 65536. The prefix digit 1 (for discrete input) is implicit and must be omitted.
 * Count: Number of discrete inputs to read.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -1205,7 +1205,7 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Discrete 
 an einen Modbus-Slave zu senden (Modbus Funktionscode 2).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Nummer des ersten zu lesenden Discrete Inputs. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Discrete-Input-Nummer zwischen 1 und 65536. Die Präfixziffer 1 ist implizit und muss ausgelassen werden.
+* Starting Address: Nummer des ersten zu lesenden Discrete Inputs. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Discrete-Input-Nummer zwischen 1 und 65536. Die Präfixziffer 1 (für Discrete Input) ist implizit und muss ausgelassen werden.
 * Count: Anzahl der zu lesenden Register.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Discrete Inputs Response` Callback
@@ -1268,7 +1268,7 @@ In Modbus master mode this function can be used to read input registers from a s
 This function creates a Modbus function code 4 request.
 
 * Slave Address: Address of the target Modbus slave.
-* Starting Address: Number of the first input register to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead an input register number in the range of 1 to 65536. The prefix digit 3 is implicit and must be omitted.
+* Starting Address: Number of the first input register to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead an input register number in the range of 1 to 65536. The prefix digit 3 (for input register) is implicit and must be omitted.
 * Count: Number of input registers to read.
 
 Upon success the function will return a non-zero request ID which will represent
@@ -1286,7 +1286,7 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Input-Anf
 an einen Modbus-Slave zu senden (Modbus Funktionscode 4).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
-* Starting Address: Nummer der ersten zu lesenden Input Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Input-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 3 ist implizit und muss ausgelassen werden.
+* Starting Address: Nummer der ersten zu lesenden Input Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Input-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 3 (für Input Register) ist implizit und muss ausgelassen werden.
 * Count: Anzahl der zu lesenden Register.
 
 Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Read Input Registers Response` Callback
@@ -1396,8 +1396,8 @@ of the request, exception code of the response and the data as received by the
 response.
 
 Any non-zero exception code indicates a problem. If the exception code
-is greater than zero then the number represents a Modbus exception code. If it is
-less than zero then it represents other errors. For example, -1 indicates that
+is greater than 0 then the number represents a Modbus exception code. If it is
+less than 0 then it represents other errors. For example, -1 indicates that
 the request timed out or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
@@ -1410,8 +1410,8 @@ gültige Antwort auf eine Read Coils-Anfrage zurück bekommt.
 Die :word:`parameters` sind die Request ID der Anfrage, der Exception Code der
 Antwort und die empfangenen Daten.
 
-Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
-entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+Ein Exception Code der nicht 0 ist, beschreibt einen Fehler. Wenn die Zahl größer 0 ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner 0 ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
 Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
@@ -1433,7 +1433,7 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read holding registers. The :word:`parameters`
 are request ID of the request, the number of the first holding register to be read and the number of holding
 registers to be read as received by the request. The number of the first holding register is called starting address for backwards compatibility reasons.
-It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is omitted.
+It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Holding Registers Request`.
 """,
@@ -1443,7 +1443,7 @@ Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum lesen von Holding Registern erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Nummer des ersten zu lesenden Holding Registers und die Anzahl der zu lesenden
 Register. Die Nummer des ersten Holding Registers heißt aus Rückwärtskompatiblitätsgründen starting address.
-Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Prefixziffer 4 wird ausgelassen.
+Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 (für Holding Register) wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Read Holding Registers Request` gesendet werden.
@@ -1472,8 +1472,8 @@ request ID of the request, exception code of the response and the data as receiv
 by the response.
 
 Any non-zero exception code indicates a problem. If the exception
-code is greater than zero then the number represents a Modbus exception code. If
-it is less than zero then it represents other errors. For example, -1 indicates that
+code is greater than 0 then the number represents a Modbus exception code. If
+it is less than 0 then it represents other errors. For example, -1 indicates that
 the request timed out or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
@@ -1486,8 +1486,8 @@ gültige Antwort auf eine Read Holding Registers-Anfrage zurück bekommt.
 Die :word:`parameters` sind die Request ID der Anfrage, der Exception Code der
 Antwort und die empfangenen Daten.
 
-Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
-entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+Ein Exception Code der nicht 0 ist, beschreibt einen Fehler. Wenn die Zahl größer 0 ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner 0 ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
 Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
@@ -1543,8 +1543,8 @@ The :word:`parameters` are
 request ID of the request and exception code of the response.
 
 Any non-zero exception code indicates a problem.
-If the exception code is greater than zero then the number represents a Modbus
-exception code. If it is less than zero then it represents other errors. For
+If the exception code is greater than 0 then the number represents a Modbus
+exception code. If it is less than 0 then it represents other errors. For
 example, -1 indicates that the request timed out or that the master did not receive
 any valid response of the request within the master request timeout period as set
 by :func:`Set Modbus Configuration`.
@@ -1557,8 +1557,8 @@ gültige Antwort auf eine Write Single Coil-Anfrage zurück bekommt.
 Die :word:`parameters` sind die Request ID der Anfrage und der Exception Code der
 Antwort.
 
-Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
-entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+Ein Exception Code der nicht 0 ist, beschreibt einen Fehler. Wenn die Zahl größer 0 ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner 0 ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
 Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
@@ -1580,7 +1580,7 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write a single holding register. The :word:`parameters`
 are request ID of the request, the number of the holding register and the register value to
 be written as received by the request. The number of the holding register is called starting address for backwards compatibility reasons.
-It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is omitted.
+It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Single Register Request`.
 """,
@@ -1590,7 +1590,7 @@ Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum schreiben einer einzelnen Holding Registers erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Nummer des Holding Registers und der Wert des zuschreibenen
 Registers. Die Nummer des Holding Registers heißt aus Rückwärtskompatiblitätsgründen starting address.
-Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 wird ausgelassen.
+Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 (für Holding Register) wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Write Single Register Request` gesendet werden.
@@ -1614,8 +1614,8 @@ The :word:`parameters` are
 request ID of the request and exception code of the response.
 
 Any non-zero exception code
-indicates a problem. If the exception code is greater than zero then the number
-represents a Modbus exception code. If it is less than zero then it represents
+indicates a problem. If the exception code is greater than 0 then the number
+represents a Modbus exception code. If it is less than 0 then it represents
 other errors. For example, -1 indicates that the request timed out or that the
 master did not receive any valid response of the request within the master request
 timeout period as set by :func:`Set Modbus Configuration`.
@@ -1628,8 +1628,8 @@ gültige Antwort auf eine Write Single Register-Anfrage zurück bekommt.
 Die :word:`parameters` sind die Request ID der Anfrage und der Exception Code der
 Antwort.
 
-Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
-entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+Ein Exception Code der nicht 0 ist, beschreibt einen Fehler. Wenn die Zahl größer 0 ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner 0 ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
 Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
@@ -1687,8 +1687,8 @@ The :word:`parameters` are
 request ID of the request and exception code of the response.
 
 Any non-zero exception code
-indicates a problem. If the exception code is greater than zero then the number
-represents a Modbus exception code. If it is less than zero then it represents
+indicates a problem. If the exception code is greater than 0 then the number
+represents a Modbus exception code. If it is less than 0 then it represents
 other errors. For example, -1 indicates that the request timedout or that the
 master did not receive any valid response of the request within the master request
 timeout period as set by :func:`Set Modbus Configuration`.
@@ -1701,8 +1701,8 @@ gültige Antwort auf eine Write Multiple Coils-Anfrage zurück bekommt.
 Die :word:`parameters` sind die Request ID der Anfrage und der Exception Code der
 Antwort.
 
-Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
-entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+Ein Exception Code der nicht 0 ist, beschreibt einen Fehler. Wenn die Zahl größer 0 ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner 0 ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
 Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
@@ -1727,7 +1727,7 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to write multiple holding registers. The :word:`parameters`
 are request ID of the request, the number of the first holding register and the data to be written as
 received by the request. The number of the first holding register is called starting address for backwards compatibility reasons.
-It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 is omitted.
+It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Write Multiple Registers Request`.
 """,
@@ -1737,7 +1737,7 @@ Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum schreiben einer mehrerer Holding Register erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Nummer des ersten Holding Registers und die zu schreibenen Daten.
 Die Nummer des ersten Holding Registers heißt aus Rückwärtskompatiblitätsgründen starting address.
-Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536.
+Sie ist keine Adresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 (für Holding Register) wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Write Multiple Registers Request` gesendet werden.
@@ -1761,8 +1761,8 @@ The :word:`parameters`
 are request ID of the request and exception code of the response.
 
 Any non-zero
-exception code indicates a problem. If the exception code is greater than zero then
-the number represents a Modbus exception code. If it is less than zero then it
+exception code indicates a problem. If the exception code is greater than 0 then
+the number represents a Modbus exception code. If it is less than 0 then it
 represents other errors. For example, -1 indicates that the request timedout or
 that the master did not receive any valid response of the request within the master
 request timeout period as set by :func:`Set Modbus Configuration`.
@@ -1775,8 +1775,8 @@ gültige Antwort auf eine Write Multiple Register-Anfrage zurück bekommt.
 Die :word:`parameters` sind die Request ID der Anfrage und der Exception Code der
 Antwort.
 
-Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
-entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+Ein Exception Code der nicht 0 ist, beschreibt einen Fehler. Wenn die Zahl größer 0 ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner 0 ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
 Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
@@ -1798,7 +1798,7 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read discrete inputs. The :word:`parameters`
 are request ID of the request, the number of the first discrete input and the number of discrete
 inputs to be read as received by the request. The number of the first discrete input is called starting address for backwards compatibility reasons.
-It is not an address, but instead a discrete input number in the range of 1 to 65536. The prefix digit 1 is omitted.
+It is not an address, but instead a discrete input number in the range of 1 to 65536. The prefix digit 1 (for discrete input) is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Discrete Inputs Request`.
 """,
@@ -1808,7 +1808,7 @@ Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum lesen von Discrete Inputs erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Nummer des ersten Discrete Inputs und die Anzahl der zu lesenden
 Discrete Inputs. Die Nummer des ersten Discrete Inputs heißt aus Rückwärtskompatiblitätsgründen starting address.
-Sie ist keine Adresse, sondern eine eins-basierte Discrete Input-Nummer zwischen 1 und 65536. Die Präfixziffer 1 wird ausgelassen.
+Sie ist keine Adresse, sondern eine eins-basierte Discrete Input-Nummer zwischen 1 und 65536. Die Präfixziffer 1 (für Discrete Input) wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Read Discrete Inputs Request` gesendet werden.
@@ -1837,8 +1837,8 @@ request ID of the request, exception code of the response and the data as receiv
 by the response.
 
 Any non-zero exception code indicates a problem. If the exception
-code is greater than zero then the number represents a Modbus exception code. If
-it is less than zero then it represents other errors. For example, -1 indicates that
+code is greater than 0 then the number represents a Modbus exception code. If
+it is less than 0 then it represents other errors. For example, -1 indicates that
 the request timedout or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
@@ -1851,8 +1851,8 @@ gültige Antwort auf eine Read Discrete Inputs-Anfrage zurück bekommt.
 Die :word:`parameters` sind die Request ID der Anfrage, der Exception Code der
 Antwort und die empfangenen Daten.
 
-Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
-entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+Ein Exception Code der nicht 0 ist, beschreibt einen Fehler. Wenn die Zahl größer 0 ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner 0 ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
 Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
@@ -1874,7 +1874,7 @@ This callback is called only in Modbus slave mode when the slave receives a
 valid request from a Modbus master to read input registers. The :word:`parameters`
 are request ID of the request, the number of the first input register and the number of input
 registers to be read as received by the request. The number of the first input register is called starting address for backwards compatibility reasons.
-It is not an address, but instead a input register number in the range of 1 to 65536. The prefix digit 3 is omitted.
+It is not an address, but instead a input register number in the range of 1 to 65536. The prefix digit 3 (for input register) is omitted.
 
 To send a response of this request use :func:`Modbus Slave Answer Read Input Registers Request`.
 """,
@@ -1884,7 +1884,7 @@ Dieser Callback wird im Modbus-Slave Modus aufgerufen, wenn der Slave eine
 gültige Anfrage eines Masters zum lesen von Input Registern erhält. Die :word:`parameters`
 sind die Request ID der Anfrage, die Nummer des ersten Input Registers und die Anzahl der zu lesenden
 Register. Die Nummer des ersten Input Registers heißt aus Rückwärtskompatiblitätsgründen starting address.
-Sie ist keine Adresse, sondern eine eins-basierte Input Register-Nummer zwischen 1 und 65536. Die Präfixziffer 3 wird ausgelassen.
+Sie ist keine Adresse, sondern eine eins-basierte Input Register-Nummer zwischen 1 und 65536. Die Präfixziffer 3 (für Input Register) wird ausgelassen.
 
 Eine Antwort auf diese Anfrage kann mit der Funktion
 :func:`Modbus Slave Answer Read Input Registers Request` gesendet werden.
@@ -1913,8 +1913,8 @@ request ID of the request, exception code of the response and the data as receiv
 by the response.
 
 Any non-zero exception code indicates a problem. If the exception
-code is greater than zero then the number represents a Modbus exception code. If
-it is less than zero then it represents other errors. For example, -1 indicates that
+code is greater than 0 then the number represents a Modbus exception code. If
+it is less than 0 then it represents other errors. For example, -1 indicates that
 the request timedout or that the master did not receive any valid response of the
 request within the master request timeout period as set by
 :func:`Set Modbus Configuration`.
@@ -1927,8 +1927,8 @@ gültige Antwort auf eine Read Input Registers-Anfrage zurück bekommt.
 Die :word:`parameters` sind die Request ID der Anfrage, der Exception Code der
 Antwort und die empfangenen Daten.
 
-Ein Exception Code der nicht Null ist, beschreibt einen Fehler. Wenn die Zahl größer Null ist,
-entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner Null ist,
+Ein Exception Code der nicht 0 ist, beschreibt einen Fehler. Wenn die Zahl größer 0 ist,
+entspricht der Code dem Modbus Exception Code. Wenn die Zahl kleiner 0 ist,
 ist ein anderer Fehler aufgetreten. Ein Wert von -1 bedeutet, dass es einen
 Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 :func:`Set Modbus Configuration` gesetzt werden.
