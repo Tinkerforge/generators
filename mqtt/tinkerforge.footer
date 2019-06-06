@@ -146,7 +146,7 @@ class MQTTBindings:
             except Exception as e:
                 payload = ""
                 if self.show_payload:
-                    payload = ". \n\tPayload was: " + str(json_args)
+                    payload = ". \n\tPayload was: " + repr(json_args)
                 return json_error("Could not parse payload for {} callback registration as JSON encoding a boolean: {}{}".format(function, str(e), payload))
 
             if not isinstance(should_register, bool):
@@ -234,12 +234,22 @@ class MQTTBindings:
 
             global_prefix, request_type, device, uid, function, suffix, response_path = path_info
 
+            try:
+                payload = msg.payload.decode('utf-8')
+            except Exception as e:
+                payload_str = (" Payload was: " + repr(msg.payload)) if self.show_payload else ''
+                response = json_error("Could not decode payload as utf-8: {}{}".format(str(e), payload_str))
+                logging.debug("Publishing response to {}".format(response_path))
+                self.mqttc.publish(response_path, response)
+                logging.debug("\n")
+                return
+
             if device == "ip_connection":
-                response = self.handle_ip_connection_call(request_type, device, function, msg.payload, response_path)
+                response = self.handle_ip_connection_call(request_type, device, function, payload, response_path)
             elif device == "bindings":
-                response = self.handle_bindings_call(request_type, device, function, msg.payload, response_path)
+                response = self.handle_bindings_call(request_type, device, function, payload, response_path)
             else:
-                response = self.dispatch_call(request_type, device, uid, function, msg.payload, response_path)
+                response = self.dispatch_call(request_type, device, uid, function, payload, response_path)
 
             if response is None:
                 return
@@ -337,7 +347,7 @@ class MQTTBindings:
             except Exception as e:
                 payload = ""
                 if self.show_payload:
-                    payload = ". \n\tPayload was: " + str(json_args)
+                    payload = ". \n\tPayload was: " + repr(json_args)
                 return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
 
 
@@ -594,7 +604,7 @@ class MQTTBindings:
         except Exception as e:
             payload = ""
             if self.show_payload:
-                payload = ". \n\tPayload was: " + str(json_args)
+                payload = ". \n\tPayload was: " + repr(json_args)
             return json_error("Could not parse payload for {} callback registration of {} {} as JSON encoding a boolean: {}{}".format(callbackName, device_class, device_name, str(e), payload))
 
         if not isinstance(should_register, bool):
@@ -632,7 +642,7 @@ class MQTTBindings:
             except Exception as e:
                 payload = ""
                 if self.show_payload:
-                    payload = ". \n\tPayload was: " + str(json_args)
+                    payload = ". \n\tPayload was: " + repr(json_args)
                 return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
         else:
             obj = {}
