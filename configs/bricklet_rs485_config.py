@@ -898,7 +898,7 @@ Modbus-Slave zu schreiben (Modbus Funktionscode 5).
 * Coil Address: Nummer der zu schreibenden Coil. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
 * Coil Value: Zu schreibender Wert
 
-Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Single Coil` Callback
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Single Coil Response` Callback
 aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
 eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
 zurückgegeben Request ID überein.
