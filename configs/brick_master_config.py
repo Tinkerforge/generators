@@ -3157,7 +3157,7 @@ you have to restart the Master Brick after configuration.
 """,
 'de':
 """
-alle Konfigurationsfunktionen der WIFI Extension 2.0 ändern die Werte nicht
+Alle Konfigurationsfunktionen der WIFI Extension 2.0 ändern die Werte nicht
 dauerhaft. Nach einer Konfiguration muss diese Funktion aufgerufen werden, um
 die Werte dauerhaft zu speichern.
 
