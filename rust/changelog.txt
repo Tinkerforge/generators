@@ -39,3 +39,6 @@
 - Add remove_calibration and get/set_background_calibration_duration functions
   to Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
+
+2019-06-11: 2.0.10 (<unknown>)
+- Fix streaming of fixed length parameters

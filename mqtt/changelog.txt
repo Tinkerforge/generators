@@ -26,3 +26,6 @@
   to Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
 - Add -v/--version parameter
+
+2019-06-11: 2.0.6 (<unknown>)
+- Fix JSON parsing in Python < 3.6
