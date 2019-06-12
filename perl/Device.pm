@@ -103,7 +103,7 @@ sub _base58_decode
 		$base->bmul(58);
 	}
 
-	if ($value->bgt(0xFFFFFFFF))
+	if ($value->bcmp(0xFFFFFFFF) > 0)
 	{
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_UID, "UID '$encoded' is too big"));
 	}
