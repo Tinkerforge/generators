@@ -136,3 +136,6 @@
 - Add remove_calibration and get/set_background_calibration_duration functions
   to Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
+
+2019-06-12: 2.1.23 (<unknown>)
+- Fix UID decoding on RED Brick
