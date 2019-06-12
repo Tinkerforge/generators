@@ -301,8 +301,26 @@ the :cb:`Continuous Acceleration 8 Bit` callback is activated. If at least
 one of the axis is enabled and the resolution is set to 16 bit,
 the :cb:`Continuous Acceleration 16 Bit` callback is activated.
 
+The returned values are raw ADC data. If you want to put this data into
+a FFT to determine the occurrences of specific frequencies we recommend
+that you use the data as is. It has all of the ADC noise in it. This noise
+looks like pure noise at first glance, but it might still have some frequnecy
+information in it that can be utilized by the FFT.
+
+Otherwise you have to use the following formulas that depend on the configured
+resolution (8/16 bit) and the full scale range (see :func:`Set Configuration`) to calculate 
+the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
+
+* 16 bit, full scale 2G: acceleration = value*625/1024
+* 16 bit, full scale 4G: acceleration = value*1250/1024
+* 16 bit, full scale 8G: acceleration = value*2500/1024
+
 If a resolution of 8 bit is used, only the 8 most significant bits will be
-transferred. This means that the unit changes from g/10000 to g*256/10000.
+transferred, so you can use the following formulas:
+
+* 8 bit, full scale 2G:  acceleration = value*256*625/1024
+* 8 bit, full scale 4G:  acceleration = value*256*1250/1024
+* 8 bit, full scale 8G:  acceleration = value*256*2500/1024
 
 If no axis is enabled, both callbacks are disabled. If one of the continuous
 callbacks is enabled, the :cb:`Acceleration` callback is disabled.
@@ -332,8 +350,27 @@ wird der :cb:`Continuous Acceleration 8 Bit`-Callback aktiviert.
 Wenn mindestens eine Achse aktiviert ist mit 16-Bit Auflösung,
 wird der :cb:`Continuous Acceleration 16 Bit`-Callback aktiviert.
 
-Bei einer Auflösung von 8-Bit werden nur die 8 höchstwertigen Bits übertragen.
-Daher ändert sich die Einheit von g/10000 auf g*256/10000.
+Die zurückgegebenen Werte sind Rohwerte des AD-Wandlers. Wenn die Daten mit einem
+FFT genutzt werden sollen um Vorkomnisse from Frequenzen zu bestimmen empfehlen wir
+die Rohwerte direkt zu nutzen. Die Rohwerte beinhalten das Rauschen des AD-Wandlers,
+in diesem Rauschen können allerdings Frequenzinformation enthalten sein die für
+einen FFT relevant seien können.
+
+Andernfalls können die folgenden Formeln benutzt werden um die Daten wieder
+in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
+umzuwandeln. Die Formeln hängen ab von der eingestelleten Auflösung (8/16-Bit) und dem
+eingestellten Wertebereich (siehe :func:`Set Configuration`):
+
+* 16-Bit, Wertebereich 2G: Beschleinigung = Rohwert*625/1024
+* 16-Bit, Wertebereich 4G: Beschleinigung = Rohwert*1250/1024
+* 16-Bit, Wertebereich 8G: Beschleinigung = Rohwert*2500/1024
+
+Bei einer Auflösung von 8-Bit werden nur die 8 höchstwertigen Bits übertragen, daher
+sehen die Formeln wie folgt aus:
+
+* 8-Bit, Wertebereich 2G:  Beschleinigung = Rohwert*256*625/1024
+* 8-Bit, Wertebereich 4G:  Beschleinigung = Rohwert*256*1250/1024
+* 8-Bit, Wertebereich 8G:  Beschleinigung = Rohwert*256*2500/1024
 
 Wenn keine Achse aktiviert is, sind beide Callbacks deaktiviert. Wenn einer der
 "Continuous Callbacks" genutzt wird, wird der :cb:`Acceleration`-Callback
@@ -388,7 +425,19 @@ Returns 30 acceleration values with 16 bit resolution. The data rate can
 be configured with :func:`Set Configuration` and this callback can be
 enabled with :func:`Set Continuous Acceleration Configuration`.
 
-The unit of the values is g/10000.
+The returned values are raw ADC data. If you want to put this data into
+a FFT to determine the occurrences of specific frequencies we recommend
+that you use the data as is. It has all of the ADC noise in it. This noise
+looks like pure noise at first glance, but it might still have some frequnecy
+information in it that can be utilized by the FFT.
+
+Otherwise you have to use the following formulas that depend on the 
+full scale range (see :func:`Set Configuration`) to calculate 
+the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
+
+* Full scale 2G: acceleration = value*625/1024
+* Full scale 4G: acceleration = value*1250/1024
+* Full scale 8G: acceleration = value*2500/1024
 
 The data is formated in the sequence "x, y, z, x, y, z, ..." depending on
 the enabled axis. Examples:
@@ -405,7 +454,20 @@ kann mit der Funktion :func:`Set Configuration` eingestellt werden und
 der Callback kann per :func:`Set Continuous Acceleration Configuration`
 aktiviert werden.
 
-Die Einheit der Werte ist g/10000.
+Die zurückgegebenen Werte sind Rohwerte des AD-Wandlers. Wenn die Daten mit einem
+FFT genutzt werden sollen um Vorkomnisse from Frequenzen zu bestimmen empfehlen wir
+die Rohwerte direkt zu nutzen. Die Rohwerte beinhalten das Rauschen des AD-Wandlers,
+in diesem Rauschen können allerdings Frequenzinformation enthalten sein die für
+einen FFT relevant seien können.
+
+Andernfalls können die folgenden Formeln benutzt werden um die Daten wieder
+in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
+umzuwandeln. Die Formeln hängen ab von dem
+eingestellten Wertebereich (siehe :func:`Set Configuration`):
+
+* Wertebereich 2G: Beschleinigung = Rohwert*625/1024
+* Wertebereich 4G: Beschleinigung = Rohwert*1250/1024
+* Wertebereich 8G: Beschleinigung = Rohwert*2500/1024
 
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig
 von den aktivierten Achsen. Beispiele:
@@ -430,7 +492,19 @@ Returns 30 acceleration values with 8 bit resolution. The data rate can
 be configured with :func:`Set Configuration` and this callback can be
 enabled with :func:`Set Continuous Acceleration Configuration`.
 
-The unit of the values is g*256/10000.
+The returned values are raw ADC data. If you want to put this data into
+a FFT to determine the occurrences of specific frequencies we recommend
+that you use the data as is. It has all of the ADC noise in it. This noise
+looks like pure noise at first glance, but it might still have some frequnecy
+information in it that can be utilized by the FFT.
+
+Otherwise you have to use the following formulas that depend on the 
+full scale range (see :func:`Set Configuration`) to calculate 
+the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
+
+* Full scale 2G:  acceleration = value*256*625/1024
+* Full scale 4G:  acceleration = value*256*1250/1024
+* Full scale 8G:  acceleration = value*256*2500/1024
 
 The data is formated in the sequence "x, y, z, x, y, z, ..." depending on
 the enabled axis. Examples:
@@ -447,7 +521,20 @@ kann mit der Funktion :func:`Set Configuration` eingestellt werden und
 der Callback kann per :func:`Set Continuous Acceleration Configuration`
 aktiviert werden.
 
-Die Einheit der Werte ist g*256/10000.
+Die zurückgegebenen Werte sind Rohwerte des AD-Wandlers. Wenn die Daten mit einem
+FFT genutzt werden sollen um Vorkomnisse from Frequenzen zu bestimmen empfehlen wir
+die Rohwerte direkt zu nutzen. Die Rohwerte beinhalten das Rauschen des AD-Wandlers,
+in diesem Rauschen können allerdings Frequenzinformation enthalten sein die für
+einen FFT relevant seien können.
+
+Andernfalls können die folgenden Formeln benutzt werden um die Daten wieder
+in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
+umzuwandeln. Die Formeln hängen ab von dem
+eingestellten Wertebereich (siehe :func:`Set Configuration`):
+
+* Wertebereich 2G:  Beschleinigung = Rohwert*256*625/1024
+* Wertebereich 4G:  Beschleinigung = Rohwert*256*1250/1024
+* Wertebereich 8G:  Beschleinigung = Rohwert*256*2500/1024
 
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig
 von den aktivierten Achsen. Beispiele:
