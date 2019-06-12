@@ -34,11 +34,13 @@ import common
 def generate(root_dir):
     tmp_dir               = os.path.join(root_dir, 'maven_package')
     tmp_src_main_java_dir = os.path.join(tmp_dir, 'src', 'main', 'java')
+    tmp_src_main_resources_dir = os.path.join(tmp_dir, 'src', 'main', 'resources')
     tmp_unzipped_dir      = os.path.join(tmp_dir, 'unzipped')
 
     # Make directories
     common.recreate_dir(tmp_dir)
     os.makedirs(tmp_src_main_java_dir)
+    os.makedirs(tmp_src_main_resources_dir)
 
     # Unzip
     version = common.get_changelog_version(root_dir)
@@ -52,6 +54,9 @@ def generate(root_dir):
     # Copy source
     shutil.copytree(os.path.join(tmp_unzipped_dir, 'source', 'com'),
                     os.path.join(tmp_src_main_java_dir, 'com'))
+    # Copy META-INF
+    shutil.copytree(os.path.join(tmp_unzipped_dir, 'source', 'META-INF'),
+                    os.path.join(tmp_src_main_resources_dir, 'META-INF'))
 
     # Make pom.xml
     common.specialize_template(os.path.join(root_dir, 'pom.xml.template'),
