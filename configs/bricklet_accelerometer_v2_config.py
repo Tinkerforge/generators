@@ -361,16 +361,16 @@ in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurück
 umzuwandeln. Die Formeln hängen ab von der eingestelleten Auflösung (8/16-Bit) und dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 
-* 16-Bit, Wertebereich 2G: Beschleinigung = Rohwert*625/1024
-* 16-Bit, Wertebereich 4G: Beschleinigung = Rohwert*1250/1024
-* 16-Bit, Wertebereich 8G: Beschleinigung = Rohwert*2500/1024
+* 16-Bit, Wertebereich 2G: Beschleunigung = Rohwert*625/1024
+* 16-Bit, Wertebereich 4G: Beschleunigung = Rohwert*1250/1024
+* 16-Bit, Wertebereich 8G: Beschleunigung = Rohwert*2500/1024
 
 Bei einer Auflösung von 8-Bit werden nur die 8 höchstwertigen Bits übertragen, daher
 sehen die Formeln wie folgt aus:
 
-* 8-Bit, Wertebereich 2G:  Beschleinigung = Rohwert*256*625/1024
-* 8-Bit, Wertebereich 4G:  Beschleinigung = Rohwert*256*1250/1024
-* 8-Bit, Wertebereich 8G:  Beschleinigung = Rohwert*256*2500/1024
+* 8-Bit, Wertebereich 2G:  Beschleunigung = Rohwert*256*625/1024
+* 8-Bit, Wertebereich 4G:  Beschleunigung = Rohwert*256*1250/1024
+* 8-Bit, Wertebereich 8G:  Beschleunigung = Rohwert*256*2500/1024
 
 Wenn keine Achse aktiviert is, sind beide Callbacks deaktiviert. Wenn einer der
 "Continuous Callbacks" genutzt wird, wird der :cb:`Acceleration`-Callback
@@ -465,9 +465,9 @@ in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurück
 umzuwandeln. Die Formeln hängen ab von dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 
-* Wertebereich 2G: Beschleinigung = Rohwert*625/1024
-* Wertebereich 4G: Beschleinigung = Rohwert*1250/1024
-* Wertebereich 8G: Beschleinigung = Rohwert*2500/1024
+* Wertebereich 2G: Beschleunigung = Rohwert*625/1024
+* Wertebereich 4G: Beschleunigung = Rohwert*1250/1024
+* Wertebereich 8G: Beschleunigung = Rohwert*2500/1024
 
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig
 von den aktivierten Achsen. Beispiele:
@@ -532,9 +532,9 @@ in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurück
 umzuwandeln. Die Formeln hängen ab von dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 
-* Wertebereich 2G:  Beschleinigung = Rohwert*256*625/1024
-* Wertebereich 4G:  Beschleinigung = Rohwert*256*1250/1024
-* Wertebereich 8G:  Beschleinigung = Rohwert*256*2500/1024
+* Wertebereich 2G:  Beschleunigung = Rohwert*256*625/1024
+* Wertebereich 4G:  Beschleunigung = Rohwert*256*1250/1024
+* Wertebereich 8G:  Beschleunigung = Rohwert*256*2500/1024
 
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig
 von den aktivierten Achsen. Beispiele:
