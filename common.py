@@ -3,7 +3,7 @@
 """
 Common Generator Library
 Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2012-2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012-2015, 2019 Olaf Lüke <olaf@tinkerforge.com>
 
 common.py: Common Library for generation of bindings and documentation
 
@@ -221,6 +221,11 @@ Bindings ist Teil deren allgemeine Beschreibung.
         'de': 'Dieses Bricklet'
     }
 
+    tng = {
+        'en': 'This TNG module',
+        'de': 'Dieses TNG-Modul'
+    }
+
     programming_language_name_link = {
         'en': 'of the :ref:`{0} API bindings <api_bindings_{1}>`',
         'de': 'der :ref:`{0} API Bindings <api_bindings_{1}>`'
@@ -241,6 +246,11 @@ Bindings ist Teil deren allgemeine Beschreibung.
         'de': 'das :ref:`{0} <{1}_bricklet>`',
     }
 
+    tng_name = {
+        'en': 'the :ref:`{0} <tng_{1}>`',
+        'de': 'das :ref:`{0} <tng_{1}>`',
+    }
+
     # format bindings name
     if is_programming_language:
         bindings_name_link = select_lang(programming_language_name_link)
@@ -253,6 +263,8 @@ Bindings ist Teil deren allgemeine Beschreibung.
     # format device name
     if device.is_brick():
         device_name = select_lang(brick_name)
+    elif device.is_tng():
+        device_name = select_lang(tng_name)
     else:
         device_name = select_lang(bricklet_name)
 
@@ -271,6 +283,8 @@ Bindings ist Teil deren allgemeine Beschreibung.
     if not device.is_released():
         if device.is_brick():
             d = brick
+        if device.is_tng():
+            d = tng
         else:
             d = bricklet
 
@@ -687,6 +701,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
     brick_infos = []
     bricklet_infos = []
+    tng_infos = []
     device_identifiers = set()
 
     generator = generator_class(root_dir, config_name, language)
@@ -768,6 +783,28 @@ def subgenerate(root_dir, language, generator_class, config_name):
                                    device.get_description())
 
                     brick_infos.append(device_info)
+                elif device.is_tng():
+                    ref_name = device.get_name().under + '_tng'
+                    hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
+                    software_doc_prefix = device.get_name().camel + '_TNG'
+                    firmware_url_part = device.get_name().under
+
+                    device_info = (device.get_device_identifier(),
+                                   device.get_long_display_name(),
+                                   device.get_short_display_name(),
+                                   ref_name,
+                                   hardware_doc_name,
+                                   software_doc_prefix,
+                                   device.get_git_name(),
+                                   firmware_url_part,
+                                   False,
+                                   device.is_released(),
+                                   device.is_documented(),
+                                   device.is_discontinued(),
+                                   True,
+                                   device.get_description())
+
+                    tng_infos.append(device_info)
                 else:
                     ref_name = device.get_name().under + '_bricklet'
                     hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
@@ -1682,6 +1719,9 @@ class Device(object):
 
     def is_bricklet(self):
         return self.get_category().space == 'Bricklet'
+
+    def is_tng(self):
+        return self.get_category().space == 'TNG'
 
     def get_device_identifier(self):
         return self.raw_data['device_identifier']

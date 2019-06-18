@@ -4,7 +4,7 @@
 """
 Python Bindings Generator
 Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011, 2019 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_bindings.py: Generator for Python bindings
 
@@ -584,7 +584,8 @@ class {0}(Device):
         source += self.get_python_high_level_callbacks()
         source += self.get_python_methods()
         source += self.get_python_register_callback_method()
-        source += self.get_python_old_name()
+        if not self.is_tng():
+            source += self.get_python_old_name()
 
         return common.strip_trailing_whitespace(source)
 
