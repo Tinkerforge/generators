@@ -66,7 +66,7 @@ use crate::{{
     byte_converter::*,
     converting_receiver::{conv_receiver},{callback_recv}{high_level_callback_recv}
     device::*,
-    ip_connection::IpConnection,{low_level}
+    ip_connection::GetRequestSender,{low_level}
 }};""".format(header=self.get_generator().get_header_comment(kind='asterisk'),
               description=description,
               callback_recv = "" if len(self.get_packets("callback")) == 0 else "\n\tconverting_callback_receiver::ConvertingCallbackReceiver,",
@@ -304,8 +304,8 @@ pub struct {name} {{
     pub const DEVICE_IDENTIFIER: u16 = {device_identifier};
     pub const DEVICE_DISPLAY_NAME: &'static str = "{device_display_name}";
     /// Creates an object with the unique device ID `uid`. This object can then be used after the IP Connection `ip_connection` is connected.
-    pub fn new(uid: &str, ip_connection: &IpConnection) -> {name} {{
-        let mut result = {name} {{ device: Device::new({apiVersion}, uid, ip_connection, {high_level_function_count}) }};
+    pub fn new<T: GetRequestSender>(uid: &str, req_sender: T) -> {name} {{
+        let mut result = {name} {{ device: Device::new({apiVersion}, uid, req_sender, {high_level_function_count}) }};
         {response_expected_config}
         result
     }}

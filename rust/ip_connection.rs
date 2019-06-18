@@ -744,6 +744,25 @@ impl Drop for IpConnection {
         }
     }
 }
+
+/// A trait to get an [`IpConnectionRequestSender`](crate::ip_connection::IpConnectionRequestSender).
+/// Implementing this trait allows a type to used to create device handles.
+pub trait GetRequestSender {
+    fn get_rs(&self) -> IpConnectionRequestSender;
+}
+
+impl GetRequestSender for &IpConnection {
+    fn get_rs(&self) -> IpConnectionRequestSender {
+        self.get_request_sender()
+    }
+}
+
+impl GetRequestSender for &IpConnectionRequestSender {
+    fn get_rs(&self) -> IpConnectionRequestSender {
+        self.clone().to_owned()
+    }
+}
+
 impl IpConnectionRequestSender {
     /// Creates a TCP/IP connection to the given `addr`. `addr` can be any object which implements
     /// [`ToSocketAddrs`](std::net::ToSocketAddrs), for example a tuple of a hostname and a port.

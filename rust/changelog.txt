@@ -40,5 +40,8 @@
   to Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
 
-2019-06-11: 2.0.10 (<unknown>)
+2019-06-11: 2.0.10 (6ec2351)
 - Fix streaming of fixed length parameters
+
+2019-06-18: 2.0.11 (<unknown>)
+- Allow device construction with an IpConnectionRequestSender

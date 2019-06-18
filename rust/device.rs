@@ -5,7 +5,7 @@ use crate::{
     byte_converter::FromByteSlice,
     converting_callback_receiver::ConvertingCallbackReceiver,
     converting_receiver::{BrickletError, BrickletRecvTimeoutError, ConvertingReceiver},
-    ip_connection::{IpConnection, Request, SocketThreadRequest},
+    ip_connection::{GetRequestSender, Request, SocketThreadRequest},
     low_level_traits::*,
 };
 use std::sync::{
@@ -75,12 +75,12 @@ impl std::fmt::Display for SetResponseExpectedError {
 }
 
 impl Device {
-    pub(crate) fn new(api_version: [u8; 3], uid: &str, ip_connection: &IpConnection, high_level_function_count: u8) -> Device {
+    pub(crate) fn new<T: GetRequestSender>(api_version: [u8; 3], uid: &str, req_sender: T, high_level_function_count: u8) -> Device {
         match uid.base58_to_u32() {
             Ok(internal_uid) => Device {
                 api_version,
                 internal_uid: internal_uid,
-                req_tx: ip_connection.req.socket_thread_tx.clone(),
+                req_tx: req_sender.get_rs().socket_thread_tx.clone(),
                 response_expected: [ResponseExpectedFlag::InvalidFunctionId; 256],
                 high_level_locks: vec![Arc::new(Mutex::new(())); high_level_function_count as usize],
             },
