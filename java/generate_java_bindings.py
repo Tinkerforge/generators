@@ -662,7 +662,7 @@ public class {0} extends Device {{
 	}}
 """.format(read_parameters, read_forward, error_parameters, error_forward)
 
-        return listeners + '}\n'
+        return listeners
 
     def get_java_function_id_definitions(self):
         function_ids = ''
@@ -1295,7 +1295,7 @@ public class {0} extends Device {{
 
         return methods
 
-    def get_java_source(self):
+    def get_java_source(self, close_device_class=True):
         source  = self.get_java_import()
         source += self.get_java_class()
         source += self.get_java_function_id_definitions()
@@ -1319,6 +1319,9 @@ public class {0} extends Device {{
         source += self.get_java_callback_listener_definitions()
         source += self.get_java_methods()
         source += self.get_java_add_listener()
+
+        if close_device_class:
+            source += '}\n'
 
         return source
 
