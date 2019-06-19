@@ -131,14 +131,15 @@ class GoPacket(common.Packet):
         filtered_returns = self.get_elements(direction='out') if not high_level_only else [ret for ret in self.get_elements(direction='out') if ret.get_level() != 'low']
         result = ["Clone"]
 
-        #String can be cloned, but not copied, so don't derive copy if the struct will contain strings
+        # String can be cloned, but not copied, so don't derive copy if the struct will contain strings
         if all("String" not in x.get_go_type() for x in filtered_returns):
             result.append("Copy")
 
-        #Arrays with more than 32 entries don't implement any traits except clone and copy
+        # Arrays with more than 32 entries don't implement any traits except clone and copy
         if all(x.get_cardinality() <= 32 for x in filtered_returns):
             result += ["Debug", "Default", "PartialEq"]
-            #Floats implement PartialEq only, as NaN != NaN
+
+            # Floats implement PartialEq only, as NaN != NaN
             if all("f" not in x.get_go_type() for x in filtered_returns):
                 result += ["Eq", "Hash"]
 
@@ -149,9 +150,7 @@ class GoPacket(common.Packet):
 
         # handle links
         text = text.replace(":ref:", "")
-
         text = re.sub("`([^<]+) <([^>]+)>`__", r"\g<2>", text)
-
 
         # handle tables
         lines = text.split('\n')
@@ -159,8 +158,10 @@ class GoPacket(common.Packet):
         in_table_head = False
         in_table_body = False
         col_count = 0
+
         for line in lines:
             line = line.replace('"', '')
+
             if line.strip() == '.. csv-table::':
                 in_table_head = True
             elif line.strip().startswith(':header: ') and in_table_head:
@@ -206,8 +207,10 @@ class GoElement(common.Element):
     def get_go_name(self):
         blacklist = ["break", "default", "func", "interface", "select", "case", "defer", "go", "map", "struct", "chan", "else", "goto", "package", "switch", "const", "fallthrough", "if", "range", "type", "continue", "for", "import", "return", "var"]
         name = self.get_name().headless
+
         if name in blacklist:
             return name + "_"
+
         return name
 
     def get_go_type(self, ignore_cardinality=False, ignore_constant_group=False):

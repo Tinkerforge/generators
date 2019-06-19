@@ -317,7 +317,6 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
             text += common.format_constants(prefix, self, constants, constant_format_func=const_fmt_func, show_constant_group=True, group_format_func=lambda g: "\n" + _for + " " + constant_group_func(g) + ":\n\n")
 
         text += common.format_since_firmware(self.get_device(), self)
-
         text = text.replace('|device_identifier_constant|\n', '')
 
         return common.shift_right(text, 1)

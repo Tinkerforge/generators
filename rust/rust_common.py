@@ -45,16 +45,21 @@ class RustDevice(common.Device):
 
     def specialize_rust_doc_function_links(self, text):
         specialized = []
+
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                name = 'get_{0}_callback_receiver'.format(packet.get_name(skip=-2 if high_level else 0).under)                
+                name = 'get_{0}_callback_receiver'.format(packet.get_name(skip=-2 if high_level else 0).under)
             else:
                 name = packet.get_name(skip=-2 if high_level else 0).under
+
             result = '[`{0}`]'.format(name)
             specialized.append(result + ": #method."+name)
+
             return result
+
         result_text = self.specialize_doc_rst_links(text, specializer)
         result = (result_text, [link for link in specialized if link.split(':')[0] in result_text])
+
         return result
 
 class RustPacket(common.Packet):
@@ -92,18 +97,18 @@ class RustPacket(common.Packet):
                     return template.format(result_type=self.get_rust_type_name(skip=-2) + "Result")
 
 
-        returns = self.get_elements(direction='out')            
+        returns = self.get_elements(direction='out')
         name = self.get_rust_type_name() + ("Event" if self.get_type() == 'callback' else "")
         if len(returns) == 0 and not self.has_high_level():
             return "()"
         if len(returns) == 1 and not self.has_high_level():
             return returns[0].get_rust_type()
-            
+
         return name
 
     def get_high_level_payload_type(self):
         return [elem.get_rust_type(ignore_cardinality=True) for elem in self.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
-    
+
     def get_rust_parameters(self, high_level=False):
         parameters = []
 
@@ -125,8 +130,8 @@ class RustPacket(common.Packet):
             if self.has_high_level():
                 return self.get_rust_type_name()
             else:
-                return returns[0].get_rust_type()            
-        
+                return returns[0].get_rust_type()
+
         return self.get_rust_type_name()
 
     def get_stream_info_return_type(self):
@@ -134,14 +139,14 @@ class RustPacket(common.Packet):
         if len(returns) == 0:
             return "()"
         if len(returns) == 1:
-            return returns[0].get_rust_type()            
-        
+            return returns[0].get_rust_type()
+
         return self.get_rust_type_name()
 
     def get_rust_name(self, skip=0):
         return self.get_name(skip=skip).camel_abbrv
 
-    def get_rust_type_name(self, skip=0):        
+    def get_rust_type_name(self, skip=0):
         name = self.get_rust_name(skip)
 
         if self.get_name(skip).under.startswith('get_'):
@@ -152,9 +157,9 @@ class RustPacket(common.Packet):
         return name
 
     def get_rust_derivable_traits(self, high_level_only=False):
-        filtered_returns = self.get_elements(direction='out') if not high_level_only else [ret for ret in self.get_elements(direction='out') if ret.get_level() != 'low']        
+        filtered_returns = self.get_elements(direction='out') if not high_level_only else [ret for ret in self.get_elements(direction='out') if ret.get_level() != 'low']
         result = ["Clone"]
-        
+
         #String can be cloned, but not copied, so don't derive copy if the struct will contain strings
         if all("String" not in x.get_rust_type() for x in filtered_returns):
             result.append("Copy")
@@ -171,7 +176,7 @@ class RustPacket(common.Packet):
     def get_rust_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
 
-        # handle links      
+        # handle links
         text = text.replace(":ref:", "")
         #text = text.replace(":func:", "")
         #if ":ref:" in text:
@@ -196,8 +201,8 @@ class RustPacket(common.Packet):
         in_table_head = False
         in_table_body = False
         col_count = 0
-        for line in lines:  
-            line = line.replace('"', '')          
+        for line in lines:
+            line = line.replace('"', '')
             if line.strip() == '.. csv-table::':
                 in_table_head = True
             elif line.strip().startswith(':header: ') and in_table_head:
@@ -256,7 +261,7 @@ class RustElement(common.Element):
         if self.get_type() == 'string':
             return 'String'
         elif self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
-            element_type = self.get_type().replace('uint', 'u').replace('int', 'i')            
+            element_type = self.get_type().replace('uint', 'u').replace('int', 'i')
         elif self.get_type() == 'bool':
             element_type = 'bool'
         elif self.get_type() == 'float':
