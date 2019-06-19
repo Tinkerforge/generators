@@ -111,16 +111,16 @@ class GoDocDevice(go_common.GoDevice):
  Creates a new ``{bricklet_camel}`` object with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
 
- This device object can be used after the IP connection has been connected
+ This device object can be used after the IPConnection has been connected
  (see examples :ref:`above <{rst_ref_name}_go_examples>`).
 """,
             'de': """
 .. go:function:: func New{bricklet_camel}(uid string, ipcon *IPConnection) (device {bricklet_camel}, err error)
 
  Erzeugt ein neues ``{bricklet_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
- fügt es der IP-Connection ``ipcon`` hinzu:
+ fügt es der IPConnection ``ipcon`` hinzu:
 
- Dieses Geräteobjekt kann benutzt werden, nachdem die IP-Connection verbunden
+ Dieses Geräteobjekt kann benutzt werden, nachdem die IPConnection verbunden
  wurde (siehe Beispiele :ref:`oben <{rst_ref_name}_go_examples>`).
 """
         }
@@ -134,7 +134,7 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the corresponding `Register*Callback` function, which returns a unique callback ID.
+with the corresponding ``Register*Callback`` function, which returns a unique callback ID.
 This ID can be used to deregister the callback later.
 
 .. note::
@@ -152,7 +152,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der entsprechenden `Register*Callback`-Function durchgeführt werden,
+mit der entsprechenden ``Register*Callback``-Function durchgeführt werden,
 welche eine eindeutige Callback-ID zurück gibt. Mit dieser ID kann das Callback
 später deregistriert werden.
 
@@ -229,7 +229,7 @@ Constants
  This constant is used to identify a {device_name_display}.
 
  The :go:func:`(*{device_name_camel}) GetIdentity()` function and the :go:func:`(*IPConnection) RegisterEnumerateCallback()`
- callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
+ callback of the IPConnection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
 .. go:constant:: {device_name_under}.DeviceDisplayName
@@ -247,7 +247,7 @@ Konstanten
  Diese Konstante wird verwendet um {article} {device_name_display} zu identifizieren.
 
  Die :go:func:`(*{device_name_camel}) GetIdentity()` Funktion und der :go:func:`(*IPConnection) RegisterEnumerateCallback()`
- Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
+ Callback der IPConnection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
 .. go:constant:: {device_name_under}.DeviceDisplayName

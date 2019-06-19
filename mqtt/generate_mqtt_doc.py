@@ -173,7 +173,7 @@ Mit diesem Suffix kann das Callback später deregistriert werden.
 API
 ---
 
-All published payload to an from the MQTT bindings is in the JSON format.
+All published payloads to and from the MQTT bindings are in JSON format.
 
 If an error occures, the bindings publish a JSON object containing the error message as attribute "_ERROR".
 It is published on the corresponding response topic: ``.../response/...`` for ``.../request/...`` and ``.../callback/...`` for ``.../register/...``.
@@ -187,7 +187,7 @@ It is published on the corresponding response topic: ``.../response/...`` for ``
 API
 ---
 
-Alle veröffentlichten Payloads an die und von den MQTT-Bindings sind im JSON format.
+Alle veröffentlichten Payloads an die und von den MQTT-Bindings sind im JSON Format.
 
 Falls ein Fehler auftritt, veröffentlichen die Bindings ein JSON-Objekt, das die Fehlermeldung als "_ERROR"-Attribut enthält.
 Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../response/...`` für ``.../request/...`` und ``.../callback/...`` für ``.../register/...``.
@@ -307,11 +307,7 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
             for elem in group.get_elements():
                 if elem.get_packet().get_name().under == self.get_name().under:
                     return elem.get_name().under
-                #to_search = []
-                #for word in reversed(splt):
-                #    to_search.append(word)
-                #    if elem.get_name().under == '_'.join(to_search):
-                #        return elem.get_name().under
+
             return group.get_name().under
 
         if self.get_name().space == 'Set Response Expected':

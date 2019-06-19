@@ -219,8 +219,6 @@ class GoElement(common.Element):
             element_type = 'rune'
         elif self.get_type() == 'string':
             return 'string'
-        #elif self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
-        #    element_type = self.get_type()
         elif self.get_type() == 'bool':
             element_type = 'bool'
         elif self.get_type() == 'float':
