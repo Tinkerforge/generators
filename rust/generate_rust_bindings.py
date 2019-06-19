@@ -50,14 +50,21 @@ class RustBindingsDevice(rust_common.RustDevice):
 
         conv_receiver = conv_receiver_imports[0] if len(conv_receiver_imports) == 1 else ("{" + ", ".join(conv_receiver_imports) + "}")
 
-        tf_doc_link = {'en': '//! See also the documentation [here](https://www.tinkerforge.com/en/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Rust.html).',
-                       'de': '//! Siehe auch die Dokumentation [hier](https://www.tinkerforge.com/de/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Rust.html).'
+        tf_doc_link = {
+        'en': '//! See also the documentation [here](https://www.tinkerforge.com/en/doc/Software/{category_name}/{rst_name}_Rust.html).',
+        'de': '//! Siehe auch die Dokumentation [hier](https://www.tinkerforge.com/de/doc/Software/{category_name}/{rst_name}_Rust.html).'
         }
 
         description = common.select_lang(self.get_description()) + "."
         description += '\n//! \n'
-        description += common.select_lang(tf_doc_link).format(device_category_camel = self.get_category().camel,
-                                                              device_name_camel = self.get_name().camel)
+
+        category_name = self.get_category().camel
+
+        if not self.is_tng():
+            category_name += 's'
+
+        description += common.select_lang(tf_doc_link).format(category_name=category_name,
+                                                              rst_name=self.get_doc_rst_name())
 
         return """{header}
 
@@ -651,7 +658,10 @@ class RustBindingsGenerator(common.BindingsGenerator):
         return rust_common.RustElement
 
     def generate(self, device):
-        filename = '{0}_{1}'.format(device.get_name().under, device.get_category().under)
+        if device.is_tng():
+            filename = '{0}_{1}'.format(device.get_category().under, device.get_name().under)
+        else:
+            filename = '{0}_{1}'.format(device.get_name().under, device.get_category().under)
 
         with open(os.path.join(self.get_bindings_dir(), filename + '.rs'), 'w') as f:
             f.write(device.get_rust_source())

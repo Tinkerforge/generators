@@ -173,7 +173,7 @@ später deregistriert werden.
 API
 ---
 
-The {device_name_display}'s API is defined in the package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}``
+The {device_name_display} API is defined in the package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}``
 
 Nearly every function of the Go bindings can return an
 ``BrickletError``, implementing the error interface. The error can have one of the following values:
@@ -197,7 +197,7 @@ All functions listed below are thread-safe.
 API
 ---
 
-Die API des {device_name_display}s ist im Package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}`` definiert.
+Die API des {device_name_display} ist im Package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}`` definiert.
 
 Fast alle Funktionen der Go Bindings können einen ``BrickletError``, der das error-Interface implementiert,
 zurückgeben. Dieser kann folgende Werte annehmen:
@@ -279,7 +279,6 @@ Konstanten
         if self.is_brick():
             article = 'einen'
         api_str += common.select_lang(const_str).format(device_name_ref=self.get_doc_rst_ref_name(),
-                                                        #device_name_upper=self.get_name().upper,
                                                         device_name_camel=self.get_go_name(),
                                                         device_name_under=self.get_go_package(),
                                                         article=article,
@@ -289,7 +288,7 @@ Konstanten
                                               self.specialize_go_doc_function_links(common.select_lang(self.get_doc())),
                                               api_str,
                                               device_name_display=self.get_long_display_name(),
-                                              device_name_under = self.get_go_package())
+                                              device_name_under=self.get_go_package())
 
     def get_go_doc(self):
         docs_rs = {'en': 'Additional documentation can be found on `godoc.org <https://godoc.org/github.com/Tinkerforge/go-api-bindings/{device_name_under}>`_.\n',
@@ -297,7 +296,7 @@ Konstanten
 
         doc  = common.make_rst_header(self)
         doc += common.make_rst_summary(self)
-        doc += common.select_lang(docs_rs).format(device_name_under=self.get_name().under + "_" + self.get_category().under)
+        doc += common.select_lang(docs_rs).format(device_name_under=self.get_go_package())
         doc += self.get_go_examples()
         doc += self.get_go_api()
 

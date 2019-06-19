@@ -32,9 +32,15 @@ import common
 
 class GoDevice(common.Device):
     def get_go_name(self):
+        if self.is_tng():
+            return self.get_category().camel + self.get_name().camel
+
         return self.get_name().camel + self.get_category().camel
 
     def get_go_package(self):
+        if self.is_tng():
+            return self.get_category().under + "_" + self.get_name().under
+
         return self.get_name().under + "_" + self.get_category().under
 
     def specialize_go_doc_function_links(self, text):
@@ -43,10 +49,10 @@ class GoDevice(common.Device):
                 name = 'Register{0}Callback'.format(packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 name = packet.get_name(skip=-2 if high_level else 0).camel
-            result = name
-            return result
-        result_text = self.specialize_doc_rst_links(text, specializer)
-        return result_text
+
+            return name
+
+        return self.specialize_doc_rst_links(text, specializer)
 
 class GoPacket(common.Packet):
     def get_go_return_type(self, high_level=False):
@@ -86,8 +92,10 @@ class GoPacket(common.Packet):
 
     def get_return_type(self):
         returns = self.get_elements(direction='out')
+
         if len(returns) == 0:
             return "()"
+
         if len(returns) == 1:
             if self.has_high_level():
                 return self.get_go_type_name()
@@ -98,6 +106,7 @@ class GoPacket(common.Packet):
 
     def get_stream_info_return_type(self):
         returns = [elem for elem in self.get_elements(direction='out') if elem.get_level() == 'low']
+
         if len(returns) == 0:
             return "()"
         if len(returns) == 1:
@@ -113,7 +122,7 @@ class GoPacket(common.Packet):
 
         if self.get_name(skip).under.startswith('get_'):
             name = name[3:]
-        if self.get_name(skip).under.startswith('is_'):
+        elif self.get_name(skip).under.startswith('is_'):
             name = name[2:]
 
         return name

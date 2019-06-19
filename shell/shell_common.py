@@ -32,9 +32,15 @@ import common
 
 class ShellDevice(common.Device):
     def get_shell_class_name(self):
+        if self.is_tng():
+            return self.get_category().camel + self.get_name().camel
+
         return self.get_name().camel + self.get_category().camel
 
     def get_shell_device_name(self):
+        if self.is_tng():
+            return self.get_category().dash + '-' + self.get_name().dash
+
         return self.get_name().dash + '-' + self.get_category().dash
 
 class ShellPacket(common.Packet):

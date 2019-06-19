@@ -36,10 +36,10 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return ':mqtt:func:`register/{0}/<UID>/{1}`'.format(packet.get_device().get_mqtt_device_name(),
-                                                            packet.get_mqtt_name(skip=-2 if high_level else 0))
+                                                                    packet.get_mqtt_name(skip=-2 if high_level else 0))
             else:
                 return ':mqtt:func:`request/{0}/<UID>/{1}`'.format(packet.get_device().get_mqtt_device_name(),
-                                                   packet.get_mqtt_name(skip=-2 if high_level else 0))
+                                                                   packet.get_mqtt_name(skip=-2 if high_level else 0))
 
         return self.specialize_doc_rst_links(text, specializer, prefix='mqtt')
 
@@ -75,9 +75,9 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
                     'en': """If symbolic output is not disabled, the device identifier is mapped to the corresponding name in the format used in topics.
 
  The display name contains the {}'s name in a human readable form.""",
-                    'de': """Falls die symbolische Ausgabe nicht deaktiviert wurde, wird der device identifier auf den entsprechenden Namen im Format, welches die Topics verwenden, abgebildet.
+                    'de': """Falls die symbolische Ausgabe nicht deaktiviert wurde, wird der Device Identifier auf den entsprechenden Namen im Format, welches die Topics verwenden, abgebildet.
 
- Der display name enthält den Anzeigenamen des {}."""}
+ Der Display Name enthält den Anzeigenamen des {}."""}
                 desc += common.select_lang(get_id_desc).format(self.get_short_display_name())
 
             func = '{start}request/{struct_name}/<UID>/{func_name}\n\n {params}{returns}{desc}'.format(start=func_start, struct_name=self.get_mqtt_device_name(), func_name=name, params=params, returns = returns, desc=desc)

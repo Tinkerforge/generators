@@ -32,14 +32,21 @@ import common
 
 class MQTTDevice(common.Device):
     def get_mqtt_device_name(self):
+        if self.is_tng():
+            return self.get_category().under + '_' + self.get_name().under
+
         return self.get_name().under + '_' + self.get_category().under
 
     def get_python_class_name(self):
+        if self.is_tng():
+            return self.get_category().camel + self.get_name().camel
+
         return self.get_name().camel + self.get_category().camel
 
 class MQTTPacket(common.Packet):
     def get_mqtt_name(self, skip=0):
         return self.get_name(skip).under
+
     def get_python_name(self, skip=0):
         return self.get_name(skip).under
 

@@ -32,7 +32,17 @@ import common
 
 class RustDevice(common.Device):
     def get_rust_name(self):
+        if self.is_tng():
+            return self.get_category().camel_abbrv + self.get_name().camel_abbrv
+
         return self.get_name().camel_abbrv + self.get_category().camel_abbrv
+
+    def get_rust_module_name(self):
+        if self.is_tng():
+            return self.get_category().under + "_" + self.get_name().under
+
+        return self.get_name().under + "_" + self.get_category().under
+
     def specialize_rust_doc_function_links(self, text):
         specialized = []
         def specializer(packet, high_level):

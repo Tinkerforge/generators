@@ -116,18 +116,18 @@ Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space
     def get_rust_api(self):
         create_str = {
             'en': """
-.. rust:function:: {bricklet_camel}::new(uid: &str, ip_connection: &IpConnection) -> {bricklet_camel}
+.. rust:function:: {device_camel}::new(uid: &str, ip_connection: &IpConnection) -> {device_camel}
 
- Creates a new ``{bricklet_camel}`` object with the unique device ID ``uid`` and adds
+ Creates a new ``{device_camel}`` object with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
 
  This device object can be used after the IP connection has been connected
  (see examples :ref:`above <{rst_ref_name}_rust_examples>`).
 """,
             'de': """
-.. rust:function:: {bricklet_camel}::new(uid: &str, ip_connection: &IpConnection) -> {bricklet_camel}
+.. rust:function:: {device_camel}::new(uid: &str, ip_connection: &IpConnection) -> {device_camel}
 
- Erzeugt ein neues ``{bricklet_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
+ Erzeugt ein neues ``{device_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IP-Connection ``ipcon`` hinzu:
 
  Dieses Geräteobjekt kann benutzt werden, nachdem die IP-Connection verbunden
@@ -258,7 +258,7 @@ Konstanten
         }
 
         cre = common.select_lang(create_str).format(rst_ref_name=self.get_doc_rst_ref_name(),
-                                                    bricklet_camel=self.get_rust_name())
+                                                    device_camel=self.get_rust_name())
         bf = self.get_rust_methods('bf')
         af = self.get_rust_methods('af')
         ccf = self.get_rust_methods('ccf')
@@ -280,7 +280,6 @@ Konstanten
         if self.is_brick():
             article = 'einen'
         api_str += common.select_lang(const_str).format(device_name_ref=self.get_doc_rst_ref_name(),
-                                                        #device_name_upper=self.get_name().upper,
                                                         device_name_camel=self.get_rust_name(),
                                                         article=article,
                                                         device_name_display=self.get_long_display_name())
@@ -290,12 +289,12 @@ Konstanten
                                               api_str)
 
     def get_rust_doc(self):
-        docs_rs = {'en': 'Additional documentation can be found on `docs.rs <https://docs.rs/tinkerforge/latest/tinkerforge/{device_name_under}/index.html>`_.\n',
-                   'de': 'Zusätzliche Dokumentation findet sich auf `docs.rs <https://docs.rs/tinkerforge/latest/tinkerforge/{device_name_under}/index.html>`_.\n'}
+        docs_rs = {'en': 'Additional documentation can be found on `docs.rs <https://docs.rs/tinkerforge/latest/tinkerforge/{module_name}/index.html>`_.\n',
+                   'de': 'Zusätzliche Dokumentation findet sich auf `docs.rs <https://docs.rs/tinkerforge/latest/tinkerforge/{module_name}/index.html>`_.\n'}
 
         doc  = common.make_rst_header(self)
         doc += common.make_rst_summary(self)
-        doc += common.select_lang(docs_rs).format(device_name_under=self.get_name().under + "_" + self.get_category().under)
+        doc += common.select_lang(docs_rs).format(module_name=self.get_rust_module_name())
         doc += self.get_rust_examples()
         doc += self.get_rust_api()
 
@@ -321,7 +320,7 @@ class RustDocPacket(rust_common.RustPacket):
             text = common.handle_rst_word(text, constants=constants)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = self.get_device().get_name().upper + '_' + self.get_device().get_category().upper + '_'
+        prefix = self.get_device().get_rust_module_name().upper() + '_'
 
         if self.get_name().space == 'Set Response Expected':
             text += common.format_function_id_constants(prefix, self.get_device(), constants)

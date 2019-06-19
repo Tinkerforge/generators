@@ -146,8 +146,31 @@ def make_rst_header(device, has_device_identifier_constant=True):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     full_title = '{0} - {1}'.format(bindings_display_name, device.get_long_display_name())
     full_title_underline = '='*len(full_title)
-    device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_{2}_constants>` for the device identifier of this {3}.\n',
-                                  'de': '.. |device_identifier_constant| replace:: Es gibt auch eine :ref:`Konstante <{0}_{1}_{2}_constants>` für den Device Identifier dieses {3}.\n'}
+
+    brick_name = {
+        'en': 'this Brick',
+        'de': 'dieses Bricks'
+    }
+
+    bricklet_name = {
+        'en': 'this Bricklet',
+        'de': 'dieses Bricklets'
+    }
+
+    tng_name = {
+        'en': 'this TNG module',
+        'de': 'dieses TNG-Moduls'
+    }
+
+    if device.is_brick():
+        device_name = select_lang(brick_name)
+    elif device.is_tng():
+        device_name = select_lang(tng_name)
+    else:
+        device_name = select_lang(bricklet_name)
+
+    device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_constants>` for the device identifier of {2}.\n',
+                                  'de': '.. |device_identifier_constant| replace:: Es gibt auch eine :ref:`Konstante <{0}_{1}_constants>` für den Device Identifier {2}.\n'}
 
     if device.is_released():
         orphan = ''
@@ -155,14 +178,13 @@ def make_rst_header(device, has_device_identifier_constant=True):
         orphan = ':orphan:\n'
 
     if has_device_identifier_constant:
-        device_identifier_constant = select_lang(device_identifier_constant).format(device.get_name().under,
-                                                                                    device.get_category().under,
+        device_identifier_constant = select_lang(device_identifier_constant).format(device.get_doc_rst_ref_name(),
                                                                                     ref_name,
-                                                                                    device.get_category().camel)
+                                                                                    device_name)
     else:
         device_identifier_constant = '.. |device_identifier_constant| unicode:: 0xA0\n   :trim:\n'
 
-    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_name().under, device.get_category().under, ref_name)
+    ref = '.. _{0}_{1}:\n'.format(device.get_doc_rst_ref_name(), ref_name)
 
     return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n'.format(gen_text_rst.format(date),
                                                    orphan,
@@ -237,18 +259,18 @@ Bindings ist Teil deren allgemeine Beschreibung.
     }
 
     brick_name = {
-        'en': 'the :ref:`{0} <{1}_brick>`',
-        'de': 'den :ref:`{0} <{1}_brick>`',
+        'en': 'the :ref:`{0} <{1}>`',
+        'de': 'den :ref:`{0} <{1}>`',
     }
 
     bricklet_name = {
-        'en': 'the :ref:`{0} <{1}_bricklet>`',
-        'de': 'das :ref:`{0} <{1}_bricklet>`',
+        'en': 'the :ref:`{0} <{1}>`',
+        'de': 'das :ref:`{0} <{1}>`',
     }
 
     tng_name = {
-        'en': 'the :ref:`{0} <tng_{1}>`',
-        'de': 'das :ref:`{0} <tng_{1}>`',
+        'en': 'the :ref:`{0} <{1}>`',
+        'de': 'das :ref:`{0} <{1}>`',
     }
 
     # format bindings name
@@ -269,12 +291,12 @@ Bindings ist Teil deren allgemeine Beschreibung.
         device_name = select_lang(bricklet_name)
 
     device_name = device_name.format(device.get_long_display_name(),
-                                     device.get_name().under)
+                                     device.get_doc_rst_ref_name())
 
     s = select_lang(summary).format(bindings_name_link,
                                     device_name,
                                     device.get_long_display_name(),
-                                    device.get_name().under + '_' + device.get_category().under)
+                                    device.get_doc_rst_ref_name())
 
     if is_programming_language:
         s += select_lang(summary_install).format(device.get_generator().get_bindings_name(),
@@ -370,9 +392,8 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     if is_picture:
         imp = imp_picture_scroll
 
-    ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_name().under,
-                                               device.get_category().under,
-                                               bindings_name)
+    ref = '.. _{0}_{1}_examples:\n'.format(device.get_doc_rst_ref_name(),
+                                           bindings_name)
     examples = select_lang(ex).format(ref)
     files = find_device_examples(device, filename_regex)
     copy_files = []
@@ -390,7 +411,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         else:
             language = language_from_filename(f[0])
 
-        include = '{0}_{1}_{2}_{3}'.format(device.get_name().camel, device.get_category().camel, include_name, f[0].replace(' ', '_'))
+        include = '{0}_{1}_{2}'.format(device.get_doc_rst_name(), include_name, f[0].replace(' ', '_'))
         copy_files.append((f[1], include))
         title = title_from_filename(f[0])
         url = url_format.format(device.get_git_name(), bindings_name, f[0].replace(' ', '%20'))
@@ -784,9 +805,9 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
                     brick_infos.append(device_info)
                 elif device.is_tng():
-                    ref_name = device.get_name().under + '_tng'
+                    ref_name = 'tng_' + device.get_name().under
                     hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
-                    software_doc_prefix = device.get_name().camel + '_TNG'
+                    software_doc_prefix = 'TNG_' + device.get_name().camel
                     firmware_url_part = device.get_name().under
 
                     device_info = (device.get_device_identifier(),
@@ -1773,6 +1794,9 @@ class Device(object):
     def get_long_display_name(self):
         display_name = self.raw_data['display_name']
 
+        if self.is_tng():
+            return self.get_category().space + ' ' + display_name
+
         if display_name.endswith(' 2.0') or display_name.endswith(' 3.0'):
             parts = display_name.split(' ')
             parts.insert(-1, self.get_category().space)
@@ -1846,13 +1870,17 @@ class Device(object):
 
         return ''.join(constants)
 
+    def get_doc_rst_name(self):
+        if self.is_tng():
+            return self.get_category().camel + '_' + self.get_name().camel
+
+        return self.get_name().camel + '_' + self.get_category().camel
+
     def get_doc_rst_path(self):
         if not self.get_generator().is_doc():
             raise GeneratorError("Invalid call in non-doc generator")
 
-        filename = '{0}_{1}_{2}.rst'.format(self.get_name().camel,
-                                            self.get_category().camel,
-                                            self.get_generator().get_doc_rst_filename_part())
+        filename = self.get_doc_rst_name() + '_' + self.get_generator().get_doc_rst_filename_part() + '.rst'
 
         return os.path.join(self.get_generator().get_doc_dir(),
                             self.get_generator().get_language(),
@@ -1861,6 +1889,9 @@ class Device(object):
     def get_doc_rst_ref_name(self):
         if not self.get_generator().is_doc():
             raise GeneratorError("Invalid call in non-doc generator")
+
+        if self.is_tng():
+            return self.get_category().under + '_' + self.get_name().under
 
         return self.get_name().under + '_' + self.get_category().under
 
