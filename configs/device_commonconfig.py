@@ -488,6 +488,29 @@ Gibt den aktuellen Bootloader-Modus zurück, siehe :func:`Set Bootloader Mode`.
 })
 
 common_packets.append({
+'feature': 'tng',
+'type': 'function',
+'function_id': 236,
+'name': 'Copy Firmware',
+'elements': [('Status', 'uint8', 1, 'out', ('Copy Status', [('OK', 0),
+                                                            ('Device Identifier Incorrect', 1),
+                                                            ('Magic Number Incorrect', 2),
+                                                            ('Length Malformed', 3),
+                                                            ('CRC Mismatch', 4)]))],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+common_packets.append({
 'feature': 'comcu_bricklet_host',
 'type': 'function',
 'function_id': 237,
@@ -534,6 +557,25 @@ Die Fehler sind aufgeteilt in
 Die Fehlerzähler sind für Fehler die auf der Seite des Bricks auftreten.
 Jedes Bricklet hat eine ähnliche Funktion welche die Fehler auf Brickletseite
 ausgibt.
+"""
+}]
+})
+
+common_packets.append({
+'feature': 'tng',
+'type': 'function',
+'function_id': 237,
+'name': 'Set Write Firmware Pointer',
+'elements': [('Pointer', 'uint32', 1, 'in')],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
 """
 }]
 })
@@ -598,6 +640,26 @@ ist, ist sie an und sie flackert wenn Daten transferiert werden. Wenn sie
 deaktiviert ist, ist sie immer aus.
 
 Der Standardzustand ist aktiviert.
+"""
+}]
+})
+
+common_packets.append({
+'feature': 'tng',
+'type': 'function',
+'function_id': 238,
+'name': 'Write Firmware',
+'elements': [('Data', 'uint8', 64, 'in'),
+             ('Status', 'uint8', 1, 'out')],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
 """
 }]
 })
@@ -902,6 +964,34 @@ undefined behavior!
 'de':
 """
 Ein Aufruf dieser Funktion setzt das Bricklet zurück. Nach einem
+Neustart sind alle Konfiguration verloren.
+
+Nach dem Zurücksetzen ist es notwendig neue Objekte zu erzeugen,
+Funktionsaufrufe auf bestehenden führen zu undefiniertem Verhalten.
+"""
+}]
+})
+
+common_packets.append({
+'feature': 'tng',
+'type': 'function',
+'function_id': 243,
+'name': 'Reset',
+'elements': [],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+Calling this function will reset the TNG module. All configurations
+will be lost.
+
+After a reset you have to create new device objects,
+calling functions on the existing ones will result in
+undefined behavior!
+""",
+'de':
+"""
+Ein Aufruf dieser Funktion setzt das TNG-Modul zurück. Nach einem
 Neustart sind alle Konfiguration verloren.
 
 Nach dem Zurücksetzen ist es notwendig neue Objekte zu erzeugen,
