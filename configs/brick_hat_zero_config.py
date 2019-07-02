@@ -19,7 +19,7 @@ com = {
         'de': 'HAT für Raspberry Pi Zero mit 4 Bricklet-Ports'
     },
     'released': True,
-    'documented': False,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',

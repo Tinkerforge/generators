@@ -19,7 +19,7 @@ com = {
         'de': 'HAT für Raspberry Pi mit 8 Bricklet-Ports und Echtzeituhr'
     },
     'released': True,
-    'documented': False,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',
