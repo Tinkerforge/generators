@@ -189,3 +189,13 @@ Es gibt drei mögliche Kombinationen:
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Sleep',
+'functions': [('setter', 'Set Sleep Mode', [('uint32', 2000), ('uint32', 1000*60*30), ('bool', True), ('bool', True), ('bool', True)], 'Turn Raspberry Pi and Bricklets off in 2 seconds for 30 minutes with sleep indicator enabled', None)]
+})
+
+com['examples'].append({
+'name': 'Print Voltages',
+'functions': [('getter', ('Get Voltages', 'get voltages'), [(('Voltage USB', 'Voltage USB'), 'uint16', 1, 1000.0, 'V', None), (('Voltage DC', 'Voltage DC'), 'uint16', 1, 1000.0, 'V', None)], [])]
+})
