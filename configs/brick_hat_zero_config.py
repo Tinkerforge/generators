@@ -45,3 +45,8 @@ Gibt die USB-Versorgungsspannung des Raspberry Pi in mV zurück.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get USB Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], [])]
+})
