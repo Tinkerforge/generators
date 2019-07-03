@@ -192,7 +192,7 @@ Es gibt drei mögliche Kombinationen:
 
 com['examples'].append({
 'name': 'Sleep',
-'functions': [('setter', 'Set Sleep Mode', [('uint32', 2000), ('uint32', 1000*60*30), ('bool', True), ('bool', True), ('bool', True)], 'Turn Raspberry Pi and Bricklets off in 2 seconds for 30 minutes with sleep indicator enabled', None)]
+'functions': [('setter', 'Set Sleep Mode', [('uint32', 2), ('uint32', 60*30), ('bool', True), ('bool', True), ('bool', True)], 'Turn Raspberry Pi and Bricklets off in 2 seconds for 30 minutes with sleep indicator enabled', None)]
 })
 
 com['examples'].append({
