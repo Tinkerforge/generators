@@ -43,10 +43,14 @@ com['packets'].append({
 """
 Sets the sleep mode.
 
+.. note::
+ Calling this function will cut the Raspberry Pi's power after Power Off Delay seconds.
+ You have to shut down the Operating System yourself, e.g. by calling 'sudo shutdown -h now'.
+
 Parameters:
 
 * Power Off Delay: Time in seconds before the RPi/Bricklets are powered off.
-* Power Off Duration: Duration in seconds that the RPi/Bricklets stay powered.
+* Power Off Duration: Duration in seconds that the RPi/Bricklets stay powered off.
 * Raspberry Pi Off: RPi is powered off if set to true.
 * Bricklets Off: Bricklets are powered off if set to true.
 * Enable Sleep Indicator: If set to true, the status LED will blink in a 1s interval
@@ -63,6 +67,11 @@ the HAT will reset the RPi after 10 seconds.
 'de':
 """
 Setzt den Schlaf-Modus.
+
+.. note::
+ Diese Funktion schaltet die Stromversorgung des Raspberry Pis nach Power Off Delay Sekunden ab.
+ Das Betriebssystem muss manuell heruntergefahren werden, zum Beispiel durch Ausführen von
+ 'sudo shutdown -h now'.
 
 Parameter:
 
