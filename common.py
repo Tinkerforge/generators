@@ -1006,7 +1006,7 @@ def check_output_and_error(*popenargs, **kwargs):
 class GeneratorError(Exception):
     pass
 
-NameFlavors = namedtuple('NameFlavors', 'space lower camel headless under upper dash camel_abbrv')
+NameFlavors = namedtuple('NameFlavors', 'space lower camel headless under upper dash camel_abbrv lower_no_space')
 
 class FlavoredName(object):
     def __init__(self, name):
@@ -1033,7 +1033,8 @@ class FlavoredName(object):
                                           '_'.join(words).lower(), # under
                                           '_'.join(words).upper(), # upper
                                           '-'.join(words).lower(), # dash
-                                          ''.join([word.capitalize() for word in words])) # camel_abbrv; like camel, but produces GetSpiTfp... instead of GetSPITFP...
+                                          ''.join([word.capitalize() for word in words]),  # camel_abbrv; like camel, but produces GetSpiTfp... instead of GetSPITFP...
+                                          ''.join(words).lower()) # lower_no_space
 
             return self.cache[key]
 

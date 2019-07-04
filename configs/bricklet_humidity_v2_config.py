@@ -6,8 +6,7 @@
 
 # Humidity Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -281,3 +280,31 @@ com['examples'].append({
 'functions': [('callback', ('Humidity', 'humidity'), [(('Humidity', 'Humidity'), 'uint16', 1, 100.0, '%RH', None)], None, 'Recommended humidity for human comfort is 30 to 60 %RH.'),
               ('callback_configuration', ('Humidity', 'humidity'), [], 10000, False, 'o', [(30, 60)])]
 })
+
+
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'params': [],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': '',
+    'channels': [
+        oh_generic_channel('Humidity', 'humidity', 'SmartHomeUnits.PERCENT', divisor=100.0),
+        oh_generic_channel('Temperature', 'temperature', 'SIUnits.CELSIUS', divisor=100.0),
+    ],
+    'channel_types': [
+        oh_channel_type('humidity', 'Number:Dimensionless', 'Humidity',
+                     description='Measured relative humidity',
+                     read_only=True,
+                     pattern='%.1f %%',
+                     min_=0,
+                     max_=100),
+        oh_channel_type('temperature', 'Number:Temperature', 'Temperature',
+                     description='Measured temperature',
+                     read_only=True,
+                     pattern='%.1f %unit%',
+                     min_=-40,
+                     max_=165),
+    ]
+}

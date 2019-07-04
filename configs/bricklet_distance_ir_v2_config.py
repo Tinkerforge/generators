@@ -6,8 +6,7 @@
 
 # Distance IR Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -275,3 +274,22 @@ com['examples'].append({
 'functions': [('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, 10.0, 'cm', None)], None, None),
               ('callback_configuration', ('Distance', 'distance'), [], 1000, False, '<', [(30, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'params': [],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': '',
+    'channels': [
+        oh_generic_channel('Distance', 'distance', 'SIUnits.METRE', divisor=1000.0)
+    ],
+    'channel_types': [
+        oh_channel_type('distance', 'Number:Length', 'Distance',
+                     description='Measured distance',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=40,
+                     max_=1500)
+    ]
+}

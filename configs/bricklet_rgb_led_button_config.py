@@ -6,6 +6,8 @@
 
 # RGB LED Button Bricklet communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Bastian Nordmeyer <bastian@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -187,3 +189,25 @@ com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Button State Changed', 'button state changed'), [(('State', 'State'), 'uint8:constant', 1, None, None, None)], None, None)]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_trigger_channel_imports(),
+    'params': [],
+    'param_groups': [],
+    'init_code': '',
+    'channels': [
+        {
+            'id': 'Button State Changed',
+            'type_id': 'system.rawbutton',
+            'params': [],
+            'init_code':"""this.addButtonStateChangedListener((state) -> {{triggerChannelFn.accept("{camel}", state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED);}});""",
+            'dispose_code': "",
+            'getter': "this.getButtonState() == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED",
+            'java_unit': None,
+            'divisor': None,
+            'is_trigger_channel': True
+        }
+    ],
+    'channel_types': []
+}

@@ -1,0 +1,46 @@
+/* ***********************************************************
+ * This file was automatically generated on 2019-06-12.      *
+ *                                                           *
+ * Java Bindings Version 2.1.23                              *
+ *                                                           *
+ * If you have a bugfix for this file and want to commit it, *
+ * please fix the bug in the generator. You can find a link  *
+ * to the generators git repository on tinkerforge.com       *
+ *************************************************************/
+
+package com.tinkerforge;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class DeviceFactory {
+    private final static List<DeviceInfo> deviceInfos;
+
+    static {
+        deviceInfos = Arrays.asList(
+            {devices}
+        );
+    }
+
+    public static DeviceInfo getDeviceInfo(int deviceIdentifier) {
+        return deviceInfos.stream()
+                   .filter(info -> info.deviceIdentifier == deviceIdentifier)
+                   .findFirst()
+                   .orElseThrow(() -> new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier));
+    }
+
+    public static DeviceInfo getDeviceInfo(String thingName) {
+        return deviceInfos.stream()
+                   .filter(info -> info.deviceThingTypeName.equals(thingName))
+                   .findFirst()
+                   .orElseThrow(() -> new IllegalArgumentException("Unknown device thing name: " + thingName));
+    }
+
+	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {
+		return getDeviceInfo(deviceIdentifier).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+    }
+
+    public static Device createDevice(String thingName, String uid, IPConnection ipcon) throws Exception {
+		return getDeviceInfo(thingName).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+	}
+}

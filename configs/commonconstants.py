@@ -177,3 +177,80 @@ Der :word:`parameter` ist der gleiche wie :func:`{1}`.
     packets.append(callback_config_setter)
     packets.append(callback_config_getter)
     packets.append(callback)
+
+def oh_generic_channel_imports():
+    return """import org.eclipse.smarthome.core.library.types.QuantityType;
+import org.eclipse.smarthome.core.library.unit.MetricPrefix;
+import org.eclipse.smarthome.core.library.unit.SIUnits;
+import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;"""
+
+
+def oh_generic_channel(id_, type_id, unit, divisor=1.0):
+    return {
+        'id': id_,
+        'type_id': type_id,
+        'params':[{
+            'name': '{title_words} Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': '{title_words} Update Interval',
+            'description': 'Specifies the {lower_words} update interval in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }],
+        'init_code':"""this.set{camel}CallbackConfiguration(cfg.{headless}UpdateInterval, true, \'x\', 0, 0);
+this.add{camel}Listener({headless} -> {{updateStateFn.accept("{camel}", new QuantityType<>({headless}{divisor}, {unit}));}});""",
+        'dispose_code': """this.listener{camel}.clear();
+this.set{camel}CallbackConfiguration(0, true, \'x\', 0, 0);""",
+        'getter':'this.get{camel}()',
+        'java_unit': unit,
+        'divisor': divisor,
+        'is_trigger_channel': False
+    }
+
+def oh_generic_old_style_channel(id_, type_id, unit, divisor=1.0):
+    return {
+        'id': id_,
+        'type_id': type_id,
+        'params':[{
+            'name': '{title_words} Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': '{title_words} Update Interval',
+            'description': 'Specifies the {lower_words} update interval in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }],
+        'init_code':"""this.set{camel}CallbackPeriod(cfg.{headless}UpdateInterval);
+this.set{camel}CallbackThreshold(\'x\', 0, 0);
+this.add{camel}Listener({headless} -> {{updateStateFn.accept("{camel}", new QuantityType<>({headless}{divisor}, {unit}));}});""",
+        'dispose_code': """this.listener{camel}.clear();
+this.set{camel}CallbackPeriod(0);""",
+        'getter':'this.get{camel}()',
+        'java_unit': unit,
+        'divisor': divisor,
+        'is_trigger_channel': False
+    }
+
+def oh_generic_channel_param_groups():
+    return [{
+        'name': 'update_intervals',
+        'label': 'Update Intervals',
+        'description': 'Update Intervals',
+        'advanced': 'true'
+    }]
+
+def oh_generic_trigger_channel_imports():
+    return "import org.eclipse.smarthome.core.thing.CommonTriggerEvents;"
+
+def oh_channel_type(id_, item_type, label, description=None, read_only=None, pattern=None, min_=None, max_=None):
+    return {
+        'type_id': id_,
+        'item_type': item_type,
+        'label': label,
+        'description':description,
+        'read_only':read_only,
+        'pattern':pattern,
+        'min': min_,
+        'max': max_,
+    }

@@ -1,0 +1,4 @@
+Tinkerforge Java Bindings for Custom Devices
+============================================
+
+The custom JAR file depends on the regular Tinkerforge.jar file.

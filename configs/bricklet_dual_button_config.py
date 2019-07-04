@@ -6,6 +6,8 @@
 
 # Dual Button Bricklet communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -211,3 +213,61 @@ com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('State Changed', 'state changed'), [(('Button L', 'Left Button'), 'uint8:constant', 1, None, None, None), (('Button R', 'Right Button'), 'uint8:constant', 1, None, None, None), (('LED L', None), 'uint8:constant', 1, None, None, None), (('LED R', None), 'uint8:constant', 1, None, None, None)], None, None)]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_trigger_channel_imports(),
+    'params': [
+        {
+            'name': 'Left LED State',
+            'type': 'integer',
+            'default': 0,
+
+            'label': 'Left LED State',
+            'description': 'Left LED State',
+            'options':  [('Auto Toggle On', 0),
+                         ('Auto Toggle Off', 1),
+                         ('On', 2),
+                         ('Off', 3)],
+        },
+        {
+            'name': 'Right LED State',
+            'type': 'integer',
+            'default': 0,
+
+            'label': 'Right LED State',
+            'description': 'Right LED State',
+            'options': [('Auto Toggle On', 0),
+                        ('Auto Toggle Off', 1),
+                        ('On', 2),
+                        ('Off', 3)],
+        }
+    ],
+    'param_groups': [],
+    'init_code': 'this.setLEDState(cfg.leftLEDState.shortValue(), cfg.rightLEDState.shortValue());',
+    'channels': [
+        {
+            'id': 'Left Button State Changed',
+            'type_id': 'system.rawbutton',
+            'params': [],
+            'init_code':"""this.addStateChangedListener((buttonL, _buttonR, _ledL, _ledR) -> {{triggerChannelFn.accept("{camel}", buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED);}});""",
+            'dispose_code': "",
+            'getter': "this.getButtonState().buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED",
+            'java_unit': None,
+            'divisor': None,
+            'is_trigger_channel': True
+        },
+        {
+            'id': 'Right Button State Changed',
+            'type_id': 'system.rawbutton',
+            'params': [],
+            'init_code':"""this.addStateChangedListener((_buttonL, buttonR, _ledL, _ledR) -> {{triggerChannelFn.accept("{camel}", buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED);}});""",
+            'dispose_code': "",
+            'getter': "this.getButtonState().buttonR== BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED",
+            'java_unit': None,
+            'divisor': None,
+            'is_trigger_channel': True
+        },
+    ],
+    'channel_types': []
+}

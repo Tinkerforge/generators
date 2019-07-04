@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="tinkerforge"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="http://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="http://openhab.org/schemas/thing-description/v1.0.0 http://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+    <bridge-type id="brickd">
+        <label>Brick Daemon</label>
+        <description>A connection to a Brick Daemon, Ethernet Extension or WIFI Extension</description>
+
+        <config-description>
+            <parameter-group name="conn_group">
+                <label>Connection</label>
+                <description>Connection</description>
+            </parameter-group>
+
+            <parameter-group name="auth_group">
+                <label>Authentication</label>
+                <description>Authentication</description>
+            </parameter-group>
+
+            <parameter-group name="discovery_group">
+                <label>Auto-Discovery</label>
+                <description>Auto-Discovery</description>
+            </parameter-group>
+
+            <parameter name="host" type="text" required="true" groupName="conn_group">
+                <label>Broker Hostname/IP</label>
+                <description>The IP/hostname of the Brick Daemon, Ethernet Extension or WIFI Extension</description>
+                <context>network-address</context>
+                <advanced>false</advanced>
+                <default>localhost</default>
+            </parameter>
+
+            <parameter name="port" type="integer" min="1" max="65535" step="1" groupName="conn_group">
+                <label>Broker Port</label>
+                <description>The port is optional, if none is provided, the typical
+                    port 4223 is used.</description>
+                <context>network-address</context>
+                <advanced>false</advanced>
+                <default>4223</default>
+            </parameter>
+
+            <parameter name="enableReconnect" type="boolean" groupName="conn_group">
+                <label>Enable reconnects</label>
+                <description>Enable reattempting to connect to the Brick Daemon instance if the connection could not be established.</description>
+                <advanced>true</advanced>
+                <default>true</default>
+            </parameter>
+
+            <parameter name="reconnectInterval" type="decimal" groupName="conn_group" unit="s">
+                <default>10.0</default>
+                <label>Reconnect Interval</label>
+                <description>Seconds to wait between attempts to connect.</description>
+                <advanced>true</advanced>
+            </parameter>
+
+            <parameter name="auth" type="boolean" groupName="auth_group">
+                <label>Use authentication</label>
+                <description>Use authentication when connecting to the Brick Daemon.</description>
+                <advanced>true</advanced>
+            </parameter>
+
+            <parameter name="password" type="text" groupName="auth_group">
+                <label>Password</label>
+                <description>The password to use for authenticating.</description>
+                <advanced>true</advanced>
+                <context>password</context>
+            </parameter>
+
+            <parameter name="enableBackgroundDiscovery" type="boolean" groupName="discovery_group">
+                <default>true</default>
+                <label>Enable Background Discovery</label>
+                <description>This will check periodically for new devices attached to the Brick Daemon, Ethernet Extension or WIFI Extension.</description>
+                <advanced>true</advanced>
+            </parameter>
+
+            <parameter name="backgroundDiscoveryInterval" type="decimal" groupName="discovery_group" unit="min">
+                <default>10.0</default>
+                <label>Background Discovery Interval</label>
+                <description>Minutes to wait between Background Discovery Scans.</description>
+                <advanced>true</advanced>
+            </parameter>
+
+        </config-description>
+     </bridge-type>
+
+
+</thing:thing-descriptions>

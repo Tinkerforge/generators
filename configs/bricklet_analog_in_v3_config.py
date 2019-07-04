@@ -6,8 +6,7 @@
 
 # Analog In Bricklet 3.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -199,3 +198,22 @@ com['examples'].append({
 'functions': [('callback', ('Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], None, None),
               ('callback_configuration', ('Voltage', 'voltage'), [], 1000, False, '<', [(5, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'params': [],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': '',
+    'channels': [
+        oh_generic_channel('Voltage', 'voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
+    ],
+    'channel_types': [
+        oh_channel_type('voltage', 'Number:ElectricPotential', 'Voltage',
+                     description='Measured voltage',
+                     read_only=True,
+                     pattern='%.1f %unit%',
+                     min_=0,
+                     max_=42)
+    ]
+}

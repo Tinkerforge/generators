@@ -6,7 +6,7 @@
 
 # Barometer Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
@@ -667,3 +667,34 @@ com['examples'].append({
               ('callback', ('Air Pressure Reached', 'air pressure reached'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], None, 'Enjoy the potentially good weather!'),
               ('callback_threshold', ('Air Pressure', 'air pressure'), [], '>', [(1025, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + "\nimport java.math.BigDecimal;",
+    'params': [{
+            'name': 'Reference Air Pressure',
+            'type': 'decimal',
+            'default': 1013.25,
+
+            'label': 'Reference Air Pressure in mbar',
+            'description': 'The reference air pressure for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+        }],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': 'this.setReferenceAirPressure(cfg.referenceAirPressure.multiply(new BigDecimal(1000)).intValue());',
+    'channels': [
+        oh_generic_old_style_channel('Air Pressure', 'airPressure', 'SmartHomeUnits.MILLIBAR', divisor=1000.0),
+        oh_generic_old_style_channel('Altitude', 'altitude', 'SIUnits.METRE', divisor=100.0)
+    ],
+    'channel_types': [
+        oh_channel_type('airPressure', 'Number:Pressure', 'Air Pressure',
+                     description='Measured air pressure',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=10,
+                     max_=1200),
+        oh_channel_type('altitude', 'Number:Length', 'Altitude',
+                     description='Relative Altitude derived from air pressure',
+                     read_only=True,
+                     pattern='%.2f %unit%')
+    ]
+}
+
