@@ -6,8 +6,7 @@
 
 # Industrial Dual Analog In Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
@@ -361,3 +360,55 @@ com['examples'].append({
 'functions': [('callback', ('Voltage', 'voltage'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Voltage', 'Voltage'), 'int32', 1, 1000.0, 'V', None)], None, None),
               ('callback_configuration', ('Voltage', 'voltage (channel 0)'), [('uint8', 0)], 10000, False, '>', [(10, 0)])]
 })
+
+def voltage_channel(index):
+    return {
+            'id': 'Voltage Channel {0}'.format(index),
+            'type_id': 'voltage{0}'.format(index),
+            'params':[{
+                'name': 'Voltage Update Interval {0}'.format(index),
+                'type': 'integer',
+                'unit': 'ms',
+                'label': 'Voltage Update Interval (Channel {0})'.format(index),
+                'description': 'Specifies the voltage update interval for channel {0} in milliseconds. A value of 0 disables automatic updates.'.format(index),
+                'default': 1000,
+                'groupName': 'update_intervals'
+            }],
+            'init_code':"""this.setVoltageCallbackConfiguration({0}, cfg.voltageUpdateInterval{0}, true, \'x\', 0, 0);""".format(index),
+            'dispose_code': """this.setVoltageCallbackConfiguration({0}, 0, true, \'x\', 0, 0);""".format(index),
+            'packet': 'Get Voltage',
+            'packet_params': [str(index)],
+            'callback_filter': 'channel == {0}'.format(index),
+            'callback_packet': 'Voltage',
+            'callback_param_mapping': {'Channel': '__skip__', 'Voltage': 'value'},
+            'transform': 'new QuantityType<>(value{divisor}, {unit})',
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': '1000.0',
+            'is_trigger_channel': False
+        }
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'params': [],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': '',
+    'dispose_code': '',
+    'channels': [
+        voltage_channel(0),
+        voltage_channel(1),
+    ],
+    'channel_types': [
+        oh_channel_type('voltage0', 'Number:ElectricPotential', 'Voltage',
+                     description='Measured voltage',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=-35,
+                     max_=35),
+        oh_channel_type('voltage1', 'Number:ElectricPotential', 'Voltage',
+                     description='Measured voltage',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=-35,
+                     max_=35)
+    ]
+}

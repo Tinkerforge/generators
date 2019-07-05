@@ -98,7 +98,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         # Convert from dicts to namedtuples
         OpenHAB = namedtuple('OpenHAB', ['channels', 'channel_types', 'imports', 'params', 'param_groups', 'init_code', 'dispose_code'])
-        Channel = namedtuple('Channel', ['id', 'type_id', 'params', 'init_code', 'dispose_code', 'java_unit', 'divisor', 'is_trigger_channel', 'transform', 'packet', 'callback_packet', 'callback_param_mapping'])
+        Channel = namedtuple('Channel', ['id', 'type_id', 'params', 'init_code', 'dispose_code', 'java_unit', 'divisor', 'is_trigger_channel', 'transform', 'packet', 'callback_packet', 'callback_param_mapping', 'callback_filter', 'packet_params'])
         Param = namedtuple('Param', ['name', 'type', 'default', 'attrs', 'elements', 'options', 'filter'])
         ParamGroup = namedtuple('ParamGroup', ['name', 'elements'])
         ChannelType = namedtuple('ChannelType', 'type_id item_type label description read_only pattern min max')
@@ -182,7 +182,7 @@ import org.eclipse.smarthome.core.types.State;
 """
 
         case_template = """case "{camel}":
-               {updateFn}.accept(value, transform{camel}(this.{getter}()));
+               {updateFn}.accept(value, transform{camel}(this.{getter}({getter_params})));
                return;"""
 
         transformation_template = """    private {state_or_string} transform{camel}({type_} value) {{
@@ -195,7 +195,7 @@ import org.eclipse.smarthome.core.types.State;
         return value;
     }}"""
 
-        cb_registration = 'this.add{camel}Listener(({args}) -> {updateFn}.accept("{channel_camel}", transform{channel_camel}(lambdaArgsTo{channel_camel}({args}))));'
+        cb_registration = 'this.add{camel}Listener(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}(lambdaArgsTo{channel_camel}({args})));}}}});'
         cb_deregistration = 'this.listener{camel}.clear();'
 
         init_code = self.oh.init_code.split('\n')
@@ -203,6 +203,7 @@ import org.eclipse.smarthome.core.types.State;
         for c in self.oh.channels:
             elements = c.callback_packet.get_elements(direction='out', high_level=True)
             init_code.append(cb_registration.format(camel=c.callback_packet.get_name().camel,
+                                                    filter=c.callback_filter,
                                                     channel_camel=common.FlavoredName(c.id).get().camel,
                                                     args=', '.join(e.get_name().headless for e in elements),
                                                     updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn'))
@@ -216,14 +217,23 @@ import org.eclipse.smarthome.core.types.State;
             name = common.FlavoredName(c.id).get()
             channel_cases.append(case_template.format(camel=name.camel,
                                                       updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
-                                                      getter=c.packet.get_name().headless))
+                                                      getter=c.packet.get_name().headless,
+                                                      getter_params=', '.join(c.packet_params)))
 
             elements = c.callback_packet.get_elements(direction='out', high_level=True)
-            if len(elements) > 1:
+            if c.callback_param_mapping is not None:
+                def f(e):
+                    val = c.callback_param_mapping[e.get_name()]
+                    return val is not None and val.space != '__skip__'
+                filtered_elements = [e for e in elements if f(e)]
+            else:
+                filtered_elements = elements
+
+            if len(filtered_elements) > 1:
                 type_ = c.packet.get_java_object_name(skip=-2 if c.packet.has_high_level() else 0)
                 init = ' = new {}()'.format(type_)
                 if c.callback_param_mapping is None:
-                    assignments = '\n\t\t'.join('value.{0} = {0};'.format(e.get_name().headless) for e in elements)
+                    assignments = '\n\t\t'.join('value.{0} = {0};'.format(e.get_name().headless) for e in filtered_elements)
                 else:
                     assignments = []
                     for k, v in c.callback_param_mapping.items():
@@ -232,9 +242,9 @@ import org.eclipse.smarthome.core.types.State;
                         assignments.append('value.{} = {};'.format(k.headless, v.headless))
                     assignments = '\n\t\t'.join(assignments)
             else:
-                type_ = elements[0].get_java_type()
+                type_ = filtered_elements[0].get_java_type()
                 init = ''
-                assignments = 'value = {};'.format(elements[0].get_name().headless)
+                assignments = 'value = {};'.format(filtered_elements[0].get_name().headless)
 
             transformations.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'State',
                                                                 camel=name.camel,

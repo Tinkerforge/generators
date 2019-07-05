@@ -205,6 +205,8 @@ com['openhab'] = {
             'init_code': "",
             'dispose_code': "",
             'packet': 'Get Button State',
+            'packet_params': [],
+            'callback_filter': 'true',
             'callback_packet': 'Button State Changed',
             'callback_param_mapping': None,
             'transform': 'value == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',

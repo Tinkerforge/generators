@@ -254,7 +254,9 @@ com['openhab'] = {
             'init_code':"",
             'dispose_code': "",
             'packet': 'Get Button State',
+            'packet_params': [],
             'callback_packet': 'State Changed',
+            'callback_filter': 'true',
             'callback_param_mapping': {
                 'Button L': 'Button L',
                 'Button R': 'Button R',
@@ -273,7 +275,9 @@ com['openhab'] = {
             'init_code':"",
             'dispose_code': "",
             'packet': 'Get Button State',
+            'packet_params': [],
             'callback_packet': 'State Changed',
+            'callback_filter': 'true',
             'callback_param_mapping': {
                 'Button L': 'Button L',
                 'Button R': 'Button R',
