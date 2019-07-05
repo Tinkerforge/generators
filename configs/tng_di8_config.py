@@ -40,7 +40,8 @@ CONSTANT_CHANNEL = ('Channel', [('0', 0),
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Value', 'bool', 8, 'out')],
+'elements': [('Timestamp', 'uint64', 1, 'out'),
+             ('Value', 'bool', 8, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
