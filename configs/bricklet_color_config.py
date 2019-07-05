@@ -6,7 +6,7 @@
 
 # Color Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
@@ -723,3 +723,49 @@ com['examples'].append({
               ('callback', ('Color Reached', 'color reached'), [(('R', 'Color [R]'), 'uint16', 1, None, None, None), (('G', 'Color [G]'), 'uint16', 1, None, None, None), (('B', 'Color [B]'), 'uint16', 1, None, None, None), (('C', 'Color [C]'), 'uint16', 1, None, None, None)], None, None),
               ('callback_threshold', ('Color', 'color'), [], '>', [(100, 0), (200, 0), (300, 0), (400, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': 'import org.eclipse.smarthome.core.library.types.HSBType;',
+    'params': [{
+            'name': 'Reference Air Pressure',
+            'type': 'decimal',
+            'default': 1013.25,
+
+            'label': 'Reference Air Pressure in mbar',
+            'description': 'The reference air pressure for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+        }],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': '',
+    'dispose_code': '',
+    'channels': [
+        {
+        'id': 'Color',
+        'type_id': 'color',
+        'params':[{
+            'name': '{title_words} Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': '{title_words} Update Interval',
+            'description': 'Specifies the {lower_words} update interval in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }],
+        'init_code':"""this.set{camel}CallbackPeriod(cfg.{headless}UpdateInterval);
+this.set{camel}CallbackThreshold(\'x\', 0, 0, 0, 0, 0, 0, 0, 0);""",
+        'dispose_code': """this.set{camel}CallbackPeriod(0);""",
+        'packet': 'Get Color',
+        'callback_packet': 'Color',
+        'callback_param_mapping': None,
+        'transform': 'HSBType.fromRGB(value.r * 255 / 65535, value.g * 255 / 65535, value.b * 255 / 65535)',
+        'java_unit': None,
+        'divisor': None,
+        'is_trigger_channel': False
+    }
+    ],
+    'channel_types': [
+        oh_channel_type('color', 'Color', 'Color',
+                     description='Measured color',
+                     read_only=True)
+    ]
+}

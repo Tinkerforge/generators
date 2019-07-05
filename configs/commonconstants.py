@@ -198,11 +198,12 @@ def oh_generic_channel(id_, type_id, unit, divisor=1.0):
             'default': 1000,
             'groupName': 'update_intervals'
         }],
-        'init_code':"""this.set{camel}CallbackConfiguration(cfg.{headless}UpdateInterval, true, \'x\', 0, 0);
-this.add{camel}Listener({headless} -> {{updateStateFn.accept("{camel}", new QuantityType<>({headless}{divisor}, {unit}));}});""",
-        'dispose_code': """this.listener{camel}.clear();
-this.set{camel}CallbackConfiguration(0, true, \'x\', 0, 0);""",
-        'getter':'this.get{camel}()',
+        'init_code':"""this.set{camel}CallbackConfiguration(cfg.{headless}UpdateInterval, true, \'x\', 0, 0);""",
+        'dispose_code': """this.set{camel}CallbackConfiguration(0, true, \'x\', 0, 0);""",
+        'packet': 'Get {title_words}',
+        'callback_packet': '{title_words}',
+        'callback_param_mapping': None,
+        'transform': 'new QuantityType<>(value{divisor}, {unit})',
         'java_unit': unit,
         'divisor': divisor,
         'is_trigger_channel': False
@@ -222,11 +223,12 @@ def oh_generic_old_style_channel(id_, type_id, unit, divisor=1.0):
             'groupName': 'update_intervals'
         }],
         'init_code':"""this.set{camel}CallbackPeriod(cfg.{headless}UpdateInterval);
-this.set{camel}CallbackThreshold(\'x\', 0, 0);
-this.add{camel}Listener({headless} -> {{updateStateFn.accept("{camel}", new QuantityType<>({headless}{divisor}, {unit}));}});""",
-        'dispose_code': """this.listener{camel}.clear();
-this.set{camel}CallbackPeriod(0);""",
-        'getter':'this.get{camel}()',
+this.set{camel}CallbackThreshold(\'x\', 0, 0);""",
+        'dispose_code': """this.set{camel}CallbackPeriod(0);""",
+        'packet': 'Get {title_words}',
+        'callback_packet': '{title_words}',
+        'callback_param_mapping': None,
+        'transform': 'new QuantityType<>(value{divisor}, {unit})',
         'java_unit': unit,
         'divisor': divisor,
         'is_trigger_channel': False

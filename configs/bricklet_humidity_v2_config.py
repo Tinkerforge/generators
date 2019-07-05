@@ -289,6 +289,7 @@ com['openhab'] = {
     'params': [],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': '',
+    'dispose_code': '',
     'channels': [
         oh_generic_channel('Humidity', 'humidity', 'SmartHomeUnits.PERCENT', divisor=100.0),
         oh_generic_channel('Temperature', 'temperature', 'SIUnits.CELSIUS', divisor=100.0),

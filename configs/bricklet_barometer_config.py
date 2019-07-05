@@ -680,6 +680,7 @@ com['openhab'] = {
         }],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': 'this.setReferenceAirPressure(cfg.referenceAirPressure.multiply(new BigDecimal(1000)).intValue());',
+    'dispose_code': '',
     'channels': [
         oh_generic_old_style_channel('Air Pressure', 'airPressure', 'SmartHomeUnits.MILLIBAR', divisor=1000.0),
         oh_generic_old_style_channel('Altitude', 'altitude', 'SIUnits.METRE', divisor=100.0)

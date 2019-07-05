@@ -196,14 +196,18 @@ com['openhab'] = {
     'params': [],
     'param_groups': [],
     'init_code': '',
+    'dispose_code': '',
     'channels': [
         {
             'id': 'Button State Changed',
             'type_id': 'system.rawbutton',
             'params': [],
-            'init_code':"""this.addButtonStateChangedListener((state) -> {{triggerChannelFn.accept("{camel}", state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED);}});""",
+            'init_code': "",
             'dispose_code': "",
-            'getter': "this.getButtonState() == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED",
+            'packet': 'Get Button State',
+            'callback_packet': 'Button State Changed',
+            'callback_param_mapping': None,
+            'transform': 'value == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
             'java_unit': None,
             'divisor': None,
             'is_trigger_channel': True

@@ -205,6 +205,7 @@ com['openhab'] = {
     'params': [],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': '',
+    'dispose_code': '',
     'channels': [
         oh_generic_channel('Voltage', 'voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
     ],
