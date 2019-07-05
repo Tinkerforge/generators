@@ -1,0 +1,13 @@
+*.swp
+*.pyc
+__pycache__
+.vscode
+software/.cproject
+software/.project
+software/.pydevproject
+software/.settings
+software/build
+software/src/brickletlib
+software/src/bricklib
+software/src/bricklib2
+hardware/kicad-libraries
