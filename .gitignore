@@ -13,6 +13,7 @@
 */doc_*/
 */*_package/
 stubs/comcu/
+stubs/tng/
 stubs/doc/
 device_infos.py
 csharp/tinkerforge.*.nupkg
