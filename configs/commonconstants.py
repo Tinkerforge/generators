@@ -179,10 +179,10 @@ Der :word:`parameter` ist der gleiche wie :func:`{1}`.
     packets.append(callback)
 
 def oh_generic_channel_imports():
-    return """import org.eclipse.smarthome.core.library.types.QuantityType;
-import org.eclipse.smarthome.core.library.unit.MetricPrefix;
-import org.eclipse.smarthome.core.library.unit.SIUnits;
-import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;"""
+    return ['org.eclipse.smarthome.core.library.types.QuantityType',
+            'org.eclipse.smarthome.core.library.unit.MetricPrefix',
+            'org.eclipse.smarthome.core.library.unit.SIUnits',
+            'org.eclipse.smarthome.core.library.unit.SmartHomeUnits']
 
 
 def oh_generic_channel(id_, type_id, unit, divisor=1.0):
@@ -247,7 +247,7 @@ def oh_generic_channel_param_groups():
     }]
 
 def oh_generic_trigger_channel_imports():
-    return "import org.eclipse.smarthome.core.thing.CommonTriggerEvents;"
+    return ["org.eclipse.smarthome.core.thing.CommonTriggerEvents"]
 
 def oh_channel_type(id_, item_type, label, description=None, read_only=None, pattern=None, min_=None, max_=None):
     return {

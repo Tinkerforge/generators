@@ -79,6 +79,26 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         oh = self.raw_data['openhab']
 
+        channel_defaults = {
+            'params': [],
+            'init_code': "",
+            'dispose_code': "",
+            'packet_params': [],
+            'callback_param_mapping': None,
+            'callback_filter': 'true',
+            'java_unit': None,
+            'divisor': 1,
+        }
+
+        oh_defaults = {
+
+        }
+
+        for c_idx, channel in enumerate(oh['channels']):
+            tmp = channel_defaults.copy()
+            tmp.update(channel)
+            oh['channels'][c_idx] = tmp
+
         # Replace config placeholders
         def fmt(format_str, base_name, unit, divisor):
             if not isinstance(format_str, str):
@@ -138,12 +158,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_java_import(self):
         java_imports = super().get_java_import()
-        java_imports += """
-import java.util.function.BiConsumer;
+        oh_imports = ['java.util.function.BiConsumer', 'org.eclipse.smarthome.core.types.State'] + self.oh.imports
 
-import org.eclipse.smarthome.core.types.State;
-"""
-        java_imports += self.oh.imports + '\n'
+        java_imports += '\n'.join('import {};'.format(i) for i in oh_imports) + '\n'
 
         return java_imports
 

@@ -726,7 +726,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': 'import org.eclipse.smarthome.core.library.types.HSBType;',
+    'imports': ['org.eclipse.smarthome.core.library.types.HSBType'],
     'params': [{
             'name': 'Reference Air Pressure',
             'type': 'decimal',

@@ -669,7 +669,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + "\nimport java.math.BigDecimal;",
+    'imports': oh_generic_channel_imports() + ["java.math.BigDecimal"],
     'params': [{
             'name': 'Reference Air Pressure',
             'type': 'decimal',
