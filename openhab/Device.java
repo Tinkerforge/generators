@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import org.eclipse.smarthome.core.types.State;
+import org.eclipse.smarthome.core.types.Command;
 
 public abstract class Device extends DeviceBase {
 	public class Identity {
@@ -50,4 +51,6 @@ public abstract class Device extends DeviceBase {
     public abstract Class<?> getConfigurationClass();
 
     public abstract void refreshValue(String value, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
+
+    public abstract void handleCommand(String channel, Command command) throws TinkerforgeException;
 }

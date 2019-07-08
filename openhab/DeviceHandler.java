@@ -146,7 +146,7 @@ public class DeviceHandler extends BaseThingHandler {
                 device.refreshValue(channelUID.getId(), this::updateState, this::triggerChannel);
             }
             else {
-                throw new RuntimeException("Not implemented: " + command.toFullString());
+                device.handleCommand(channelUID.getId(), command);
             }
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);

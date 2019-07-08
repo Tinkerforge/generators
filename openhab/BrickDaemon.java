@@ -13,6 +13,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.function.BiConsumer;
 
+
+import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 
 class BrickDaemon extends Device {
@@ -80,5 +82,10 @@ class BrickDaemon extends Device {
     public void refreshValue(String value, BiConsumer<String, State> updateStateFn,
             BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {
         throw new NotSupportedException();
+    }
+
+    @Override
+    public void handleCommand(String channel, Command command) {
+
     }
 }

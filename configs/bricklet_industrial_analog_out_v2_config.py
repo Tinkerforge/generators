@@ -6,6 +6,8 @@
 
 # Industrial Analog Out Bricklet 2.0 communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -394,3 +396,47 @@ com['examples'].append({
               ('wait',)],
 'cleanups': [('setter', 'Set Enabled', [('bool', False)], None, None)]
 })
+
+
+com['openhab'] = {
+    'imports': ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'actor_channels': [{
+            'id': 'Enabled',
+            'type_id': 'enabled',
+            'params':[],
+            'init_code': "",
+            'dispose_code': "",
+            'command_type': "OnOffType",
+            'packet': 'Set {title_words}',
+            'packet_params': ['cmd == OnOffType.ON'],
+
+            'getter_packet': 'Get {title_words}',
+            'transform': 'value ? OnOffType.ON : OnOffType.OFF',
+        },
+        {
+            'id': 'Voltage',
+            'type_id': 'voltage',
+            'params':[],
+            'init_code': "",
+            'dispose_code': "",
+            'command_type': "DecimalType",
+            'packet': 'Set {title_words}',
+            'packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
+            'getter_packet': 'Get {title_words}',
+            'transform': 'new DecimalType(value / 1000.0)',
+        }
+    ],
+    'channels': [],
+    'channel_types': [
+        oh_channel_type('enabled', 'Switch', 'Output Enabled',
+                     description='Enables/disables the output of voltage and current.',
+                     read_only=False),
+        oh_channel_type('voltage', 'Number:ElectricPotential', 'Output Voltage',
+                     description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
+                     read_only=False,
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=5)
+    ]
+}
+
