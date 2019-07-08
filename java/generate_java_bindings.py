@@ -486,9 +486,6 @@ public class {0} extends Device {{
         return listeners + '\t}\n'
 
     def get_java_add_listener(self):
-        if self.get_callback_count() == 0:
-            return '}\n'
-
         listeners = ''
         template = """
 	/**
