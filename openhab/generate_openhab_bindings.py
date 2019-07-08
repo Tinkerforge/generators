@@ -81,23 +81,31 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         channel_defaults = {
             'params': [],
-            'init_code': "",
-            'dispose_code': "",
+            'init_code': '',
+            'dispose_code': '',
             'packet_params': [],
             'callback_param_mapping': None,
             'callback_filter': 'true',
             'java_unit': None,
             'divisor': 1,
+            'is_trigger_channel': False
         }
 
         oh_defaults = {
-
+            'params': [],
+            'param_groups': [],
+            'init_code': '',
+            'dispose_code': '',
         }
 
         for c_idx, channel in enumerate(oh['channels']):
             tmp = channel_defaults.copy()
             tmp.update(channel)
             oh['channels'][c_idx] = tmp
+
+        tmp = oh_defaults.copy()
+        tmp.update(oh)
+        oh = tmp
 
         # Replace config placeholders
         def fmt(format_str, base_name, unit, divisor):

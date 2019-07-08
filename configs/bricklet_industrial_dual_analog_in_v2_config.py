@@ -389,10 +389,7 @@ def voltage_channel(index):
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
-    'params': [],
     'param_groups': oh_generic_channel_param_groups(),
-    'init_code': '',
-    'dispose_code': '',
     'channels': [
         voltage_channel(0),
         voltage_channel(1),

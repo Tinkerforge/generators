@@ -243,20 +243,13 @@ com['openhab'] = {
                         ('Off', 3)],
         }
     ],
-    'param_groups': [],
     'init_code': 'this.setLEDState(cfg.leftLEDState.shortValue(), cfg.rightLEDState.shortValue());',
-    'dispose_code': '',
     'channels': [
         {
             'id': 'Left Button State Changed',
             'type_id': 'system.rawbutton',
-            'params': [],
-            'init_code':"",
-            'dispose_code': "",
             'packet': 'Get Button State',
-            'packet_params': [],
             'callback_packet': 'State Changed',
-            'callback_filter': 'true',
             'callback_param_mapping': {
                 'Button L': 'Button L',
                 'Button R': 'Button R',
@@ -264,18 +257,12 @@ com['openhab'] = {
                 'LED R': None,
             },
             'transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
-            'java_unit': None,
-            'divisor': None,
             'is_trigger_channel': True
         },
         {
             'id': 'Right Button State Changed',
             'type_id': 'system.rawbutton',
-            'params': [],
-            'init_code':"",
-            'dispose_code': "",
             'packet': 'Get Button State',
-            'packet_params': [],
             'callback_packet': 'State Changed',
             'callback_filter': 'true',
             'callback_param_mapping': {
@@ -285,8 +272,6 @@ com['openhab'] = {
                 'LED R': None,
             },
             'transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
-            'java_unit': None,
-            'divisor': None,
             'is_trigger_channel': True
         },
     ],

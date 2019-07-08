@@ -193,25 +193,13 @@ com['examples'].append({
 
 com['openhab'] = {
     'imports': oh_generic_trigger_channel_imports(),
-    'params': [],
-    'param_groups': [],
-    'init_code': '',
-    'dispose_code': '',
     'channels': [
         {
             'id': 'Button State Changed',
             'type_id': 'system.rawbutton',
-            'params': [],
-            'init_code': "",
-            'dispose_code': "",
             'packet': 'Get Button State',
-            'packet_params': [],
-            'callback_filter': 'true',
             'callback_packet': 'Button State Changed',
-            'callback_param_mapping': None,
             'transform': 'value == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
-            'java_unit': None,
-            'divisor': None,
             'is_trigger_channel': True
         }
     ],

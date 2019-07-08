@@ -278,10 +278,7 @@ com['examples'].append({
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
-    'params': [],
     'param_groups': oh_generic_channel_param_groups(),
-    'init_code': '',
-    'dispose_code': '',
     'channels': [
         oh_generic_channel('Distance', 'distance', 'SIUnits.METRE', divisor=1000.0)
     ],
