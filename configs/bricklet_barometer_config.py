@@ -674,6 +674,8 @@ com['openhab'] = {
             'name': 'Reference Air Pressure',
             'type': 'decimal',
             'default': 1013.25,
+            'min': 10,
+            'max': 1200,
 
             'label': 'Reference Air Pressure in mbar',
             'description': 'The reference air pressure for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
