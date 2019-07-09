@@ -11,6 +11,8 @@ package com.tinkerforge;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 
@@ -87,5 +89,10 @@ class BrickDaemon extends Device {
     @Override
     public void handleCommand(String channel, Command command) {
 
+    }
+
+    @Override
+    public List<String> getEnabledChannels(Object config) {
+        return new ArrayList<>();
     }
 }

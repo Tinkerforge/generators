@@ -94,7 +94,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'callback_filter': 'true',
             'java_unit': None,
             'divisor': 1,
-            'is_trigger_channel': False
+            'is_trigger_channel': False,
+            'predicate': 'true'
         }
 
         oh_defaults = {
@@ -132,7 +133,12 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         # Convert from dicts to namedtuples
         OpenHAB = namedtuple('OpenHAB', ['channels', 'channel_types', 'imports', 'params', 'param_groups', 'init_code', 'dispose_code'])
-        Channel = namedtuple('Channel', ['id', 'type_id', 'params', 'init_code', 'dispose_code', 'java_unit', 'divisor', 'is_trigger_channel', 'transform', 'getter_packet', 'getter_packet_params', 'setter_packet', 'setter_packet_params', 'setter_command_type', 'callback_packet', 'callback_param_mapping', 'callback_filter'])
+        Channel = namedtuple('Channel', ['id', 'type_id', 'params', 'init_code', 'dispose_code',
+                                         'java_unit', 'divisor', 'is_trigger_channel', 'transform',
+                                         'getter_packet', 'getter_packet_params',
+                                         'setter_packet', 'setter_packet_params', 'setter_command_type',
+                                         'callback_packet', 'callback_param_mapping', 'callback_filter',
+                                         'predicate'])
         Param = namedtuple('Param', ['name', 'type', 'default', 'attrs', 'elements', 'options', 'filter'])
         ParamGroup = namedtuple('ParamGroup', ['name', 'elements'])
         ChannelType = namedtuple('ChannelType', 'type_id item_type label description read_only pattern min max')
@@ -177,7 +183,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_java_import(self):
         java_imports = super().get_java_import()
-        oh_imports = ['java.util.function.BiConsumer', 'org.eclipse.smarthome.core.types.State', 'org.eclipse.smarthome.core.types.Command'] + self.oh.imports
+        oh_imports = ['java.util.ArrayList', 'java.util.function.BiConsumer', 'org.eclipse.smarthome.core.types.State', 'org.eclipse.smarthome.core.types.Command'] + self.oh.imports
 
         java_imports += '\n'.join('import {};'.format(i) for i in oh_imports) + '\n'
 
@@ -328,6 +334,21 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         return template.format(channel_cases='\n            '.join(channel_cases))
 
+    def get_openhab_channel_enablers(self):
+        template = """if ({pred}) {{
+                result.add("{channel_camel}");
+            }}"""
+
+        enablers = []
+        for c in self.oh.channels:
+            name = common.FlavoredName(c.id).get().camel
+            if c.predicate == 'true':
+                enablers.append('result.add("{channel_camel}");'.format(channel_camel=name))
+            else:
+                enablers.append(template.format(pred=c.predicate, channel_camel=name))
+
+        return enablers
+
     def get_openhab_device_impl(self):
         template = """
     @Override
@@ -348,6 +369,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         {dispose_code}
     }}
 
+    @Override
+    public List<String> getEnabledChannels(Object config) {{
+        {name_camel}Config cfg = ({name_camel}Config) config;
+        List<String> result = new ArrayList<String>();
+        {channel_enablers}
+        return result;
+    }}
+
     {refresh_value}
 
     {handle_command}
@@ -360,12 +389,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         callback_regs, callback_init_code, callback_deregs, callback_dispose_code, lambda_transforms = self.get_openhab_callback_impl()
         refresh_value, getter_transforms = self.get_openhab_getter_impl()
         handle_command = self.get_openhab_setter_impl()
+        channel_enablers = self.get_openhab_channel_enablers()
 
         return template.format(name_camel=self.get_category().camel + self.get_name().camel,
                                init_code='\n\t\t'.join(init_code + callback_init_code),
                                callback_registrations='\n\t\t'.join(callback_regs),
                                callback_deregistrations='\n\t\t'.join(callback_deregs),
                                dispose_code='\n\t\t'.join(callback_dispose_code + dispose_code),
+                               channel_enablers='\n\t\t'.join(channel_enablers),
                                refresh_value=refresh_value,
                                handle_command=handle_command,
                                transforms='\n\t'.join(lambda_transforms + getter_transforms))

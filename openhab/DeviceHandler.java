@@ -14,6 +14,7 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -26,7 +27,10 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
@@ -52,8 +56,11 @@ public class DeviceHandler extends BaseThingHandler {
 
     private final BiFunction<String, IPConnection, Device> deviceSupplier;
 
+    private List<Channel> channels;
+
     public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier) {
         super(thing);
+        channels = thing.getChannels();
         System.out.println("Constructing " + thing.getUID().getAsString());
         this.deviceSupplier = deviceSupplier;
 
@@ -163,5 +170,18 @@ public class DeviceHandler extends BaseThingHandler {
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
+    }
+
+    @Override
+    public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
+        super.handleConfigurationUpdate(configurationParameters);
+        List<String> enabledChannelNames = device.getEnabledChannels(getConfigAs(device.getConfigurationClass()));
+
+        List<Channel> enabledChannels = enabledChannelNames.stream()
+                                                           .map(s -> new ChannelUID(getThing().getUID(), s))
+                                                           .map(cuid -> channels.stream().filter(c -> c.getUID().equals(cuid)).findFirst().get())
+                                                           .collect(Collectors.toList());
+
+        updateThing(editThing().withChannels(enabledChannels).build());
     }
 }

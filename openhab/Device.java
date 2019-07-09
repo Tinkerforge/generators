@@ -10,6 +10,7 @@
 package com.tinkerforge;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.eclipse.smarthome.core.types.State;
@@ -53,4 +54,6 @@ public abstract class Device extends DeviceBase {
     public abstract void refreshValue(String value, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
 
     public abstract void handleCommand(String channel, Command command) throws TinkerforgeException;
+
+    public abstract List<String> getEnabledChannels(Object config);
 }
