@@ -95,7 +95,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'java_unit': None,
             'divisor': 1,
             'is_trigger_channel': False,
-            'predicate': 'true'
+            'predicate': 'true',
+
+            'label': None,
+            'description': None
         }
 
         oh_defaults = {
@@ -138,7 +141,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                          'getter_packet', 'getter_packet_params',
                                          'setter_packet', 'setter_packet_params', 'setter_command_type',
                                          'callback_packet', 'callback_param_mapping', 'callback_filter',
-                                         'predicate'])
+                                         'predicate',
+                                         'label', 'description'])
         Param = namedtuple('Param', ['name', 'type', 'default', 'attrs', 'elements', 'options', 'filter'])
         ParamGroup = namedtuple('ParamGroup', ['name', 'elements'])
         ChannelType = namedtuple('ChannelType', 'type_id item_type label description read_only pattern min max')
@@ -210,11 +214,21 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         return filtered_elements, type_
 
+    def get_openhab_channel_init_code(self):
+        init_code = []
+        for c in self.oh.channels:
+            if c.predicate != 'true':
+                init_code += ['if ({}) {{'.format(c.predicate)]
+                init_code += c.init_code.split('\n')
+                init_code += ['}']
+            else:
+                init_code += c.init_code.split('\n')
+        return init_code
     def get_openhab_callback_impl(self):
         lambda_transformation_template = """    private {type_} lambdaArgsTo{channel_camel}({callback_args}) {{
-        {type_} value{init};
+        {type_} lambda_transform_result{init};
         {assignments}
-        return value;
+        return lambda_transform_result;
     }}"""
 
         # To init
@@ -223,7 +237,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         cb_deregistration = 'this.listener{camel}.clear();'
 
         regs = []
-        init_code = []
+
         deregs = []
         dispose_code = []
         lambda_transforms = []
@@ -237,7 +251,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                channel_camel=common.FlavoredName(c.id).get().camel,
                                                args=', '.join(e.get_name().headless for e in elements),
                                                updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn'))
-            init_code += c.init_code.split('\n')
+
             deregs.append(cb_deregistration.format(camel=c.callback_packet.get_name().camel))
             dispose_code += c.dispose_code.split('\n')
 
@@ -246,17 +260,20 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if len(filtered_elements) > 1:
                 init = ' = new {}()'.format(type_)
                 if c.callback_param_mapping is None:
-                    assignments = '\n\t\t'.join('value.{0} = {0};'.format(e.get_name().headless) for e in filtered_elements)
+                    assignments = '\n\t\t'.join('lambda_transform_result.{0} = {0};'.format(e.get_name().headless) for e in filtered_elements)
                 else:
                     assignments = []
                     for k, v in c.callback_param_mapping.items():
                         if v is None:
                             continue
-                        assignments.append('value.{} = {};'.format(k.headless, v.headless))
+                        assignments.append('lambda_transform_result.{} = {};'.format(k.headless, v.headless))
                     assignments = '\n\t\t'.join(assignments)
             else:
                 init = ''
-                assignments = 'value = {};'.format(filtered_elements[0].get_name().headless)
+                if c.callback_param_mapping is None:
+                    assignments = 'lambda_transform_result = {};'.format(filtered_elements[0].get_name().headless)
+                else:
+                    assignments = 'lambda_transform_result = {};'.format(c.callback_param_mapping[filtered_elements[0].get_name()].headless)
 
             lambda_transforms.append(lambda_transformation_template.format(type_=type_,
                                                                            channel_camel=name.camel,
@@ -264,7 +281,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                                            init=init,
                                                                            assignments=assignments))
 
-        return (regs, init_code, deregs, dispose_code, lambda_transforms)
+        return (regs, deregs, dispose_code, lambda_transforms)
 
     def get_openhab_getter_impl(self):
         template = """    @Override
@@ -384,15 +401,15 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     {transforms}
 """
 
-        init_code = self.oh.init_code.split('\n')
+        init_code = self.oh.init_code.split('\n') + self.get_openhab_channel_init_code()
         dispose_code = self.oh.dispose_code.split('\n')
-        callback_regs, callback_init_code, callback_deregs, callback_dispose_code, lambda_transforms = self.get_openhab_callback_impl()
+        callback_regs, callback_deregs, callback_dispose_code, lambda_transforms = self.get_openhab_callback_impl()
         refresh_value, getter_transforms = self.get_openhab_getter_impl()
         handle_command = self.get_openhab_setter_impl()
         channel_enablers = self.get_openhab_channel_enablers()
 
         return template.format(name_camel=self.get_category().camel + self.get_name().camel,
-                               init_code='\n\t\t'.join(init_code + callback_init_code),
+                               init_code='\n\t\t'.join(init_code),
                                callback_registrations='\n\t\t'.join(callback_regs),
                                callback_deregistrations='\n\t\t'.join(callback_deregs),
                                dispose_code='\n\t\t'.join(callback_dispose_code + dispose_code),
@@ -424,9 +441,21 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 {channel_types}
 </thing:thing-descriptions>"""
 
-        channel_template = '<channel id="{id}" typeId="{typeId}" />'
 
+        def get_channel_xml(c):
+            template = """<channel id="{id}" typeId="{typeId}">
+            {elems}
+            </channel>"""
+            elems = []
+            if c.label is not None:
+                elems.append('<label>{}</label>'.format(c.label))
 
+            if c.description is not None:
+                elems.append('<description>{}</description>'.format(c.description))
+
+            return template.format(id=common.FlavoredName(c.id).get().camel,
+                                   typeId=c.type_id,
+                                   elems='\n'.join(elems))
 
         def get_parameter_group_xml(g):
             template = """            <parameter-group name="{name}">
@@ -478,8 +507,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return template.format(dev_name=self.get_name().lower_no_space,
                                name_space=self.get_long_display_name(),
                                description=common.select_lang(self.get_description()),
-                               channels='\n\t\t\t'.join(channel_template.format(id=common.FlavoredName(c.id).get().camel,
-                                                                                typeId=c.type_id) for c in self.oh.channels),
+                               channels='\n\t\t\t'.join(get_channel_xml(c) for c in self.oh.channels),
                                parameter_groups='\n\t\t\t'.join(get_parameter_group_xml(g) for g in self.oh.param_groups),
                                parameters='\n\t\t\t'.join(get_parameter_xml(p) for p in params),
                                channel_types='\n'.join(get_channel_type_xml(ct) for ct in self.oh.channel_types))
@@ -507,7 +535,7 @@ public class {name_camel}Config {{
             'integer': 'Integer',
             'decimal': 'BigDecimal',
             'boolean': 'Boolean',
-            'string': 'String'
+            'text': 'String'
         }
 
         return template.format(imports='\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in params] else '',

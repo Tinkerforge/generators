@@ -380,7 +380,7 @@ def voltage_channel(index):
             'getter_packet_params': [str(index)],
             'callback_filter': 'channel == {0}'.format(index),
             'callback_packet': 'Voltage',
-            'callback_param_mapping': {'Channel': '__skip__', 'Voltage': 'value'},
+            'callback_param_mapping': {'Channel': '__skip__', 'Voltage': 'voltage'},
             'transform': 'new QuantityType<>(value{divisor}, {unit})',
             'java_unit': 'SmartHomeUnits.VOLT',
             'divisor': '1000.0',

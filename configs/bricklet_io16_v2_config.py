@@ -6,6 +6,8 @@
 
 # IO-16 Bricklet 2.0 communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -633,3 +635,77 @@ com['examples'].append({
 'functions': [('callback', ('Input Value', 'input value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
               ('callback_configuration', ('Input Value', 'input value (channel 4)'), [('uint8', 4)], 500, False, None, [])]
 })
+
+
+def input_channel(idx):
+    return {
+            'predicate': 'cfg.pinConfiguration{} > 1'.format(idx),
+            'id': 'Input Pin {}'.format(idx),
+            'label': 'Measured Level (Pin {}/{})'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
+
+            'type_id': 'input_pin',
+
+            'getter_packet': 'Get Value',
+            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx),
+
+            #'callback_filter': 'channel == {}'.format(idx),
+            'callback_packet': 'All Input Value',
+            'callback_param_mapping': {'Changed': '__skip__', 'Value': 'Value'},
+
+            # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
+            'init_code':"""this.setAllInputValueCallbackConfiguration(1000, false);
+            this.setConfiguration({0}, 'i', cfg.pinConfiguration{0} % 2 == 1);""".format(idx),
+            'dispose_code': """this.setInputValueCallbackConfiguration({}, 0, false);""".format(idx),
+    }
+
+def output_channel(idx):
+    return {
+            'predicate': 'cfg.pinConfiguration{} <= 1'.format(idx),
+            'id': 'Output Pin {}'.format(idx),
+            'label': 'Set Level (Pin {}/{})'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
+
+            'type_id': 'output_pin',
+
+            'getter_packet': 'Get Value',
+            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx),
+
+            'setter_packet': 'Set Selected Value',
+            'setter_packet_params': [str(idx), 'cmd == OnOffType.ON'],
+            'setter_command_type': "OnOffType",
+
+            'init_code':"""this.setConfiguration({0}, 'o', cfg.pinConfiguration{0} % 2 == 1);""".format(idx),
+    }
+
+def pin_config(idx):
+    return {
+            'name': 'Pin Configuration {}'.format(idx),
+            'type': 'integer',
+            'options': [
+                ('Input with pull-up', 3),
+                ('Input without pull-up', 2),
+                ('Output (Initial high)', 1),
+                ('Output (Initial low)', 0)
+            ],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Pin Configuration {}/{}'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
+            'description': 'Configures the direction of pin {}/{}. Inputs without pull-up will be floating if nothing is connected. Outputs can have an initial state of low or high.'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
+        }
+
+channels = [input_channel(i) for i in range(0, 16)] + [output_channel(i) for i in range(0, 16)]
+params = [pin_config(i) for i in range(0, 16)]
+
+com['openhab'] = {
+    'imports': ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'params': params,
+    'channels': channels,
+    'channel_types': [
+        oh_channel_type('input_pin', 'Switch', 'Measured Level',
+                     description='The logic level that is currently measured on the pin.',
+                     read_only=True),
+        oh_channel_type('output_pin', 'Switch', 'Set Level',
+                     description='The logic level that is currently set on the pin.',
+                     read_only=False),
+    ]
+}
