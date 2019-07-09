@@ -752,7 +752,7 @@ com['openhab'] = {
         'init_code':"""this.set{camel}CallbackPeriod(cfg.{headless}UpdateInterval);
 this.set{camel}CallbackThreshold(\'x\', 0, 0, 0, 0, 0, 0, 0, 0);""",
         'dispose_code': """this.set{camel}CallbackPeriod(0);""",
-        'packet': 'Get Color',
+        'getter_packet': 'Get Color',
         'callback_packet': 'Color',
         'transform': 'HSBType.fromRGB(value.r * 255 / 65535, value.g * 255 / 65535, value.b * 255 / 65535)',
     }

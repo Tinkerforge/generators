@@ -400,15 +400,13 @@ com['examples'].append({
 
 com['openhab'] = {
     'imports': ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
-    'actor_channels': [{
+    'channels': [{
             'id': 'Enabled',
             'type_id': 'enabled',
-            'params':[],
-            'init_code': "",
-            'dispose_code': "",
-            'command_type': "OnOffType",
-            'packet': 'Set {title_words}',
-            'packet_params': ['cmd == OnOffType.ON'],
+
+            'setter_packet': 'Set {title_words}',
+            'setter_packet_params': ['cmd == OnOffType.ON'],
+            'setter_command_type': "OnOffType",
 
             'getter_packet': 'Get {title_words}',
             'transform': 'value ? OnOffType.ON : OnOffType.OFF',
@@ -416,17 +414,15 @@ com['openhab'] = {
         {
             'id': 'Voltage',
             'type_id': 'voltage',
-            'params':[],
-            'init_code': "",
-            'dispose_code': "",
-            'command_type': "DecimalType",
-            'packet': 'Set {title_words}',
-            'packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
+
+            'setter_packet': 'Set {title_words}',
+            'setter_packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
+            'setter_command_type': "DecimalType",
+
             'getter_packet': 'Get {title_words}',
             'transform': 'new DecimalType(value / 1000.0)',
         }
     ],
-    'channels': [],
     'channel_types': [
         oh_channel_type('enabled', 'Switch', 'Output Enabled',
                      description='Enables/disables the output of voltage and current.',

@@ -248,7 +248,7 @@ com['openhab'] = {
         {
             'id': 'Left Button State Changed',
             'type_id': 'system.rawbutton',
-            'packet': 'Get Button State',
+            'getter_packet': 'Get Button State',
             'callback_packet': 'State Changed',
             'callback_param_mapping': {
                 'Button L': 'Button L',
@@ -262,7 +262,7 @@ com['openhab'] = {
         {
             'id': 'Right Button State Changed',
             'type_id': 'system.rawbutton',
-            'packet': 'Get Button State',
+            'getter_packet': 'Get Button State',
             'callback_packet': 'State Changed',
             'callback_filter': 'true',
             'callback_param_mapping': {
