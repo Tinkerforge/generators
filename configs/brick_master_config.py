@@ -3090,7 +3090,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the access point password (up to 63 chars) for the configured encryption
+Sets the access point password (at least 8 and up to 63 chars) for the configured encryption
 mode, see :func:`Set Wifi2 AP Configuration`.
 
 To apply configuration changes to the WIFI Extension 2.0 the
@@ -3101,7 +3101,7 @@ It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
 'de':
 """
-Setzt das Access-Point-Passwort (bis zu 63 Zeichen) für den eingestellten
+Setzt das Access-Point-Passwort (mindestens 8 und bis zu 63 Zeichen) für den eingestellten
 Verschlüsselungsmodus, siehe :func:`Set Wifi2 AP Configuration`.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
