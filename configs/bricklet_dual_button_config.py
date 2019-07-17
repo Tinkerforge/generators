@@ -246,7 +246,8 @@ com['openhab'] = {
     'init_code': 'this.setLEDState(cfg.leftLEDState.shortValue(), cfg.rightLEDState.shortValue());',
     'channels': [
         {
-            'id': 'Left Button State Changed',
+            'id': 'Left Button',
+            'label': 'Left Button',
             'type_id': 'system.rawbutton',
             'getter_packet': 'Get Button State',
             'callback_packet': 'State Changed',
@@ -260,7 +261,8 @@ com['openhab'] = {
             'is_trigger_channel': True
         },
         {
-            'id': 'Right Button State Changed',
+            'id': 'Right Button',
+            'label': 'Right Button',
             'type_id': 'system.rawbutton',
             'getter_packet': 'Get Button State',
             'callback_packet': 'State Changed',

@@ -207,7 +207,8 @@ com['openhab'] = {
         'transform': 'HSBType.fromRGB(value.red, value.green, value.blue)',
         },
         {
-            'id': 'Button State Changed',
+            'id': 'Button',
+            'label': 'Button',
             'type_id': 'system.rawbutton',
             'getter_packet': 'Get Button State',
             'callback_packet': 'Button State Changed',
