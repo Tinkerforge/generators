@@ -727,14 +727,7 @@ com['examples'].append({
 
 com['openhab'] = {
     'imports': ['org.eclipse.smarthome.core.library.types.HSBType'],
-    'params': [{
-            'name': 'Reference Air Pressure',
-            'type': 'decimal',
-            'default': 1013.25,
-
-            'label': 'Reference Air Pressure in mbar',
-            'description': 'The reference air pressure for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
-        }],
+    'params': [],
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
         {
