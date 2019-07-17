@@ -185,9 +185,11 @@ def oh_generic_channel_imports():
             'org.eclipse.smarthome.core.library.unit.SmartHomeUnits']
 
 
-def oh_generic_channel(id_, type_id, unit, divisor=1.0):
+def oh_generic_channel(id_, type_id, unit, divisor=1.0, label=None, description=None):
     return {
         'id': id_,
+        'label': label,
+        'description': description,
         'type_id': type_id,
         'params':[{
             'name': '{title_words} Update Interval',
@@ -249,7 +251,7 @@ def oh_generic_channel_param_groups():
 def oh_generic_trigger_channel_imports():
     return ["org.eclipse.smarthome.core.thing.CommonTriggerEvents"]
 
-def oh_channel_type(id_, item_type, label, description=None, read_only=None, pattern=None, min_=None, max_=None):
+def oh_channel_type(id_, item_type, label, description=None, read_only=None, pattern=None, min_=None, max_=None, is_trigger_channel=False, command_options=None):
     return {
         'type_id': id_,
         'item_type': item_type,
@@ -259,4 +261,6 @@ def oh_channel_type(id_, item_type, label, description=None, read_only=None, pat
         'pattern':pattern,
         'min': min_,
         'max': max_,
+        'is_trigger_channel': is_trigger_channel,
+        'command_options': command_options
     }
