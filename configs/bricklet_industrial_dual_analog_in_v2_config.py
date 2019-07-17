@@ -205,6 +205,11 @@ wird für die Kalibrierung benötigt, siehe :func:`Set Calibration`.
 }]
 })
 
+
+led_channel_config_description = """Each channel has a corresponding LED. You can turn the LED off, on or show a
+heartbeat. You can also set the LED to "Channel Status". In this mode the
+LED can either be turned on with a pre-defined threshold or the intensity
+of the LED can change with the measured value."""
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
@@ -214,15 +219,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Each channel has a corresponding LED. You can turn the LED off, on or show a
-heartbeat. You can also set the LED to "Channel Status". In this mode the
-LED can either be turned on with a pre-defined threshold or the intensity
-of the LED can change with the measured value.
+{}
 
 You can configure the channel status behavior with :func:`Set Channel LED Status Config`.
 
 By default all channel LEDs are configured as "Channel Status".
-""",
+""".format(led_channel_config_description),
 'de':
 """
 Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
@@ -257,21 +259,7 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config'})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Sets the channel LED status config. This config is used if the channel LED is
-configured as "Channel Status", see :func:`Set Channel LED Config`.
-
-For each channel you can choose between threshold and intensity mode.
+led_status_config_description = """For each channel you can choose between threshold and intensity mode.
 
 In threshold mode you can define a positive or a negative threshold.
 For a positive threshold set the "min" parameter to the threshold value in mV
@@ -287,11 +275,27 @@ In intensity mode you can define a range in mV that is used to scale the brightn
 of the LED. Example with min=4V, max=20V: The LED is off at 4V, on at 20V
 and the brightness is linearly scaled between the values 4V and 20V. If the
 min value is greater than the max value, the LED brightness is scaled the other
-way around.
+way around."""
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Channel LED Status Config',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in'),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the channel LED status config. This config is used if the channel LED is
+configured as "Channel Status", see :func:`Set Channel LED Config`.
+
+For each channel you can choose between threshold and intensity mode.
+{}
 By default the channel LED status config is set to intensity with min=0V and
 max=10V.
-""",
+""".format(led_status_config_description),
 'de':
 """
 Setzt die Kanal-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
@@ -380,32 +384,120 @@ def voltage_channel(index):
             'getter_packet_params': [str(index)],
             'callback_filter': 'channel == {0}'.format(index),
             'callback_packet': 'Voltage',
-            'callback_param_mapping': {'Channel': '__skip__', 'Voltage': 'voltage'},
+            'callback_param_mapping': {'Channel': None, 'Voltage': 'voltage'},
             'transform': 'new QuantityType<>(value{divisor}, {unit})',
             'java_unit': 'SmartHomeUnits.VOLT',
             'divisor': '1000.0',
             'is_trigger_channel': False
         }
 
+
+
+def led_status_config(channel):
+    return [{
+            'name': 'Channel {} LED Config'.format(channel),
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Channel Status', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Channel {} LED Config'.format(channel),
+            'description': led_channel_config_description.replace('\n', '\\n').replace('"', '\\\"'),
+            'groupName': 'channel{}LEDConfig'.format(channel)
+        },
+        {
+            'name': 'Channel {} LED Status Mode'.format(channel),
+            'type': 'integer',
+            'options': [('Threshold', 0),
+                        ('Intensity', 1)],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Channel {} LED Status Mode'.format(channel),
+            'description': led_status_config_description.replace('\n', '\\n').replace('"', '\\\"'),
+            'groupName': 'channel{}LEDConfig'.format(channel)
+        },
+        {
+            'name': 'Channel {} LED Status Minimum'.format(channel),
+            'type': 'integer',
+            'min': '-35',
+            'max': '35',
+            'unit': 'V',
+            'default': '0',
+
+            'label': 'Channel {} LED Status Maximum'.format(channel),
+            'description': 'See LED Status Mode for further explaination.',
+            'groupName': 'channel{}LEDConfig'.format(channel)
+        },
+        {
+            'name': 'Channel {} LED Status Maximum'.format(channel),
+            'type': 'integer',
+            'min': '-35',
+            'max': '35',
+            'unit': 'V',
+            'default': '10',
+
+            'label': 'Channel {} LED Status Maximum'.format(channel),
+            'description': 'See LED Status Mode for further explaination.',
+            'groupName': 'channel{}LEDConfig'.format(channel)
+        }]
+
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
-    'param_groups': oh_generic_channel_param_groups(),
+    'param_groups': oh_generic_channel_param_groups() + [{
+        'name': 'channel0LEDConfig',
+        'label': 'Channel 0 LED Config',
+        'advanced': 'true'
+    },
+    {
+        'name': 'channel1LEDConfig',
+        'label': 'Channel 1 LED Config',
+        'advanced': 'true'
+    }],
+    'params': led_status_config(0) + led_status_config(1) + [
+        {
+            'name': 'Sample Rate',
+            'type': 'integer',
+            'options': [('976 SPS', 0),
+                        ('488 SPS', 1),
+                        ('244 SPS', 2),
+                        ('122 SPS', 3),
+                        ('61 SPS', 4),
+                        ('4 SPS', 5),
+                        ('2 SPS', 6),
+                        ('1 SPS', 7)],
+            'limitToOptions': 'true',
+            'default': '6',
+
+            'label': 'Sample Rate',
+            'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
+            'advanced': 'true'
+        }
+    ],
+    'init_code': """this.setChannelLEDConfig(0, cfg.channel0LEDConfig);
+this.setChannelLEDStatusConfig(0, cfg.channel0LEDStatusMinimum, cfg.channel0LEDStatusMaximum, cfg.channel0LEDStatusMode);
+this.setChannelLEDConfig(1, cfg.channel1LEDConfig);
+this.setChannelLEDStatusConfig(1, cfg.channel1LEDStatusMinimum, cfg.channel1LEDStatusMaximum, cfg.channel1LEDStatusMode);
+this.setSampleRate(cfg.sampleRate);""",
     'channels': [
         voltage_channel(0),
         voltage_channel(1),
     ],
     'channel_types': [
-        oh_channel_type('voltage0', 'Number:ElectricPotential', 'Voltage',
-                     description='Measured voltage',
+        oh_channel_type('voltage0', 'Number:ElectricPotential', 'Voltage Channel 0',
+                     description='Measured voltage between -35 and 35 V',
                      read_only=True,
                      pattern='%.3f %unit%',
                      min_=-35,
                      max_=35),
-        oh_channel_type('voltage1', 'Number:ElectricPotential', 'Voltage',
-                     description='Measured voltage',
+        oh_channel_type('voltage1', 'Number:ElectricPotential', 'Voltage Channel 1',
+                     description='Measured voltage between -35 and 35 V',
                      read_only=True,
                      pattern='%.3f %unit%',
                      min_=-35,
-                     max_=35)
+                     max_=35,)
     ]
 }

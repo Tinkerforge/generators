@@ -6,6 +6,8 @@
 
 # Energy Monitor Bricklet communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -383,3 +385,91 @@ com['examples'].append({
                                                             (('Frequency', 'Frequency'), 'uint16', 1, 100, 'Hz', None)], None, None),
               ('callback_configuration', ('Energy Data', 'Energy Data'), [], 1000, False, None, [])]
 })
+
+
+integration_info = 'Integrated over 10 zero-crossings of the voltage sine wave. With a standard AC mains voltage frequecy of 50Hz this results in a 5 measurements per second (or an integration time of 200ms per measurement). If no voltage transformer is connected, the Bricklet will use the current waveform to calculate the frequency and it will use an integration time of 10 zero-crossings of the current waveform.'
+
+def energyDataChannel(id_, type_id, unit='QuantityType.ONE.getUnit()', divisor=1):
+    return {
+        'id': id_,
+        'type_id': type_id,
+        'getter_packet': 'Get Energy Data',
+        'getter_packet_params': [],
+        'callback_packet': 'Energy Data',
+        'transform': 'new QuantityType<>(value.{headless}{divisor}, {unit})',
+        'java_unit': unit,
+        'divisor': divisor,
+        'is_trigger_channel': False
+    }
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Energy Data Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': 'Energy Data Update Interval',
+            'description': 'Specifies the update interval for all energy data in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }],
+    'init_code': """this.setEnergyDataCallbackConfiguration(cfg.energyDataUpdateInterval, true);""",
+    'dispose_code': """this.setEnergyDataCallbackConfiguration(0, true);""",
+    'channels': [
+        energyDataChannel('Voltage', 'voltage', 'SmartHomeUnits.VOLT', 100.0),
+        energyDataChannel('Current', 'current', 'SmartHomeUnits.AMPERE', 100.0),
+        energyDataChannel('Energy', 'energy', 'SmartHomeUnits.WATT_HOUR', 100.0),
+        energyDataChannel('Real Power', 'realPower', 'SmartHomeUnits.WATT', 100.0),
+        energyDataChannel('Apparent Power', 'appPower', divisor=100.0),
+        energyDataChannel('Reactive Power', 'reacPower', divisor=100.0),
+        energyDataChannel('Power Factor', 'factor', divisor=1000.0),
+        energyDataChannel('Frequency', 'frequency', 'SmartHomeUnits.HERTZ', 100.0),
+        {
+            'id': 'Reset Energy',
+            'type_id': 'reset',
+
+            'transform': 'value',
+
+            'setter_packet': 'Reset Energy',
+            'setter_command_type': "StringType",
+        }
+    ],
+    'channel_types': [
+        oh_channel_type('voltage', 'Number:ElectricPotential', 'Voltage RMS',
+                     description='Voltage RMS\\n\\n'+integration_info,
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_channel_type('current', 'Number:ElectricCurrent', 'Current RMS',
+                     description='Current RMS\\n\\n'+integration_info,
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_channel_type('energy', 'Number:Energy', 'Energy',
+                     description='Energy (integrated over time)\\n\\n'+integration_info,
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_channel_type('realPower', 'Number:Power', 'Real Power',
+                     description='Real Power\\n\\n'+integration_info,
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_channel_type('appPower', 'Number', 'Apparent Power',
+                     description='Apparent Power\\n\\n'+integration_info,
+                     read_only=True,
+                     pattern='%.2f VA'),
+        oh_channel_type('reacPower', 'Number', 'Reactive Power',
+                     description='Reactive Power\\n\\n'+integration_info,
+                     read_only=True,
+                     pattern='%.2f VAR'),
+        oh_channel_type('factor', 'Number', 'Power Factor',
+                     description='Power Factor\\n\\n'+integration_info,
+                     read_only=True,
+                     pattern='%.3f'),
+        oh_channel_type('frequency', 'Number:Frequency', 'Frequency',
+                     description='AC Frequency of the mains voltage\\n\\nThe frequency is recalculated every 6s.',
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_channel_type('reset', 'String', 'Reset Energy Value',
+                    description='Sets the energy value back to 0 Wh',
+                    command_options=[('Reset', 'RESET')])
+    ]
+}

@@ -650,7 +650,7 @@ def input_channel(idx):
 
             #'callback_filter': 'channel == {}'.format(idx),
             'callback_packet': 'All Input Value',
-            'callback_param_mapping': {'Changed': '__skip__', 'Value': 'Value'},
+            'callback_param_mapping': {'Changed': None, 'Value': 'Value'},
 
             # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
             'init_code':"""this.setAllInputValueCallbackConfiguration(1000, false);

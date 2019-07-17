@@ -6,8 +6,7 @@
 
 # PTC Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -367,3 +366,58 @@ com['examples'].append({
 'functions': [('callback', ('Temperature', 'temperature'), [(('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None)], None, None),
               ('callback_configuration', ('Temperature', 'temperature'), [], 1000, False, '>', [(30, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Wire Mode',
+            'type': 'integer',
+            'options': [('2-wire', 2),
+                        ('3-wire', 3),
+                        ('4-wire', 4)],
+            'limitToOptions': 'true',
+            'default': '2',
+
+            'label': 'Wire Mode',
+            'description': 'The wire mode of the sensor. Possible values are 2, 3 and 4 which correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper configuration on the Bricklet.',
+        },
+        {
+            'name': 'Temperature Moving Average Length',
+            'type': 'integer',
+            'default': '40',
+            'min': '1',
+            'max': '1000',
+
+            'label': 'Temperature Moving Average Length',
+            'description': 'Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\\n\\nNew data is gathered every 20ms. With a moving average of length 1000 the resulting averaging window has a length of 20s. If you want to do long term measurements the longest moving average will give the cleanest results.',
+        },
+        {
+            'name': 'Noise Rejection Filter Frequency',
+            'type': 'integer',
+            'options': [('50 Hz', 0),
+                        ('60 Hz', 1)],
+            'limitToOptions': 'true',
+            'default': '0',
+
+            'label': 'Noise Rejection Filter Frequency',
+            'description': 'Sets the noise rejection filter to either 50 Hz or 60 Hz. Noise from 50 Hz or 60 Hz power sources (including harmonics of the AC power’s fundamental frequency) is attenuated by 82dB',
+        },
+    ],
+    'init_code': """this.setWireMode(cfg.wireMode);
+this.setMovingAverageConfiguration(0, cfg.temperatureMovingAverageLength);
+this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency);""",
+    'channels': [
+        oh_generic_channel('Temperature', 'temperature', 'SIUnits.CELSIUS', divisor=100.0),
+    ],
+    'channel_types': [
+        oh_channel_type('temperature', 'Number:Temperature', 'Temperature',
+                     description='Temperature of the connected sensor',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=-246,
+                     max_=849)
+    ]
+}
