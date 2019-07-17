@@ -9,12 +9,18 @@
 
 package com.tinkerforge;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import org.eclipse.smarthome.config.core.ConfigDescription;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.eclipse.smarthome.core.thing.type.ChannelType;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
+import org.eclipse.smarthome.core.thing.type.ThingType;
 
 public abstract class Device extends DeviceBase {
 	public class Identity {
@@ -53,7 +59,13 @@ public abstract class Device extends DeviceBase {
 
     public abstract void refreshValue(String value, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
 
-    public abstract void handleCommand(String channel, Command command) throws TinkerforgeException;
+    public abstract void handleCommand(Object config, String channel, Command command) throws TinkerforgeException;
 
     public abstract List<String> getEnabledChannels(Object config);
+
+    /*public abstract ThingType getThingType(ThingTypeUID thingTypeUID);
+
+    public abstract ChannelType getChannelType(ChannelTypeUID channelTypeUID);
+
+    public abstract ConfigDescription getConfigDescription(URI uri);*/
 }

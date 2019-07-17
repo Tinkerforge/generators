@@ -75,7 +75,7 @@ class MQTTExample(common.Example):
         if len(cleanups) > 1:
             cleanups = functools.reduce(lambda l, r: l + [''] + r, cleanups[1:], cleanups[0]) # Insert empty list between source blocks later generate a newline between blocks (so before comments). This also flattens the sublists
         else:
-            cleanups = sum(cleanups, []) # Only flatten the list
+            cleanups = common.flatten(cleanups)
 
         return template.format(incomplete=incomplete,
                                description=description,

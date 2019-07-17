@@ -12,11 +12,16 @@
  */
 package org.eclipse.smarthome.binding.tinkerforge.internal;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 
 /**
  * The {@link TinkerforgeBindingConstants} class defines common constants, which are
@@ -31,12 +36,29 @@ public class TinkerforgeBindingConstants {
 
     // List of all Thing Type UIDs
     public static final ThingTypeUID THING_TYPE_BRICK_DAEMON = new ThingTypeUID(BINDING_ID, "brickd");
-    {uids}
+    {thing_type_decls}
 
     public static final List<ThingTypeUID> SUPPORTED_DEVICES = Arrays.asList(THING_TYPE_BRICK_DAEMON,
         {thing_types});
 
-    // List of all Channel ids
-    public static final String CHANNEL_1 = "led-color";
-    public static final String CHANNEL_LED_BUTTON = "Button";
+    // List of all Channel Type UIDs
+    {channel_type_decls}
+
+    public static final Map<ChannelTypeUID, ThingTypeUID> SUPPORTED_CHANNELS;
+
+    static {
+        SUPPORTED_CHANNELS = new HashMap<>();
+        {channel_type_assigns}
+    }
+
+    public static final URI CONFIG_DESCRIPTION_URI_BRICK_DAEMON = URI.create("thing-type:"+THING_TYPE_BRICK_DAEMON.toString());
+    {config_description_decls}
+
+    public static final Map<URI, ThingTypeUID> SUPPORTED_CONFIG_DESCRIPTIONS;
+
+    static {
+        SUPPORTED_CONFIG_DESCRIPTIONS = new HashMap<>();
+        SUPPORTED_CONFIG_DESCRIPTIONS.put(CONFIG_DESCRIPTION_URI_BRICK_DAEMON, THING_TYPE_BRICK_DAEMON);
+        {config_description_assigns}
+    }
 }

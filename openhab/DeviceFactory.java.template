@@ -18,6 +18,7 @@ public class DeviceFactory {
 
     static {
         deviceInfos = Arrays.asList(
+            BrickDaemon.DEVICE_INFO,
             {devices}
         );
     }

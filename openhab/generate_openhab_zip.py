@@ -49,10 +49,14 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'dependencies.xml': './src/main/history',
             'binding.xml': './src/main/resources/ESH-INF/binding',
             'tinkerforge_xx_XX.properties': './src/main/resources/ESH-INF/i18n',
-            'BrickDaemon.xml': './src/main/resources/ESH-INF/thing',
+            #'BrickDaemon.xml': './src/main/resources/ESH-INF/thing',
 
             'BrickDaemonDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
             'TinkerforgeHandlerFactory.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'TinkerforgeChannelTypeProvider.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'TinkerforgeConfigDescriptionProvider.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'TinkerforgeThingTypeProvider.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+
             'BrickDaemonHandler.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'DeviceHandler.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
 
@@ -106,7 +110,7 @@ class OpenHABZipGenerator(common.ZipGenerator):
 
         shutil.copy(os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + '.java'), self.tmp_bindings_dir)
         shutil.copy(os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + 'Config.java'), self.tmp_bindings_dir)
-        shutil.copy(os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + '.xml'), self.tmp_xml_dir)
+        #shutil.copy(os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + '.xml'), self.tmp_xml_dir)
 
         # Copy device examples
         #tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,

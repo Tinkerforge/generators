@@ -645,6 +645,9 @@ def handle_rst_substitutions(text, packet):
 def under_to_space(name):
     return ' '.join([part.capitalize() for part in name.split('_')])
 
+def flatten(list_of_lists):
+    return sum(list_of_lists, [])
+
 def recreate_dir(path):
     if os.path.exists(path):
         shutil.rmtree(path)

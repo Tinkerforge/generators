@@ -153,7 +153,7 @@ public class DeviceHandler extends BaseThingHandler {
                 device.refreshValue(channelUID.getId(), this::updateState, this::triggerChannel);
             }
             else {
-                device.handleCommand(channelUID.getId(), command);
+                device.handleCommand(getConfigAs(device.getConfigurationClass()), channelUID.getId(), command);
             }
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
