@@ -11,5 +11,5 @@ your MQTT client. This ZIP file contains:
 For more information about the MQTT bindings (including setup instructions)
 go to:
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_MQTT.html (English)
- http://www.tinkerforge.com/de/doc/Software/API_Bindings_MQTT.html (German)
+ https://www.tinkerforge.com/en/doc/Software/API_Bindings_MQTT.html (English)
+ https://www.tinkerforge.com/de/doc/Software/API_Bindings_MQTT.html (German)

@@ -11,8 +11,8 @@ your Ruby scripts. This ZIP file contains:
 For more information about the Ruby bindings (including setup instructions)
 go to:
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_Ruby.html (English)
- http://www.tinkerforge.com/de/doc/Software/API_Bindings_Ruby.html (German)
+ https://www.tinkerforge.com/en/doc/Software/API_Bindings_Ruby.html (English)
+ https://www.tinkerforge.com/de/doc/Software/API_Bindings_Ruby.html (German)
 
 The Ruby bindings are also available from the Python Package Index (PyPI):
 

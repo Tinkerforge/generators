@@ -142,7 +142,7 @@ typedef struct {
 #elif defined __GNUC__
 	#ifdef _WIN32
 		// workaround struct packing bug in GCC 4.7 on Windows
-		// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
+		// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
 		#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
 	#else
 		#define ATTRIBUTE_PACKED __attribute__((packed))
@@ -481,7 +481,7 @@ int ipcon_disconnect(IPConnection *ipcon);
  * is not enabled at all on the Brick Daemon or the WIFI/Ethernet Extension.
  *
  * For more information about authentication see
- * http://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
+ * https://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
  */
 int ipcon_authenticate(IPConnection *ipcon, const char secret[64]);
 

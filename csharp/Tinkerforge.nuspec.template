@@ -7,7 +7,7 @@
     <authors>Tinkerforge GmbH</authors>
     <owners>Tinkerforge GmbH</owners>
     <license type="expression">CC0-1.0</license>
-    <projectUrl>http://www.tinkerforge.com</projectUrl>
+    <projectUrl>https://www.tinkerforge.com</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/Tinkerforge/generators/master/csharp/package.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This .NET library provides the C# API bindings for Tinkerforge Bricks and Bricklets.</description>

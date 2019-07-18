@@ -785,7 +785,7 @@ impl FromByteSlice for [bool; {count}] {{
 #![doc(html_favicon_url = "https://raw.githubusercontent.com/Tinkerforge/generators/master/rust/logo_small.png")]
 
 //! Rust API bindings for [Tinkerforge](https://www.tinkerforge.com) bricks and bricklets.
-//! See also the additional documentation and examples [here](http://www.tinkerforge.com/en/doc/Software/API_Bindings_Rust.html)
+//! See also the additional documentation and examples [here](https://www.tinkerforge.com/en/doc/Software/API_Bindings_Rust.html)
 
 mod bindings;
 pub use crate::bindings::*;

@@ -454,7 +454,7 @@ sub _connect_unlocked
 	#        receive data. but the program main thread or user-created threads
 	#        will update their local sockets (via _get_local_socket) later while
 	#        the receive thread is already blocking the socket. this creates
-	#        a deadlock on Windows again. http://perlmonks.org/?node_id=1078634
+	#        a deadlock on Windows again. https://perlmonks.org/?node_id=1078634
 	#
 	# NOTE:  all this applies to Strawberry Perl and Active State Perl only.
 	#        with Cygwin's Perl everything works as expected.
@@ -725,7 +725,7 @@ Authentication can fail if the wrong secret was used or if authentication
 is not enabled at all on the Brick Daemon or the WIFI/Ethernet Extension.
 
 For more information about authentication see
-http://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
+https://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
 
 =cut
 

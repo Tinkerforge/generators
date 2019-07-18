@@ -180,7 +180,7 @@ function LEConvertUInt64From(const offset: longint; const data: TByteArray): uin
 var i: longint;
 begin
   { Avoid compiler bug when assigning constants to a uint64 variable:
-    http://qc.embarcadero.com/wc/qcmain.aspx?d=9411 }
+    https://qc.embarcadero.com/wc/qcmain.aspx?d=9411 }
   result := uint64(0);
   for i := 0 to 7 do begin
     result := result or (uint64(data[offset + i]) shl (i * 8));

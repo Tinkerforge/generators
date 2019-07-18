@@ -53,7 +53,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             else:
                 block_set_color = 'this.setColour(297);'
 
-            block_help_url = 'this.setHelpUrl(\'' + '/'.join(['http://www.tinkerforge.com/en/doc/Software',
+            block_help_url = 'this.setHelpUrl(\'' + '/'.join(['https://www.tinkerforge.com/en/doc/Software',
                                                               self.get_category().camel +\
                                                               's',
                                                               self.get_name().camel +\

@@ -11,5 +11,5 @@ your shell scripts. This ZIP file contains:
 For more information about the Shell bindings (including setup instructions)
 go to:
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_Shell.html (English)
- http://www.tinkerforge.com/de/doc/Software/API_Bindings_Shell.html (German)
+ https://www.tinkerforge.com/en/doc/Software/API_Bindings_Shell.html (English)
+ https://www.tinkerforge.com/de/doc/Software/API_Bindings_Shell.html (German)

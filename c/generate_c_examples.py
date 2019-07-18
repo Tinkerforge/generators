@@ -309,7 +309,7 @@ class CExampleParameter(common.ExampleParameter, CTypeMixin, CPrintfFormatMixin)
         else:
             # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
             #        integer in base-2, that doesn't require open-coding it with several lines of code.
-            #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
+            #        there is "char *itoa(int value, int base)" (see https://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
             template = '{global_line_prefix}\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
@@ -386,7 +386,7 @@ class CExampleResult(common.ExampleResult, CTypeMixin, CPrintfFormatMixin):
         else:
             # FIXME: the result type can indicate a bitmask, but there is no easy way in C to format an
             #        integer in base-2, that doesn't require open-coding it with several lines of code.
-            #        there is "char *itoa(int value, int base)" (see http://www.strudel.org.uk/itoa/)
+            #        there is "char *itoa(int value, int base)" (see https://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
             template = '{global_line_prefix}\tprintf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'

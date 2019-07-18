@@ -401,7 +401,7 @@ namespace Tinkerforge
 		///  is not enabled at all on the Brick Daemon or the WIFI/Ethernet Extension.
 		///
 		///  For more information about authentication see
-		///  http://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
+		///  https://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
 		/// </summary>
 		public void Authenticate(string secret)
 		{

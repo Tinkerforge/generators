@@ -25,7 +25,7 @@ with common.ChangedDirectory(root):
 base = os.path.join(root, bindings)
 tmp = tempfile.mkdtemp()
 
-if os.system('bash -cex "curl http://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/tinkerforge_{0}_bindings_latest.zip"'.format(bindings, tmp)) != 0:
+if os.system('bash -cex "curl https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/tinkerforge_{0}_bindings_latest.zip"'.format(bindings, tmp)) != 0:
     print 'download latest.zip failed'
     sys.exit(1)
 

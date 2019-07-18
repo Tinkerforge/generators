@@ -21,8 +21,8 @@ Version <<VERSION>>
 The Tinkerforge Perl module provides official API support for all Tinkerforge
 Bricks and Bricklets. A comprehensive documentation for the Perl bindings can
 be found at,
-English: L<strict|http://www.tinkerforge.com/en/doc/Software/API_Bindings_Perl.html>
-German: L<strict|http://www.tinkerforge.com/de/doc/Software/API_Bindings_Perl.html>
+English: L<strict|https://www.tinkerforge.com/en/doc/Software/API_Bindings_Perl.html>
+German: L<strict|https://www.tinkerforge.com/de/doc/Software/API_Bindings_Perl.html>
 
 =cut
 

@@ -10,5 +10,5 @@ Bricklets from your Delphi/Lazarus programs. This ZIP file contains:
 For more information about the Delphi/Lazarus bindings (including setup
 instructions) go to:
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_Delphi.html (English)
- http://www.tinkerforge.com/de/doc/Software/API_Bindings_Delphi.html (German)
+ https://www.tinkerforge.com/en/doc/Software/API_Bindings_Delphi.html (English)
+ https://www.tinkerforge.com/de/doc/Software/API_Bindings_Delphi.html (German)

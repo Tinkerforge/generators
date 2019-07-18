@@ -10,10 +10,10 @@ your Perl scripts. This ZIP file contains:
 For more information about the Perl bindings (including setup instructions)
 go to:
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_Perl.html (English)
- http://www.tinkerforge.com/de/doc/Software/API_Bindings_Perl.html (German)
+ https://www.tinkerforge.com/en/doc/Software/API_Bindings_Perl.html (English)
+ https://www.tinkerforge.com/de/doc/Software/API_Bindings_Perl.html (German)
 
 The Perl bindings are also available from the Comprehensive Perl Archive
 Network (CPAN) repository:
 
- http://search.cpan.org/dist/Tinkerforge/
+ https://search.cpan.org/dist/Tinkerforge/

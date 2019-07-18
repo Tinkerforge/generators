@@ -12,5 +12,5 @@ Bricklets from your Visual Basic .NET programs. This ZIP file contains:
 For more information about the Visual Basic .NET bindings (including setup
 instructions) go to:
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_VBNET.html (English)
- http://www.tinkerforge.com/de/doc/Software/API_Bindings_VBNET.html (German)
+ https://www.tinkerforge.com/en/doc/Software/API_Bindings_VBNET.html (English)
+ https://www.tinkerforge.com/de/doc/Software/API_Bindings_VBNET.html (German)

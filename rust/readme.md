@@ -31,7 +31,7 @@ you can use the device's API, for example:
 let temperature = t.get_temperature().recv()? as f32 / 100.0;
 ```
 
-Further examples can be found [here](http://www.tinkerforge.com/en/doc/Software/API_Bindings_Rust.html).
+Further examples can be found [here](https://www.tinkerforge.com/en/doc/Software/API_Bindings_Rust.html).
 
 ## Rust version requirements
 

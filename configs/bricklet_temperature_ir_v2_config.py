@@ -122,7 +122,7 @@ used to calculate the surface temperature as returned by
 
 The emissivity is usually given as a value between 0.0 and 1.0. A list of
 emissivities of different materials can be found
-`here <http://www.infrared-thermography.com/material.htm>`__.
+`here <https://www.infrared-thermography.com/material.htm>`__.
 
 The parameter of :func:`Set Emissivity` has to be given with a factor of
 65535 (16-bit). For example: An emissivity of 0.1 can be set with the
@@ -146,7 +146,7 @@ welcher zur Berechnung der Oberflächentemperatur benutzt wird, wie von
 
 Der Emissionsgrad wird normalerweise als Wert zwischen 0,0 und 1,0 angegeben.
 Eine Liste von Emissionsgraden unterschiedlicher Materialien ist
-`hier <http://www.infrared-thermography.com/material.htm>`__ zu finden.
+`hier <https://www.infrared-thermography.com/material.htm>`__ zu finden.
 
 Der Parameter von :func:`Set Emissivity` muss mit eine Faktor von 65535 (16-Bit)
 vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert

@@ -9,5 +9,5 @@ spec = Gem::Specification.new do |s|
   s.license = 'CC0-1.0'
   s.author = 'Matthias Bolte'
   s.email = 'matthias@tinkerforge.com'
-  s.homepage = 'http://www.tinkerforge.com/'
+  s.homepage = 'https://www.tinkerforge.com/'
 end

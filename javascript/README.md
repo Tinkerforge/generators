@@ -31,7 +31,7 @@ BrickletDualButton = new BrickletDualButton();
 ```
 
 ## Documentation
-For detailed documentation see the [Tinkerforge](http://www.tinkerforge.com/en/doc/Software/API_Bindings_JavaScript.html) homepage.
+For detailed documentation see the [Tinkerforge](https://www.tinkerforge.com/en/doc/Software/API_Bindings_JavaScript.html) homepage.
 
 ## Examples
 ### Enumeration

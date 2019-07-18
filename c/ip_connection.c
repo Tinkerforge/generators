@@ -69,7 +69,7 @@ extern "C" {
 #elif defined __GNUC__
 	#ifdef _WIN32
 		// workaround struct packing bug in GCC 4.7 on Windows
-		// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
+		// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
 		#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
 	#else
 		#define ATTRIBUTE_PACKED __attribute__((packed))

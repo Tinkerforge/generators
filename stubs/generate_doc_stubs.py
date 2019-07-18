@@ -102,7 +102,7 @@ Resources
 * Schematic (`Download <https://github.com/Tinkerforge/{4}/raw/master/hardware/{5}-schematic.pdf>`__)
 * Outline and drilling plan (`Download <../../_images/Dimensions/{1}_dimensions.png>`__)
 * Source code and design files (`Download <https://github.com/Tinkerforge/{4}/zipball/master>`__)
-* 3D model (`View online <TBD>`__ | Download: `STEP <http://download.tinkerforge.com/3d/TBD/TBD.step>`__, `FreeCAD <http://download.tinkerforge.com/3d/TBD/TBD.FCStd>`__)
+* 3D model (`View online <https://autode.sk/TBD>`__ | Download: `STEP <https://download.tinkerforge.com/3d/TBD/TBD.step>`__, `FreeCAD <https://download.tinkerforge.com/3d/TBD/TBD.FCStd>`__)
 
 
 .. _{1}_test:
@@ -233,7 +233,7 @@ Ressourcen
 * Schaltplan (`Download <https://github.com/Tinkerforge/{4}/raw/master/hardware/{5}-schematic.pdf>`__)
 * Umriss und Bohrplan (`Download <../../_images/Dimensions/{1}_dimensions.png>`__)
 * Quelltexte und Platinenlayout (`Download <https://github.com/Tinkerforge/{4}/zipball/master>`__)
-* 3D Modell (`Online ansehen <TBD>`__ | Download: `STEP <http://download.tinkerforge.com/3d/TBD/TBD.step>`__, `FreeCAD <http://download.tinkerforge.com/3d/TBD/TBD.FCStd>`__)
+* 3D Modell (`Online ansehen <https://autode.sk/TBD>`__ | Download: `STEP <https://download.tinkerforge.com/3d/TBD/TBD.step>`__, `FreeCAD <https://download.tinkerforge.com/3d/TBD/TBD.FCStd>`__)
 
 
 .. _{1}_test:

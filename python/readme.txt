@@ -10,8 +10,8 @@ your Python scripts. This ZIP file contains:
 For more information about the Python bindings (including setup instructions)
 go to:
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_Python.html (English)
- http://www.tinkerforge.com/de/doc/Software/API_Bindings_Python.html (German)
+ https://www.tinkerforge.com/en/doc/Software/API_Bindings_Python.html (English)
+ https://www.tinkerforge.com/de/doc/Software/API_Bindings_Python.html (German)
 
 The Python bindings are also available from the Python Package Index (PyPI):
 

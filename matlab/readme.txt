@@ -14,5 +14,5 @@ Bricklets from your MATLAB/Octave scripts. This ZIP file contains:
 For more information about the MATLAB/Octave bindings (including setup
 instructions) go to:
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_MATLAB.html (English)
- http://www.tinkerforge.com/de/doc/Software/API_Bindings_MATLAB.html (German)
+ https://www.tinkerforge.com/en/doc/Software/API_Bindings_MATLAB.html (English)
+ https://www.tinkerforge.com/de/doc/Software/API_Bindings_MATLAB.html (German)

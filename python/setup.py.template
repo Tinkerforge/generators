@@ -8,6 +8,6 @@ setup(name='tinkerforge',
       license='CC0 1.0 Universal',
       author='Tinkerforge GmbH',
       author_email='olaf@tinkerforge.com',
-      url='http://www.tinkerforge.com',
+      url='https://www.tinkerforge.com',
       packages=['tinkerforge'],
       platforms = ('Any'))

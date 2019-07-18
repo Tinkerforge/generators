@@ -10,17 +10,17 @@
   </properties>
   <name>Tinkerforge API Bindings</name>
   <description>Java API Bindings for Tinkerforge Bricks and Bricklets</description>
-  <url>http://www.tinkerforge.com/en/doc/Software/API_Bindings_Java.html</url>
+  <url>https://www.tinkerforge.com/en/doc/Software/API_Bindings_Java.html</url>
   <organization>
     <name>Tinkerforge GmbH</name>
-    <url>http://www.tinkerforge.com</url>
+    <url>https://www.tinkerforge.com</url>
   </organization>
   <developers>
     <developer>
       <name>Matthias Bolte</name>
       <email>matthias@tinkerforge.com</email>
       <organization>Tinkerforge GmbH</organization>
-      <organizationUrl>http://www.tinkerforge.com</organizationUrl>
+      <organizationUrl>https://www.tinkerforge.com</organizationUrl>
     </developer>
   </developers>
   <distributionManagement>
@@ -107,7 +107,7 @@
   <licenses>
     <license>
       <name>CC0 1.0 Universal</name>
-      <url>http://creativecommons.org/publicdomain/zero/1.0/</url>
+      <url>https://creativecommons.org/publicdomain/zero/1.0/</url>
       <comments>Public Domain Dedication</comments>
     </license>
   </licenses>
