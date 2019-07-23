@@ -25,55 +25,85 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
-CONSTANT_CHANNEL = ('Channel', [('0', 0),
-                                ('1', 1),
-                                ('2', 2),
-                                ('3', 3)])
+com['constant_groups'].append({
+'name': 'Channel',
+'type': 'uint8',
+'constants': [('0', 0),
+              ('1', 1),
+              ('2', 2),
+              ('3', 3)]
+})
 
-CONSTANT_COUNT_EDGE = ('Count Edge', [('Rising', 0),
-                                      ('Falling', 1),
-                                      ('Both', 2)])
+com['constant_groups'].append({
+'name': 'Count Edge',
+'type': 'uint8',
+'constants': [('Rising', 0),
+              ('Falling', 1),
+              ('Both', 2)]
+})
 
-CONSTANT_COUNT_DIRECTON = ('Count Direction', [('Up', 0),
-                                               ('Down', 1),
-                                               ('External Up', 2),
-                                               ('External Down', 3)])
+com['constant_groups'].append({
+'name': 'Count Direction',
+'type': 'uint8',
+'constants': [('Up', 0),
+              ('Down', 1),
+              ('External Up', 2),
+              ('External Down', 3)]
+})
 
-CONSTANT_DUTY_CYCLE_PRESCALER = ('Duty Cycle Prescaler', [('1', 0),
-                                                          ('2', 1),
-                                                          ('4', 2),
-                                                          ('8', 3),
-                                                          ('16', 4),
-                                                          ('32', 5),
-                                                          ('64', 6),
-                                                          ('128', 7),
-                                                          ('256', 8),
-                                                          ('512', 9),
-                                                          ('1024', 10),
-                                                          ('2048', 11),
-                                                          ('4096', 12),
-                                                          ('8192', 13),
-                                                          ('16384', 14),
-                                                          ('32768', 15)])
+com['constant_groups'].append({
+'name': 'Duty Cycle Prescaler',
+'type': 'uint8',
+'constants': [('1', 0),
+              ('2', 1),
+              ('4', 2),
+              ('8', 3),
+              ('16', 4),
+              ('32', 5),
+              ('64', 6),
+              ('128', 7),
+              ('256', 8),
+              ('512', 9),
+              ('1024', 10),
+              ('2048', 11),
+              ('4096', 12),
+              ('8192', 13),
+              ('16384', 14),
+              ('32768', 15)]
+})
 
-CONSTANT_FREQUENCY_INTEGRATION_TIME = ('Frequency Integration Time', [('128 MS', 0),
-                                                                      ('256 MS', 1),
-                                                                      ('512 MS', 2),
-                                                                      ('1024 MS', 3),
-                                                                      ('2048 MS', 4),
-                                                                      ('4096 MS', 5),
-                                                                      ('8192 MS', 6),
-                                                                      ('16384 MS', 7),
-                                                                      ('32768 MS', 8)])
+com['constant_groups'].append({
+'name': 'Frequency Integration Time',
+'type': 'uint8',
+'constants': [('128 MS', 0),
+              ('256 MS', 1),
+              ('512 MS', 2),
+              ('1024 MS', 3),
+              ('2048 MS', 4),
+              ('4096 MS', 5),
+              ('8192 MS', 6),
+              ('16384 MS', 7),
+              ('32768 MS', 8)]
+})
+
+com['constant_groups'].append({
+'name': 'Channel LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Channel Status', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Counter', 'int64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -108,7 +138,7 @@ Gibt die Zählerstände für alle vier Kanäle zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Counter', 'int64', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -151,7 +181,7 @@ Der Standardwert für die Zähler nach dem Starten ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Signal Data',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Duty Cycle', 'uint16', 1, 'out'),
              ('Period', 'uint64', 1, 'out'),
              ('Frequency', 'uint32', 1, 'out'),
@@ -224,7 +254,7 @@ Die Einheiten sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Active',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Active', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -275,7 +305,7 @@ Standardmäßig sind alle Kanäle aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Active',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Active', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -318,11 +348,11 @@ true = aktiviert, false = deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Configuration',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Count Edge', 'uint8', 1, 'in', CONSTANT_COUNT_EDGE),
-             ('Count Direction', 'uint8', 1, 'in', CONSTANT_COUNT_DIRECTON),
-             ('Duty Cycle Prescaler', 'uint8', 1, 'in', CONSTANT_DUTY_CYCLE_PRESCALER),
-             ('Frequency Integration Time', 'uint8', 1, 'in', CONSTANT_FREQUENCY_INTEGRATION_TIME)],
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
+             ('Count Edge', 'uint8', 1, 'in', {'constant_group': 'Count Edge'}),
+             ('Count Direction', 'uint8', 1, 'in', {'constant_group': 'Count Direction'}),
+             ('Duty Cycle Prescaler', 'uint8', 1, 'in', {'constant_group': 'Duty Cycle Prescaler'}),
+             ('Frequency Integration Time', 'uint8', 1, 'in', {'constant_group': 'Frequency Integration Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -364,11 +394,11 @@ Setzt die Zähler-Konfiguration für den gegebenen Kanal.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Configuration',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Count Edge', 'uint8', 1, 'out', CONSTANT_COUNT_EDGE),
-             ('Count Direction', 'uint8', 1, 'out', CONSTANT_COUNT_DIRECTON),
-             ('Duty Cycle Prescaler', 'uint8', 1, 'out', CONSTANT_DUTY_CYCLE_PRESCALER),
-             ('Frequency Integration Time', 'uint8', 1, 'out', CONSTANT_FREQUENCY_INTEGRATION_TIME)],
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
+             ('Count Edge', 'uint8', 1, 'out', {'constant_group': 'Count Edge'}),
+             ('Count Direction', 'uint8', 1, 'out', {'constant_group': 'Count Direction'}),
+             ('Duty Cycle Prescaler', 'uint8', 1, 'out', {'constant_group': 'Duty Cycle Prescaler'}),
+             ('Frequency Integration Time', 'uint8', 1, 'out', {'constant_group': 'Frequency Integration Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -504,11 +534,8 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
-                                                                  ('On', 1),
-                                                                  ('Show Heartbeat', 2),
-                                                                  ('Show Channel Status', 3)]))],
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -534,11 +561,8 @@ Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
-                                                                   ('On', 1),
-                                                                   ('Show Heartbeat', 2),
-                                                                   ('Show Channel Status', 3)]))],
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

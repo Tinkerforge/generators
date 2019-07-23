@@ -25,11 +25,73 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
-COLOR = ('Color', [('White', False), ('Black', True)])
+com['constant_groups'].append({
+'name': 'Gesture',
+'type': 'uint8',
+'constants': [('Left To Right', 0),
+              ('Right To Left', 1),
+              ('Top To Bottom', 2),
+              ('Bottom To Top', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Color',
+'type': 'bool',
+'constants': [('White', False),
+              ('Black', True)]
+})
+
+com['constant_groups'].append({
+'name': 'Font',
+'type': 'uint8',
+'constants': [('6x8', 0),
+              ('6x16', 1),
+              ('6x24', 2),
+              ('6x32', 3),
+              ('12x16', 4),
+              ('12x24', 5),
+              ('12x32', 6),
+              ('18x24', 7),
+              ('18x32', 8),
+              ('24x32', 9)]
+})
+
+com['constant_groups'].append({
+'name': 'Direction',
+'type': 'uint8',
+'constants': [('Horizontal', 0),
+              ('Vertical', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Change Tab On',
+'type': 'uint8',
+'constants': [('Click', 1),
+              ('Swipe', 2),
+              ('Click And Swipe', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Graph Type',
+'type': 'uint8',
+'constants': [('Dot',  0),
+              ('Line', 1),
+              ('Bar',  2)]
+})
+
+com['constant_groups'].append({
+'name': 'Touch LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Touch', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -410,10 +472,7 @@ die gleichen wie die von :func:`Get Touch Position`.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch Gesture',
-'elements': [('Gesture', 'uint8', 1, 'out', ('Gesture', [('Left To Right', 0),
-                                                         ('Right To Left', 1),
-                                                         ('Top To Bottom', 2),
-                                                         ('Bottom To Top', 3)])),
+'elements': [('Gesture', 'uint8', 1, 'out', {'constant_group': 'Gesture'}),
              ('Duration', 'uint32', 1, 'out'),
              ('Pressure Max', 'uint16', 1, 'out'),
              ('X Start', 'uint16', 1, 'out'),
@@ -515,10 +574,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Touch Gesture',
-'elements': [('Gesture', 'uint8', 1, 'out',  ('Gesture', [('Left To Right', 0),
-                                                          ('Right To Left', 1),
-                                                          ('Top To Bottom', 2),
-                                                          ('Bottom To Top', 3)])),
+'elements': [('Gesture', 'uint8', 1, 'out', {'constant_group': 'Gesture'}),
              ('Duration', 'uint32', 1, 'out'),
              ('Pressure Max', 'uint16', 1, 'out'),
              ('X Start', 'uint16', 1, 'out'),
@@ -550,7 +606,7 @@ com['packets'].append({
              ('Position Y Start', 'uint8', 1, 'in'),
              ('Position X End', 'uint8', 1, 'in'),
              ('Position Y End', 'uint8', 1, 'in'),
-             ('Color', 'bool', 1, 'in', COLOR)],
+             ('Color', 'bool', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -576,7 +632,7 @@ com['packets'].append({
              ('Position X End', 'uint8', 1, 'in'),
              ('Position Y End', 'uint8', 1, 'in'),
              ('Fill', 'bool', 1, 'in'),
-             ('Color', 'bool', 1, 'in', COLOR)],
+             ('Color', 'bool', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -606,17 +662,8 @@ com['packets'].append({
 'name': 'Draw Text',
 'elements': [('Position X', 'uint8', 1, 'in'),
              ('Position Y', 'uint8', 1, 'in'),
-             ('Font', 'uint8', 1, 'in',  ('Font', [('6x8', 0),
-                                                   ('6x16', 1),
-                                                   ('6x24', 2),
-                                                   ('6x32', 3),
-                                                   ('12x16', 4),
-                                                   ('12x24', 5),
-                                                   ('12x32', 6),
-                                                   ('18x24', 7),
-                                                   ('18x32', 8),
-                                                   ('24x32', 9)])),
-             ('Color', 'bool', 1, 'in', COLOR),
+             ('Font', 'uint8', 1, 'in', {'constant_group': 'Font'}),
+             ('Color', 'bool', 1, 'in', {'constant_group': 'Color'}),
              ('Text', 'string', 22, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -864,8 +911,7 @@ com['packets'].append({
              ('Position X', 'uint8', 1, 'in'),
              ('Position Y', 'uint8', 1, 'in'),
              ('Length', 'uint8', 1, 'in'),
-             ('Direction', 'uint8', 1, 'in', ('Direction', [('Horizontal', 0),
-                                                            ('Vertical', 1)])),
+             ('Direction', 'uint8', 1, 'in', {'constant_group': 'Direction'}),
              ('Value', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -933,8 +979,7 @@ com['packets'].append({
              ('Position X', 'uint8', 1, 'out'),
              ('Position Y', 'uint8', 1, 'out'),
              ('Length', 'uint8', 1, 'out'),
-             ('Direction', 'uint8', 1, 'out', ('Direction', [('Horizontal', 0),
-                                                             ('Vertical', 1)])),
+             ('Direction', 'uint8', 1, 'out', {'constant_group': 'Direction'}),
              ('Value', 'uint8', 1, 'out')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -1079,9 +1124,7 @@ die gleichen wie die von :func:`Get GUI Slider Value`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Tab Configuration',
-'elements': [('Change Tab Config', 'uint8', 1, 'in', ('Change Tab On', [('Click', 1),
-                                                                        ('Swipe', 2),
-                                                                        ('Click And Swipe', 3)])),
+'elements': [('Change Tab Config', 'uint8', 1, 'in', {'constant_group': 'Change Tab On'}),
              ('Clear GUI', 'bool', 1, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -1113,9 +1156,7 @@ aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Tab Configuration',
-'elements': [('Change Tab Config', 'uint8', 1, 'out', ('Change Tab On', [('Click', 1),
-                                                                         ('Swipe', 2),
-                                                                         ('Click And Swipe', 3)])),
+'elements': [('Change Tab Config', 'uint8', 1, 'out', {'constant_group': 'Change Tab On'}),
              ('Clear GUI', 'bool', 1, 'out')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -1380,9 +1421,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Graph Configuration',
 'elements': [('Index', 'uint8', 1, 'in'),
-             ('Graph Type', 'uint8', 1, 'in', ('Graph Type', [('Dot',  0),
-                                                              ('Line', 1),
-                                                              ('Bar',  2)])),
+             ('Graph Type', 'uint8', 1, 'in', {'constant_group': 'Graph Type'}),
              ('Position X', 'uint8', 1, 'in'),
              ('Position Y', 'uint8', 1, 'in'),
              ('Width', 'uint8', 1, 'in'),
@@ -1445,9 +1484,7 @@ com['packets'].append({
 'name': 'Get GUI Graph Configuration',
 'elements': [('Index', 'uint8', 1, 'in'),
              ('Active', 'bool', 1, 'out'),
-             ('Graph Type', 'uint8', 1, 'out', ('Graph Type', [('Dot',  0),
-                                                               ('Line', 1),
-                                                               ('Bar',  2)])),
+             ('Graph Type', 'uint8', 1, 'out', {'constant_group': 'Graph Type'}),
              ('Position X', 'uint8', 1, 'out'),
              ('Position Y', 'uint8', 1, 'out'),
              ('Width', 'uint8', 1, 'out'),
@@ -1581,10 +1618,7 @@ Entfernt alle GUI-Elemente (Buttons, Slider, Graphen, Tabs).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Touch LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Touch LED Config', [('Off', 0),
-                                                                ('On', 1),
-                                                                ('Show Heartbeat', 2),
-                                                                ('Show Touch', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Touch LED Config'})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -1611,10 +1645,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Touch LED Config', [('Off', 0),
-                                                                 ('On', 1),
-                                                                 ('Show Heartbeat', 2),
-                                                                 ('Show Touch', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Touch LED Config'})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':

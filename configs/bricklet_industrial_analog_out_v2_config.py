@@ -25,9 +25,41 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Voltage Range',
+'type': 'uint8',
+'constants': [('0 To 5V', 0),
+              ('0 To 10V', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Current Range',
+'type': 'uint8',
+'constants': [('4 To 20mA', 0),
+              ('0 To 20mA', 1),
+              ('0 To 24ma', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Out LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Out Status', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Out LED Status Config',
+'type': 'uint8',
+'constants': [('Threshold', 0),
+              ('Intensity', 1)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -151,11 +183,8 @@ Gibt die Spannung zurück, wie von :func:`Set Current` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Voltage Range', 'uint8', 1, 'in', ('Voltage Range', [('0 To 5V', 0),
-                                                                    ('0 To 10V', 1)])),
-             ('Current Range', 'uint8', 1, 'in', ('Current Range', [('4 To 20mA', 0),
-                                                                    ('0 To 20mA', 1),
-                                                                    ('0 To 24ma', 2)]))],
+'elements': [('Voltage Range', 'uint8', 1, 'in', {'constant_group': 'Voltage Range'}),
+             ('Current Range', 'uint8', 1, 'in', {'constant_group': 'Current Range'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -200,11 +229,8 @@ sich bei kleineren Wertebereichen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Voltage Range', 'uint8', 1, 'out', ('Voltage Range', [('0 To 5V', 0),
-                                                                     ('0 To 10V', 1)])),
-             ('Current Range', 'uint8', 1, 'out', ('Current Range', [('4 To 20mA', 0),
-                                                                     ('0 To 20mA', 1),
-                                                                     ('0 To 24ma', 2)]))],
+'elements': [('Voltage Range', 'uint8', 1, 'out', {'constant_group': 'Voltage Range'}),
+             ('Current Range', 'uint8', 1, 'out', {'constant_group': 'Current Range'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -221,10 +247,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Out LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Out LED Config', [('Off', 0),
-                                                              ('On', 1),
-                                                              ('Show Heartbeat', 2),
-                                                              ('Show Out Status', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -257,10 +280,7 @@ Standardmäßig ist die LED auf Out-Status konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Out LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Out LED Config', [('Off', 0),
-                                                               ('On', 1),
-                                                               ('Show Heartbeat', 2),
-                                                               ('Show Out Status', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Out LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -279,8 +299,7 @@ com['packets'].append({
 'name': 'Set Out LED Status Config',
 'elements': [('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', ('Out LED Status Config', [('Threshold', 0),
-                                                                     ('Intensity', 1)]))],
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Status Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -345,8 +364,7 @@ com['packets'].append({
 'name': 'Get Out LED Status Config',
 'elements': [('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out'),
-             ('Config', 'uint8', 1, 'out', ('Out LED Status Config', [('Threshold', 0),
-                                                                      ('Intensity', 1)]))],
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Out LED Status Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

@@ -30,6 +30,7 @@ com = {
         'eeprom_bricklet_host',
         'comcu_bricklet_host'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }

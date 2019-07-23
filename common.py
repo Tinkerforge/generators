@@ -546,6 +546,7 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     for constant_group in packet.get_constant_groups():
         if show_constant_group:
             constants.append(group_format_func(constant_group))
+
         for constant in constant_group.get_constants():
             if constant_group.get_type() == 'char':
                 value = char_format_func(constant.get_value())
@@ -718,7 +719,8 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
     configs = sorted(os.listdir(config_path))
 
-    common_device_packets = copy.deepcopy(__import__('device_commonconfig').common_packets)
+    common_constant_groups = copy.deepcopy(__import__('device_commonconfig').common_constant_groups)
+    common_packets = copy.deepcopy(__import__('device_commonconfig').common_packets)
 
     brick_infos = []
     bricklet_infos = []
@@ -727,6 +729,15 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
     generator = generator_class(root_dir, config_name, language)
     generator.prepare()
+
+    def prepare_common_constant_groups(com, common_constant_groups):
+        features = com['features']
+
+        for common_constant_group in common_constant_groups:
+            if common_constant_group['feature'] not in features:
+                common_constant_group['to_be_removed'] = True
+
+        return filter(lambda x: 'to_be_removed' not in x, common_constant_groups)
 
     def prepare_common_packets(com, common_packets):
         features = com['features']
@@ -765,7 +776,8 @@ def subgenerate(root_dir, language, generator_class, config_name):
                 print(' * {0}'.format(config[:-10]))
 
             if 'common_included' not in com:
-                com['packets'].extend(prepare_common_packets(com, copy.deepcopy(common_device_packets)))
+                com['constant_groups'].extend(prepare_common_constant_groups(com, copy.deepcopy(common_constant_groups)))
+                com['packets'].extend(prepare_common_packets(com, copy.deepcopy(common_packets)))
                 com['common_included'] = True
 
             device = generator.get_device_class()(com, generator)
@@ -1032,27 +1044,19 @@ class Constant(object):
         return self.raw_data[1]
 
 class ConstantGroup(object):
-    def __init__(self, type_, raw_data, device):
-        self.type_ = type_
+    def __init__(self, raw_data, device):
+        assert isinstance(raw_data, dict)
+        check_name(raw_data['name'])
+
         self.raw_data = raw_data
         self.device = device
-        self.elements = []
+        self.name = FlavoredName(raw_data['name'])
         self.constants = []
 
-        if len(raw_data) != 2:
-            raise GeneratorError('Invalid ConstantGroup: ' + repr(raw_data))
-
-        check_name(raw_data[0])
-
-        self.name = FlavoredName(raw_data[0])
-
-        for raw_constant in raw_data[1]:
+        for raw_constant in raw_data['constants']:
             self.constants.append(self.get_generator().get_constant_class()(raw_constant, self))
 
-    def get_elements(self): # parents
-        return self.elements
-
-    def get_device(self):
+    def get_device(self): # parent
         return self.device
 
     def get_generator(self):
@@ -1062,13 +1066,21 @@ class ConstantGroup(object):
         return self.name.get(*args, **kwargs)
 
     def get_type(self):
-        return self.type_
+        return self.raw_data['type']
 
     def get_constants(self):
         return self.constants
 
-    def add_elements(self, elements):
-        self.elements += elements
+    def get_elements(self, packet):
+        elements = []
+
+        for element in packet.get_elements():
+            constant_group = element.get_constant_group()
+
+            if constant_group != None and constant_group.get_name().space == self.get_name().space:
+                elements.append(element)
+
+        return elements
 
 class Element(object):
     def __init__(self, raw_data, packet, level, role):
@@ -1086,8 +1098,16 @@ class Element(object):
             raise GeneratorError('Invalid Element: ' + repr(raw_data))
 
         if len(self.raw_data) > 4:
-            self.constant_group = self.get_generator().get_constant_group_class()(raw_data[1], raw_data[4], self.get_device())
-            self.constant_group.add_elements([self])
+            assert isinstance(self.raw_data[4], dict), self.raw_data[4]
+            assert len(set(self.raw_data[4].keys()) - set(['constant_group'])) == 0, self.raw_data[4]
+
+            constant_group_name = self.raw_data[4].get('constant_group')
+
+            if constant_group_name != None:
+                self.constant_group = self.get_device().get_constant_group(constant_group_name)
+
+                if self.constant_group.get_type() != self.get_type():
+                    raise GeneratorError("Element '{0}' Constant Group '{1}' type mismatch".format(self.get_name().space, constant_group_name))
 
     def get_packet(self): # parent
         return self.packet
@@ -1374,39 +1394,7 @@ class Packet(object):
         for element in self.elements:
             constant_group = element.get_constant_group()
 
-            if constant_group is None:
-                continue
-
-            for known_constant_group in self.constant_groups:
-                if constant_group.get_name().under != known_constant_group.get_name().under:
-                    continue
-
-                if constant_group.get_type() != known_constant_group.get_type():
-                    raise GeneratorError('Multiple instance of constant group {0} with different types' \
-                                         .format(constant_group.get_name().under))
-
-                for constant, known_constant in zip(constant_group.get_constants(), known_constant_group.get_constants()):
-                    a = known_constant.get_name().under
-                    b = constant.get_name().under
-
-                    if a != b:
-                        raise GeneratorError('Constant item name ({0} != {1}) mismatch in constant group {2}' \
-                                             .format(a, b, constant_group.get_name().under))
-
-                    a = known_constant.get_value()
-                    b = constant.get_value()
-
-                    if a != b:
-                        raise GeneratorError('Constant item value ({0} != {1}) mismatch in constant group {2}' \
-                                             .format(a, b, constant_group.get_name().under))
-
-                known_constant_group.add_elements(constant_group.get_elements())
-
-                constant_group = None
-
-                break
-
-            if constant_group is not None:
+            if constant_group != None and constant_group not in self.constant_groups:
                 self.constant_groups.append(constant_group)
 
     def get_device(self): # parent
@@ -1596,6 +1584,7 @@ class Device(object):
     def __init__(self, raw_data, generator):
         self.raw_data = raw_data
         self.generator = generator
+        self.constant_groups = []
         self.all_packets = []
         self.all_packets_without_doc_only = []
         self.all_function_packets = []
@@ -1607,6 +1596,16 @@ class Device(object):
 
         self.category = FlavoredName(raw_data['category'])
         self.name = FlavoredName(raw_data['name'])
+
+        for raw_constant_group in raw_data['constant_groups']:
+            constant_group = generator.get_constant_group_class()(raw_constant_group, self)
+            constant_group_name = constant_group.get_name().space
+
+            for other_constant_group in self.constant_groups:
+                if other_constant_group.get_name().space == constant_group_name:
+                    raise GeneratorError('Constant Group {0} is not unique'.format(constant_group_name))
+
+            self.constant_groups.append(constant_group)
 
         next_function_id = 1
 
@@ -1668,39 +1667,6 @@ class Device(object):
                 self.callback_packets.append(packet)
             else:
                 raise GeneratorError('Invalid packet type ' + packet.get_type())
-
-        self.constant_groups = []
-
-        for packet in self.all_packets:
-            for constant_group in packet.get_constant_groups():
-                for known_constant_group in self.constant_groups:
-                    if constant_group.get_name().under != known_constant_group.get_name().under:
-                        continue
-
-                    if constant_group.get_type() != known_constant_group.get_type():
-                        raise GeneratorError('Multiple instance of constant group {0} with different types' \
-                                             .format(constant_group.get_name().under))
-
-                    for constant, known_constant in zip(constant_group.get_constants(), known_constant_group.get_constants()):
-                        a = known_constant.get_name().under
-                        b = constant.get_name().under
-
-                        if a != b:
-                            raise GeneratorError('Constant name ({0} != {1}) mismatch in constant group {2}' \
-                                                 .format(a, b, constant_group.get_name().under))
-
-                        a = known_constant.get_value()
-                        b = constant.get_value()
-
-                        if a != b:
-                            raise GeneratorError('Constant value ({0} != {1}) mismatch in constant group {2}' \
-                                                 .format(a, b, constant_group.get_name().under))
-
-                    constant_group = None
-                    break
-
-                if constant_group != None:
-                    self.constant_groups.append(constant_group)
 
         for raw_example in raw_data['examples']:
             self.examples.append(generator.get_example_class()(raw_example, self))
@@ -1821,6 +1787,13 @@ class Device(object):
         global_root_dir = os.path.normpath(os.path.join(self.get_generator().get_root_dir(), '..', '..'))
 
         return os.path.join(global_root_dir, self.get_git_name())
+
+    def get_constant_group(self, name):
+        for constant_group in self.constant_groups:
+            if constant_group.get_name().space == name:
+                return constant_group
+
+        raise GeneratorError("Unknown Constant Group '{0}'".format(name))
 
     def get_packets(self, type_=None):
         if type_ == None:

@@ -24,9 +24,34 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Weekday',
+'type': 'uint8',
+'constants': [('Monday', 1),
+              ('Tuesday', 2),
+              ('Wednesday', 3),
+              ('Thursday', 4),
+              ('Friday', 5),
+              ('Saturday', 6),
+              ('Sunday', 7)]
+})
+
+com['constant_groups'].append({
+'name': 'Alarm Match',
+'type': 'int8',
+'constants': [('Disabled', -1)]
+})
+
+com['constant_groups'].append({
+'name': 'Alarm Interval',
+'type': 'int32',
+'constants': [('Disabled', -1)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -38,13 +63,7 @@ com['packets'].append({
              ('Minute', 'uint8', 1, 'in'),
              ('Second', 'uint8', 1, 'in'),
              ('Centisecond', 'uint8', 1, 'in'),
-             ('Weekday', 'uint8', 1, 'in', ('Weekday', [('Monday', 1),
-                                                        ('Tuesday', 2),
-                                                        ('Wednesday', 3),
-                                                        ('Thursday', 4),
-                                                        ('Friday', 5),
-                                                        ('Saturday', 6),
-                                                        ('Sunday', 7)]))],
+             ('Weekday', 'uint8', 1, 'in', {'constant_group': 'Weekday'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -105,13 +124,7 @@ com['packets'].append({
              ('Minute', 'uint8', 1, 'out'),
              ('Second', 'uint8', 1, 'out'),
              ('Centisecond', 'uint8', 1, 'out'),
-             ('Weekday', 'uint8', 1, 'out', ('Weekday', [('Monday', 1),
-                                                         ('Tuesday', 2),
-                                                         ('Wednesday', 3),
-                                                         ('Thursday', 4),
-                                                         ('Friday', 5),
-                                                         ('Saturday', 6),
-                                                         ('Sunday', 7)]))],
+             ('Weekday', 'uint8', 1, 'out', {'constant_group': 'Weekday'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -282,13 +295,13 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Alarm',
-'elements': [('Month', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
-             ('Day', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
-             ('Hour', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
-             ('Minute', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
-             ('Second', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
-             ('Weekday', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
-             ('Interval', 'int32', 1, 'in', ('Alarm Interval', [('Disabled', -1)]))],
+'elements': [('Month', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
+             ('Day', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
+             ('Hour', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
+             ('Minute', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
+             ('Second', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
+             ('Weekday', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
+             ('Interval', 'int32', 1, 'in', {'constant_group': 'Alarm Interval'})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
@@ -356,13 +369,13 @@ wiederholt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Alarm',
-'elements': [('Month', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
-             ('Day', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
-             ('Hour', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
-             ('Minute', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
-             ('Second', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
-             ('Weekday', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
-             ('Interval', 'int32', 1, 'out', ('Alarm Interval', [('Disabled', -1)]))],
+'elements': [('Month', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
+             ('Day', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
+             ('Hour', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
+             ('Minute', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
+             ('Second', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
+             ('Weekday', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
+             ('Interval', 'int32', 1, 'out', {'constant_group': 'Alarm Interval'})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
@@ -386,13 +399,7 @@ com['packets'].append({
              ('Minute', 'uint8', 1, 'out'),
              ('Second', 'uint8', 1, 'out'),
              ('Centisecond', 'uint8', 1, 'out'),
-             ('Weekday', 'uint8', 1, 'out', ('Weekday', [('Monday', 1),
-                                                         ('Tuesday', 2),
-                                                         ('Wednesday', 3),
-                                                         ('Thursday', 4),
-                                                         ('Friday', 5),
-                                                         ('Saturday', 6),
-                                                         ('Sunday', 7)])),
+             ('Weekday', 'uint8', 1, 'out', {'constant_group': 'Weekday'}),
              ('Timestamp', 'int64', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['c', {
@@ -428,13 +435,7 @@ com['packets'].append({
              ('Minute', 'uint8', 1, 'out'),
              ('Second', 'uint8', 1, 'out'),
              ('Centisecond', 'uint8', 1, 'out'),
-             ('Weekday', 'uint8', 1, 'out', ('Weekday', [('Monday', 1),
-                                                         ('Tuesday', 2),
-                                                         ('Wednesday', 3),
-                                                         ('Thursday', 4),
-                                                         ('Friday', 5),
-                                                         ('Saturday', 6),
-                                                         ('Sunday', 7)])),
+             ('Weekday', 'uint8', 1, 'out', {'constant_group': 'Weekday'}),
              ('Timestamp', 'int64', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['c', {

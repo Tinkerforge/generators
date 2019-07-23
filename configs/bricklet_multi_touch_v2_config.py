@@ -25,9 +25,19 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Touch LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Touch', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -303,10 +313,7 @@ Gibt die aktuelle Empfindlichkeit zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Touch LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Touch LED Config', [('Off', 0),
-                                                                ('On', 1),
-                                                                ('Show Heartbeat', 2),
-                                                                ('Show Touch', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Touch LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -330,10 +337,7 @@ Der Standardwert ist 3 (Touch-Zustand).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Touch LED Config', [('Off', 0),
-                                                                 ('On', 1),
-                                                                 ('Show Heartbeat', 2),
-                                                                 ('Show Touch', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Touch LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

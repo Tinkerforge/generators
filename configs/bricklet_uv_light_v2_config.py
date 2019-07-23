@@ -6,7 +6,7 @@
 
 # UV Light Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,22 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Integration Time',
+'type': 'uint8',
+'constants': [('50ms', 0),
+              ('100ms', 1),
+              ('200ms', 2),
+              ('400ms', 3),
+              ('800ms', 4)]
+})
 
 uva_doc = {
 'en':
@@ -149,11 +162,7 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Integration Time', 'uint8', 1, 'in', ('Integration Time', [('50ms', 0),
-                                                                          ('100ms', 1),
-                                                                          ('200ms', 2),
-                                                                          ('400ms', 3),
-                                                                          ('800ms', 4)]))],
+'elements': [('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -190,11 +199,7 @@ Standardwert: 400 ms.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Integration Time', 'uint8', 1, 'out', ('Integration Time', [('50ms', 0),
-                                                                           ('100ms', 1),
-                                                                           ('200ms', 2),
-                                                                           ('400ms', 3),
-                                                                           ('800ms', 4)]))],
+'elements': [('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

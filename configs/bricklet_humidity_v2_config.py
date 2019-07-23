@@ -6,7 +6,7 @@
 
 # Humidity Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -29,9 +29,30 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Heater Config',
+'type': 'uint8',
+'constants': [('Disabled', 0),
+              ('Enabled', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'SPS',
+'type': 'uint8',
+'constants': [('20', 0),
+              ('10', 1),
+              ('5', 2),
+              ('1', 3),
+              ('02', 4),
+              ('01', 5)]
+})
 
 humidity_doc = {
 'en':
@@ -79,13 +100,10 @@ add_callback_value_function(
     doc       = temperature_doc
 )
 
-HEATER_CONFIG_CONSTANT = ('Heater Config', [('Disabled', 0),
-                                            ('Enabled',  1)])
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Heater Configuration',
-'elements': [('Heater Config', 'uint8', 1, 'in', HEATER_CONFIG_CONSTANT)],
+'elements': [('Heater Config', 'uint8', 1, 'in', {'constant_group': 'Heater Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -108,7 +126,7 @@ Standardmäßig ist das Heizelement deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Heater Configuration',
-'elements': [('Heater Config', 'uint8', 1, 'out', HEATER_CONFIG_CONSTANT)],
+'elements': [('Heater Config', 'uint8', 1, 'out', {'constant_group': 'Heater Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -194,17 +212,10 @@ Gibt die Moving Average-Konfiguration zurück, wie von :func:`Set Moving Average
 }]
 })
 
-SPS_CONFIG_CONSTANT = ('SPS', [('20', 0),
-                               ('10', 1),
-                               ('5',  2),
-                               ('1',  3),
-                               ('02', 4),
-                               ('01', 5)])
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Samples Per Second',
-'elements': [('SPS', 'uint8', 1, 'in', SPS_CONFIG_CONSTANT)],
+'elements': [('SPS', 'uint8', 1, 'in', {'constant_group': 'SPS'})],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':
@@ -240,7 +251,7 @@ Vor Version 2.0.3 wurden 30 Messungen pro Sekunde gemacht. Der neue Standardwert
 com['packets'].append({
 'type': 'function',
 'name': 'Get Samples Per Second',
-'elements': [('SPS', 'uint8', 1, 'out', SPS_CONFIG_CONSTANT)],
+'elements': [('SPS', 'uint8', 1, 'out', {'constant_group': 'SPS'})],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':

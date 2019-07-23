@@ -24,6 +24,7 @@ com = {
     'features': [
         'tng'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }

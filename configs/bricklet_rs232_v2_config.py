@@ -25,9 +25,42 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Parity',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('Odd', 1),
+              ('Even', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Stopbits',
+'type': 'uint8',
+'constants': [('1', 1),
+              ('2', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Wordlength',
+'type': 'uint8',
+'constants': [('5', 5),
+              ('6', 6),
+              ('7', 7),
+              ('8', 8)]
+})
+
+com['constant_groups'].append({
+'name': 'Flowcontrol',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('Software', 1),
+              ('Hardware', 2)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -158,18 +191,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
 'elements': [('Baudrate', 'uint32', 1, 'in'),
-             ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
-                                                      ('Odd', 1),
-                                                      ('Even', 2)])),
-             ('Stopbits', 'uint8', 1, 'in', ('Stopbits', [('1', 1),
-                                                          ('2', 2)])),
-             ('Wordlength', 'uint8', 1, 'in', ('Wordlength', [('5', 5),
-                                                              ('6', 6),
-                                                              ('7', 7),
-                                                              ('8', 8)])),
-             ('Flowcontrol', 'uint8', 1, 'in', ('Flowcontrol', [('Off', 0),
-                                                                ('Software', 1),
-                                                                ('Hardware', 2)]))],
+             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity'}),
+             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits'}),
+             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength'}),
+             ('Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Flowcontrol'})],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -205,18 +230,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
 'elements': [('Baudrate', 'uint32', 1, 'out'),
-             ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
-                                                       ('Odd', 1),
-                                                       ('Even', 2)])),
-             ('Stopbits', 'uint8', 1, 'out', ('Stopbits', [('1', 1),
-                                                           ('2', 2)])),
-             ('Wordlength', 'uint8', 1, 'out', ('Wordlength', [('5', 5),
-                                                               ('6', 6),
-                                                               ('7', 7),
-                                                               ('8', 8)])),
-             ('Flowcontrol', 'uint8', 1, 'out', ('Flowcontrol', [('Off', 0),
-                                                                 ('Software', 1),
-                                                                 ('Hardware', 2)]))],
+             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity'}),
+             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits'}),
+             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength'}),
+             ('Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Flowcontrol'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

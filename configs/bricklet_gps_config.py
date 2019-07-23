@@ -25,9 +25,27 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Fix',
+'type': 'uint8',
+'constants': [('No Fix', 1),
+              ('2D Fix', 2),
+              ('3D Fix', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Restart Type',
+'type': 'uint8',
+'constants': [('Hot Start', 0),
+              ('Warm Start', 1),
+              ('Cold Start', 2),
+              ('Factory Reset', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -90,9 +108,7 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Status',
-'elements': [('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
-                                                 ('2D Fix', 2),
-                                                 ('3D Fix', 3)])),
+'elements': [('Fix', 'uint8', 1, 'out', {'constant_group': 'Fix'}),
              ('Satellites View', 'uint8', 1, 'out'),
              ('Satellites Used', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -225,10 +241,7 @@ Beispiel, 140713 bedeutet 14.05.13 als Datum und 195923568 bedeutet
 com['packets'].append({
 'type': 'function',
 'name': 'Restart',
-'elements': [('Restart Type', 'uint8', 1, 'in', ('Restart Type', [('Hot Start', 0),
-                                                                  ('Warm Start', 1),
-                                                                  ('Cold Start', 2),
-                                                                  ('Factory Reset', 3)]))],
+'elements': [('Restart Type', 'uint8', 1, 'in', {'constant_group': 'Restart Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -535,9 +548,7 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Status',
-'elements': [('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
-                                                 ('2D Fix', 2),
-                                                 ('3D Fix', 3)])),
+'elements': [('Fix', 'uint8', 1, 'out', {'constant_group': 'Fix'}),
              ('Satellites View', 'uint8', 1, 'out'),
              ('Satellites Used', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],

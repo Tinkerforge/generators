@@ -25,9 +25,17 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Button State',
+'type': 'uint8',
+'constants': [('Pressed', 0),
+              ('Released', 1)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -74,8 +82,7 @@ Gibt die LED-Farbe zurück, wie von :func:`Set Color` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Button State',
-'elements': [('State', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
-                                                            ('Released', 1)]))],
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Button State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -92,8 +99,7 @@ Gibt den aktuellen Zustand des Knopfes zurück (entweder gedrückt oder nicht ge
 com['packets'].append({
 'type': 'callback',
 'name': 'Button State Changed',
-'elements': [('State', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
-                                                            ('Released', 1)]))],
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Button State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

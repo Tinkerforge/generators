@@ -25,9 +25,35 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Resolution',
+'type': 'uint8',
+'constants': [('0 To 6553 Kelvin', 0),
+              ('0 To 655 Kelvin', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'FFC Status',
+'type': 'uint8',
+'constants': [('Never Commanded', 0),
+              ('Imminent', 1),
+              ('In Progress', 2),
+              ('Complete', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Image Transfer',
+'type': 'uint8',
+'constants': [('Manual High Contrast Image', 0),
+              ('Manual Temperature Image', 1),
+              ('Callback High Contrast Image', 2),
+              ('Callback Temperature Image', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -126,12 +152,8 @@ com['packets'].append({
 'name': 'Get Statistics',
 'elements': [('Spotmeter Statistics', 'uint16', 4, 'out'), # mean, max, min, pixel count
              ('Temperatures', 'uint16', 4, 'out'), # focal plain array, focal plain array at last ffc, housing, housing at last ffc
-             ('Resolution', 'uint8', 1, 'out', ('Resolution', [('0 To 6553 Kelvin', 0),
-                                                               ('0 To 655 Kelvin', 1)])),
-             ('FFC Status', 'uint8', 1, 'out', ('FFC Status', [('Never Commanded', 0),
-                                                               ('Imminent', 1),
-                                                               ('In Progress', 2),
-                                                               ('Complete', 3)])),
+             ('Resolution', 'uint8', 1, 'out', {'constant_group': 'Resolution'}),
+             ('FFC Status', 'uint8', 1, 'out', {'constant_group': 'FFC Status'}),
              ('Temperature Warning', 'bool', 2, 'out') # shutter lockout, overtemp
 ],
 'since_firmware': [1, 0, 0],
@@ -208,8 +230,7 @@ Temperaturwarnungs-Status:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Resolution',
-'elements': [('Resolution', 'uint8', 1, 'in', ('Resolution', [('0 To 6553 Kelvin', 0),
-                                                              ('0 To 655 Kelvin', 1)]))],
+'elements': [('Resolution', 'uint8', 1, 'in', {'constant_group': 'Resolution'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -242,8 +263,7 @@ Der Standardwert ist 0 bis 655 Kelvin.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Resolution',
-'elements': [('Resolution', 'uint8', 1, 'out', ('Resolution', [('0 To 6553 Kelvin', 0),
-                                                               ('0 To 655 Kelvin', 1)]))],
+'elements': [('Resolution', 'uint8', 1, 'out', {'constant_group': 'Resolution'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -445,10 +465,7 @@ Gibt die High Contrast Konfiguration zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Image Transfer Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Image Transfer', [('Manual High Contrast Image', 0),
-                                                              ('Manual Temperature Image', 1),
-                                                              ('Callback High Contrast Image', 2),
-                                                              ('Callback Temperature Image', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Image Transfer'})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -488,10 +505,7 @@ Der Standardwert ist Manual High Contrast Image (0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Image Transfer Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Image Transfer', [('Manual High Contrast Image', 0),
-                                                               ('Manual Temperature Image', 1),
-                                                               ('Callback High Contrast Image', 2),
-                                                               ('Callback Temperature Image', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Image Transfer'})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

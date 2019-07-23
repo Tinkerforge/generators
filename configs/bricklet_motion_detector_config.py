@@ -24,15 +24,30 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Motion',
+'type': 'uint8',
+'constants': [('Not Detected', 0),
+              ('Detected', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Status LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Status', 2)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion Detected',
-'elements': [('Motion', 'uint8', 1, 'out', ('Motion', [('Not Detected', 0),
-                                                       ('Detected', 1)]))],
+'elements': [('Motion', 'uint8', 1, 'out', {'constant_group': 'Motion'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -99,9 +114,7 @@ eine weitere Bewegung erkannt werden nach ungefähr 2 Sekunden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Status LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Status LED Config', [('Off', 0),
-                                                                 ('On', 1),
-                                                                 ('Show Status', 2)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Status LED Config'})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -128,9 +141,7 @@ Die LED kann auch permanent an/aus gestellt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Status LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Status LED Config', [('Off', 0),
-                                                                  ('On', 1),
-                                                                  ('Show Status', 2)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Status LED Config'})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

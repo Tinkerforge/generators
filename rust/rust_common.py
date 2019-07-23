@@ -273,6 +273,10 @@ class RustElement(common.Element):
         else:
             return element_type
 
+class RustConstantGroup(common.ConstantGroup):
+    def get_rust_type(self):
+        return get_rust_type(self.get_type(), 1)
+
 rust_types = {
     'int8':   'i8',
     'uint8':  'u8',

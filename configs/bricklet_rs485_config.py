@@ -6,18 +6,6 @@
 
 # RS485 Bricklet communication config
 
-EXCEPTION_CODE_CONSTANTS =  ('Exception Code', [('Timeout', -1),
-                                                ('Success', 0),
-                                                ('Illegal Function', 1),
-                                                ('Illegal Data Address', 2),
-                                                ('Illegal Data Value', 3),
-                                                ('Slave Device Failure', 4),
-                                                ('Acknowledge', 5),
-                                                ('Slave Device Busy', 6),
-                                                ('Memory Parity Error', 8),
-                                                ('Gateway Path Unavailable', 10),
-                                                ('Gateway Target Device Failed To Respond', 11)])
-
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -37,9 +25,83 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Parity',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('Odd', 1),
+              ('Even', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Stopbits',
+'type': 'uint8',
+'constants': [('1', 1),
+              ('2', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Wordlength',
+'type': 'uint8',
+'constants': [('5', 5),
+              ('6', 6),
+              ('7', 7),
+              ('8', 8)]
+})
+
+com['constant_groups'].append({
+'name': 'Duplex',
+'type': 'uint8',
+'constants': [('Half', 0),
+              ('Full', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Mode',
+'type': 'uint8',
+'constants': [('RS485', 0),
+              ('Modbus Master RTU', 1),
+              ('Modbus Slave RTU', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Communication LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Communication', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Error LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Error', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Exception Code',
+'type': 'int8',
+'constants': [('Timeout', -1),
+              ('Success', 0),
+              ('Illegal Function', 1),
+              ('Illegal Data Address', 2),
+              ('Illegal Data Value', 3),
+              ('Slave Device Failure', 4),
+              ('Acknowledge', 5),
+              ('Slave Device Busy', 6),
+              ('Memory Parity Error', 8),
+              ('Gateway Path Unavailable', 10),
+              ('Gateway Target Device Failed To Respond', 11)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -170,17 +232,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set RS485 Configuration',
 'elements': [('Baudrate', 'uint32', 1, 'in'),
-             ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
-                                                      ('Odd', 1),
-                                                      ('Even', 2)])),
-             ('Stopbits', 'uint8', 1, 'in', ('Stopbits', [('1', 1),
-                                                          ('2', 2)])),
-             ('Wordlength', 'uint8', 1, 'in', ('Wordlength', [('5', 5),
-                                                              ('6', 6),
-                                                              ('7', 7),
-                                                              ('8', 8)])),
-             ('Duplex', 'uint8', 1, 'in', ('Duplex', [('Half', 0),
-                                                      ('Full', 1)]))],
+             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity'}),
+             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits'}),
+             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength'}),
+             ('Duplex', 'uint8', 1, 'in', {'constant_group': 'Duplex'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -215,17 +270,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get RS485 Configuration',
 'elements': [('Baudrate', 'uint32', 1, 'out'),
-             ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
-                                                       ('Odd', 1),
-                                                       ('Even', 2)])),
-             ('Stopbits', 'uint8', 1, 'out', ('Stopbits', [('1', 1),
-                                                           ('2', 2)])),
-             ('Wordlength', 'uint8', 1, 'out', ('Wordlength', [('5', 5),
-                                                               ('6', 6),
-                                                               ('7', 7),
-                                                               ('8', 8)])),
-             ('Duplex', 'uint8', 1, 'out', ('Duplex', [('Half', 0),
-                                                       ('Full', 1)]))],
+             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity'}),
+             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits'}),
+             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength'}),
+             ('Duplex', 'uint8', 1, 'out', {'constant_group': 'Duplex'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -288,9 +336,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Modbus Configuration` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
-'elements': [('Mode', 'uint8', 1, 'in',('Mode', [('RS485', 0),
-                                                 ('Modbus Master RTU', 1),
-                                                 ('Modbus Slave RTU', 2)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -319,9 +365,7 @@ Der Standardmodus ist RS485.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Mode',
-'elements': [('Mode', 'uint8', 1, 'out',('Mode', [('RS485', 0),
-                                                  ('Modbus Master RTU', 1),
-                                                  ('Modbus Slave RTU', 2)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -338,10 +382,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Mode` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Communication LED Config', [('Off', 0),
-                                                                        ('On', 1),
-                                                                        ('Show Heartbeat', 2),
-                                                                        ('Show Communication', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -368,10 +409,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Communication LED Config', [('Off', 0),
-                                                                         ('On', 1),
-                                                                         ('Show Heartbeat', 2),
-                                                                         ('Show Communication', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -388,10 +426,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Error LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Error LED Config', [('Off', 0),
-                                                                ('On', 1),
-                                                                ('Show Heartbeat', 2),
-                                                                ('Show Error', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -425,10 +460,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Error LED Config', [('Off', 0),
-                                                                 ('On', 1),
-                                                                 ('Show Heartbeat', 2),
-                                                                 ('Show Error', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -646,7 +678,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Report Exception',
 'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Exception Code', 'int8', 1, 'in', EXCEPTION_CODE_CONSTANTS)],
+             ('Exception Code', 'int8', 1, 'in', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1379,7 +1411,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Read Coils Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
              ('Coils Length', 'uint16', 1, 'out'),
              ('Coils Chunk Offset', 'uint16', 1, 'out'),
              ('Coils Chunk Data', 'bool', 464, 'out')],
@@ -1455,7 +1487,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Read Holding Registers Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
              ('Holding Registers Length', 'uint16', 1, 'out'),
              ('Holding Registers Chunk Offset', 'uint16', 1, 'out'),
              ('Holding Registers Chunk Data', 'uint16', 29, 'out')],
@@ -1531,7 +1563,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Write Single Coil Response',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS)],
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1602,7 +1634,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Write Single Register Response',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS)],
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1675,7 +1707,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Write Multiple Coils Response',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS)],
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1749,7 +1781,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Write Multiple Registers Response',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS)],
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1820,7 +1852,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Read Discrete Inputs Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
              ('Discrete Inputs Length', 'uint16', 1, 'out'),
              ('Discrete Inputs Chunk Offset', 'uint16', 1, 'out'),
              ('Discrete Inputs Chunk Data', 'bool', 464, 'out')],
@@ -1896,7 +1928,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Read Input Registers Response Low Level',
 'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Exception Code', 'int8', 1, 'out', EXCEPTION_CODE_CONSTANTS),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
              ('Input Registers Length', 'uint16', 1, 'out'),
              ('Input Registers Chunk Offset', 'uint16', 1, 'out'),
              ('Input Registers Chunk Data', 'uint16', 29, 'out')],

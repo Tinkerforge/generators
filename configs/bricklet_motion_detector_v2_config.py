@@ -25,15 +25,22 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Motion',
+'type': 'uint8',
+'constants': [('Not Detected', 0),
+              ('Detected', 1)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion Detected',
-'elements': [('Motion', 'uint8', 1, 'out', ('Motion', [('Not Detected', 0),
-                                                       ('Detected', 1)]))],
+'elements': [('Motion', 'uint8', 1, 'out', {'constant_group': 'Motion'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

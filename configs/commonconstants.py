@@ -4,11 +4,15 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-THRESHOLD_OPTION_CONSTANTS = ('Threshold Option', [('Off', 'x'),
-                                                   ('Outside', 'o'),
-                                                   ('Inside', 'i'),
-                                                   ('Smaller', '<'),
-                                                   ('Greater', '>')])
+THRESHOLD_OPTION_CONSTANT_GROUP = {
+'name': 'Threshold Option',
+'type': 'char',
+'constants': [('Off', 'x'),
+              ('Outside', 'o'),
+              ('Inside', 'i'),
+              ('Smaller', '<'),
+              ('Greater', '>')]
+}
 
 def add_callback_value_function(packets, name, data_name, data_type, doc,
                                 has_channels=False, since_firmware=[1, 0, 0]):
@@ -47,7 +51,7 @@ verwendet werden. Der Callback wird mit der Funktion
         'corresponding_getter': name_get,
         'elements': [('Period', 'uint32', 1, 'in'),
                      ('Value Has To Change', 'bool', 1, 'in'),
-                     ('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+                     ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
                      ('Min', data_type, 1, 'in'),
                      ('Max', data_type, 1, 'in')],
         'since_firmware': since_firmware,
@@ -127,7 +131,7 @@ Der Standardwert ist (0, false, 'x', 0, 0).
         'corresponding_getter': name_get,
         'elements': [('Period', 'uint32', 1, 'out'),
                      ('Value Has To Change', 'bool', 1, 'out'),
-                     ('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+                     ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
                      ('Min', data_type, 1, 'out'),
                      ('Max', data_type, 1, 'out')],
         'since_firmware': since_firmware,

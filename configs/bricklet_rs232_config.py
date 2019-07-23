@@ -24,9 +24,76 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Baudrate',
+'type': 'uint8',
+'constants': [('300', 0),
+              ('600', 1),
+              ('1200', 2),
+              ('2400', 3),
+              ('4800', 4),
+              ('9600', 5),
+              ('14400', 6),
+              ('19200', 7),
+              ('28800', 8),
+              ('38400', 9),
+              ('57600', 10),
+              ('115200', 11),
+              ('230400', 12)]
+})
+
+com['constant_groups'].append({
+'name': 'Parity',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('Odd', 1),
+              ('Even', 2),
+              ('Forced Parity 1', 3),
+              ('Forced Parity 0', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Stopbits',
+'type': 'uint8',
+'constants': [('1', 1),
+              ('2', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Wordlength',
+'type': 'uint8',
+'constants': [('5', 5),
+              ('6', 6),
+              ('7', 7),
+              ('8', 8)]
+})
+
+com['constant_groups'].append({
+'name': 'Hardware Flowcontrol',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Software Flowcontrol',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Error',
+'type': 'uint8',
+'constants': [('Overrun', 1),
+              ('Parity', 2),
+              ('Framing', 4)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -156,34 +223,12 @@ Gibt *true* zurück falls :cb:`Read` Callback aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Baudrate', 'uint8', 1, 'in', ('Baudrate', [('300', 0),
-                                                          ('600', 1),
-                                                          ('1200', 2),
-                                                          ('2400', 3),
-                                                          ('4800', 4),
-                                                          ('9600', 5),
-                                                          ('14400', 6),
-                                                          ('19200', 7),
-                                                          ('28800', 8),
-                                                          ('38400', 9),
-                                                          ('57600', 10),
-                                                          ('115200', 11),
-                                                          ('230400', 12)])),
-             ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
-                                                      ('Odd', 1),
-                                                      ('Even', 2),
-                                                      ('Forced Parity 1', 3),
-                                                      ('Forced Parity 0', 4)])),
-             ('Stopbits', 'uint8', 1, 'in', ('Stopbits', [('1', 1),
-                                                          ('2', 2)])),
-             ('Wordlength', 'uint8', 1, 'in', ('Wordlength', [('5', 5),
-                                                              ('6', 6),
-                                                              ('7', 7),
-                                                              ('8', 8)])),
-             ('Hardware Flowcontrol', 'uint8', 1, 'in', ('Hardware Flowcontrol', [('Off', 0),
-                                                                                  ('On', 1)])),
-             ('Software Flowcontrol', 'uint8', 1, 'in', ('Software Flowcontrol', [('Off', 0),
-                                                                                  ('On', 1)]))],
+'elements': [('Baudrate', 'uint8', 1, 'in', {'constant_group': 'Baudrate'}),
+             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity'}),
+             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits'}),
+             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength'}),
+             ('Hardware Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Hardware Flowcontrol'}),
+             ('Software Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Software Flowcontrol'})],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -218,34 +263,12 @@ Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/S
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Baudrate', 'uint8', 1, 'out', ('Baudrate', [('300', 0),
-                                                           ('600', 1),
-                                                           ('1200', 2),
-                                                           ('2400', 3),
-                                                           ('4800', 4),
-                                                           ('9600', 5),
-                                                           ('14400', 6),
-                                                           ('19200', 7),
-                                                           ('28800', 8),
-                                                           ('38400', 9),
-                                                           ('57600', 10),
-                                                           ('115200', 11),
-                                                           ('230400', 12)])),
-             ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
-                                                       ('Odd', 1),
-                                                       ('Even', 2),
-                                                       ('Forced Parity 1', 3),
-                                                       ('Forced Parity 0', 4)])),
-             ('Stopbits', 'uint8', 1, 'out', ('Stopbits', [('1', 1),
-                                                           ('2', 2)])),
-             ('Wordlength', 'uint8', 1, 'out', ('Wordlength', [('5', 5),
-                                                               ('6', 6),
-                                                               ('7', 7),
-                                                               ('8', 8)])),
-             ('Hardware Flowcontrol', 'uint8', 1, 'out', ('Hardware Flowcontrol', [('Off', 0),
-                                                                                   ('On', 1)])),
-             ('Software Flowcontrol', 'uint8', 1, 'out', ('Software Flowcontrol', [('Off', 0),
-                                                                                   ('On', 1)]))],
+'elements': [('Baudrate', 'uint8', 1, 'out', {'constant_group': 'Baudrate'}),
+             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity'}),
+             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits'}),
+             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength'}),
+             ('Hardware Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Hardware Flowcontrol'}),
+             ('Software Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Software Flowcontrol'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -288,9 +311,7 @@ Dieser Callback kann durch :func:`Enable Read Callback` aktiviert werden.
 com['packets'].append({
 'type': 'callback',
 'name': 'Error',
-'elements': [('Error', 'uint8', 1, 'out', ('Error', [('Overrun', 1),
-                                                     ('Parity', 2),
-                                                     ('Framing', 4)]))],
+'elements': [('Error', 'uint8', 1, 'out', {'constant_group': 'Error'})],
 'since_firmware': [2, 0, 1],
 'doc': ['c', {
 'en':

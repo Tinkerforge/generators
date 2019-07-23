@@ -6,7 +6,7 @@
 
 # Load Cell Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,35 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Info LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Rate',
+'type': 'uint8',
+'constants': [('10Hz', 0),
+              ('80Hz', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Gain',
+'type': 'uint8',
+'constants': [('128x', 0),
+              ('64x', 1),
+              ('32x', 2)]
+})
 
 weight_doc = {
 'en':
@@ -105,9 +131,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Info LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Info LED Config', [('Off', 0),
-                                                               ('On', 1),
-                                                               ('Show Heartbeat', 2)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Info LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -126,9 +150,7 @@ im Herzschlagmodus betrieben werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Info LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Info LED Config', [('Off', 0),
-                                                                ('On', 1),
-                                                                ('Show Heartbeat', 2)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Info LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -200,11 +222,8 @@ Setzt das aktuell gemessene Gewicht als Leergewicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Rate', 'uint8', 1, 'in', ('Rate', [('10Hz', 0),
-                                                  ('80Hz', 1)])),
-             ('Gain', 'uint8', 1, 'in', ('Gain', [('128x', 0),
-                                                  ('64x', 1),
-                                                  ('32x', 2)]))],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Rate'}),
+             ('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -249,11 +268,8 @@ Die Standardwerte sind 10Hz für die Rate und 128x für den Gain.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Rate', 'uint8', 1, 'out', ('Rate', [('10Hz', 0),
-                                                   ('80Hz', 1)])),
-             ('Gain', 'uint8', 1, 'out', ('Gain', [('128x', 0),
-                                                   ('64x', 1),
-                                                   ('32x', 2)]))],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Rate'}),
+             ('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

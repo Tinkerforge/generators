@@ -403,7 +403,8 @@ class ShellDocPacket(shell_common.ShellPacket):
             c += common.select_lang(for_) + ' '
 
             e = []
-            for element in constant_group.get_elements():
+
+            for element in constant_group.get_elements(self):
                 name = element.get_name().dash
                 if element.get_direction() == 'in':
                     e.append('<{0}>'.format(name))

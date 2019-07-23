@@ -30,9 +30,77 @@ com = {
         'eeprom_bricklet_host',
         'comcu_bricklet_host'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Magnetometer Rate',
+'type': 'uint8',
+'constants': [('2Hz', 0),
+              ('6Hz', 1),
+              ('8Hz', 2),
+              ('10Hz', 3),
+              ('15Hz', 4),
+              ('20Hz', 5),
+              ('25Hz', 6),
+              ('30Hz', 7)]
+})
+
+com['constant_groups'].append({
+'name': 'Gyroscope Range',
+'type': 'uint8',
+'constants': [('2000DPS', 0),
+              ('1000DPS', 1),
+              ('500DPS', 2),
+              ('250DPS', 3),
+              ('125DPS', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Gyroscope Bandwidth',
+'type': 'uint8',
+'constants': [('523Hz', 0),
+              ('230Hz', 1),
+              ('116Hz', 2),
+              ('47Hz', 3),
+              ('23Hz', 4),
+              ('12Hz', 5),
+              ('64Hz', 6),
+              ('32Hz', 7)]
+})
+
+com['constant_groups'].append({
+'name': 'Accelerometer Range',
+'type': 'uint8',
+'constants': [('2G', 0),
+              ('4G', 1),
+              ('8G', 2),
+              ('16G', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Accelerometer Bandwidth',
+'type': 'uint8',
+'constants': [('7 81Hz', 0),
+              ('15 63Hz', 1),
+              ('31 25Hz', 2),
+              ('62 5Hz', 3),
+              ('125Hz', 4),
+              ('250Hz', 5),
+              ('500Hz', 6),
+              ('1000Hz', 7)]
+})
+
+com['constant_groups'].append({
+'name': 'Sensor Fusion',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('On Without Magnetometer', 2),
+              ('On Without Fast Magnetometer Calibration', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -1024,39 +1092,11 @@ gleichen wie bei :func:`Get All Data`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Configuration',
-'elements': [('Magnetometer Rate', 'uint8', 1, 'in', ('Magnetometer Rate', [('2Hz', 0),
-                                                                            ('6Hz', 1),
-                                                                            ('8Hz', 2),
-                                                                            ('10Hz', 3),
-                                                                            ('15Hz', 4),
-                                                                            ('20Hz', 5),
-                                                                            ('25Hz', 6),
-                                                                            ('30Hz', 7)])),
-             ('Gyroscope Range', 'uint8', 1, 'in', ('Gyroscope Range', [('2000DPS', 0),
-                                                                        ('1000DPS', 1),
-                                                                        ('500DPS', 2),
-                                                                        ('250DPS', 3),
-                                                                        ('125DPS', 4)])),
-             ('Gyroscope Bandwidth', 'uint8', 1, 'in', ('Gyroscope Bandwidth', [('523Hz', 0),
-                                                                              ('230Hz', 1),
-                                                                              ('116Hz', 2),
-                                                                              ('47Hz', 3),
-                                                                              ('23Hz', 4),
-                                                                              ('12Hz', 5),
-                                                                              ('64Hz', 6),
-                                                                              ('32Hz', 7)])),
-             ('Accelerometer Range', 'uint8', 1, 'in', ('Accelerometer Range', [('2G', 0),
-                                                                                ('4G', 1),
-                                                                                ('8G', 2),
-                                                                                ('16G', 3)])),
-             ('Accelerometer Bandwidth', 'uint8', 1, 'in', ('Accelerometer Bandwidth', [('7 81Hz', 0),
-                                                                                       ('15 63Hz', 1),
-                                                                                       ('31 25Hz', 2),
-                                                                                       ('62 5Hz', 3),
-                                                                                       ('125Hz', 4),
-                                                                                       ('250Hz', 5),
-                                                                                       ('500Hz', 6),
-                                                                                       ('1000Hz', 7)]))],
+'elements': [('Magnetometer Rate', 'uint8', 1, 'in', {'constant_group': 'Magnetometer Rate'}),
+             ('Gyroscope Range', 'uint8', 1, 'in', {'constant_group': 'Gyroscope Range'}),
+             ('Gyroscope Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Gyroscope Bandwidth'}),
+             ('Accelerometer Range', 'uint8', 1, 'in', {'constant_group': 'Accelerometer Range'}),
+             ('Accelerometer Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Accelerometer Bandwidth'})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
@@ -1094,39 +1134,11 @@ Die Standardwerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Configuration',
-'elements': [('Magnetometer Rate', 'uint8', 1, 'out', ('Magnetometer Rate', [('2Hz', 0),
-                                                                             ('6Hz', 1),
-                                                                             ('8Hz', 2),
-                                                                             ('10Hz', 3),
-                                                                             ('15Hz', 4),
-                                                                             ('20Hz', 5),
-                                                                             ('25Hz', 6),
-                                                                             ('30Hz', 7)])),
-             ('Gyroscope Range', 'uint8', 1, 'out', ('Gyroscope Range', [('2000DPS', 0),
-                                                                         ('1000DPS', 1),
-                                                                         ('500DPS', 2),
-                                                                         ('250DPS', 3),
-                                                                         ('125DPS', 4)])),
-             ('Gyroscope Bandwidth', 'uint8', 1, 'out', ('Gyroscope Bandwidth', [('523Hz', 0),
-                                                                               ('230Hz', 1),
-                                                                               ('116Hz', 2),
-                                                                               ('47Hz', 3),
-                                                                               ('23Hz', 4),
-                                                                               ('12Hz', 5),
-                                                                               ('64Hz', 6),
-                                                                               ('32Hz', 7)])),
-             ('Accelerometer Range', 'uint8', 1, 'out', ('Accelerometer Range', [('2G', 0),
-                                                                                 ('4G', 1),
-                                                                                 ('8G', 2),
-                                                                                 ('16G', 3)])),
-             ('Accelerometer Bandwidth', 'uint8', 1, 'out', ('Accelerometer Bandwidth', [('7 81Hz', 0),
-                                                                                        ('15 63Hz', 1),
-                                                                                        ('31 25Hz', 2),
-                                                                                        ('62 5Hz', 3),
-                                                                                        ('125Hz', 4),
-                                                                                        ('250Hz', 5),
-                                                                                        ('500Hz', 6),
-                                                                                        ('1000Hz', 7)]))],
+'elements': [('Magnetometer Rate', 'uint8', 1, 'out', {'constant_group': 'Magnetometer Rate'}),
+             ('Gyroscope Range', 'uint8', 1, 'out', {'constant_group': 'Gyroscope Range'}),
+             ('Gyroscope Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Gyroscope Bandwidth'}),
+             ('Accelerometer Range', 'uint8', 1, 'out', {'constant_group': 'Accelerometer Range'}),
+             ('Accelerometer Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Accelerometer Bandwidth'})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
@@ -1144,10 +1156,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Fusion Mode',
-'elements': [('Mode', 'uint8', 1, 'in', ('Sensor Fusion', [('Off', 0),
-                                                           ('On', 1),
-                                                           ('On Without Magnetometer', 2),
-                                                           ('On Without Fast Magnetometer Calibration', 3)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Sensor Fusion',})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
@@ -1196,10 +1205,7 @@ Standardmäßig ist der Fusion-Modus aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Fusion Mode',
-'elements': [('Mode', 'uint8', 1, 'out', ('Sensor Fusion', [('Off', 0),
-                                                            ('On', 1),
-                                                            ('On Without Magnetometer', 2),
-                                                            ('On Without Fast Magnetometer Calibration', 3)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Sensor Fusion'})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':

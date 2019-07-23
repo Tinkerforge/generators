@@ -30,9 +30,109 @@ com = {
         'eeprom_bricklet_host',
         'comcu_bricklet_host'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Step Resolution',
+'type': 'uint8',
+'constants': [('1', 8),
+              ('2', 7),
+              ('4', 6),
+              ('8', 5),
+              ('16', 4),
+              ('32', 3),
+              ('64', 2),
+              ('128', 1),
+              ('256', 0)]
+})
+
+com['constant_groups'].append({
+'name': 'Chopper Mode',
+'type': 'uint8',
+'constants': [('Spread Cycle', 0),
+              ('Fast Decay', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Freewheel Mode',
+'type': 'uint8',
+'constants': [('Normal', 0),
+              ('Freewheeling', 1),
+              ('Coil Short LS', 2),
+              ('Coil Short HS', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Current Up Step Increment',
+'type': 'uint8',
+'constants': [('1', 0),
+              ('2', 1),
+              ('4', 2),
+              ('8', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Current Down Step Decrement',
+'type': 'uint8',
+'constants': [('1', 0),
+              ('2', 1),
+              ('8', 2),
+              ('32', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Minimum Current',
+'type': 'uint8',
+'constants': [('Half', 0),
+              ('Quarter', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Stallguard Mode',
+'type': 'uint8',
+'constants': [('Standard', 0),
+              ('Filtered', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Open Load',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('Phase A', 1),
+              ('Phase B', 2),
+              ('Phase AB', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Short To Ground',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('Phase A', 1),
+              ('Phase B', 2),
+              ('Phase AB', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Over Temperature',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('Warning', 1),
+              ('Limit', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'State',
+'type': 'uint8',
+'constants': [('Stop', 1),
+              ('Acceleration', 2),
+              ('Run', 3),
+              ('Deacceleration', 4),
+              ('Direction Change To Forward', 5),
+              ('Direction Change To Backward', 6)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -347,15 +447,7 @@ hat, wird 1500 zurückgegeben.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Step Configuration',
-'elements': [('Step Resolution', 'uint8', 1, 'in', ('Step Resolution', [('1', 8),
-                                                                        ('2', 7),
-                                                                        ('4', 6),
-                                                                        ('8', 5),
-                                                                        ('16', 4),
-                                                                        ('32', 3),
-                                                                        ('64', 2),
-                                                                        ('128', 1),
-                                                                        ('256', 0)])),
+'elements': [('Step Resolution', 'uint8', 1, 'in', {'constant_group': 'Step Resolution'}),
              ('Interpolation', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -398,15 +490,7 @@ Der Standardwert ist 1/256 Schritte mit aktivierter Interpolation.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Step Configuration',
-'elements': [('Step Resolution', 'uint8', 1, 'out', ('Step Resolution', [('1', 8),
-                                                                         ('2', 7),
-                                                                         ('4', 6),
-                                                                         ('8', 5),
-                                                                         ('16', 4),
-                                                                         ('32', 3),
-                                                                         ('64', 2),
-                                                                         ('128', 1),
-                                                                         ('256', 0)])),
+'elements': [('Step Resolution', 'uint8', 1, 'out', {'constant_group': 'Step Resolution'}),
              ('Interpolation', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -812,8 +896,7 @@ com['packets'].append({
              ('Hysteresis Start Value', 'uint8', 1, 'in'), # hstrt if chm=0 0-7
              ('Hysteresis End Value', 'int8', 1, 'in'), # hend if chm=0 -3-12
              ('Sine Wave Offset', 'int8', 1, 'in'), # hend if chm=1 -3-12
-             ('Chopper Mode', 'uint8', 1, 'in', ('Chopper Mode', [('Spread Cycle', 0),
-                                                                  ('Fast Decay', 1)])), # chm
+             ('Chopper Mode', 'uint8', 1, 'in', {'constant_group': 'Chopper Mode'}), # chm
              ('Comparator Blank Time', 'uint8', 1, 'in'), # tbl 0-3
              ('Fast Decay Without Comparator', 'bool', 1, 'in')], # disfdcc
 'since_firmware': [1, 0, 0],
@@ -943,8 +1026,7 @@ com['packets'].append({
              ('Hysteresis Start Value', 'uint8', 1, 'out'), # hstrt if chm=0 0-7
              ('Hysteresis End Value', 'int8', 1, 'out'), # hend if chm=0 -3-12
              ('Sine Wave Offset', 'int8', 1, 'out'), # hend if chm=1 -3-12
-             ('Chopper Mode', 'uint8', 1, 'out', ('Chopper Mode', [('Spread Cycle', 0),
-                                                                   ('Fast Decay', 1)])), # chm
+             ('Chopper Mode', 'uint8', 1, 'out', {'constant_group': 'Chopper Mode'}), # chm
              ('Comparator Blank Time', 'uint8', 1, 'out'), # tbl 0-3
              ('Fast Decay Without Comparator', 'bool', 1, 'out')], # disfdcc
 'since_firmware': [1, 0, 0],
@@ -968,10 +1050,7 @@ com['packets'].append({
              ('Gradient', 'uint8', 1, 'in'), # pwm_grad
              ('Enable Autoscale', 'bool', 1, 'in'), # pwm_autoscale
              ('Force Symmetric', 'bool', 1, 'in'), # pwm_symmetric
-             ('Freewheel Mode', 'uint8', 1, 'in', ('Freewheel Mode', [('Normal', 0),
-                                                                      ('Freewheeling', 1),
-                                                                      ('Coil Short LS', 2),
-                                                                      ('Coil Short HS', 3)]))], # freewheel
+             ('Freewheel Mode', 'uint8', 1, 'in', {'constant_group': 'Freewheel Mode'})], # freewheel
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1060,10 +1139,7 @@ com['packets'].append({
              ('Gradient', 'uint8', 1, 'out'), # pwm_grad
              ('Enable Autoscale', 'bool', 1, 'out'), # pwm_autoscale
              ('Force Symmetric', 'bool', 1, 'out'), # pwm_symmetric
-             ('Freewheel Mode', 'uint8', 1, 'out', ('Freewheel Mode', [('Normal', 0),
-                                                                       ('Freewheeling', 1),
-                                                                       ('Coil Short LS', 2),
-                                                                       ('Coil Short HS', 3)]))], # freewheel (if ihold=0)
+             ('Freewheel Mode', 'uint8', 1, 'out', {'constant_group': 'Freewheel Mode'})], # freewheel (if ihold=0)
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1081,20 +1157,12 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Coolstep Configuration',
 'elements': [('Minimum Stallguard Value', 'uint8', 1, 'in'), # semin 0-15
-             ('Maximum Stallguard Value', 'uint8', 1, 'in'),  # semax 0-15
-             ('Current Up Step Width', 'uint8', 1, 'in', ('Current Up Step Increment', [('1', 0),
-                                                                                        ('2', 1),
-                                                                                        ('4', 2),
-                                                                                        ('8', 3)])),  # seup 0-3
-             ('Current Down Step Width', 'uint8', 1, 'in', ('Current Down Step Decrement', [('1', 0),
-                                                                                            ('2', 1),
-                                                                                            ('8', 2),
-                                                                                            ('32', 3)])),  # sedn 0-3
-             ('Minimum Current', 'uint8', 1, 'in', ('Minimum Current', [('Half', 0),
-                                                                        ('Quarter', 1)])),  # seimin
-             ('Stallguard Threshold Value', 'int8', 1, 'in'),  # sgt -64-63
-             ('Stallguard Mode', 'uint8', 1, 'in', ('Stallguard Mode', [('Standard', 0),
-                                                                        ('Filtered', 1)]))], # sfilt
+             ('Maximum Stallguard Value', 'uint8', 1, 'in'), # semax 0-15
+             ('Current Up Step Width', 'uint8', 1, 'in', {'constant_group': 'Current Up Step Increment'}), # seup 0-3
+             ('Current Down Step Width', 'uint8', 1, 'in', {'constant_group': 'Current Down Step Decrement'}), # sedn 0-3
+             ('Minimum Current', 'uint8', 1, 'in', {'constant_group': 'Minimum Current'}), # seimin
+             ('Stallguard Threshold Value', 'int8', 1, 'in'), # sgt -64-63
+             ('Stallguard Mode', 'uint8', 1, 'in', {'constant_group': 'Stallguard Mode'})], # sfilt
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1187,20 +1255,12 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Coolstep Configuration',
 'elements': [('Minimum Stallguard Value', 'uint8', 1, 'out'), # semin 0-15
-             ('Maximum Stallguard Value', 'uint8', 1, 'out'),  # semax 0-15
-             ('Current Up Step Width', 'uint8', 1, 'out', ('Current Up Step Increment', [('1', 0),
-                                                                                         ('2', 1),
-                                                                                         ('4', 2),
-                                                                                         ('8', 3)])),  # seup 0-3
-             ('Current Down Step Width', 'uint8', 1, 'out', ('Current Down Step Decrement', [('1', 0),
-                                                                                             ('2', 1),
-                                                                                             ('8', 2),
-                                                                                             ('32', 3)])),  # sedn 0-3
-             ('Minimum Current', 'uint8', 1, 'out', ('Minimum Current', [('Half', 0),
-                                                                         ('Quarter', 1)])),  # seimin
-             ('Stallguard Threshold Value', 'int8', 1, 'out'),  # sgt -64-63
-             ('Stallguard Mode', 'uint8', 1, 'out', ('Stallguard Mode', [('Standard', 0),
-                                                                         ('Filtered', 1)]))], # sfilt
+             ('Maximum Stallguard Value', 'uint8', 1, 'out'), # semax 0-15
+             ('Current Up Step Width', 'uint8', 1, 'out', {'constant_group': 'Current Up Step Increment'}), # seup 0-3
+             ('Current Down Step Width', 'uint8', 1, 'out', {'constant_group': 'Current Down Step Decrement'}), # sedn 0-3
+             ('Minimum Current', 'uint8', 1, 'out', {'constant_group': 'Minimum Current'}), # seimin
+             ('Stallguard Threshold Value', 'int8', 1, 'out'), # sgt -64-63
+             ('Stallguard Mode', 'uint8', 1, 'out', {'constant_group': 'Stallguard Mode'})], # sfilt
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1289,17 +1349,9 @@ Gibt die Konfiguration zurück, wie von :func:`Set Misc Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Driver Status',
-'elements': [('Open Load', 'uint8', 1, 'out', ('Open Load', [('None', 0),
-                                                             ('Phase A', 1),
-                                                             ('Phase B', 2),
-                                                             ('Phase AB', 3)])), # ola, olb
-             ('Short To Ground', 'uint8', 1, 'out', ('Short To Ground', [('None', 0),
-                                                                         ('Phase A', 1),
-                                                                         ('Phase B', 2),
-                                                                         ('Phase AB', 3)])), # s2ga, s2gb
-             ('Over Temperature', 'uint8', 1, 'out', ('Over Temperature', [('None', 0),
-                                                                           ('Warning', 1),
-                                                                           ('Limit', 2)])), # otpw, ot
+'elements': [('Open Load', 'uint8', 1, 'out', {'constant_group': 'Open Load'}), # ola, olb
+             ('Short To Ground', 'uint8', 1, 'out', {'constant_group': 'Short To Ground'}), # s2ga, s2gb
+             ('Over Temperature', 'uint8', 1, 'out', {'constant_group': 'Over Temperature'}), # otpw, ot
              ('Motor Stalled', 'bool', 1, 'out'), # stallGuard
              ('Actual Motor Current', 'uint8', 1, 'out'), # CS ACTUAL
              ('Full Step Active', 'bool', 1, 'out'), # fsactive
@@ -1639,18 +1691,8 @@ externe Spannung und der aktuelle Stromverbrauch des Schrittmotors.
 com['packets'].append({
 'type': 'callback',
 'name': 'New State',
-'elements': [('State New',      'uint8', 1, 'out', ('State', [('Stop', 1),
-                                                              ('Acceleration', 2),
-                                                              ('Run', 3),
-                                                              ('Deacceleration', 4),
-                                                              ('Direction Change To Forward', 5),
-                                                              ('Direction Change To Backward', 6)])),
-             ('State Previous', 'uint8', 1, 'out', ('State', [('Stop', 1),
-                                                              ('Acceleration', 2),
-                                                              ('Run', 3),
-                                                              ('Deacceleration', 4),
-                                                              ('Direction Change To Forward', 5),
-                                                              ('Direction Change To Backward', 6)]))],
+'elements': [('State New', 'uint8', 1, 'out', {'constant_group': 'State'}),
+             ('State Previous', 'uint8', 1, 'out', {'constant_group': 'State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

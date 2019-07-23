@@ -6,7 +6,7 @@
 
 # Color Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,31 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Gain',
+'type': 'uint8',
+'constants': [('1x', 0),
+              ('4x', 1),
+              ('16x', 2),
+              ('60x', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Integration Time',
+'type': 'uint8',
+'constants': [('2ms', 0),
+              ('24ms', 1),
+              ('101ms', 2),
+              ('154ms', 3),
+              ('700ms', 4)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -273,15 +295,8 @@ Gibt den Wert zurück, wie von :func:`Set Light` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Config',
-'elements': [('Gain', 'uint8', 1, 'in', ('Gain', [('1x', 0),
-                                                  ('4x', 1),
-                                                  ('16x', 2),
-                                                  ('60x', 3)])),
-             ('Integration Time', 'uint8', 1, 'in', ('Integration Time', [('2ms', 0),
-                                                                          ('24ms', 1),
-                                                                          ('101ms', 2),
-                                                                          ('154ms', 3),
-                                                                          ('700ms', 4)]))],
+'elements': [('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain'}),
+             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -349,15 +364,8 @@ Die Standardwerte sind 60x Verstärkung und 154ms Integrationszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Config',
-'elements': [('Gain', 'uint8', 1, 'out', ('Gain', [('1x', 0),
-                                                   ('4x', 1),
-                                                   ('16x', 2),
-                                                   ('60x', 3)])),
-             ('Integration Time', 'uint8', 1, 'out', ('Integration Time', [('2ms', 0),
-                                                                           ('24ms', 1),
-                                                                           ('101ms', 2),
-                                                                           ('154ms', 3),
-                                                                           ('700ms', 4)]))],
+'elements': [('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain'}),
+             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

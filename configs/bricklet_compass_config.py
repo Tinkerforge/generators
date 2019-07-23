@@ -6,7 +6,7 @@
 
 # Compass Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,21 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Data Rate',
+'type': 'uint8',
+'constants': [('100Hz', 0),
+              ('200Hz', 1),
+              ('400Hz', 2),
+              ('600Hz', 3)]
+})
 
 heading_doc = {
 'en':
@@ -165,10 +177,7 @@ Die :word:`parameters` sind der gleichen wie :func:`Get Magnetic Flux Density`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'in', ('Data Rate', [('100Hz', 0),
-                                                            ('200Hz', 1),
-                                                            ('400Hz', 2),
-                                                            ('600Hz', 3)])),
+'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate'}),
              ('Background Calibration', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -186,7 +195,6 @@ Configuration:
   you will not get new data for a period of 20ms. We highly recommend that
   you keep the background calibration enabled and only disable it if the 20ms
   off-time is a problem in you application.
-
 
 Default values: Data rate of 100Hz and background calibration enabled.
 """,
@@ -213,10 +221,7 @@ Standardwerte: Datenrate 100Hz und Hintergrundkalibrierung aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'out', ('Data Rate', [('100Hz', 0),
-                                                             ('200Hz', 1),
-                                                             ('400Hz', 2),
-                                                             ('600Hz', 3)])),
+'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate',}),
              ('Background Calibration', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

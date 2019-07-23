@@ -6,7 +6,7 @@
 
 # Analog In Bricklet 3.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,20 +28,27 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
-OVERSAMPLING = ('Oversampling', [('32', 0),
-                                 ('64', 1),
-                                 ('128', 2),
-                                 ('256', 3),
-                                 ('512', 4),
-                                 ('1024', 5),
-                                 ('2048', 6),
-                                 ('4096', 7),
-                                 ('8192', 8),
-                                 ('16384', 9)])
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Oversampling',
+'type': 'uint8',
+'constants': [('32', 0),
+              ('64', 1),
+              ('128', 2),
+              ('256', 3),
+              ('512', 4),
+              ('1024', 5),
+              ('2048', 6),
+              ('4096', 7),
+              ('8192', 8),
+              ('16384', 9)]
+})
 
 voltage_doc = {
 'en':
@@ -69,7 +76,7 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Oversampling',
-'elements': [('Oversampling', 'uint8', 1, 'in', OVERSAMPLING)],
+'elements': [('Oversampling', 'uint8', 1, 'in', {'constant_group': 'Oversampling'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -111,7 +118,7 @@ Der Standardwert ist 4096x.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Oversampling',
-'elements': [('Oversampling', 'uint8', 1, 'out', OVERSAMPLING)],
+'elements': [('Oversampling', 'uint8', 1, 'out', {'constant_group': 'Oversampling'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

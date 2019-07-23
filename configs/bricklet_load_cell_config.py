@@ -6,7 +6,7 @@
 
 # Load Cell Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -26,9 +26,27 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Rate',
+'type': 'uint8',
+'constants': [('10Hz', 0),
+              ('80Hz', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Gain',
+'type': 'uint8',
+'constants': [('128x', 0),
+              ('64x', 1),
+              ('32x', 2)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -105,7 +123,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Weight Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -152,7 +170,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Weight Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -384,11 +402,8 @@ Setzt das aktuell gemessene Gewicht als Leergewicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Rate', 'uint8', 1, 'in', ('Rate', [('10Hz', 0),
-                                                  ('80Hz', 1)])),
-             ('Gain', 'uint8', 1, 'in', ('Gain', [('128x', 0),
-                                                  ('64x', 1),
-                                                  ('32x', 2)]))],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Rate'}),
+             ('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -445,11 +460,8 @@ Die Standardwerte sind 10Hz für die Rate und 128x für den Gain.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Rate', 'uint8', 1, 'out', ('Rate', [('10Hz', 0),
-                                                   ('80Hz', 1)])),
-             ('Gain', 'uint8', 1, 'out', ('Gain', [('128x', 0),
-                                                   ('64x', 1),
-                                                   ('32x', 2)]))],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Rate'}),
+             ('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

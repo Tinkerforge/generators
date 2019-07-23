@@ -6,7 +6,7 @@
 
 # Pressure Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
@@ -26,9 +26,20 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Sensor Type',
+'type': 'uint8',
+'constants': [('MPX5500', 0),
+              ('MPXV5004', 1),
+              ('MPX4115A', 2)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -179,7 +190,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Pressure Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -226,7 +237,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Pressure Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -246,7 +257,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -293,7 +304,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -372,9 +383,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Type',
-'elements': [('Sensor', 'uint8', 1, 'in', ('Sensor Type', [('MPX5500', 0),
-                                                           ('MPXV5004', 1),
-                                                           ('MPX4115A', 2)]))],
+'elements': [('Sensor', 'uint8', 1, 'in', {'constant_group': 'Sensor Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -403,9 +412,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Type',
-'elements': [('Sensor', 'uint8', 1, 'out', ('Sensor Type', [('MPX5500', 0),
-                                                            ('MPXV5004', 1),
-                                                            ('MPX4115A', 2)]))],
+'elements': [('Sensor', 'uint8', 1, 'out', {'constant_group': 'Sensor Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

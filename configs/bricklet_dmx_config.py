@@ -25,15 +25,40 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'DMX Mode',
+'type': 'uint8',
+'constants': [('Master', 0),
+              ('Slave', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Communication LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Communication', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Error LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Error', 3)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set DMX Mode',
-'elements': [('DMX Mode', 'uint8', 1, 'in', ('DMX Mode', [('Master', 0),
-                                                          ('Slave', 1)]))],
+'elements': [('DMX Mode', 'uint8', 1, 'in', {'constant_group': 'DMX Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -58,8 +83,7 @@ Der Standardwert ist 0 (Master).
 com['packets'].append({
 'type': 'function',
 'name': 'Get DMX Mode',
-'elements': [('DMX Mode', 'uint8', 1, 'out', ('DMX Mode', [('Master', 0),
-                                                           ('Slave', 1)]))],
+'elements': [('DMX Mode', 'uint8', 1, 'out', {'constant_group': 'DMX Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -269,10 +293,7 @@ Gibt die aktuelle Anzahl an Overrun und Framing Fehlern zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Communication LED Config', [('Off', 0),
-                                                                        ('On', 1),
-                                                                        ('Show Heartbeat', 2),
-                                                                        ('Show Communication', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -300,10 +321,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Communication LED Config', [('Off', 0),
-                                                                         ('On', 1),
-                                                                         ('Show Heartbeat', 2),
-                                                                         ('Show Communication', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -320,10 +338,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Error LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Error LED Config', [('Off', 0),
-                                                                ('On', 1),
-                                                                ('Show Heartbeat', 2),
-                                                                ('Show Error', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -357,10 +372,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Error LED Config', [('Off', 0),
-                                                                 ('On', 1),
-                                                                 ('Show Heartbeat', 2),
-                                                                 ('Show Error', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

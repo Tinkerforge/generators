@@ -6,7 +6,7 @@
 
 # Analog In Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -27,9 +27,23 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Range',
+'type': 'uint8',
+'constants': [('Automatic', 0),
+              ('Up To 6V', 1),
+              ('Up To 10V', 2),
+              ('Up To 36V', 3),
+              ('Up To 45V', 4),
+              ('Up To 3V', 5)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -196,7 +210,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -243,7 +257,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -263,7 +277,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -310,7 +324,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -497,12 +511,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Range',
-'elements': [('Range', 'uint8', 1, 'in', ('Range', [('Automatic', 0),
-                                                    ('Up To 6V', 1),
-                                                    ('Up To 10V', 2),
-                                                    ('Up To 36V', 3),
-                                                    ('Up To 45V', 4),
-                                                    ('Up To 3V', 5)]))],
+'elements': [('Range', 'uint8', 1, 'in', {'constant_group': 'Range'})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -537,12 +546,7 @@ Der Standardbereich ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Range',
-'elements': [('Range', 'uint8', 1, 'out', ('Range', [('Automatic', 0),
-                                                     ('Up To 6V', 1),
-                                                     ('Up To 10V', 2),
-                                                     ('Up To 36V', 3),
-                                                     ('Up To 45V', 4),
-                                                     ('Up To 3V', 5)]))],
+'elements': [('Range', 'uint8', 1, 'out', {'constant_group': 'Range'})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':

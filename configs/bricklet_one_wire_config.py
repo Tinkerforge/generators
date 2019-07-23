@@ -25,15 +25,29 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
-ONE_WIRE_STATUS = ('Status', [('OK', 0),
-                              ('Busy', 1),
-                              ('No Presence', 2),
-                              ('Timeout', 3),
-                              ('Error', 4)])
+com['constant_groups'].append({
+'name': 'Status',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Busy', 1),
+              ('No Presence', 2),
+              ('Timeout', 3),
+              ('Error', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Communication LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Communication', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -41,7 +55,7 @@ com['packets'].append({
 'elements': [('Identifier Length', 'uint16', 1, 'out'),
              ('Identifier Chunk Offset', 'uint16', 1, 'out'),
              ('Identifier Chunk Data', 'uint64', 7, 'out'),
-             ('Status', 'uint8', 1, 'out', ONE_WIRE_STATUS)],
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'high_level': {'stream_out': {'name': 'Identifier'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -71,7 +85,7 @@ von Maxim aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Reset Bus',
-'elements': [('Status', 'uint8', 1, 'out', ONE_WIRE_STATUS)],
+'elements': [('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -89,7 +103,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Write',
 'elements': [('Data', 'uint8', 1, 'in'),
-             ('Status', 'uint8', 1, 'out', ONE_WIRE_STATUS)],
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -107,7 +121,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Read',
 'elements': [('Data', 'uint8', 1, 'out'),
-             ('Status', 'uint8', 1, 'out', ONE_WIRE_STATUS)],
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -126,7 +140,7 @@ com['packets'].append({
 'name': 'Write Command',
 'elements': [('Identifier', 'uint64', 1, 'in'),
              ('Command', 'uint8', 1, 'in'),
-             ('Status', 'uint8', 1, 'out', ONE_WIRE_STATUS)],
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -155,10 +169,7 @@ Operation verwendet, um den Befehl zu übertragen.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Communication LED Config', [('Off', 0),
-                                                                        ('On', 1),
-                                                                        ('Show Heartbeat', 2),
-                                                                        ('Show Communication', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -185,10 +196,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Communication LED Config', [('Off', 0),
-                                                                         ('On', 1),
-                                                                         ('Show Heartbeat', 2),
-                                                                         ('Show Communication', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

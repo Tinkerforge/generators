@@ -6,135 +6,6 @@
 
 # RED Brick communication config
 
-ERROR_CODE_CONSTANTS = ('Error Code', [('Success', 0),
-                                       ('Unknown Error', 1),
-                                       ('Invalid Operation', 2),
-                                       ('Operation Aborted', 3),
-                                       ('Internal Error', 4),
-                                       ('Unknown Session Id', 5),
-                                       ('No Free Session Id', 6),
-                                       ('Unknown Object Id', 7),
-                                       ('No Free Object Id', 8),
-                                       ('Object Is Locked', 9),
-                                       ('No More Data', 10),
-                                       ('Wrong List Item Type', 11),
-                                       ('Program Is Purged', 12),
-                                       ('Invalid Parameter', 128),
-                                       ('No Free Memory', 129),
-                                       ('No Free Space', 130),
-                                       ('Access Denied', 121),
-                                       ('Already Exists', 132),
-                                       ('Does Not Exist', 133),
-                                       ('Interrupted', 134),
-                                       ('Is Directory', 135),
-                                       ('Not A Directory', 136),
-                                       ('Would Block', 137),
-                                       ('Overflow', 138),
-                                       ('Bad File Descriptor', 139),
-                                       ('Out Of Range', 140),
-                                       ('Name Too Long', 141),
-                                       ('Invalid Seek', 142),
-                                       ('Not Supported', 143),
-                                       ('Too Many Open Files', 144)])
-
-OBJECT_TYPE_CONSTANTS = ('Object Type', [('String', 0),
-                                         ('List', 1),
-                                         ('File', 2),
-                                         ('Directory', 3),
-                                         ('Process', 4),
-                                         ('Program', 5)])
-
-FILE_TYPE_CONSTANTS = ('File Type', [('Unknown', 0),
-                                     ('Regular', 1),
-                                     ('Directory', 2),
-                                     ('Character', 3),
-                                     ('Block', 4),
-                                     ('FIFO', 5),
-                                     ('Symlink', 6),
-                                     ('Socket', 7),
-                                     ('Pipe', 8)])
-
-FILE_FLAG_CONSTANTS = ('File Flag', [('Read Only', 0x0001),
-                                     ('Write Only', 0x0002),
-                                     ('Read Write', 0x0004),
-                                     ('Append', 0x0008),
-                                     ('Create', 0x0010),
-                                     ('Exclusive', 0x0020),
-                                     ('Non Blocking', 0x0040),
-                                     ('Truncate', 0x0080),
-                                     ('Temporary', 0x0100),
-                                     ('Replace', 0x0200)])
-
-PIPE_FLAG_CONSTANTS = ('Pipe Flag', [('Non Blocking Read', 0x0001),
-                                     ('Non Blocking Write', 0x0002)])
-
-# the permission bit values match the UNIX permission bit values, this allows
-# to use the normal octal way to write them, e.g. 0755
-FILE_PERMISSION_CONSTANTS = ('File Permission', [('User All', 0o0700),
-                                                 ('User Read', 0o0400),
-                                                 ('User Write', 0o0200),
-                                                 ('User Execute', 0o0100),
-                                                 ('Group All', 0o0070),
-                                                 ('Group Read', 0o0040),
-                                                 ('Group Write', 0o0020),
-                                                 ('Group Execute', 0o0010),
-                                                 ('Others All', 0o0007),
-                                                 ('Others Read', 0o0004),
-                                                 ('Others Write', 0o0002),
-                                                 ('Others Execute', 0o0001)])
-
-FILE_ORIGIN_CONSTANTS = ('File Origin', [('Beginning', 0),
-                                         ('Current', 1),
-                                         ('End', 2)])
-
-FILE_EVENT_CONSTANTS = ('File Event', [('Readable', 0x0001),
-                                       ('Writable', 0x0002)])
-
-DIRECTORY_ENTRY_TYPE_CONSTANTS = ('Directory Entry Type', [('Unknown', 0),
-                                                           ('Regular', 1),
-                                                           ('Directory', 2),
-                                                           ('Character', 3),
-                                                           ('Block', 4),
-                                                           ('FIFO', 5),
-                                                           ('Symlink', 6),
-                                                           ('Socket', 7)])
-
-DIRECTORY_FLAG_CONSTANTS = ('Directory Flag', [('Recursive', 0x0001),
-                                               ('Exclusive', 0x0002)])
-
-# the signal numbers match the UNIX signal numbers on purpose
-PROCESS_SIGNAL_CONSTANTS = ('Process Signal', [('Interrupt', 2),
-                                               ('Quit', 3),
-                                               ('Abort', 6),
-                                               ('Kill', 9),
-                                               ('User1', 10),
-                                               ('User2', 12),
-                                               ('Terminate', 15),
-                                               ('Continue', 18),
-                                               ('Stop', 19)])
-
-PROCESS_STATE_CONSTANTS = ('Process State', [('Unknown', 0),
-                                             ('Running', 1),
-                                             ('Error', 2),
-                                             ('Exited', 3),
-                                             ('Killed', 4),
-                                             ('Stopped', 5)])
-
-PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('Program Stdio Redirection', [('Dev Null', 0),
-                                                                     ('Pipe', 1),
-                                                                     ('File', 2),
-                                                                     ('Individual Log', 3),
-                                                                     ('Continuous Log', 4),
-                                                                     ('Stdout', 5)])
-
-PROGRAM_START_MODE_CONSTANTS = ('Program Start Mode', [('Never', 0),
-                                                       ('Always', 1),
-                                                       ('Interval', 2),
-                                                       ('Cron', 3)])
-
-PROGRAM_SCHEDULER_STATE_CONSTANTS = ('Program Scheduler State', [('Stopped', 0),
-                                                                 ('Running', 1)])
-
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -153,9 +24,199 @@ com = {
     'features': [
         'brick_get_identity'
      ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Error Code',
+'type': 'uint8',
+'constants': [('Success', 0),
+              ('Unknown Error', 1),
+              ('Invalid Operation', 2),
+              ('Operation Aborted', 3),
+              ('Internal Error', 4),
+              ('Unknown Session Id', 5),
+              ('No Free Session Id', 6),
+              ('Unknown Object Id', 7),
+              ('No Free Object Id', 8),
+              ('Object Is Locked', 9),
+              ('No More Data', 10),
+              ('Wrong List Item Type', 11),
+              ('Program Is Purged', 12),
+              ('Invalid Parameter', 128),
+              ('No Free Memory', 129),
+              ('No Free Space', 130),
+              ('Access Denied', 121),
+              ('Already Exists', 132),
+              ('Does Not Exist', 133),
+              ('Interrupted', 134),
+              ('Is Directory', 135),
+              ('Not A Directory', 136),
+              ('Would Block', 137),
+              ('Overflow', 138),
+              ('Bad File Descriptor', 139),
+              ('Out Of Range', 140),
+              ('Name Too Long', 141),
+              ('Invalid Seek', 142),
+              ('Not Supported', 143),
+              ('Too Many Open Files', 144)]
+})
+
+com['constant_groups'].append({
+'name': 'Object Type',
+'type': 'uint8',
+'constants': [('String', 0),
+              ('List', 1),
+              ('File', 2),
+              ('Directory', 3),
+              ('Process', 4),
+              ('Program', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'File Flag',
+'type': 'uint32',
+'constants': [('Read Only', 0x0001),
+              ('Write Only', 0x0002),
+              ('Read Write', 0x0004),
+              ('Append', 0x0008),
+              ('Create', 0x0010),
+              ('Exclusive', 0x0020),
+              ('Non Blocking', 0x0040),
+              ('Truncate', 0x0080),
+              ('Temporary', 0x0100),
+              ('Replace', 0x0200)]
+})
+
+# the permission bit values match the UNIX permission bit values, this allows
+# to use the normal octal way to write them, e.g. 0755
+com['constant_groups'].append({
+'name': 'File Permission',
+'type': 'uint16',
+'constants': [('User All', 0o0700),
+              ('User Read', 0o0400),
+              ('User Write', 0o0200),
+              ('User Execute', 0o0100),
+              ('Group All', 0o0070),
+              ('Group Read', 0o0040),
+              ('Group Write', 0o0020),
+              ('Group Execute', 0o0010),
+              ('Others All', 0o0007),
+              ('Others Read', 0o0004),
+              ('Others Write', 0o0002),
+              ('Others Execute', 0o0001)]
+})
+
+com['constant_groups'].append({
+'name': 'Pipe Flag',
+'type': 'uint32',
+'constants': [('Non Blocking Read', 0x0001),
+              ('Non Blocking Write', 0x0002)]
+})
+
+com['constant_groups'].append({
+'name': 'File Type',
+'type': 'uint8',
+'constants': [('Unknown', 0),
+              ('Regular', 1),
+              ('Directory', 2),
+              ('Character', 3),
+              ('Block', 4),
+              ('FIFO', 5),
+              ('Symlink', 6),
+              ('Socket', 7),
+              ('Pipe', 8)]
+})
+
+com['constant_groups'].append({
+'name': 'File Origin',
+'type': 'uint8',
+'constants': [('Beginning', 0),
+              ('Current', 1),
+              ('End', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'File Event',
+'type': 'uint16',
+'constants': [('Readable', 0x0001),
+              ('Writable', 0x0002)]
+})
+
+com['constant_groups'].append({
+'name': 'Directory Entry Type',
+'type': 'uint8',
+'constants': [('Unknown', 0),
+              ('Regular', 1),
+              ('Directory', 2),
+              ('Character', 3),
+              ('Block', 4),
+              ('FIFO', 5),
+              ('Symlink', 6),
+              ('Socket', 7)]
+})
+
+com['constant_groups'].append({
+'name': 'Directory Flag',
+'type': 'uint32',
+'constants': [('Recursive', 0x0001),
+              ('Exclusive', 0x0002)]
+})
+
+# the signal numbers match the UNIX signal numbers on purpose
+com['constant_groups'].append({
+'name': 'Process Signal',
+'type': 'uint8',
+'constants': [('Interrupt', 2),
+              ('Quit', 3),
+              ('Abort', 6),
+              ('Kill', 9),
+              ('User1', 10),
+              ('User2', 12),
+              ('Terminate', 15),
+              ('Continue', 18),
+              ('Stop', 19)]
+})
+
+com['constant_groups'].append({
+'name': 'Process State',
+'type': 'uint8',
+'constants': [('Unknown', 0),
+              ('Running', 1),
+              ('Error', 2),
+              ('Exited', 3),
+              ('Killed', 4),
+              ('Stopped', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'Program Stdio Redirection',
+'type': 'uint8',
+'constants': [('Dev Null', 0),
+              ('Pipe', 1),
+              ('File', 2),
+              ('Individual Log', 3),
+              ('Continuous Log', 4),
+              ('Stdout', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'Program Start Mode',
+'type': 'uint8',
+'constants': [('Never', 0),
+              ('Always', 1),
+              ('Interval', 2),
+              ('Cron', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Program Scheduler State',
+'type': 'uint8',
+'constants': [('Stopped', 0),
+              ('Running', 1)]
+})
 
 com['doc'] = {
 'en':
@@ -256,7 +317,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Create Session',
 'elements': [('Lifetime', 'uint32', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Session Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -273,7 +334,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Expire Session',
 'elements': [('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -305,7 +366,7 @@ com['packets'].append({
 'name': 'Keep Session Alive',
 'elements': [('Session Id', 'uint16', 1, 'in'),
              ('Lifetime', 'uint32', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -326,7 +387,7 @@ com['packets'].append({
 'name': 'Release Object',
 'elements': [('Object Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -366,7 +427,7 @@ com['packets'].append({
 'elements': [('Length To Reserve', 'uint32', 1, 'in'),
              ('Buffer', 'string', 58, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -389,7 +450,7 @@ com['packets'].append({
 'name': 'Truncate String',
 'elements': [('String Id', 'uint16', 1, 'in'),
              ('Length', 'uint32', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -407,7 +468,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get String Length',
 'elements': [('String Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Length', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -427,7 +488,7 @@ com['packets'].append({
 'elements': [('String Id', 'uint16', 1, 'in'),
              ('Offset', 'uint32', 1, 'in'),
              ('Buffer', 'string', 58, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -447,7 +508,7 @@ com['packets'].append({
 'name': 'Get String Chunk',
 'elements': [('String Id', 'uint16', 1, 'in'),
              ('Offset', 'uint32', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Buffer', 'string', 63, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -471,7 +532,7 @@ com['packets'].append({
 'name': 'Allocate List',
 'elements': [('Length To Reserve', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('List Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -496,7 +557,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get List Length',
 'elements': [('List Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Length', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -516,9 +577,9 @@ com['packets'].append({
 'elements': [('List Id', 'uint16', 1, 'in'),
              ('Index', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Item Object Id', 'uint16', 1, 'out'),
-             ('Type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
+             ('Type', 'uint8', 1, 'out', {'constant_group': 'Object Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -546,7 +607,7 @@ com['packets'].append({
 'name': 'Append To List',
 'elements': [('List Id', 'uint16', 1, 'in'),
              ('Item Object Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -567,7 +628,7 @@ com['packets'].append({
 'name': 'Remove From List',
 'elements': [('List Id', 'uint16', 1, 'in'),
              ('Index', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -591,12 +652,12 @@ com['packets'].append({
 'type': 'function',
 'name': 'Open File',
 'elements': [('Name String Id', 'uint16', 1, 'in'),
-             ('Flags', 'uint32', 1, 'in', FILE_FLAG_CONSTANTS),
-             ('Permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
+             ('Flags', 'uint32', 1, 'in', {'constant_group': 'File Flag'}),
+             ('Permissions', 'uint16', 1, 'in', {'constant_group': 'File Permission'}),
              ('UID', 'uint32', 1, 'in'),
              ('GID', 'uint32', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('File Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -653,10 +714,10 @@ Returns the object ID of the new file object and the resulting error code.
 com['packets'].append({
 'type': 'function',
 'name': 'Create Pipe',
-'elements': [('Flags', 'uint32', 1, 'in', PIPE_FLAG_CONSTANTS),
+'elements': [('Flags', 'uint32', 1, 'in', {'constant_group': 'Pipe Flag'}),
              ('Length', 'uint64', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('File Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -686,11 +747,11 @@ com['packets'].append({
 'name': 'Get File Info',
 'elements': [('File Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('Type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
+             ('Type', 'uint8', 1, 'out', {'constant_group': 'File Type'}),
              ('Name String Id', 'uint16', 1, 'out'),
              ('Flags', 'uint32', 1, 'out'),
-             ('Permissions', 'uint16', 1, 'out', FILE_PERMISSION_CONSTANTS),
+             ('Permissions', 'uint16', 1, 'out', {'constant_group': 'File Permission'}),
              ('UID', 'uint32', 1, 'out'),
              ('GID', 'uint32', 1, 'out'),
              ('Length', 'uint64', 1, 'out'),
@@ -736,7 +797,7 @@ com['packets'].append({
 'name': 'Read File',
 'elements': [('File Id', 'uint16', 1, 'in'),
              ('Length To Read', 'uint8', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Buffer', 'uint8', 62, 'out'),
              ('Length Read', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -794,7 +855,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Abort Async File Read',
 'elements': [('File Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -817,7 +878,7 @@ com['packets'].append({
 'elements': [('File Id', 'uint16', 1, 'in'),
              ('Buffer', 'uint8', 61, 'in'),
              ('Length To Write', 'uint8', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Length Written', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -892,8 +953,8 @@ com['packets'].append({
 'name': 'Set File Position',
 'elements': [('File Id', 'uint16', 1, 'in'),
              ('Offset', 'int64', 1, 'in'),
-             ('Origin', 'uint8', 1, 'in', FILE_ORIGIN_CONSTANTS),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Origin', 'uint8', 1, 'in', {'constant_group': 'File Origin'}),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Position', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -922,7 +983,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get File Position',
 'elements': [('File Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Position', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -944,8 +1005,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set File Events',
 'elements': [('File Id', 'uint16', 1, 'in'),
-             ('Events', 'uint16', 1, 'in', FILE_EVENT_CONSTANTS),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Events', 'uint16', 1, 'in', {'constant_group': 'File Event'}),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -961,8 +1022,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get File Events',
 'elements': [('File Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('Events', 'uint16', 1, 'out', FILE_EVENT_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
+             ('Events', 'uint16', 1, 'out', {'constant_group': 'File Event'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -978,7 +1039,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Async File Read',
 'elements': [('File Id', 'uint16', 1, 'out'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Buffer', 'uint8', 60, 'out'),
              ('Length Read', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -998,7 +1059,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Async File Write',
 'elements': [('File Id', 'uint16', 1, 'out'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Length Written', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1017,7 +1078,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'File Events Occurred',
 'elements': [('File Id', 'uint16', 1, 'out'),
-             ('Events', 'uint16', 1, 'out', FILE_EVENT_CONSTANTS)],
+             ('Events', 'uint16', 1, 'out', {'constant_group': 'File Event'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1038,7 +1099,7 @@ com['packets'].append({
 'name': 'Open Directory',
 'elements': [('Name String Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Directory Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1066,7 +1127,7 @@ com['packets'].append({
 'name': 'Get Directory Name',
 'elements': [('Directory Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Name String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1086,9 +1147,9 @@ com['packets'].append({
 'name': 'Get Next Directory Entry',
 'elements': [('Directory Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Name String Id', 'uint16', 1, 'out'),
-             ('Type', 'uint8', 1, 'out', DIRECTORY_ENTRY_TYPE_CONSTANTS)],
+             ('Type', 'uint8', 1, 'out', {'constant_group': 'Directory Entry Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1119,7 +1180,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Rewind Directory',
 'elements': [('Directory Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1136,11 +1197,11 @@ com['packets'].append({
 'type': 'function',
 'name': 'Create Directory',
 'elements': [('Name String Id', 'uint16', 1, 'in'),
-             ('Flags', 'uint32', 1, 'in', DIRECTORY_FLAG_CONSTANTS),
-             ('Permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
+             ('Flags', 'uint32', 1, 'in', {'constant_group': 'Directory Flag'}),
+             ('Permissions', 'uint16', 1, 'in', {'constant_group': 'File Permission'}),
              ('UID', 'uint32', 1, 'in'),
              ('GID', 'uint32', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1161,7 +1222,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Processes',
 'elements': [('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Processes List Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1187,7 +1248,7 @@ com['packets'].append({
              ('Stdout File Id', 'uint16', 1, 'in'),
              ('Stderr File Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Process Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1204,8 +1265,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Kill Process',
 'elements': [('Process Id', 'uint16', 1, 'in'),
-             ('Signal', 'uint8', 1, 'in', PROCESS_SIGNAL_CONSTANTS),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Signal', 'uint8', 1, 'in', {'constant_group': 'Process Signal'}),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1235,7 +1296,7 @@ com['packets'].append({
 'name': 'Get Process Command',
 'elements': [('Process Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Executable String Id', 'uint16', 1, 'out'),
              ('Arguments List Id', 'uint16', 1, 'out'),
              ('Environment List Id', 'uint16', 1, 'out'),
@@ -1258,7 +1319,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Process Identity',
 'elements': [('Process Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('PID', 'uint32', 1, 'out'),
              ('UID', 'uint32', 1, 'out'),
              ('GID', 'uint32', 1, 'out')],
@@ -1283,7 +1344,7 @@ com['packets'].append({
 'name': 'Get Process Stdio',
 'elements': [('Process Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Stdin File Id', 'uint16', 1, 'out'),
              ('Stdout File Id', 'uint16', 1, 'out'),
              ('Stderr File Id', 'uint16', 1, 'out')],
@@ -1304,8 +1365,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Process State',
 'elements': [('Process Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('State', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
+             ('State', 'uint8', 1, 'out', {'constant_group': 'Process State'}),
              ('Timestamp', 'uint64', 1, 'out'),
              ('Exit Code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1354,7 +1415,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Process State Changed',
 'elements': [('Process Id', 'uint16', 1, 'out'),
-             ('State', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('State', 'uint8', 1, 'out', {'constant_group': 'Process State'}),
              ('Timestamp', 'uint64', 1, 'out'),
              ('Exit Code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1376,7 +1437,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Programs',
 'elements': [('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Programs List Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1394,7 +1455,7 @@ com['packets'].append({
 'name': 'Define Program',
 'elements': [('Identifier String Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Program Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1412,7 +1473,7 @@ com['packets'].append({
 'name': 'Purge Program',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Cookie', 'uint32', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1429,7 +1490,7 @@ com['packets'].append({
 'name': 'Get Program Identifier',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Identifier String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1447,7 +1508,7 @@ com['packets'].append({
 'name': 'Get Program Root Directory',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Root Directory String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1469,7 +1530,7 @@ com['packets'].append({
              ('Arguments List Id', 'uint16', 1, 'in'),
              ('Environment List Id', 'uint16', 1, 'in'),
              ('Working Directory String Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1487,7 +1548,7 @@ com['packets'].append({
 'name': 'Get Program Command',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Executable String Id', 'uint16', 1, 'out'),
              ('Arguments List Id', 'uint16', 1, 'out'),
              ('Environment List Id', 'uint16', 1, 'out'),
@@ -1508,13 +1569,13 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Program Stdio Redirection',
 'elements': [('Program Id', 'uint16', 1, 'in'),
-             ('Stdin Redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stdin Redirection', 'uint8', 1, 'in', {'constant_group': 'Program Stdio Redirection'}),
              ('Stdin File Name String Id', 'uint16', 1, 'in'),
-             ('Stdout Redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stdout Redirection', 'uint8', 1, 'in', {'constant_group': 'Program Stdio Redirection'}),
              ('Stdout File Name String Id', 'uint16', 1, 'in'),
-             ('Stderr Redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stderr Redirection', 'uint8', 1, 'in', {'constant_group': 'Program Stdio Redirection'}),
              ('Stderr File Name String Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1532,12 +1593,12 @@ com['packets'].append({
 'name': 'Get Program Stdio Redirection',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('Stdin Redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
+             ('Stdin Redirection', 'uint8', 1, 'out', {'constant_group': 'Program Stdio Redirection'}),
              ('Stdin File Name String Id', 'uint16', 1, 'out'),
-             ('Stdout Redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stdout Redirection', 'uint8', 1, 'out', {'constant_group': 'Program Stdio Redirection'}),
              ('Stdout File Name String Id', 'uint16', 1, 'out'),
-             ('Stderr Redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stderr Redirection', 'uint8', 1, 'out', {'constant_group': 'Program Stdio Redirection'}),
              ('Stderr File Name String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1555,11 +1616,11 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Program Schedule',
 'elements': [('Program Id', 'uint16', 1, 'in'),
-             ('Start Mode', 'uint8', 1, 'in', PROGRAM_START_MODE_CONSTANTS),
+             ('Start Mode', 'uint8', 1, 'in', {'constant_group': 'Program Start Mode'}),
              ('Continue After Error', 'bool', 1, 'in'),
              ('Start Interval', 'uint32', 1, 'in'),
              ('Start Fields String Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1576,8 +1637,8 @@ com['packets'].append({
 'name': 'Get Program Schedule',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('Start Mode', 'uint8', 1, 'out', PROGRAM_START_MODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
+             ('Start Mode', 'uint8', 1, 'out', {'constant_group': 'Program Start Mode'}),
              ('Continue After Error', 'bool', 1, 'out'),
              ('Start Interval', 'uint32', 1, 'out'),
              ('Start Fields String Id', 'uint16', 1, 'out')],
@@ -1597,8 +1658,8 @@ com['packets'].append({
 'name': 'Get Program Scheduler State',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('State', 'uint8', 1, 'out', PROGRAM_SCHEDULER_STATE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
+             ('State', 'uint8', 1, 'out', {'constant_group': 'Program Scheduler State'}),
              ('Timestamp', 'uint64', 1, 'out'),
              ('Message String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1617,7 +1678,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Continue Program Schedule',
 'elements': [('Program Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1633,7 +1694,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Start Program',
 'elements': [('Program Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1650,7 +1711,7 @@ com['packets'].append({
 'name': 'Get Last Spawned Program Process',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Process Id', 'uint16', 1, 'out'),
              ('Timestamp', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1669,7 +1730,7 @@ com['packets'].append({
 'name': 'Get Custom Program Option Names',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Names List Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1688,7 +1749,7 @@ com['packets'].append({
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Name String Id', 'uint16', 1, 'in'),
              ('Value String Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1706,7 +1767,7 @@ com['packets'].append({
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Name String Id', 'uint16', 1, 'in'),
              ('Session Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Value String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1724,7 +1785,7 @@ com['packets'].append({
 'name': 'Remove Custom Program Option',
 'elements': [('Program Id', 'uint16', 1, 'in'),
              ('Name String Id', 'uint16', 1, 'in'),
-             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+             ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

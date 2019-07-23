@@ -6,26 +6,6 @@
 
 # Outdoor Weather Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
-
-WIND_DIRECTION = ('Wind Direction', [('N', 0),
-                                     ('NNE', 1),
-                                     ('NE', 2),
-                                     ('ENE', 3),
-                                     ('E', 4),
-                                     ('ESE', 5),
-                                     ('SE', 6),
-                                     ('SSE', 7),
-                                     ('S', 8),
-                                     ('SSW', 9),
-                                     ('SW', 10),
-                                     ('WSW', 11),
-                                     ('W', 12),
-                                     ('WNW', 13),
-                                     ('NW', 14),
-                                     ('NNW', 15),
-                                     ('Error', 255)])
-
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -45,9 +25,32 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Wind Direction',
+'type': 'uint8',
+'constants': [('N', 0),
+              ('NNE', 1),
+              ('NE', 2),
+              ('ENE', 3),
+              ('E', 4),
+              ('ESE', 5),
+              ('SE', 6),
+              ('SSE', 7),
+              ('S', 8),
+              ('SSW', 9),
+              ('SW', 10),
+              ('WSW', 11),
+              ('W', 12),
+              ('WNW', 13),
+              ('NW', 14),
+              ('NNW', 15),
+              ('Error', 255)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -126,7 +129,7 @@ com['packets'].append({
              ('Wind Speed', 'uint32', 1, 'out'),   # in m/10s
              ('Gust Speed', 'uint32', 1, 'out'),   # in m/10s
              ('Rain', 'uint32', 1, 'out'),         # in mm/10
-             ('Wind Direction', 'uint8', 1, 'out', WIND_DIRECTION),
+             ('Wind Direction', 'uint8', 1, 'out', {'constant_group': 'Wind Direction'}),
              ('Battery Low', 'bool', 1, 'out'),    # true = battery low
              ('Last Change', 'uint16', 1, 'out')], # in seconds
 'since_firmware': [1, 0, 0],
@@ -281,7 +284,7 @@ com['packets'].append({
              ('Wind Speed', 'uint32', 1, 'out'),   # in m/10s
              ('Gust Speed', 'uint32', 1, 'out'),   # in m/10s
              ('Rain', 'uint32', 1, 'out'),         # in mm/10
-             ('Wind Direction', 'uint8', 1, 'out', WIND_DIRECTION),
+             ('Wind Direction', 'uint8', 1, 'out', {'constant_group': 'Wind Direction'}),
              ('Battery Low', 'bool', 1, 'out')],   # true = battery low
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

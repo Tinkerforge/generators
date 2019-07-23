@@ -6,8 +6,6 @@
 
 # Piezo Speaker Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
-
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -27,17 +25,31 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Beep Duration',
+'type': 'uint32',
+'constants': [('Off', 0),
+              ('Infinite', 4294967295)]
+})
+
+com['constant_groups'].append({
+'name': 'Alarm Duration',
+'type': 'uint32',
+'constants': [('Off', 0),
+              ('Infinite', 4294967295)]
+})
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Beep',
 'elements': [('Frequency', 'uint16', 1, 'in'),
              ('Volume', 'uint8', 1, 'in'),
-             ('Duration', 'uint32', 1, 'in', ('Beep Duration', [('Off', 0),
-                                                                ('Infinite', 4294967295)]))],
+             ('Duration', 'uint32', 1, 'in', {'constant_group': 'Beep Duration'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -83,8 +95,7 @@ com['packets'].append({
 'name': 'Get Beep',
 'elements': [('Frequency', 'uint16', 1, 'out'),
              ('Volume', 'uint8', 1, 'out'),
-             ('Duration', 'uint32', 1, 'out', ('Beep Duration', [('Off', 0),
-                                                                 ('Infinite', 4294967295)])),
+             ('Duration', 'uint32', 1, 'out', {'constant_group': 'Beep Duration'}),
              ('Duration Remaining', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -116,8 +127,7 @@ com['packets'].append({
              ('Step Size', 'uint16', 1, 'in'),
              ('Step Delay', 'uint16', 1, 'in'),
              ('Volume', 'uint8', 1, 'in'),
-             ('Duration', 'uint32', 1, 'in', ('Alarm Duration', [('Off', 0),
-                                                                 ('Infinite', 4294967295)]))],
+             ('Duration', 'uint32', 1, 'in', {'constant_group': 'Alarm Duration'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -220,8 +230,7 @@ com['packets'].append({
              ('Step Size', 'uint16', 1, 'out'),
              ('Step Delay', 'uint16', 1, 'out'),
              ('Volume', 'uint8', 1, 'out'),
-             ('Duration', 'uint32', 1, 'out', ('Alarm Duration', [('Off', 0),
-                                                                  ('Infinite', 4294967295)])),
+             ('Duration', 'uint32', 1, 'out', {'constant_group': 'Alarm Duration'}),
              ('Duration Remaining', 'uint32', 1, 'out'),
              ('Current Frequency', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],

@@ -6,7 +6,7 @@
 
 # Voltage/Current Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,25 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Averaging',
+'type': 'uint8',
+'constants': [('1', 0),
+              ('4', 1),
+              ('16', 2),
+              ('64', 3),
+              ('128', 4),
+              ('256', 5),
+              ('512', 6),
+              ('1024', 7)]
+})
 
 current_doc = {
 'en':
@@ -98,14 +114,7 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Averaging', 'uint8', 1, 'in', ('Averaging', [('1', 0),
-                                                            ('4', 1),
-                                                            ('16', 2),
-                                                            ('64', 3),
-                                                            ('128', 4),
-                                                            ('256', 5),
-                                                            ('512', 6),
-                                                            ('1024', 7)])),
+'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging'}),
              ('Voltage Conversion Time', 'uint8', 1, 'in'),
              ('Current Conversion Time', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -194,14 +203,7 @@ Durchschnittsbildung und die Spannungs/Stromstärkenwandlungszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Averaging', 'uint8', 1, 'out', ('Averaging', [('1', 0),
-                                                             ('4', 1),
-                                                             ('16', 2),
-                                                             ('64', 3),
-                                                             ('128', 4),
-                                                             ('256', 5),
-                                                             ('512', 6),
-                                                             ('1024', 7)])),
+'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging'}),
              ('Voltage Conversion Time', 'uint8', 1, 'out'),
              ('Current Conversion Time', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],

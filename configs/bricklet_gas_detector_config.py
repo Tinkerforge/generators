@@ -6,7 +6,7 @@
 
 # Gas Detector Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -26,9 +26,19 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Detector Type',
+'type': 'uint8',
+'constants': [('0', 0),
+              ('1', 1)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -109,7 +119,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -156,7 +166,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -282,8 +292,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Detector Type',
-'elements': [('Detector Type', 'uint8', 1, 'in', ('Detector Type', [('0', 0),
-                                                                    ('1', 1)]))],
+'elements': [('Detector Type', 'uint8', 1, 'in', {'constant_group': 'Detector Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -326,8 +335,7 @@ Der standard Detektortyp ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Detector Type',
-'elements': [('Detector Type', 'uint8', 1, 'out', ('Detector Type', [('0', 0),
-                                                                     ('1', 1)]))],
+'elements': [('Detector Type', 'uint8', 1, 'out', {'constant_group': 'Detector Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

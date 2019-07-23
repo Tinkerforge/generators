@@ -24,17 +24,55 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Frame Type',
+'type': 'uint8',
+'constants': [('Standard Data', 0),
+              ('Standard Remote', 1),
+              ('Extended Data', 2),
+              ('Extended Remote', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Baud Rate',
+'type': 'uint8',
+'constants': [('10kbps', 0),
+              ('20kbps', 1),
+              ('50kbps', 2),
+              ('125kbps', 3),
+              ('250kbps', 4),
+              ('500kbps', 5),
+              ('800kbps', 6),
+              ('1000kbps', 7)]
+})
+
+com['constant_groups'].append({
+'name': 'Transceiver Mode',
+'type': 'uint8',
+'constants': [('Normal', 0),
+              ('Loopback', 1),
+              ('Read Only', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Filter Mode',
+'type': 'uint8',
+'constants': [('Disabled', 0),
+              ('Accept All', 1),
+              ('Match Standard', 2),
+              ('Match Standard And Data', 3),
+              ('Match Extended', 4)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Write Frame',
-'elements': [('Frame Type', 'uint8', 1, 'in', ('Frame Type', [('Standard Data', 0),
-                                                              ('Standard Remote', 1),
-                                                              ('Extended Data', 2),
-                                                              ('Extended Remote', 3)])),
+'elements': [('Frame Type', 'uint8', 1, 'in', {'constant_group': 'Frame Type'}),
              ('Identifier', 'uint32', 1, 'in'),
              ('Data', 'uint8', 8, 'in'),
              ('Length', 'uint8', 1, 'in'),
@@ -98,10 +136,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Read Frame',
 'elements': [('Success', 'bool', 1, 'out'),
-             ('Frame Type', 'uint8', 1, 'out', ('Frame Type', [('Standard Data', 0),
-                                                               ('Standard Remote', 1),
-                                                               ('Extended Data', 2),
-                                                               ('Extended Remote', 3)])),
+             ('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
              ('Identifier', 'uint32', 1, 'out'),
              ('Data', 'uint8', 8, 'out'),
              ('Length', 'uint8', 1, 'out')],
@@ -215,17 +250,8 @@ sonst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Baud Rate', 'uint8', 1, 'in', ('Baud Rate', [('10kbps', 0),
-                                                            ('20kbps', 1),
-                                                            ('50kbps', 2),
-                                                            ('125kbps', 3),
-                                                            ('250kbps', 4),
-                                                            ('500kbps', 5),
-                                                            ('800kbps', 6),
-                                                            ('1000kbps', 7)])),
-             ('Transceiver Mode', 'uint8', 1, 'in', ('Transceiver Mode', [('Normal', 0),
-                                                                          ('Loopback', 1),
-                                                                          ('Read Only', 2)])),
+'elements': [('Baud Rate', 'uint8', 1, 'in', {'constant_group': 'Baud Rate'}),
+             ('Transceiver Mode', 'uint8', 1, 'in', {'constant_group': 'Transceiver Mode'}),
              ('Write Timeout', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -294,17 +320,8 @@ Schreib-Timeout.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Baud Rate', 'uint8', 1, 'out', ('Baud Rate', [('10kbps', 0),
-                                                             ('20kbps', 1),
-                                                             ('50kbps', 2),
-                                                             ('125kbps', 3),
-                                                             ('250kbps', 4),
-                                                             ('500kbps', 5),
-                                                             ('800kbps', 6),
-                                                             ('1000kbps', 7)])),
-             ('Transceiver Mode', 'uint8', 1, 'out', ('Transceiver Mode', [('Normal', 0),
-                                                                           ('Loopback', 1),
-                                                                           ('Read Only', 2)])),
+'elements': [('Baud Rate', 'uint8', 1, 'out', {'constant_group': 'Baud Rate'}),
+             ('Transceiver Mode', 'uint8', 1, 'out', {'constant_group': 'Transceiver Mode'}),
              ('Write Timeout', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -322,11 +339,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Read Filter',
-'elements': [('Mode', 'uint8', 1, 'in', ('Filter Mode', [('Disabled', 0),
-                                                         ('Accept All', 1),
-                                                         ('Match Standard', 2),
-                                                         ('Match Standard And Data', 3),
-                                                         ('Match Extended', 4)])),
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Filter Mode'}),
              ('Mask', 'uint32', 1, 'in'),
              ('Filter1', 'uint32', 1, 'in'),
              ('Filter2', 'uint32', 1, 'in')],
@@ -461,11 +474,7 @@ Der Standardmodus ist Accept-All.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Read Filter',
-'elements': [('Mode', 'uint8', 1, 'out', ('Filter Mode', [('Disabled', 0),
-                                                          ('Accept All', 1),
-                                                          ('Match Standard', 2),
-                                                          ('Match Standard And Data', 3),
-                                                          ('Match Extended', 4)])),
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Filter Mode'}),
              ('Mask', 'uint32', 1, 'out'),
              ('Filter1', 'uint32', 1, 'out'),
              ('Filter2', 'uint32', 1, 'out')],
@@ -576,10 +585,7 @@ die Anzahl dieser Fehler:
 com['packets'].append({
 'type': 'callback',
 'name': 'Frame Read',
-'elements': [('Frame Type', 'uint8', 1, 'out', ('Frame Type', [('Standard Data', 0),
-                                                               ('Standard Remote', 1),
-                                                               ('Extended Data', 2),
-                                                               ('Extended Remote', 3)])),
+'elements': [('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
              ('Identifier', 'uint32', 1, 'out'),
              ('Data', 'uint8', 8, 'out'),
              ('Length', 'uint8', 1, 'out')],

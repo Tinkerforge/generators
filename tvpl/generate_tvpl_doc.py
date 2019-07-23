@@ -182,7 +182,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
 
             e = []
 
-            for element in constant_group.get_elements():
+            for element in constant_group.get_elements(self):
                 e.append(element.get_name().space)
 
             if len(e) > 1:

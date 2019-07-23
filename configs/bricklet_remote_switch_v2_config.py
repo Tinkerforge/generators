@@ -25,15 +25,37 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Switching State',
+'type': 'uint8',
+'constants': [('Ready', 0),
+              ('Busy', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Switch To',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Remote Type',
+'type': 'uint8',
+'constants': [('A', 0),
+              ('B', 1),
+              ('C', 2)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get Switching State',
-'elements': [('State', 'uint8', 1, 'out', ('Switching State', [('Ready', 0),
-                                                               ('Busy', 1)]))],
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Switching State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -131,8 +153,7 @@ com['packets'].append({
 'name': 'Switch Socket A',
 'elements': [('House Code', 'uint8', 1, 'in'),
              ('Receiver Code', 'uint8', 1, 'in'),
-             ('Switch To', 'uint8', 1, 'in', ('Switch To', [('Off', 0),
-                                                            ('On', 1)]))],
+             ('Switch To', 'uint8', 1, 'in', {'constant_group': 'Switch To'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -163,8 +184,7 @@ com['packets'].append({
 'name': 'Switch Socket B',
 'elements': [('Address', 'uint32', 1, 'in'),
              ('Unit', 'uint8', 1, 'in'),
-             ('Switch To', 'uint8', 1, 'in', ('Switch To', [('Off', 0),
-                                                            ('On', 1)]))],
+             ('Switch To', 'uint8', 1, 'in', {'constant_group': 'Switch To'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -232,8 +252,7 @@ com['packets'].append({
 'name': 'Switch Socket C',
 'elements': [('System Code', 'char', 1, 'in'),
              ('Device Code', 'uint8', 1, 'in'),
-             ('Switch To', 'uint8', 1, 'in', ('Switch To', [('Off', 0),
-                                                            ('On', 1)]))],
+             ('Switch To', 'uint8', 1, 'in', {'constant_group': 'Switch To'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -264,9 +283,7 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_c_system_and_device_code>`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Remote Configuration',
-'elements': [('Remote Type', 'uint8', 1, 'in', ('Remote Type', [('A', 0),
-                                                                ('B', 1),
-                                                                ('C', 2)])),
+'elements': [('Remote Type', 'uint8', 1, 'in', {'constant_group': 'Remote Type'}),
              ('Minimum Repeats', 'uint16', 1, 'in'),
              ('Callback Enabled', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -303,9 +320,7 @@ Der Standardwert ist ('A', 2, false).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Remote Configuration',
-'elements': [('Remote Type', 'uint8', 1, 'out', ('Remote Type', [('A', 0),
-                                                                 ('B', 1),
-                                                                 ('C', 2)])),
+'elements': [('Remote Type', 'uint8', 1, 'out', {'constant_group': 'Remote Type'}),
              ('Minimum Repeats', 'uint16', 1, 'out'),
              ('Callback Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -326,8 +341,7 @@ com['packets'].append({
 'name': 'Get Remote Status A',
 'elements': [('House Code', 'uint8', 1, 'out'),
              ('Receiver Code', 'uint8', 1, 'out'),
-             ('Switch To', 'uint8', 1, 'out', ('Switch To', [('Off', 0),
-                                                             ('On', 1)])),
+             ('Switch To', 'uint8', 1, 'out', {'constant_group': 'Switch To'}),
              ('Repeats', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -365,8 +379,7 @@ com['packets'].append({
 'name': 'Get Remote Status B',
 'elements': [('Address', 'uint32', 1, 'out'),
              ('Unit', 'uint8', 1, 'out'),
-             ('Switch To', 'uint8', 1, 'out', ('Switch To', [('Off', 0),
-                                                             ('On', 1)])),
+             ('Switch To', 'uint8', 1, 'out', {'constant_group': 'Switch To'}),
              ('Dim Value', 'uint8', 1, 'out'),
              ('Repeats', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -410,8 +423,7 @@ com['packets'].append({
 'name': 'Get Remote Status C',
 'elements': [('System Code', 'char', 1, 'out'),
              ('Device Code', 'uint8', 1, 'out'),
-             ('Switch To', 'uint8', 1, 'out', ('Switch To', [('Off', 0),
-                                                             ('On', 1)])),
+             ('Switch To', 'uint8', 1, 'out', {'constant_group': 'Switch To'}),
              ('Repeats', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -448,8 +460,7 @@ com['packets'].append({
 'name': 'Remote Status A',
 'elements': [('House Code', 'uint8', 1, 'out'),
              ('Receiver Code', 'uint8', 1, 'out'),
-             ('Switch To', 'uint8', 1, 'out', ('Switch To', [('Off', 0),
-                                                             ('On', 1)])),
+             ('Switch To', 'uint8', 1, 'out', {'constant_group': 'Switch To'}),
              ('Repeats', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -487,8 +498,7 @@ com['packets'].append({
 'name': 'Remote Status B',
 'elements': [('Address', 'uint32', 1, 'out'),
              ('Unit', 'uint8', 1, 'out'),
-             ('Switch To', 'uint8', 1, 'out', ('Switch To', [('Off', 0),
-                                                             ('On', 1)])),
+             ('Switch To', 'uint8', 1, 'out', {'constant_group': 'Switch To'}),
              ('Dim Value', 'uint8', 1, 'out'),
              ('Repeats', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -530,8 +540,7 @@ com['packets'].append({
 'name': 'Remote Status C',
 'elements': [('System Code', 'char', 1, 'out'),
              ('Device Code', 'uint8', 1, 'out'),
-             ('Switch To', 'uint8', 1, 'out', ('Switch To', [('Off', 0),
-                                                             ('On', 1)])),
+             ('Switch To', 'uint8', 1, 'out', {'constant_group': 'Switch To'}),
              ('Repeats', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

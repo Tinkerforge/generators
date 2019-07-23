@@ -25,14 +25,36 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
-CONSTANT_CHANNEL = ('Channel', [('0', 0),
-                                ('1', 1),
-                                ('2', 2),
-                                ('3', 3)])
+com['constant_groups'].append({
+'name': 'Channel',
+'type': 'uint8',
+'constants': [('0', 0),
+              ('1', 1),
+              ('2', 2),
+              ('3', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Edge Type',
+'type': 'uint8',
+'constants': [('Rising', 0),
+              ('Falling', 1),
+              ('Both', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Channel LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Channel Status', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -54,7 +76,7 @@ Gibt die Eingangswerte als Bools zurück, *true* bedeutet logisch 1 und *false* 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value Callback Configuration',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -98,7 +120,7 @@ Der Standardwert ist (0, false).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value Callback Configuration',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -180,7 +202,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Reset Counter', 'bool', 1, 'in'),
              ('Count', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -208,10 +230,8 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Configuration',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Edge Type', 'uint8', 1, 'in', ('Edge Type', [('Rising', 0),
-                                                            ('Falling', 1),
-                                                            ('Both', 2)])),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
+             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type'}),
              ('Debounce', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -262,10 +282,8 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Configuration',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Edge Type', 'uint8', 1, 'out', ('Edge Type', [('Rising', 0),
-                                                             ('Falling', 1),
-                                                             ('Both', 2)])),
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
+             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type'}),
              ('Debounce', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -285,11 +303,8 @@ wie von :func:`Set Edge Count Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
-                                                                  ('On', 1),
-                                                                  ('Show Heartbeat', 2),
-                                                                  ('Show Channel Status', 3)]))],
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -315,11 +330,8 @@ Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in', CONSTANT_CHANNEL),
-             ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
-                                                                   ('On', 1),
-                                                                   ('Show Heartbeat', 2),
-                                                                   ('Show Channel Status', 3)]))],
+'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -336,7 +348,7 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 com['packets'].append({
 'type': 'callback',
 'name': 'Value',
-'elements': [('Channel', 'uint8', 1, 'out', CONSTANT_CHANNEL),
+'elements': [('Channel', 'uint8', 1, 'out', {'constant_group': 'Channel'}),
              ('Changed', 'bool', 1, 'out'),
              ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],

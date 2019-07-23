@@ -6,7 +6,7 @@
 
 # Barometer Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,31 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Data Rate',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('1Hz', 1),
+              ('10Hz', 2),
+              ('25Hz', 3),
+              ('50Hz', 4),
+              ('75Hz', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'Low Pass Filter',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('1 9th', 1),
+              ('1 20th', 2)]
+})
 
 air_pressure_doc = {
 'en':
@@ -299,15 +321,8 @@ Gibt die Luftdruck One Point Calibration Werte zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'in', ('Data Rate', [('Off', 0),
-                                                            ('1Hz', 1),
-                                                            ('10Hz', 2),
-                                                            ('25Hz', 3),
-                                                            ('50Hz', 4),
-                                                            ('75Hz', 5)])),
-             ('Air Pressure Low Pass Filter', 'uint8', 1, 'in', ('Low Pass Filter', [('Off', 0),
-                                                                                     ('1 9th', 1),
-                                                                                     ('1 20th', 2)]))],
+'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate'}),
+             ('Air Pressure Low Pass Filter', 'uint8', 1, 'in', {'constant_group': 'Low Pass Filter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -347,15 +362,8 @@ Die Standardwerte sind 50Hz Datenrate und 1/9tel Tiefpassfilter.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'out', ('Data Rate', [('Off', 0),
-                                                             ('1Hz', 1),
-                                                             ('10Hz', 2),
-                                                             ('25Hz', 3),
-                                                             ('50Hz', 4),
-                                                             ('75Hz', 5)])),
-             ('Air Pressure Low Pass Filter', 'uint8', 1, 'out', ('Low Pass Filter', [('Off', 0),
-                                                                                      ('1 9th', 1),
-                                                                                      ('1 20th', 2)]))],
+'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate'}),
+             ('Air Pressure Low Pass Filter', 'uint8', 1, 'out', {'constant_group': 'Low Pass Filter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

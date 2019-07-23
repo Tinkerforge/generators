@@ -30,9 +30,21 @@ com = {
         'eeprom_bricklet_host',
         'comcu_bricklet_host'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Calibration Type',
+'type': 'uint8',
+'constants': [('Accelerometer Gain', 0),
+              ('Accelerometer Bias', 1),
+              ('Magnetometer Gain', 2),
+              ('Magnetometer Bias', 3),
+              ('Gyroscope Gain', 4),
+              ('Gyroscope Bias', 5)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -514,12 +526,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Typ', 'uint8', 1, 'in', ('Calibration Type', [('Accelerometer Gain', 0),
-                                                             ('Accelerometer Bias', 1),
-                                                             ('Magnetometer Gain', 2),
-                                                             ('Magnetometer Bias', 3),
-                                                             ('Gyroscope Gain', 4),
-                                                             ('Gyroscope Bias', 5)])),
+'elements': [('Typ', 'uint8', 1, 'in', {'constant_group': 'Calibration Type'}),
              ('Data', 'int16', 10, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -602,12 +609,7 @@ Betriebstemperatur des IMU Brick sollte einer der Kalibrierpunkte sein.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Typ', 'uint8', 1, 'in', ('Calibration Type', [('Accelerometer Gain', 0),
-                                                             ('Accelerometer Bias', 1),
-                                                             ('Magnetometer Gain', 2),
-                                                             ('Magnetometer Bias', 3),
-                                                             ('Gyroscope Gain', 4),
-                                                             ('Gyroscope Bias', 5)])),
+'elements': [('Typ', 'uint8', 1, 'in', {'constant_group': 'Calibration Type'}),
              ('Data', 'int16', 10, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {

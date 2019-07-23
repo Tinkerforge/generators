@@ -25,21 +25,39 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'LED State',
+'type': 'uint8',
+'constants': [('Auto Toggle On', 0),
+              ('Auto Toggle Off', 1),
+              ('On', 2),
+              ('Off', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Button State',
+'type': 'uint8',
+'constants': [('Pressed', 0),
+              ('Released', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'LED',
+'type': 'uint8',
+'constants': [('Left', 0),
+              ('Right', 1)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set LED State',
-'elements': [('LED L', 'uint8', 1, 'in', ('LED State', [('Auto Toggle On', 0),
-                                                        ('Auto Toggle Off', 1),
-                                                        ('On', 2),
-                                                        ('Off', 3)])),
-             ('LED R', 'uint8', 1, 'in', ('LED State', [('Auto Toggle On', 0),
-                                                        ('Auto Toggle Off', 1),
-                                                        ('On', 2),
-                                                        ('Off', 3)]))],
+'elements': [('LED L', 'uint8', 1, 'in', {'constant_group': 'LED State'}),
+             ('LED R', 'uint8', 1, 'in', {'constant_group': 'LED State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -83,14 +101,8 @@ Der Standardwert ist (1, 1).
 com['packets'].append({
 'type': 'function',
 'name': 'Get LED State',
-'elements': [('LED L', 'uint8', 1, 'out', ('LED State', [('Auto Toggle On', 0),
-                                                         ('Auto Toggle Off', 1),
-                                                         ('On', 2),
-                                                         ('Off', 3)])),
-             ('LED R', 'uint8', 1, 'out', ('LED State', [('Auto Toggle On', 0),
-                                                         ('Auto Toggle Off', 1),
-                                                         ('On', 2),
-                                                         ('Off', 3)]))],
+'elements': [('LED L', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
+             ('LED R', 'uint8', 1, 'out', {'constant_group': 'LED State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -107,10 +119,8 @@ Gibt den aktuellen Zustand der LEDs zurück, wie von :func:`Set LED State` geset
 com['packets'].append({
 'type': 'function',
 'name': 'Get Button State',
-'elements': [('Button L', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
-                                                               ('Released', 1)])),
-             ('Button R', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
-                                                               ('Released', 1)]))],
+'elements': [('Button L', 'uint8', 1, 'out', {'constant_group': 'Button State'}),
+             ('Button R', 'uint8', 1, 'out', {'constant_group': 'Button State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -134,18 +144,10 @@ Zustände sind:
 com['packets'].append({
 'type': 'callback',
 'name': 'State Changed',
-'elements': [('Button L', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
-                                                               ('Released', 1)])),
-             ('Button R', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
-                                                               ('Released', 1)])),
-             ('LED L', 'uint8', 1, 'out', ('LED State', [('Auto Toggle On', 0),
-                                                         ('Auto Toggle Off', 1),
-                                                         ('On', 2),
-                                                         ('Off', 3)])),
-             ('LED R', 'uint8', 1, 'out', ('LED State', [('Auto Toggle On', 0),
-                                                         ('Auto Toggle Off', 1),
-                                                         ('On', 2),
-                                                         ('Off', 3)]))],
+'elements': [('Button L', 'uint8', 1, 'out', {'constant_group': 'Button State'}),
+             ('Button R', 'uint8', 1, 'out', {'constant_group': 'Button State'}),
+             ('LED L', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
+             ('LED R', 'uint8', 1, 'out', {'constant_group': 'LED State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -190,12 +192,8 @@ Dieser Callback kann über :func:`Set State Changed Callback Configuration` akti
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected LED State',
-'elements': [('LED', 'uint8', 1, 'in', ('LED', [('Left', 0),
-                                                ('Right', 1)])),
-             ('State', 'uint8', 1, 'in', ('LED State', [('Auto Toggle On', 0),
-                                                        ('Auto Toggle Off', 1),
-                                                        ('On', 2),
-                                                        ('Off', 3)])),
+'elements': [('LED', 'uint8', 1, 'in', {'constant_group': 'LED'}),
+             ('State', 'uint8', 1, 'in', {'constant_group': 'LED State'}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {

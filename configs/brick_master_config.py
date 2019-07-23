@@ -6,7 +6,7 @@
 
 # Master Brick communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -32,9 +32,161 @@ com = {
         'eeprom_bricklet_host',
         'comcu_bricklet_host'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Extension Type',
+'type': 'uint32',
+'constants': [('Chibi', 1),
+              ('RS485', 2),
+              ('Wifi', 3),
+              ('Ethernet', 4),
+              ('Wifi2', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'Chibi Frequency',
+'type': 'uint8',
+'constants': [('OQPSK 868 MHz', 0),
+              ('OQPSK 915 MHz', 1),
+              ('OQPSK 780 MHz', 2),
+              ('BPSK40 915 MHz', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'RS485 Parity',
+'type': 'char',
+'constants': [('None', 'n'),
+              ('Even', 'e'),
+              ('Odd', 'o')]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi Connection',
+'type': 'uint8',
+'constants': [('DHCP', 0),
+              ('Static IP', 1),
+              ('Access Point DHCP', 2),
+              ('Access Point Static IP', 3),
+              ('Ad Hoc DHCP', 4),
+              ('Ad Hoc Static IP', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi Encryption',
+'type': 'uint8',
+'constants': [('WPA WPA2', 0),
+              ('WPA Enterprise', 1),
+              ('WEP', 2),
+              ('No Encryption', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi EAP Option',
+'type': 'uint8',
+'constants': [('Outer Auth EAP FAST', 0),
+              ('Outer Auth EAP TLS', 1),
+              ('Outer Auth EAP TTLS', 2),
+              ('Outer Auth EAP PEAP', 3),
+              ('Inner Auth EAP MSCHAP', 0),
+              ('Inner Auth EAP GTC', 4),
+              ('Cert Type CA Cert', 0),
+              ('Cert Type Client Cert', 8),
+              ('Cert Type Private Key', 16)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi State',
+'type': 'uint8',
+'constants': [('Disassociated', 0),
+              ('Associated', 1),
+              ('Associating', 2),
+              ('Error', 3),
+              ('Not Initialized Yet', 255)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi Power Mode',
+'type': 'uint8',
+'constants': [('Full Speed', 0),
+              ('Low Power', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi Domain',
+'type': 'uint8',
+'constants': [('Channel 1To11', 0),
+              ('Channel 1To13', 1),
+              ('Channel 1To14', 2)]
+})
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Ethernet Connection',
+'type': 'uint8',
+'constants': [('DHCP', 0),
+              ('Static IP', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Connection Type',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('USB', 1),
+              ('SPI Stack', 2),
+              ('Chibi', 3),
+              ('RS485', 4),
+              ('Wifi', 5),
+              ('Ethernet', 6),
+              ('Wifi2', 7)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi2 PHY Mode',
+'type': 'uint8',
+'constants': [('B', 0),
+              ('G', 1),
+              ('N', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi2 Client Status',
+'type': 'uint8',
+'constants': [('Idle', 0),
+              ('Connecting', 1),
+              ('Wrong Password', 2),
+              ('No AP Found', 3),
+              ('Connect Failed', 4),
+              ('Got IP', 5),
+              ('Unknown', 255)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi2 AP Encryption',
+'type': 'uint8',
+'constants': [('Open', 0),
+              ('WEP', 1),
+              ('WPA PSK', 2),
+              ('WPA2 PSK', 3),
+              ('WPA WPA2 PSK', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Wifi2 Mesh Status',
+'type': 'uint8',
+'constants': [('Disabled', 0),
+              ('WIFI Connecting', 1),
+              ('Got IP', 2),
+              ('Mesh Local', 3),
+              ('Mesh Online', 4),
+              ('AP Available', 5),
+              ('AP Setup', 6),
+              ('Leaf Available', 7)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -82,11 +234,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Extension Type',
 'elements': [('Extension', 'uint8', 1, 'in'),
-             ('Exttype', 'uint32', 1, 'in', ('Extension Type', [('Chibi', 1),
-                                                                ('RS485', 2),
-                                                                ('Wifi', 3),
-                                                                ('Ethernet', 4),
-                                                                ('Wifi2', 5)]))],
+             ('Exttype', 'uint32', 1, 'in', {'constant_group': 'Extension Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -139,11 +287,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Extension Type',
 'elements': [('Extension', 'uint8', 1, 'in'),
-             ('Exttype', 'uint32', 1, 'out', ('Extension Type', [('Chibi', 1),
-                                                                 ('RS485', 2),
-                                                                 ('Wifi', 3),
-                                                                 ('Ethernet', 4),
-                                                                 ('Wifi2', 5)]))],
+             ('Exttype', 'uint32', 1, 'out', {'constant_group': 'Extension Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -379,10 +523,7 @@ vorliegen.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Chibi Frequency',
-'elements': [('Frequency', 'uint8', 1, 'in', ('Chibi Frequency', [('OQPSK 868 MHz', 0),
-                                                                  ('OQPSK 915 MHz', 1),
-                                                                  ('OQPSK 780 MHz', 2),
-                                                                  ('BPSK40 915 MHz', 3)]))],
+'elements': [('Frequency', 'uint8', 1, 'in', {'constant_group': 'Chibi Frequency'})],
 'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
@@ -425,10 +566,7 @@ jedem Start ist daher nicht notwendig.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Chibi Frequency',
-'elements': [('Frequency', 'uint8', 1, 'out', ('Chibi Frequency', [('OQPSK 868 MHz', 0),
-                                                                   ('OQPSK 915 MHz', 1),
-                                                                   ('OQPSK 780 MHz', 2),
-                                                                   ('BPSK40 915 MHz', 3)]))],
+'elements': [('Frequency', 'uint8', 1, 'out', {'constant_group': 'Chibi Frequency'})],
 'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
@@ -454,7 +592,7 @@ Sets the channel used by the Chibi Extension. Possible channels are
 different for different frequencies:
 
 .. csv-table::
- :header: "Frequency",             "Possible Channels"
+ :header: "Frequency", "Possible Channels"
  :widths: 40, 60
 
  "OQPSK 868MHz (Europe)", "0"
@@ -472,7 +610,7 @@ Setzt den verwendeten Kanal der Chibi Extension. Die möglichen Kanäle sind
 abhängig vom verwendeten Frequenzbereich:
 
 .. csv-table::
- :header: "Frequenzbereich",             "Mögliche Kanäle"
+ :header: "Frequenzbereich", "Mögliche Kanäle"
  :widths: 40, 60
 
  "OQPSK 868MHz (Europe)", "0"
@@ -664,9 +802,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set RS485 Configuration',
 'elements': [('Speed', 'uint32', 1, 'in'),
-             ('Parity', 'char', 1, 'in', ('RS485 Parity', [('None', 'n'),
-                                                           ('Even', 'e'),
-                                                           ('Odd', 'o')])),
+             ('Parity', 'char', 1, 'in', {'constant_group': 'RS485 Parity'}),
              ('Stopbits', 'uint8', 1, 'in')],
 'since_firmware': [1, 2, 0],
 'doc': ['af', {
@@ -707,9 +843,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get RS485 Configuration',
 'elements': [('Speed', 'uint32', 1, 'out'),
-             ('Parity', 'char', 1, 'out', ('RS485 Parity', [('None', 'n'),
-                                                            ('Even', 'e'),
-                                                            ('Odd', 'o')])),
+             ('Parity', 'char', 1, 'out', {'constant_group': 'RS485 Parity'}),
              ('Stopbits', 'uint8', 1, 'out')],
 'since_firmware': [1, 2, 0],
 'doc': ['af', {
@@ -748,12 +882,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Wifi Configuration',
 'elements': [('SSID', 'string', 32, 'in'),
-             ('Connection', 'uint8', 1, 'in', ('Wifi Connection', [('DHCP', 0),
-                                                                   ('Static IP', 1),
-                                                                   ('Access Point DHCP', 2),
-                                                                   ('Access Point Static IP', 3),
-                                                                   ('Ad Hoc DHCP', 4),
-                                                                   ('Ad Hoc Static IP', 5)])),
+             ('Connection', 'uint8', 1, 'in', {'constant_group': 'Wifi Connection'}),
              ('IP', 'uint8', 4, 'in'),
              ('Subnet Mask', 'uint8', 4, 'in'),
              ('Gateway', 'uint8', 4, 'in'),
@@ -828,12 +957,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi Configuration',
 'elements': [('SSID', 'string', 32, 'out'),
-             ('Connection', 'uint8', 1, 'out', ('Wifi Connection', [('DHCP', 0),
-                                                                    ('Static IP', 1),
-                                                                    ('Access Point DHCP', 2),
-                                                                    ('Access Point Static IP', 3),
-                                                                    ('Ad Hoc DHCP', 4),
-                                                                    ('Ad Hoc Static IP', 5)])),
+             ('Connection', 'uint8', 1, 'out', {'constant_group': 'Wifi Connection'}),
              ('IP', 'uint8', 4, 'out'),
              ('Subnet Mask', 'uint8', 4, 'out'),
              ('Gateway', 'uint8', 4, 'out'),
@@ -855,21 +979,10 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wifi Encryption',
-'elements': [('Encryption', 'uint8', 1, 'in', ('Wifi Encryption', [('WPA WPA2', 0),
-                                                                   ('WPA Enterprise', 1),
-                                                                   ('WEP', 2),
-                                                                   ('No Encryption', 3)])),
+'elements': [('Encryption', 'uint8', 1, 'in', {'constant_group': 'Wifi Encryption'}),
              ('Key', 'string', 50, 'in'),
              ('Key Index', 'uint8', 1, 'in'),
-             ('EAP Options', 'uint8', 1, 'in', ('Wifi EAP Option', [('Outer Auth EAP FAST', 0),
-                                                                    ('Outer Auth EAP TLS', 1),
-                                                                    ('Outer Auth EAP TTLS', 2),
-                                                                    ('Outer Auth EAP PEAP', 3),
-                                                                    ('Inner Auth EAP MSCHAP', 0),
-                                                                    ('Inner Auth EAP GTC', 4),
-                                                                    ('Cert Type CA Cert', 0),
-                                                                    ('Cert Type Client Cert', 8),
-                                                                    ('Cert Type Private Key', 16)])),
+             ('EAP Options', 'uint8', 1, 'in', {'constant_group': 'Wifi EAP Option'}),
              ('CA Certificate Length', 'uint16', 1, 'in'),
              ('Client Certificate Length', 'uint16', 1, 'in'),
              ('Private Key Length', 'uint16', 1, 'in')],
@@ -975,21 +1088,10 @@ zu konfigurieren.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi Encryption',
-'elements': [('Encryption', 'uint8', 1, 'out', ('Wifi Encryption', [('WPA WPA2', 0),
-                                                                    ('WPA Enterprise', 1),
-                                                                    ('WEP', 2),
-                                                                    ('No Encryption', 3)])),
+'elements': [('Encryption', 'uint8', 1, 'out', {'constant_group': 'Wifi Encryption'}),
              ('Key', 'string', 50, 'out'),
              ('Key Index', 'uint8', 1, 'out'),
-             ('EAP Options', 'uint8', 1, 'out', ('Wifi EAP Option', [('Outer Auth EAP FAST', 0),
-                                                                     ('Outer Auth EAP TLS', 1),
-                                                                     ('Outer Auth EAP TTLS', 2),
-                                                                     ('Outer Auth EAP PEAP', 3),
-                                                                     ('Inner Auth EAP MSCHAP', 0),
-                                                                     ('Inner Auth EAP GTC', 4),
-                                                                     ('Cert Type CA Cert', 0),
-                                                                     ('Cert Type Client Cert', 8),
-                                                                     ('Cert Type Private Key', 16)])),
+             ('EAP Options', 'uint8', 1, 'out', {'constant_group': 'Wifi EAP Option'}),
              ('CA Certificate Length', 'uint16', 1, 'out'),
              ('Client Certificate Length', 'uint16', 1, 'out'),
              ('Private Key Length', 'uint16', 1, 'out')],
@@ -1026,11 +1128,7 @@ com['packets'].append({
              ('Gateway', 'uint8', 4, 'out'),
              ('RX Count', 'uint32', 1, 'out'),
              ('TX Count', 'uint32', 1, 'out'),
-             ('State', 'uint8', 1, 'out', ('Wifi State', [('Disassociated', 0),
-                                                          ('Associated', 1),
-                                                          ('Associating', 2),
-                                                          ('Error', 3),
-                                                          ('Not Initialized Yet', 255)]))],
+             ('State', 'uint8', 1, 'out', {'constant_group': 'Wifi State'})],
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
@@ -1175,8 +1273,7 @@ Gibt das Zertifikat für einen Index zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wifi Power Mode',
-'elements': [('Mode', 'uint8', 1, 'in', ('Wifi Power Mode', [('Full Speed', 0),
-                                                             ('Low Power', 1)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Wifi Power Mode'})],
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
@@ -1211,8 +1308,7 @@ Der Standardwert ist 0 (Full Speed).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi Power Mode',
-'elements': [('Mode', 'uint8', 1, 'out', ('Wifi Power Mode', [('Full Speed', 0),
-                                                              ('Low Power', 1)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Wifi Power Mode'})],
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
@@ -1274,9 +1370,7 @@ Pausen gesendet werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wifi Regulatory Domain',
-'elements': [('Domain', 'uint8', 1, 'in', ('Wifi Domain', [('Channel 1To11', 0),
-                                                           ('Channel 1To13', 1),
-                                                           ('Channel 1To14', 2)]))],
+'elements': [('Domain', 'uint8', 1, 'in', {'constant_group': 'Wifi Domain'})],
 'since_firmware': [1, 3, 4],
 'doc': ['af', {
 'en':
@@ -1313,9 +1407,7 @@ Der Standardwert ist 1 (ETSI).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi Regulatory Domain',
-'elements': [('Domain', 'uint8', 1, 'out', ('Wifi Domain', [('Channel 1To11', 0),
-                                                            ('Channel 1To13', 1),
-                                                            ('Channel 1To14', 2)]))],
+'elements': [('Domain', 'uint8', 1, 'out', {'constant_group': 'Wifi Domain'})],
 'since_firmware': [1, 3, 4],
 'doc': ['af', {
 'en':
@@ -1592,7 +1684,7 @@ gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Stack Current Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [2, 0, 5],
@@ -1639,7 +1731,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Current Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [2, 0, 5],
@@ -1659,7 +1751,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Stack Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [2, 0, 5],
@@ -1706,7 +1798,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [2, 0, 5],
@@ -1726,7 +1818,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set USB Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [2, 0, 5],
@@ -1773,7 +1865,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get USB Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [2, 0, 5],
@@ -2041,8 +2133,7 @@ Ethernet Extension verfügbar ist.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Ethernet Configuration',
-'elements': [('Connection', 'uint8', 1, 'in', ('Ethernet Connection', [('DHCP', 0),
-                                                                       ('Static IP', 1)])),
+'elements': [('Connection', 'uint8', 1, 'in', {'constant_group': 'Ethernet Connection'}),
              ('IP', 'uint8', 4, 'in'),
              ('Subnet Mask', 'uint8', 4, 'in'),
              ('Gateway', 'uint8', 4, 'in'),
@@ -2109,8 +2200,7 @@ konfigurieren.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Ethernet Configuration',
-'elements': [('Connection', 'uint8', 1, 'out', ('Ethernet Connection', [('DHCP', 0),
-                                                                        ('Static IP', 1)])),
+'elements': [('Connection', 'uint8', 1, 'out', {'constant_group': 'Ethernet Connection'}),
              ('IP', 'uint8', 4, 'out'),
              ('Subnet Mask', 'uint8', 4, 'out'),
              ('Gateway', 'uint8', 4, 'out'),
@@ -2411,14 +2501,7 @@ Gibt das Authentifizierungsgeheimnis zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get Connection Type',
-'elements': [('Connection Type', 'uint8', 1, 'out', ('Connection Type', [('None', 0),
-                                                                         ('USB', 1),
-                                                                         ('SPI Stack', 2),
-                                                                         ('Chibi', 3),
-                                                                         ('RS485', 4),
-                                                                         ('Wifi', 5),
-                                                                         ('Ethernet', 6),
-                                                                         ('Wifi2', 7)]))],
+'elements': [('Connection Type', 'uint8', 1, 'out', {'constant_group': 'Connection Type'})],
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':
@@ -2622,9 +2705,7 @@ com['packets'].append({
 'elements': [('Port', 'uint16', 1, 'in'),
              ('Websocket Port', 'uint16', 1, 'in'),
              ('Website Port', 'uint16', 1, 'in'),
-             ('PHY Mode', 'uint8', 1, 'in', ('Wifi2 PHY Mode', [('B', 0),
-                                                                ('G', 1),
-                                                                ('N', 2)])),
+             ('PHY Mode', 'uint8', 1, 'in', {'constant_group': 'Wifi2 PHY Mode'}),
              ('Sleep Mode', 'uint8', 1, 'in'), # FIXME: constants?
              ('Website', 'uint8', 1, 'in')], # FIXME: constants?
 'since_firmware': [2, 4, 0],
@@ -2695,9 +2776,7 @@ com['packets'].append({
 'elements': [('Port', 'uint16', 1, 'out'),
              ('Websocket Port', 'uint16', 1, 'out'),
              ('Website Port', 'uint16', 1, 'out'),
-             ('PHY Mode', 'uint8', 1, 'out', ('Wifi2 PHY Mode', [('B', 0),
-                                                                 ('G', 1),
-                                                                 ('N', 2)])),
+             ('PHY Mode', 'uint8', 1, 'out', {'constant_group': 'Wifi2 PHY Mode'}),
              ('Sleep Mode', 'uint8', 1, 'out'), # FIXME: constants?
              ('Website', 'uint8', 1, 'out')], # FIXME: constants?
 'since_firmware': [2, 4, 0],
@@ -2718,13 +2797,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi2 Status',
 'elements': [('Client Enabled', 'bool', 1, 'out'),
-             ('Client Status', 'uint8', 1, 'out', ('Wifi2 Client Status', [('Idle', 0),
-                                                                           ('Connecting', 1),
-                                                                           ('Wrong Password', 2),
-                                                                           ('No AP Found', 3),
-                                                                           ('Connect Failed', 4),
-                                                                           ('Got IP', 5),
-                                                                           ('Unknown', 255)])),
+             ('Client Status', 'uint8', 1, 'out', {'constant_group': 'Wifi2 Client Status'}),
              ('Client IP', 'uint8', 4, 'out'),
              ('Client Subnet Mask', 'uint8', 4, 'out'),
              ('Client Gateway', 'uint8', 4, 'out'),
@@ -2968,11 +3041,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'in'),
              ('Subnet Mask', 'uint8', 4, 'in'),
              ('Gateway', 'uint8', 4, 'in'),
-             ('Encryption', 'uint8', 1, 'in', ('Wifi2 AP Encryption', [('Open', 0),
-                                                                       ('WEP', 1),
-                                                                       ('WPA PSK', 2),
-                                                                       ('WPA2 PSK', 3),
-                                                                       ('WPA WPA2 PSK', 4)])),
+             ('Encryption', 'uint8', 1, 'in', {'constant_group': 'Wifi2 AP Encryption'}),
              ('Hidden', 'bool', 1, 'in'),
              ('Channel', 'uint8', 1, 'in'),
              ('MAC Address', 'uint8', 6, 'in')],
@@ -3060,11 +3129,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'out'),
              ('Subnet Mask', 'uint8', 4, 'out'),
              ('Gateway', 'uint8', 4, 'out'),
-             ('Encryption', 'uint8', 1, 'out', ('Wifi2 AP Encryption', [('Open', 0),
-                                                                        ('WEP', 1),
-                                                                        ('WPA PSK', 2),
-                                                                        ('WPA2 PSK', 3),
-                                                                        ('WPA WPA2 PSK', 4)])),
+             ('Encryption', 'uint8', 1, 'out', {'constant_group': 'Wifi2 AP Encryption'}),
              ('Hidden', 'bool', 1, 'out'),
              ('Channel', 'uint8', 1, 'out'),
              ('MAC Address', 'uint8', 6, 'out')],
@@ -3483,14 +3548,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi2 Mesh Common Status',
-'elements': [('Status', 'uint8', 1, 'out', ('Wifi2 Mesh Status', [('Disabled', 0),
-                                                                  ('WIFI Connecting', 1),
-                                                                  ('Got IP', 2),
-                                                                  ('Mesh Local', 3),
-                                                                  ('Mesh Online', 4),
-                                                                  ('AP Available', 5),
-                                                                  ('AP Setup', 6),
-                                                                  ('Leaf Available', 7)])),
+'elements': [('Status', 'uint8', 1, 'out', {'constant_group': 'Wifi2 Mesh Status'}),
              ('Root Node', 'bool', 1, 'out'),
              ('Root Candidate', 'bool', 1, 'out'),
              ('Connected Nodes', 'uint16', 1, 'out'),

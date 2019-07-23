@@ -6,7 +6,7 @@
 
 # Distance US Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,28 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Update Rate',
+'type': 'uint8',
+'constants': [('2 Hz', 0),
+              ('10 Hz', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Distance LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Distance', 3)]
+})
 
 distance_doc = {
 'en':
@@ -51,12 +70,10 @@ add_callback_value_function(
     doc       = distance_doc
 )
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Update Rate',
-'elements': [('Update Rate', 'uint8', 1, 'in', ('Update Rate', [('2 Hz', 0),
-                                                                ('10 Hz', 1)]))],
+'elements': [('Update Rate', 'uint8', 1, 'in', {'constant_group': 'Update Rate'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -83,8 +100,7 @@ Der Standardwert beträgt 2 Hz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Update Rate',
-'elements': [('Update Rate', 'uint8', 1, 'out', ('Update Rate', [('2 Hz', 0),
-                                                                 ('10 Hz', 1)]))],
+'elements': [('Update Rate', 'uint8', 1, 'out', {'constant_group': 'Update Rate'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -101,10 +117,7 @@ Gibt die Aktualisierungsrate zurück, wie von :func:`Set Update Rate` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Distance LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Distance LED Config', [('Off', 0),
-                                                                   ('On', 1),
-                                                                   ('Show Heartbeat', 2),
-                                                                   ('Show Distance', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Distance LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -128,10 +141,7 @@ Der Standardwert ist 3 (Distanzanzeige).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Distance LED Config', [('Off', 0),
-                                                                    ('On', 1),
-                                                                    ('Show Heartbeat', 2),
-                                                                    ('Show Distance', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Distance LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

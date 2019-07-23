@@ -25,9 +25,19 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Channel LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Channel Status', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -185,10 +195,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
-                                                                  ('On', 1),
-                                                                  ('Show Heartbeat', 2),
-                                                                  ('Show Channel Status', 3)]))],
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -215,10 +222,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
-                                                                   ('On', 1),
-                                                                   ('Show Heartbeat', 2),
-                                                                   ('Show Channel Status', 3)]))],
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

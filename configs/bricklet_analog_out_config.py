@@ -24,9 +24,19 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Mode',
+'type': 'uint8',
+'constants': [('Analog Value', 0),
+              ('1k To Ground', 1),
+              ('100k To Ground', 2),
+              ('500k To Ground', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -72,10 +82,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
-'elements': [('Mode', 'uint8', 1, 'in', ('Mode', [('Analog Value', 0),
-                                                  ('1k To Ground', 1),
-                                                  ('100k To Ground', 2),
-                                                  ('500k To Ground', 3)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -112,10 +119,7 @@ Der Standardmodus ist 1.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Mode',
-'elements': [('Mode', 'uint8', 1, 'out', ('Mode', [('Analog Value', 0),
-                                                   ('1k To Ground', 1),
-                                                   ('100k To Ground', 2),
-                                                   ('500k To Ground', 3)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

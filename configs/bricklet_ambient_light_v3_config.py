@@ -6,7 +6,7 @@
 
 # Ambient Light Bricklet 3.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,37 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Illuminance Range',
+'type': 'uint8',
+'constants': [('Unlimited', 6),
+              ('64000Lux', 0),
+              ('32000Lux', 1),
+              ('16000Lux', 2),
+              ('8000Lux', 3),
+              ('1300Lux', 4),
+              ('600Lux', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'Integration Time',
+'type': 'uint8',
+'constants': [('50ms', 0),
+              ('100ms', 1),
+              ('150ms', 2),
+              ('200ms', 3),
+              ('250ms', 4),
+              ('300ms', 5),
+              ('350ms', 6),
+              ('400ms', 7)]
+})
 
 illuminance_doc = {
 'en':
@@ -67,21 +95,8 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Illuminance Range', 'uint8', 1, 'in', ('Illuminance Range', [('Unlimited', 6),
-                                                                            ('64000Lux', 0),
-                                                                            ('32000Lux', 1),
-                                                                            ('16000Lux', 2),
-                                                                            ('8000Lux', 3),
-                                                                            ('1300Lux', 4),
-                                                                            ('600Lux', 5)])),
-             ('Integration Time', 'uint8', 1, 'in', ('Integration Time', [('50ms', 0),
-                                                                          ('100ms', 1),
-                                                                          ('150ms', 2),
-                                                                          ('200ms', 3),
-                                                                          ('250ms', 4),
-                                                                          ('300ms', 5),
-                                                                          ('350ms', 6),
-                                                                          ('400ms', 7)]))],
+'elements': [('Illuminance Range', 'uint8', 1, 'in', {'constant_group': 'Illuminance Range'}),
+             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -146,21 +161,8 @@ Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 150ms Integrationszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Illuminance Range', 'uint8', 1, 'out', ('Illuminance Range', [('Unlimited', 6),
-                                                                             ('64000Lux', 0),
-                                                                             ('32000Lux', 1),
-                                                                             ('16000Lux', 2),
-                                                                             ('8000Lux', 3),
-                                                                             ('1300Lux', 4),
-                                                                             ('600Lux', 5)])),
-             ('Integration Time', 'uint8', 1, 'out', ('Integration Time', [('50ms', 0),
-                                                                           ('100ms', 1),
-                                                                           ('150ms', 2),
-                                                                           ('200ms', 3),
-                                                                           ('250ms', 4),
-                                                                           ('300ms', 5),
-                                                                           ('350ms', 6),
-                                                                           ('400ms', 7)]))],
+'elements': [('Illuminance Range', 'uint8', 1, 'out', {'constant_group': 'Illuminance Range'}),
+             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

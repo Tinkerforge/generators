@@ -30,9 +30,17 @@ com = {
         'eeprom_bricklet_host',
         'comcu_bricklet_host'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Drive Mode',
+'type': 'uint8',
+'constants': [('Drive Brake', 0),
+              ('Drive Coast', 1)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -433,8 +441,7 @@ Gibt die minimale Spannung zurück, wie von :func:`Set Minimum Voltage` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Drive Mode',
-'elements': [('Mode', 'uint8', 1, 'in', ('Drive Mode', [('Drive Brake', 0),
-                                                        ('Drive Coast', 1)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Drive Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -483,8 +490,7 @@ Der Standardwert ist 0 = Fahren/Bremsen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Drive Mode',
-'elements': [('Mode', 'uint8', 1, 'out', ('Drive Mode', [('Drive Brake', 0),
-                                                         ('Drive Coast', 1)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Drive Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

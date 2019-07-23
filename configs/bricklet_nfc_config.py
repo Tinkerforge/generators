@@ -6,6 +6,49 @@
 
 # NFC Bricklet communication config
 
+com = {
+    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
+    'api_version': [2, 0, 1],
+    'category': 'Bricklet',
+    'device_identifier': 286,
+    'name': 'NFC',
+    'display_name': 'NFC',
+    'manufacturer': 'Tinkerforge',
+    'description': {
+        'en': 'NFC tag read/write, NFC P2P and Card Emulation',
+        'de': 'NFC Tag Lesen/Schreiben, NFC P2P und Card Emulation'
+    },
+    'released': True,
+    'documented': True,
+    'discontinued': False,
+    'features': [
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
+    'constant_groups': [],
+    'packets': [],
+    'examples': []
+}
+
+com['constant_groups'].append({
+'name': 'Mode',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('Cardemu', 1),
+              ('P2P', 2),
+              ('Reader', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Tag Type',
+'type': 'uint8',
+'constants': [('Mifare Classic', 0),
+              ('Type1', 1),
+              ('Type2', 2),
+              ('Type3', 3),
+              ('Type4', 4)]
+})
+
 STATE_IDLE_MASK = (1 << 7)
 STATE_ERROR_MASK = ((1 << 7) | (1 << 6))
 
@@ -32,27 +75,31 @@ READER_STATE_REQUEST_NDEF = 7
 READER_STATE_REQUEST_NDEF_READY = STATE_IDLE_MASK | READER_STATE_REQUEST_NDEF
 READER_STATE_REQUEST_NDEF_ERROR = STATE_ERROR_MASK | READER_STATE_REQUEST_NDEF
 
-READER_STATE = ('Reader State', [('Initialization', STATE_INITIALIZATION),
-                                 ('Idle', STATE_IDLE),
-                                 ('Error', STATE_ERROR),
-                                 ('Request Tag ID', READER_STATE_REQUEST_TAG_ID),
-                                 ('Request Tag ID Ready', READER_STATE_REQUEST_TAG_ID_READY),
-                                 ('Request Tag ID Error', READER_STATE_REQUEST_TAG_ID_ERROR),
-                                 ('Authenticate Mifare Classic Page', READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE),
-                                 ('Authenticate Mifare Classic Page Ready', READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE_READY),
-                                 ('Authenticate Mifare Classic Page Error', READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE_ERROR),
-                                 ('Write Page', READER_STATE_WRITE_PAGE),
-                                 ('Write Page Ready', READER_STATE_WRITE_PAGE_READY),
-                                 ('Write Page Error', READER_STATE_WRITE_PAGE_ERROR),
-                                 ('Request Page', READER_STATE_REQUEST_PAGE),
-                                 ('Request Page Ready', READER_STATE_REQUEST_PAGE_READY),
-                                 ('Request Page Error', READER_STATE_REQUEST_PAGE_ERROR),
-                                 ('Write NDEF', READER_STATE_WRITE_NDEF),
-                                 ('Write NDEF Ready', READER_STATE_WRITE_NDEF_READY),
-                                 ('Write NDEF Error', READER_STATE_WRITE_NDEF_ERROR),
-                                 ('Request NDEF', READER_STATE_REQUEST_NDEF),
-                                 ('Request NDEF Ready', READER_STATE_REQUEST_NDEF_READY),
-                                 ('Request NDEF Error', READER_STATE_REQUEST_NDEF_ERROR)])
+com['constant_groups'].append({
+'name': 'Reader State',
+'type': 'uint8',
+'constants': [('Initialization', STATE_INITIALIZATION),
+              ('Idle', STATE_IDLE),
+              ('Error', STATE_ERROR),
+              ('Request Tag ID', READER_STATE_REQUEST_TAG_ID),
+              ('Request Tag ID Ready', READER_STATE_REQUEST_TAG_ID_READY),
+              ('Request Tag ID Error', READER_STATE_REQUEST_TAG_ID_ERROR),
+              ('Authenticate Mifare Classic Page', READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE),
+              ('Authenticate Mifare Classic Page Ready', READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE_READY),
+              ('Authenticate Mifare Classic Page Error', READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE_ERROR),
+              ('Write Page', READER_STATE_WRITE_PAGE),
+              ('Write Page Ready', READER_STATE_WRITE_PAGE_READY),
+              ('Write Page Error', READER_STATE_WRITE_PAGE_ERROR),
+              ('Request Page', READER_STATE_REQUEST_PAGE),
+              ('Request Page Ready', READER_STATE_REQUEST_PAGE_READY),
+              ('Request Page Error', READER_STATE_REQUEST_PAGE_ERROR),
+              ('Write NDEF', READER_STATE_WRITE_NDEF),
+              ('Write NDEF Ready', READER_STATE_WRITE_NDEF_READY),
+              ('Write NDEF Error', READER_STATE_WRITE_NDEF_ERROR),
+              ('Request NDEF', READER_STATE_REQUEST_NDEF),
+              ('Request NDEF Ready', READER_STATE_REQUEST_NDEF_READY),
+              ('Request NDEF Error', READER_STATE_REQUEST_NDEF_ERROR)]
+})
 
 CARDEMU_STATE_DISCOVER = 2
 CARDEMU_STATE_DISCOVER_READY = STATE_IDLE_MASK | CARDEMU_STATE_DISCOVER
@@ -61,15 +108,47 @@ CARDEMU_STATE_TRANSFER_NDEF = 3
 CARDEMU_STATE_TRANSFER_NDEF_READY = STATE_IDLE_MASK | CARDEMU_STATE_TRANSFER_NDEF
 CARDEMU_STATE_TRANSFER_NDEF_ERROR = STATE_ERROR_MASK | CARDEMU_STATE_TRANSFER_NDEF
 
-CARDEMU_STATE = ('Cardemu State', [('Initialization', STATE_INITIALIZATION),
-                                   ('Idle', STATE_IDLE),
-                                   ('Error', STATE_ERROR),
-                                   ('Discover', CARDEMU_STATE_DISCOVER),
-                                   ('Discover Ready', CARDEMU_STATE_DISCOVER_READY),
-                                   ('Discover Error', CARDEMU_STATE_DISCOVER_ERROR),
-                                   ('Transfer NDEF', CARDEMU_STATE_TRANSFER_NDEF),
-                                   ('Transfer NDEF Ready', CARDEMU_STATE_TRANSFER_NDEF_READY),
-                                   ('Transfer NDEF Error', CARDEMU_STATE_TRANSFER_NDEF_ERROR)])
+com['constant_groups'].append({
+'name': 'Key',
+'type': 'uint8',
+'constants': [('A', 0),
+              ('B', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Reader Write',
+'type': 'uint16',
+'constants': [('Type4 Capability Container', 3),
+              ('Type4 NDEF', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Reader Request',
+'type': 'uint16',
+'constants': [('Type4 Capability Container', 3),
+              ('Type4 NDEF', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Cardemu State',
+'type': 'uint8',
+'constants': [('Initialization', STATE_INITIALIZATION),
+              ('Idle', STATE_IDLE),
+              ('Error', STATE_ERROR),
+              ('Discover', CARDEMU_STATE_DISCOVER),
+              ('Discover Ready', CARDEMU_STATE_DISCOVER_READY),
+              ('Discover Error', CARDEMU_STATE_DISCOVER_ERROR),
+              ('Transfer NDEF', CARDEMU_STATE_TRANSFER_NDEF),
+              ('Transfer NDEF Ready', CARDEMU_STATE_TRANSFER_NDEF_READY),
+              ('Transfer NDEF Error', CARDEMU_STATE_TRANSFER_NDEF_ERROR)]
+})
+
+com['constant_groups'].append({
+'name': 'Cardemu Transfer',
+'type': 'uint8',
+'constants': [('Abort', 0),
+              ('Write', 1)]
+})
 
 P2P_STATE_DISCOVER = 2
 P2P_STATE_DISCOVER_READY = STATE_IDLE_MASK | P2P_STATE_DISCOVER
@@ -78,48 +157,41 @@ P2P_STATE_TRANSFER_NDEF = 3
 P2P_STATE_TRANSFER_NDEF_READY = STATE_IDLE_MASK | P2P_STATE_TRANSFER_NDEF
 P2P_STATE_TRANSFER_NDEF_ERROR = STATE_ERROR_MASK | P2P_STATE_TRANSFER_NDEF
 
-P2P_STATE = ('P2P State', [('Initialization', STATE_INITIALIZATION),
-                           ('Idle', STATE_IDLE),
-                           ('Error', STATE_ERROR),
-                           ('Discover', P2P_STATE_DISCOVER),
-                           ('Discover Ready', P2P_STATE_DISCOVER_READY),
-                           ('Discover Error', P2P_STATE_DISCOVER_ERROR),
-                           ('Transfer NDEF', P2P_STATE_TRANSFER_NDEF),
-                           ('Transfer NDEF Ready', P2P_STATE_TRANSFER_NDEF_READY),
-                           ('Transfer NDEF Error', P2P_STATE_TRANSFER_NDEF_ERROR)])
+com['constant_groups'].append({
+'name': 'P2P State',
+'type': 'uint8',
+'constants': [('Initialization', STATE_INITIALIZATION),
+              ('Idle', STATE_IDLE),
+              ('Error', STATE_ERROR),
+              ('Discover', P2P_STATE_DISCOVER),
+              ('Discover Ready', P2P_STATE_DISCOVER_READY),
+              ('Discover Error', P2P_STATE_DISCOVER_ERROR),
+              ('Transfer NDEF', P2P_STATE_TRANSFER_NDEF),
+              ('Transfer NDEF Ready', P2P_STATE_TRANSFER_NDEF_READY),
+              ('Transfer NDEF Error', P2P_STATE_TRANSFER_NDEF_ERROR)]
+})
 
-MODE = ('Mode', [('Off',     0),
-                 ('Cardemu', 1),
-                 ('P2P',     2),
-                 ('Reader',  3)])
+com['constant_groups'].append({
+'name': 'P2P Transfer',
+'type': 'uint8',
+'constants': [('Abort', 0),
+              ('Write', 1),
+              ('Read', 2)]
+})
 
-com = {
-    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
-    'category': 'Bricklet',
-    'device_identifier': 286,
-    'name': 'NFC',
-    'display_name': 'NFC',
-    'manufacturer': 'Tinkerforge',
-    'description': {
-        'en': 'NFC tag read/write, NFC P2P and Card Emulation',
-        'de': 'NFC Tag Lesen/Schreiben, NFC P2P und Card Emulation'
-    },
-    'released': True,
-    'documented': True,
-    'discontinued': False,
-    'features': [
-        'comcu_bricklet',
-        'bricklet_get_identity'
-    ],
-    'packets': [],
-    'examples': []
-}
+com['constant_groups'].append({
+'name': 'Detection LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Detection', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
-'elements': [('Mode', 'uint8', 1, 'in', MODE)],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -159,7 +231,7 @@ Der Standardwert ist "Off".
 com['packets'].append({
 'type': 'function',
 'name': 'Get Mode',
-'elements': [('Mode', 'uint8', 1, 'out', MODE)],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -254,11 +326,7 @@ aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Get Tag ID Low Level',
-'elements': [('Tag Type', 'uint8', 1, 'out', ('Tag Type', [('Mifare Classic', 0),
-                                                           ('Type1', 1),
-                                                           ('Type2', 2),
-                                                           ('Type3', 3),
-                                                           ('Type4', 4)])),
+'elements': [('Tag Type', 'uint8', 1, 'out', {'constant_group': 'Tag Type'}),
              ('Tag ID Length', 'uint8', 1, 'out'),
              ('Tag ID Data', 'uint8', 32, 'out')],
 'high_level': {'stream_out': {'name': 'Tag ID', 'single_chunk': True}},
@@ -297,7 +365,7 @@ Der Ansatz um die Tag ID eines Tags zu bekommen sieht wie folgt aus:
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Get State',
-'elements': [('State', 'uint8', 1, 'out', READER_STATE),
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Reader State'}),
              ('Idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -478,8 +546,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Reader Authenticate Mifare Classic Page',
 'elements': [('Page', 'uint16', 1, 'in'),
-             ('Key Number', 'uint8', 1, 'in', ('Key', [('A', 0),
-                                                       ('B', 1)])),
+             ('Key Number', 'uint8', 1, 'in', {'constant_group': 'Key'}),
              ('Key', 'uint8', 6, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -540,8 +607,7 @@ Die Authentifizierung bezieht sich immer auf einen ganzen Sektor (4 Pages).
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Write Page Low Level',
-'elements': [('Page', 'uint16', 1, 'in', ('Reader Write', [('Type4 Capability Container', 3),
-                                                           ('Type4 NDEF', 4)])),
+'elements': [('Page', 'uint16', 1, 'in', {'constant_group': 'Reader Write'}),
              ('Data Length', 'uint16', 1, 'in'),
              ('Data Chunk Offset', 'uint16', 1, 'in'),
              ('Data Chunk Data', 'uint8', 58, 'in')],
@@ -617,8 +683,7 @@ Setze Page auf 3 um CC zu wählen und auf 4 um NDEF zu wählen.
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Request Page',
-'elements': [('Page', 'uint16', 1, 'in', ('Reader Request', [('Type4 Capability Container', 3),
-                                                             ('Type4 NDEF', 4)])),
+'elements': [('Page', 'uint16', 1, 'in', {'constant_group': 'Reader Request'}),
              ('Length', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -722,7 +787,7 @@ Der Buffer kann eine Größe von bis zu 8192 Bytes haben.
 com['packets'].append({
 'type': 'callback',
 'name': 'Reader State Changed',
-'elements': [('State', 'uint8', 1, 'out', READER_STATE),
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Reader State'}),
              ('Idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -743,7 +808,7 @@ sich verändert. Siehe :func:`Reader Get State` für mehr Informationen
 com['packets'].append({
 'type': 'function',
 'name': 'Cardemu Get State',
-'elements': [('State', 'uint8', 1, 'out', CARDEMU_STATE),
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Cardemu State'}),
              ('Idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -864,8 +929,7 @@ oder der Modus nicht gewechselt wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Cardemu Start Transfer',
-'elements': [('Transfer', 'uint8', 1, 'in', ('Cardemu Transfer', [('Abort', 0),
-                                                                  ('Write', 1)]))],
+'elements': [('Transfer', 'uint8', 1, 'in', {'constant_group': 'Cardemu Transfer'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -897,7 +961,7 @@ erfolgreich war oder zu *CardemuTransferNDEFError* falls nicht.
 com['packets'].append({
 'type': 'callback',
 'name': 'Cardemu State Changed',
-'elements': [('State', 'uint8', 1, 'out', CARDEMU_STATE),
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Cardemu State'}),
              ('Idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -918,7 +982,7 @@ sich verändert. Siehe :func:`Cardemu Get State` für mehr Informationen
 com['packets'].append({
 'type': 'function',
 'name': 'P2P Get State',
-'elements': [('State', 'uint8', 1, 'out', P2P_STATE),
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'P2P State'}),
              ('Idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1039,9 +1103,7 @@ der Modus nicht gewechselt oder über P2P eine NDEF Nachricht gelesen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'P2P Start Transfer',
-'elements': [('Transfer', 'uint8', 1, 'in', ('P2P Transfer', [('Abort', 0),
-                                                              ('Write', 1),
-                                                              ('Read', 2)]))],
+'elements': [('Transfer', 'uint8', 1, 'in', {'constant_group': 'P2P Transfer'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1109,7 +1171,7 @@ Aufruf mit einem Lese-Transfer der P2P Zustand zu *P2PTransferNDEFReady* ändert
 com['packets'].append({
 'type': 'callback',
 'name': 'P2P State Changed',
-'elements': [('State', 'uint8', 1, 'out', P2P_STATE),
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'P2P State'}),
              ('Idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1130,10 +1192,7 @@ sich verändert. Siehe :func:`P2P Get State` für mehr Informationen
 com['packets'].append({
 'type': 'function',
 'name': 'Set Detection LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Detection LED Config', [('Off', 0),
-                                                                    ('On', 1),
-                                                                    ('Show Heartbeat', 2),
-                                                                    ('Show Detection', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Detection LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1160,10 +1219,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Detection LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Detection LED Config', [('Off', 0),
-                                                                     ('On', 1),
-                                                                     ('Show Heartbeat', 2),
-                                                                     ('Show Detection', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Detection LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

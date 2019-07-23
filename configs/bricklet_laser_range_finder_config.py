@@ -6,7 +6,7 @@
 
 # Laser Range Finder Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -26,9 +26,29 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Mode',
+'type': 'uint8',
+'constants': [('Distance', 0),
+              ('Velocity Max 13ms', 1),
+              ('Velocity Max 32ms', 2),
+              ('Velocity Max 64ms', 3),
+              ('Velocity Max 127ms', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Version',
+'type': 'uint8',
+'constants': [('1', 1),
+              ('3', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -209,7 +229,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Distance Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -256,7 +276,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -276,7 +296,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Velocity Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int16', 1, 'in'),
              ('Max', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -323,7 +343,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Velocity Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int16', 1, 'out'),
              ('Max', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -455,11 +475,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
-'elements': [('Mode', 'uint8', 1, 'in', ('Mode', [('Distance', 0),
-                                                  ('Velocity Max 13ms', 1),
-                                                  ('Velocity Max 32ms', 2),
-                                                  ('Velocity Max 64ms', 3),
-                                                  ('Velocity Max 127ms', 4)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -511,11 +527,7 @@ Der Standardmodus ist 0 (Distanzmessung).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Mode',
-'elements': [('Mode', 'uint8', 1, 'out', ('Mode', [('Distance', 0),
-                                                   ('Velocity Max 13ms', 1),
-                                                   ('Velocity Max 32ms', 2),
-                                                   ('Velocity Max 64ms', 3),
-                                                   ('Velocity Max 127ms', 4)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -695,8 +707,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Hardware Version',
-'elements': [('Version', 'uint8', 1, 'out', ('Version', [('1', 1),
-                                                         ('3', 3)]))],
+'elements': [('Version', 'uint8', 1, 'out', {'constant_group': 'Version'})],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':

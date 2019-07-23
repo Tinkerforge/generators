@@ -6,7 +6,7 @@
 
 # Sound Pressure Level Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,32 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'FFT Size',
+'type': 'uint8',
+'constants': [('128', 0),
+              ('256', 1),
+              ('512', 2),
+              ('1024', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Weighting',
+'type': 'uint8',
+'constants': [('A', 0),
+              ('B', 1),
+              ('C', 2),
+              ('D', 3),
+              ('Z', 4),
+              ('ITU R 468', 5)]
+})
 
 decibel_doc = {
 'en':
@@ -195,16 +218,8 @@ Der :word:`parameter` ist der gleiche wie :func:`Get Spectrum`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('FFT Size', 'uint8', 1, 'in', ('FFT Size', [('128', 0),
-                                                          ('256', 1),
-                                                          ('512', 2),
-                                                          ('1024', 3)])),
-             ('Weighting', 'uint8', 1, 'in', ('Weighting', [('A', 0),
-                                                            ('B', 1),
-                                                            ('C', 2),
-                                                            ('D', 3),
-                                                            ('Z', 4),
-                                                            ('ITU R 468', 5)])),
+'elements': [('FFT Size', 'uint8', 1, 'in', {'constant_group': 'FFT Size'}),
+             ('Weighting', 'uint8', 1, 'in', {'constant_group': 'Weighting'}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -265,16 +280,8 @@ Die Standardeinstellungen sind FFT Größe 1024 und Gewichtung dB(A).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('FFT Size', 'uint8', 1, 'out', ('FFT Size', [('128', 0),
-                                                           ('256', 1),
-                                                           ('512', 2),
-                                                           ('1024', 3)])),
-             ('Weighting', 'uint8', 1, 'out', ('Weighting', [('A', 0),
-                                                             ('B', 1),
-                                                             ('C', 2),
-                                                             ('D', 3),
-                                                             ('Z', 4),
-                                                             ('ITU R 468', 5)])),
+'elements': [('FFT Size', 'uint8', 1, 'out', {'constant_group': 'FFT Size'}),
+             ('Weighting', 'uint8', 1, 'out', {'constant_group': 'Weighting'}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

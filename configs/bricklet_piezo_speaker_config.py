@@ -24,15 +24,22 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Beep Duration',
+'type': 'uint32',
+'constants': [('Off', 0),
+              ('Infinite', 4294967295)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Beep',
-'elements': [('Duration', 'uint32', 1, 'in', ('Beep Duration', [('Off', 0),
-                                                                ('Infinite', 4294967295)])),
+'elements': [('Duration', 'uint32', 1, 'in', {'constant_group': 'Beep Duration'}),
              ('Frequency', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

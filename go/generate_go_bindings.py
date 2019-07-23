@@ -85,7 +85,7 @@ const (
 
         # Create constants used in function parameters
         for constant_group in self.get_constant_groups():
-            constant_type = constant_group.get_elements()[0].get_go_type(ignore_cardinality=True, ignore_constant_group=True)
+            constant_type = constant_group.get_go_type()
             constant_group_name = constant_group.get_name().camel
             enum_values = []
             for constant in constant_group.get_constants():
@@ -539,6 +539,9 @@ class GoBindingsGenerator(common.BindingsGenerator):
 
     def get_element_class(self):
         return go_common.GoElement
+
+    def get_constant_group_class(self):
+        return go_common.GoConstantGroup
 
     def generate(self, device):
         filename = '{0}_{1}'.format(device.get_name().under, device.get_category().under)

@@ -298,13 +298,12 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
         const_func_id_fmt_func = lambda prefix, func_name, value: '* {0}Function{1} = {2}\n'.format(
                                                                   prefix, func_name.camel, value)
 
-
         def constant_group_func(group):
             splt = group.get_name().under.split('_')
 
             found = None
 
-            for elem in group.get_elements():
+            for elem in group.get_elements(self):
                 if elem.get_packet().get_name().under == self.get_name().under:
                     return elem.get_name().under
 

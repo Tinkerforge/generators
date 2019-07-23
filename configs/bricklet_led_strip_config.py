@@ -24,9 +24,55 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Chip Type',
+'type': 'uint16',
+'constants': [('WS2801', 2801),
+              ('WS2811', 2811),
+              ('WS2812', 2812),
+              ('LPD8806', 8806),
+              ('APA102', 102)]
+})
+
+com['constant_groups'].append({
+'name': 'Channel Mapping',
+'type': 'uint8',
+'constants': [('RGB', 6),
+              ('RBG', 9),
+              ('BRG', 33),
+              ('BGR', 36),
+              ('GRB', 18),
+              ('GBR', 24),
+              ('RGBW', 27),
+              ('RGWB', 30),
+              ('RBGW', 39),
+              ('RBWG', 45),
+              ('RWGB', 54),
+              ('RWBG', 57),
+              ('GRWB', 78),
+              ('GRBW', 75),
+              ('GBWR', 108),
+              ('GBRW', 99),
+              ('GWBR', 120),
+              ('GWRB', 114),
+              ('BRGW', 135),
+              ('BRWG', 141),
+              ('BGRW', 147),
+              ('BGWR', 156),
+              ('BWRG', 177),
+              ('BWGR', 180),
+              ('WRBG', 201),
+              ('WRGB', 198),
+              ('WGBR', 216),
+              ('WGRB', 210),
+              ('WBGR', 228),
+              ('WBRG', 225)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -338,11 +384,7 @@ Gibt die aktuell genutzte Clock-Frequenz zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Chip Type',
-'elements': [('Chip', 'uint16', 1, 'in', ('Chip Type', [('WS2801', 2801),
-                                                        ('WS2811', 2811),
-                                                        ('WS2812', 2812),
-                                                        ('LPD8806', 8806),
-                                                        ('APA102', 102)]))],
+'elements': [('Chip', 'uint16', 1, 'in', {'constant_group': 'Chip Type'})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -378,11 +420,7 @@ Der Standardwert ist WS2801 (2801).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Chip Type',
-'elements': [('Chip', 'uint16', 1, 'out', ('Chip Type', [('WS2801', 2801),
-                                                         ('WS2811', 2811),
-                                                         ('WS2812', 2812),
-                                                         ('LPD8806', 8806),
-                                                         ('APA102', 102)]))],
+'elements': [('Chip', 'uint16', 1, 'out', {'constant_group': 'Chip Type'})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -568,36 +606,7 @@ Die Werte sind die letzten von :func:`Set RGBW Values` gesetzten Werte.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel Mapping',
-'elements': [('Mapping', 'uint8', 1, 'in', ('Channel Mapping', [('RGB', 6),
-                                                                ('RBG', 9),
-                                                                ('BRG', 33),
-                                                                ('BGR', 36),
-                                                                ('GRB', 18),
-                                                                ('GBR', 24),
-                                                                ('RGBW', 27),
-                                                                ('RGWB', 30),
-                                                                ('RBGW', 39),
-                                                                ('RBWG', 45),
-                                                                ('RWGB', 54),
-                                                                ('RWBG', 57),
-                                                                ('GRWB', 78),
-                                                                ('GRBW', 75),
-                                                                ('GBWR', 108),
-                                                                ('GBRW', 99),
-                                                                ('GWBR', 120),
-                                                                ('GWRB', 114),
-                                                                ('BRGW', 135),
-                                                                ('BRWG', 141),
-                                                                ('BGRW', 147),
-                                                                ('BGWR', 156),
-                                                                ('BWRG', 177),
-                                                                ('BWGR', 180),
-                                                                ('WRBG', 201),
-                                                                ('WRGB', 198),
-                                                                ('WGBR', 216),
-                                                                ('WGRB', 210),
-                                                                ('WBGR', 228),
-                                                                ('WBRG', 225)]))],
+'elements': [('Mapping', 'uint8', 1, 'in', {'constant_group': 'Channel Mapping'})],
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
@@ -656,36 +665,7 @@ Der Standardwert ist BGR (36).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel Mapping',
-'elements': [('Mapping', 'uint8', 1, 'out', ('Channel Mapping', [('RGB', 6),
-                                                                 ('RBG', 9),
-                                                                 ('BRG', 33),
-                                                                 ('BGR', 36),
-                                                                 ('GRB', 18),
-                                                                 ('GBR', 24),
-                                                                 ('RGBW', 27),
-                                                                 ('RGWB', 30),
-                                                                 ('RBGW', 39),
-                                                                 ('RBWG', 45),
-                                                                 ('RWGB', 54),
-                                                                 ('RWBG', 57),
-                                                                 ('GRWB', 78),
-                                                                 ('GRBW', 75),
-                                                                 ('GBWR', 108),
-                                                                 ('GBRW', 99),
-                                                                 ('GWBR', 120),
-                                                                 ('GWRB', 114),
-                                                                 ('BRGW', 135),
-                                                                 ('BRWG', 141),
-                                                                 ('BGRW', 147),
-                                                                 ('BGWR', 156),
-                                                                 ('BWRG', 177),
-                                                                 ('BWGR', 180),
-                                                                 ('WRBG', 201),
-                                                                 ('WRGB', 198),
-                                                                 ('WGBR', 216),
-                                                                 ('WGRB', 210),
-                                                                 ('WBGR', 228),
-                                                                 ('WBRG', 225)]))],
+'elements': [('Mapping', 'uint8', 1, 'out', {'constant_group': 'Channel Mapping'})],
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':

@@ -30,9 +30,30 @@ com = {
         'eeprom_bricklet_host',
         'comcu_bricklet_host'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Step Mode',
+'type': 'uint8',
+'constants': [('Full Step', 1),
+              ('Half Step', 2),
+              ('Quarter Step', 4),
+              ('Eighth Step', 8)]
+})
+
+com['constant_groups'].append({
+'name': 'State',
+'type': 'uint8',
+'constants': [('Stop', 1),
+              ('Acceleration', 2),
+              ('Run', 3),
+              ('Deacceleration', 4),
+              ('Direction Change To Forward', 5),
+              ('Direction Change To Backward', 6)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -347,10 +368,7 @@ hat, wird 1500 zurückgegeben.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Step Mode',
-'elements': [('Mode', 'uint8', 1, 'in', ('Step Mode', [('Full Step', 1),
-                                                       ('Half Step', 2),
-                                                       ('Quarter Step', 4),
-                                                       ('Eighth Step', 8)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Step Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -387,10 +405,7 @@ Der Standardwert ist 8 (Achtelschritt).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Step Mode',
-'elements': [('Mode', 'uint8', 1, 'out', ('Step Mode', [('Full Step', 1),
-                                                        ('Half Step', 2),
-                                                        ('Quarter Step', 4),
-                                                        ('Eighth Step', 8)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Step Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1042,18 +1057,8 @@ externe Spannung und der aktuelle Stromverbrauch des Schrittmotors.
 com['packets'].append({
 'type': 'callback',
 'name': 'New State',
-'elements': [('State New',      'uint8', 1, 'out', ('State', [('Stop', 1),
-                                                              ('Acceleration', 2),
-                                                              ('Run', 3),
-                                                              ('Deacceleration', 4),
-                                                              ('Direction Change To Forward', 5),
-                                                              ('Direction Change To Backward', 6)])),
-             ('State Previous', 'uint8', 1, 'out', ('State', [('Stop', 1),
-                                                              ('Acceleration', 2),
-                                                              ('Run', 3),
-                                                              ('Deacceleration', 4),
-                                                              ('Direction Change To Forward', 5),
-                                                              ('Direction Change To Backward', 6)]))],
+'elements': [('State New', 'uint8', 1, 'out', {'constant_group': 'State'}),
+             ('State Previous', 'uint8', 1, 'out', {'constant_group': 'State'})],
 'since_firmware': [1, 1, 6],
 'doc': ['c', {
 'en':

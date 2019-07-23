@@ -24,9 +24,25 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Voltage Range',
+'type': 'uint8',
+'constants': [('0 To 5V', 0),
+              ('0 To 10V', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Current Range',
+'type': 'uint8',
+'constants': [('4 To 20mA', 0),
+              ('0 To 20mA', 1),
+              ('0 To 24ma', 2)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -171,11 +187,8 @@ Gibt die Spannung zurück, wie von :func:`Set Current` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Voltage Range', 'uint8', 1, 'in', ('Voltage Range', [('0 To 5V', 0),
-                                                                    ('0 To 10V', 1)])),
-             ('Current Range', 'uint8', 1, 'in', ('Current Range', [('4 To 20mA', 0),
-                                                                    ('0 To 20mA', 1),
-                                                                    ('0 To 24ma', 2)]))],
+'elements': [('Voltage Range', 'uint8', 1, 'in', {'constant_group': 'Voltage Range'}),
+             ('Current Range', 'uint8', 1, 'in', {'constant_group': 'Current Range'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -220,11 +233,8 @@ sich bei kleineren Wertebereichen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Voltage Range', 'uint8', 1, 'out', ('Voltage Range', [('0 To 5V', 0),
-                                                                     ('0 To 10V', 1)])),
-             ('Current Range', 'uint8', 1, 'out', ('Current Range', [('4 To 20mA', 0),
-                                                                     ('0 To 20mA', 1),
-                                                                     ('0 To 24ma', 2)]))],
+'elements': [('Voltage Range', 'uint8', 1, 'out', {'constant_group': 'Voltage Range'}),
+             ('Current Range', 'uint8', 1, 'out', {'constant_group': 'Current Range'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

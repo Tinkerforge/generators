@@ -112,7 +112,7 @@ impl From<{function}> for u8 {{
 
         # Create constants used in function parameters
         for constant_group in self.get_constant_groups():
-            constant_type = constant_group.get_elements()[0].get_rust_type(ignore_cardinality=True)
+            constant_type = constant_group.get_rust_type()
             constant_name = self.get_name().upper + "_" + self.get_category().upper +'_'+ constant_group.get_name().upper + "_"
             enum_values = []
             for constant in constant_group.get_constants():
@@ -656,6 +656,9 @@ class RustBindingsGenerator(common.BindingsGenerator):
 
     def get_element_class(self):
         return rust_common.RustElement
+
+    def get_constant_group_class(self):
+        return rust_common.RustConstantGroup
 
     def generate(self, device):
         if device.is_tng():

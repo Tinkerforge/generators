@@ -6,7 +6,7 @@
 
 # Motorized Linear Poti Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,19 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Drive Mode',
+'type': 'uint8',
+'constants': [('Fast', 0),
+              ('Smooth', 1)]
+})
 
 position_doc = {
 'en':
@@ -57,8 +67,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Motor Position',
 'elements': [('Position', 'uint16', 1, 'in'),
-             ('Drive Mode', 'uint8', 1, 'in', ('Drive Mode', [('Fast', 0),
-                                                              ('Smooth', 1)])),
+             ('Drive Mode', 'uint8', 1, 'in', {'constant_group': 'Drive Mode'}),
              ('Hold Position', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -100,8 +109,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Motor Position',
 'elements': [('Position', 'uint16', 1, 'out'),
-             ('Drive Mode', 'uint8', 1, 'out', ('Drive Mode', [('Fast', 0),
-                                                               ('Smooth', 1)])),
+             ('Drive Mode', 'uint8', 1, 'out', {'constant_group': 'Drive Mode'}),
              ('Hold Position', 'bool', 1, 'out'),
              ('Position Reached', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],

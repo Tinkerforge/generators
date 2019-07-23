@@ -6,10 +6,69 @@
 
 # Common Device communication config
 
-# is_virtual is set to True for functions without a corresponding TCP/IP packet
+common_constant_groups = []
+
+common_constant_groups.append({
+'feature': 'send_timeout_count',
+'name': 'Communication Method',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('USB', 1),
+              ('SPI Stack', 2),
+              ('Chibi', 3),
+              ('RS485', 4),
+              ('WIFI', 5),
+              ('Ethernet', 6),
+              ('WIFI V2', 7)]
+})
+
+common_constant_groups.append({
+'feature': 'comcu_bricklet',
+'name': 'Bootloader Mode',
+'type': 'uint8',
+'constants': [('Bootloader', 0),
+              ('Firmware', 1),
+              ('Bootloader Wait For Reboot', 2),
+              ('Firmware Wait For Reboot', 3),
+              ('Firmware Wait For Erase And Reboot', 4)]
+})
+
+common_constant_groups.append({
+'feature': 'comcu_bricklet',
+'name': 'Bootloader Status',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Invalid Mode', 1),
+              ('No Change', 2),
+              ('Entry Function Not Present', 3),
+              ('Device Identifier Incorrect', 4),
+              ('CRC Mismatch', 5)]
+})
+
+common_constant_groups.append({
+'feature': 'comcu_bricklet',
+'name': 'Status LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Status', 3)]
+})
+
+common_constant_groups.append({
+'feature': 'tng',
+'name': 'Copy Status',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Device Identifier Incorrect', 1),
+              ('Magic Number Incorrect', 2),
+              ('Length Malformed', 3),
+              ('CRC Mismatch', 4)]
+})
 
 common_packets = []
 
+# is_virtual is set to True for functions without a corresponding TCP/IP packet
 common_packets.append({
 'is_virtual': True,
 'type': 'function',
@@ -251,14 +310,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 233,
 'name': 'Get Send Timeout Count',
-'elements': [('Communication Method', 'uint8', 1, 'in', ('Communication Method', [('None', 0),
-                                                                                  ('USB', 1),
-                                                                                  ('SPI Stack', 2),
-                                                                                  ('Chibi', 3),
-                                                                                  ('RS485', 4),
-                                                                                  ('WIFI', 5),
-                                                                                  ('Ethernet', 6),
-                                                                                  ('WIFI V2', 7)])),
+'elements': [('Communication Method', 'uint8', 1, 'in', {'constant_group': 'Communication Method'}),
              ('Timeout Count', 'uint32', 1, 'out')],
 'since_firmware': {'*': [2, 0, 0],
                    'DC': [2, 3, 3],
@@ -420,17 +472,8 @@ common_packets.append({
 'type': 'function',
 'function_id': 235,
 'name': 'Set Bootloader Mode',
-'elements': [('Mode', 'uint8', 1, 'in', ('Bootloader Mode', [('Bootloader', 0),
-                                                             ('Firmware', 1),
-                                                             ('Bootloader Wait For Reboot', 2),
-                                                             ('Firmware Wait For Reboot', 3),
-                                                             ('Firmware Wait For Erase And Reboot', 4)])),
-             ('Status', 'uint8', 1, 'out', ('Bootloader Status', [('OK', 0),
-                                                                  ('Invalid Mode', 1),
-                                                                  ('No Change', 2),
-                                                                  ('Entry Function Not Present', 3),
-                                                                  ('Device Identifier Incorrect', 4),
-                                                                  ('CRC Mismatch', 5)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Bootloader Mode'}),
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Bootloader Status'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -469,11 +512,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 236,
 'name': 'Get Bootloader Mode',
-'elements': [('Mode', 'uint8', 1, 'out', ('Bootloader Mode', [('Bootloader', 0),
-                                                              ('Firmware', 1),
-                                                              ('Bootloader Wait For Reboot', 2),
-                                                              ('Firmware Wait For Reboot', 3),
-                                                              ('Firmware Wait For Erase And Reboot', 4)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Bootloader Mode'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -492,11 +531,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 236,
 'name': 'Copy Firmware',
-'elements': [('Status', 'uint8', 1, 'out', ('Copy Status', [('OK', 0),
-                                                            ('Device Identifier Incorrect', 1),
-                                                            ('Magic Number Incorrect', 2),
-                                                            ('Length Malformed', 3),
-                                                            ('CRC Mismatch', 4)]))],
+'elements': [('Status', 'uint8', 1, 'out', {'constant_group': 'Copy Status'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -738,10 +773,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 239,
 'name': 'Set Status LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Status LED Config', [('Off', 0),
-                                                                 ('On', 1),
-                                                                 ('Show Heartbeat', 2),
-                                                                 ('Show Status', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Status LED Config'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -796,10 +828,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 240,
 'name': 'Get Status LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Status LED Config', [('Off', 0),
-                                                                  ('On', 1),
-                                                                  ('Show Heartbeat', 2),
-                                                                  ('Show Status', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Status LED Config'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':

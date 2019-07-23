@@ -6,7 +6,7 @@
 
 # Accelerometer Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -27,9 +27,46 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Data Rate',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('3Hz', 1),
+              ('6Hz', 2),
+              ('12Hz', 3),
+              ('25Hz', 4),
+              ('50Hz', 5),
+              ('100Hz', 6),
+              ('400Hz', 7),
+              ('800Hz', 8),
+              ('1600Hz', 9)]
+})
+
+com['constant_groups'].append({
+'name': 'Full Scale',
+'type': 'uint8',
+'constants': [('2g', 0),
+              ('4g', 1),
+              ('6g', 2),
+              ('8g', 3),
+              ('16g', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Filter Bandwidth',
+'type': 'uint8',
+'constants': [('800Hz', 0),
+              ('400Hz', 1),
+              ('200Hz', 2),
+              ('50Hz', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -110,7 +147,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min X', 'int16', 1, 'in'),
              ('Max X', 'int16', 1, 'in'),
              ('Min Y', 'int16', 1, 'in'),
@@ -161,7 +198,7 @@ Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min X', 'int16', 1, 'out'),
              ('Max X', 'int16', 1, 'out'),
              ('Min Y', 'int16', 1, 'out'),
@@ -257,25 +294,9 @@ Gibt die Temperatur des Beschleunigungssensors in °C zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'in', ('Data Rate', [('Off', 0),
-                                                            ('3Hz', 1),
-                                                            ('6Hz', 2),
-                                                            ('12Hz', 3),
-                                                            ('25Hz', 4),
-                                                            ('50Hz', 5),
-                                                            ('100Hz', 6),
-                                                            ('400Hz', 7),
-                                                            ('800Hz', 8),
-                                                            ('1600Hz', 9)])),
-             ('Full Scale', 'uint8', 1, 'in', ('Full Scale', [('2g', 0),
-                                                              ('4g', 1),
-                                                              ('6g', 2),
-                                                              ('8g', 3),
-                                                              ('16g', 4)])),
-             ('Filter Bandwidth', 'uint8', 1, 'in', ('Filter Bandwidth', [('800Hz', 0),
-                                                                          ('400Hz', 1),
-                                                                          ('200Hz', 2),
-                                                                          ('50Hz', 3)]))],
+'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate'}),
+             ('Full Scale', 'uint8', 1, 'in', {'constant_group': 'Full Scale'}),
+             ('Filter Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Filter Bandwidth'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -314,25 +335,9 @@ Filterbandbreite.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'out', ('Data Rate', [('Off', 0),
-                                                             ('3Hz', 1),
-                                                             ('6Hz', 2),
-                                                             ('12Hz', 3),
-                                                             ('25Hz', 4),
-                                                             ('50Hz', 5),
-                                                             ('100Hz', 6),
-                                                             ('400Hz', 7),
-                                                             ('800Hz', 8),
-                                                             ('1600Hz', 9)])),
-             ('Full Scale', 'uint8', 1, 'out', ('Full Scale', [('2g', 0),
-                                                               ('4g', 1),
-                                                               ('6g', 2),
-                                                               ('8g', 3),
-                                                               ('16g', 4)])),
-             ('Filter Bandwidth', 'uint8', 1, 'out', ('Filter Bandwidth', [('800Hz', 0),
-                                                                           ('400Hz', 1),
-                                                                           ('200Hz', 2),
-                                                                           ('50Hz', 3)]))],
+'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate'}),
+             ('Full Scale', 'uint8', 1, 'out', {'constant_group': 'Full Scale'}),
+             ('Filter Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Filter Bandwidth'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

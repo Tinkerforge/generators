@@ -6,9 +6,6 @@
 
 # Energy Monitor Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
-from commonconstants import add_callback_value_function
-
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -28,10 +25,10 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
-
 
 com['packets'].append({
 'type': 'function',
@@ -111,8 +108,6 @@ Setzt den Energiewert (siehe :func:`Get Energy Data`) zurück auf 0Wh
 """
 }]
 })
-
-
 
 com['packets'].append({
 'type': 'function',

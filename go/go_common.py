@@ -236,6 +236,10 @@ class GoElement(common.Element):
         else:
             return element_type
 
+class GoConstantGroup(common.ConstantGroup):
+    def get_go_type(self):
+        return get_go_type(self.get_type(), 1)
+
 go_types = {
     'int8':   'int8',
     'uint8':  'uint8',

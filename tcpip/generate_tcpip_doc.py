@@ -206,7 +206,7 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
 
             e = []
 
-            for element in constant_group.get_elements():
+            for element in constant_group.get_elements(self):
                 name = element.get_name().under
                 e.append(name)
 

@@ -24,16 +24,23 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Tilt State',
+'type': 'uint8',
+'constants': [('Closed', 0),
+              ('Open', 1),
+              ('Closed Vibrating', 2)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get Tilt State',
-'elements': [('State', 'uint8', 1, 'out', ('Tilt State', [('Closed', 0),
-                                                          ('Open', 1),
-                                                          ('Closed Vibrating', 2)]))],
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Tilt State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -124,9 +131,7 @@ Gibt *true* zurück wenn der :cb:`Tilt State` Callback aktiviert ist.
 com['packets'].append({
 'type': 'callback',
 'name': 'Tilt State',
-'elements': [('State', 'uint8', 1, 'out', ('Tilt State', [('Closed', 0),
-                                                          ('Open', 1),
-                                                          ('Closed Vibrating', 2)]))],
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Tilt State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -6,7 +6,7 @@
 
 # Temperature Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,19 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Heater Config',
+'type': 'uint8',
+'constants': [('Disabled', 0),
+              ('Enabled',  1)]
+})
 
 temperature_doc = {
 'en':
@@ -55,13 +65,10 @@ add_callback_value_function(
     doc       = temperature_doc
 )
 
-HEATER_CONFIG_CONSTANT = ('Heater Config', [('Disabled', 0),
-                                            ('Enabled',  1)])
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Heater Configuration',
-'elements': [('Heater Config', 'uint8', 1, 'in', HEATER_CONFIG_CONSTANT)],
+'elements': [('Heater Config', 'uint8', 1, 'in', {'constant_group': 'Heater Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -83,7 +90,7 @@ Standardmäßig ist das Heizelement deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Heater Configuration',
-'elements': [('Heater Config', 'uint8', 1, 'out', HEATER_CONFIG_CONSTANT)],
+'elements': [('Heater Config', 'uint8', 1, 'out', {'constant_group': 'Heater Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

@@ -6,7 +6,7 @@
 
 # XMC1400 Breakout Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,32 +28,42 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
-GPIO_MODE = ('GPIO Mode', [('Input Tristate', 0),
-                           ('Input Pull Down', 1),
-                           ('Input Pull Up', 2),
-                           ('Input Sampling', 3),
-                           ('Input Inverted Tristate', 4),
-                           ('Input Inverted Pull Down', 5),
-                           ('Input Inverted Pull Up', 6),
-                           ('Input Inverted Sampling', 7),
-                           ('Output Push Pull', 8),
-                           ('Output Open Drain', 9)])
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 
-GPIO_INPUT_HYSTERESIS = ('GPIO Input Hysteresis', [('Standard', 0),
-                                                   ('Large', 4)])
+com['constant_groups'].append({
+'name': 'GPIO Mode',
+'type': 'uint8',
+'constants': [('Input Tristate', 0),
+              ('Input Pull Down', 1),
+              ('Input Pull Up', 2),
+              ('Input Sampling', 3),
+              ('Input Inverted Tristate', 4),
+              ('Input Inverted Pull Down', 5),
+              ('Input Inverted Pull Up', 6),
+              ('Input Inverted Sampling', 7),
+              ('Output Push Pull', 8),
+              ('Output Open Drain', 9)]
+})
 
+com['constant_groups'].append({
+'name': 'GPIO Input Hysteresis',
+'type': 'uint8',
+'constants': [('Standard', 0),
+              ('Large', 4)]
+})
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set GPIO Config',
 'elements': [('Port', 'uint8', 1, 'in'),
              ('Pin', 'uint8', 1, 'in'),
-             ('Mode', 'uint8', 1, 'in', GPIO_MODE),
-             ('Input Hysteresis', 'uint8', 1, 'in', GPIO_INPUT_HYSTERESIS),
+             ('Mode', 'uint8', 1, 'in', {'constant_group': 'GPIO Mode'}),
+             ('Input Hysteresis', 'uint8', 1, 'in', {'constant_group': 'GPIO Input Hysteresis'}),
              ('Output Level', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

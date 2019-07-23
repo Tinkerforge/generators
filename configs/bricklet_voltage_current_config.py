@@ -6,7 +6,7 @@
 
 # Voltage/Current Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -26,9 +26,25 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Averaging',
+'type': 'uint8',
+'constants': [('1', 0),
+              ('4', 1),
+              ('16', 2),
+              ('64', 3),
+              ('128', 4),
+              ('256', 5),
+              ('512', 6),
+              ('1024', 7)]
+})
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 
 com['packets'].append({
 'type': 'function',
@@ -114,14 +130,7 @@ den :cb:`Power` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Averaging', 'uint8', 1, 'in', ('Averaging', [('1', 0),
-                                                            ('4', 1),
-                                                            ('16', 2),
-                                                            ('64', 3),
-                                                            ('128', 4),
-                                                            ('256', 5),
-                                                            ('512', 6),
-                                                            ('1024', 7)])),
+'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging'}),
              ('Voltage Conversion Time', 'uint8', 1, 'in'),
              ('Current Conversion Time', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -210,14 +219,7 @@ Durchschnittsbildung und die Spannungs/Stromstärkenwandlungszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Averaging', 'uint8', 1, 'out', ('Averaging', [('1', 0),
-                                                             ('4', 1),
-                                                             ('16', 2),
-                                                             ('64', 3),
-                                                             ('128', 4),
-                                                             ('256', 5),
-                                                             ('512', 6),
-                                                             ('1024', 7)])),
+'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging'}),
              ('Voltage Conversion Time', 'uint8', 1, 'out'),
              ('Current Conversion Time', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -428,7 +430,7 @@ gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -475,7 +477,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -495,7 +497,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -542,7 +544,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -562,7 +564,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Power Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -609,7 +611,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Power Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],

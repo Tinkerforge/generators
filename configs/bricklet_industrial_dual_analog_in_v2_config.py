@@ -6,7 +6,7 @@
 
 # Industrial Dual Analog In Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,9 +28,41 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Sample Rate',
+'type': 'uint8',
+'constants': [('976 SPS', 0),
+              ('488 SPS', 1),
+              ('244 SPS', 2),
+              ('122 SPS', 3),
+              ('61 SPS', 4),
+              ('4 SPS', 5),
+              ('2 SPS', 6),
+              ('1 SPS', 7)]
+})
+
+com['constant_groups'].append({
+'name': 'Channel LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Channel Status', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Channel LED Status Config',
+'type': 'uint8',
+'constants': [('Threshold', 0),
+              ('Intensity', 1)]
+})
 
 com['doc'] = {
 'en':
@@ -71,14 +103,7 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'in', ('Sample Rate', [('976 SPS', 0),
-                                                         ('488 SPS', 1),
-                                                         ('244 SPS', 2),
-                                                         ('122 SPS', 3),
-                                                         ('61 SPS', 4),
-                                                         ('4 SPS', 5),
-                                                         ('2 SPS', 6),
-                                                         ('1 SPS', 7)]))],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -103,14 +128,7 @@ Der Standardwert ist 6 (2 Werte pro Sekunde).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'out', ('Sample Rate', [('976 SPS', 0),
-                                                          ('488 SPS', 1),
-                                                          ('244 SPS', 2),
-                                                          ('122 SPS', 3),
-                                                          ('61 SPS', 4),
-                                                          ('4 SPS', 5),
-                                                          ('2 SPS', 6),
-                                                          ('1 SPS', 7)]))],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -192,10 +210,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', ('Channel LED Config', [('Off', 0),
-                                                                  ('On', 1),
-                                                                  ('Show Heartbeat', 2),
-                                                                  ('Show Channel Status', 3)]))],
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -229,10 +244,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'out', ('Channel LED Config', [('Off', 0),
-                                                                   ('On', 1),
-                                                                   ('Show Heartbeat', 2),
-                                                                   ('Show Channel Status', 3)]))],
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -252,8 +264,7 @@ com['packets'].append({
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', ('Channel LED Status Config', [('Threshold', 0),
-                                                                         ('Intensity', 1)]))],
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -318,8 +329,7 @@ com['packets'].append({
 'elements': [('Channel', 'uint8', 1, 'in'),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out'),
-             ('Config', 'uint8', 1, 'out', ('Channel LED Status Config', [('Threshold', 0),
-                                                                          ('Intensity', 1)]))],
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Status Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

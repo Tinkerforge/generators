@@ -25,9 +25,54 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
      ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Data Rate',
+'type': 'uint8',
+'constants': [('0 781Hz', 0),
+              ('1 563Hz', 1),
+              ('3 125Hz', 2),
+              ('6 2512Hz', 3),
+              ('12 5Hz', 4),
+              ('25Hz', 5),
+              ('50Hz', 6),
+              ('100Hz', 7),
+              ('200Hz', 8),
+              ('400Hz', 9),
+              ('800Hz', 10),
+              ('1600Hz', 11),
+              ('3200Hz', 12),
+              ('6400Hz', 13),
+              ('12800Hz', 14),
+              ('25600Hz', 15)]
+})
+
+com['constant_groups'].append({
+'name': 'Full Scale',
+'type': 'uint8',
+'constants': [('2g', 0),
+              ('4g', 1),
+              ('8g', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Info LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Resolution',
+'type': 'uint8',
+'constants': [('8bit', 0),
+              ('16bit', 1)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -61,25 +106,8 @@ den :cb:`Acceleration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'in', ('Data Rate', [('0 781Hz', 0),
-                                                            ('1 563Hz', 1),
-                                                            ('3 125Hz', 2),
-                                                            ('6 2512Hz', 3),
-                                                            ('12 5Hz', 4),
-                                                            ('25Hz', 5),
-                                                            ('50Hz', 6),
-                                                            ('100Hz', 7),
-                                                            ('200Hz', 8),
-                                                            ('400Hz', 9),
-                                                            ('800Hz', 10),
-                                                            ('1600Hz', 11),
-                                                            ('3200Hz', 12),
-                                                            ('6400Hz', 13),
-                                                            ('12800Hz', 14),
-                                                            ('25600Hz', 15)])),
-             ('Full Scale', 'uint8', 1, 'in', ('Full Scale', [('2g', 0),
-                                                              ('4g', 1),
-                                                              ('8g', 2)]))],
+'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate'}),
+             ('Full Scale', 'uint8', 1, 'in', {'constant_group': 'Full Scale'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -114,25 +142,8 @@ Die Standardwerte sind 100Hz Datenrate und -2g bis +2g Wertebereich.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'out', ('Data Rate', [('0 781Hz', 0),
-                                                             ('1 563Hz', 1),
-                                                             ('3 125Hz', 2),
-                                                             ('6 2512Hz', 3),
-                                                             ('12 5Hz', 4),
-                                                             ('25Hz', 5),
-                                                             ('50Hz', 6),
-                                                             ('100Hz', 7),
-                                                             ('200Hz', 8),
-                                                             ('400Hz', 9),
-                                                             ('800Hz', 10),
-                                                             ('1600Hz', 11),
-                                                             ('3200Hz', 12),
-                                                             ('6400Hz', 13),
-                                                             ('12800Hz', 14),
-                                                             ('25600Hz', 15)])),
-             ('Full Scale', 'uint8', 1, 'out', ('Full Scale', [('2g', 0),
-                                                               ('4g', 1),
-                                                               ('8g', 2)]))],
+'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate'}),
+             ('Full Scale', 'uint8', 1, 'out', {'constant_group': 'Full Scale'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -215,9 +226,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set Info LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Info LED Config', [('Off', 0),
-                                                               ('On', 1),
-                                                               ('Show Heartbeat', 2)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Info LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -236,9 +245,7 @@ Die LED kann ausgeschaltet, eingeschaltet oder im Herzschlagmodus betrieben werd
 com['packets'].append({
 'type': 'function',
 'name': 'Get Info LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Info LED Config', [('Off', 0),
-                                                                ('On', 1),
-                                                                ('Show Heartbeat', 2)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Info LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -283,8 +290,7 @@ com['packets'].append({
 'elements': [('Enable X', 'bool', 1, 'in'),
              ('Enable Y', 'bool', 1, 'in'),
              ('Enable Z', 'bool', 1, 'in'),
-             ('Resolution', 'uint8', 1, 'in', ('Resolution', [('8bit', 0),
-                                                              ('16bit', 1)]))],
+             ('Resolution', 'uint8', 1, 'in', {'constant_group': 'Resolution'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -308,7 +314,7 @@ looks like pure noise at first glance, but it might still have some frequnecy
 information in it that can be utilized by the FFT.
 
 Otherwise you have to use the following formulas that depend on the configured
-resolution (8/16 bit) and the full scale range (see :func:`Set Configuration`) to calculate 
+resolution (8/16 bit) and the full scale range (see :func:`Set Configuration`) to calculate
 the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
 
 * 16 bit, full scale 2G: acceleration = value*625/1024
@@ -396,8 +402,7 @@ com['packets'].append({
 'elements': [('Enable X', 'bool', 1, 'out'),
              ('Enable Y', 'bool', 1, 'out'),
              ('Enable Z', 'bool', 1, 'out'),
-             ('Resolution', 'uint8', 1, 'out', ('Resolution', [('8bit', 0),
-                                                               ('16bit', 1)]))],
+             ('Resolution', 'uint8', 1, 'out', {'constant_group': 'Resolution'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -431,8 +436,8 @@ that you use the data as is. It has all of the ADC noise in it. This noise
 looks like pure noise at first glance, but it might still have some frequnecy
 information in it that can be utilized by the FFT.
 
-Otherwise you have to use the following formulas that depend on the 
-full scale range (see :func:`Set Configuration`) to calculate 
+Otherwise you have to use the following formulas that depend on the
+full scale range (see :func:`Set Configuration`) to calculate
 the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
 
 * Full scale 2G: acceleration = value*625/1024
@@ -498,8 +503,8 @@ that you use the data as is. It has all of the ADC noise in it. This noise
 looks like pure noise at first glance, but it might still have some frequnecy
 information in it that can be utilized by the FFT.
 
-Otherwise you have to use the following formulas that depend on the 
-full scale range (see :func:`Set Configuration`) to calculate 
+Otherwise you have to use the following formulas that depend on the
+full scale range (see :func:`Set Configuration`) to calculate
 the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
 
 * Full scale 2G:  acceleration = value*256*625/1024

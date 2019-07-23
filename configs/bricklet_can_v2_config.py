@@ -25,17 +25,68 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Frame Type',
+'type': 'uint8',
+'constants': [('Standard Data', 0),
+              ('Standard Remote', 1),
+              ('Extended Data', 2),
+              ('Extended Remote', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Transceiver Mode',
+'type': 'uint8',
+'constants': [('Normal', 0),
+              ('Loopback', 1),
+              ('Read Only', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Filter Mode',
+'type': 'uint8',
+'constants': [('Accept All', 0),
+              ('Match Standard Only', 1),
+              ('Match Extended Only', 2),
+              ('Match Standard And Extended', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Transceiver State',
+'type': 'uint8',
+'constants': [('Active', 0),
+              ('Passive', 1),
+              ('Disabled', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Communication LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Communication', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Error LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Transceiver State', 3),
+              ('Show Error', 4)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Write Frame Low Level',
-'elements': [('Frame Type', 'uint8', 1, 'in', ('Frame Type', [('Standard Data', 0),
-                                                              ('Standard Remote', 1),
-                                                              ('Extended Data', 2),
-                                                              ('Extended Remote', 3)])),
+'elements': [('Frame Type', 'uint8', 1, 'in', {'constant_group': 'Frame Type'}),
              ('Identifier', 'uint32', 1, 'in'),
              ('Data Length', 'uint8', 1, 'in'),
              ('Data Data', 'uint8', 15, 'in'),
@@ -114,10 +165,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Read Frame Low Level',
 'elements': [('Success', 'bool', 1, 'out'),
-             ('Frame Type', 'uint8', 1, 'out', ('Frame Type', [('Standard Data', 0),
-                                                               ('Standard Remote', 1),
-                                                               ('Extended Data', 2),
-                                                               ('Extended Remote', 3)])),
+             ('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
              ('Identifier', 'uint32', 1, 'out'),
              ('Data Length', 'uint8', 1, 'out'),
              ('Data Data', 'uint8', 15, 'out')],
@@ -223,9 +271,7 @@ com['packets'].append({
 'name': 'Set Transceiver Configuration',
 'elements': [('Baud Rate', 'uint32', 1, 'in'),
              ('Sample Point', 'uint16', 1, 'in'),
-             ('Transceiver Mode', 'uint8', 1, 'in', ('Transceiver Mode', [('Normal', 0),
-                                                                          ('Loopback', 1),
-                                                                          ('Read Only', 2)]))],
+             ('Transceiver Mode', 'uint8', 1, 'in', {'constant_group': 'Transceiver Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -274,9 +320,7 @@ com['packets'].append({
 'name': 'Get Transceiver Configuration',
 'elements': [('Baud Rate', 'uint32', 1, 'out'),
              ('Sample Point', 'uint16', 1, 'out'),
-             ('Transceiver Mode', 'uint8', 1, 'out', ('Transceiver Mode', [('Normal', 0),
-                                                                           ('Loopback', 1),
-                                                                           ('Read Only', 2)]))],
+             ('Transceiver Mode', 'uint8', 1, 'out', {'constant_group': 'Transceiver Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -452,10 +496,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Read Filter Configuration',
 'elements': [('Buffer Index', 'uint8', 1, 'in'),
-             ('Filter Mode', 'uint8', 1, 'in', ('Filter Mode', [('Accept All', 0),
-                                                                ('Match Standard Only', 1),
-                                                                ('Match Extended Only', 2),
-                                                                ('Match Standard And Extended', 3)])),
+             ('Filter Mode', 'uint8', 1, 'in', {'constant_group': 'Filter Mode'}),
              ('Filter Mask', 'uint32', 1, 'in'),
              ('Filter Identifier', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -591,10 +632,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Read Filter Configuration',
 'elements': [('Buffer Index', 'uint8', 1, 'in'),
-             ('Filter Mode', 'uint8', 1, 'out', ('Filter Mode', [('Accept All', 0),
-                                                                 ('Match Standard Only', 1),
-                                                                 ('Match Extended Only', 2),
-                                                                 ('Match Standard And Extended', 3)])),
+             ('Filter Mode', 'uint8', 1, 'out', {'constant_group': 'Filter Mode'}),
              ('Filter Mask', 'uint32', 1, 'out'),
              ('Filter Identifier', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -613,9 +651,7 @@ Gibt die Lese-Filter-Konfiguration zurück, wie von :func:`Set Read Filter Confi
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error Log Low Level',
-'elements': [('Transceiver State', 'uint8', 1, 'out', ('Transceiver State', [('Active', 0),
-                                                                             ('Passive', 1),
-                                                                             ('Disabled', 2)])),
+'elements': [('Transceiver State', 'uint8', 1, 'out', {'constant_group': 'Transceiver State'}),
              ('Transceiver Write Error Level', 'uint8', 1, 'out'),
              ('Transceiver Read Error Level', 'uint8', 1, 'out'),
              ('Transceiver Stuffing Error Count', 'uint32', 1, 'out'),
@@ -718,10 +754,7 @@ Lese-Buffer. In welchem Lese-Buffer seit dem letzten Aufruf dieser Funktion ein
 com['packets'].append({
 'type': 'function',
 'name': 'Set Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Communication LED Config', [('Off', 0),
-                                                                        ('On', 1),
-                                                                        ('Show Heartbeat', 2),
-                                                                        ('Show Communication', 3)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -749,10 +782,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Communication LED Config', [('Off', 0),
-                                                                         ('On', 1),
-                                                                         ('Show Heartbeat', 2),
-                                                                         ('Show Communication', 3)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -769,11 +799,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Error LED Config',
-'elements': [('Config', 'uint8', 1, 'in', ('Error LED Config', [('Off', 0),
-                                                                ('On', 1),
-                                                                ('Show Heartbeat', 2),
-                                                                ('Show Transceiver State', 3),
-                                                                ('Show Error', 4)]))],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -815,11 +841,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error LED Config',
-'elements': [('Config', 'uint8', 1, 'out', ('Error LED Config', [('Off', 0),
-                                                                 ('On', 1),
-                                                                 ('Show Heartbeat', 2),
-                                                                 ('Show Transceiver State', 3),
-                                                                 ('Show Error', 4)]))],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -836,10 +858,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Error LED Config` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Frame Read Low Level',
-'elements': [('Frame Type', 'uint8', 1, 'out', ('Frame Type', [('Standard Data', 0),
-                                                               ('Standard Remote', 1),
-                                                               ('Extended Data', 2),
-                                                               ('Extended Remote', 3)])),
+'elements': [('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
              ('Identifier', 'uint32', 1, 'out'),
              ('Data Length', 'uint8', 1, 'out'),
              ('Data Data', 'uint8', 15, 'out')],

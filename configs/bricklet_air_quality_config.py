@@ -6,7 +6,7 @@
 
 # Air Quality Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
 com = {
@@ -28,20 +28,34 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
-IAQ_CONSTANT = ('Accuracy', [('Unreliable', 0),
-                             ('Low',  1),
-                             ('Medium',  2),
-                             ('High',  3)])
+com['constant_groups'].append({
+'name': 'Accuracy',
+'type': 'uint8',
+'constants': [('Unreliable', 0),
+              ('Low',  1),
+              ('Medium',  2),
+              ('High',  3)]
+})
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Duration',
+'type': 'uint8',
+'constants': [('4 Days', 0),
+              ('28 Days', 1)]
+})
 
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Values',
 'elements': [('IAQ Index', 'int32', 1, 'out'),
-             ('IAQ Index Accuracy', 'uint8', 1, 'out', IAQ_CONSTANT),
+             ('IAQ Index Accuracy', 'uint8', 1, 'out', {'constant_group': 'Accuracy'}),
              ('Temperature', 'int32', 1, 'out'),
              ('Humidity', 'int32', 1, 'out'),
              ('Air Pressure', 'int32', 1, 'out')],
@@ -218,7 +232,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'All Values',
 'elements': [('IAQ Index', 'int32', 1, 'out'),
-             ('IAQ Index Accuracy', 'uint8', 1, 'out', IAQ_CONSTANT),
+             ('IAQ Index Accuracy', 'uint8', 1, 'out', {'constant_group': 'Accuracy'}),
              ('Temperature', 'int32', 1, 'out'),
              ('Humidity', 'int32', 1, 'out'),
              ('Air Pressure', 'int32', 1, 'out')],
@@ -245,7 +259,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get IAQ Index',
 'elements': [('IAQ Index', 'int32', 1, 'out'),
-             ('IAQ Index Accuracy', 'uint8', 1, 'out', IAQ_CONSTANT)],
+             ('IAQ Index Accuracy', 'uint8', 1, 'out', {'constant_group': 'Accuracy'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -345,7 +359,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'IAQ Index',
 'elements': [('IAQ Index', 'int32', 1, 'out'),
-             ('IAQ Index Accuracy', 'uint8', 1, 'out', IAQ_CONSTANT)],
+             ('IAQ Index Accuracy', 'uint8', 1, 'out', {'constant_group': 'Accuracy'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -456,8 +470,7 @@ es vier Tage bis eine volle Kalibrierung wieder hergestellt ist.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Background Calibration Duration',
-'elements': [('Duration', 'uint8', 1, 'in', ('Duration', [('4 Days', 0),
-                                                          ('28 Days', 1)]))],
+'elements': [('Duration', 'uint8', 1, 'in', {'constant_group': 'Duration'})],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':
@@ -512,8 +525,7 @@ Der Standardwert (seit Firmware-Version 2.0.3) beträgt 28 Tage.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Background Calibration Duration',
-'elements': [('Duration', 'uint8', 1, 'out', ('Duration', [('4 Days', 0),
-                                                           ('28 Days', 1)]))],
+'elements': [('Duration', 'uint8', 1, 'out', {'constant_group': 'Duration'})],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':

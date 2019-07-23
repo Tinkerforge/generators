@@ -6,7 +6,7 @@
 
 # PTC Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -26,9 +26,27 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Filter Option',
+'type': 'uint8',
+'constants': [('50Hz', 0),
+              ('60Hz', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Wire Mode',
+'type': 'uint8',
+'constants': [('2', 2),
+              ('3', 3),
+              ('4', 4)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -191,7 +209,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -238,7 +256,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -258,7 +276,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Resistance Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -305,7 +323,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Resistance Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -490,8 +508,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Noise Rejection Filter',
-'elements': [('Filter', 'uint8', 1, 'in', ('Filter Option', [('50Hz', 0),
-                                                             ('60Hz', 1)]))],
+'elements': [('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -518,8 +535,7 @@ Der Standardwert ist 0 = 50Hz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Noise Rejection Filter',
-'elements': [('Filter', 'uint8', 1, 'out', ('Filter Option', [('50Hz', 0),
-                                                              ('60Hz', 1)]))],
+'elements': [('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -563,9 +579,7 @@ verbunden oder der Sensor selbst ist fehlerhaft.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wire Mode',
-'elements': [('Mode', 'uint8', 1, 'in', ('Wire Mode', [('2', 2),
-                                                       ('3', 3),
-                                                       ('4', 4)]))],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Wire Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -590,9 +604,7 @@ Der Standardwert ist 2 = 2-Leiter.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wire Mode',
-'elements': [('Mode', 'uint8', 1, 'out', ('Wire Mode', [('2', 2),
-                                                        ('3', 3),
-                                                        ('4', 4)]))],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Wire Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

@@ -25,15 +25,63 @@ com = {
         'comcu_bricklet',
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
 
-COLOR = ('Color', [('Black', 0), ('White', 1), ('Red', 2), ('Gray', 2)])
-ORIENTATION = ('Orientation', [('Horizontal', 0), ('Vertical', 1)])
-DRAW_STATUS = ('Draw Status', [('Idle', 0), ('Copying', 1), ('Drawing', 2)])
-UPDATE_MODE = ('Update Mode', [('Default', 0), ('Black White', 1), ('Delta', 2)])
-DISPLAY_TYPE = ('Display Type', [('Black White Red', 0), ('Black White Gray', 1)])
+com['constant_groups'].append({
+'name': 'Draw Status',
+'type': 'uint8',
+'constants': [('Idle', 0),
+              ('Copying', 1),
+              ('Drawing', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Color',
+'type': 'uint8',
+'constants': [('Black', 0),
+              ('White', 1),
+              ('Red', 2),
+              ('Gray', 2)]
+})
+com['constant_groups'].append({
+'name': 'Font',
+'type': 'uint8',
+'constants': [('6x8', 0),
+              ('6x16', 1),
+              ('6x24', 2),
+              ('6x32', 3),
+              ('12x16', 4),
+              ('12x24', 5),
+              ('12x32', 6),
+              ('18x24', 7),
+              ('18x32', 8),
+              ('24x32', 9)]
+})
+
+com['constant_groups'].append({
+'name': 'Orientation',
+'type': 'uint8',
+'constants': [('Horizontal', 0),
+              ('Vertical', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Update Mode',
+'type': 'uint8',
+'constants': [('Default', 0),
+              ('Black White', 1),
+              ('Delta', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Display Type',
+'type': 'uint8',
+'constants': [('Black White Red', 0),
+              ('Black White Gray', 1)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -63,7 +111,7 @@ Siehe :func:`Get Draw Status`.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Draw Status',
-'elements': [('Draw Status', 'uint8', 1, 'out', DRAW_STATUS)],
+'elements': [('Draw Status', 'uint8', 1, 'out', {'constant_group': 'Draw Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -284,7 +332,7 @@ den Inhalt beibehält.
 com['packets'].append({
 'type': 'function',
 'name': 'Fill Display',
-'elements': [('Color', 'uint8', 1, 'in', COLOR)],
+'elements': [('Color', 'uint8', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -303,18 +351,9 @@ com['packets'].append({
 'name': 'Draw Text',
 'elements': [('Position X', 'uint16', 1, 'in'),
              ('Position Y', 'uint8', 1, 'in'),
-             ('Font', 'uint8', 1, 'in',  ('Font', [('6x8', 0),
-                                                   ('6x16', 1),
-                                                   ('6x24', 2),
-                                                   ('6x32', 3),
-                                                   ('12x16', 4),
-                                                   ('12x24', 5),
-                                                   ('12x32', 6),
-                                                   ('18x24', 7),
-                                                   ('18x32', 8),
-                                                   ('24x32', 9)])),
-             ('Color', 'uint8', 1, 'in', COLOR),
-             ('Orientation', 'uint8', 1, 'in', ORIENTATION),
+             ('Font', 'uint8', 1, 'in', {'constant_group': 'Font'}),
+             ('Color', 'uint8', 1, 'in', {'constant_group': 'Color'}),
+             ('Orientation', 'uint8', 1, 'in', {'constant_group': 'Orientation'}),
              ('Text', 'string', 50, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -349,7 +388,7 @@ com['packets'].append({
              ('Position Y Start', 'uint8', 1, 'in'),
              ('Position X End', 'uint16', 1, 'in'),
              ('Position Y End', 'uint8', 1, 'in'),
-             ('Color', 'uint8', 1, 'in', COLOR)],
+             ('Color', 'uint8', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -375,7 +414,7 @@ com['packets'].append({
              ('Position X End', 'uint16', 1, 'in'),
              ('Position Y End', 'uint8', 1, 'in'),
              ('Fill', 'bool', 1, 'in'),
-             ('Color', 'uint8', 1, 'in', COLOR)],
+             ('Color', 'uint8', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -403,7 +442,7 @@ gezeichnet.
 com['packets'].append({
 'type': 'callback',
 'name': 'Draw Status',
-'elements': [('Draw Status', 'uint8', 1, 'out', DRAW_STATUS)],
+'elements': [('Draw Status', 'uint8', 1, 'out', {'constant_group': 'Draw Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -422,7 +461,7 @@ ausgelöst wenn sich der Draw Status ändert (siehe :func:`Get Draw Status`).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Update Mode',
-'elements': [('Update Mode', 'uint8', 1, 'in', UPDATE_MODE)],
+'elements': [('Update Mode', 'uint8', 1, 'in', {'constant_group': 'Update Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -507,7 +546,7 @@ flackerfreie Aktualisierungen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Update Mode',
-'elements': [('Update Mode', 'uint8', 1, 'out', UPDATE_MODE)],
+'elements': [('Update Mode', 'uint8', 1, 'out', {'constant_group': 'Update Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -524,7 +563,7 @@ Gibt den Update Mode zurück, wie von :func:`Set Update Mode` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Display Type',
-'elements': [('Display Type', 'uint8', 1, 'in', DISPLAY_TYPE)],
+'elements': [('Display Type', 'uint8', 1, 'in', {'constant_group': 'Display Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -548,7 +587,7 @@ bleibt bei einem Neustart unverändert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Display Type',
-'elements': [('Display Type', 'uint8', 1, 'out', DISPLAY_TYPE)],
+'elements': [('Display Type', 'uint8', 1, 'out', {'constant_group': 'Display Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

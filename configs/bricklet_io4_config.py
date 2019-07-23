@@ -24,9 +24,25 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'Direction',
+'type': 'char',
+'constants': [('In', 'i'),
+              ('Out', 'o')]
+})
+
+com['constant_groups'].append({
+'name': 'Edge Type',
+'type': 'uint8',
+'constants': [('Rising', 0),
+              ('Falling', 1),
+              ('Both', 2)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -92,8 +108,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
 'elements': [('Selection Mask', 'uint8', 1, 'in'),
-             ('Direction', 'char', 1, 'in', ('Direction', [('In', 'i'),
-                                                           ('Out', 'o')])),
+             ('Direction', 'char', 1, 'in', {'constant_group': 'Direction'}),
              ('Value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -500,9 +515,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Config',
 'elements': [('Selection Mask', 'uint8', 1, 'in'),
-             ('Edge Type', 'uint8', 1, 'in', ('Edge Type', [('Rising', 0),
-                                                            ('Falling', 1),
-                                                            ('Both', 2)])),
+             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type'}),
              ('Debounce', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
@@ -554,9 +567,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Config',
 'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Edge Type', 'uint8', 1, 'out', ('Edge Type', [('Rising', 0),
-                                                             ('Falling', 1),
-                                                             ('Both', 2)])),
+             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type'}),
              ('Debounce', 'uint8', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {

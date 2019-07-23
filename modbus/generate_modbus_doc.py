@@ -205,7 +205,8 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
             c += common.select_lang(for_) + ' '
 
             e = []
-            for element in constant_group.get_elements():
+
+            for element in constant_group.get_elements(self):
                 name = element.get_name().under
                 e.append(name)
 

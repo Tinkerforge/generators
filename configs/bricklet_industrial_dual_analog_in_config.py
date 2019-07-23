@@ -6,7 +6,7 @@
 
 # Industrial Dual Analog In Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -26,9 +26,25 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'Sample Rate',
+'type': 'uint8',
+'constants': [('976 SPS', 0),
+              ('488 SPS', 1),
+              ('244 SPS', 2),
+              ('122 SPS', 3),
+              ('61 SPS', 4),
+              ('4 SPS', 5),
+              ('2 SPS', 6),
+              ('1 SPS', 7)]
+})
 
 com['doc'] = {
 'en':
@@ -126,7 +142,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Threshold',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -176,7 +192,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Threshold',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -251,14 +267,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'in', ('Sample Rate', [('976 SPS', 0),
-                                                         ('488 SPS', 1),
-                                                         ('244 SPS', 2),
-                                                         ('122 SPS', 3),
-                                                         ('61 SPS', 4),
-                                                         ('4 SPS', 5),
-                                                         ('2 SPS', 6),
-                                                         ('1 SPS', 7)]))],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -283,14 +292,7 @@ Der Standardwert ist 6 (2 Werte pro Sekunde).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'out', ('Sample Rate', [('976 SPS', 0),
-                                                          ('488 SPS', 1),
-                                                          ('244 SPS', 2),
-                                                          ('122 SPS', 3),
-                                                          ('61 SPS', 4),
-                                                          ('4 SPS', 5),
-                                                          ('2 SPS', 6),
-                                                          ('1 SPS', 7)]))],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

@@ -6,7 +6,7 @@
 
 # Humidity Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANTS
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -27,9 +27,12 @@ com = {
     'features': [
         'bricklet_get_identity'
     ],
+    'constant_groups': [],
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 
 com['packets'].append({
 'type': 'function',
@@ -202,7 +205,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Humidity Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -249,7 +252,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Humidity Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -269,7 +272,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -316,7 +319,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
