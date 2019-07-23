@@ -553,18 +553,18 @@ class IPConnection(object):
         self.disconnect_probe_thread = None
         self.waiter = threading.Semaphore()
         self.brickd = BrickDaemon('2', self)
-        self._retry_first_connection = False
+        self.retry_first_connection = False
         self.reconnect_sleep_time = 0.1
 
-    def _enable_retry_first_connection(self, log_fn):
+    def enable_retry_first_connection(self, log_fn):
         """
         Used for MQTT bindings. This will enable reconnect attempts even if there was no successful connection yet.
 
         log_fn will be called with an exception to signal, that the first connection attempt was unsuccessful and will be retried.
         """
         self.auto_reconnect_allowed = True
-        self._retry_first_connection = True
-        self._log_fn = log_fn
+        self.retry_first_connection = True
+        self.log_fn = log_fn
         self.reconnect_sleep_time = 5
 
     def connect(self, host, port):
@@ -811,17 +811,17 @@ class IPConnection(object):
 
                     self.callback = None
 
-            if not self._retry_first_connection:
+            if not self.retry_first_connection:
                 cleanup1()
             else:
-                if not is_auto_reconnect and self._log_fn is not None:
-                    self._log_fn(e)
+                if not is_auto_reconnect and self.log_fn is not None:
+                    self.log_fn(e)
                 self.callback.queue.put((IPConnection.QUEUE_META,
                                     (IPConnection.CALLBACK_DISCONNECTED,
                                     IPConnection.DISCONNECT_REASON_ERROR, self.socket_id)))
             raise e
 
-        if self._retry_first_connection:
+        if self.retry_first_connection:
             self.reconnect_sleep_time = 0.1
 
         self.socket = tmp
@@ -885,7 +885,7 @@ class IPConnection(object):
             cleanup3()
             raise
 
-        if not self._retry_first_connection:
+        if not self.retry_first_connection:
             self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
 
