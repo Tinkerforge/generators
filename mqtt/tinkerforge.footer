@@ -16,7 +16,11 @@ class MQTTBindings:
         self.no_symbolic_response = no_symbolic_response
         self.show_payload = show_payload
 
+        self.broker_connected_event = threading.Event()
+        self.ipcon_connected_event = threading.Event()
+
         self.ipcon = IPConnection()
+        self.ipcon._enable_retry_first_connection(lambda e: logging.info("Could not connect to Brick Daemon: {}. Will retry.".format(str(e))))
         self.handle_ipcon_exceptions(lambda i: i.set_timeout(ipcon_timeout))
 
         self.mqttc = mqtt.Client(userdata=len(global_prefix))
@@ -39,7 +43,10 @@ class MQTTBindings:
             self.mqttc.tls_insecure_set(True)
 
         self.mqttc.on_message = self.on_message
+
+        self.was_connected = False
         self.mqttc.on_connect = self.on_connect
+        self.mqttc.on_log = self.on_log
 
         self.callback_devices = {}
         self.enumerate_response_paths = set()
@@ -64,27 +71,39 @@ class MQTTBindings:
 
         self.global_prefix = global_prefix
 
-    def connect(self, ipcon_host, ipcon_port,ipcon_auth_secret, broker_host, broker_port):
+    def on_log(self, client, userdata, level, buf):
+        if 'Connection failed, retrying' in buf:
+            logging.info("Could not connect to MQTT Broker. Will retry.")
+
+    def ipcon_connect_unblocker(self, _reason):
+        self.ipcon_connected_event.set()
+
+    def connect_to_brickd(self, ipcon_host, ipcon_port, ipcon_auth_secret):
         logging.debug("Connecting to brickd at {}:{}".format(ipcon_host, ipcon_port))
-        self.handle_ipcon_exceptions(lambda i: i.connect(ipcon_host, ipcon_port))
+
+        self.ipcon.register_callback(self.ipcon.CALLBACK_CONNECTED, self.ipcon_connect_unblocker)
+        try:
+            self.ipcon.connect(ipcon_host, ipcon_port)
+        except:
+            pass
+
+        self.ipcon_connected_event.wait()
+        self.ipcon.register_callback(self.ipcon.CALLBACK_CONNECTED, None)
         logging.debug("Connected to brickd at {}:{}".format(ipcon_host, ipcon_port))
         if ipcon_auth_secret != "":
             self.authenticate(ipcon_auth_secret, "Could not authenticate.")
 
-        logging.debug("Connecting to MQTT broker at {}:{}".format(broker_host, broker_port))
+    def configure_mqtt_connection(self, broker_host, broker_port):
+        logging.debug("Configuring connection to MQTT broker at {}:{}".format(broker_host, broker_port))
         try:
-            self.mqttc.connect(broker_host, broker_port)
+            self.mqttc.connect_async(broker_host, broker_port)
         except Exception as e:
-            fatal_error("Connecting to MQTT broker failed: " + str(e), ERROR_NO_CONNECTION_TO_BROKER)
-        logging.debug("Connected to MQTT broker at {}:{}".format(broker_host, broker_port))
-
-        self.mqttc.subscribe(self.global_prefix + "request/#")
-        self.mqttc.subscribe(self.global_prefix + "register/#")
-        self.mqttc.publish(self.global_prefix + "callback/bindings/restart", "null")
-        self.mqttc.subscribe(self.global_prefix + "callback/bindings/restart")
+            fatal_error("Configuring connection to MQTT broker failed: " + str(e), ERROR_NO_CONNECTION_TO_BROKER)
+        logging.debug("Configured connection to MQTT broker at {}:{}".format(broker_host, broker_port))
 
     def run(self, initial_config):
         self.mqttc.loop_start()
+        self.broker_connected_event.wait()
         try:
             for topic, payload in initial_config.items():
                 self.on_message(self.mqttc, len(self.global_prefix), message_tup(topic, json.dumps(payload)))
@@ -99,7 +118,6 @@ class MQTTBindings:
             time.sleep(0.2)
             self.mqttc.disconnect()
             self.mqttc.loop_stop()
-
 
 
     def ip_connection_callback_fn(self, callback_id, *args):
@@ -183,9 +201,18 @@ class MQTTBindings:
         self.ipcon.devices = {}
 
 
-    @staticmethod
-    def on_connect(mqttc, obj, flags, rc):
-        logging.debug("Connecting to mqtt broker: " + mqtt.connack_string(rc))
+    def on_connect(self, mqttc, obj, flags, rc):
+        if rc == 0:
+            logging.debug("Connected to mqtt broker.")
+            self.mqttc.subscribe(self.global_prefix + "request/#")
+            self.mqttc.subscribe(self.global_prefix + "register/#")
+            if not self.was_connected:
+                self.mqttc.publish(self.global_prefix + "callback/bindings/restart", "null")
+                self.was_connected = True
+            self.mqttc.subscribe(self.global_prefix + "callback/bindings/restart")
+            self.broker_connected_event.set()
+        else:
+            logging.debug("Failed to connect to mqtt broker: " + mqtt.connack_string(rc))
 
     @staticmethod
     def parse_path(global_prefix_len, path):
@@ -264,7 +291,7 @@ class MQTTBindings:
         try:
             return function(self.ipcon)
         except Error as e:
-            if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC, Error.TIMEOUT]:
+            if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC, Error.TIMEOUT, Error.NOT_CONNECTED]:
                 if infoString is not None:
                     return json_error(e.description + " " + infoString, resultDict)
                 return json_error(e.description, resultDict)
@@ -774,9 +801,16 @@ def main():
             sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
     else:
         initial_config = {}
-    bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
-    bindings.connect(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret,args.broker_host, args.broker_port)
-    bindings.run(initial_config)
+
+    try:
+        bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
+        bindings.connect_to_brickd(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret)
+        bindings.configure_mqtt_connection(args.broker_host, args.broker_port)
+        bindings.run(initial_config)
+    except KeyboardInterrupt:
+        pass
+    except:
+        raise
 
 if __name__ == '__main__':
     main()
