@@ -819,7 +819,7 @@ class IPConnection(object):
                 self.callback.queue.put((IPConnection.QUEUE_META,
                                     (IPConnection.CALLBACK_DISCONNECTED,
                                     IPConnection.DISCONNECT_REASON_ERROR, self.socket_id)))
-            raise e
+            raise
 
         if self.retry_first_connection:
             self.reconnect_sleep_time = 0.1
