@@ -207,7 +207,7 @@ Genereller Ansatz:
 * Warten auf den :cb:`Frame Available` Callback.
 * Und so weiter.
 
-Anstatt das diese Funktion gepollt wird, kann auch der:cb:`Frame` Callback genutzt werden.
+Anstatt das diese Funktion gepollt wird, kann auch der :cb:`Frame` Callback genutzt werden.
 Der Callback kann mit :func:`Set Frame Callback Config` aktiviert werden.
 
 Die *frame number* startet mit 0 und wird für jedes empfangene Frame erhöht.
