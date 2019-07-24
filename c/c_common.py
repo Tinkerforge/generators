@@ -50,9 +50,6 @@ class CPacket(common.Packet):
 
             if role == 'stream_data':
                 if direction == 'in' and packet_type == 'function':
-                    if element_type == 'char':
-                        element_type = 'const ' + element_type
-
                     modifier = '*'
                 elif direction == 'out' and packet_type == 'callback':
                     modifier = '*'
@@ -127,6 +124,12 @@ class CElement(common.Element):
 
         if type_ == 'string':
             if self.get_direction() == 'in' and context == 'signature':
+                return 'const char'
+
+            return 'char'
+
+        if type_ == 'char':
+            if self.get_direction() == 'in' and self.get_role() == 'stream_data' and context == 'signature':
                 return 'const char'
 
             return 'char'
