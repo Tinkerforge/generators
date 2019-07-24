@@ -53,7 +53,7 @@ def files_are_not_the_same(src_file, dest_path):
         return text_files_are_not_the_same(src_file, dest_path)
 
 path = os.getcwd()
-start_path = path.replace('/generators', '')
+start_path = '/'.join([part for part in path.split('/') if not part.startswith('generators')])
 brickv_path_bindings = os.path.join(start_path, 'brickv/src/brickv/bindings')
 flash_test_path_bindings = os.path.join(start_path, 'flash-test/src/flash-test/plugin_system/tinkerforge')
 bindings = []
