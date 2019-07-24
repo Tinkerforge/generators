@@ -310,7 +310,7 @@ finished.
 """,
 'de':
 """
-Diese Callback wird ausgelöst wenn der Zähler (siehe :func:`Start Counter`)
+Diese Callback wird ausgelöst, wenn der Zähler (siehe :func:`Start Counter`)
 fertig ist.
 """
 }]

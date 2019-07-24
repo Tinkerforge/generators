@@ -303,7 +303,7 @@ By default this callback is disabled.
 'de':
 """
 Wenn dieser Callback aktiviert ist, wird der :cb:`Sensor Connected` Callback
-jedes mal ausgelöst wenn ein Pt-Sensor verbunden/getrennt wird.
+jedes mal ausgelöst, wenn ein Pt-Sensor verbunden/getrennt wird.
 
 Standardmäßig ist dieser Callback deaktiviert.
 """

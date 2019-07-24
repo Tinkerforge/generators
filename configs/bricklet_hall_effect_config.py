@@ -228,7 +228,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Edge Count` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Edge Count` Callback wird nur ausgelöst wenn sich die Flankenzählung
+Der :cb:`Edge Count` Callback wird nur ausgelöst, wenn sich die Flankenzählung
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -302,7 +302,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 sind der aktuelle Zählerstand und der aktuelle Wert (siehe
 :func:`Get Value` and :func:`Get Edge Count`).
 
-Der :cb:`Edge Count` Callback wird nur ausgelöst wenn sich mindestens einer
+Der :cb:`Edge Count` Callback wird nur ausgelöst, wenn sich mindestens einer
 der beiden Werte seit der letzten Auslösung geändert hat.
 """
 }]

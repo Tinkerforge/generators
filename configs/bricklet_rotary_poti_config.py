@@ -120,7 +120,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Position` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Position` Callback wird nur ausgelöst wenn sich die Position seit der
+Der :cb:`Position` Callback wird nur ausgelöst, wenn sich die Position seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -167,7 +167,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -230,10 +230,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Position *außerhalb* der min und max Werte ist"
- "'i'",    "Callback wird ausgelöst wenn die Position *innerhalb* der min und max Werte ist"
- "'<'",    "Callback wird ausgelöst wenn die Position kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Position größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Position *außerhalb* der min und max Werte ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Position *innerhalb* der min und max Werte ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Position kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Position größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -297,10 +297,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* der min und max Werte ist"
- "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* der min und max Werte ist"
- "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Analogwert *außerhalb* der min und max Werte ist"
+ "'i'",    "Callback wird ausgelöst, wenn der Analogwert *innerhalb* der min und max Werte ist"
+ "'<'",    "Callback wird ausgelöst, wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -407,7 +407,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Position Callback Period`, ausgelöst. Der :word:`parameter` ist die
 Position des Drehpotentiometers.
 
-Der :cb:`Position` Callback wird nur ausgelöst wenn sich die Position seit der
+Der :cb:`Position` Callback wird nur ausgelöst, wenn sich die Position seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -434,7 +434,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Analog Value Callback Period`, ausgelöst. Der :word:`parameter`
 ist der Analogwert des Drehpotentiometers.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -457,7 +457,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Position Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Position des Drehpotentiometers.
 
@@ -484,7 +484,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Drehpotentiometers.
 

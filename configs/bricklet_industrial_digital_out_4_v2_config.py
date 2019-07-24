@@ -205,7 +205,7 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
+Dieser Callback wird ausgelöst, wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten den Kanal und den aktuellen Zustand des Kanals
 (der Zustand nach dem Monoflop).
 """

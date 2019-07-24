@@ -106,7 +106,7 @@ This callback is triggered when the button is pressed.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Taster gedrückt wird.
+Dieser Callback wird ausgelöst, wenn der Taster gedrückt wird.
 """
 }]
 })
@@ -123,7 +123,7 @@ This callback is triggered when the button is released.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Taster losgelassen wird.
+Dieser Callback wird ausgelöst, wenn der Taster losgelassen wird.
 """
 }]
 })

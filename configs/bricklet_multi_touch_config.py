@@ -178,7 +178,7 @@ This callback is triggered every time the touch state changes.
 Gibt den aktuellen Tastzustand zurück, siehe :func:`Get Touch State`
 für mehr Informationen über den Zustand.
 
-Dieser Callback wird ausgelöst wenn sich ein Tastzustand ändert.
+Dieser Callback wird ausgelöst, wenn sich ein Tastzustand ändert.
 """
 }]
 })

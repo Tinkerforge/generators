@@ -186,7 +186,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Color Callback Configuration`,
 ausgelöst. Der :word:`parameter` ist die Farbe des Sensors als RGBC.
 
-Der :cb:`Color` Callback wird nur ausgelöst wenn sich die Farbe seit der
+Der :cb:`Color` Callback wird nur ausgelöst, wenn sich die Farbe seit der
 letzten Auslösung geändert hat.
 """
 }]

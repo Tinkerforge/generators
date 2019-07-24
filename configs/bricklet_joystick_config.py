@@ -174,7 +174,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Position` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-The :cb:`Position` Callback wird nur ausgelöst wenn sich die Position seit der
+The :cb:`Position` Callback wird nur ausgelöst, wenn sich die Position seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -221,7 +221,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich die Analogwerte
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich die Analogwerte
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -286,10 +286,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Position *außerhalb* der min und max Werte ist"
- "'i'",    "Callback wird ausgelöst wenn die Position *innerhalb* der min und max Werte ist"
- "'<'",    "Callback wird ausgelöst wenn die Position kleiner als die min Werte ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Position größer als die min Werte ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Position *außerhalb* der min und max Werte ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Position *innerhalb* der min und max Werte ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Position kleiner als die min Werte ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Position größer als die min Werte ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0, 0, 0).
 """
@@ -357,10 +357,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Analogwerte *außerhalb* der min und max Werte ist"
- "'i'",    "Callback wird ausgelöst wenn die Analogwerte *innerhalb* der min und max Werte ist"
- "'<'",    "Callback wird ausgelöst wenn die Analogwerte kleiner als die min Werte ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Analogwerte größer als die min Werte ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Analogwerte *außerhalb* der min und max Werte ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Analogwerte *innerhalb* der min und max Werte ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Analogwerte kleiner als die min Werte ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Analogwerte größer als die min Werte ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0, 0, 0).
 """
@@ -496,7 +496,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Analog Value Callback Period`,
 ausgelöst. Der :word:`parameter` sind die Analogwerte des Joysticks.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich die Analogwerte
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich die Analogwerte
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -520,7 +520,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Position Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Position des Joysticks.
 
@@ -548,7 +548,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` sind die Analogwerte des Joystick.
 
@@ -570,7 +570,7 @@ This callback is triggered when the button is pressed.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn die Taste gedrückt wird.
+Dieser Callback wird ausgelöst, wenn die Taste gedrückt wird.
 """
 }]
 })
@@ -587,7 +587,7 @@ This callback is triggered when the button is released.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn die Taste losgelassen wird.
+Dieser Callback wird ausgelöst, wenn die Taste losgelassen wird.
 """
 }]
 })

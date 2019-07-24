@@ -125,7 +125,7 @@ Setzt die Periode in ms mit welcher der :cb:`Current` Callback für den
 übergebenen Sensor ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Current` Callback wird nur ausgelöst wenn sich die Stromstärke seit der
+Der :cb:`Current` Callback wird nur ausgelöst, wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -192,10 +192,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Stromstärke *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Stromstärke *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Stromstärke *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Stromstärke *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -358,7 +358,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Current Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
 
-Der :cb:`Current` Callback wird nur ausgelöst wenn sich die Stromstärke seit der
+Der :cb:`Current` Callback wird nur ausgelöst, wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -382,7 +382,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Current Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Stromstärke des Sensors.
 

@@ -113,7 +113,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Air Pressure` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Air Pressure` Callback wird nur ausgelöst wenn sich der Luftdruck
+Der :cb:`Air Pressure` Callback wird nur ausgelöst, wenn sich der Luftdruck
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -160,7 +160,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Altitude` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Altitude` Callback wird nur ausgelöst wenn sich Höhe seit der letzten
+Der :cb:`Altitude` Callback wird nur ausgelöst, wenn sich Höhe seit der letzten
 Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -223,10 +223,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Luftdruck *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Luftdruck *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Luftdruck kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Luftdruck größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Luftdruck *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn der Luftdruck *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn der Luftdruck kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn der Luftdruck größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -290,10 +290,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Höhe *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Höhe *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Höhe kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Höhe größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Höhe *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Höhe *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Höhe kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Höhe größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -469,7 +469,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Air Pressure Callback Period`, ausgelöst. Der :word:`parameter` ist
 der Luftdruck des Luftdrucksensors.
 
-Der :cb:`Air Pressure` Callback wird nur ausgelöst wenn sich der Luftdruck
+Der :cb:`Air Pressure` Callback wird nur ausgelöst, wenn sich der Luftdruck
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -496,7 +496,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Altitude Callback Period`, ausgelöst. Der :word:`parameter` ist
 die Höhe des Luftdrucksensors.
 
-Der :cb:`Altitude` Callback wird nur ausgelöst wenn sich die Höhe seit der
+Der :cb:`Altitude` Callback wird nur ausgelöst, wenn sich die Höhe seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -519,7 +519,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Air Pressure Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Luftdruck des Luftdrucksensors.
 
@@ -546,7 +546,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Altitude Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Höhe des Luftdrucksensors.
 

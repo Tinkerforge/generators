@@ -193,7 +193,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Ambient Temperature` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Ambient Temperature` Callback wird nur ausgelöst wenn sich die
+Der :cb:`Ambient Temperature` Callback wird nur ausgelöst, wenn sich die
 Temperatur seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -240,7 +240,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Object Temperature` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Object Temperature` Callback wird nur ausgelöst wenn sich die
+Der :cb:`Object Temperature` Callback wird nur ausgelöst, wenn sich die
 Temperatur seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -303,10 +303,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Umgebungstemperatur *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Umgebungstemperatur *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Umgebungstemperatur kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Umgebungstemperatur größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Umgebungstemperatur *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Umgebungstemperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Umgebungstemperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Umgebungstemperatur größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -370,10 +370,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Objekttemperatur *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Objekttemperatur *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Objekttemperatur kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Objekttemperatur größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Objekttemperatur *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Objekttemperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Objekttemperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Objekttemperatur größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -479,7 +479,7 @@ temperature has changed since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Ambient Temperature Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Temperatur des Sensors.
 
-Der :cb:`Ambient Temperature` Callback wird nur ausgelöst wenn sich die
+Der :cb:`Ambient Temperature` Callback wird nur ausgelöst, wenn sich die
 Temperatur seit der letzten Auslösung geändert hat.
 """
 }]
@@ -506,7 +506,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Object Temperature Callback Period`, ausgelöst. Der
 :word:`parameter` ist die Objekttemperatur des Sensors.
 
-Der :cb:`Object Temperature` Callback wird nur ausgelöst wenn sich die
+Der :cb:`Object Temperature` Callback wird nur ausgelöst, wenn sich die
 Objekttemperatur seit der letzten Auslösung geändert hat.
 """
 }]
@@ -529,7 +529,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Ambient Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Umgebungstemperatur des Sensors.
 
@@ -556,7 +556,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Object Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Objekttemperatur des Sensors.
 

@@ -118,7 +118,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Acceleration` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Acceleration` Callback wird nur ausgelöst wenn sich die Acceleration
+Der :cb:`Acceleration` Callback wird nur ausgelöst, wenn sich die Acceleration
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -185,10 +185,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Beschleunigung *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Beschleunigung *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Beschleunigung kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Beschleunigung größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Beschleunigung *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Beschleunigung *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Beschleunigung kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Beschleunigung größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """
@@ -425,7 +425,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Acceleration Callback Period`, ausgelöst. Die :word:`parameters`
 sind die Beschleunigungen der X-, Y- und Z-Achse.
 
-Der :cb:`Acceleration` Callback wird nur ausgelöst wenn sich die Beschleunigung
+Der :cb:`Acceleration` Callback wird nur ausgelöst, wenn sich die Beschleunigung
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -450,7 +450,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Acceleration Callback Threshold` gesetzt, erreicht wird.
 Die :word:`parameters` sind die Beschleunigungen der X-, Y- und Z-Achse.
 

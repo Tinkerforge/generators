@@ -153,7 +153,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Distance` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Distance` Callback wird nur ausgelöst wenn sich der Entfernungswert
+Der :cb:`Distance` Callback wird nur ausgelöst, wenn sich der Entfernungswert
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -200,7 +200,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Velocity` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Velocity` Callback wird nur ausgelöst wenn sich der
+Der :cb:`Velocity` Callback wird nur ausgelöst, wenn sich der
 Geschwindigkeitswert seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -263,10 +263,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Entfernungswert *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Entfernungswert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Entfernungswert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Entfernungswert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Entfernungswert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn der Entfernungswert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn der Entfernungswert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn der Entfernungswert größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -330,10 +330,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Geschwindigkeitswert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn der Geschwindigkeitswert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn der Geschwindigkeitswert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn der Geschwindigkeitswert größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -618,7 +618,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Distance Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Entfernungswert des Sensors.
 
-Der :cb:`Distance` Callback wird nur ausgelöst wenn sich der Entfernungswert
+Der :cb:`Distance` Callback wird nur ausgelöst, wenn sich der Entfernungswert
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -644,7 +644,7 @@ the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Velocity Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Geschwindigkeit des Sensors.
 
-Der :cb:`Velocity` Callback wird nur ausgelöst wenn sich der
+Der :cb:`Velocity` Callback wird nur ausgelöst, wenn sich der
 Geschwindigkeitswert seit der letzten Auslösung geändert hat.
 """
 }]
@@ -667,7 +667,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Distance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Entfernungswert des Sensors.
 
@@ -694,7 +694,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Velocity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Geschwindigkeitswert des Sensors.
 

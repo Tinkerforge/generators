@@ -798,7 +798,7 @@ See :func:`Reader Get State` for more information about the possible states.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Reader-Zustand des NFC Bricklets
+Dieser Callback wird ausgelöst, wenn der Reader-Zustand des NFC Bricklets
 sich verändert. Siehe :func:`Reader Get State` für mehr Informationen
 über die möglichen Zustände des Bricklets.
 """
@@ -972,7 +972,7 @@ See :func:`Cardemu Get State` for more information about the possible states.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Cardemu-Zustand des NFC Bricklets
+Dieser Callback wird ausgelöst, wenn der Cardemu-Zustand des NFC Bricklets
 sich verändert. Siehe :func:`Cardemu Get State` für mehr Informationen
 über die möglichen Zustände des Bricklets.
 """
@@ -1182,7 +1182,7 @@ See :func:`P2P Get State` for more information about the possible states.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der P2P-Zustand des NFC Bricklets
+Dieser Callback wird ausgelöst, wenn der P2P-Zustand des NFC Bricklets
 sich verändert. Siehe :func:`P2P Get State` für mehr Informationen
 über die möglichen Zustände des Bricklets.
 """

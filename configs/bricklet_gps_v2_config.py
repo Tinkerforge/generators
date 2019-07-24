@@ -413,7 +413,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Coordinates` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Coordinates` Callback wird nur ausgelöst wenn sich die Koordinaten seit der
+Der :cb:`Coordinates` Callback wird nur ausgelöst, wenn sich die Koordinaten seit der
 letzten Auslösung geändert haben.
 
 Der Standardwert ist 0.
@@ -460,7 +460,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Status` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Status` Callback wird nur ausgelöst wenn sich der Status seit der
+Der :cb:`Status` Callback wird nur ausgelöst, wenn sich der Status seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -507,7 +507,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Altitude` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Altitude` Callback wird nur ausgelöst wenn sich die Höhe seit der
+Der :cb:`Altitude` Callback wird nur ausgelöst, wenn sich die Höhe seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -554,7 +554,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Motion` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Motion` Callback wird nur ausgelöst wenn sich die Bewegung seit der
+Der :cb:`Motion` Callback wird nur ausgelöst, wenn sich die Bewegung seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -601,7 +601,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Date Time` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Date Time` Callback wird nur ausgelöst wenn sich das Datum oder die
+Der :cb:`Date Time` Callback wird nur ausgelöst, wenn sich das Datum oder die
 Zeit seit der letzten Auslösung geändert haben.
 
 Der Standardwert ist 0.
@@ -682,7 +682,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Coordinates Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Coordinates`.
 
-Der :cb:`Coordinates` Callback wird nur ausgelöst wenn sich die
+Der :cb:`Coordinates` Callback wird nur ausgelöst, wenn sich die
 Koordinaten seit der letzten Auslösung geändert haben und ein Fix vorhanden
 ist (siehe :func:`Get Status`).
 """
@@ -711,7 +711,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Status Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Status`.
 
-Der :cb:`Status` Callback wird nur ausgelöst wenn sich der
+Der :cb:`Status` Callback wird nur ausgelöst, wenn sich der
 Status seit der letzten Auslösung geändert hat.
 """
 }]
@@ -740,7 +740,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Altitude Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Altitude`.
 
-Der :cb:`Altitude` Callback wird nur ausgelöst wenn sich die
+Der :cb:`Altitude` Callback wird nur ausgelöst, wenn sich die
 Höhe seit der letzten Auslösung geändert hat und ein Fix vorhanden
 ist (siehe :func:`Get Status`).
 """
@@ -770,7 +770,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Motion Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Motion`.
 
-Der :cb:`Motion` Callback wird nur ausgelöst wenn sich die
+Der :cb:`Motion` Callback wird nur ausgelöst, wenn sich die
 Bewegung seit der letzten Auslösung geändert hat und ein Fix vorhanden
 ist (siehe :func:`Get Status`).
 """
@@ -799,7 +799,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Date Time Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Date Time`.
 
-Der :cb:`Date Time` Callback wird nur ausgelöst wenn sich das Datum oder die
+Der :cb:`Date Time` Callback wird nur ausgelöst, wenn sich das Datum oder die
 Zeit seit der letzten Auslösung geändert haben.
 """
 }]

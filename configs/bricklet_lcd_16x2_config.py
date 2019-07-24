@@ -218,7 +218,7 @@ the number of the button (0 to 2).
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. Der :word:`parameter`
+Dieser Callback wird ausgelöst, wenn eine Taste gedrückt wird. Der :word:`parameter`
 ist die Nummer der Taste (0 bis 2).
 """
 }]
@@ -237,7 +237,7 @@ the number of the button (0 to 2).
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. Der :word:`parameter`
+Dieser Callback wird ausgelöst, wenn eine Taste losgelassen wird. Der :word:`parameter`
 ist die Nummer der Taste (0 bis 2).
 """
 }]

@@ -90,7 +90,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Value` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Value` Callback wird nur ausgelöst wenn sich der Wert seit der
+Der :cb:`Value` Callback wird nur ausgelöst, wenn sich der Wert seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -153,10 +153,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Wert *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Wert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Wert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Wert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Wert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn der Wert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn der Wert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn der Wert größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -420,7 +420,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Value Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Wert.
 
-Der :cb:`Value` Callback wird nur ausgelöst wenn sich der Wert seit der
+Der :cb:`Value` Callback wird nur ausgelöst, wenn sich der Wert seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -443,7 +443,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Wert des Detektors.
 

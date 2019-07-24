@@ -228,7 +228,7 @@ By default this callback is disabled.
 'de':
 """
 Wenn dieser Callback aktiviert ist, wird der :cb:`State Changed` Callback
-jedes mal ausgelöst wenn ein Taster gedrückt/losgelassen wird.
+jedes mal ausgelöst, wenn ein Taster gedrückt/losgelassen wird.
 
 Standardmäßig ist dieser Callback deaktiviert.
 """

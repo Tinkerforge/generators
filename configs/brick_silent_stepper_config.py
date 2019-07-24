@@ -1488,7 +1488,7 @@ in mV.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn die Eingangsspannung unter den, mittels
+Dieser Callback wird ausgelöst, wenn die Eingangsspannung unter den, mittels
 :func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
 ist die aktuelle Spannung in mV.
 """
@@ -1702,7 +1702,7 @@ It returns the new state as well as the previous state.
 """,
 'de':
 """
-Dieser Callback wird immer dann ausgelöst wenn der Silent Stepper Brick einen
+Dieser Callback wird immer dann ausgelöst, wenn der Silent Stepper Brick einen
 neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand
 zurückgegeben.
 """

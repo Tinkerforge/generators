@@ -89,7 +89,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Intensity` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-The :cb:`Intensity` Callback wird nur ausgelöst wenn sich die Intensität seit
+The :cb:`Intensity` Callback wird nur ausgelöst, wenn sich die Intensität seit
 der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -152,10 +152,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Intensität *außerhalb* der min und max Werte ist"
- "'i'",    "Callback wird ausgelöst wenn die Intensität *innerhalb* der min und max Werte ist"
- "'<'",    "Callback wird ausgelöst wenn die Intensität kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Intensität größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Intensität *außerhalb* der min und max Werte ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Intensität *innerhalb* der min und max Werte ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Intensität kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Intensität größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -257,7 +257,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Intensity Callback Period`,
 ausgelöst. Der :word:`parameter` ist gemessene Schallintensität.
 
-Der :cb:`Intensity` Callback wird nur ausgelöst wenn sich die Intensität seit
+Der :cb:`Intensity` Callback wird nur ausgelöst, wenn sich die Intensität seit
 der letzten Auslösung geändert hat.
 """
 }]
@@ -280,7 +280,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Intensity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die gemessene Schallintensität.
 

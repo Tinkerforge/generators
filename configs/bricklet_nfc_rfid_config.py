@@ -457,7 +457,7 @@ See :func:`Get State` for more information about the possible states.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Zustand des NFC/RFID Bricklets
+Dieser Callback wird ausgelöst, wenn der Zustand des NFC/RFID Bricklets
 sich verändert. Siehe :func:`Get State` für mehr Informationen
 über die möglichen Zustände des Bricklets.
 """

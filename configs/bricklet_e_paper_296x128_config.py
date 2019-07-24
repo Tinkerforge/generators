@@ -453,7 +453,7 @@ draw status changes (see :func:`Get Draw Status`).
 'de':
 """
 Callback für den aktuellen Draw Status. Diese Callback wird jedes mal
-ausgelöst wenn sich der Draw Status ändert (siehe :func:`Get Draw Status`).
+ausgelöst, wenn sich der Draw Status ändert (siehe :func:`Get Draw Status`).
 """
 }]
 })

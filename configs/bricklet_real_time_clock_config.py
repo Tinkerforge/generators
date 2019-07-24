@@ -266,7 +266,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Date Time` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Date Time` Callback wird nur ausgelöst wenn sich das Datum oder die
+Der :cb:`Date Time` Callback wird nur ausgelöst, wenn sich das Datum oder die
 Zeit seit der letzten Auslösung geändert haben.
 
 Der Standardwert ist 0.
@@ -419,7 +419,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 die gleichen wie die von :func:`Get Date Time` und :func:`Get Timestamp`
 kombiniert.
 
-Der :cb:`Date Time` Callback wird nur ausgelöst wenn sich das Datum oder die
+Der :cb:`Date Time` Callback wird nur ausgelöst, wenn sich das Datum oder die
 Zeit seit der letzten Auslösung geändert haben.
 """
 }]

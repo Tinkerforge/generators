@@ -87,7 +87,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Reflectivity` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Reflectivity` Callback wird nur ausgelöst wenn sich die Reflektivität
+Der :cb:`Reflectivity` Callback wird nur ausgelöst, wenn sich die Reflektivität
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -150,10 +150,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Reflektivität *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Reflektivität *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Reflektivität kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Reflektivität größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Reflektivität *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Reflektivität *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Reflektivität kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Reflektivität größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -255,7 +255,7 @@ changed since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Reflectivity Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Reflektivität des Sensors.
 
-Der :cb:`Reflectivity` Callback wird nur ausgelöst wenn sich die Reflektivität
+Der :cb:`Reflectivity` Callback wird nur ausgelöst, wenn sich die Reflektivität
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -278,7 +278,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Reflectivity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Reflektivität des Sensors.
 

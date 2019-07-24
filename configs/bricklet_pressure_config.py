@@ -114,7 +114,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Pressure` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Pressure` Callback wird nur ausgelöst wenn sich der Druck seit der
+Der :cb:`Pressure` Callback wird nur ausgelöst, wenn sich der Druck seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -161,7 +161,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -224,10 +224,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Druck *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Druck *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Druck kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Druck größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Druck *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn der Druck *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn der Druck kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn der Druck größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -291,10 +291,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Analogwert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn der Analogwert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -499,7 +499,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Pressure Callback Period`,
 ausgelöst. Der :word:`parameter` ist der gemessene Druck des Sensors.
 
-Der :cb:`Pressure` Callback wird nur ausgelöst wenn sich der Druck seit der
+Der :cb:`Pressure` Callback wird nur ausgelöst, wenn sich der Druck seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -525,7 +525,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Analog Value Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -548,7 +548,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Pressure Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der gemessene Druck des Sensors.
 
@@ -575,7 +575,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Sensors.
 

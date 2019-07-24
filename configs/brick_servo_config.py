@@ -757,7 +757,7 @@ in mV.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn die Eingangsspannung unter den, mittels
+Dieser Callback wird ausgelöst, wenn die Eingangsspannung unter den, mittels
 :func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
 ist die aktuelle Spannung in mV.
 """
@@ -788,7 +788,7 @@ You can enable this callback with :func:`Enable Position Reached Callback`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine konfigurierte Position, wie von
+Dieser Callback wird ausgelöst, wenn eine konfigurierte Position, wie von
 :func:`Set Position` gesetzt, erreicht wird. Falls die neue Position der
 aktuellen Position entspricht, wird der Callback nicht ausgelöst, weil sich der
 Servo nicht bewegt hat.

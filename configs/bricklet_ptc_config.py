@@ -133,7 +133,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Temperature` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Temperature` Callback wird nur ausgelöst wenn sich die Temperatur seit
+Der :cb:`Temperature` Callback wird nur ausgelöst, wenn sich die Temperatur seit
 der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -180,7 +180,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Resistance` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Resistance` Callback wird nur ausgelöst wenn sich der Widerstand seit
+Der :cb:`Resistance` Callback wird nur ausgelöst, wenn sich der Widerstand seit
 der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -243,10 +243,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Temperatur *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -310,10 +310,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Temperatur *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -419,7 +419,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Temperature Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Temperatur des verbundenen Sensors.
 
-Der :cb:`Temperature` Callback wird nur ausgelöst wenn sich die Temperatur
+Der :cb:`Temperature` Callback wird nur ausgelöst, wenn sich die Temperatur
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -442,7 +442,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Temperatur des verbundenen Sensors.
 
@@ -472,7 +472,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Resistance Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Widerstand des verbundenen Sensors.
 
-Der :cb:`Resistance` Callback wird nur ausgelöst wenn sich der Widerstand seit
+Der :cb:`Resistance` Callback wird nur ausgelöst, wenn sich der Widerstand seit
 der letzten Auslösung geändert hat.
 """
 }]
@@ -495,7 +495,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Resistance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Widerstand des verbundenen Sensors.
 
@@ -634,7 +634,7 @@ By default this callback is disabled.
 'de':
 """
 Wenn dieser Callback aktiviert ist, wird der :cb:`Sensor Connected` Callback
-jedes mal ausgelöst wenn ein Pt-Sensor verbunden/getrennt wird.
+jedes mal ausgelöst, wenn ein Pt-Sensor verbunden/getrennt wird.
 
 Standardmäßig ist dieser Callback deaktiviert.
 """

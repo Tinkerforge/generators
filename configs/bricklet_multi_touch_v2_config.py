@@ -162,7 +162,7 @@ a given period (see :func:`Set Touch State Callback Configuration`)
 Gibt den aktuellen Tastzustand zurück, siehe :func:`Get Touch State`
 für mehr Informationen über den Zustand.
 
-Dieser Callback wird ausgelöst wenn sich ein Tastzustand ändert mit
+Dieser Callback wird ausgelöst, wenn sich ein Tastzustand ändert mit
 der eingestellten Periode (siehe :func:`Set Touch State Callback Configuration`)
 """
 }]

@@ -111,7 +111,7 @@ The :word:`parameter` is the current state of the button.
 """,
 'de':
 """
-Dieser Callback wird jedes mal ausgelöst wenn sich der Zustand es Knopfes ändert
+Dieser Callback wird jedes mal ausgelöst, wenn sich der Zustand es Knopfes ändert
 von gedrückt zu nicht gedrückt oder anders herum
 
 Das :word:`parameter` ist der aktuelle Zustand des Knopfes.

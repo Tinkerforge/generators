@@ -216,7 +216,7 @@ Fall ist mit hoher Wahrscheinlichkeit das Thermoelement defekt. Ein
 Open Circuit-Error deutet darauf hin, das kein Thermoelement angeschlossen
 ist.
 
-Der :cb:`Error State` Callback wird automatisch jedes mal ausgelöst wenn sich
+Der :cb:`Error State` Callback wird automatisch jedes mal ausgelöst, wenn sich
 der Error-Status ändert.
 """
 }]
@@ -236,7 +236,7 @@ This Callback is triggered every time the error state changes
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Error-Status sich verändert
+Dieser Callback wird ausgelöst, wenn der Error-Status sich verändert
 (siehe :func:`Get Error State`).
 """
 }]

@@ -90,7 +90,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Temperature` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Temperature` Callback wird nur ausgelöst wenn sich die Temperatur seit
+Der :cb:`Temperature` Callback wird nur ausgelöst, wenn sich die Temperatur seit
 der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -153,10 +153,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Temperatur *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -258,7 +258,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Temperature Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Temperatur des Sensors.
 
-Der :cb:`Temperature` Callback wird nur ausgelöst wenn sich die Temperatur seit
+Der :cb:`Temperature` Callback wird nur ausgelöst, wenn sich die Temperatur seit
 der letzten Auslösung geändert hat.
 """
 }]
@@ -281,7 +281,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Temperatur des Sensors.
 

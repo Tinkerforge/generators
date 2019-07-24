@@ -154,7 +154,7 @@ The parameter is the current state of the relay
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
+Dieser Callback wird ausgelöst, wenn ein Monoflop Timer abläuft (0 erreicht).
 Der Parameter ist der aktuellen Zustand des Relais
 (der Zustand nach dem Monoflop).
 """

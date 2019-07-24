@@ -304,7 +304,7 @@ This callback is triggered if a beep set by :func:`Set Beep` is finished
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn ein Piepton, wie von :func:`Set Beep` gesetzt,
+Dieser Callback wird ausgelöst, wenn ein Piepton, wie von :func:`Set Beep` gesetzt,
 beendet wurde.
 """
 }]
@@ -322,7 +322,7 @@ This callback is triggered if a alarm set by :func:`Set Alarm` is finished
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn ein Alarm, wie von :func:`Set Alarm` gesetzt,
+Dieser Callback wird ausgelöst, wenn ein Alarm, wie von :func:`Set Alarm` gesetzt,
 beendet wurde.
 """
 }]

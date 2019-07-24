@@ -93,7 +93,7 @@ This callback is triggered if a beep set by :func:`Beep` is finished
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn ein Piepton, wie von :func:`Beep` gesetzt,
+Dieser Callback wird ausgelöst, wenn ein Piepton, wie von :func:`Beep` gesetzt,
 beendet wurde.
 """
 }]
@@ -112,7 +112,7 @@ This callback is triggered if the playback of the morse code set by
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn die Wiedergabe des Morsecodes, wie von
+Dieser Callback wird ausgelöst, wenn die Wiedergabe des Morsecodes, wie von
 :func:`Morse Code` gesetzt, beendet wurde.
 """
 }]

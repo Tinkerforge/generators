@@ -86,7 +86,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Count` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Count` Callback wird nur ausgelöst wenn sich der Zählerwert seit der
+Der :cb:`Count` Callback wird nur ausgelöst, wenn sich der Zählerwert seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -149,10 +149,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Zählerwert *außerhalb* der min und max Werte ist"
- "'i'",    "Callback wird ausgelöst wenn die Zählerwert *innerhalb* der min und max Werte ist"
- "'<'",    "Callback wird ausgelöst wenn die Zählerwert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Zählerwert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Zählerwert *außerhalb* der min und max Werte ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Zählerwert *innerhalb* der min und max Werte ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Zählerwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Zählerwert größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -255,7 +255,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Count Callback Period`, ausgelöst. Der :word:`parameter` ist der
 Zählerwert des Encoders.
 
-Der :cb:`Count` Callback wird nur ausgelöst wenn sich der Zähler seit der
+Der :cb:`Count` Callback wird nur ausgelöst, wenn sich der Zähler seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -278,7 +278,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Count Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Zählerwert des Encoders.
 
@@ -323,7 +323,7 @@ This callback is triggered when the button is pressed.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Taster gedrückt wird.
+Dieser Callback wird ausgelöst, wenn der Taster gedrückt wird.
 """
 }]
 })
@@ -340,7 +340,7 @@ This callback is triggered when the button is released.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Taster losgelassen wird.
+Dieser Callback wird ausgelöst, wenn der Taster losgelassen wird.
 """
 }]
 })

@@ -434,7 +434,7 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
+Dieser Callback wird ausgelöst, wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten die beteiligten Pins als Bitmaske und den aktuellen
 Zustand als Bitmaske (der Zustand nach dem Monoflop).
 """

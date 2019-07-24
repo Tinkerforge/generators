@@ -129,7 +129,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Humidity` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Humidity` Callback wird nur ausgelöst wenn sich die Luftfeuchtigkeit
+Der :cb:`Humidity` Callback wird nur ausgelöst, wenn sich die Luftfeuchtigkeit
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -176,7 +176,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert
 seit der letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -239,10 +239,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn die Luftfeuchtigkeit *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn die Luftfeuchtigkeit *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn die Luftfeuchtigkeit kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn die Luftfeuchtigkeit größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -306,10 +306,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst, wenn der Analogwert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst, wenn der Analogwert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst, wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst, wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -415,7 +415,7 @@ the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Humidity Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Luftfeuchtigkeit des Sensors.
 
-Der :cb:`Humidity` Callback wird nur ausgelöst wenn sich die Luftfeuchtigkeit
+Der :cb:`Humidity` Callback wird nur ausgelöst, wenn sich die Luftfeuchtigkeit
 seit der letzten Auslösung geändert hat.
 """
 }]
@@ -441,7 +441,7 @@ since the last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Analog Value Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
 
-:cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert seit der
+:cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -464,7 +464,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Humidity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Luftfeuchtigkeit des Sensors.
 
@@ -491,7 +491,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
+Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Sensors.
 

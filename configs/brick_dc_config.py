@@ -558,7 +558,7 @@ in mV.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn die Eingangsspannung unter den, mittels
+Dieser Callback wird ausgelöst, wenn die Eingangsspannung unter den, mittels
 :func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
 ist die aktuelle Spannung in mV.
 """
@@ -590,7 +590,7 @@ That means, :func:`Enable` has to be called to drive the motor again.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn entweder der Stromverbrauch (über 5A)
+Dieser Callback wird ausgelöst, wenn entweder der Stromverbrauch (über 5A)
 oder die Temperatur der Treiberstufe zu hoch ist (über 175°C). Beide
 Möglichkeiten sind letztendlich gleichbedeutend, da die Temperatur
 ihren Schwellwert überschreitet sobald der Motor zu viel Strom verbraucht.
