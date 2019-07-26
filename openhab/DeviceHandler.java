@@ -14,6 +14,7 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
@@ -97,13 +98,18 @@ public class DeviceHandler extends BaseThingHandler {
         if (!wasInitialized)
         {
             brickd.addEnumerateListener(this::enumerateListener);
-            wasInitialized = true;
         }
 
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
 
         String id = thing.getUID().getId();
         device = deviceSupplier.apply(id, ipcon);
+
+        if (!wasInitialized) {
+            configureChannels();
+        }
+        wasInitialized = true;
+
         if(this.getBridge().getStatus() == ThingStatus.ONLINE) {
             initialize_device();
         } else {
@@ -111,15 +117,18 @@ public class DeviceHandler extends BaseThingHandler {
         }
     }
 
+    private Configuration getChannelConfiguration(String channelID) {
+        return getThing().getChannel(channelID).getConfiguration();
+    }
+
     private void initialize_device() {
-        Object config = getConfigAs(device.getConfigurationClass());
         String id = thing.getUID().getId();
         BrickDaemonHandler brickd = ((BrickDaemonHandler) getBridge().getHandler());
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
         device = deviceSupplier.apply(id, ipcon);
 
         try {
-            device.initialize(config, this::updateState, this::triggerChannel);
+            device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
         }
         catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
@@ -153,7 +162,7 @@ public class DeviceHandler extends BaseThingHandler {
                 device.refreshValue(channelUID.getId(), this::updateState, this::triggerChannel);
             }
             else {
-                device.handleCommand(getConfigAs(device.getConfigurationClass()), channelUID.getId(), command);
+                device.handleCommand(getConfig(), getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
             }
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
@@ -164,7 +173,7 @@ public class DeviceHandler extends BaseThingHandler {
     public void handleRemoval() {
         try {
             if (device != null) {
-                device.dispose(getConfigAs(device.getConfigurationClass()));
+                device.dispose(getConfig());
             }
             updateStatus(ThingStatus.REMOVED);
         } catch (TinkerforgeException e) {
@@ -172,10 +181,8 @@ public class DeviceHandler extends BaseThingHandler {
         }
     }
 
-    @Override
-    public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
-        super.handleConfigurationUpdate(configurationParameters);
-        List<String> enabledChannelNames = device.getEnabledChannels(getConfigAs(device.getConfigurationClass()));
+    private void configureChannels() {
+        List<String> enabledChannelNames = device.getEnabledChannels(getConfig());
 
         List<Channel> enabledChannels = enabledChannelNames.stream()
                                                            .map(s -> new ChannelUID(getThing().getUID(), s))
@@ -183,5 +190,11 @@ public class DeviceHandler extends BaseThingHandler {
                                                            .collect(Collectors.toList());
 
         updateThing(editThing().withChannels(enabledChannels).build());
+    }
+
+    @Override
+    public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
+        super.handleConfigurationUpdate(configurationParameters);
+        configureChannels();
     }
 }

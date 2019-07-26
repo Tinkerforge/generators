@@ -248,32 +248,25 @@ com['openhab'] = {
         {
             'id': 'Left Button',
             'label': 'Left Button',
-            'type_id': 'system.rawbutton',
+            'type': 'system.rawbutton',
             'getter_packet': 'Get Button State',
+            'getter_transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+
             'callback_packet': 'State Changed',
-            'callback_param_mapping': {
-                'Button L': 'Button L',
-                'Button R': 'Button R',
-                'LED L': None,
-                'LED R': None,
-            },
-            'transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'callback_transform': 'buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+
             'is_trigger_channel': True
         },
         {
             'id': 'Right Button',
             'label': 'Right Button',
-            'type_id': 'system.rawbutton',
+            'type': 'system.rawbutton',
             'getter_packet': 'Get Button State',
+            'getter_transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+
             'callback_packet': 'State Changed',
-            'callback_filter': 'true',
-            'callback_param_mapping': {
-                'Button L': 'Button L',
-                'Button R': 'Button R',
-                'LED L': None,
-                'LED R': None,
-            },
-            'transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'callback_transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+
             'is_trigger_channel': True
         },
     ],

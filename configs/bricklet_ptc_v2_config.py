@@ -410,10 +410,10 @@ com['openhab'] = {
 this.setMovingAverageConfiguration(0, cfg.temperatureMovingAverageLength);
 this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency);""",
     'channels': [
-        oh_generic_channel('Temperature', 'temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
     ],
     'channel_types': [
-        oh_channel_type('temperature', 'Number:Temperature', 'Temperature',
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
                      description='Temperature of the connected sensor',
                      read_only=True,
                      pattern='%.2f %unit%',

@@ -13,8 +13,10 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import org.eclipse.smarthome.config.core.ConfigDescription;
+import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
@@ -51,17 +53,15 @@ public abstract class Device extends DeviceBase {
 
     public abstract Identity getIdentity() throws TinkerforgeException;
 
-    public abstract void initialize(Object config, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
+    public abstract void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
 
-    public abstract void dispose(Object config) throws TinkerforgeException;
-
-    public abstract Class<?> getConfigurationClass();
+    public abstract void dispose(Configuration config) throws TinkerforgeException;
 
     public abstract void refreshValue(String value, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
 
-    public abstract void handleCommand(Object config, String channel, Command command) throws TinkerforgeException;
+    public abstract void handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException;
 
-    public abstract List<String> getEnabledChannels(Object config);
+    public abstract List<String> getEnabledChannels(Configuration config);
 
     /*public abstract ThingType getThingType(ThingTypeUID thingTypeUID);
 

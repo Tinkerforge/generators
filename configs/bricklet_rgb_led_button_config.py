@@ -196,28 +196,29 @@ def percent_type_to_int(name):
 com['openhab'] = {
     'imports': oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.HSBType'],
     'channels': [{
-        'id': 'Color',
-        'type_id': 'color',
+            'id': 'Color',
+            'type': 'Color',
 
-        'setter_packet': 'Set {title_words}',
-        'setter_packet_params': [percent_type_to_int('cmd.getRed()'), percent_type_to_int('cmd.getGreen()'), percent_type_to_int('cmd.getBlue()'),],
-        'setter_command_type': "HSBType",
+            'setter_packet': 'Set {title_words}',
+            'setter_packet_params': [percent_type_to_int('cmd.getRed()'), percent_type_to_int('cmd.getGreen()'), percent_type_to_int('cmd.getBlue()'),],
+            'setter_command_type': "HSBType",
 
-        'getter_packet': 'Get {title_words}',
-        'transform': 'HSBType.fromRGB(value.red, value.green, value.blue)',
+            'getter_packet': 'Get {title_words}',
+            'getter_transform': 'HSBType.fromRGB(value.red, value.green, value.blue)',
         },
         {
             'id': 'Button',
             'label': 'Button',
-            'type_id': 'system.rawbutton',
+            'type': 'system.rawbutton',
             'getter_packet': 'Get Button State',
             'callback_packet': 'Button State Changed',
-            'transform': 'value == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'getter_transform': 'value == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'callback_transform': 'state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
             'is_trigger_channel': True
         }
     ],
     'channel_types': [
-        oh_channel_type('color', 'Color', 'LED Color',
+        oh_generic_channel_type('Color', 'Color', 'LED Color',
                      read_only=False)
     ]
 }

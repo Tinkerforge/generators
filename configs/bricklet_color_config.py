@@ -732,26 +732,18 @@ com['openhab'] = {
     'channels': [
         {
         'id': 'Color',
-        'type_id': 'color',
-        'params':[{
-            'name': '{title_words} Update Interval',
-            'type': 'integer',
-            'unit': 'ms',
-            'label': '{title_words} Update Interval',
-            'description': 'Specifies the {lower_words} update interval in milliseconds. A value of 0 disables automatic updates.',
-            'default': 1000,
-            'groupName': 'update_intervals'
-        }],
-        'init_code':"""this.set{camel}CallbackPeriod(cfg.{headless}UpdateInterval);
+        'type': 'Color',
+        'init_code':"""this.set{camel}CallbackPeriod(channelCfg.updateInterval);
 this.set{camel}CallbackThreshold(\'x\', 0, 0, 0, 0, 0, 0, 0, 0);""",
         'dispose_code': """this.set{camel}CallbackPeriod(0);""",
         'getter_packet': 'Get Color',
         'callback_packet': 'Color',
-        'transform': 'HSBType.fromRGB(value.r * 255 / 65535, value.g * 255 / 65535, value.b * 255 / 65535)',
+        'getter_transform': 'HSBType.fromRGB(value.r * 255 / 65535, value.g * 255 / 65535, value.b * 255 / 65535)',
+        'callback_transform': 'HSBType.fromRGB(r * 255 / 65535, g * 255 / 65535, b * 255 / 65535)',
     }
     ],
     'channel_types': [
-        oh_channel_type('color', 'Color', 'Color',
+        oh_generic_channel_type('Color', 'Color', 'Color',
                      description='Measured color',
                      read_only=True)
     ]

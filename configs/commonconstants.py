@@ -185,56 +185,38 @@ def oh_generic_channel_imports():
             'org.eclipse.smarthome.core.library.unit.SmartHomeUnits']
 
 
-def oh_generic_channel(id_, type_id, unit, divisor=1.0, label=None, description=None):
+def oh_generic_channel(id_, type_, unit, divisor=1.0, label=None, description=None):
     return {
         'id': id_,
         'label': label,
         'description': description,
-        'type_id': type_id,
-        'params':[{
-            'name': '{title_words} Update Interval',
-            'type': 'integer',
-            'unit': 'ms',
-            'label': '{title_words} Update Interval',
-            'description': 'Specifies the {lower_words} update interval in milliseconds. A value of 0 disables automatic updates.',
-            'default': 1000,
-            'groupName': 'update_intervals'
-        }],
-        'init_code':"""this.set{camel}CallbackConfiguration(cfg.{headless}UpdateInterval, true, \'x\', 0, 0);""",
+        'type': type_,
+        'init_code':"""this.set{camel}CallbackConfiguration(channelCfg.updateInterval, true, \'x\', 0, 0);""",
         'dispose_code': """this.set{camel}CallbackConfiguration(0, true, \'x\', 0, 0);""",
         'getter_packet': 'Get {title_words}',
         'getter_packet_params': [],
         'callback_packet': '{title_words}',
-        'callback_param_mapping': None,
+        'callback_transform': 'new QuantityType<>({headless}{divisor}, {unit})',
         'callback_filter': 'true',
-        'transform': 'new QuantityType<>(value{divisor}, {unit})',
+        'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
         'java_unit': unit,
         'divisor': divisor,
         'is_trigger_channel': False
     }
 
-def oh_generic_old_style_channel(id_, type_id, unit, divisor=1.0):
+def oh_generic_old_style_channel(id_, type_, unit, divisor=1.0):
     return {
         'id': id_,
-        'type_id': type_id,
-        'params':[{
-            'name': '{title_words} Update Interval',
-            'type': 'integer',
-            'unit': 'ms',
-            'label': '{title_words} Update Interval',
-            'description': 'Specifies the {lower_words} update interval in milliseconds. A value of 0 disables automatic updates.',
-            'default': 1000,
-            'groupName': 'update_intervals'
-        }],
-        'init_code':"""this.set{camel}CallbackPeriod(cfg.{headless}UpdateInterval);
+        'type': type_,
+        'init_code':"""this.set{camel}CallbackPeriod(channelCfg.updateInterval);
 this.set{camel}CallbackThreshold(\'x\', 0, 0);""",
         'dispose_code': """this.set{camel}CallbackPeriod(0);""",
         'getter_packet': 'Get {title_words}',
         'getter_packet_params': [],
         'callback_packet': '{title_words}',
-        'callback_param_mapping': None,
+        'callback_transform': 'new QuantityType<>({headless}{divisor}, {unit})',
         'callback_filter': 'true',
-        'transform': 'new QuantityType<>(value{divisor}, {unit})',
+        'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
         'java_unit': unit,
         'divisor': divisor,
         'is_trigger_channel': False
@@ -251,14 +233,23 @@ def oh_generic_channel_param_groups():
 def oh_generic_trigger_channel_imports():
     return ["org.eclipse.smarthome.core.thing.CommonTriggerEvents"]
 
-def oh_channel_type(id_, item_type, label, description=None, read_only=None, pattern=None, min_=None, max_=None, is_trigger_channel=False, command_options=None):
+def oh_generic_channel_type(id_, item_type, label, description=None, read_only=None, pattern=None, min_=None, max_=None, is_trigger_channel=False, command_options=None, params=()):
     return {
-        'type_id': id_,
+        'id': id_,
         'item_type': item_type,
+        'params':[{
+            'name': 'Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': 'Update Interval',
+            'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }] + list(params), # Use tuple as default for params to silence pylint warning "Dangerous default value [] as argument" (as a list could be mutated, changing the default)
         'label': label,
-        'description':description,
-        'read_only':read_only,
-        'pattern':pattern,
+        'description': description,
+        'read_only': read_only,
+        'pattern': pattern,
         'min': min_,
         'max': max_,
         'is_trigger_channel': is_trigger_channel,

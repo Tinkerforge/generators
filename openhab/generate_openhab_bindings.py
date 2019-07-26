@@ -32,6 +32,26 @@ sys.path.append(os.path.join(os.path.split(os.getcwd())[0], 'java'))
 import common
 from java.generate_java_bindings import JavaBindingsGenerator, JavaBindingsDevice
 
+
+
+OpenHAB = namedtuple('OpenHAB', 'channels channel_types imports params param_groups init_code dispose_code category')
+Channel = namedtuple('Channel', ['id', 'type', 'init_code', 'dispose_code',
+                                    'java_unit', 'divisor', 'is_trigger_channel',
+                                    'getter_packet', 'getter_packet_params', 'getter_transform',
+                                    'setter_packet', 'setter_packet_params', 'setter_command_type',
+                                    'callback_packet', 'callback_filter', 'callback_transform',
+                                    'predicate',
+                                    'label', 'description'])
+
+ChannelType = namedtuple('ChannelType', ['id', 'params', 'item_type', 'category', 'label', 'description',
+                                            'read_only', 'pattern', 'min', 'max', 'step', 'options',
+                                            'is_trigger_channel', 'command_options'])
+
+Param = namedtuple('Param', ['name', 'type', 'context', 'default', 'description', 'groupName', 'label',
+                                'pattern', 'unit', 'unitLabel', 'advanced', 'limitToOptions', 'multiple',
+                                'readOnly', 'required', 'verify', 'min', 'max', 'step', 'options', 'filter'])
+ParamGroup = namedtuple('ParamGroup', 'name elements')
+
 class OpenHABBindingsDevice(JavaBindingsDevice):
     def apply_defaults(self, oh):
         oh = self.raw_data['openhab']
@@ -59,7 +79,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         }
 
         channel_defaults = {
-            'params': [],
             'init_code': '',
             'dispose_code': '',
             'getter_packet': None,
@@ -70,8 +89,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'setter_command_type': None,
 
             'callback_packet': None,
-            'callback_param_mapping': None,
             'callback_filter': 'true',
+            'callback_transform': None,
 
             'java_unit': None,
             'divisor': 1,
@@ -83,6 +102,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         }
 
         channel_type_defaults = {
+            'params': [],
             'category': None,
             'item_type': None,
             'pattern': None,
@@ -117,12 +137,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         for c_idx, channel in enumerate(oh['channels']):
             tmp_channel = channel_defaults.copy()
             tmp_channel.update(channel)
-
-            for p_idx, param in enumerate(tmp_channel['params']):
-                tmp_param = param_defaults.copy()
-                tmp_param.update(param)
-                tmp_channel['params'][p_idx] = tmp_param
-
             oh['channels'][c_idx] = tmp_channel
 
         for p_idx, param in enumerate(oh['params']):
@@ -131,9 +145,15 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             oh['params'][p_idx] = tmp
 
         for ct_idx, channel_type in enumerate(oh['channel_types']):
-            tmp = channel_type_defaults.copy()
-            tmp.update(channel_type)
-            oh['channel_types'][ct_idx] = tmp
+            tmp_channel_type = channel_type_defaults.copy()
+            tmp_channel_type.update(channel_type)
+
+            for p_idx, param in enumerate(tmp_channel_type['params']):
+                tmp_param = param_defaults.copy()
+                tmp_param.update(param)
+                tmp_channel_type['params'][p_idx] = tmp_param
+
+            oh['channel_types'][ct_idx] = tmp_channel_type
 
         for pg_idx, param_group in enumerate(oh['param_groups']):
             tmp = param_group_defaults.copy()
@@ -141,6 +161,48 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             oh['param_groups'][pg_idx] = tmp
 
         return oh
+
+    def sanity_check_config(self, oh):
+        # Params must be used
+        for param in oh.params:
+            needle = 'cfg.{}'.format(common.FlavoredName(param.name).get().headless)
+            init_code_uses_param = needle in oh.init_code
+            channel_init_code_uses_param = any(c.init_code is not None and needle in c.init_code for c in oh.channels)
+            channel_setters_use_param = any(needle in p for c in oh.channels for p in c.setter_packet_params if c.setter_packet_params is not None)
+            channel_getters_use_param = any(needle in p for c in oh.channels for p in c.getter_packet_params if c.getter_packet_params is not None)
+
+            if not any([init_code_uses_param,
+                        channel_init_code_uses_param,
+                        channel_setters_use_param,
+                        channel_getters_use_param]):
+                raise common.GeneratorError('openhab: Device {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), param.name))
+
+        # Use only one of command options, state description and trigger channel per channel type
+        for ct in oh.channel_types:
+            has_command_description = ct.command_options is not None
+            has_state_description = any(x is not None for x in [ct.min, ct.max, ct.pattern, ct.read_only, ct.options, ct.step])
+            is_trigger_channel = ct.is_trigger_channel
+
+            if has_command_description and is_trigger_channel:
+                raise common.GeneratorError('openhab: Device {} Channel Type {} has command description, but is flagged as trigger channel (which is the opposite).'.format(self.get_long_display_name(), ct.id))
+
+            if has_command_description and has_state_description:
+                raise common.GeneratorError('openhab: Device {} Channel Type {} has command description and state description (that would override the commands).'.format(self.get_long_display_name(), ct.id))
+
+            if has_state_description and is_trigger_channel:
+                raise common.GeneratorError('openhab: Device {} Channel Type {} has state description, but is flagged as trigger channel (which is stateless).'.format(self.get_long_display_name(), ct.id))
+
+        #for c in oh.channels:
+        #    if len(c.params) > 0:
+        #        print('openhab: Device {} Channel {} has config params. This is not supported yet, as the UI seems to render them incorrectly.'.format(self.get_long_display_name(), ct.id))
+
+    def find_channel_type(self, channel, channel_types):
+        if channel['type'].startswith('system.'):
+            return ChannelType._make([common.FlavoredName(channel['type']).get()] + [None] * (len(ChannelType._fields) - 1))
+        try:
+            return next(ct for ct in channel_types if ct.id.space.replace(self.get_name().space + ' ', '') == channel['type'])
+        except StopIteration:
+            raise common.GeneratorError('openhab: Device "{}" Channel "{}" has type {}, but no such channel type was found.'.format(self.get_long_display_name(), channel['id'].space, channel['type']))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -163,44 +225,41 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                      divisor=' / ' + str(divisor) if divisor != 1 else '')
 
         for c_idx, channel in enumerate(oh['channels']):
-            for p_idx, param in enumerate(channel['params']):
-                channel['params'][p_idx] = {k: fmt(v, channel['id'], param['unit'], 1) for k, v in channel['params'][p_idx].items()}
             oh['channels'][c_idx] = {k: fmt(v, channel['id'], channel['java_unit'], channel['divisor']) for k, v in oh['channels'][c_idx].items()}
 
-        # Convert from dicts to namedtuples
-        OpenHAB = namedtuple('OpenHAB', 'channels channel_types imports params param_groups init_code dispose_code category')
-        Channel = namedtuple('Channel', ['id', 'type_id', 'params', 'init_code', 'dispose_code',
-                                         'java_unit', 'divisor', 'is_trigger_channel', 'transform',
-                                         'getter_packet', 'getter_packet_params',
-                                         'setter_packet', 'setter_packet_params', 'setter_command_type',
-                                         'callback_packet', 'callback_param_mapping', 'callback_filter',
-                                         'predicate',
-                                         'label', 'description'])
+        for ct_idx, channel_type in enumerate(oh['channel_types']):
+            for p_idx, param in enumerate(channel_type['params']):
+                channel_type['params'][p_idx] = {k: fmt(v, channel_type['id'], param['unit'], 1) for k, v in channel_type['params'][p_idx].items()}
+            oh['channel_types'][ct_idx] = {k: fmt(v, channel_type['id'], None, None) for k, v in oh['channel_types'][ct_idx].items()}
 
-        Param = namedtuple('Param', ['name', 'type', 'context', 'default', 'description', 'groupName', 'label', 'pattern', 'unit', 'unitLabel', 'advanced', 'limitToOptions', 'multiple', 'readOnly', 'required', 'verify', 'min', 'max', 'step', 'options', 'filter'])
-        ParamGroup = namedtuple('ParamGroup', 'name elements')
-        ChannelType = namedtuple('ChannelType', 'type_id item_type category label description read_only pattern min max step options is_trigger_channel command_options')
 
         def find_packet(name):
             if name is None:
                 return None
             return next(p for p in self.get_packets() if p.get_name().space == name)
 
+        # Convert from dicts to namedtuples
+        for ct_idx, channel_type in enumerate(oh['channel_types']):
+            if channel_type['id'].startswith('system.'):
+                channel_type['id'] = common.FlavoredName(channel_type['id']).get()
+            else:
+                channel_type['id'] = common.FlavoredName(self.get_name().space + ' ' + channel_type['id']).get()
+
+            for p_idx, param in enumerate(channel_type['params']):
+                channel_type['params'][p_idx] = Param(**param)
+            oh['channel_types'][ct_idx] = ChannelType(**channel_type)
+
         for c_idx, channel in enumerate(oh['channels']):
-            if not channel['type_id'].startswith('system.'):
-                channel['type_id'] = self.get_name().under + '_' + channel['type_id']
-            for p_idx, param in enumerate(channel['params']):
-                channel['params'][p_idx] = Param(**param)
+            if channel['id'].startswith('system.'):
+                channel['id'] = common.FlavoredName(channel['id']).get()
+            else:
+                channel['id'] = common.FlavoredName(self.get_name().space + ' ' + channel['id']).get()
+
             for packet in ['getter_packet', 'setter_packet', 'callback_packet']:
                 oh['channels'][c_idx][packet] = find_packet(oh['channels'][c_idx][packet])
-            if oh['channels'][c_idx]['callback_param_mapping'] is not None:
-                oh['channels'][c_idx]['callback_param_mapping'] = {common.FlavoredName(k).get(): (common.FlavoredName(v).get() if v is not None else None) for k, v in oh['channels'][c_idx]['callback_param_mapping'].items()}
+            oh['channels'][c_idx]['type'] = self.find_channel_type(oh['channels'][c_idx], oh['channel_types'])
             oh['channels'][c_idx] = Channel(**channel)
 
-        for ct_idx, channel_type in enumerate(oh['channel_types']):
-            if not channel_type['type_id'].startswith('system.'):
-                channel_type['type_id'] = self.get_name().under + '_' + channel_type['type_id']
-            oh['channel_types'][ct_idx] = ChannelType(**channel_type)
 
         for p_idx, param in enumerate(oh['params']):
             oh['params'][p_idx] = Param(**param)
@@ -210,13 +269,16 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                    elements={k: v for k, v in group.items() if v is not None})
 
         self.oh = OpenHAB(**oh)
+        self.sanity_check_config(self.oh)
 
     def get_java_import(self):
         java_imports = super().get_java_import()
         oh_imports = ['java.net.URI',
                       'java.math.BigDecimal',
                       'java.util.ArrayList',
+                      'java.util.function.Function',
                       'java.util.function.BiConsumer',
+                      'org.eclipse.smarthome.config.core.Configuration',
                       'org.eclipse.smarthome.config.core.ConfigDescription',
                       'org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type',
                       'org.eclipse.smarthome.config.core.ConfigDescriptionParameterBuilder',
@@ -244,41 +306,36 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class);\n\n'.format(self.get_name().lower_no_space, self.get_java_class_name())
         return java_class
 
-    def get_filtered_elements_and_type(self, packet, elements, mapping):
-        if mapping is not None:
-            def f(e):
-                val = mapping[e.get_name()]
-                return val is not None
-            filtered_elements = [e for e in elements if f(e)]
-        else:
-            filtered_elements = elements
-
-        if len(filtered_elements) > 1:
+    def get_filtered_elements_and_type(self, packet, elements):
+        if len(elements) > 1:
             type_ = packet.get_java_object_name(skip=-2 if packet.has_high_level() else 0)
         else:
-            type_ = filtered_elements[0].get_java_type()
+            type_ = elements[0].get_java_type()
 
-        return filtered_elements, type_
+        return elements, type_
 
     def get_openhab_channel_init_code(self):
         init_code = []
         for c in self.oh.channels:
+            channel_cfg = ['{channel_type_name_camel}Config channelCfg = getChannelConfigFn.apply("{channel_name_camel}").as({channel_type_name_camel}Config.class);'
+                               .format(channel_name_camel=c.id.camel,
+                                       channel_type_name_camel=self.get_category().camel + c.type.id.camel)]
+            if c.type.id.space.startswith('system.'):
+                channel_cfg = []
             if c.predicate != 'true':
                 init_code += ['if ({}) {{'.format(c.predicate)]
                 init_code += c.init_code.split('\n')
                 init_code += ['}']
             else:
-                init_code += c.init_code.split('\n')
+                init_code += ['{'] + channel_cfg + c.init_code.split('\n') + ['}']
         return init_code
-    def get_openhab_callback_impl(self):
-        lambda_transformation_template = """    private {type_} lambdaArgsTo{channel_camel}({callback_args}) {{
-        {type_} lambda_transform_result{init};
-        {assignments}
-        return lambda_transform_result;
-    }}"""
 
+    def get_openhab_callback_impl(self):
+        transformation_template = """    private {state_or_string} transform{camel}Callback({callback_args}) {{
+        return {transform};
+    }}"""
         # To init
-        cb_registration = 'this.add{camel}Listener(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}(lambdaArgsTo{channel_camel}({args})));}}}});'
+        cb_registration = 'this.add{camel}Listener(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}Callback({args}));}}}});'
         # To dispose
         cb_deregistration = 'this.listener{camel}.clear();'
 
@@ -290,42 +347,23 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         for c in self.oh.channels:
             if c.callback_packet is None:
                 continue
-            name = common.FlavoredName(c.id).get()
             elements = c.callback_packet.get_elements(direction='out', high_level=True)
             regs.append(cb_registration.format(camel=c.callback_packet.get_name().camel,
                                                filter=c.callback_filter,
-                                               channel_camel=common.FlavoredName(c.id).get().camel,
+                                               channel_camel=c.id.camel,
                                                args=', '.join(e.get_name().headless for e in elements),
                                                updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn'))
 
             deregs.append(cb_deregistration.format(camel=c.callback_packet.get_name().camel))
             dispose_code += c.dispose_code.split('\n')
 
-            filtered_elements, type_ = self.get_filtered_elements_and_type(c.getter_packet, elements, c.callback_param_mapping)
+            filtered_elements, type_ = self.get_filtered_elements_and_type(c.getter_packet, elements)
 
-            if len(filtered_elements) > 1:
-                init = ' = new {}()'.format(type_)
-                if c.callback_param_mapping is None:
-                    assignments = '\n\t\t'.join('lambda_transform_result.{0} = {0};'.format(e.get_name().headless) for e in filtered_elements)
-                else:
-                    assignments = []
-                    for k, v in c.callback_param_mapping.items():
-                        if v is None:
-                            continue
-                        assignments.append('lambda_transform_result.{} = {};'.format(k.headless, v.headless))
-                    assignments = '\n\t\t'.join(assignments)
-            else:
-                init = ''
-                if c.callback_param_mapping is None:
-                    assignments = 'lambda_transform_result = {};'.format(filtered_elements[0].get_name().headless)
-                else:
-                    assignments = 'lambda_transform_result = {};'.format(c.callback_param_mapping[filtered_elements[0].get_name()].headless)
 
-            lambda_transforms.append(lambda_transformation_template.format(type_=type_,
-                                                                           channel_camel=name.camel,
-                                                                           callback_args=', '.join(e.get_java_type() + ' ' + e.get_name().headless for e in elements),
-                                                                           init=init,
-                                                                           assignments=assignments))
+            lambda_transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'State',
+                                                             camel=c.id.camel,
+                                                             callback_args=', '.join(e.get_java_type() + ' ' + e.get_name().headless for e in elements),
+                                                             transform=c.callback_transform))
 
         return (regs, deregs, dispose_code, lambda_transforms)
 
@@ -340,46 +378,42 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     """
 
         case_template = """case "{camel}":
-               {updateFn}.accept(value, transform{camel}(this.{getter}({getter_params})));
+               {updateFn}.accept(value, transform{camel}Getter(this.{getter}({getter_params})));
                return;"""
         empty_case_template = """case "{camel}":
                return;"""
 
-        transformation_template = """    private {state_or_string} transform{camel}({type_} value) {{
+        transformation_template = """    private {state_or_string} transform{camel}Getter({type_} value) {{
         return {transform};
     }}"""
 
         channel_cases = []
         transforms = []
         for c in self.oh.channels:
-            name = common.FlavoredName(c.id).get()
             if c.getter_packet is None:
-                channel_cases.append(empty_case_template.format(camel=name.camel))
+                channel_cases.append(empty_case_template.format(camel=c.id.camel))
                 continue
 
-            channel_cases.append(case_template.format(camel=name.camel,
+            channel_cases.append(case_template.format(camel=c.id.camel,
                                                       updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
                                                       getter=c.getter_packet.get_name().headless,
                                                       getter_params=', '.join(c.getter_packet_params)))
 
-            if c.callback_packet is not None:
-                elements = c.callback_packet.get_elements(direction='out', high_level=True)
-            else:
-                elements = c.getter_packet.get_elements(direction='out', high_level=True)
-            _, type_ = self.get_filtered_elements_and_type(c.getter_packet, elements, c.callback_param_mapping)
+            elements = c.getter_packet.get_elements(direction='out', high_level=True)
+            _, type_ = self.get_filtered_elements_and_type(c.getter_packet, elements)
 
             transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'State',
-                                                             camel=name.camel,
+                                                             camel=c.id.camel,
                                                              type_=type_,
-                                                             transform=c.transform))
+                                                             transform=c.getter_transform))
 
         return (template.format(channel_cases='\n            '.join(channel_cases)), transforms)
 
 
     def get_openhab_setter_impl(self):
         template = """    @Override
-    public void handleCommand(Object config, String channel, Command command) throws TinkerforgeException {{
-        {name_camel}Config cfg = ({name_camel}Config) config;
+    public void handleCommand(org.eclipse.smarthome.config.core.Configuration config, org.eclipse.smarthome.config.core.Configuration channelConfig, String channel, Command command) throws TinkerforgeException {{
+        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         switch(channel) {{
             {channel_cases}
         }}
@@ -387,6 +421,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         case_template = """case "{camel}":
                 if (command instanceof {command_type}) {{
+                    {category_camel}{channel_type_camel}Config channelCfg = channelConfig.as({category_camel}{channel_type_camel}Config.class);
                     {command_type} cmd = ({command_type}) command;
                     this.{setter}({setter_params});
                 }}
@@ -395,9 +430,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         for c in self.oh.channels:
             if c.setter_packet is None:
                 continue
-            name = common.FlavoredName(c.id).get()
             channel_cases.append(
-                case_template.format(camel=name.camel,
+                case_template.format(category_camel=self.get_category().camel,
+                                     channel_type_camel=c.type.id.camel,
+                                     camel=c.id.camel,
                                      command_type=c.setter_command_type,
                                      setter=c.setter_packet.get_name().headless,
                                      setter_params=', '.join(c.setter_packet_params)))
@@ -411,7 +447,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         enablers = []
         for c in self.oh.channels:
-            name = common.FlavoredName(c.id).get().camel
+            name = c.id.camel
             if c.predicate == 'true':
                 enablers.append('result.add("{channel_camel}");'.format(channel_camel=name))
             else:
@@ -422,26 +458,22 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     def get_openhab_device_impl(self):
         template = """
     @Override
-    public void initialize(Object config, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
-        {name_camel}Config cfg = ({name_camel}Config) config;
+    public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
+        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         {callback_registrations}
         {init_code}
     }}
 
     @Override
-    public Class<{name_camel}Config> getConfigurationClass() {{
-        return {name_camel}Config.class;
-    }}
-
-    @Override
-    public void dispose(Object config) throws TinkerforgeException {{
+    public void dispose(org.eclipse.smarthome.config.core.Configuration config) throws TinkerforgeException {{
+        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         {callback_deregistrations}
         {dispose_code}
     }}
 
     @Override
-    public List<String> getEnabledChannels(Object config) {{
-        {name_camel}Config cfg = ({name_camel}Config) config;
+    public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config) {{
+        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         List<String> result = new ArrayList<String>();
         {channel_enablers}
         return result;
@@ -482,7 +514,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
 
     def get_openhab_channel_type_builder_call(self, ct):
-        template = """ChannelTypeBuilder.{state_or_trigger}(new ChannelTypeUID("tinkerforge", "{type_id}"), "{label}"{state_item_type}).withConfigDescriptionURI(URI.create("channel-type:tinkerforge:{type_id}")){with_calls}.build()"""
+        template = """ChannelTypeBuilder.{state_or_trigger}(new ChannelTypeUID("tinkerforge", "{type_id_camel}"), "{label}"{state_item_type}).withConfigDescriptionURI(URI.create("channel-type:tinkerforge:{type_id_camel}")){with_calls}.build()"""
 
         def get_state_description(min_=None, max_=None, options=None, pattern=None, readOnly=None, step=None):
             template = """StateDescriptionFragmentBuilder.create(){with_calls}.build().toStateDescription()"""
@@ -523,7 +555,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             with_calls.append('.withCommandDescription(CommandDescriptionBuilder.create(){}.build())'.format(''.join('.withCommandOption(new CommandOption("{}", "{}"))'.format(command, label) for label, command in ct.command_options)))
 
         return template.format(state_or_trigger='trigger' if ct.is_trigger_channel else 'state',
-                               type_id=ct.type_id,
+                               type_id_camel=ct.id.camel,
                                label=ct.label,
                                state_item_type='' if ct.is_trigger_channel else ', "{}"'.format(ct.item_type),
                                with_calls='\n'.join(with_calls))
@@ -540,7 +572,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         case_template = """case "{channel_type_id}":
                 return {channel_type_builder_call};"""
 
-        cases = [case_template.format(channel_type_id=ct.type_id,
+        cases = [case_template.format(channel_type_id=ct.id.camel,
                                       channel_type_builder_call=self.get_openhab_channel_type_builder_call(ct))
                  for ct in self.oh.channel_types]
         return template.format('\n            '.join(cases))
@@ -555,12 +587,12 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             with_calls.append('.withDescription("{}")'.format(c.description))
 
         binding = 'tinkerforge'
-        channel_type_id = c.type_id
+        channel_type_id = c.type.id.camel
         if channel_type_id.startswith('system.'):
             binding = 'system'
             channel_type_id = channel_type_id.replace('system.', '')
 
-        return template.format(channel_id=common.FlavoredName(c.id).get().camel, binding=binding, channel_type_id=channel_type_id, with_calls=''.join(with_calls))
+        return template.format(channel_id=c.id.camel, binding=binding, channel_type_id=channel_type_id, with_calls=''.join(with_calls))
 
     def get_openhab_thing_type_builder_call(self):
         template = """ThingTypeBuilder.instance(thingTypeUID, "{label}").isListed(false).withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_BRICK_DAEMON.getId())).withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId())){with_calls}.build()"""
@@ -578,8 +610,13 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return {};
     }}""".format(self.get_openhab_thing_type_builder_call())
 
-    def get_openhab_config_description_parameter_builder_call(self, param):
+    def get_openhab_config_description_parameter_builder_call(self, param, channel_name=None):
         template = """ConfigDescriptionParameterBuilder.create("{name}", Type.{type_upper}){with_calls}.build()"""
+
+        if channel_name is not None:
+            name = channel_name + common.FlavoredName(param.name).get().camel
+        else:
+            name = common.FlavoredName(param.name).get().headless
 
         with_calls = []
         # Strings
@@ -603,7 +640,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         if param.filter is not None:
             with_calls.append('.withFilterCriteria(Arrays.asList({}))'.format(', '.join('new FilterCriteria({}, {})'.format(val, label) for label, val in param.options)))
 
-        return template.format(name=common.FlavoredName(param.name).get().headless, type_upper=param.type.upper(), with_calls=''.join(with_calls))
+        return template.format(name=name, type_upper=param.type.upper(), with_calls=''.join(with_calls))
 
     def get_openhab_get_config_description_impl(self):
         template = """public static ConfigDescription getConfigDescription(URI uri) {{
@@ -619,8 +656,11 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         cases = [case_template.format(uri='thing-type:tinkerforge:' + self.get_name().lower_no_space,
                                       builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in self.oh.params))
                 ] + \
-                [case_template.format(uri='channel-type:tinkerforge:' + self.get_name().under + '_' + common.FlavoredName(c.id).get().headless,
-                                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in c.params)) for c in self.oh.channels]
+                [case_template.format(uri='channel-type:tinkerforge:' + ct.id.camel,
+                                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in ct.params)) for ct in self.oh.channel_types
+                ] #+ \
+                #[case_template.format(uri='channel:tinkerforge:' + self.get_name().under + '_' + c.id.headless,
+                #                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in c.params)) for c in self.oh.channels]
 
         return template.format(cases='\n            '.join(cases))
 
@@ -630,18 +670,16 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         source += '}\n'
         return source
 
-    def get_openhab_config_class(self):
+    def get_openhab_config_classes(self):
         template = """package com.tinkerforge;{imports}
 
-public class {name_camel}Config {{
+public class {name_camel} {{
     {parameters}
 
-    public {name_camel}Config() {{}}
+    public {name_camel}() {{}}
 }}"""
 
         parameter_template = "{type} {name} = {ctor}{default}{ctor2};"
-
-        params = self.oh.params + [p for c in self.oh.channels for p in c.params]
 
         param_types = {
             'integer': 'Integer',
@@ -650,13 +688,31 @@ public class {name_camel}Config {{
             'text': 'String'
         }
 
-        return template.format(imports='\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in params] else '',
-                               name_camel=self.get_category().camel + self.get_name().camel,
+
+        classes = []
+        imports = '\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in self.oh.params] else ''
+        class_name = self.get_category().camel + self.get_name().camel + 'Config'
+        classes.append((class_name,
+                        template.format(imports=imports,
+                               name_camel=class_name,
                                parameters="\n\t".join(parameter_template.format(type=param_types[p.type],
                                                                                 name=common.FlavoredName(p.name).get().headless,
                                                                                 ctor='new BigDecimal(' if p.type == 'decimal' else '',
                                                                                 ctor2=')' if p.type == 'decimal' else '',
-                                                                                default=p.default) for p in params))
+                                                                                default=p.default) for p in self.oh.params))))
+        for ct in self.oh.channel_types:
+            imports = '\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in ct.params] else ''
+            class_name = self.get_category().camel + ct.id.camel + 'Config'
+            classes.append((class_name,
+                            template.format(imports=imports,
+                               name_camel=class_name,
+                               parameters="\n\t".join(parameter_template.format(type=param_types[p.type],
+                                                                                name=common.FlavoredName(p.name).get().headless,
+                                                                                ctor='new BigDecimal(' if p.type == 'decimal' else '',
+                                                                                ctor2=')' if p.type == 'decimal' else '',
+                                                                                default=p.default) for p in ct.params))))
+
+        return classes
 
     def get_openhab_binding_constant(self):
         thing_type_template = """public static final ThingTypeUID {} = new ThingTypeUID(BINDING_ID, "{}");"""
@@ -664,12 +720,12 @@ public class {name_camel}Config {{
         thing_type_decl = thing_type_template.format(thing_type_caps, self.get_name().lower_no_space)
 
         channel_type_template = """public static final ChannelTypeUID {} = new ChannelTypeUID(BINDING_ID, "{}");"""
-        channel_types_caps = ['CHANNEL_TYPE_' + common.FlavoredName(ct.type_id).get().upper for ct in self.oh.channel_types]
-        channel_type_decls = [channel_type_template.format(caps, id_) for caps, id_ in zip(channel_types_caps, [ct.type_id for ct in self.oh.channel_types])]
+        channel_types_caps = ['CHANNEL_TYPE_' + ct.id.upper for ct in self.oh.channel_types]
+        channel_type_decls = [channel_type_template.format(caps, id_) for caps, id_ in zip(channel_types_caps, [ct.id.camel for ct in self.oh.channel_types])]
 
         config_description_type_template = """public static final URI {name} = URI.create("{thing_or_channel}-type:"+{type_caps}.toString());"""
-        config_description_types_caps = ['CONFIG_DESCRIPTION_URI_' + self.get_name().upper + '_' + common.FlavoredName(c.id).get().upper for c in self.oh.channels if not c.type_id.startswith('system.')]
-        config_description_type_decls = [config_description_type_template.format(name=caps, thing_or_channel='channel', type_caps='CHANNEL_TYPE_' + common.FlavoredName(c.type_id).get().upper) for caps, c in zip(config_description_types_caps, [c for c in self.oh.channels]) if not c.type_id.startswith('system.')]
+        config_description_types_caps = ['CONFIG_DESCRIPTION_URI_' + ct.id.upper for ct in self.oh.channel_types if not ct.id.space.startswith('system.')]
+        config_description_type_decls = [config_description_type_template.format(name=caps, thing_or_channel='channel', type_caps='CHANNEL_TYPE_' + ct.id.upper) for caps, ct in zip(config_description_types_caps, [ct for ct in self.oh.channel_types]) if not ct.id.space.startswith('system.')]
 
         config_description_types_caps.append('CONFIG_DESCRIPTION_URI_' + self.get_name().upper)
         config_description_type_decls.append(config_description_type_template.format(name='CONFIG_DESCRIPTION_URI_' + self.get_name().upper, thing_or_channel='thing', type_caps=thing_type_caps))
@@ -703,8 +759,10 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
         with open(os.path.join(self.get_bindings_dir(), class_name + '.java'), 'w') as f:
             f.write(device.get_java_source())
 
-        with open(os.path.join(self.get_bindings_dir(), class_name + 'Config.java'), 'w') as f:
-            f.write(device.get_openhab_config_class())
+        config_classes = device.get_openhab_config_classes()
+        for config_class_name, config_class in config_classes:
+            with open(os.path.join(self.get_bindings_dir(), config_class_name + '.java'), 'w') as f:
+                f.write(config_class)
 
         if device.is_released():
             self.released_devices.append(device)

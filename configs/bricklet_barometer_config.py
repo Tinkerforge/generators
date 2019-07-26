@@ -683,17 +683,17 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': 'this.setReferenceAirPressure(cfg.referenceAirPressure.multiply(new BigDecimal(1000)).intValue());',
     'channels': [
-        oh_generic_old_style_channel('Air Pressure', 'airPressure', 'SmartHomeUnits.MILLIBAR', divisor=1000.0),
-        oh_generic_old_style_channel('Altitude', 'altitude', 'SIUnits.METRE', divisor=100.0)
+        oh_generic_old_style_channel('Air Pressure', 'Air Pressure', 'SmartHomeUnits.MILLIBAR', divisor=1000.0),
+        oh_generic_old_style_channel('Altitude', 'Altitude', 'SIUnits.METRE', divisor=100.0)
     ],
     'channel_types': [
-        oh_channel_type('airPressure', 'Number:Pressure', 'Air Pressure',
+        oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
                      description='Measured air pressure',
                      read_only=True,
                      pattern='%.3f %unit%',
                      min_=10,
                      max_=1200),
-        oh_channel_type('altitude', 'Number:Length', 'Altitude',
+        oh_generic_channel_type('Altitude', 'Number:Length', 'Altitude',
                      description='Relative Altitude derived from air pressure',
                      read_only=True,
                      pattern='%.2f %unit%')

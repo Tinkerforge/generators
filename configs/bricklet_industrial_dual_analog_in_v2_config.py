@@ -368,34 +368,27 @@ com['examples'].append({
 def voltage_channel(index):
     return {
             'id': 'Voltage Channel {0}'.format(index),
-            'type_id': 'voltage{0}'.format(index),
-            'params':[{
-                'name': 'Voltage Update Interval {0}'.format(index),
-                'type': 'integer',
-                'unit': 'ms',
-                'label': 'Voltage Update Interval (Channel {0})'.format(index),
-                'description': 'Specifies the voltage update interval for channel {0} in milliseconds. A value of 0 disables automatic updates.'.format(index),
-                'default': 1000,
-                'groupName': 'update_intervals'
-            }],
-            'init_code':"""this.setVoltageCallbackConfiguration({0}, cfg.voltageUpdateInterval{0}, true, \'x\', 0, 0);""".format(index),
+            'type': 'Voltage',
+            'label': 'Voltage Channel {0}'.format(index),
+
+            'init_code':"""this.setVoltageCallbackConfiguration({0}, channelCfg.updateInterval, true, \'x\', 0, 0);
+this.setChannelLEDConfig({0}, channelCfg.ledConfig);
+this.setChannelLEDStatusConfig({0}, channelCfg.ledStatusMinimum, channelCfg.ledStatusMaximum, channelCfg.ledStatusMode);""".format(index),
             'dispose_code': """this.setVoltageCallbackConfiguration({0}, 0, true, \'x\', 0, 0);""".format(index),
             'getter_packet': 'Get Voltage',
             'getter_packet_params': [str(index)],
             'callback_filter': 'channel == {0}'.format(index),
             'callback_packet': 'Voltage',
-            'callback_param_mapping': {'Channel': None, 'Voltage': 'voltage'},
-            'transform': 'new QuantityType<>(value{divisor}, {unit})',
+            'callback_transform': 'new QuantityType<>(voltage{divisor}, {unit})',
+            'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
             'java_unit': 'SmartHomeUnits.VOLT',
             'divisor': '1000.0',
             'is_trigger_channel': False
         }
 
-
-
-def led_status_config(channel):
+def led_status_config():
     return [{
-            'name': 'Channel {} LED Config'.format(channel),
+            'name': 'LED Config',
             'type': 'integer',
             'options': [('Off', 0),
                         ('On', 1),
@@ -404,60 +397,47 @@ def led_status_config(channel):
             'limitToOptions': 'true',
             'default': '3',
 
-            'label': 'Channel {} LED Config'.format(channel),
+            'label': 'LED Configuration',
             'description': led_channel_config_description.replace('\n', '\\n').replace('"', '\\\"'),
-            'groupName': 'channel{}LEDConfig'.format(channel)
         },
         {
-            'name': 'Channel {} LED Status Mode'.format(channel),
+            'name': 'LED Status Mode',
             'type': 'integer',
             'options': [('Threshold', 0),
                         ('Intensity', 1)],
             'limitToOptions': 'true',
             'default': '1',
 
-            'label': 'Channel {} LED Status Mode'.format(channel),
+            'label': 'LED Status Mode',
             'description': led_status_config_description.replace('\n', '\\n').replace('"', '\\\"'),
-            'groupName': 'channel{}LEDConfig'.format(channel)
         },
         {
-            'name': 'Channel {} LED Status Minimum'.format(channel),
+            'name': 'LED Status Minimum',
             'type': 'integer',
             'min': '-35',
             'max': '35',
             'unit': 'V',
             'default': '0',
 
-            'label': 'Channel {} LED Status Maximum'.format(channel),
+            'label': 'LED Status Maximum',
             'description': 'See LED Status Mode for further explaination.',
-            'groupName': 'channel{}LEDConfig'.format(channel)
         },
         {
-            'name': 'Channel {} LED Status Maximum'.format(channel),
+            'name': 'LED Status Maximum',
             'type': 'integer',
             'min': '-35',
             'max': '35',
             'unit': 'V',
             'default': '10',
 
-            'label': 'Channel {} LED Status Maximum'.format(channel),
+            'label': 'LED Status Maximum',
             'description': 'See LED Status Mode for further explaination.',
-            'groupName': 'channel{}LEDConfig'.format(channel)
         }]
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
-    'param_groups': oh_generic_channel_param_groups() + [{
-        'name': 'channel0LEDConfig',
-        'label': 'Channel 0 LED Config',
-        'advanced': 'true'
-    },
-    {
-        'name': 'channel1LEDConfig',
-        'label': 'Channel 1 LED Config',
-        'advanced': 'true'
-    }],
-    'params': led_status_config(0) + led_status_config(1) + [
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
         {
             'name': 'Sample Rate',
             'type': 'integer',
@@ -477,27 +457,18 @@ com['openhab'] = {
             'advanced': 'true'
         }
     ],
-    'init_code': """this.setChannelLEDConfig(0, cfg.channel0LEDConfig);
-this.setChannelLEDStatusConfig(0, cfg.channel0LEDStatusMinimum, cfg.channel0LEDStatusMaximum, cfg.channel0LEDStatusMode);
-this.setChannelLEDConfig(1, cfg.channel1LEDConfig);
-this.setChannelLEDStatusConfig(1, cfg.channel1LEDStatusMinimum, cfg.channel1LEDStatusMaximum, cfg.channel1LEDStatusMode);
-this.setSampleRate(cfg.sampleRate);""",
+    'init_code': """this.setSampleRate(cfg.sampleRate);""",
     'channels': [
         voltage_channel(0),
         voltage_channel(1),
     ],
     'channel_types': [
-        oh_channel_type('voltage0', 'Number:ElectricPotential', 'Voltage Channel 0',
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'NOT USED',
                      description='Measured voltage between -35 and 35 V',
                      read_only=True,
                      pattern='%.3f %unit%',
                      min_=-35,
-                     max_=35),
-        oh_channel_type('voltage1', 'Number:ElectricPotential', 'Voltage Channel 1',
-                     description='Measured voltage between -35 and 35 V',
-                     read_only=True,
-                     pattern='%.3f %unit%',
-                     min_=-35,
-                     max_=35,)
+                     max_=35,
+                     params=led_status_config())
     ]
 }

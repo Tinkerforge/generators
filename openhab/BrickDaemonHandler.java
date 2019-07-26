@@ -14,6 +14,7 @@ import org.eclipse.smarthome.core.types.Command;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.tinkerforge.AlreadyConnectedException;
 import com.tinkerforge.BrickDaemonConfig;

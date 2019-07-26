@@ -402,32 +402,32 @@ com['openhab'] = {
     'imports': ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
     'channels': [{
             'id': 'Enabled',
-            'type_id': 'enabled',
+            'type': 'Enabled',
 
             'setter_packet': 'Set {title_words}',
             'setter_packet_params': ['cmd == OnOffType.ON'],
             'setter_command_type': "OnOffType",
 
             'getter_packet': 'Get {title_words}',
-            'transform': 'value ? OnOffType.ON : OnOffType.OFF',
+            'getter_transform': 'value ? OnOffType.ON : OnOffType.OFF',
         },
         {
             'id': 'Voltage',
-            'type_id': 'voltage',
+            'type': 'Voltage',
 
             'setter_packet': 'Set {title_words}',
             'setter_packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
             'setter_command_type': "DecimalType",
 
             'getter_packet': 'Get {title_words}',
-            'transform': 'new DecimalType(value / 1000.0)',
+            'getter_transform': 'new DecimalType(value / 1000.0)',
         }
     ],
     'channel_types': [
-        oh_channel_type('enabled', 'Switch', 'Output Enabled',
+        oh_generic_channel_type('Enabled', 'Switch', 'Output Enabled',
                      description='Enables/disables the output of voltage and current.',
                      read_only=False),
-        oh_channel_type('voltage', 'Number:ElectricPotential', 'Output Voltage',
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Output Voltage',
                      description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
                      read_only=False,
                      pattern='%.3f %unit%',

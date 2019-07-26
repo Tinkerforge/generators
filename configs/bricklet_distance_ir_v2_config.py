@@ -280,10 +280,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_channel('Distance', 'distance', 'SIUnits.METRE', divisor=1000.0)
+        oh_generic_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=1000.0)
     ],
     'channel_types': [
-        oh_channel_type('distance', 'Number:Length', 'Distance',
+        oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
                      description='Measured distance',
                      read_only=True,
                      pattern='%.3f %unit%',

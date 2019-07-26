@@ -643,14 +643,14 @@ def input_channel(idx):
             'id': 'Input Pin {}'.format(idx),
             'label': 'Measured Level (Pin {}/{})'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
 
-            'type_id': 'input_pin',
+            'type': 'Input Pin',
 
             'getter_packet': 'Get Value',
-            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx),
+            'getter_transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx),
 
-            #'callback_filter': 'channel == {}'.format(idx),
-            'callback_packet': 'All Input Value',
-            'callback_param_mapping': {'Changed': None, 'Value': 'Value'},
+            'callback_filter': 'channel == {}'.format(idx),
+            'callback_packet': 'Input Value',
+            'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF'.format(idx),
 
             # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
             'init_code':"""this.setAllInputValueCallbackConfiguration(1000, false);
@@ -664,10 +664,10 @@ def output_channel(idx):
             'id': 'Output Pin {}'.format(idx),
             'label': 'Set Level (Pin {}/{})'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
 
-            'type_id': 'output_pin',
+            'type': 'Output Pin',
 
             'getter_packet': 'Get Value',
-            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx),
+            'getter_transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx),
 
             'setter_packet': 'Set Selected Value',
             'setter_packet_params': [str(idx), 'cmd == OnOffType.ON'],
@@ -701,10 +701,10 @@ com['openhab'] = {
     'params': params,
     'channels': channels,
     'channel_types': [
-        oh_channel_type('input_pin', 'Switch', 'Measured Level',
+        oh_generic_channel_type('Input Pin', 'Switch', 'Measured Level',
                      description='The logic level that is currently measured on the pin.',
                      read_only=True),
-        oh_channel_type('output_pin', 'Switch', 'Set Level',
+        oh_generic_channel_type('Output Pin', 'Switch', 'Set Level',
                      description='The logic level that is currently set on the pin.',
                      read_only=False),
     ]

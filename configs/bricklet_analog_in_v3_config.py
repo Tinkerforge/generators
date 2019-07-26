@@ -204,10 +204,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_channel('Voltage', 'voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
+        oh_generic_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
     ],
     'channel_types': [
-        oh_channel_type('voltage', 'Number:ElectricPotential', 'Voltage',
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
                      description='Measured voltage',
                      read_only=True,
                      pattern='%.1f %unit%',

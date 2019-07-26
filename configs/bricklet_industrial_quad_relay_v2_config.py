@@ -281,10 +281,10 @@ def relay_channel(channel):
         'label': 'Relay {}'.format(channel),
         'description': 'Switches Relay {}. A running monoflop timer for this relay will be aborted if the relay is toggled by this channel.'.format(channel),
 
-        'type_id': 'relay',
+        'type': 'Relay',
 
         'getter_packet': 'Get Value',
-        'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(channel),
+        'getter_transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(channel),
 
         'setter_packet': 'Set Selected Value',
         'setter_packet_params': [str(channel), 'cmd == OnOffType.ON'],
@@ -292,40 +292,27 @@ def relay_channel(channel):
     }
 
 def monoflop_params(channel):
-    return [{
-            'name': 'Monoflop {} Duration'.format(channel),
-            'type': 'decimal',
-            'default': 1000,
-            'min': 0,
-            'max': 2**31 - 1,
-            'unit': 'ms',
-
-            'label': 'Monoflop duration',
-            'description': 'The time (in ms) that the relay should hold the configured value.',
-        },
-        {
-            'name': 'Monoflop {} Value'.format(channel),
-            'type': 'boolean',
-            'default': 'true',
-
-            'label': 'Monoflop value',
-            'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
-    }]
+    return []
 
 def monoflop_channel(channel):
     return {
         'id': 'Monoflop relay {}'.format(channel),
         'label': 'Monoflop Relay {}'.format(channel),
-        'type_id': 'monoflop',
+        'type': 'Monoflop',
 
         'getter_packet': 'Get Monoflop',
         'getter_packet_params': [str(channel)],
-        'transform': 'value.value ? OnOffType.ON : OnOffType.OFF',
+        'getter_transform': 'value.value ? OnOffType.ON : OnOffType.OFF',
 
         'setter_packet': 'Set Monoflop',
-        'setter_packet_params': [str(channel), 'cfg.monoflop{}Value.booleanValue()'.format(channel), 'cfg.monoflop{}Duration.longValue()'.format(channel)],
+        #TODO: cfg needs monoflop channel number
+        'setter_packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration.longValue()'],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
     }
+
+
+
+
 
 #TODO: Add monoflop done channel?
 com['openhab'] = {
@@ -334,11 +321,34 @@ com['openhab'] = {
     'params': sum([monoflop_params(i) for i in range(0, 4)], []), #flatten param lists
     'channels': [relay_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)],
     'channel_types': [
-        oh_channel_type('relay', 'Switch', 'NOT USED',
+        oh_generic_channel_type('Relay', 'Switch', 'NOT USED',
                      description='NOT USED'),
-        oh_channel_type('monoflop', 'String', 'NOT USED',
-                    description='Triggers a monoflop as configured',
-                    command_options=[('Trigger', 'TRIGGER')])
+        {
+            'id': 'Monoflop',
+            'item_type': 'String',
+            'params': [{
+                'name': 'Monoflop Duration',
+                'type': 'decimal',
+                'default': 1000,
+                'min': 0,
+                'max': 2**31 - 1,
+                'unit': 'ms',
+
+                'label': 'Monoflop duration',
+                'description': 'The time (in ms) that the relay should hold the configured value.',
+            },
+            {
+                'name': 'Monoflop Value',
+                'type': 'boolean',
+                'default': 'true',
+
+                'label': 'Monoflop value',
+                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+            }],
+            'label': 'NOT USED',
+            'description':'Triggers a monoflop as configured',
+            'command_options': [('Trigger', 'TRIGGER')]
+        }
     ]
 }
 

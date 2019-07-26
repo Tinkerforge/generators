@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import org.eclipse.smarthome.config.core.ConfigDescription;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameterBuilder;
+import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.type.ChannelType;
@@ -85,15 +87,10 @@ public class BrickDaemon extends Device {
     }
 
     @Override
-    public void initialize(Object config, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {}
+    public void initialize(Configuration config, Function<String, Configuration> channelConfigFn, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {}
 
     @Override
-    public void dispose(Object config) throws TinkerforgeException {}
-
-    @Override
-    public Class<?> getConfigurationClass() {
-        return BrickDaemonConfig.class;
-    }
+    public void dispose(Configuration config) throws TinkerforgeException {}
 
     @Override
     public void refreshValue(String value, BiConsumer<String, State> updateStateFn,
@@ -102,12 +99,12 @@ public class BrickDaemon extends Device {
     }
 
     @Override
-    public void handleCommand(Object config, String channel, Command command) {
+    public void handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException {
 
     }
 
     @Override
-    public List<String> getEnabledChannels(Object config) {
+    public List<String> getEnabledChannels(Configuration config) {
         return new ArrayList<>();
     }
 
