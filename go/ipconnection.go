@@ -367,14 +367,14 @@ type connectRequest struct {
 	doneRx      chan<- error
 }
 
-type ConnectReason uint8
+type ConnectReason = uint8
 
 const (
 	ConnectReasonRequest ConnectReason = iota
 	ConnectReasonAutoReconnect
 )
 
-type DisconnectReason uint8
+type DisconnectReason = uint8
 
 const (
 	DisconnectReasonRequest DisconnectReason = iota
@@ -382,7 +382,7 @@ const (
 	DisconnectReasonShutdown
 )
 
-type EnumerationType uint8
+type EnumerationType = uint8
 
 const (
 	EnumerationTypeAvailable EnumerationType = iota
@@ -561,7 +561,7 @@ func callbackThreadFn(
 
 }
 
-type callbackConnectionState uint8
+type callbackConnectionState = uint8
 
 const (
 	callbackConnectionStateAutoReconnect callbackConnectionState = iota
@@ -868,7 +868,7 @@ type DisconnectCallbackContainer struct {
 	Callback func(uint8)
 }
 
-type ConnectionState uint8
+type ConnectionState = uint8
 
 const (
 	ConnectionStateDisconnected ConnectionState = iota

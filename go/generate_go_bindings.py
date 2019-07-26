@@ -73,7 +73,7 @@ import (
 
         const_prefix = "Function"
 
-        template = """type {name} {type}
+        template = """type {name} = {type}
 
 const (
     {values}

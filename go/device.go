@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-type ResponseExpectedFlag uint8
+type ResponseExpectedFlag = uint8
 
 const (
 	ResponseExpectedFlagInvalidFunctionID ResponseExpectedFlag = iota
