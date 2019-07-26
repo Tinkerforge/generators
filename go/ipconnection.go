@@ -15,14 +15,20 @@ import (
 
 type BrickletError uint8
 
+type DeviceError = BrickletError
+
 const (
-	BrickletErrorSuccess BrickletError = iota
-	BrickletErrorInvalidParameter
-	BrickletErrorFunctionNotSupported
-	BrickletErrorUnknownError
+	BrickletErrorSuccess DeviceError = 0
+	BrickletErrorInvalidParameter DeviceError = 1
+	BrickletErrorFunctionNotSupported DeviceError = 2
+	BrickletErrorUnknownError DeviceError = 3
+	DeviceErrorSuccess DeviceError = 0
+	DeviceErrorInvalidParameter DeviceError = 1
+	DeviceErrorFunctionNotSupported DeviceError = 2
+	DeviceErrorUnknownError DeviceError = 3
 )
 
-func (e BrickletError) Error() string {
+func (e DeviceError) Error() string {
 	switch e {
 	case 0:
 		return "Success"
@@ -36,6 +42,8 @@ func (e BrickletError) Error() string {
 		return "Unknown Error"
 	}
 }
+
+
 
 // The IPConnection gets moved when returning from NewIPConnection(),
 // so it only stores pointers to timeout and autoReconnect, as they are
@@ -227,7 +235,7 @@ func (ipcon *IPConnection) Authenticate(secret string) error {
 	var respHeader PacketHeader
 	respHeader.FillFromBytes(resp)
 	if respHeader.ErrorCode != 0 {
-		return BrickletError(respHeader.ErrorCode)
+		return DeviceError(respHeader.ErrorCode)
 	}
 
 	serverNonce := resp[PacketHeaderSize : PacketHeaderSize+4]
@@ -255,7 +263,7 @@ func (ipcon *IPConnection) Authenticate(secret string) error {
 	if len(resp) > 0 {
 		respHeader.FillFromBytes(resp)
 		if respHeader.ErrorCode != 0 {
-			return BrickletError(respHeader.ErrorCode)
+			return DeviceError(respHeader.ErrorCode)
 		}
 	}
 	return nil

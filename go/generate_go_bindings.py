@@ -299,7 +299,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
 
         header.FillFromBytes(resultBytes)
         if header.ErrorCode != 0 {{
-            return {return_results}BrickletError(header.ErrorCode)
+            return {return_results}DeviceError(header.ErrorCode)
         }}
 
         {resultBufAssignment}bytes.NewBuffer(resultBytes[8:])

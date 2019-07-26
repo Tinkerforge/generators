@@ -176,12 +176,12 @@ API
 The {device_name_display} API is defined in the package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}``
 
 Nearly every function of the Go bindings can return an
-``BrickletError``, implementing the error interface. The error can have one of the following values:
+``DeviceError``, implementing the error interface. The error can have one of the following values:
 
-* BrickletErrorSuccess = 0
-* BrickletErrorInvalidParameter = 1
-* BrickletErrorFunctionNotSupported = 2
-* BrickletErrorUnknownError = 3
+* DeviceErrorSuccess = 0
+* DeviceErrorInvalidParameter = 1
+* DeviceErrorFunctionNotSupported = 2
+* DeviceErrorUnknownError = 3
 
 which correspond to the values returned from Bricks and Bricklets.
 
@@ -199,13 +199,13 @@ API
 
 Die API des {device_name_display} ist im Package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}`` definiert.
 
-Fast alle Funktionen der Go Bindings können einen ``BrickletError``, der das error-Interface implementiert,
+Fast alle Funktionen der Go Bindings können einen ``DeviceError``, der das error-Interface implementiert,
 zurückgeben. Dieser kann folgende Werte annehmen:
 
-* BrickletErrorSuccess = 0
-* BrickletErrorInvalidParameter = 1
-* BrickletErrorFunctionNotSupported = 2
-* BrickletErrorUnknownError = 3
+* DeviceErrorSuccess = 0
+* DeviceErrorInvalidParameter = 1
+* DeviceErrorFunctionNotSupported = 2
+* DeviceErrorUnknownError = 3
 
 welche den Werten entsprechen, die der Brick oder das Bricklet zurückgeben.
 
