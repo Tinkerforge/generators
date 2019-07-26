@@ -98,10 +98,10 @@ class GoDocDevice(go_common.GoDevice):
             else:
                 skip = 0
             cbs += common.select_lang(cb).format(device=device,
-                                                    callback_name_camel=packet.get_name(skip=skip).camel,
-                                                    callback_name_space=packet.get_name(skip=skip).space,
-                                                    result_type=result_type,
-                                                    desc=desc)
+                                                 callback_name_camel=packet.get_name(skip=skip).camel,
+                                                 callback_name_space=packet.get_name(skip=skip).space,
+                                                 result_type=result_type,
+                                                 desc=desc)
         return cbs
     def get_go_api(self):
         create_str = {

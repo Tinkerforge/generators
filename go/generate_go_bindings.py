@@ -51,14 +51,14 @@ class GoBindingsDevice(go_common.GoDevice):
 
         return """{header}
 
-//{description}
+// {description}
 package {device}
 
 import (
 	"encoding/binary"
 	"bytes"
-    . "github.com/Tinkerforge/go-api-bindings/internal"
-    "github.com/Tinkerforge/go-api-bindings/ipconnection"
+	. "github.com/Tinkerforge/go-api-bindings/internal"
+	"github.com/Tinkerforge/go-api-bindings/ipconnection"
 )
 """.format(header=self.get_generator().get_header_comment(kind='asterisk'), description=description, device=self.get_go_package())
 
@@ -76,7 +76,7 @@ import (
         template = """type {name} = {type}
 
 const (
-    {values}
+	{values}
 )
 """
         result = template.format(name=const_prefix,
@@ -107,7 +107,7 @@ const (
             return "ResponseExpectedFlagFalse"
 
     def get_go_device_definition(self):
-        return "type {name} struct{{\n\tdevice Device\n}}".format(name=self.get_go_name())
+        return "type {name} struct {{\n\tdevice Device\n}}".format(name=self.get_go_name())
 
 
     def go_fill_payload(self, elements, bufferName):
@@ -150,13 +150,13 @@ const DeviceDisplayName = "{device_display_name}"
 
 // Creates an object with the unique device ID `uid`. This object can then be used after the IP Connection `ipcon` is connected.
 func New(uid string, ipcon *ipconnection.IPConnection) ({name}, error) {{
-    internalIPCon := ipcon.GetInternalHandle().(IPConnection)
-    dev, err := NewDevice([3]uint8{{ {apiVersion} }}, uid, &internalIPCon, {high_level_function_count})
-    if err != nil {{
-        return {name}{{}}, err
-    }}
-    {response_expected_config}
-    return {name}{{dev}}, nil
+	internalIPCon := ipcon.GetInternalHandle().(IPConnection)
+	dev, err := NewDevice([3]uint8{{ {apiVersion} }}, uid, &internalIPCon, {high_level_function_count})
+	if err != nil {{
+		return {name}{{}}, err
+	}}
+	{response_expected_config}
+	return {name}{{dev}}, nil
 }}
 
 // Returns the response expected flag for the function specified by the function ID parameter.
@@ -174,7 +174,7 @@ func New(uid string, ipcon *ipconnection.IPConnection) ({name}, error) {{
 //
 // See SetResponseExpected for the list of function ID constants available for this function.
 func (device *{name}) GetResponseExpected(functionID {function}) (bool, error) {{
-    return device.device.GetResponseExpected(uint8(functionID))
+	return device.device.GetResponseExpected(uint8(functionID))
 }}
 
 // Changes the response expected flag of the function specified by the function ID parameter.
@@ -186,7 +186,7 @@ func (device *{name}) GetResponseExpected(functionID {function}) (bool, error) {
 // for this purpose. If this flag is disabled for a setter function then no response is send
 // and errors are silently ignored, because they cannot be detected.
 func (device *{name}) SetResponseExpected(functionID {function}, responseExpected bool) error {{
-    return device.device.SetResponseExpected(uint8(functionID), responseExpected)
+	return device.device.SetResponseExpected(uint8(functionID), responseExpected)
 }}
 
 // Changes the response expected flag for all setter and callback configuration functions of this device at once.
@@ -196,7 +196,7 @@ func (device *{name}) SetResponseExpectedAll(responseExpected bool) {{
 
 // Returns the version of the API definition (major, minor, revision) implemented by this API bindings. This is neither the release version of this API bindings nor does it tell you anything about the represented Brick or Bricklet.
 func (device *{name}) GetAPIVersion() [3]uint8 {{
-    return device.device.GetAPIVersion()
+	return device.device.GetAPIVersion()
 }}
 
 {functions}
@@ -207,44 +207,44 @@ func (device *{name}) GetAPIVersion() [3]uint8 {{
         functions = []
 
         callback_template = """{description}\nfunc (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
-            wrapper := func(byteSlice []byte) {{
-                {buf_decl}
-                {param_decls}
-                {param_reads}
-                fn({params})
-            }}
-    return device.device.RegisterCallback(uint8({fun_enum}Callback{fn_id}), wrapper)
+	wrapper := func(byteSlice []byte) {{
+		{buf_decl}
+		{param_decls}
+		{param_reads}
+		fn({params})
+	}}
+	return device.device.RegisterCallback(uint8({fun_enum}Callback{fn_id}), wrapper)
 }}
 
-//Remove a registered {name_desc} callback.
+// Remove a registered {name_desc} callback.
 func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
-    device.device.DeregisterCallback(uint8({fun_enum}Callback{fn_id}), registrationID)
+	device.device.DeregisterCallback(uint8({fun_enum}Callback{fn_id}), registrationID)
 }}
 """
 
         high_level_callback_template = """{description}
 func (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
-    buf := make([]{buf_type}, 0)
-    wrapper := func({params})  {{
-        if int({message_chunk_offset}) != len(buf) {{
-            buf = make([]{buf_type}, 0)
-            if {message_chunk_offset} != 0 {{
-                return
-            }}
-        }}
-        toRead := MinU(uint64({message_length}-{message_chunk_offset}), uint64(len({message_chunk_data}[:])))
-        buf = append(buf, {message_chunk_data}[:toRead]...)
-        if len(buf) >= int({message_length}) {{
-            fn({high_level_params})
-            buf = make([]{buf_type}, 0)
-        }}
-    }}
-    return device.Register{low_level_name}Callback(wrapper)
+	buf := make([]{buf_type}, 0)
+	wrapper := func({params})  {{
+		if int({message_chunk_offset}) != len(buf) {{
+			buf = make([]{buf_type}, 0)
+			if {message_chunk_offset} != 0 {{
+				return
+			}}
+		}}
+		toRead := MinU(uint64({message_length}-{message_chunk_offset}), uint64(len({message_chunk_data}[:])))
+		buf = append(buf, {message_chunk_data}[:toRead]...)
+		if len(buf) >= int({message_length}) {{
+			fn({high_level_params})
+			buf = make([]{buf_type}, 0)
+		}}
+	}}
+	return device.Register{low_level_name}Callback(wrapper)
 }}
 
-//Remove a registered {name_desc} callback.
+// Remove a registered {name_desc} callback.
 func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
-    device.Deregister{low_level_name}Callback(registrationID)
+	device.Deregister{low_level_name}Callback(registrationID)
 }}
 """
 
@@ -254,17 +254,18 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
             param_decls = ["var {} {}".format(param.get_go_name(), param.get_go_type()) for param in params]
             param_reads = self.go_read_results(params, "buf", low_level_in_bits=False)
 
-            functions.append(callback_template.format(name = packet.get_name().camel,
-                                                      name_desc = packet.get_name().space,
+            functions.append(callback_template.format(name=packet.get_name().camel,
+                                                      name_desc=packet.get_name().space,
                                                       device_name=self.get_go_name(),
-                                                      param_decls = "\n".join(param_decls),
-                                                      param_reads = "\n".join(param_reads),
-                                                      buf_decl = "buf := bytes.NewBuffer(byteSlice[8:])" if len(params) > 0 else "",
-                                                      params = ", ".join(param.get_go_name() for param in params),
+                                                      param_decls="\n\t\t".join(param_decls),
+                                                      param_reads="\n\t\t".join(param_reads),
+                                                      buf_decl="buf := bytes.NewBuffer(byteSlice[8:])" if len(params) > 0 else "",
+                                                      params=", ".join(param.get_go_name() for param in params),
                                                       description= packet.get_go_formatted_doc(),
-                                                      type = ", ".join(ret.get_go_type() for ret in params),
-                                                      fun_enum = "Function",
-                                                      fn_id = packet.get_name().camel))
+                                                      type=", ".join(ret.get_go_type() for ret in params),
+                                                      fun_enum="Function",
+                                                      fn_id=packet.get_name().camel))
+
             if packet.has_high_level():
                 high_level_params = list(p for p in params if p.get_level() != 'low')
                 stream = packet.get_high_level('stream_out')
@@ -274,92 +275,92 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
                 chunk_offset = stream.get_chunk_offset_element().get_go_name() if not stream.has_single_chunk() else 0
 
 
-                functions.append(high_level_callback_template.format(name = packet.get_name(skip=-2).camel,
-                                                      name_desc = packet.get_name().space,
-                                                      description= packet.get_go_formatted_doc(),
-                                                      device_name=self.get_go_name(),
-                                                      type=", ".join([p.get_go_type() for p in high_level_params] + ["[]"+data_type]),
-                                                      buf_type = data_type,
-                                                      params = ", ".join(p.get_go_name() + " " + p.get_go_type() for p in params),
-                                                      message_length = length,
-                                                      message_chunk_offset = chunk_offset,
-                                                      message_chunk_data = data.get_go_name(),
-                                                      high_level_params = ", ".join([p.get_go_name() for p in high_level_params] + ["buf"]),
-                                                      low_level_name=packet.get_name().camel))
+                functions.append(high_level_callback_template.format(name=packet.get_name(skip=-2).camel,
+                                                                     name_desc=packet.get_name().space,
+                                                                     description=packet.get_go_formatted_doc(),
+                                                                     device_name=self.get_go_name(),
+                                                                     type=", ".join([p.get_go_type() for p in high_level_params] + ["[]"+data_type]),
+                                                                     buf_type=data_type,
+                                                                     params=", ".join(p.get_go_name() + " " + p.get_go_type() for p in params),
+                                                                     message_length=length,
+                                                                     message_chunk_offset=chunk_offset,
+                                                                     message_chunk_data=data.get_go_name(),
+                                                                     high_level_params=", ".join([p.get_go_name() for p in high_level_params] + ["buf"]),
+                                                                     low_level_name=packet.get_name().camel))
 
         function_template = """{description}\nfunc (device *{device_name}) {name}({params}) ({returnType}) {{
-        var buf bytes.Buffer
-    {fill_payload}
-    resultBytes, err := device.device.{fn}(uint8({fun_enum}{fn_id}), buf.Bytes())
-    if err != nil {{
-        return {return_results}err
-    }}
-    if len(resultBytes) > 0 {{
-        var header PacketHeader
+	var buf bytes.Buffer
+	{fill_payload}
+	resultBytes, err := device.device.{fn}(uint8({fun_enum}{fn_id}), buf.Bytes())
+	if err != nil {{
+		return {return_results}err
+	}}
+	if len(resultBytes) > 0 {{
+		var header PacketHeader
 
-        header.FillFromBytes(resultBytes)
-        if header.ErrorCode != 0 {{
-            return {return_results}DeviceError(header.ErrorCode)
-        }}
+		header.FillFromBytes(resultBytes)
+		if header.ErrorCode != 0 {{
+			return {return_results}DeviceError(header.ErrorCode)
+		}}
 
-        {resultBufAssignment}bytes.NewBuffer(resultBytes[8:])
-        {read_results}
-    }}
+		{resultBufAssignment}bytes.NewBuffer(resultBytes[8:])
+		{read_results}
+	}}
 
-    return {return_results}nil
+	return {return_results}nil
 }}"""
 
         stream_in_setter_template = """{description}\n\tfunc (device *{device_name}) {name}({params}) ({returnType}) {{
-        {lowLevelResult}, err {colon}= device.device.SetHighLevel(func({length} uint64, {chunkOffset} uint64, {payload} []byte) (LowLevelWriteResult, error) {{
-            arr := [{chunk_size}]{chunk_data_type}{{}}
-            copy(arr[:], ByteSliceTo{chunk_data_type_title}Slice({payload}))
+		{lowLevelResult}, err {colon}= device.device.SetHighLevel(func({length} uint64, {chunkOffset} uint64, {payload} []byte) (LowLevelWriteResult, error) {{
+			arr := [{chunk_size}]{chunk_data_type}{{}}
+			copy(arr[:], ByteSliceTo{chunk_data_type_title}Slice({payload}))
 
-            {low_level_results}err := device.{name}LowLevel({low_level_params})
+			{low_level_results}err := device.{name}LowLevel({low_level_params})
 
-            var lowLevelResults bytes.Buffer
-            {fill_low_level_results}
+			var lowLevelResults bytes.Buffer
+			{fill_low_level_results}
 
-            return LowLevelWriteResult{{
-                uint64({written}),
-                lowLevelResults.Bytes()}}, err
-        }}, {high_level_function_idx}, {element_size_in_bit}, {chunk_len_in_bit}, {chunk_data_type_title}SliceToByteSlice({data_var}))
+			return LowLevelWriteResult{{
+				uint64({written}),
+				lowLevelResults.Bytes()}}, err
+		}}, {high_level_function_idx}, {element_size_in_bit}, {chunk_len_in_bit}, {chunk_data_type_title}SliceToByteSlice({data_var}))
 
-         if err != nil {{
-            return
-        }}
+		if err != nil {{
+			return
+		}}
 
-        {resultBuf}
-        {expand_low_level_results}
-        {copy_written}
-        return
-    }}"""
+		{resultBuf}
+		{expand_low_level_results}
+		{copy_written}
+		return
+	}}"""
 
         stream_out_getter_template = """{description}\n\tfunc (device *{device_name}) {name}({params}) ({return_type}) {{
-        buf, {result}, err := device.device.GetHighLevel(func() (LowLevelResult, error) {{
-            {low_level_vars}, err := device.{name}LowLevel({params_without_type})
+		buf, {result}, err := device.device.GetHighLevel(func() (LowLevelResult, error) {{
+			{low_level_vars}, err := device.{name}LowLevel({params_without_type})
 
-            if err != nil {{
-                return LowLevelResult{{}}, err
-            }}
+			if err != nil {{
+				return LowLevelResult{{}}, err
+			}}
 
-            var lowLevelResults bytes.Buffer
-            {fill_low_level_results}
+			var lowLevelResults bytes.Buffer
+			{fill_low_level_results}
 
-            return LowLevelResult{{
-                uint64({length_var}),
-                uint64({chunk_offset_var}),
-                {type_title}SliceToByteSlice({chunk_data_var}[:]),
-                lowLevelResults.Bytes()}}, nil
-        }},
-            {high_level_function_idx},
-            {element_size_in_bit})
-        if err != nil {{
-            return {return_results}, err
-        }}
-        {resultBuf}
-        {expand_low_level_results}
-        return {return_results}, nil
-    }}"""
+			return LowLevelResult{{
+				uint64({length_var}),
+				uint64({chunk_offset_var}),
+				{type_title}SliceToByteSlice({chunk_data_var}[:]),
+				lowLevelResults.Bytes()}}, nil
+		}},
+			{high_level_function_idx},
+			{element_size_in_bit})
+		if err != nil {{
+			return {return_results}, err
+		}}
+		{resultBuf}
+		{expand_low_level_results}
+		return {return_results}, nil
+	}}"""
 
         high_level_function_count = len([packet for packet in self.get_packets() if packet.get_high_level('stream_in') != None or packet.get_high_level('stream_out') != None])
         high_level_function_counter = -1
@@ -484,26 +485,25 @@ func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
                 else:
                     chunk_offset = stream.get_length_element().get_go_name()
 
-                functions.append(stream_out_getter_template.format(description= packet.get_go_formatted_doc(),
+                functions.append(stream_out_getter_template.format(description=packet.get_go_formatted_doc(),
                                                                    device_name=self.get_go_name(),
                                                                    name=name,
                                                                    params=params,
-                                                                   result = "result" if any(ret for ret in returns if ret.get_level() != "low") else "_",
-                                                                   resultBuf = "resultBuf := bytes.NewBuffer(result)" if any(ret for ret in returns if ret.get_level() != "low") else "",
-                                                                   params_without_type = params_without_type,
-                                                                   return_type = packet.get_go_return_type(high_level=True),
-                                                                   low_level_vars = ", ".join(ret.get_go_name() for ret in returns),
-                                                                   fill_low_level_results = "\n\t".join(self.go_fill_payload((ret for ret in returns if ret.get_level() != "low"), "lowLevelResults")),
-                                                                   length_var = length,
-                                                                   chunk_offset_var = chunk_offset,
-                                                                   type_lower = stream.get_chunk_data_element().get_go_type(ignore_cardinality=True).lower(),
-                                                                   type_title = stream.get_chunk_data_element().get_go_type(ignore_cardinality=True).title(),
-                                                                   chunk_data_var = stream.get_chunk_data_element().get_go_name(),
-                                                                   high_level_function_idx = high_level_function_counter,
-                                                                   element_size_in_bit = go_common.get_go_type_size(stream.get_data_element().get_go_type(ignore_cardinality=True)),
-                                                                   return_results = return_results,
-                                                                   expand_low_level_results = "\n\t".join(self.go_read_results((ret for ret in returns if ret.get_level() != "low"), "resultBuf"))
-                                                                   ))
+                                                                   result="result" if any(ret for ret in returns if ret.get_level() != "low") else "_",
+                                                                   resultBuf="resultBuf := bytes.NewBuffer(result)" if any(ret for ret in returns if ret.get_level() != "low") else "",
+                                                                   params_without_type=params_without_type,
+                                                                   return_type=packet.get_go_return_type(high_level=True),
+                                                                   low_level_vars=", ".join(ret.get_go_name() for ret in returns),
+                                                                   fill_low_level_results="\n\t".join(self.go_fill_payload((ret for ret in returns if ret.get_level() != "low"), "lowLevelResults")),
+                                                                   length_var=length,
+                                                                   chunk_offset_var=chunk_offset,
+                                                                   type_lower=stream.get_chunk_data_element().get_go_type(ignore_cardinality=True).lower(),
+                                                                   type_title=stream.get_chunk_data_element().get_go_type(ignore_cardinality=True).title(),
+                                                                   chunk_data_var=stream.get_chunk_data_element().get_go_name(),
+                                                                   high_level_function_idx=high_level_function_counter,
+                                                                   element_size_in_bit=go_common.get_go_type_size(stream.get_data_element().get_go_type(ignore_cardinality=True)),
+                                                                   return_results=return_results,
+                                                                   expand_low_level_results="\n\t".join(self.go_read_results((ret for ret in returns if ret.get_level() != "low"), "resultBuf"))))
 
         return template.format(name=self.get_go_name(),
                                device_identifier = self.get_device_identifier(),
