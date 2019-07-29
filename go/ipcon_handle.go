@@ -196,10 +196,14 @@ const (
 	EnumerationTypeDisconnected
 )
 
+// State of the connection to the  Brick Daemon or the WIFI/Ethernet Extension.
 type ConnectionState = uint8
 
 const (
+	// No connection is established.
 	ConnectionStateDisconnected ConnectionState = iota
+	// A connection to the Brick Daemon or the WIFI/Ethernet Extension is established.
 	ConnectionStateConnected
+	// IP Connection is currently trying to connect.
 	ConnectionStatePending
 )
