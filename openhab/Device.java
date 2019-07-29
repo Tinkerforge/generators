@@ -39,7 +39,17 @@ public abstract class Device extends DeviceBase {
 			       "firmwareVersion = " + Arrays.toString(firmwareVersion) + ", " +
 			       "deviceIdentifier = " + deviceIdentifier + "]";
 		}
-	}
+    }
+
+    public class SetterRefresh {
+        public final String channel;
+        public final long delay;
+
+        public SetterRefresh(String channel, long delay) {
+            this.channel = channel;
+            this.delay = delay;
+        }
+    }
 
 	/**
 	 * Creates the device object with the unique device ID \c uid and adds
@@ -59,7 +69,7 @@ public abstract class Device extends DeviceBase {
 
     public abstract void refreshValue(String value, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
 
-    public abstract void handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException;
+    public abstract List<SetterRefresh> handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException;
 
     public abstract List<String> getEnabledChannels(Configuration config);
 

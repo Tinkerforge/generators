@@ -286,6 +286,10 @@ def relay_channel(channel):
         'getter_packet': 'Get Value',
         'getter_transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(channel),
 
+        'callback_packet': 'Monoflop Done',
+        'callback_filter': 'channel == {}'.format(channel),
+        'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF',
+
         'setter_packet': 'Set Selected Value',
         'setter_packet_params': [str(channel), 'cmd == OnOffType.ON'],
         'setter_command_type': "OnOffType",
@@ -306,12 +310,13 @@ def monoflop_channel(channel):
 
         'setter_packet': 'Set Monoflop',
         #TODO: cfg needs monoflop channel number
-        'setter_packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration.longValue()'],
+        'setter_packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+        'setter_refreshs': [{
+            'channel': 'Relay {}'.format(channel),
+            'delay': '0'
+        }]
     }
-
-
-
 
 
 #TODO: Add monoflop done channel?
@@ -328,7 +333,7 @@ com['openhab'] = {
             'item_type': 'String',
             'params': [{
                 'name': 'Monoflop Duration',
-                'type': 'decimal',
+                'type': 'integer',
                 'default': 1000,
                 'min': 0,
                 'max': 2**31 - 1,

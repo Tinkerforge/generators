@@ -15,6 +15,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -99,8 +100,8 @@ public class BrickDaemon extends Device {
     }
 
     @Override
-    public void handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException {
-
+    public List<SetterRefresh> handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException {
+        return Collections.emptyList();
     }
 
     @Override

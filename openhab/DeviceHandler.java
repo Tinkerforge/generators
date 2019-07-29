@@ -30,12 +30,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
+import com.tinkerforge.Device.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
 
@@ -148,6 +150,14 @@ public class DeviceHandler extends BaseThingHandler {
         }
     }
 
+    private void refreshValue(String channelId) {
+        try {
+            System.out.println("Refreshing " + channelId);
+            device.refreshValue(channelId, this::updateState, this::triggerChannel);
+        } catch (TinkerforgeException e) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
+        }
+    }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
@@ -158,11 +168,11 @@ public class DeviceHandler extends BaseThingHandler {
 
         try {
             if (command instanceof RefreshType) {
-                System.out.println("Refreshing " + channelUID.getId());
-                device.refreshValue(channelUID.getId(), this::updateState, this::triggerChannel);
+                refreshValue(channelUID.getId());
             }
             else {
-                device.handleCommand(getConfig(), getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
+                List<SetterRefresh> refreshs = device.handleCommand(getConfig(), getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
+                refreshs.forEach(r -> scheduler.schedule(() -> refreshValue(r.channel), r.delay, TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
