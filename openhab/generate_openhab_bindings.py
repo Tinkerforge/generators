@@ -167,7 +167,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     def sanity_check_config(self, oh):
         # Params must be used
         for param in oh.params:
-            needle = 'cfg.{}'.format(common.FlavoredName(param.name).get().headless)
+            needle = 'cfg.{}'.format(param.name.headless)
             init_code_uses_param = needle in oh.init_code
             channel_init_code_uses_param = any(c.init_code is not None and needle in c.init_code for c in oh.channels)
             channel_setters_use_param = any(needle in p for c in oh.channels for p in c.setter_packet_params if c.setter_packet_params is not None)
@@ -247,6 +247,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             else:
                 channel_type['id'] = common.FlavoredName(self.get_name().space + ' ' + channel_type['id']).get()
 
+            for param in channel_type['params']:
+                param['name'] = common.FlavoredName(param['name']).get()
+
             channel_type['params'] = [Param(**p) for p in channel_type['params']]
             oh['channel_types'][ct_idx] = ChannelType(**channel_type)
 
@@ -265,6 +268,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
 
         for p_idx, param in enumerate(oh['params']):
+            param['name'] = common.FlavoredName(param['name']).get()
             oh['params'][p_idx] = Param(**param)
 
         for g_idx, group in enumerate(oh['param_groups']):
@@ -632,9 +636,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         template = """ConfigDescriptionParameterBuilder.create("{name}", Type.{type_upper}){with_calls}.build()"""
 
         if channel_name is not None:
-            name = channel_name + common.FlavoredName(param.name).get().camel
+            name = channel_name + param.name.camel
         else:
-            name = common.FlavoredName(param.name).get().headless
+            name = param.name.headless
 
         with_calls = []
         # Strings
@@ -714,7 +718,7 @@ public class {name_camel} {{
                         template.format(imports=imports,
                                name_camel=class_name,
                                parameters="\n\t".join(parameter_template.format(type=param_types[p.type],
-                                                                                name=common.FlavoredName(p.name).get().headless,
+                                                                                name=p.name.headless,
                                                                                 ctor='new BigDecimal(' if p.type == 'decimal' else '',
                                                                                 ctor2=')' if p.type == 'decimal' else '',
                                                                                 default=p.default) for p in self.oh.params))))
@@ -725,7 +729,7 @@ public class {name_camel} {{
                             template.format(imports=imports,
                                name_camel=class_name,
                                parameters="\n\t".join(parameter_template.format(type=param_types[p.type],
-                                                                                name=common.FlavoredName(p.name).get().headless,
+                                                                                name=p.name.headless,
                                                                                 ctor='new BigDecimal(' if p.type == 'decimal' else '',
                                                                                 ctor2=')' if p.type == 'decimal' else '',
                                                                                 default=p.default) for p in ct.params))))
