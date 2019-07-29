@@ -58,11 +58,40 @@ func (ipcon *IPConnection) RegisterDisconnectCallback(fn func(DisconnectReason))
 
 // Callbacks registered to this event are called whenever a enumerate event is received.
 // This function returns a registration ID which is used to deregister the callback when it should not be called anymore.
-func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(EnumerateResponse)) uint64 {
+// Parameters of the callback are:
+//
+// * uid string - The UID of the device.
+//
+// * connectedUID string - UID where the device is connected to.
+//     For a Bricklet this will be a UID of the Brick where it is connected to.
+//     For a Brick it will be the UID of the bottom Master Brick in the stack.
+//     For the bottom Master Brick in a stack this will be "0".
+//     With this information it is possible to reconstruct the complete network topology.
+//
+// * position rune -  For Bricks: '0' - '8' (position in stack). For Bricklets: 'a' - 'd' (position on Brick).
+//
+// * hardwareVersion [3]uint8 - Major, minor and release number for hardware version.
+//
+// * firmwareVersion [3]uint8 - Major, minor and release number for firmware version.
+//
+// * deviceIdentifier uint16 - A number that represents the device.
+//     The device identifier numbers can be found here: https://www.tinkerforge.com/en/doc/Software/Device_Identifier.html
+//     There are also constants for these numbers named following this pattern:
+//     <device-package>.DeviceIdentifier
+//     For example: master_brick.DeviceIdentifier or ambient_light_bricklet.DeviceIdentifier.
+//
+// * enumerationType EnumerationType - Type of enumeration.
+func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(uid string, connectedUID string, position rune, hardwareVersion [3]uint8, firmwareVersion [3]uint8, deviceIdentifier uint16, enumerationType EnumerationType)) uint64 {
 	wrapper := func(bytes []byte) {
-		var resp EnumerateResponse
-		fillFromLeBytes(&resp, bytes[8:])
-		fn(resp)
+		bytes = bytes[8:]
+		uid := internal.ByteSliceToString(bytes[0:8])
+		connectedUID := internal.ByteSliceToString(bytes[8:16])
+		position := rune(bytes[16])
+		hardwareVersion := [3]uint8{bytes[17], bytes[18], bytes[19]}
+		firmwareVersion := [3]uint8{bytes[20], bytes[21], bytes[22]}
+		deviceIdentifier := binary.LittleEndian.Uint16(bytes[23:25])
+		enumerationType := EnumerationType(bytes[25])
+		fn(uid, connectedUID, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType)
 	}
 	return ipcon.handle.RegisterEnumerateCallback(wrapper)
 }
@@ -166,49 +195,6 @@ const (
 	// Device is disconnected (only possible for USB connection). In this case only uid and enumerationType are valid.
 	EnumerationTypeDisconnected
 )
-
-// Devices send `EnumerateResponse`s when they are connected, disconnected or when an enumeration was
-// triggered by the user using the enumerate method.
-type EnumerateResponse struct {
-	// The UID of the device.
-	UID string
-	// UID where the device is connected to.
-	// For a Bricklet this will be a UID of the Brick where it is connected to.
-	// For a Brick it will be the UID of the bottom Master Brick in the stack.
-	// For the bottom Master Brick in a stack this will be "0".
-	// With this information it is possible to reconstruct the complete network topology.
-	ConnectedUID string
-	// For Bricks: '0' - '8' (position in stack). For Bricklets: 'a' - 'd' (position on Brick).
-	Position rune
-	// Major, minor and release number for hardware version.
-	HardwareVersion [3]uint8
-	// Major, minor and release number for firmware version.
-	FirmwareVersion [3]uint8
-	// A number that represents the device.
-	// The device identifier numbers can be found here: https://www.tinkerforge.com/en/doc/Software/Device_Identifier.html
-	// There are also constants for these numbers named following this pattern:
-	//
-	// <device-package>.DeviceIdentifier
-	//
-	// For example: master_brick.DeviceIdentifier or ambient_light_bricklet.DeviceIdentifier.
-	DeviceIdentifier uint16
-	// Type of enumeration.
-	EnumerationType EnumerationType
-}
-
-func fillFromLeBytes(resp *EnumerateResponse, bytes []byte) {
-	resp.UID = internal.ByteSliceToString(bytes[0:8])
-	resp.ConnectedUID = internal.ByteSliceToString(bytes[8:16])
-	resp.Position = rune(bytes[16])
-	resp.HardwareVersion = [3]uint8{bytes[17], bytes[18], bytes[19]}
-	resp.FirmwareVersion = [3]uint8{bytes[20], bytes[21], bytes[22]}
-	resp.DeviceIdentifier = binary.LittleEndian.Uint16(bytes[23:25])
-	resp.EnumerationType = EnumerationType(bytes[25])
-}
-
-func bytesExpected(resp *EnumerateResponse) int {
-	return 26
-}
 
 type ConnectionState = uint8
 

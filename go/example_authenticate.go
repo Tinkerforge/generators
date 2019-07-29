@@ -34,9 +34,9 @@ func main() {
 		ipcon.Enumerate()            // then trigger enumerate.
 	})
 
-	ipcon.RegisterEnumerateCallback(func(response ipconnection.EnumerateResponse) {
-		fmt.Printf("UID:               %s\n", response.UID)
-		switch response.EnumerationType {
+	ipcon.RegisterEnumerateCallback(func(uid string, connectedUID string, position rune, hardwareVersion [3]uint8, firmwareVersion [3]uint8, deviceIdentifier uint16, enumerationType ipconnection.EnumerationType) {
+		fmt.Printf("UID:               %s\n", uid)
+		switch enumerationType {
 		case ipconnection.EnumerationTypeAvailable:
 			fmt.Printf("Enumeration Type:  Available\n")
 		case ipconnection.EnumerationTypeConnected:
@@ -46,11 +46,11 @@ func main() {
 			return
 		}
 
-		fmt.Printf("Connected UID:     %s\n", response.ConnectedUID)
-		fmt.Printf("Position:          %c\n", response.Position)
-		fmt.Printf("Hardware Version:  %d.%d.%d\n", response.HardwareVersion[0], response.HardwareVersion[1], response.HardwareVersion[2])
-		fmt.Printf("Firmware Version:  %d.%d.%d\n", response.FirmwareVersion[0], response.FirmwareVersion[1], response.FirmwareVersion[2])
-		fmt.Printf("Device Identifier: %d\n", response.DeviceIdentifier)
+		fmt.Printf("Connected UID:     %s\n", connectedUID)
+		fmt.Printf("Position:          %c\n", position)
+		fmt.Printf("Hardware Version:  %d.%d.%d\n", hardwareVersion[0], hardwareVersion[1], hardwareVersion[2])
+		fmt.Printf("Firmware Version:  %d.%d.%d\n", firmwareVersion[0], firmwareVersion[1], firmwareVersion[2])
+		fmt.Printf("Device Identifier: %d\n", deviceIdentifier)
 		fmt.Println("")
 	})
 

@@ -16,3 +16,7 @@
 - Properly check UIDs and report invalid UIDs
 - Fix IP Connection auto-reconnect setting
 - Properly strip trailing NUL-bytes from UIDs in enumerate callback
+
+<unknown>: 2.0.4 (<unknown>)
+- Breaking Change: Remove enumerate response structure. Enumerate callback uses parameters directly,
+  which is more in line with all other callbacks.
