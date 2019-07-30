@@ -261,15 +261,19 @@ class MQTTBindings:
 
             global_prefix, request_type, device, uid, function, suffix, response_path = path_info
 
-            try:
-                payload = msg.payload.decode('utf-8')
-            except Exception as e:
-                payload_str = (" Payload was: " + repr(msg.payload)) if self.show_payload else ''
-                response = json_error("Could not decode payload as utf-8: {}{}".format(str(e), payload_str))
-                logging.debug("Publishing response to {}".format(response_path))
-                self.mqttc.publish(response_path, response)
-                logging.debug("\n")
-                return
+            # msg.payload could be from an init file, then it is already decoded.
+            if isinstance(msg.payload, str):
+                payload = msg.payload
+            else:
+                try:
+                    payload = msg.payload.decode('utf-8')
+                except Exception as e:
+                    payload_str = (" Payload was: " + repr(msg.payload)) if self.show_payload else ''
+                    response = json_error("Could not decode payload as utf-8: {}{}".format(str(e), payload_str))
+                    logging.debug("Publishing response to {}".format(response_path))
+                    self.mqttc.publish(response_path, response)
+                    logging.debug("\n")
+                    return
 
             if device == "ip_connection":
                 response = self.handle_ip_connection_call(request_type, device, function, payload, response_path)
