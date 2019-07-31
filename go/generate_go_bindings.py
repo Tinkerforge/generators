@@ -217,8 +217,8 @@ func (device *{name}) GetAPIVersion() [3]uint8 {{
 }}
 
 // Remove a registered {name_desc} callback.
-func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
-	device.device.DeregisterCallback(uint8({fun_enum}Callback{fn_id}), registrationID)
+func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
+	device.device.DeregisterCallback(uint8({fun_enum}Callback{fn_id}), registrationId)
 }}
 """
 
@@ -243,8 +243,8 @@ func (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
 }}
 
 // Remove a registered {name_desc} callback.
-func (device *{device_name}) Deregister{name}Callback(registrationID uint64) {{
-	device.Deregister{low_level_name}Callback(registrationID)
+func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
+	device.Deregister{low_level_name}Callback(registrationId)
 }}
 """
 

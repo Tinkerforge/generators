@@ -70,18 +70,18 @@ class GoDocDevice(go_common.GoDevice):
     def get_go_callbacks(self):
         cb = {
         'en': """
-.. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationID uint64)
+.. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationId uint64)
 
  A callback can be registered for this event with the ``Register{callback_name_camel}Callback()`` function. This function returns the ID of the registered callback.
- An added callback can be removed with the ``Deregister{callback_name_camel}Callback(registrationID uint64)`` function.
+ An added callback can be removed with the ``Deregister{callback_name_camel}Callback(registrationId uint64)`` function.
 
 {desc}
 """,
             'de': """
-.. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationID uint64)
+.. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationId uint64)
 
  Ein Callback für dieses Event kann mit der Funktion ``Register{callback_name_camel}Callback()`` hinzugefügt werden. Diese gibt die ID des registrierten Callbacks zurück.
- Ein hinzugefügtes Callback kann mit der Funktion ``Deregister{callback_name_camel}Callback(registrationID uint64)`` wieder
+ Ein hinzugefügtes Callback kann mit der Funktion ``Deregister{callback_name_camel}Callback(registrationId uint64)`` wieder
  entfernt werden.
 
 {desc}
