@@ -523,6 +523,26 @@ normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 }]
 })
 
+
+common_packets.append({
+'feature': 'tng',
+'type': 'function',
+'function_id': 235,
+'name': 'Copy Firmware',
+'elements': [('Status', 'uint8', 1, 'out', {'constant_group': 'Copy Status'})],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
 # function 236 must never be used for anything else than "Get Bootloader Mode"
 # to allow for calling function 236 without knowing anything about the device
 # and either calling "Get Bootloader Mode" or getting a non-supported error.
@@ -541,25 +561,6 @@ Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
 'de':
 """
 Gibt den aktuellen Bootloader-Modus zurück, siehe :func:`Set Bootloader Mode`.
-"""
-}]
-})
-
-common_packets.append({
-'feature': 'tng',
-'type': 'function',
-'function_id': 236,
-'name': 'Copy Firmware',
-'elements': [('Status', 'uint8', 1, 'out', {'constant_group': 'Copy Status'})],
-'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
 """
 }]
 })
