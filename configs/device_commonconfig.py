@@ -441,6 +441,25 @@ ausgibt.
 })
 
 common_packets.append({
+'feature': 'tng',
+'type': 'function',
+'function_id': 234,
+'name': 'Get Timestamp',
+'elements': [('Timestamp', 'uint64', 1, 'out')],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+common_packets.append({
 'feature': 'comcu_bricklet_host',
 'type': 'function',
 'function_id': 235,
