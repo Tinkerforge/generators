@@ -34,11 +34,13 @@ class GoDocDevice(go_common.GoDevice):
     def specialize_go_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return ':go:func:`(*{0}) Register{1}Callback`'.format(packet.get_device().get_go_name(),
-                                                            packet.get_name(skip=-2 if high_level else 0).camel)
+                return ':go:func:`Register{1}Callback <(*{0}) Register{1}Callback>`' \
+                       .format(packet.get_device().get_go_name(),
+                               packet.get_name(skip=-2 if high_level else 0).camel)
             else:
-                return ':go:func:`(*{0}) {1}`'.format(packet.get_device().get_go_name(),
-                                                   packet.get_name(skip=-2 if high_level else 0).camel)
+                return ':go:func:`{1}() <(*{0}) {1}>`' \
+                       .format(packet.get_device().get_go_name(),
+                               packet.get_name(skip=-2 if high_level else 0).camel)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='go')
 
@@ -228,7 +230,8 @@ Constants
 
  This constant is used to identify a {device_name_display}.
 
- The :go:func:`(*{device_name_camel}) GetIdentity()` function and the :go:func:`(*IPConnection) RegisterEnumerateCallback()`
+ The :go:func:`GetIdentity() <(*{device_name_camel}) GetIdentity>` function and
+ the :go:func:`(*IPConnection) RegisterEnumerateCallback`
  callback of the IPConnection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
@@ -246,7 +249,8 @@ Konstanten
 
  Diese Konstante wird verwendet um {article} {device_name_display} zu identifizieren.
 
- Die :go:func:`(*{device_name_camel}) GetIdentity()` Funktion und der :go:func:`(*IPConnection) RegisterEnumerateCallback()`
+ Die :go:func:`GetIdentity() <(*{device_name_camel}) GetIdentity>` Funktion und
+ der :go:func:`(*IPConnection) RegisterEnumerateCallback`
  Callback der IPConnection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 

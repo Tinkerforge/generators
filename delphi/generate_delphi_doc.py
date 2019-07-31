@@ -243,7 +243,7 @@ Constants
  This constant is used to identify a {4}.
 
  The :delphi:func:`GetIdentity <{5}.GetIdentity>` function and the
- :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
+ :delphi:func:`TIPConnection.OnEnumerate <TIPConnection.OnEnumerate>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
@@ -262,7 +262,7 @@ Konstanten
  Diese Konstante wird verwendet um {3} {4} zu identifizieren.
 
  Die :delphi:func:`GetIdentity <{5}.GetIdentity>` Funktion und der
- :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
+ :delphi:func:`TIPConnection.OnEnumerate <TIPConnection.OnEnumerate>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 

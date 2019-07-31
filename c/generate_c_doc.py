@@ -246,7 +246,7 @@ API
 
 Every function of the C/C++ bindings returns an integer which describes an
 error code. Data returned from the device, when a getter is called,
-is handled via call by reference. These parameters are labeled with the
+is handled via output parameters. These parameters are labeled with the
 ``ret_`` prefix.
 
 Possible error codes are:
@@ -282,7 +282,7 @@ API
 
 Jede Funktion der C/C++ Bindings gibt einen Integer zurück, welcher einen
 Fehlercode beschreibt. Vom Gerät zurückgegebene Daten werden, wenn eine
-Abfrage aufgerufen wurde, über Referenzparameter gehandhabt. Diese Parameter
+Abfrage aufgerufen wurde, über Ausgabeparameter gehandhabt. Diese Parameter
 sind mit dem ``ret_`` Präfix gekennzeichnet.
 
 Mögliche Fehlercodes sind:

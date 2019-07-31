@@ -298,7 +298,7 @@ Constants
  This constant is used to identify a {3}.
 
  The :mathematica:func:`GetIdentity[] <{1}@GetIdentity>` function and the
- :mathematica:func:`EnumerateCallback <IPConnection@EnumerateCallback>`
+ :mathematica:func:`IPConnection@EnumerateCallback <IPConnection@EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
@@ -317,7 +317,7 @@ Konstanten
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
  Die :mathematica:func:`GetIdentity[] <{1}@GetIdentity>` Funktion und der
- :mathematica:func:`EnumerateCallback <IPConnection@EnumerateCallback>`
+ :mathematica:func:`IPConnection@EnumerateCallback <IPConnection@EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 

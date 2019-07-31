@@ -64,7 +64,7 @@ class GoPacket(common.Packet):
                 written_elements = [elem for elem in self.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_written']
 
                 if stream.has_short_write():
-                    returns.append("{} {}".format(written_elements[0].get_go_name(),"uint64"))
+                    returns.append("{} {}".format(written_elements[0].get_go_name(), "uint64"))
             elif self.get_high_level('stream_out') != None:
                 data = self.get_high_level('stream_out').get_data_element()
                 returns.insert(0, "{} []{}".format(data.get_go_name(), data.get_go_type(ignore_cardinality=True)))

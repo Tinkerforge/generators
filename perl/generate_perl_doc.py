@@ -308,7 +308,7 @@ Constants
  This constant is used to identify a {3}.
 
  The :perl:func:`get_identity() <{1}->get_identity>` function and the
- :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
+ :perl:attr:`IPConnection->CALLBACK_ENUMERATE <IPConnection->CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 
@@ -327,7 +327,7 @@ Konstanten
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
  Die :perl:func:`get_identity() <{1}->get_identity>` Funktion und der
- :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
+ :perl:attr:`IPConnection->CALLBACK_ENUMERATE <IPConnection->CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 

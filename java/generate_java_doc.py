@@ -35,8 +35,8 @@ class JavaDocDevice(java_common.JavaDevice):
     def specialize_java_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return ':java:func:`{1}Listener <{0}.{1}Listener>`'.format(packet.get_device().get_java_class_name(),
-                                                                           packet.get_name(skip=-2 if high_level else 0).camel)
+                return ':java:func:`{1}Listener <{0}::{1}Listener>`'.format(packet.get_device().get_java_class_name(),
+                                                                            packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':java:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_java_class_name(),
                                                               packet.get_name(skip=-2 if high_level else 0).headless)
@@ -170,7 +170,7 @@ Listeners
 
 Listeners can be registered to receive
 time critical or recurring data from the device. The registration is done
-with "add*Listener" functions of the device object.
+with ``add*Listener()`` functions of the device object.
 
 The parameter is a listener class object, for example:
 
@@ -184,7 +184,7 @@ The parameter is a listener class object, for example:
 
 The available listener classes with inherent methods to be overwritten
 are described below. It is possible to add several listeners and
-to remove them with the corresponding "remove*Listener" function.
+to remove them with the corresponding ``remove*Listener()`` function.
 
 .. note::
  Using listeners for recurring events is *always* preferred
@@ -201,7 +201,7 @@ Listener
 
 Listener können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit "add*Listener" Funktionen eines Geräteobjekts durchgeführt werden.
+mit ``add*Listener()`` Funktionen eines Geräteobjekts durchgeführt werden.
 
 Der Parameter ist ein Listener Klassen Objekt, z.B.:
 
@@ -216,7 +216,7 @@ Der Parameter ist ein Listener Klassen Objekt, z.B.:
 Die verfügbaren Listener Klassen mit den Methoden welche überschrieben
 werden können werden unterhalb beschrieben. Es ist möglich mehrere
 Listener hinzuzufügen und auch mit einem korrespondierenden
-"remove*Listener" wieder zu entfernen.
+``remove*Listener()`` wieder zu entfernen.
 
 .. note::
  Listener für wiederkehrende Ereignisse zu verwenden ist
@@ -306,7 +306,7 @@ Constants
  This constant is used to identify a {3}.
 
  The :java:func:`getIdentity() <{1}::getIdentity>` function and the
- :java:func:`EnumerateListener <IPConnection.EnumerateListener>`
+ :java:func:`IPConnection.EnumerateListener <IPConnection::EnumerateListener>`
  listener of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
@@ -325,7 +325,7 @@ Konstanten
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
  Die :java:func:`getIdentity() <{1}::getIdentity>` Funktion und der
- :java:func:`EnumerateListener <IPConnection.EnumerateListener>`
+ :java:func:`IPConnection.EnumerateListener <IPConnection::EnumerateListener>`
  Listener der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 

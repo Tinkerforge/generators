@@ -277,7 +277,7 @@ Constants
  This constant is used to identify a {3}.
 
  The :php:func:`getIdentity() <{1}::getIdentity>` function and the
- :php:member:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
+ :php:member:`IPConnection::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
@@ -296,7 +296,7 @@ Konstanten
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
  Die :php:func:`getIdentity() <{1}::getIdentity>` Funktion und der
- :php:func:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
+ :php:func:`IPConnection::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 

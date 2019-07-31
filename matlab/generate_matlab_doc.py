@@ -35,8 +35,8 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
     def specialize_matlab_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return ':matlab:member:`{1}Callback <{0}.{1}Callback>`'.format(packet.get_device().get_matlab_class_name(),
-                                                                               packet.get_name(skip=-2 if high_level else 0).camel)
+                return ':matlab:member:`{1}Callback <{0}::{1}Callback>`'.format(packet.get_device().get_matlab_class_name(),
+                                                                                packet.get_name(skip=-2 if high_level else 0).camel)
             else:
                 return ':matlab:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_matlab_class_name(),
                                                                 packet.get_name(skip=-2 if high_level else 0).headless)
@@ -386,7 +386,7 @@ Constants
  This constant is used to identify a {3}.
 
  The :matlab:func:`getIdentity() <{1}::getIdentity>` function and the
- :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
+ :matlab:member:`IPConnection.EnumerateCallback <IPConnection::EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
@@ -405,7 +405,7 @@ Konstanten
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
  Die :matlab:func:`getIdentity() <{1}::getIdentity>` Funktion und der
- :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
+ :matlab:member:`IPConnection.EnumerateCallback <IPConnection::EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 

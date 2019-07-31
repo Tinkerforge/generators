@@ -332,7 +332,7 @@ Constants
  This constant is used to identify a {3}.
 
  The :javascript:func:`getIdentity() <{1}.getIdentity>` function and the
- :javascript:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
+ :javascript:attr:`IPConnection.CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 
@@ -351,7 +351,7 @@ Konstanten
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
  Die :javascript:func:`getIdentity() <{1}.getIdentity>` Funktion und der
- :javascript:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
+ :javascript:attr:`IPConnection.CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
