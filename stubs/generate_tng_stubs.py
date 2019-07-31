@@ -251,14 +251,13 @@ bool handle_{0}_callback(void) {{
 \tstatic {1}_Callback cb;
 
 \tif(!is_buffered) {{
-\t\ttfp_make_default_header(&cb.header, bootloader_get_uid(), sizeof({1}_Callback), FID_CALLBACK_{2});
+\t\ttfp_make_default_header(&cb.header, tng_get_uid(), sizeof({1}_Callback), FID_CALLBACK_{2});
 \t\t// TODO: Implement {1} callback handling
 
 \t\treturn false;
 \t}}
 
-\tif(bootloader_spitfp_is_send_possible(&bootloader_status.st)) {{
-\t\tbootloader_spitfp_send_ack_and_message(&bootloader_status, (uint8_t*)&cb, sizeof({1}_Callback));
+\tif(usb_send((uint8_t*)&cb, sizeof({1}_Callback))) {{
 \t\tis_buffered = false;
 \t\treturn true;
 \t}} else {{
@@ -349,6 +348,7 @@ class TNGStubGenerator(common.Generator):
 
 #include "bricklib2/utility/communication_callback.h"
 #include "bricklib2/protocols/tfp/tfp.h"
+#include "bricklib2/tng/usb_stm32/usb.h
 {7}
 TNGHandleMessageResponse handle_message(const void *message, void *response) {{
 \tswitch(tfp_get_fid_from_message(message)) {{

@@ -45,6 +45,7 @@ SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/startup/startup_stm32f0.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/startup/startup_stm32f072xb.S"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/crc32.c"
+	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/communication_callback.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/os/coop_task.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/os/coop_task_pendsv_handler.S"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/logging/logging.c"
