@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2130,
     'name': 'Accelerometer V2',
@@ -73,6 +73,21 @@ com['constant_groups'].append({
 'constants': [('8bit', 0),
               ('16bit', 1)]
 })
+
+com['constant_groups'].append({
+'name': 'IIR Bypass',
+'type': 'uint8',
+'constants': [('Applied', 0),
+              ('Bypassed', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Low Pass Filter',
+'type': 'uint8',
+'constants': [('Ninth', 0),
+              ('Half', 1)]
+})
+
 
 com['packets'].append({
 'type': 'function',
@@ -548,6 +563,64 @@ von den aktivierten Achsen. Beispiele:
 * x, z aktiviert: "x, z, ... 30x ..., x, z"
 * y aktiviert: "y, ... 60x ..., y"
 
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Filter Configuration',
+'elements': [('IIR Bypass', 'uint8', 1, 'in', {'constant_group': 'IIR Bypass'}),
+             ('Low Pass Filter', 'uint8', 1, 'in', {'constant_group': 'Low Pass Filter'})],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Configures IIR Bypass filter mode and low pass filter roll off corner frequency.
+
+The filter can be applied or bypassed and the corner frequency can be
+half or a ninth of the output data rate.
+
+.. image:: /Images/Bricklets/bricklet_accelerometer_v2_filter.png
+   :scale: 100 %
+   :alt: Accelerometer filter
+   :align: center
+   :target: ../../_images/Bricklets/bricklet_accelerometer_v2_filter.png
+
+By default filtering is applied and the filter corner frequency is a ninth of the output data rate.
+""",
+'de':
+"""
+Konfiguriert den IIR Bypass Filter Modus und die Low Pass Filter Roll Off Corner Frequenz.
+
+Der Filter kann angewendet oder umgangen werden und die Frequenz kann die halbe ein ein Neuntel
+der Ausgabe-Datenrate sein.
+
+.. image:: /Images/Bricklets/bricklet_accelerometer_v2_filter.png
+   :scale: 100 %
+   :alt: Accelerometer filter
+   :align: center
+   :target: ../../_images/Bricklets/bricklet_accelerometer_v2_filter.png
+
+Standardmäßig wird der Filter angewendet und die Frequenz ist ein Neuntel der Ausgabe-Datenrate.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Filter Configuration',
+'elements': [('IIR Bypass', 'uint8', 1, 'out', {'constant_group': 'IIR Bypass'}),
+             ('Low Pass Filter', 'uint8', 1, 'out', {'constant_group': 'Low Pass Filter'})],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`Set Filter Configuration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`Set Filter Configuration` gesetzt.
 """
 }]
 })
