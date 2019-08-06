@@ -842,24 +842,24 @@ static void {device_name_under}_callback_wrapper_{name_under}(DevicePrivate *dev
         template_normal = """
 static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePrivate *device_p, Packet *packet) {{
 	{packet_name_camel}_CallbackFunction callback_function;
-	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{callback_packet_decl}
+	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{alignment_copies}{callback_packet_decl}
 
 	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
 
 	if (callback_function == NULL) {{
 		return;
 	}}
-{alignment_copies}{endian_conversions}{bool_unpacks}
+{endian_conversions}{bool_unpacks}
 	callback_function({callback_args}{callback_args_comma}user_data);
 }}
 """
         template_low_level = """
 static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePrivate *device_p, Packet *packet) {{
 	{packet_name_camel}_CallbackFunction callback_function;
-	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{callback_packet_decl}
+	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{alignment_copies}{callback_packet_decl}
 
 	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
-{alignment_copies}{endian_conversions}{bool_unpacks}
+{endian_conversions}{bool_unpacks}
 	{device_name_under}_callback_wrapper_{ll_packet_name_under}(device_p, {callback_args});
 
 	if (callback_function != NULL) {{
