@@ -849,7 +849,7 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
 	if (callback_function == NULL) {{
 		return;
 	}}
-{endian_conversions}{bool_unpacks}
+{alignment_copies}{endian_conversions}{bool_unpacks}
 	callback_function({callback_args}{callback_args_comma}user_data);
 }}
 """
@@ -859,7 +859,7 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
 	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{callback_packet_decl}
 
 	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
-{endian_conversions}{bool_unpacks}
+{alignment_copies}{endian_conversions}{bool_unpacks}
 	{device_name_under}_callback_wrapper_{ll_packet_name_under}(device_p, {callback_args});
 
 	if (callback_function != NULL) {{
@@ -881,6 +881,12 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
             bool_unpack_decls = ''
             bool_unpacks = ''
 
+            # GCC 9.1 upwards warns (correctly) if a pointer to a member of a packed struct is accessed.
+            # Such code is only generated for arrays of types > 1 byte in callback wrappers.
+            # Fortunately all those arrays are accessed anyway by the little endian conversion.
+            # Assigning the converted values into an aligned array fixes the issue.
+            alignment_copy_list = []
+
             for element in packet.get_elements():
                 if element.get_type() == 'bool':
                     if element.get_cardinality() > 1:
@@ -893,8 +899,11 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
                         bool_unpacks += '\tunpacked_{0} = callback->{0} != 0;\n'.format(element.get_name().under)
                 elif element.get_item_size() > 1:
                     if element.get_cardinality() > 1:
+                        template = "\t{type} aligned_{name}[{size}];"
+                        alignment_copy_list.append(template.format(type=element.get_c_type('default'), name=element.get_name().under, size=element.get_cardinality()))
+                        callback_arg_list = [elem if elem != "callback->" + element.get_name().under else "aligned_" + element.get_name().under for elem in callback_arg_list]
                         loop_index_decl = '\n\tint i;'
-                        endian_list.append('\tfor (i = 0; i < {2}; i++) callback->{0}[i] = leconvert_{1}_from(callback->{0}[i]);' \
+                        endian_list.append('\tfor (i = 0; i < {2}; i++) aligned_{0}[i] = leconvert_{1}_from(callback->{0}[i]);' \
                                            .format(element.get_name().under, element.get_type(), element.get_cardinality()))
                     else:
                         endian_list.append('\tcallback->{0} = leconvert_{1}_from(callback->{0});'.format(element.get_name().under, element.get_type()))
@@ -925,7 +934,8 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
                                          loop_index_decl=loop_index_decl,
                                          bool_unpack_decls=bool_unpack_decls,
                                          bool_unpacks=bool_unpacks,
-                                         ll_packet_name_under=ll_packet_name_under)
+                                         ll_packet_name_under=ll_packet_name_under,
+                                         alignment_copies=common.wrap_non_empty('\n', '\n'.join(alignment_copy_list), '\n'))
 
         return functions
 
