@@ -106,7 +106,7 @@ class CExamplesTester(common.Tester):
         if self.compiler == 'scan-build clang' and exit_code == 0 and 'scan-build: No bugs found.\n' not in output:
             return False
 
-        return True
+        return exit_code == 0
 
 def run(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/c/weather_station.c'),
