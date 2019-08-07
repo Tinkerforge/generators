@@ -653,7 +653,7 @@ def input_channel(idx):
             'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF'.format(idx),
 
             # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
-            'init_code':"""this.setAllInputValueCallbackConfiguration(1000, false);
+            'init_code':"""this.setInputValueCallbackConfiguration({0}, 1000, false);
             this.setConfiguration({0}, 'i', cfg.pinConfiguration{0} % 2 == 1);""".format(idx),
             'dispose_code': """this.setInputValueCallbackConfiguration({}, 0, false);""".format(idx),
     }
@@ -673,7 +673,33 @@ def output_channel(idx):
             'setter_packet_params': [str(idx), 'cmd == OnOffType.ON'],
             'setter_command_type': "OnOffType",
 
+            'callback_packet': 'Monoflop Done',
+            'callback_filter': 'channel == {}'.format(idx),
+            'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF',
+
+
             'init_code':"""this.setConfiguration({0}, 'o', cfg.pinConfiguration{0} % 2 == 1);""".format(idx),
+    }
+
+def monoflop_channel(channel):
+    return {
+        'predicate': 'cfg.pinConfiguration{} <= 1'.format(channel),
+        'id': 'Monoflop Pin {}'.format(channel),
+        'label': 'Monoflop Pin {}'.format(channel),
+        'type': 'Monoflop',
+
+        'getter_packet': 'Get Monoflop',
+        'getter_packet_params': [str(channel)],
+        'getter_transform': 'value.value ? OnOffType.ON : OnOffType.OFF',
+
+        'setter_packet': 'Set Monoflop',
+        #TODO: cfg needs monoflop channel number
+        'setter_packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
+        'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+        'setter_refreshs': [{
+            'channel': 'Output Pin {}'.format(channel),
+            'delay': '0'
+        }]
     }
 
 def pin_config(idx):
@@ -693,11 +719,11 @@ def pin_config(idx):
             'description': 'Configures the direction of pin {}/{}. Inputs without pull-up will be floating if nothing is connected. Outputs can have an initial state of low or high.'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
         }
 
-channels = [input_channel(i) for i in range(0, 16)] + [output_channel(i) for i in range(0, 16)]
+channels = [input_channel(i) for i in range(0, 16)] + [output_channel(i) for i in range(0, 16)] + [monoflop_channel(i) for i in range(0, 16)]
 params = [pin_config(i) for i in range(0, 16)]
 
 com['openhab'] = {
-    'imports': ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'params': params,
     'channels': channels,
     'channel_types': [
@@ -707,5 +733,31 @@ com['openhab'] = {
         oh_generic_channel_type('Output Pin', 'Switch', 'Set Level',
                      description='The logic level that is currently set on the pin.',
                      read_only=False),
+        {
+            'id': 'Monoflop',
+            'item_type': 'String',
+            'params': [{
+                'name': 'Monoflop Duration',
+                'type': 'integer',
+                'default': 1000,
+                'min': 0,
+                'max': 2**31 - 1,
+                'unit': 'ms',
+
+                'label': 'Monoflop duration',
+                'description': 'The time (in ms) that the pin should hold the configured value.',
+            },
+            {
+                'name': 'Monoflop Value',
+                'type': 'boolean',
+                'default': 'true',
+
+                'label': 'Monoflop value',
+                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+            }],
+            'label': 'NOT USED',
+            'description':'Triggers a monoflop as configured',
+            'command_options': [('Trigger', 'TRIGGER')]
+        }
     ]
 }

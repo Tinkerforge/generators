@@ -150,10 +150,10 @@ public class DeviceHandler extends BaseThingHandler {
         }
     }
 
-    private void refreshValue(String channelId) {
+    private void refreshValue(String channelId, Configuration channelConfig) {
         try {
             System.out.println("Refreshing " + channelId);
-            device.refreshValue(channelId, this::updateState, this::triggerChannel);
+            device.refreshValue(channelId, channelConfig, this::updateState, this::triggerChannel);
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
@@ -168,11 +168,11 @@ public class DeviceHandler extends BaseThingHandler {
 
         try {
             if (command instanceof RefreshType) {
-                refreshValue(channelUID.getId());
+                refreshValue(channelUID.getId(), getThing().getChannel(channelUID).getConfiguration());
             }
             else {
                 List<SetterRefresh> refreshs = device.handleCommand(getConfig(), getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
-                refreshs.forEach(r -> scheduler.schedule(() -> refreshValue(r.channel), r.delay, TimeUnit.MILLISECONDS));
+                refreshs.forEach(r -> scheduler.schedule(() -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay, TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);

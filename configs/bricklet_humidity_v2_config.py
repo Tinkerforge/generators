@@ -286,7 +286,61 @@ com['examples'].append({
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
-    'param_groups': oh_generic_channel_param_groups(),
+    'param_groups': oh_generic_channel_param_groups() +  [{
+        'name': 'average',
+        'label': 'Averaging',
+        'description': 'Sets the length of a moving averaging for the humidity and temperature.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>New data is gathered every 50ms*. With a moving average of length 1000 the resulting averaging window has a length of 50s. If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 5.<br/><br/>* In firmware version 2.0.3 we added the setSamplesPerSecond() function. It configures the measurement frequency. Since high frequencies can result in self-heating of th IC, changed the default value from 20 samples per second to 1. With 1 sample per second a moving average length of 1000 would result in an averaging window of 1000 seconds!',
+        'advanced': 'true'
+    }],
+    'params': [
+         {
+            'name': 'Enable Heater',
+            'type': 'boolean',
+            'default': 'false',
+
+            'label': 'Enable Heater',
+            'description': 'Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.',
+        },
+        {
+            'name': 'Humidity Moving Average Length',
+            'type': 'integer',
+            'default': 5,
+            'min': 1,
+            'max': 1000,
+
+            'label': 'Humidity Moving Average Length',
+            'groupName': 'average'
+        },
+        {
+            'name': 'Temperature Moving Average Length',
+            'type': 'integer',
+            'default': 5,
+            'min': 1,
+            'max': 1000,
+
+            'label': 'Temperature Moving Average Length',
+            'groupName': 'average'
+        },
+        {
+            'name': 'Sample Rate',
+            'type': 'integer',
+            'options': [('20 SPS', 0),
+                        ('10 SPS', 1),
+                        ('5 SPS',  2),
+                        ('1 SPS',  3),
+                        ('0.2 SPS', 4),
+                        ('0.1 SPS', 5)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Sample Rate',
+            'description': "The samples per second that are gathered by the humidity/temperature sensor HDC1080.<br/><br/>We added this function since we found out that a high measurement frequency can lead to self-heating of the sensor. Which can distort the temperature measurement.<br/><br/>If you don't need a lot of measurements, you can use the lowest available measurement frequency of 0.1 samples per second for the least amount of self-heating.",
+            'advanced': 'true'
+        }
+    ],
+    'init_code': """this.setSamplesPerSecond(cfg.sampleRate);
+this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperatureMovingAverageLength);
+this.setHeaterConfiguration(cfg.enableHeater ? 1 : 0);""",
     'channels': [
         oh_generic_channel('Humidity', 'Humidity', 'SmartHomeUnits.PERCENT', divisor=100.0),
         oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
@@ -295,13 +349,13 @@ com['openhab'] = {
         oh_generic_channel_type('Humidity', 'Number:Dimensionless', 'Humidity',
                      description='Measured relative humidity',
                      read_only=True,
-                     pattern='%.1f %%',
+                     pattern='%.2f %%',
                      min_=0,
                      max_=100),
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
                      description='Measured temperature',
                      read_only=True,
-                     pattern='%.1f %unit%',
+                     pattern='%.2f %unit%',
                      min_=-40,
                      max_=165),
     ]

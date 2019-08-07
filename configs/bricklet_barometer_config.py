@@ -679,9 +679,47 @@ com['openhab'] = {
 
             'label': 'Reference Air Pressure in mbar',
             'description': 'The reference air pressure for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+        },
+        {
+            'name': 'Pressure Moving Average Length',
+            'type': 'integer',
+            'default': 25,
+            'min': 0,
+            'max': 25,
+
+            'label': 'Pressure Moving Average Length',
+            'groupName': 'average'
+        },
+        {
+            'name': 'Pressure Average Length',
+            'type': 'integer',
+            'default': 10,
+            'min': 0,
+            'max': 10,
+
+            'label': 'Pressure Average Length',
+            'groupName': 'average'
+        },
+        {
+            'name': 'Temperature Average Length',
+            'type': 'integer',
+            'default': 25,
+            'min': 0,
+            'max': 255,
+
+            'label': 'Temperature Average Length',
+            'groupName': 'average'
         }],
-    'param_groups': oh_generic_channel_param_groups(),
-    'init_code': 'this.setReferenceAirPressure(cfg.referenceAirPressure.multiply(new BigDecimal(1000)).intValue());',
+    'param_groups': oh_generic_channel_param_groups() + [
+     {
+        'name': 'average',
+        'label': 'Averaging',
+        'description': 'Sets the different averaging parameters. It is possible to set the length of a normal averaging for the temperature and pressure, as well as an additional length of a moving average for the pressure. The moving average is calculated from the normal averages. There is no moving average for the temperature.<br/><br/>The maximum length for the pressure average is 10, for the temperature average is 255 and for the moving average is 25.<br/><br/>Setting the all three parameters to 0 will turn the averaging completely off. If the averaging is off, there is lots of noise on the data, but the data is without delay. Thus we recommend to turn the averaging off if the Barometer Bricklet data is to be used for sensor fusion with other sensors.<br/><br/>The default values are 10 for the normal averages and 25 for the moving average.',
+        'advanced': 'true'
+    }
+    ],
+    'init_code': """this.setReferenceAirPressure(cfg.referenceAirPressure.multiply(new BigDecimal(1000)).intValue());
+this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAverageLength.shortValue(), cfg.temperatureAverageLength.shortValue());""",
     'channels': [
         oh_generic_old_style_channel('Air Pressure', 'Air Pressure', 'SmartHomeUnits.MILLIBAR', divisor=1000.0),
         oh_generic_old_style_channel('Altitude', 'Altitude', 'SIUnits.METRE', divisor=100.0)

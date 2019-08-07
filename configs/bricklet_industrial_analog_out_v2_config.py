@@ -296,20 +296,7 @@ Gibt die Out-LED-Konfiguration zurück, wie von :func:`Set Out LED Config` geset
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Out LED Status Config',
-'elements': [('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Status Config'})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Sets the Out LED status config. This config is used if the Out LED is
-configured as "Out Status", see :func:`Set Out LED Config`.
-
-For each channel you can choose between threshold and intensity mode.
+out_led_status_description = """For each channel you can choose between threshold and intensity mode.
 
 In threshold mode you can define a positive or a negative threshold.
 For a positive threshold set the "min" parameter to the threshold value in mV or
@@ -326,11 +313,26 @@ In intensity mode you can define a range mV or µA that is used to scale the bri
 of the LED. Example with min=2V, max=8V: The LED is off at 2V and below, on at
 8V and above and the brightness is linearly scaled between the values 2V and 8V.
 If the min value is greater than the max value, the LED brightness is scaled the
-other way around.
+other way around."""
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Out LED Status Config',
+'elements': [('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in'),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Status Config'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the Out LED status config. This config is used if the Out LED is
+configured as "Out Status", see :func:`Set Out LED Config`.
+
+{}
 
 By default the channel LED status config is set to intensity with min=0V and
 max=10V.
-""",
+""".format(out_led_status_description),
 'de':
 """
 Setzt die Out-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
@@ -398,8 +400,92 @@ com['examples'].append({
 })
 
 
+
 com['openhab'] = {
-    'imports': ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'params': [
+        {
+            'name': 'Control Voltage',
+            'type': 'integer',
+            'options': [
+                ('Current', '0'),
+                ('Voltage', '1'),
+            ],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Output configuration',
+            'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
+        }, {
+            'name': 'Voltage Range',
+            'type': 'integer',
+            'options': [('0 To 5V', 0),
+                        ('0 To 10V', 1)
+            ],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Voltage Range',
+            'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+        }, {
+            'name': 'Current Range',
+            'type': 'integer',
+            'options': [('4 To 20mA', 0),
+                        ('0 To 20mA', 1),
+                        ('0 To 24mA', 2)
+            ],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Current Range',
+            'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+        }, {
+            'name': 'Out LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Out Status', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Output LED Configuration',
+            'description': 'You can turn the Out LED off, on or show a heartbeat. You can also set the LED to Out Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the output value (voltage or current).',
+        }, {
+            'name': 'Out LED Status Mode',
+            'type': 'integer',
+            'options': [('Threshold', 0),
+                        ('Intensity', 1)],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Output LED Status Mode',
+            'description': out_led_status_description.replace('\n', '<br/>').replace('"', '\\\"'),
+        }, {
+            'name': 'Out LED Status Minimum',
+            'type': 'decimal',
+            'min': '0',
+            'max': '10',
+            'default': '0',
+
+            'label': 'Output LED Status Maximum',
+            'description': 'See LED Status Mode for further explaination.',
+        }, {
+            'name': 'Out LED Status Maximum',
+            'type': 'decimal',
+            'min': '0',
+            'max': '10',
+            'default': '10',
+
+            'label': 'Output LED Status Maximum',
+            'description': 'See LED Status Mode for further explaination.',
+        }
+    ],
+    'init_code': """this.setConfiguration(cfg.voltageRange, cfg.currentRange);
+this.setOutLEDConfig(cfg.outLEDConfig);
+this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.controlVoltage == 1 ? 1000.0 : 1000000.0)),
+                           (int)(cfg.outLEDStatusMaximum.doubleValue() * (cfg.controlVoltage == 1 ? 1000.0 : 1000000.0)),
+                           cfg.outLEDStatusMode);""",
     'channels': [{
             'id': 'Enabled',
             'type': 'Enabled',
@@ -412,15 +498,30 @@ com['openhab'] = {
             'getter_transform': 'value ? OnOffType.ON : OnOffType.OFF',
         },
         {
+            'id': 'Current',
+            'type': 'Current',
+
+            'predicate': 'cfg.controlVoltage == 0',
+
+            'setter_packet': 'Set {title_words}',
+            'setter_packet_params': ['(int)(cmd.doubleValue() * 1000000.0)'],
+            'setter_command_type': "QuantityType",
+
+            'getter_packet': 'Get {title_words}',
+            'getter_transform': 'new QuantityType(value / 1000000.0, SmartHomeUnits.AMPERE)',
+        },
+        {
             'id': 'Voltage',
             'type': 'Voltage',
 
+            'predicate': 'cfg.controlVoltage == 1',
+
             'setter_packet': 'Set {title_words}',
             'setter_packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
-            'setter_command_type': "DecimalType",
+            'setter_command_type': "QuantityType",
 
             'getter_packet': 'Get {title_words}',
-            'getter_transform': 'new DecimalType(value / 1000.0)',
+            'getter_transform': 'new QuantityType(value / 1000.0, SmartHomeUnits.VOLT)',
         }
     ],
     'channel_types': [
@@ -432,7 +533,14 @@ com['openhab'] = {
                      read_only=False,
                      pattern='%.3f %unit%',
                      min_=0,
-                     max_=5)
+                     max_=10),
+        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Output Current',
+                     description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.',
+                     read_only=False,
+                     pattern='%.6f %unit%',
+                     min_=0,
+                     max_=0.024)
     ]
 }
+
 

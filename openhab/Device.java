@@ -67,7 +67,7 @@ public abstract class Device extends DeviceBase {
 
     public abstract void dispose(Configuration config) throws TinkerforgeException;
 
-    public abstract void refreshValue(String value, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
+    public abstract void refreshValue(String value, Configuration channelConfig, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
 
     public abstract List<SetterRefresh> handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException;
 

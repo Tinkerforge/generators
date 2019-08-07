@@ -43,7 +43,7 @@ Channel = namedtuple('Channel', ['id', 'type', 'init_code', 'dispose_code',
                                     'predicate',
                                     'label', 'description'])
 
-ChannelType = namedtuple('ChannelType', ['id', 'params', 'item_type', 'category', 'label', 'description',
+ChannelType = namedtuple('ChannelType', ['id', 'params', 'param_groups', 'item_type', 'category', 'label', 'description',
                                             'read_only', 'pattern', 'min', 'max', 'step', 'options',
                                             'is_trigger_channel', 'command_options'])
 SetterRefresh = namedtuple('SetterRefresh', ['channel', 'delay'])
@@ -51,7 +51,7 @@ SetterRefresh = namedtuple('SetterRefresh', ['channel', 'delay'])
 Param = namedtuple('Param', ['name', 'type', 'context', 'default', 'description', 'groupName', 'label',
                                 'pattern', 'unit', 'unitLabel', 'advanced', 'limitToOptions', 'multiple',
                                 'readOnly', 'required', 'verify', 'min', 'max', 'step', 'options', 'filter'])
-ParamGroup = namedtuple('ParamGroup', 'name elements')
+ParamGroup = namedtuple('ParamGroup', 'name context advanced label description')
 
 class OpenHABBindingsDevice(JavaBindingsDevice):
     def apply_defaults(self, oh):
@@ -105,6 +105,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         channel_type_defaults = {
             'params': [],
+            'param_groups': [],
             'category': None,
             'item_type': None,
             'pattern': None,
@@ -177,7 +178,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                         channel_init_code_uses_param,
                         channel_setters_use_param,
                         channel_getters_use_param]):
-                raise common.GeneratorError('openhab: Device {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), param.name))
+                raise common.GeneratorError('openhab: Device {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), param.name.space))
 
         # Use only one of command options, state description and trigger channel per channel type
         for ct in oh.channel_types:
@@ -193,10 +194,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
             if has_state_description and is_trigger_channel:
                 raise common.GeneratorError('openhab: Device {} Channel Type {} has state description, but is flagged as trigger channel (which is stateless).'.format(self.get_long_display_name(), ct.id))
-
-        #for c in oh.channels:
-        #    if len(c.params) > 0:
-        #        print('openhab: Device {} Channel {} has config params. This is not supported yet, as the UI seems to render them incorrectly.'.format(self.get_long_display_name(), ct.id))
 
     def find_channel_type(self, channel, channel_types):
         if channel['type'].startswith('system.'):
@@ -272,8 +269,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             oh['params'][p_idx] = Param(**param)
 
         for g_idx, group in enumerate(oh['param_groups']):
-            oh['param_groups'][g_idx] = ParamGroup(name=group['name'],
-                                                   elements={k: v for k, v in group.items() if v is not None})
+            oh['param_groups'][g_idx] = ParamGroup(**group)
 
         self.oh = OpenHAB(**oh)
         self.sanity_check_config(self.oh)
@@ -290,6 +286,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'org.eclipse.smarthome.config.core.ConfigDescription',
                       'org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type',
                       'org.eclipse.smarthome.config.core.ConfigDescriptionParameterBuilder',
+                      'org.eclipse.smarthome.config.core.ConfigDescriptionParameterGroup',
                       'org.eclipse.smarthome.config.core.ParameterOption',
                       'org.eclipse.smarthome.core.types.State',
                       'org.eclipse.smarthome.core.types.Command',
@@ -376,8 +373,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return (regs, deregs, dispose_code, lambda_transforms)
 
     def get_openhab_getter_impl(self):
-        template = """    @Override
-    public void refreshValue(String value, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
+        func_template = """    @Override
+    public void refreshValue(String value, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
         switch(value) {{
             {channel_cases}
         }}
@@ -385,9 +382,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     }}
     """
 
+        case_template_with_config = """case "{camel}": {{
+                   {category_camel}{channel_type_camel}Config channelCfg = channelConfig.as({category_camel}{channel_type_camel}Config.class);
+                   {updateFn}.accept(value, transform{camel}Getter(this.{getter}({getter_params})));
+                   return;
+               }}"""
         case_template = """case "{camel}":
-               {updateFn}.accept(value, transform{camel}Getter(this.{getter}({getter_params})));
-               return;"""
+                   {updateFn}.accept(value, transform{camel}Getter(this.{getter}({getter_params})));
+                   return;"""
         empty_case_template = """case "{camel}":
                return;"""
 
@@ -402,7 +404,11 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 channel_cases.append(empty_case_template.format(camel=c.id.camel))
                 continue
 
-            channel_cases.append(case_template.format(camel=c.id.camel,
+            template = case_template if c.type.id.camel.startswith('system.') else case_template_with_config
+
+            channel_cases.append(template.format(camel=c.id.camel,
+                                                      category_camel=self.get_category().camel,
+                                                      channel_type_camel=c.type.id.camel,
                                                       updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
                                                       getter=c.getter_packet.get_name().headless,
                                                       getter_params=', '.join(c.getter_packet_params)))
@@ -415,7 +421,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                              type_=type_,
                                                              transform=c.getter_transform))
 
-        return (template.format(channel_cases='\n            '.join(channel_cases)), transforms)
+        return (func_template.format(channel_cases='\n            '.join(channel_cases)), transforms)
 
 
     def get_openhab_setter_impl(self):
@@ -664,6 +670,20 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         return template.format(name=name, type_upper=param.type.upper(), with_calls=''.join(with_calls))
 
+    def get_openhab_parameter_group_ctor_list(self, param_groups):
+        ctor_template = 'new ConfigDescriptionParameterGroup("{}", "{}", {}, "{}", "{}")'
+
+        ctors = []
+        for pg in param_groups:
+            ctor_params = (item if item is not None else 'null' for item in [pg.name, pg.context, pg.advanced, pg.label, pg.description])
+            ctors.append(ctor_template.format(*ctor_params))
+
+        #ctors = [ctor_template.format(name=pg.name, context=pg.context, advanced=pg.advanced, label=pg.label, description=pg.description) for pg in param_groups]
+
+        if len(ctors) > 0:
+            return ', Arrays.asList({})'.format(', '.join(ctors))
+        return ''
+
     def get_openhab_get_config_description_impl(self):
         template = """public static ConfigDescription getConfigDescription(URI uri) {{
         switch(uri.toASCIIString()) {{
@@ -673,13 +693,15 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     }}"""
 
         case_template = """case "{uri}":
-                return new ConfigDescription(uri, Arrays.asList({builder_calls}));"""
+                return new ConfigDescription(uri, Arrays.asList({builder_calls}){groups});"""
 
         cases = [case_template.format(uri='thing-type:tinkerforge:' + self.get_name().lower_no_space,
-                                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in self.oh.params))
+                                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in self.oh.params),
+                                      groups=self.get_openhab_parameter_group_ctor_list(self.oh.param_groups))
                 ] + \
                 [case_template.format(uri='channel-type:tinkerforge:' + ct.id.camel,
-                                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in ct.params)) for ct in self.oh.channel_types
+                                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in ct.params),
+                                      groups=self.get_openhab_parameter_group_ctor_list(ct.param_groups)) for ct in self.oh.channel_types
                 ] #+ \
                 #[case_template.format(uri='channel:tinkerforge:' + self.get_name().under + '_' + c.id.headless,
                 #                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in c.params)) for c in self.oh.channels]

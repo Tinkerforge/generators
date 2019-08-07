@@ -293,6 +293,8 @@ def relay_channel(channel):
         'setter_packet': 'Set Selected Value',
         'setter_packet_params': [str(channel), 'cmd == OnOffType.ON'],
         'setter_command_type': "OnOffType",
+
+        'init_code': """this.setChannelLEDConfig({}, channelCfg.channelLEDConfig);""".format(channel)
     }
 
 def monoflop_params(channel):
@@ -309,7 +311,6 @@ def monoflop_channel(channel):
         'getter_transform': 'value.value ? OnOffType.ON : OnOffType.OFF',
 
         'setter_packet': 'Set Monoflop',
-        #TODO: cfg needs monoflop channel number
         'setter_packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
         'setter_refreshs': [{
@@ -318,16 +319,31 @@ def monoflop_channel(channel):
         }]
     }
 
+relay_channel_type = oh_generic_channel_type('Relay', 'Switch', 'NOT USED',
+                     description='NOT USED')
+relay_channel_type['params'] = [
+{
+    'name': 'Channel LED Config',
+    'type': 'integer',
+    'default': 3,
 
-#TODO: Add monoflop done channel?
+    'label': 'Channel LED Config',
+    'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
+    'options':  [('Off', 0),
+                ('On', 1),
+                ('Show Heartbeat', 2),
+                ('Show Channel Status', 3)],
+},
+]
+
+
 com['openhab'] = {
     'imports': oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': sum([monoflop_params(i) for i in range(0, 4)], []), #flatten param lists
     'channels': [relay_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)],
     'channel_types': [
-        oh_generic_channel_type('Relay', 'Switch', 'NOT USED',
-                     description='NOT USED'),
+        relay_channel_type,
         {
             'id': 'Monoflop',
             'item_type': 'String',

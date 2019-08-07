@@ -398,7 +398,7 @@ def led_status_config():
             'default': '3',
 
             'label': 'LED Configuration',
-            'description': led_channel_config_description.replace('\n', '\\n').replace('"', '\\\"'),
+            'description': led_channel_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
         {
             'name': 'LED Status Mode',
@@ -409,7 +409,7 @@ def led_status_config():
             'default': '1',
 
             'label': 'LED Status Mode',
-            'description': led_status_config_description.replace('\n', '\\n').replace('"', '\\\"'),
+            'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
         {
             'name': 'LED Status Minimum',
