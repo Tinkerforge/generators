@@ -48,6 +48,19 @@ com['constant_groups'].append({
               ('1024', 7)]
 })
 
+com['constant_groups'].append({
+'name': 'Conversion Time',
+'type': 'uint8',
+'constants': [('140us', 0),
+              ('204us', 1),
+              ('332us', 2),
+              ('588us', 3),
+              ('1 1ms', 4),
+              ('2 116ms', 5),
+              ('4 156ms', 6),
+              ('8 244ms', 7)]
+})
+
 current_doc = {
 'en':
 """
@@ -115,8 +128,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
 'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging'}),
-             ('Voltage Conversion Time', 'uint8', 1, 'in'),
-             ('Current Conversion Time', 'uint8', 1, 'in')],
+             ('Voltage Conversion Time', 'uint8', 1, 'in', {'constant_group': 'Conversion Time'}),
+             ('Current Conversion Time', 'uint8', 1, 'in', {'constant_group': 'Conversion Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
