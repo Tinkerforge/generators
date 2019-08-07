@@ -251,6 +251,9 @@ For example, if you are expecting a current of 1000mA and you
 are measuring 1023mA, you can calibrate the Voltage/Current Bricklet
 by setting the current multiplier to 1000 and the divisor to 1023.
 The same applies for the voltage.
+
+The calibration will be saved on the EEPROM of the Voltage/Current
+Bricklet and only needs to be done once.
 """,
 'de':
 """
@@ -262,6 +265,9 @@ Zum Beispiel: Wenn eine Messung von 1000mA erwartet wird, das
 Voltage/Current Bricklet 2.0 aber 1023mA zurück gibt, sollte
 der Multiplikator auf 1000 und der Divisor auf 1023 gesetzt
 werden. Das gleiches gilt für die Spannung.
+
+Die Kalibrierung wird in den EEPROM des Voltage/Current Bricklet
+gespeichert und muss nur einmal gesetzt werden.
 """
 }]
 })
