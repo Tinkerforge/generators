@@ -41,7 +41,7 @@ com['constant_groups'].append({
 'type': 'uint8',
 'constants': [('4 To 20mA', 0),
               ('0 To 20mA', 1),
-              ('0 To 24ma', 2)]
+              ('0 To 24mA', 2)]
 })
 
 com['packets'].append({
