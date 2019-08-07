@@ -43,20 +43,12 @@ Returns the ambient temperature of the sensor. The value
 has a range of -400 to 1250 and is given in °C/10,
 e.g. a value of 423 means that an ambient temperature of 42.3 °C is
 measured.
-
-If you want to get the ambient temperature periodically, it is recommended
-to use the :cb:`Ambient Temperature` callback and set the period with
-:func:`Set Ambient Temperature Callback Configuration`.
 """,
 'de':
 """
 Gibt die Umgebungstemperatur des Sensors zurück. Der Wertebereich ist von
 -400 bis 1250 und wird in °C/10 angegeben, z.B. bedeutet
 ein Wert von 423 eine gemessene Umgebungstemperatur von 42,3 °C.
-
-Wenn die Umgebungstemperatur periodisch abgefragt werden soll, wird empfohlen
-den :cb:`Ambient Temperature` Callback zu nutzen und die Periode mit
-:func:`Set Ambient Temperature Callback Configuration` vorzugeben.
 """
 }
 
@@ -80,10 +72,6 @@ on the surface of the object.
 The temperature of different materials is dependent on their `emissivity
 <https://en.wikipedia.org/wiki/Emissivity>`__. The emissivity of the material
 can be set with :func:`Set Emissivity`.
-
-If you want to get the object temperature periodically, it is recommended
-to use the :cb:`Object Temperature` callback and set the period with
-:func:`Set Object Temperature Callback Configuration`.
 """,
 'de':
 """
@@ -96,10 +84,6 @@ des Objektes.
 Die Temperatur von unterschiedlichen Materialien ist abhängig von ihrem
 `Emissionsgrad <https://de.wikipedia.org/wiki/Emissionsgrad>`__. Der
 Emissionsgrad des Materials kann mit :func:`Set Emissivity` gesetzt werden.
-
-Wenn die Objekttemperatur periodisch abgefragt werden soll, wird empfohlen
-den :cb:`Object Temperature` Callback zu nutzen und die Periode mit
-:func:`Set Object Temperature Callback Configuration` vorzugeben.
 """
 }
 
