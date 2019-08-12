@@ -204,12 +204,12 @@ def oh_generic_channel(id_, type_, unit, divisor=1.0, label=None, description=No
         'is_trigger_channel': False
     }
 
-def oh_generic_old_style_channel(id_, type_, unit, divisor=1.0):
+def oh_generic_old_style_channel(id_, type_, unit, divisor=1.0, cast_literal=''):
     return {
         'id': id_,
         'type': type_,
-        'init_code':"""this.set{camel}CallbackPeriod(channelCfg.updateInterval);
-this.set{camel}CallbackThreshold(\'x\', 0, 0);""",
+        'init_code':"""this.set{{camel}}CallbackPeriod(channelCfg.updateInterval);
+this.set{{camel}}CallbackThreshold(\'x\', {cast_literal}0, {cast_literal}0);""".format(cast_literal=cast_literal),
         'dispose_code': """this.set{camel}CallbackPeriod(0);""",
         'getter_packet': 'Get {title_words}',
         'getter_packet_params': [],

@@ -6,7 +6,7 @@
 
 # UV Light Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -310,3 +310,19 @@ com['examples'].append({
               ('callback', ('UV Light Reached', 'UV light reached'), [(('UV Light', 'UV Light'), 'uint32', 1, 10.0, 'mW/m²', None)], None, 'UV Index > 3. Use sunscreen!'),
               ('callback_threshold', ('UV Light', 'UV light'), [], '>', [(25*3, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('UV Light', 'UV Index', 'SmartHomeUnits.ONE', divisor=250.0),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('UV Index', 'Number:Dimensionless', 'UV Index',
+                     description='Measured UV Index',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=50),
+    ]
+}

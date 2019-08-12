@@ -6,6 +6,8 @@
 
 # Motion Detector Bricklet communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -160,3 +162,34 @@ com['examples'].append({
 'functions': [('callback', ('Motion Detected', 'motion detected'), [], None, 'Motion Detected'),
               ('callback', ('Detection Cycle Ended', 'detection cycle ended'), [], None, 'Detection Cycle Ended (next detection possible in ~3 seconds)')]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        {
+            'id': 'Motion Detected',
+            'label': 'Motion Detected',
+            'type': 'system.trigger',
+            'getter_packet': 'Get Motion Detected',
+            'getter_transform': '""',
+
+            'callback_packet': 'Motion Detected',
+            'callback_transform': '""',
+
+            'is_trigger_channel': True
+        }, {
+            'id': 'Detection Cycle Ended',
+            'label': 'Detection Cycle Ended',
+            'type': 'system.trigger',
+            'getter_packet': 'Get Motion Detected',
+            'getter_transform': '""',
+
+            'callback_packet': 'Detection Cycle Ended',
+            'callback_transform': '""',
+
+            'is_trigger_channel': True
+        },
+    ],
+    'channel_types': []
+}

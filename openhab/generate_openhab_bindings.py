@@ -216,7 +216,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if not isinstance(format_str, str):
                 return format_str
             name = common.FlavoredName(base_name).get()
-            return format_str.format(title_words=name.space.title(),
+            return format_str.format(title_words=name.space,#.title(),
                                      lower_words=name.lower,
                                      camel=name.camel,
                                      headless=name.headless,
@@ -235,7 +235,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         def find_packet(name):
             if name is None:
                 return None
-            return next(p for p in self.get_packets() if p.get_name().space == name)
+            try:
+                return next(p for p in self.get_packets() if p.get_name().space == name)
+            except StopIteration:
+                raise common.GeneratorError('openhab: Device {}: Packet {} not found.'.format(self.get_long_display_name(), name))
 
         # Convert from dicts to namedtuples
         for ct_idx, channel_type in enumerate(oh['channel_types']):
@@ -362,10 +365,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             deregs.append(cb_deregistration.format(camel=c.callback_packet.get_name().camel))
             dispose_code += c.dispose_code.split('\n')
 
-            filtered_elements, type_ = self.get_filtered_elements_and_type(c.getter_packet, elements)
+            #filtered_elements, type_ = self.get_filtered_elements_and_type(c.getter_packet, elements)
 
 
-            lambda_transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'State',
+            lambda_transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
                                                              camel=c.id.camel,
                                                              callback_args=', '.join(e.get_java_type() + ' ' + e.get_name().headless for e in elements),
                                                              transform=c.callback_transform))
@@ -374,7 +377,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_openhab_getter_impl(self):
         func_template = """    @Override
-    public void refreshValue(String value, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
+    public void refreshValue(String value, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
         switch(value) {{
             {channel_cases}
         }}
@@ -416,7 +419,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             elements = c.getter_packet.get_elements(direction='out', high_level=True)
             _, type_ = self.get_filtered_elements_and_type(c.getter_packet, elements)
 
-            transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'State',
+            transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
                                                              camel=c.id.camel,
                                                              type_=type_,
                                                              transform=c.getter_transform))
@@ -486,7 +489,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     def get_openhab_device_impl(self):
         template = """
     @Override
-    public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
+    public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         {callback_registrations}
         {init_code}

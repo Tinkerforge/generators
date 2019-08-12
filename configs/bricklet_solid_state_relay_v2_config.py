@@ -6,6 +6,8 @@
 
 # Solid State Relay Bricklet 2.0 communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -170,3 +172,73 @@ com['examples'].append({
               ('setter', 'Set State', [('bool', False)], None, None),
               ('loop_footer',)]
 })
+
+
+
+com['openhab'] = {
+    'imports': oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+        'id': 'Relay',
+        'label': 'Relay',
+        'description': 'Switches the relay. A running monoflop timer for the relay will be aborted if the relay is toggled by this channel.',
+
+        'type': 'Relay',
+
+        'getter_packet': 'Get State',
+        'getter_transform': 'value ? OnOffType.ON : OnOffType.OFF',
+
+        'callback_packet': 'Monoflop Done',
+        'callback_transform': 'state ? OnOffType.ON : OnOffType.OFF',
+
+        'setter_packet': 'Set State',
+        'setter_packet_params': ['cmd == OnOffType.ON'],
+        'setter_command_type': "OnOffType",
+    }, {
+        'id': 'Monoflop relay',
+        'label': 'Monoflop Relay',
+        'type': 'Monoflop',
+
+        'getter_packet': 'Get Monoflop',
+        'getter_transform': 'value.state ? OnOffType.ON : OnOffType.OFF',
+
+        'setter_packet': 'Set Monoflop',
+        'setter_packet_params': ['channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
+        'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+        'setter_refreshs': [{
+            'channel': 'Relay',
+            'delay': '0'
+        }]
+    }],
+    'channel_types': [
+        oh_generic_channel_type('Relay', 'Switch', 'NOT USED',
+                     description='NOT USED'),
+        {
+            'id': 'Monoflop',
+            'item_type': 'String',
+            'params': [{
+                'name': 'Monoflop Duration',
+                'type': 'integer',
+                'default': 1000,
+                'min': 0,
+                'max': 2**31 - 1,
+                'unit': 'ms',
+
+                'label': 'Monoflop duration',
+                'description': 'The time (in ms) that the relay should hold the configured value.',
+            },
+            {
+                'name': 'Monoflop Value',
+                'type': 'boolean',
+                'default': 'true',
+
+                'label': 'Monoflop value',
+                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+            }],
+            'label': 'NOT USED',
+            'description':'Triggers a monoflop as configured',
+            'command_options': [('Trigger', 'TRIGGER')]
+        }
+    ]
+}
+

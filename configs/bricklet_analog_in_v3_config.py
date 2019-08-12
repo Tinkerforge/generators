@@ -206,7 +206,16 @@ com['openhab'] = {
     'params': [{
             'name': 'Oversampling',
             'type': 'integer',
-            'options': OVERSAMPLING[1],
+            'options': [('32x', 0),
+                        ('64x', 1),
+                        ('128x', 2),
+                        ('256x', 3),
+                        ('512x', 4),
+                        ('1024x', 5),
+                        ('2048x', 6),
+                        ('4096x', 7),
+                        ('8192x', 8),
+                        ('16384x', 9)],
             'limitToOptions': 'true',
             'default': '7',
 

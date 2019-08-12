@@ -6,7 +6,7 @@
 
 # Industrial Dual Analog In Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -442,3 +442,62 @@ com['examples'].append({
               ('callback', ('Voltage Reached', 'voltage reached'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Voltage', 'Voltage'), 'int32', 1, 1000.0, 'V', None)], None, None),
               ('callback_threshold', ('Voltage', 'voltage (channel 1)'), [('uint8', 1)], '>', [(10, 0)])]
 })
+
+
+
+def voltage_channel(index):
+    return {
+            'id': 'Voltage Channel {0}'.format(index),
+            'type': 'Voltage',
+            'label': 'Voltage Channel {0}'.format(index),
+
+            'init_code':"""this.setVoltageCallbackPeriod((short){0}, channelCfg.updateInterval);""".format(index),
+            'dispose_code': """this.setVoltageCallbackPeriod((short){0}, 0);""".format(index),
+            'getter_packet': 'Get Voltage',
+            'getter_packet_params': ['(short){}'.format(index)],
+            'callback_filter': 'channel == {0}'.format(index),
+            'callback_packet': 'Voltage',
+            'callback_transform': 'new QuantityType<>(voltage{divisor}, {unit})',
+            'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': '1000.0',
+            'is_trigger_channel': False
+        }
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Sample Rate',
+            'type': 'integer',
+            'options': [('976 SPS', 0),
+                        ('488 SPS', 1),
+                        ('244 SPS', 2),
+                        ('122 SPS', 3),
+                        ('61 SPS', 4),
+                        ('4 SPS', 5),
+                        ('2 SPS', 6),
+                        ('1 SPS', 7)],
+            'limitToOptions': 'true',
+            'default': '6',
+
+            'label': 'Sample Rate',
+            'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
+            'advanced': 'true'
+        }
+    ],
+    'init_code': """this.setSampleRate(cfg.sampleRate.shortValue());""",
+    'channels': [
+        voltage_channel(0),
+        voltage_channel(1),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'NOT USED',
+                     description='Measured voltage between -35 and 35 V',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=-35,
+                     max_=35)
+    ]
+}

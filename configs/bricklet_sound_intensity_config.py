@@ -6,7 +6,7 @@
 
 # Sound Intensity Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -307,3 +307,20 @@ com['examples'].append({
               ('callback', ('Intensity Reached', 'intensity reached'), [(('Intensity', 'Intensity'), 'uint16', 1, None, None, None)], None, None),
               ('callback_threshold', ('Intensity', 'intensity'), [], '>', [(2000, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('Intensity', 'Intensity', 'SmartHomeUnits.ONE')
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Intensity', 'Number:Dimensionless', 'Sound Intensity',
+                     description="""The current sound intensity. The value has a range of 0 to 4095.<br/><br/>The value corresponds to the <a href=\\\"https://en.wikipedia.org/wiki/Envelope_(waves)\\\">upper envelop</a> of the signal of the microphone capsule.""",
+                     read_only=True,
+                     pattern='%.0f %unit%',
+                     min_=0,
+                     max_=4095)
+    ]
+}

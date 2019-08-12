@@ -6,8 +6,7 @@
 
 # Barometer Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
@@ -395,3 +394,95 @@ com['examples'].append({
 'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], None, 'Enjoy the potentially good weather!'),
               ('callback_configuration', ('Air Pressure', 'air pressure'), [], 1000, False, '>', [(1025, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups() +  [{
+        'name': 'average',
+        'label': 'Averaging',
+        'description': 'Sets the length of a moving averaging for the air pressure and temperature.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 100.',
+        'advanced': 'true'
+    }],
+    'params': [
+        {
+            'name': 'Air Pressure Moving Average Length',
+            'type': 'integer',
+            'default': 100,
+            'min': 1,
+            'max': 1000,
+
+            'label': 'Air Pressure Moving Average Length',
+            'groupName': 'average'
+        }, {
+            'name': 'Temperature Moving Average Length',
+            'type': 'integer',
+            'default': 100,
+            'min': 1,
+            'max': 1000,
+
+            'label': 'Temperature Moving Average Length',
+            'groupName': 'average'
+        }, {
+            'name': 'Reference Air Pressure',
+            'type': 'decimal',
+            'default': 1013.25,
+            'min': 260,
+            'max': 1260,
+
+            'label': 'Reference Air Pressure in mbar',
+            'description': 'The reference air pressure for the altitude calculation. Valid values are between 260 and 1260. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+        }, {
+            'name': 'Data Rate',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('1Hz', 1),
+                        ('10Hz', 2),
+                        ('25Hz', 3),
+                        ('50Hz', 4),
+                        ('75Hz', 5)],
+            'limitToOptions': 'true',
+            'default': '4',
+
+            'label': 'Data Rate',
+            'description': "Configures the data rate. A higher data rate will result in a less precise temperature because of self-heating of the sensor. If the accuracy of the temperature reading is important to you, we would recommend the 1Hz data rate.",
+        }, {
+            'name': 'Air Pressure Low Pass Filter',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('1/9th', 1),
+                        ('1/20th', 2)],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Air Pressure Low Pass Filter',
+            'description': "Configures the air pressure low pass filter. The low pass filter cut-off frequency (if enabled) can be set to 1/9th or 1/20th of the configure data rate to decrease the noise on the air pressure data.",
+        },
+    ],
+    'init_code': """this.setReferenceAirPressure(cfg.referenceAirPressure.multiply(new BigDecimal(1000)).intValue());
+this.setMovingAverageConfiguration(cfg.airPressureMovingAverageLength, cfg.temperatureMovingAverageLength);
+this.setSensorConfiguration(cfg.dataRate, cfg.airPressureLowPassFilter);""",
+    'channels': [
+        oh_generic_channel('Air Pressure', 'Air Pressure', 'SmartHomeUnits.MILLIBAR', divisor=1000.0),
+        oh_generic_channel('Altitude', 'Altitude', 'SIUnits.METRE', divisor=1000.0),
+        oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
+                    description='Measured air pressure',
+                    read_only=True,
+                    pattern='%.2f %unit%',
+                    min_=260,
+                    max_=1260),
+        oh_generic_channel_type('Altitude', 'Number:Length', 'Altitude',
+                    description='Relative Altitude derived from air pressure',
+                    read_only=True,
+                    pattern='%.2f %unit%'),
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                     description='Measured temperature',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=-40,
+                     max_=85),
+    ]
+}

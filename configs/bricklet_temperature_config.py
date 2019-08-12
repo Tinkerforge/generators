@@ -6,7 +6,7 @@
 
 # Temperature Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -363,3 +363,35 @@ com['examples'].append({
               ('callback', ('Temperature Reached', 'temperature reached'), [(('Temperature', 'Temperature'), 'int16', 1, 100.0, '°C', None)], None, 'It is too hot, we need air conditioning!'),
               ('callback_threshold', ('Temperature', 'temperature'), [], '>', [(30, 0)])]
 })
+
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+         {
+            'name': 'I2C Mode',
+            'type': 'integer',
+            'default': '0',
+            'options': [('Fast (400kHz)', 0),
+                        ('Slow (100kHz)', 1)],
+            'limitToOptions': 'true',
+
+            'label': 'I2C Mode',
+            'description': 'Sets the I2C mode. If you have problems with obvious outliers in the Temperature Bricklet measurements, they may be caused by EMI issues. In this case it may be helpful to lower the I2C speed. It is however not recommended to lower the I2C speed in applications where a high throughput needs to be achieved.',
+        }
+    ],
+    'init_code': """this.setI2CMode(cfg.i2cMode.shortValue());""",
+    'channels': [
+        oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0, cast_literal='(short)'),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                     description='Measured temperature',
+                     read_only=True,
+                     pattern='%.1f %unit%',
+                     min_=-25,
+                     max_=85),
+    ]
+}

@@ -6,7 +6,7 @@
 
 # Distance US Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -363,3 +363,38 @@ com['examples'].append({
               ('callback', ('Distance Reached', 'distance value reached'), [(('Distance', 'Distance Value'), 'uint16', 1, None, None, None)], None, None),
               ('callback_threshold', ('Distance', 'distance value'), [], '<', [(200, 0)])]
 })
+
+
+distance_channel = oh_generic_old_style_channel('Distance', 'Distance', 'SmartHomeUnits.ONE')
+distance_channel['getter_packet'] = 'Get Distance Value'
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Moving Average Length',
+            'type': 'integer',
+            'default': 0,
+            'min': 1,
+            'max': 100,
+
+            'label': 'Moving Average Length',
+            'description': 'Sets the length of a moving averaging for the distance value.<br/><br/>Setting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.',
+            'advanced': True
+        }
+    ],
+    'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
+    'channels': [
+        distance_channel
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Distance', 'Number:Dimensionless', 'Distance',
+                     description='The current distance value measured by the sensor. The value has a range of 0 to 4095. A small value corresponds to a small distance, a big value corresponds to a big distance. The relation between the measured distance value and the actual distance is affected by the 5V supply voltage (deviations in the supply voltage result in deviations in the distance values) and is non-linear (resolution is bigger at close range).',
+                     read_only=True,
+                     pattern='%.0f %unit%',
+                     min_=0,
+                     max_=4095)
+    ]
+}
+

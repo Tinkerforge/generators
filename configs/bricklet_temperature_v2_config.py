@@ -6,8 +6,7 @@
 
 # Temperature Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -120,3 +119,32 @@ com['examples'].append({
 'functions': [('callback', ('Temperature', 'temperature'), [(('Temperature', 'Temperature'), 'int16', 1, 100.0, '°C', None)], None, 'It is too hot, we need air conditioning!'),
               ('callback_configuration', ('Temperature', 'temperature'), [], 1000, False, '>', [(30, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+         {
+            'name': 'Enable Heater',
+            'type': 'boolean',
+            'default': 'false',
+
+            'label': 'Enable Heater',
+            'description': 'Enables/disables the heater. The heater can be used to test the sensor.',
+        }
+    ],
+    'init_code': """
+this.setHeaterConfiguration(cfg.enableHeater ? 1 : 0);""",
+    'channels': [
+        oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                     description='Measured temperature',
+                     read_only=True,
+                     pattern='%.1f %unit%',
+                     min_=-45,
+                     max_=130),
+    ]
+}

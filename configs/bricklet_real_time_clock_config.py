@@ -6,6 +6,8 @@
 
 # Real-Time Clock Bricklet communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -466,3 +468,68 @@ com['examples'].append({
 'functions': [('callback', ('Date Time', 'date and time'), [(('Year', 'Year'), 'uint16', 1, None, None, None), (('Month', 'Month'), 'uint8', 1, None, None, None), (('Day', 'Day'), 'uint8', 1, None, None, None), (('Hour', 'Hour'), 'uint8', 1, None, None, None), (('Minute', 'Minute'), 'uint8', 1, None, None, None), (('Second', 'Second'), 'uint8', 1, None, None, None), (('Centisecond', 'Centisecond'), 'uint8', 1, None, None, None), (('Weekday', 'Weekday'), 'uint8:constant', 1, None, None, None), (('Timestamp', 'Timestamp'), 'int64', 1, None, None, None)], None, None),
               ('callback_period', ('Date Time', 'date and time'), [], 5000)]
 })
+
+date_time_type = oh_generic_channel_type('Date Time', 'DateTime', 'Date Time',
+                     description="The real-time clock handles leap year and inserts the 29th of February accordingly. But leap seconds are not handled. The time is stored as UTC on the clock and converted into your system's timezone when accessed by OpenHAB.",)
+timestamp_type = oh_generic_channel_type('Timestamp', 'Number:Time', 'Timestamp',
+                    description="the current date and the time of the real-time clock converted to seconds. The timestamp has an effective resolution of hundredths of a second.",
+                    read_only=True,
+                    pattern='%.2f %unit%')
+
+date_time_type['params'] = []
+timestamp_type['params'] = []
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['java.time.ZonedDateTime', 'java.time.ZoneId', 'org.eclipse.smarthome.core.library.types.DateTimeType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+        'name': 'Update Interval',
+        'type': 'integer',
+        'unit': 'ms',
+        'label': 'Update Interval',
+        'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
+        'default': 1000,
+        'groupName': 'update_intervals'
+    }],
+    'init_code':"""this.setDateTimeCallbackPeriod(cfg.updateInterval);""",
+    'dispose_code': """this.setDateTimeCallbackPeriod(0);""",
+    'channels': [
+        {
+            'id': 'Date Time',
+            'label': 'Date Time',
+            'type': 'Date Time',
+            'getter_packet': 'Get Date Time',
+            'getter_transform': 'new DateTimeType(ZonedDateTime.of(value.year, value.month, value.day, value.hour, value.minute, value.second, value.centisecond * 10 * 100 * 100, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))',
+
+            'setter_packet': 'Set Date Time',
+            'setter_packet_params': ['cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getYear()',
+                                     '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMonth().getValue()',
+                                     '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfMonth()',
+                                     '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getHour()',
+                                     '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMinute()',
+                                     '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getSecond()',
+                                     '(short)(cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getNano() / 1000 / 1000 / 10)',
+                                     '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfWeek().getValue()'],
+            'setter_command_type': 'DateTimeType',
+
+            'callback_packet': 'Date Time',
+            'callback_transform': 'new DateTimeType(ZonedDateTime.of(year, month, day, hour, minute, second, centisecond * 10 * 100 * 100, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))',
+
+        }, {
+            'id': 'Timestamp',
+            'label': 'Timestamp',
+            'type': 'Timestamp',
+            'java_unit': 'SmartHomeUnits.SECOND',
+            'divisor': 1000.0,
+            'getter_packet': 'Get Timestamp',
+            'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
+
+            'callback_packet': 'Date Time',
+            'callback_transform': 'new QuantityType<>(timestamp{divisor}, {unit})',
+        },
+    ],
+    'channel_types': [
+        date_time_type,
+        timestamp_type
+    ]
+}

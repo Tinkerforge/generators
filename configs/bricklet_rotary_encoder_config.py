@@ -355,3 +355,4 @@ com['examples'].append({
 'functions': [('callback', ('Count', 'count'), [(('Count', 'Count'), 'int32', 1, None, None, None)], None, None),
               ('callback_period', ('Count', 'count'), [], 50)]
 })
+

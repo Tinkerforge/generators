@@ -6,8 +6,7 @@
 
 # UV Light Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
@@ -232,3 +231,48 @@ com['examples'].append({
 'functions': [('callback', ('UVI', 'UV index'), [(('UVI', 'UV Index'), 'int32', 1, 10.0, None, None)], None, 'UV index > 3. Use sunscreen!'),
               ('callback_configuration', ('UVI', 'UV index'), [], 1000, False, '>', [(3, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Integration Time',
+            'type': 'integer',
+            'options': [('50ms', 0),
+                        ('100ms', 1),
+                        ('200ms', 2),
+                        ('400ms', 3),
+                        ('800ms', 4)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Integration Time',
+            'description': "The integration time can be configured between 50 and 800 ms. With a shorter integration time the sensor reading updates more often but contains more noise. With a longer integration the sensor reading contains less noise but updates less often.<br/><br/>With a longer integration time (especially 800 ms) and a higher UV intensity the sensor can be saturated. If this happens the UVA/UVB/UVI readings are all -1. In this case you need to choose a shorter integration time.",
+        },
+    ],
+    'init_code': """this.setConfiguration(cfg.integrationTime);""",
+    'channels': [
+        oh_generic_channel('UVA', 'UVA Intensity', 'SmartHomeUnits.IRRADIANCE', divisor=10000.0),
+        oh_generic_channel('UVB', 'UVB Intensity', 'SmartHomeUnits.IRRADIANCE', divisor=10000.0),
+        oh_generic_channel('UVI', 'UV Index', 'SmartHomeUnits.ONE', divisor=10.0),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('UVA Intensity', 'Number:Intensity', 'UV-A Intensity',
+                    description='The sensor has not weighted the intensity with the erythemal action spectrum to get the skin-affecting irradiation. Therefore, you cannot just divide the value by 250 to get the UVA index.',
+                    read_only=True,
+                    pattern='%.5f %unit%',
+                    min_=0),
+        oh_generic_channel_type('UVB Intensity', 'Number:Intensity', 'UV-B Intensity',
+                    description='The sensor has not weighted the intensity with the erythemal action spectrum to get the skin-affecting irradiation. Therefore, you cannot just divide the value by 250 to get the UVB index.',
+                    read_only=True,
+                    pattern='%.5f %unit%',
+                    min_=0),
+        oh_generic_channel_type('UV Index', 'Number:Dimensionless', 'UV Index',
+                     description='Calculated UV Index',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=50),
+    ]
+}

@@ -6,7 +6,7 @@
 
 # PTC Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -699,3 +699,46 @@ com['examples'].append({
               ('callback', ('Temperature Reached', 'temperature reached'), [(('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None)], None, None),
               ('callback_threshold', ('Temperature', 'temperature'), [], '>', [(30, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Wire Mode',
+            'type': 'integer',
+            'options': [('2-wire', 2),
+                        ('3-wire', 3),
+                        ('4-wire', 4)],
+            'limitToOptions': 'true',
+            'default': '2',
+
+            'label': 'Wire Mode',
+            'description': 'The wire mode of the sensor. Possible values are 2, 3 and 4 which correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper configuration on the Bricklet.',
+        },
+        {
+            'name': 'Noise Rejection Filter Frequency',
+            'type': 'integer',
+            'options': [('50 Hz', 0),
+                        ('60 Hz', 1)],
+            'limitToOptions': 'true',
+            'default': '0',
+
+            'label': 'Noise Rejection Filter Frequency',
+            'description': 'Sets the noise rejection filter to either 50 Hz or 60 Hz. Noise from 50 Hz or 60 Hz power sources (including harmonics of the AC power’s fundamental frequency) is attenuated by 82dB',
+        },
+    ],
+    'init_code': """this.setWireMode(cfg.wireMode.shortValue());
+this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency.shortValue());""",
+    'channels': [
+        oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                     description='Temperature of the connected sensor',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=-246,
+                     max_=849)
+    ]
+}
