@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False, # selling remaining stock, replaced by Industrial Dual Analog In Bricklet 2.0
+    'discontinued': True, # replaced by Industrial Dual Analog In Bricklet 2.0
     'features': [
         'bricklet_get_identity'
     ],
