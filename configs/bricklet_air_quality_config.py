@@ -6,8 +6,7 @@
 
 # Air Quality Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -488,7 +487,7 @@ the calibration will start from beginning again. The configuration of the
 duration is saved in flash, so you should only have to call this function
 once in the lifetime of the Bricklet.
 
-The Bricklet has to be power cycled after this function is called 
+The Bricklet has to be power cycled after this function is called
 for a duration change to take effect.
 
 Before firmware version 2.0.3 this was not configurable and the duration was
@@ -530,12 +529,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the background calibration duration as set by 
+Returns the background calibration duration as set by
 :func:`Set Background Calibration Duration`.
 """,
 'de':
 """
-Gibt die Länge der Hintergrundkalibrierung zurück, wie von 
+Gibt die Länge der Hintergrundkalibrierung zurück, wie von
 :func:`Set Background Calibration Duration` gesetzt.
 """
 }]
@@ -553,3 +552,92 @@ com['examples'].append({
 'functions': [('callback', ('All Values', 'all values'), [(('IAQ Index', 'IAQ Index'), 'int32', 1, None, None, None), (('IAQ Index Accuracy', 'IAQ Index Accuracy'), 'uint8:constant', 1, None, None, None), (('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None), (('Humidity', 'Humidity'), 'int32', 1, 100.0, '%RH', None), (('Air Pressure', 'Air Pressure'), 'int32', 1, 100.0, 'mbar', None)], None, None),
               ('callback_configuration', ('All Values', 'all values'), [], 1000, False, None, [])]
 })
+
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Temperature Offset',
+            'type': 'decimal',
+            'default': 0,
+            'min': 0,
+            'max': 100,
+
+            'label': 'Temperature Offset',
+            'description': 'If you install this Bricklet into an enclosure and you want to measure the ambient temperature, you may have to decrease the measured temperature by some value to compensate for the error because of the heating inside of the enclosure.<br/><br/>We recommend that you leave the parts in the enclosure running for at least 24 hours such that a temperature equilibrium can be reached. After that you can measure the temperature directly outside of enclosure and set the difference as offset.<br/><br/>This temperature offset is used to calculate the relative humidity and IAQ index measurements. In case the Bricklet is installed in an enclosure, we recommend to measure and set the temperature offset to imporve the accuracy of the measurements.'
+        }
+    ],
+    'init_code': """this.setTemperatureOffset((int)(cfg.temperatureOffset.doubleValue() * 100.0f));""",
+    'channels': [
+        oh_generic_channel('Humidity', 'Humidity', 'SmartHomeUnits.PERCENT', divisor=100.0),
+        oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        oh_generic_channel('Air Pressure', 'Air Pressure', 'SmartHomeUnits.MILLIBAR', divisor=100.0),
+        {
+            'id': 'IAQ Index',
+            'type': 'IAQ Index',
+            'init_code':"""this.set{camel}CallbackConfiguration(channelCfg.updateInterval, true);""",
+            'dispose_code': """this.set{camel}CallbackConfiguration(0, true);""",
+            'getter_packet': 'Get {title_words}',
+            'getter_packet_params': [],
+            'getter_transform': 'new QuantityType<>(value.iaqIndex{divisor}, {unit})',
+
+            'callback_packet': '{title_words}',
+            'callback_transform': 'new QuantityType<>(iaqIndex{divisor}, {unit})',
+            'callback_filter': 'true',
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'divisor': 1,
+            'is_trigger_channel': False
+        },{
+            'id': 'IAQ Index Accuracy',
+            'type': 'IAQ Index Accuracy',
+            'init_code':"""this.setIAQIndexCallbackConfiguration(channelCfg.updateInterval, true);""",
+            'dispose_code': """this.setIAQIndexCallbackConfiguration(0, true);""",
+            'getter_packet': 'Get IAQ Index',
+            'getter_packet_params': [],
+            'getter_transform': 'new QuantityType<>(value.iaqIndexAccuracy{divisor}, {unit})',
+
+            'callback_packet': 'IAQ Index',
+            'callback_transform': 'new QuantityType<>(iaqIndexAccuracy{divisor}, {unit})',
+            'callback_filter': 'true',
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'divisor': 1,
+            'is_trigger_channel': False
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Humidity', 'Number:Dimensionless', 'Humidity',
+                     description='Measured relative humidity',
+                     read_only=True,
+                     pattern='%.2f %%',
+                     min_=0,
+                     max_=100),
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                     description='Measured temperature',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=-40,
+                     max_=85),
+        oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
+                     description='Measured air pressure',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=300,
+                     max_=1100),
+        oh_generic_channel_type('IAQ Index', 'Number:Dimensionless', 'IAQ Index',
+                     description='The IAQ index goes from 0 to 500. The higher the IAQ index, the greater the level of air pollution.',
+                     read_only=True,
+                     pattern='%d',
+                     min_=0,
+                     max_=500),
+        oh_generic_channel_type('IAQ Index Accuracy', 'Number:Dimensionless', 'IAQ Index Accuracy',
+                     description="The Bricklet is building a database of measurements and uses this data to do an automatic background calibration and calculate an accurate IAQ index over time. It will take a few days until the IAQ index has a high reliability.<br/><br/>The IAQ accuracy is reflects the current state of the background calibration process.<br/><br/>    Accuracy 0: The Bricklet was just started and the sensor is stabilizing.<br/>    Accuracy 1: The background history is uncertain. This typically means the gas sensor data was too stable for the calibration algorithm to clearly define its references.<br/>    Accuracy 2: The Bricklet found new calibration data and is currently calibrating.<br/>    Accuracy 3: The Bricklets is calibrated successfully.<br/><br/>The effective duration of the calibration process depends on the stimuli observed by the sensor. An IAQ accuracy going back and fourth between 2 and 3 is expected, the Bricklet is recalibrating itself.<br/><br/>The Bricklet saves the current database of values and calculated coefficients every 12 hours in its internal flash memory. If the Bricklet loses power it will not take as long to receive reliable data again.<br/><br/>Starting with firmware version 2.0.3 the automatic background calibration considers 28 days of data. We recommend that you run the Bricklet for 28 full days before you consider the data as completely reliable. It is possible to reduce the calibration window to 4 days with the API.<br/><br/><br/>Note<br/><br/>The currently released firmware (2.0.4) does not save the calibration every 12 hours. We had to disable this because of a bug in the proprietary load/save mechanism that we can't fix. We will release a new firmware that has this enabled again as soon as this bug is fixed.",
+                     read_only=True,
+                     pattern='%d',
+                     min_=0,
+                     max_=500),
+    ]
+}

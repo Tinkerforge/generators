@@ -499,7 +499,7 @@ com['openhab'] = {
 
                             'default': '100',
 
-                            'label': 'Deboun    ce Time',
+                            'label': 'Debounce Time',
                             'description': 'The debounce time in ms.',
                         },{
                             'name': 'Reset On Read',

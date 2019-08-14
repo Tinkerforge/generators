@@ -6,8 +6,7 @@
 
 # Load Cell Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -299,3 +298,75 @@ com['examples'].append({
 'functions': [('callback', ('Weight', 'weight'), [(('Weight', 'Weight'), 'int32', 1, None, 'g', None)], None, None),
               ('callback_configuration', ('Weight', 'weight'), [], 1000, False, '>', [(200, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Moving Average',
+            'type': 'integer',
+            'default': 4,
+            'min': 1,
+            'max': 100,
+
+            'label': 'Moving Average',
+            'description': 'The length of a moving averaging for the weight value.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+        }, {
+            'name': 'Measurement Rate',
+            'type': 'integer',
+            'options': [('10Hz', 0),
+                        ('80Hz', 1)],
+            'limitToOptions': 'true',
+            'default': '0',
+
+            'label': 'Measurement Rate',
+            'description': 'The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.',
+        }, {
+            'name': 'Gain',
+            'type': 'integer',
+            'options': [('128x', 0),
+                        ('64x', 1),
+                        ('32x', 2)],
+            'limitToOptions': 'true',
+            'default': '0',
+
+            'label': 'Gain',
+            'description': "The gain can be 128x, 64x or 32x. It represents a measurement range of ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an excitation voltage of 5V and most load cells use an output of 2mV/V. That means the voltage range is ±15mV for most load cells (i.e. gain of 128x is best). If you don't know what all of this means you should keep it at 128x, it will most likely be correct.",
+        },
+    ],
+    'init_code': """this.setConfiguration(cfg.measurementRate, cfg.gain);
+this.setMovingAverage(cfg.movingAverage);""",
+    'channels': [
+        oh_generic_channel('Weight', 'Weight', 'SIUnits.GRAM', divisor=1),
+        {
+            'id': 'Tare',
+            'type': 'Tare',
+
+            #'getter_packet': 'Get Monoflop',
+            #'getter_packet_params': ['(short) {}'],
+            #'getter_transform': 'value.state ? OnOffType.ON : OnOffType.OFF',
+
+            'setter_packet': 'Tare',
+            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+            'setter_refreshs': [{
+                'channel': 'Weight',
+                'delay': '0'
+            }]
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Weight', 'Number:Mass', 'Weight',
+                     description='The currently measured weight',
+                     read_only=True,
+                     pattern='%d %unit%',
+                     min_=0),
+        {
+            'id': 'Tare',
+            'item_type': 'String',
+            'label': 'Tare',
+            'description':'Sets the currently measured weight as tare weight.',
+            'command_options': [('Tare', 'TARE')]
+        }
+    ]
+}

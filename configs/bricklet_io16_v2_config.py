@@ -653,8 +653,8 @@ def input_channel(idx):
             'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF'.format(idx),
 
             # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
-            'init_code':"""this.setInputValueCallbackConfiguration({0}, 1000, false);
-            this.setConfiguration({0}, 'i', cfg.pinConfiguration{0} % 2 == 1);""".format(idx),
+            'init_code':"""this.setConfiguration({0}, 'i', cfg.pinConfiguration{0} % 2 == 1);
+            this.setInputValueCallbackConfiguration({0}, 1000, false);""".format(idx),
             'dispose_code': """this.setInputValueCallbackConfiguration({}, 0, false);""".format(idx),
     }
 
@@ -702,6 +702,24 @@ def monoflop_channel(channel):
         }]
     }
 
+
+def edge_count_channel(index):
+    return {
+            'predicate': 'cfg.pinConfiguration{} > 1'.format(index),
+            'id': 'Edge Count Pin {0}'.format(index),
+            'type': 'Edge Count',
+            'label': 'Edge Count Pin {0}'.format(index),
+
+            'init_code':"""this.setEdgeCountConfiguration({0}, channelCfg.edgeType, channelCfg.debounce);""".format(index),
+
+            'getter_packet': 'Get Edge Count',
+            'getter_packet_params': [str(index), 'channelCfg.resetOnRead'],
+            'getter_transform': 'new QuantityType<>(value, {unit})',
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'is_trigger_channel': False
+        }
+
 def pin_config(idx):
     return {
             'name': 'Pin Configuration {}'.format(idx),
@@ -719,11 +737,11 @@ def pin_config(idx):
             'description': 'Configures the direction of pin {}/{}. Inputs without pull-up will be floating if nothing is connected. Outputs can have an initial state of low or high.'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
         }
 
-channels = [input_channel(i) for i in range(0, 16)] + [output_channel(i) for i in range(0, 16)] + [monoflop_channel(i) for i in range(0, 16)]
+channels = [input_channel(i) for i in range(0, 16)] + [output_channel(i) for i in range(0, 16)] + [monoflop_channel(i) for i in range(0, 16)] + [edge_count_channel(i) for i in range(0, 16)]
 params = [pin_config(i) for i in range(0, 16)]
 
 com['openhab'] = {
-    'imports': ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'params': params,
     'channels': channels,
     'channel_types': [
@@ -758,6 +776,37 @@ com['openhab'] = {
             'label': 'NOT USED',
             'description':'Triggers a monoflop as configured',
             'command_options': [('Trigger', 'TRIGGER')]
-        }
+        },
+        oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+            description='The current value of the edge counter for the selected channel',
+            read_only=True,
+            params=[{
+                'name': 'Edge Type',
+                'type': 'integer',
+                'options':[('Rising', 0),
+                            ('Falling', 1),
+                            ('Both', 2)],
+                'limitToOptions': 'true',
+                'default': '0',
+
+                'label': 'Edge Type',
+                'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
+            },{
+                'name': 'Debounce',
+                'type': 'integer',
+
+                'default': '100',
+
+                'label': 'Debounce Time',
+                'description': 'The debounce time in ms.',
+            },{
+                'name': 'Reset On Read',
+                'type': 'boolean',
+
+                'default': 'false',
+
+                'label': 'Reset Edge Count on Update',
+                'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
+            }])
     ]
 }

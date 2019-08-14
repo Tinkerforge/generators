@@ -6,7 +6,7 @@
 
 # Temperature IR Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -589,3 +589,32 @@ com['examples'].append({
               ('callback', ('Object Temperature Reached', 'object temperature reached'), [(('Temperature', 'Object Temperature'), 'int16', 1, 10.0, '°C', None)], None, 'The water is boiling!'),
               ('callback_threshold', ('Object Temperature', 'object temperature'), [], '>', [(100, 0)])]
 })
+
+ambient_temp_channel = oh_generic_old_style_channel('Ambient Temperature', 'Ambient Temperature', 'SIUnits.CELSIUS', divisor=10.0, cast_literal='(short)')
+ambient_temp_channel['callback_transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
+
+object_temp_channel = oh_generic_old_style_channel('Object Temperature', 'Object Temperature', 'SIUnits.CELSIUS', divisor=10.0, cast_literal='(short)')
+object_temp_channel['callback_transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        ambient_temp_channel,
+        object_temp_channel
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Ambient Temperature', 'Number:Temperature', 'Ambient Temperature',
+                     description='Measured ambient temperature',
+                     read_only=True,
+                     pattern='%.1f %unit%',
+                     min_=-40,
+                     max_=125),
+        oh_generic_channel_type('Object Temperature', 'Number:Temperature', 'Object Temperature',
+                     description='Measured object temperature, i.e. the temperature of the surface of the object the sensor is aimed at. The temperature of different materials is dependent on their <a href=https://en.wikipedia.org/wiki/Emissivity>emissivity</a>.',
+                     read_only=True,
+                     pattern='%.1f %unit%',
+                     min_=-70,
+                     max_=380)
+    ]
+}

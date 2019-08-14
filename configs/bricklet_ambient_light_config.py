@@ -6,7 +6,7 @@
 
 # Ambient Light Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -520,3 +520,19 @@ com['examples'].append({
               ('callback', ('Illuminance Reached', 'illuminance reached'), [(('Illuminance', 'Illuminance'), 'uint16', 1, 10.0, 'lx', None)], None, 'Too bright, close the curtains!'),
               ('callback_threshold', ('Illuminance', 'illuminance'), [], '>', [(200, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('Illuminance', 'Illuminance', 'SmartHomeUnits.LUX', divisor=10.0)
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Illuminance', 'Number:Illuminance', 'Illuminance',
+                     description='The illuminance of the ambient light sensor.',
+                     read_only=True,
+                     pattern='%.1f %unit%',
+                     min_=0,
+                     max_=900)
+    ]
+}

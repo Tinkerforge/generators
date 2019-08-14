@@ -6,8 +6,7 @@
 
 # Ambient Light Bricklet 3.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -193,3 +192,54 @@ com['examples'].append({
 'functions': [('callback', ('Illuminance', 'illuminance'), [(('Illuminance', 'Illuminance'), 'uint32', 1, 100.0, 'lx', None)], None, 'Too bright, close the curtains!'),
               ('callback_configuration', ('Illuminance', 'illuminance'), [], 1000, False, '>', [(500, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Illuminance Range',
+            'type': 'integer',
+            'options': [('Unlimited', 6),
+                        ('64000Lux', 0),
+                        ('32000Lux', 1),
+                        ('16000Lux', 2),
+                        ('8000Lux', 3),
+                        ('1300Lux', 4),
+                        ('600Lux', 5)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Illuminance Range',
+            'description': 'The unlimited illuminance range allows to measure up to about 100000lux, but above 64000lux the precision starts to drop.<br/><br/>A smaller illuminance range increases the resolution of the data.<br/><br/>If the actual measure illuminance is out-of-range then the current illuminance range maximum +0.01lux is reported. For example, 800001 for the 0-8000lux range.<br/><br/>If the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
+        }, {
+            'name': 'Integration Time',
+            'type': 'integer',
+            'options': [('50ms', 0),
+                        ('100ms', 1),
+                        ('150ms', 2),
+                        ('200ms', 3),
+                        ('250ms', 4),
+                        ('300ms', 5),
+                        ('350ms', 6),
+                        ('400ms', 7)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Integration Time',
+            'description': 'A longer integration time will result in less noise on the data.<br/><br/>With a long integration time the sensor might be saturated before the measured value reaches the maximum of the selected illuminance range. In this case 0lux is reported.<br/><br/>If the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
+        }
+    ],
+    'init_code': """this.setConfiguration(cfg.illuminanceRange.shortValue(), cfg.integrationTime.shortValue());""",
+    'channels': [
+        oh_generic_channel('Illuminance', 'Illuminance', 'SmartHomeUnits.LUX', divisor=100.0)
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Illuminance', 'Number:Illuminance', 'Illuminance',
+                     description='The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=0,
+                     max_=100000)
+    ]
+}

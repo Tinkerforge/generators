@@ -6,6 +6,8 @@
 
 # Motion Detector Bricklet 2.0 communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -53,7 +55,7 @@ in the "motion detected" state.
 """,
 'de':
 """
-Gibt 1 zurück wenn eine Bewegung detektiert wurde. 1 wird für ca. 1,8 Sekunden 
+Gibt 1 zurück wenn eine Bewegung detektiert wurde. 1 wird für ca. 1,8 Sekunden
 zurückgegeben bevor der Sensor wieder erneut eine Bewegung detektieren kann.
 
 Auf dem Bricklet selbst ist eine blaue LED, die leuchtet solange das Bricklet
@@ -213,3 +215,86 @@ com['examples'].append({
 'name': 'Indicator',
 'functions': [('setter', 'Set Indicator', [('uint8', 255), ('uint8', 255), ('uint8', 255)], 'Turn blue backlight LEDs on (maximum brightness)', None)]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Sensitivity',
+            'type': 'integer',
+            'default': 50,
+            'min': 0,
+            'max': 100,
+
+            'label': 'Sensitivity',
+    }],
+    'init_code': "this.setSensitivity(cfg.sensitivity);",
+    'channels': [
+        {
+            'id': 'Motion Detected',
+            'label': 'Motion Detected',
+            'type': 'system.trigger',
+            'getter_packet': 'Get Motion Detected',
+            'getter_transform': '""',
+
+            'callback_packet': 'Motion Detected',
+            'callback_transform': '""',
+
+            'is_trigger_channel': True
+        }, {
+            'id': 'Detection Cycle Ended',
+            'label': 'Detection Cycle Ended',
+            'type': 'system.trigger',
+            'getter_packet': 'Get Motion Detected',
+            'getter_transform': '""',
+
+            'callback_packet': 'Detection Cycle Ended',
+            'callback_transform': '""',
+
+            'is_trigger_channel': True
+        },
+
+        {
+            'id': 'Top Left Indicator',
+            'label': 'Top Left Indicator',
+            'type': 'Indicator',
+            'getter_packet': 'Get Indicator',
+            'getter_transform': 'new QuantityType(value.topLeft, {unit})',
+
+            'setter_packet': 'Set Indicator',
+            'setter_packet_params': ['cmd.intValue()', 'this.getIndicator().topRight', 'this.getIndicator().bottom'],
+            'setter_command_type': 'QuantityType',
+            'java_unit': 'SmartHomeUnits.ONE'
+        },{
+            'id': 'Top Right Indicator',
+            'label': 'Top Right Indicator',
+            'type': 'Indicator',
+            'getter_packet': 'Get Indicator',
+            'getter_transform': 'new QuantityType(value.topRight, {unit})',
+
+            'setter_packet': 'Set Indicator',
+            'setter_packet_params': [ 'this.getIndicator().topLeft', 'cmd.intValue()', 'this.getIndicator().bottom'],
+            'setter_command_type': 'QuantityType',
+            'java_unit': 'SmartHomeUnits.ONE'
+        },{
+            'id': 'Bottom Indicator',
+            'label': 'Bottom Indicator',
+            'type': 'Indicator',
+            'getter_packet': 'Get Indicator',
+            'getter_transform': 'new QuantityType(value.bottom, {unit})',
+
+            'setter_packet': 'Set Indicator',
+            'setter_packet_params': ['this.getIndicator().topLeft', 'this.getIndicator().topRight', 'cmd.intValue()'],
+            'setter_command_type': 'QuantityType',
+            'java_unit': 'SmartHomeUnits.ONE'
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Indicator', 'Number:Dimensionless', 'NOT USED',
+                     description='Sets one of the blue backlight LEDs of the fresnel lens. A value of 0 turns the LED off and a value of 255 turns the LED to full brightness.',
+                     pattern='%d',
+                     min_=0,
+                     max_=255)
+    ]
+}

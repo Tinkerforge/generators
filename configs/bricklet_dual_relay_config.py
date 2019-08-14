@@ -246,7 +246,7 @@ def monoflop_channel(channel):
         'getter_transform': 'value.state ? OnOffType.ON : OnOffType.OFF',
 
         'setter_packet': 'Set Monoflop',
-        'setter_packet_params': ['(short){}'.format(channel), 'channelCfg.monoflopValue.booleanValue()'.format(channel), 'channelCfg.monoflopDuration'],
+        'setter_packet_params': ['(short){}'.format(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
         'setter_refreshs': [{
             'channel': 'Relay {}'.format(channel),

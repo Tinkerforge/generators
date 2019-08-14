@@ -6,6 +6,8 @@
 
 # IO-4 Bricklet communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -600,3 +602,177 @@ com['examples'].append({
 'functions': [('callback', ('Interrupt', 'interrupt'), [(('Interrupt Mask', 'Interrupt Mask'), 'uint8:bitmask:4', 1, None, None, None), (('Value Mask', 'Value Mask'), 'uint8:bitmask:4', 1, None, None, None)], None, None),
               ('setter', 'Set Interrupt', [('uint8:bitmask:4', 1 << 0)], 'Enable interrupt on pin 0', None)]
 })
+
+
+def input_channel(idx):
+    return {
+            'predicate': 'cfg.pinConfiguration{} > 1'.format(idx),
+            'id': 'Input Pin {}'.format(idx),
+            'label': 'Measured Level (Pin {})'.format(idx),
+
+            'type': 'Input Pin',
+
+            'getter_packet': 'Get Value',
+            'getter_transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+
+            'callback_filter': '(interruptMask & (1 << {})) > 0'.format(idx),
+            'callback_packet': 'Interrupt',
+            'callback_transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+
+            # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
+            'init_code':"""this.setInterrupt((short)(this.getInterrupt() | (1 << {idx})));
+            this.setConfiguration((short)(1 << {idx}), 'i', cfg.pinConfiguration{idx} % 2 == 1);""".format(idx=idx),
+            'dispose_code': """this.setInterrupt((short)(this.getInterrupt() & ~(1 << {idx})));""".format(idx=idx),
+    }
+
+def output_channel(idx):
+    return {
+            'predicate': 'cfg.pinConfiguration{} <= 1'.format(idx),
+            'id': 'Output Pin {}'.format(idx),
+            'label': 'Set Level (Pin {})'.format(idx),
+
+            'type': 'Output Pin',
+
+            'getter_packet': 'Get Value',
+            'getter_transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+
+            'setter_packet': 'Set Selected Values',
+            'setter_packet_params': ['(short)(1 << {})'.format(idx), 'cmd == OnOffType.ON ? (short)0xFF : (short)0'],
+            'setter_command_type': "OnOffType",
+
+            'callback_packet': 'Monoflop Done',
+            'callback_filter': '(selectionMask & (1 << {})) > 0'.format(idx),
+            'callback_transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+
+
+            'init_code':"""this.setConfiguration((short)(1 << {idx}), 'o', cfg.pinConfiguration{idx} % 2 == 1);""".format(idx=idx),
+    }
+
+def monoflop_channel(idx):
+    return {
+        'predicate': 'cfg.pinConfiguration{} <= 1'.format(idx),
+        'id': 'Monoflop Pin {}'.format(idx),
+        'label': 'Monoflop Pin {}'.format(idx),
+        'type': 'Monoflop',
+
+        'getter_packet': 'Get Monoflop',
+        'getter_packet_params': ['(short){}'.format(idx)],
+        'getter_transform': 'value.value > 0 ? OnOffType.ON : OnOffType.OFF',
+
+        'setter_packet': 'Set Monoflop',
+        'setter_packet_params': ['(short)(1 << {})'.format(idx), 'channelCfg.monoflopValue.booleanValue() ? (short)0xFF : (short)0', 'channelCfg.monoflopDuration.longValue()'],
+        'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+        'setter_refreshs': [{
+            'channel': 'Output Pin {}'.format(idx),
+            'delay': '0'
+        }]
+    }
+
+
+def edge_count_channel(index):
+    return {
+            'predicate': 'cfg.pinConfiguration{} > 1'.format(index),
+            'id': 'Edge Count Pin {0}'.format(index),
+            'type': 'Edge Count',
+            'label': 'Edge Count Pin {0}'.format(index),
+
+            'init_code':"""this.setEdgeCountConfig((short)(1 << {}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
+
+            'getter_packet': 'Get Edge Count',
+            'getter_packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
+            'getter_transform': 'new QuantityType<>(value, {unit})',
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'is_trigger_channel': False
+        }
+
+def pin_config(idx):
+    return {
+            'name': 'Pin Configuration {}'.format(idx),
+            'type': 'integer',
+            'options': [
+                ('Input with pull-up', 3),
+                ('Input without pull-up', 2),
+                ('Output (Initial high)', 1),
+                ('Output (Initial low)', 0)
+            ],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Pin Configuration {}'.format(idx),
+            'description': 'Configures the direction of pin {}. Inputs without pull-up will be floating if nothing is connected. Outputs can have an initial state of low or high.'.format(idx),
+        }
+
+channels = [input_channel(i) for i in range(0, 4)] + [output_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)] + [edge_count_channel(i) for i in range(0, 4)]
+params = [pin_config(i) for i in range(0, 4)]
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'params': params,
+    'channels': channels,
+    'channel_types': [
+        oh_generic_channel_type('Input Pin', 'Switch', 'Measured Level',
+                     description='The logic level that is currently measured on the pin.',
+                     read_only=True),
+        oh_generic_channel_type('Output Pin', 'Switch', 'Set Level',
+                     description='The logic level that is currently set on the pin.',
+                     read_only=False),
+        {
+            'id': 'Monoflop',
+            'item_type': 'String',
+            'params': [{
+                'name': 'Monoflop Duration',
+                'type': 'integer',
+                'default': 1000,
+                'min': 0,
+                'max': 2**31 - 1,
+                'unit': 'ms',
+
+                'label': 'Monoflop duration',
+                'description': 'The time (in ms) that the pin should hold the configured value.',
+            },
+            {
+                'name': 'Monoflop Value',
+                'type': 'boolean',
+                'default': 'true',
+
+                'label': 'Monoflop value',
+                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+            }],
+            'label': 'NOT USED',
+            'description':'Triggers a monoflop as configured',
+            'command_options': [('Trigger', 'TRIGGER')]
+        },
+        oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+            description='The current value of the edge counter for the selected channel',
+            read_only=True,
+            params=[{
+                'name': 'Edge Type',
+                'type': 'integer',
+                'options':[('Rising', 0),
+                            ('Falling', 1),
+                            ('Both', 2)],
+                'limitToOptions': 'true',
+                'default': '0',
+
+                'label': 'Edge Type',
+                'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
+            },{
+                'name': 'Debounce',
+                'type': 'integer',
+
+                'default': '100',
+
+                'label': 'Debounce Time',
+                'description': 'The debounce time in ms.',
+            },{
+                'name': 'Reset On Read',
+                'type': 'boolean',
+
+                'default': 'false',
+
+                'label': 'Reset Edge Count on Update',
+                'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
+            }])
+    ]
+}

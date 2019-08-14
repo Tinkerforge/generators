@@ -6,7 +6,7 @@
 
 # Rotary Encoder Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -356,3 +356,49 @@ com['examples'].append({
               ('callback_period', ('Count', 'count'), [], 50)]
 })
 
+count_channel = oh_generic_old_style_channel('Count', 'Count', 'SmartHomeUnits.ONE')
+count_channel['getter_packet_params'] = ['false']
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    # TODO: Remove this hack and implement in generator if more devices need mapping multiple callbacks to one channel.
+    'init_code': """this.addPressedListener(() -> triggerChannelFn.accept("RotaryEncoderPressed", CommonTriggerEvents.PRESSED));
+    this.addReleasedListener(() -> triggerChannelFn.accept("RotaryEncoderPressed", CommonTriggerEvents.RELEASED));""",
+    'channels': [
+        count_channel,
+        {
+            'id': 'Reset Counter',
+            'type': 'Reset Counter',
+
+            'setter_packet': 'Get Count',
+            'setter_packet_params': ['true'],
+            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+            'setter_refreshs': [{
+                'channel': 'Count',
+                'delay': '0'
+            }]
+        },
+        {
+            'id': 'Pressed',
+            'type': 'system.rawbutton',
+
+            'getter_packet': 'Is Pressed',
+            'getter_transform': "value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED",
+            'is_trigger_channel': True
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Count', 'Number:Dimensionless', 'Count',
+                     description='The current count of the encoder. The encoder has 24 steps per rotation. Turning the encoder to the left decrements the counter, so a negative count is possible.',
+                     read_only=True,
+                     pattern='%d'),
+        {
+            'id': 'Reset Counter',
+            'item_type': 'String',
+            'label': 'Reset Counter',
+            'description':'Resets the counter to 0.',
+            'command_options': [('Reset', 'RESET')]
+        }
+    ]
+}
