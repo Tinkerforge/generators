@@ -335,10 +335,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 channel_cfg = []
             if c.predicate != 'true':
                 init_code += ['if ({}) {{'.format(c.predicate)]
-                init_code += c.init_code.split('\n')
-                init_code += ['}']
             else:
-                init_code += ['{'] + channel_cfg + c.init_code.split('\n') + ['}']
+                init_code += ['{']
+
+            init_code +=  channel_cfg + c.init_code.split('\n') + ['}']
         return init_code
 
     def get_openhab_callback_impl(self):
