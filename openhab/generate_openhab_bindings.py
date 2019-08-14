@@ -84,6 +84,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'dispose_code': '',
             'getter_packet': None,
             'getter_packet_params': [],
+            'getter_transform': None,
 
             'setter_packet': None,
             'setter_packet_params': [],
