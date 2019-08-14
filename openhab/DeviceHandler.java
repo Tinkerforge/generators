@@ -29,6 +29,7 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -64,11 +65,9 @@ public class DeviceHandler extends BaseThingHandler {
 
     public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier) {
         super(thing);
-        channels = thing.getChannels();
+        channels = new ArrayList<Channel>(thing.getChannels());
         System.out.println("Constructing " + thing.getUID().getAsString());
         this.deviceSupplier = deviceSupplier;
-
-
     }
 
     private void enumerateListener(String uid, String connectedUid, char position, short[] hardwareVersion,
@@ -205,7 +204,6 @@ public class DeviceHandler extends BaseThingHandler {
                                                            .map(s -> new ChannelUID(getThing().getUID(), s))
                                                            .map(cuid -> channels.stream().filter(c -> c.getUID().equals(cuid)).findFirst().get())
                                                            .collect(Collectors.toList());
-
         updateThing(editThing().withChannels(enabledChannels).build());
     }
 
