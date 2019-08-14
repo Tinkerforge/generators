@@ -15,6 +15,7 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.config.core.Configuration;
+import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
@@ -125,7 +126,13 @@ public class DeviceHandler extends BaseThingHandler {
 
     private void initialize_device() {
         String id = thing.getUID().getId();
-        BrickDaemonHandler brickd = ((BrickDaemonHandler) getBridge().getHandler());
+        Bridge bridge = getBridge();
+        if (bridge == null)
+        {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
+            return;
+        }
+        BrickDaemonHandler brickd = ((BrickDaemonHandler) bridge.getHandler());
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
         device = deviceSupplier.apply(id, ipcon);
 
