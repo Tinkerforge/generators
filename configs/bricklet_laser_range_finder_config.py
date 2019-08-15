@@ -794,7 +794,7 @@ Der **Measurement Frequency** Parameter wird in Hz gesetzt. Er erzwingt eine fes
 Wenn der Wert auf 0 gesetzt wird, nutzt das Laser Range Finder Bricklet die optimale Frequenz je nach
 Konfiguration und aktuell gemessener Distanz. Da die Messrate in diesem Fall nicht fest ist, ist die
 Geschwindigkeitsmessung nicht stabil. Für eine stabile Geschwindigkeitsmessung sollte eine feste
-Messfrequenz eingestellt werden. Desto niedriger die Frequenz ist, desto größer ist die Auflösung
+Messfrequenz eingestellt werden. Je niedriger die Frequenz ist, desto größer ist die Auflösung
 der Geschwindigkeitsmessung. Der erlaubte Wertbereich ist 10Hz-500Hz (und 0 um die feste
 Messfrequenz auszustellen).
 

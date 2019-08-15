@@ -81,12 +81,12 @@ Gibt alle Messdaten des Energy Monitor Bricklets zurück.
 
 Die Frequenz wird alle 6s neu berechnet.
 
-Alle anderen Werte werden integriert über 10 Nulldurchgänge der Spannungs-Sinuskurve.
-Mit einer Standard AC-Netzspannungsfrequenz von 50Hz entspricht das 5 Messungen pro Sekunde
-(oder eine Integrationszeit von 200ms pro Messung).
+Alle anderen Werte werden  über 10 Nulldurchgänge der Spannungs-Sinuskurve integriert.
+Mit einer Standard Netzspannungsfrequenz von 50Hz entspricht das 5 Messungen pro Sekunde
+(oder einer Integrationszeit von 200ms pro Messung).
 
 Wenn kein Spannungstransformator angeschlossen ist, nutzt das Bricklet den Kurvenverlauf
-des Stroms um die Frequenz zu bestimmen und die Integrationszeit beträgt 10 Nulldurchläufe
+des Stroms, um die Frequenz zu bestimmen und die Integrationszeit beträgt 10 Nulldurchläufe
 der Strom-Sinuskurve.
 """
 }]
@@ -134,13 +134,13 @@ the voltage and current waveforms.
 """
 Gibt eine Momentaufnahme des Spannungs- und Stromkurvenverlaufs zurück. Die
 Werte im zurückgegebenen Array alternieren zwischen Spannung und Strom. Die
-Daten eines Getter-Aufrufs beinhalten 768 Datenpunkte für Spannnung und Strom,
+Daten eines Getter-Aufrufs beinhalten 768 Datenpunkte für Spannung und Strom,
 diese korrespondieren zu ungefähr 3 vollen Sinuskurven.
 
 Die Spannung hat eine Auflösung von 100mV und der Strom hat eine Auflösung
 von 10mA.
 
-Die Daten können für eine grafische Repräsentation (nicht-realzeit) der 
+Die Daten können für eine grafische Repräsentation (nicht-realzeit) der
 Kurvenverläufe genutzt werden.
 """
 }]
@@ -199,7 +199,7 @@ eine 1V:30A Spannungszange verwendet wird, ergibt das ein Spannungsverhältnis v
 
 In diesem Fall müssten also die Werte 2556 und 3000 gesetzt werden.
 
-Die Kalibrierung wird in nicht-flüchtigen Speicher gespeichert und muss nur einmal
+Die Kalibrierung wird in nicht-flüchtigem Speicher gespeichert und muss nur einmal
 gesetzt werden.
 
 Im Auslieferungszustand ist das Spanungsverhältnis auf 1923 und das Stromverhältnis auf 3000
@@ -256,17 +256,17 @@ The calibration is saved in non-volatile memory, you only have to set it once.
 'de':
 """
 Ein Aufruf dieser Funktion startet eine Offset-Kalibrierung. Dazu werden die
-Spannungs- und Stromkurvenverläufe über einen längeren Zeitraum aufsummiert um
+Spannungs- und Stromkurvenverläufe über einen längeren Zeitraum aufsummiert, um
 den Nulldurchgangspunkt der Sinuskurve zu finden.
 
-Der Offset wird für das Bricklet von Tinkerforge werkskalibriert. Ein Aufruf dieser
+Der Offset für das Bricklet wird von Tinkerforge ab Werk kalibriert. Ein Aufruf dieser
 Funktion sollte also nicht notwendig sein.
 
-Wenn der Offset re-kalibriert werden soll empfehlen wir entweder eine Last
-anzuschließen die eine glatte Sinuskurve für Spannung und Strom erzeugt oder
+Wenn der Offset rekalibriert werden soll, empfehlen wir entweder eine Last
+anzuschließen, die eine glatte Sinuskurve für Spannung und Strom erzeugt, oder
 die beiden Eingänge kurzzuschließen.
 
-Die Kalibrierung wird in nicht-flüchtigen Speicher gespeichert und muss nur einmal
+Die Kalibrierung wird in nicht-flüchtigem Speicher gespeichert und muss nur einmal
 gesetzt werden.
 """
 }]

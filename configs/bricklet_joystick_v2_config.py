@@ -106,7 +106,7 @@ Kalibriert die Mittelposition des Joysticks. Sollte der Joystick Bricklet 2.0
 nicht x=0 und y=0 in der Mittelposition zurückgeben, kann diese Funktion
 aufgerufen werden wenn der Joystick sich unbewegt in der Mittelposition befindet.
 
-Die resultierende Kalibrierung wird in nicht-flüchtigen Speicher gespeichert,
+Die resultierende Kalibrierung wird in nicht-flüchtigem Speicher gespeichert,
 somit ist die Kalibrierung nur einmalig notwendig.
 """
 }]

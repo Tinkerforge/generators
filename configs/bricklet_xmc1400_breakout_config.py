@@ -75,7 +75,7 @@ the XMC_GPIO_Init function. See communication.c in the firmware.
 'de':
 """
 Beispiel für eine Setter-Funktion. Die Werte werden direkt an die Funktion
-XMC_GPIO_Init übergeben. Siehe communication.c in the firmware.
+XMC_GPIO_Init übergeben. Siehe communication.c in der Firmware.
 """
 }]
 })
@@ -96,7 +96,7 @@ XMC_GPIO_GetInput call for the given port/pin.
 'de':
 """
 Beispiel für eine Getter-Funktion. Gibt das Resultat eines
-XMC_GPIO-GetInput-Aufrufs für den gegebenen Port/Pin zurück.
+XMC_GPIO_GetInput-Aufrufs für den gegebenen Port/Pin zurück.
 """
 }]
 })
@@ -291,8 +291,8 @@ count_doc = {
 """
 Returns the value of the example count (see example.c).
 
-This example function uses "add_callback_value_function"-helper in the
-generater. The getter as well as the callback and callback configuration
+This example function uses the "add_callback_value_function"-helper in the
+generator. The getter as well as the callback and callback configuration
 functions are auto-generated for the API as well as the firmware.
 """,
 'de':

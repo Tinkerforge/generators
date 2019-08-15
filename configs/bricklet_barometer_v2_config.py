@@ -164,7 +164,7 @@ Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gl
 für die Luftdruck- und Temperaturmessung.
 
 Wenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert.
-Desto kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
+Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
 Der Wertebereich liegt bei 1-1000.
 

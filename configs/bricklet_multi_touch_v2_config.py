@@ -47,7 +47,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current touch state. The state is given as a array of 
+Returns the current touch state. The state is given as a array of
 bools.
 
 Element 0 to 11 represent the 12 electrodes and element 12 represents
@@ -62,6 +62,10 @@ is already counted as touched if a finger is nearly touching the
 electrode. This means that you can put a piece of paper or foil
 or similar on top of a electrode to build a touch panel with
 a professional look.
+
+If you want to get the value periodically, it is recommended to use the
+:cb:`Touch State` callback. You can set the callback configuration
+with :func:`Set Touch State Callback Configuration`.
 """,
 'de':
 """
@@ -80,6 +84,10 @@ Eine Elektrode wird schon als berührt gezählt wenn ein Finger sie
 beinahe berührt. Dadurch ist es möglich ein Stück Papier oder Folie
 über die Elektrode zu kleben um damit ein Touchpanel mit einem
 professionellen Aussehen zu bauen.
+
+Wenn der Wert periodisch benötigt wird, kann auch der :cb:`Touch State` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set Touch State Callback Configuration` konfiguriert.
 """
 }]
 })

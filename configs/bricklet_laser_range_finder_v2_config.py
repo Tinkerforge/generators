@@ -200,7 +200,7 @@ Der **Measurement Frequency** Parameter wird in Hz gesetzt. Er erzwingt eine fes
 Wenn der Wert auf 0 gesetzt wird, nutzt das Laser Range Finder Bricklet die optimale Frequenz je nach
 Konfiguration und aktuell gemessener Distanz. Da die Messrate in diesem Fall nicht fest ist, ist die
 Geschwindigkeitsmessung nicht stabil. Für eine stabile Geschwindigkeitsmessung sollte eine feste
-Messfrequenz eingestellt werden. Desto niedriger die Frequenz ist, desto größer ist die Auflösung
+Messfrequenz eingestellt werden. Je niedriger die Frequenz ist, desto größer ist die Auflösung
 der Geschwindigkeitsmessung. Der erlaubte Wertbereich ist 10Hz-500Hz (und 0 um die feste
 Messfrequenz auszustellen).
 
@@ -292,19 +292,19 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-The offset is given in cm and added to the measured distance. 
+The offset is given in cm and added to the measured distance.
 It is saved in non-volatile memory, you only have to set it once.
 
-The Bricklet comes with a per-sensor factory-calibrated offset value, 
+The Bricklet comes with a per-sensor factory-calibrated offset value,
 you should not have to call this function.
 
 If you want to re-calibrate the offset you first have to set it to 0.
-Calculate the offset by measuring the distance to a known distance 
+Calculate the offset by measuring the distance to a known distance
 and set it again.
 """,
 'de':
 """
-Der Offset wird in cm gegeben auf die Distanz addiert. Es wird in 
+Der Offset wird in cm gegeben auf die Distanz addiert. Es wird in
 nicht-flüchtigen Speicher gespeichert und muss nur einmal gesetzt werden.
 
 Der Offset wird für das Bricklet pro Sensor von Tinkerforge werkskalibriert.
