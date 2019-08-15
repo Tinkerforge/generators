@@ -265,11 +265,13 @@ def electrode_channel(idx):
         'id': 'Electrode {}'.format(idx),
         'label': 'Electrode {}'.format(idx),
         'type': 'Electrode',
-        'getter_packet': 'Get Touch State',
-        'getter_transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+        'getters': [{
+            'packet': 'Get Touch State',
+            'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
-        'callback_packet': 'Touch State',
-        'callback_transform': '(state & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+        'callbacks': [{
+            'packet': 'Touch State',
+            'transform': '(state & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
     }
 
 def electrode_config(idx):
@@ -310,17 +312,20 @@ com['openhab'] = {
             'id': 'Proximity',
             'label': 'Proximity',
             'type': 'Electrode',
-            'getter_packet': 'Get Touch State',
-            'getter_transform': '(value & (1 << 12)) > 0 ? OnOffType.ON : OnOffType.OFF',
+            'getters': [{
+                'packet': 'Get Touch State',
+                'transform': '(value & (1 << 12)) > 0 ? OnOffType.ON : OnOffType.OFF'}],
 
-            'callback_packet': 'Touch State',
-            'callback_transform': '(state & (1 << 12)) > 0 ? OnOffType.ON : OnOffType.OFF',
+            'callbacks': [{
+                'packet': 'Touch State',
+                'transform': '(state & (1 << 12)) > 0 ? OnOffType.ON : OnOffType.OFF'}]
         },
         {
             'id': 'Recalibrate',
             'type': 'Recalibrate',
-            'setter_packet': 'Recalibrate',
-            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+            'setters': [{
+                'packet': 'Recalibrate'}],
+            'setter_command_type': "StringType" # Command type has to be string type to be able to use command options.
         },
     ],
     'channel_types': [

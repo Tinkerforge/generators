@@ -490,12 +490,14 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
             'id': 'Enabled',
             'type': 'Enabled',
 
-            'setter_packet': 'Set {title_words}',
-            'setter_packet_params': ['cmd == OnOffType.ON'],
+            'setters': [{
+                'packet': 'Set {title_words}',
+                'packet_params': ['cmd == OnOffType.ON']}],
             'setter_command_type': "OnOffType",
 
-            'getter_packet': 'Get {title_words}',
-            'getter_transform': 'value ? OnOffType.ON : OnOffType.OFF',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}]
         },
         {
             'id': 'Current',
@@ -503,12 +505,14 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
 
             'predicate': 'cfg.controlVoltage == 0',
 
-            'setter_packet': 'Set {title_words}',
-            'setter_packet_params': ['(int)(cmd.doubleValue() * 1000000.0)'],
+            'setters': [{
+                'packet': 'Set {title_words}',
+                'packet_params': ['(int)(cmd.doubleValue() * 1000000.0)']}],
             'setter_command_type': "QuantityType",
 
-            'getter_packet': 'Get {title_words}',
-            'getter_transform': 'new QuantityType(value / 1000000.0, SmartHomeUnits.AMPERE)',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'transform': 'new QuantityType(value / 1000000.0, SmartHomeUnits.AMPERE)'}]
         },
         {
             'id': 'Voltage',
@@ -516,12 +520,14 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
 
             'predicate': 'cfg.controlVoltage == 1',
 
-            'setter_packet': 'Set {title_words}',
-            'setter_packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
+            'setters': [{
+                'packet': 'Set {title_words}',
+                'packet_params': ['(int)(cmd.doubleValue() * 1000.0)']}],
             'setter_command_type': "QuantityType",
 
-            'getter_packet': 'Get {title_words}',
-            'getter_transform': 'new QuantityType(value / 1000.0, SmartHomeUnits.VOLT)',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'transform': 'new QuantityType(value / 1000.0, SmartHomeUnits.VOLT)'}]
         }
     ],
     'channel_types': [

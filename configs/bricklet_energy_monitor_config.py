@@ -393,11 +393,14 @@ def energyDataChannel(id_, type_, unit='SmartHomeUnits.ONE', divisor=1):
     return {
         'id': id_,
         'type': type_,
-        'getter_packet': 'Get Energy Data',
-        'getter_packet_params': [],
-        'callback_packet': 'Energy Data',
-        'getter_transform': 'new QuantityType<>(value.{headless}{divisor}, {unit})',
-        'callback_transform': 'new QuantityType<>({headless}{divisor}, {unit})',
+        'getters': [{
+            'packet': 'Get Energy Data',
+            'packet_params': [],
+            'transform': 'new QuantityType<>(value.{headless}{divisor}, {unit})'}],
+        'callbacks': [{
+            'packet': 'Energy Data',
+            'transform': 'new QuantityType<>({headless}{divisor}, {unit})'}],
+
         'java_unit': unit,
         'divisor': divisor,
         'is_trigger_channel': False
@@ -430,11 +433,9 @@ com['openhab'] = {
             'id': 'Reset Energy',
             'type': 'Reset',
 
-            'getter_transform': 'value',
-            'callback_transform': 'value',
-
-            'setter_packet': 'Reset Energy',
-            'setter_command_type': "StringType",
+            'setters': [{
+                'packet': 'Reset Energy'}],
+            'setter_command_type': "StringType"
         }
     ],
     'channel_types': [

@@ -276,49 +276,44 @@ com['examples'].append({
 })
 
 
-dist_channel = oh_generic_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=1000.0)
-dist_channel['init_code'] += """this.setMovingAverageConfiguration(channelCfg.movingAverageLength);
-this.setDistanceLEDConfig(channelCfg.distanceLEDConfig);"""
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Moving Average Length',
+            'type': 'integer',
+            'default': 25,
+            'min': 1,
+            'max': 1000,
 
-dist_channel_type = oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
+            'label': 'Moving Average Length',
+            'description': 'Sets the length of a moving averaging for the distance.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>New data is gathered every ~10ms. With a moving average of length 1000 the resulting averaging window has a length of approximately 10s. If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 25.',
+        },
+        {
+            'name': 'Distance LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Distance', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Distance LED Config',
+            'description': "Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).",
+        }],
+    'init_code': """this.setMovingAverageConfiguration(cfg.movingAverageLength);
+this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
+    'channels': [
+        oh_generic_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=1000.0)
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
                      description='Measured distance',
                      read_only=True,
                      pattern='%.3f %unit%',
                      min_=40,
                      max_=1500)
-dist_channel_type['params'] += [
-    {
-        'name': 'Moving Average Length',
-        'type': 'integer',
-        'default': 25,
-        'min': 1,
-        'max': 1000,
-
-        'label': 'Moving Average Length',
-        'description': 'Sets the length of a moving averaging for the distance.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>New data is gathered every ~10ms. With a moving average of length 1000 the resulting averaging window has a length of approximately 10s. If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 25.',
-    },
-    {
-        'name': 'Distance LED Config',
-        'type': 'integer',
-        'options': [('Off', 0),
-                    ('On', 1),
-                    ('Show Heartbeat', 2),
-                    ('Show Distance', 3)],
-        'limitToOptions': 'true',
-        'default': '3',
-
-        'label': 'Distance LED Config',
-        'description': "Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).",
-    },
-]
-
-com['openhab'] = {
-    'imports': oh_generic_channel_imports(),
-    'param_groups': oh_generic_channel_param_groups(),
-    'channels': [
-        dist_channel
-    ],
-    'channel_types': [
-        dist_channel_type
     ]
 }

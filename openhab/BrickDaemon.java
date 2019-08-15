@@ -94,7 +94,7 @@ public class BrickDaemon extends Device {
     public void dispose(Configuration config) throws TinkerforgeException {}
 
     @Override
-    public void refreshValue(String value, Configuration channelConfig, BiConsumer<String, State> updateStateFn,
+    public void refreshValue(String value, Configuration config, Configuration channelConfig, BiConsumer<String, State> updateStateFn,
             BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {
         throw new NotSupportedException();
     }

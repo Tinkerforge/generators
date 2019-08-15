@@ -357,22 +357,20 @@ com['examples'].append({
 })
 
 count_channel = oh_generic_old_style_channel('Count', 'Count', 'SmartHomeUnits.ONE')
-count_channel['getter_packet_params'] = ['false']
+count_channel['getters'][0]['packet_params'] = ['false']
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
-    # TODO: Remove this hack and implement in generator if more devices need mapping multiple callbacks to one channel.
-    'init_code': """this.addPressedListener(() -> triggerChannelFn.accept("RotaryEncoderPressed", CommonTriggerEvents.PRESSED));
-    this.addReleasedListener(() -> triggerChannelFn.accept("RotaryEncoderPressed", CommonTriggerEvents.RELEASED));""",
     'channels': [
         count_channel,
         {
             'id': 'Reset Counter',
             'type': 'Reset Counter',
 
-            'setter_packet': 'Get Count',
-            'setter_packet_params': ['true'],
+            'setters': [{
+                'packet': 'Get Count',
+                'packet_params': ['true']}],
             'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
             'setter_refreshs': [{
                 'channel': 'Count',
@@ -383,8 +381,17 @@ com['openhab'] = {
             'id': 'Pressed',
             'type': 'system.rawbutton',
 
-            'getter_packet': 'Is Pressed',
-            'getter_transform': "value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED",
+            'getters': [{
+                'packet': 'Is Pressed',
+                'transform': "value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED"}],
+
+            'callbacks': [{
+                    'packet': 'Pressed',
+                    'transform': 'CommonTriggerEvents.PRESSED'
+                },{
+                    'packet': 'Released',
+                    'transform': 'CommonTriggerEvents.RELEASED'
+                }],
             'is_trigger_channel': True
         }
     ],

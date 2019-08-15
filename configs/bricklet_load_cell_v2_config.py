@@ -343,11 +343,8 @@ this.setMovingAverage(cfg.movingAverage);""",
             'id': 'Tare',
             'type': 'Tare',
 
-            #'getter_packet': 'Get Monoflop',
-            #'getter_packet_params': ['(short) {}'],
-            #'getter_transform': 'value.state ? OnOffType.ON : OnOffType.OFF',
-
-            'setter_packet': 'Tare',
+            'setters': [{
+                'packet': 'Tare'}],
             'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
             'setter_refreshs': [{
                 'channel': 'Weight',

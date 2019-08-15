@@ -199,21 +199,27 @@ com['openhab'] = {
             'id': 'Color',
             'type': 'Color',
 
-            'setter_packet': 'Set {title_words}',
-            'setter_packet_params': [percent_type_to_int('cmd.getRed()'), percent_type_to_int('cmd.getGreen()'), percent_type_to_int('cmd.getBlue()'),],
+            'setters': [{
+                'packet': 'Set {title_words}',
+                'packet_params': [percent_type_to_int('cmd.getRed()'), percent_type_to_int('cmd.getGreen()'), percent_type_to_int('cmd.getBlue()'),]}],
             'setter_command_type': "HSBType",
 
-            'getter_packet': 'Get {title_words}',
-            'getter_transform': 'HSBType.fromRGB(value.red, value.green, value.blue)',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'transform': 'HSBType.fromRGB(value.red, value.green, value.blue)'}],
         },
         {
             'id': 'Button',
             'label': 'Button',
             'type': 'system.rawbutton',
-            'getter_packet': 'Get Button State',
-            'callback_packet': 'Button State Changed',
-            'getter_transform': 'value == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
-            'callback_transform': 'state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'getters': [{
+                'packet': 'Get Button State',
+                'transform': 'value == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+            'callbacks': [{
+                'packet': 'Button State Changed',
+                'transform': 'state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
             'is_trigger_channel': True
         }
     ],

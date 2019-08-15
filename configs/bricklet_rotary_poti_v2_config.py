@@ -6,8 +6,7 @@
 
 # Rotary Poti Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -66,3 +65,19 @@ com['examples'].append({
 'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'int16', 1, None, '°', None)], None, None),
               ('callback_configuration', ('Position', 'position'), [], 250, False, 'x', [(0, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_channel('Position', 'Position', 'SmartHomeUnits.DEGREE_ANGLE')
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Position', 'Number:Angle', 'Position',
+                     description='The position of the rotary potentiometer. The value is and between -150° (turned left) and 150° (turned right).',
+                     read_only=True,
+                     pattern='%d %unit%',
+                     min_=-150,
+                     max_=150)
+    ]
+}

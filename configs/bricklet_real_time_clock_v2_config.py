@@ -493,22 +493,25 @@ com['openhab'] = {
             'id': 'Date Time',
             'label': 'Date Time',
             'type': 'Date Time',
-            'getter_packet': 'Get Date Time',
-            'getter_transform': 'new DateTimeType(ZonedDateTime.of(value.year, value.month, value.day, value.hour, value.minute, value.second, value.centisecond * 10 * 100 * 100, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))',
+            'getters': [{
+                'packet': 'Get Date Time',
+                'transform': 'new DateTimeType(ZonedDateTime.of(value.year, value.month, value.day, value.hour, value.minute, value.second, value.centisecond * 10 * 100 * 100, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))'}],
 
-            'setter_packet': 'Set Date Time',
-            'setter_packet_params': ['cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getYear()',
-                                     'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMonth().getValue()',
-                                     'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfMonth()',
-                                     'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getHour()',
-                                     'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMinute()',
-                                     'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getSecond()',
-                                     'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getNano() / 1000 / 1000 / 10',
-                                     'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfWeek().getValue()'],
+            'setters': [{
+                'packet': 'Set Date Time',
+                'packet_params': ['cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getYear()',
+                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMonth().getValue()',
+                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfMonth()',
+                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getHour()',
+                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMinute()',
+                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getSecond()',
+                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getNano() / 1000 / 1000 / 10',
+                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfWeek().getValue()']}],
             'setter_command_type': 'DateTimeType',
 
-            'callback_packet': 'Date Time',
-            'callback_transform': 'new DateTimeType(ZonedDateTime.of(year, month, day, hour, minute, second, centisecond * 10 * 100 * 100, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))',
+            'callbacks': [{
+                'packet': 'Date Time',
+                'transform': 'new DateTimeType(ZonedDateTime.of(year, month, day, hour, minute, second, centisecond * 10 * 100 * 100, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))'}],
 
         }, {
             'id': 'Timestamp',
@@ -516,11 +519,13 @@ com['openhab'] = {
             'type': 'Timestamp',
             'java_unit': 'SmartHomeUnits.SECOND',
             'divisor': 1000.0,
-            'getter_packet': 'Get Timestamp',
-            'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
+            'getters': [{
+                'packet': 'Get Timestamp',
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
-            'callback_packet': 'Date Time',
-            'callback_transform': 'new QuantityType<>(timestamp{divisor}, {unit})',
+            'callbacks': [{
+                'packet': 'Date Time',
+                'transform': 'new QuantityType<>(timestamp{divisor}, {unit})'}]
         },
     ],
     'channel_types': [

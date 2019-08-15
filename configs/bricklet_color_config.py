@@ -736,10 +736,12 @@ com['openhab'] = {
         'init_code':"""this.set{camel}CallbackPeriod(channelCfg.updateInterval);
 this.set{camel}CallbackThreshold(\'x\', 0, 0, 0, 0, 0, 0, 0, 0);""",
         'dispose_code': """this.set{camel}CallbackPeriod(0);""",
-        'getter_packet': 'Get Color',
-        'callback_packet': 'Color',
-        'getter_transform': 'HSBType.fromRGB(value.r * 255 / 65535, value.g * 255 / 65535, value.b * 255 / 65535)',
-        'callback_transform': 'HSBType.fromRGB(r * 255 / 65535, g * 255 / 65535, b * 255 / 65535)',
+        'getters': [{
+            'packet': 'Get Color',
+            'transform': 'HSBType.fromRGB(value.r * 255 / 65535, value.g * 255 / 65535, value.b * 255 / 65535)'}],
+        'callbacks': [{
+            'packet': 'Color',
+            'transform': 'HSBType.fromRGB(r * 255 / 65535, g * 255 / 65535, b * 255 / 65535)'}]
     }
     ],
     'channel_types': [

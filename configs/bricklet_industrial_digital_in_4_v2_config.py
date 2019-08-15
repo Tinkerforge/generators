@@ -432,12 +432,14 @@ def input_channel(index):
 this.setChannelLEDConfig({0}, channelCfg.ledConfig);""".format(index),
             'dispose_code': """this.setValueCallbackConfiguration({0}, 0, true);""".format(index),
 
-            'getter_packet': 'Get Value',
-            'getter_transform': 'value[{0}] ? OnOffType.ON : OnOffType.OFF'.format(index),
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': 'value[{0}] ? OnOffType.ON : OnOffType.OFF'.format(index)}],
 
-            'callback_filter': 'channel == {0}'.format(index),
-            'callback_packet': 'Value',
-            'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF',
+            'callbacks': [{
+                'filter': 'channel == {0}'.format(index),
+                'packet': 'Value',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
             'is_trigger_channel': False
         }
@@ -450,9 +452,10 @@ def edge_count_channel(index):
 
             'init_code':"""this.setEdgeCountConfiguration({0}, channelCfg.edgeType, channelCfg.debounce);""".format(index),
 
-            'getter_packet': 'Get Edge Count',
-            'getter_packet_params': [str(index), 'channelCfg.resetOnRead'],
-            'getter_transform': 'new QuantityType<>(value, {unit})',
+            'getters': [{
+                'packet': 'Get Edge Count',
+                'packet_params': [str(index), 'channelCfg.resetOnRead'],
+                'transform': 'new QuantityType<>(value, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False

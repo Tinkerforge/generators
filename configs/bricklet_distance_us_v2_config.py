@@ -6,8 +6,7 @@
 
 # Distance US Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -171,3 +170,47 @@ com['examples'].append({
 'functions': [('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, 10.0, 'cm', None)], None, None),
               ('callback_configuration', ('Distance', 'distance'), [], 100, False, '>', [(100, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Update Rate',
+            'type': 'integer',
+            'default': 0,
+            'options':  [('2 Hz', 0),
+                         ('10 Hz', 1)],
+            'limitToOptions': 'true',
+
+            'label': 'Update Rate',
+            'description': 'With 2 Hz update rate the noise is about +-1mm, while with 10 Hz update rate the noise increases to about +-5mm.',
+        }, {
+            'name': 'Distance LED Config',
+            'type': 'integer',
+            'default': 3,
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Distance', 3)],
+            'limitToOptions': 'true',
+
+            'label': 'Distance LED Config',
+            'description': 'Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).',
+        }
+    ],
+    'init_code': """this.setUpdateRate(cfg.updateRate);
+this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
+    'channels': [
+        oh_generic_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=1000.0)
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
+                     description='The current distance measured by the sensor.',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=0.3,
+                     max_=5)
+    ]
+}

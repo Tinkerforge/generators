@@ -171,22 +171,27 @@ com['openhab'] = {
             'id': 'Motion Detected',
             'label': 'Motion Detected',
             'type': 'system.trigger',
-            'getter_packet': 'Get Motion Detected',
-            'getter_transform': '""',
+            'getters': [{
+                'packet': 'Get Motion Detected',
+                'transform': '""'}],
 
-            'callback_packet': 'Motion Detected',
-            'callback_transform': '""',
+            'callbacks': [{
+                'packet': 'Motion Detected',
+                'transform': '""'}],
 
             'is_trigger_channel': True
         }, {
             'id': 'Detection Cycle Ended',
             'label': 'Detection Cycle Ended',
             'type': 'system.trigger',
-            'getter_packet': 'Get Motion Detected',
-            'getter_transform': '""',
 
-            'callback_packet': 'Detection Cycle Ended',
-            'callback_transform': '""',
+            'getters': [{
+                'packet': 'Get Motion Detected',
+                'transform': '""'}],
+
+            'callbacks': [{
+                'packet': 'Detection Cycle Ended',
+                'transform': '""'}],
 
             'is_trigger_channel': True
         },

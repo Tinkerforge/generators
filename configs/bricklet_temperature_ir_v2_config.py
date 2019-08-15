@@ -188,10 +188,10 @@ com['examples'].append({
 })
 
 ambient_temp_channel = oh_generic_channel('Ambient Temperature', 'Ambient Temperature', 'SIUnits.CELSIUS', divisor=10.0)
-ambient_temp_channel['callback_transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
+ambient_temp_channel['callbacks'][0]['transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
 
 object_temp_channel = oh_generic_channel('Object Temperature', 'Object Temperature', 'SIUnits.CELSIUS', divisor=10.0)
-object_temp_channel['callback_transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
+object_temp_channel['callbacks'][0]['transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),

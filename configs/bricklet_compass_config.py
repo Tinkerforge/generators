@@ -6,8 +6,7 @@
 
 # Compass Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -301,3 +300,41 @@ com['examples'].append({
 'functions': [('callback', ('Heading', 'heading'), [(('Heading', 'Heading'), 'int16', 1, 10.0, '°', None)], None, None),
               ('callback_configuration', ('Heading', 'heading'), [], 100, False, 'x', [(0, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Data Rate',
+            'type': 'integer',
+            'default': '0',
+            'options': [('100Hz', 0),
+                        ('200Hz', 1),
+                        ('400Hz', 2),
+                        ('600Hz', 3)],
+            'limitToOptions': 'true',
+
+            'label': 'Data Rate',
+            'description': 'The data rate that is used by the magnetometer. The lower the data rate, the lower is the noise on the data.',
+        }, {
+            'name': 'Background Calibration',
+            'type': 'boolean',
+            'default': 'true',
+
+            'label': 'Enable Background Calibration',
+            'description': 'If the background calibration is enabled the sensing polarity is flipped once per second to automatically calculate and remove offset that is caused by temperature changes. This polarity flipping takes about 20ms. This means that once a second you will not get new data for a period of 20ms. We highly recommend that you keep the background calibration enabled and only disable it if the 20ms off-time is a problem in you application.',
+        }],
+    'init_code': """this.setConfiguration(cfg.dataRate, cfg.backgroundCalibration);""",
+    'channels': [
+        oh_generic_channel('Heading', 'Heading', 'SmartHomeUnits.DEGREE_ANGLE', divisor=10.0)
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Heading', 'Number:Angle', 'Heading',
+                     description='The heading (north = 0 degree)',
+                     read_only=True,
+                     pattern='%.1f %unit%',
+                     min_=0,
+                     max_=360),
+    ]
+}

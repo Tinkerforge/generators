@@ -223,15 +223,18 @@ def relay_channel(channel):
 
         'type': 'Relay',
 
-        'getter_packet': 'Get State',
-        'getter_transform': 'value.relay{} ? OnOffType.ON : OnOffType.OFF'.format(channel),
+        'getters': [{
+            'packet': 'Get State',
+            'transform': 'value.relay{} ? OnOffType.ON : OnOffType.OFF'.format(channel)}],
 
-        'callback_packet': 'Monoflop Done',
-        'callback_filter': 'relay == {}'.format(channel),
-        'callback_transform': 'state ? OnOffType.ON : OnOffType.OFF',
+        'callbacks': [{
+            'packet': 'Monoflop Done',
+            'filter': 'relay == {}'.format(channel),
+            'transform': 'state ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set Selected State',
-        'setter_packet_params': ['(short){}'.format(channel), 'cmd == OnOffType.ON'],
+        'setters': [{
+            'packet': 'Set Selected State',
+            'packet_params': ['(short){}'.format(channel), 'cmd == OnOffType.ON']}],
         'setter_command_type': "OnOffType",
     }
 
@@ -241,12 +244,15 @@ def monoflop_channel(channel):
         'label': 'Monoflop Relay {}'.format(channel),
         'type': 'Monoflop',
 
-        'getter_packet': 'Get Monoflop',
-        'getter_packet_params': ['(short) {}'.format(channel)],
-        'getter_transform': 'value.state ? OnOffType.ON : OnOffType.OFF',
+        'getters': [{
+            'packet': 'Get Monoflop',
+            'packet_params': ['(short) {}'.format(channel)],
+            'transform': 'value.state ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set Monoflop',
-        'setter_packet_params': ['(short){}'.format(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
+        'setters': [{
+            'packet': 'Set Monoflop',
+            'packet_params': ['(short){}'.format(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration']}],
+
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
         'setter_refreshs': [{
             'channel': 'Relay {}'.format(channel),

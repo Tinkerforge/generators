@@ -360,15 +360,18 @@ def relay_channel(channel):
 
         'type': 'Relay',
 
-        'getter_packet': 'Get Value',
-        'getter_transform': '(value & (1 << {})) == 1 ? OnOffType.ON : OnOffType.OFF'.format(channel),
+        'getters': [{
+            'packet': 'Get Value',
+            'transform': '(value & (1 << {})) == 1 ? OnOffType.ON : OnOffType.OFF'.format(channel)}],
 
-        'callback_packet': 'Monoflop Done',
-        'callback_filter': '(selectionMask & (1 << {})) == 1'.format(channel),
-        'callback_transform': '(valueMask & (1 << {})) == 1 ? OnOffType.ON : OnOffType.OFF'.format(channel),
+        'callbacks': [{
+            'packet': 'Monoflop Done',
+            'filter': '(selectionMask & (1 << {})) == 1'.format(channel),
+            'transform': '(valueMask & (1 << {})) == 1 ? OnOffType.ON : OnOffType.OFF'.format(channel)}],
 
-        'setter_packet': 'Set Value',
-        'setter_packet_params': ['cmd == OnOffType.ON ? (getValue() | (1 << {0})) : (getValue() & ~(1 << {0}))'.format(channel)],
+        'setters': [{
+            'packet': 'Set Value',
+            'packet_params': ['cmd == OnOffType.ON ? (getValue() | (1 << {0})) : (getValue() & ~(1 << {0}))'.format(channel)]}],
         'setter_command_type': "OnOffType",
     }
 
@@ -381,12 +384,14 @@ def monoflop_channel(channel):
         'label': 'Monoflop Relay {}'.format(channel),
         'type': 'Monoflop',
 
-        'getter_packet': 'Get Monoflop',
-        'getter_packet_params': ['(short) {}'.format(channel)],
-        'getter_transform': 'value.value == 1 ? OnOffType.ON : OnOffType.OFF',
+        'getters': [{
+            'packet': 'Get Monoflop',
+            'packet_params': ['(short) {}'.format(channel)],
+            'transform': 'value.value == 1 ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set Monoflop',
-        'setter_packet_params': ['1 << {}'.format(channel), 'channelCfg.monoflopValue.booleanValue() ? (1 << {}) : 0'.format(channel), 'channelCfg.monoflopDuration'],
+        'setters': [{
+            'packet': 'Set Monoflop',
+            'packet_params': ['1 << {}'.format(channel), 'channelCfg.monoflopValue.booleanValue() ? (1 << {}) : 0'.format(channel), 'channelCfg.monoflopDuration']}],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
         'setter_refreshs': [{
             'channel': 'Relay {}'.format(channel),

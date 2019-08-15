@@ -375,12 +375,17 @@ def voltage_channel(index):
 this.setChannelLEDConfig({0}, channelCfg.ledConfig);
 this.setChannelLEDStatusConfig({0}, channelCfg.ledStatusMinimum, channelCfg.ledStatusMaximum, channelCfg.ledStatusMode);""".format(index),
             'dispose_code': """this.setVoltageCallbackConfiguration({0}, 0, true, \'x\', 0, 0);""".format(index),
-            'getter_packet': 'Get Voltage',
-            'getter_packet_params': [str(index)],
-            'callback_filter': 'channel == {0}'.format(index),
-            'callback_packet': 'Voltage',
-            'callback_transform': 'new QuantityType<>(voltage{divisor}, {unit})',
-            'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
+
+            'getters': [{
+                'packet': 'Get Voltage',
+                'packet_params': [str(index)],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'filter': 'channel == {0}'.format(index),
+                'packet': 'Voltage',
+                'transform': 'new QuantityType<>(voltage{divisor}, {unit})'}],
+
             'java_unit': 'SmartHomeUnits.VOLT',
             'divisor': '1000.0',
             'is_trigger_channel': False

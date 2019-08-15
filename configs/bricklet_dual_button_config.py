@@ -249,11 +249,13 @@ com['openhab'] = {
             'id': 'Left Button',
             'label': 'Left Button',
             'type': 'system.rawbutton',
-            'getter_packet': 'Get Button State',
-            'getter_transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'getters': [{
+                'packet': 'Get Button State',
+                'transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
-            'callback_packet': 'State Changed',
-            'callback_transform': 'buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'callbacks': [{
+                'packet': 'State Changed',
+                'transform': 'buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'is_trigger_channel': True
         },
@@ -261,11 +263,13 @@ com['openhab'] = {
             'id': 'Right Button',
             'label': 'Right Button',
             'type': 'system.rawbutton',
-            'getter_packet': 'Get Button State',
-            'getter_transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'getters': [{
+                'packet': 'Get Button State',
+                'transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
-            'callback_packet': 'State Changed',
-            'callback_transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED',
+            'callbacks': [{
+                'packet': 'State Changed',
+                'transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'is_trigger_channel': True
         },

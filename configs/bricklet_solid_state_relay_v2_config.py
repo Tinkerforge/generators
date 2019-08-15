@@ -185,25 +185,30 @@ com['openhab'] = {
 
         'type': 'Relay',
 
-        'getter_packet': 'Get State',
-        'getter_transform': 'value ? OnOffType.ON : OnOffType.OFF',
+        'getters': [{
+            'packet': 'Get State',
+            'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
-        'callback_packet': 'Monoflop Done',
-        'callback_transform': 'state ? OnOffType.ON : OnOffType.OFF',
+        'callbacks': [{
+            'packet': 'Monoflop Done',
+            'transform': 'state ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set State',
-        'setter_packet_params': ['cmd == OnOffType.ON'],
+        'setters': [{
+            'packet': 'Set State',
+            'packet_params': ['cmd == OnOffType.ON']}],
         'setter_command_type': "OnOffType",
     }, {
         'id': 'Monoflop relay',
         'label': 'Monoflop Relay',
         'type': 'Monoflop',
 
-        'getter_packet': 'Get Monoflop',
-        'getter_transform': 'value.state ? OnOffType.ON : OnOffType.OFF',
+        'getters': [{
+            'packet': 'Get Monoflop',
+            'transform': 'value.state ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set Monoflop',
-        'setter_packet_params': ['channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
+        'setters': [{
+            'packet': 'Set Monoflop',
+            'packet_params': ['channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration']}],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
         'setter_refreshs': [{
             'channel': 'Relay',

@@ -235,22 +235,27 @@ com['openhab'] = {
             'id': 'Motion Detected',
             'label': 'Motion Detected',
             'type': 'system.trigger',
-            'getter_packet': 'Get Motion Detected',
-            'getter_transform': '""',
 
-            'callback_packet': 'Motion Detected',
-            'callback_transform': '""',
+            'getters': [{
+                'packet': 'Get Motion Detected',
+                'transform': '""'}],
+
+            'callbacks': [{
+                'packet': 'Motion Detected',
+                'transform': '""'}],
 
             'is_trigger_channel': True
         }, {
             'id': 'Detection Cycle Ended',
             'label': 'Detection Cycle Ended',
             'type': 'system.trigger',
-            'getter_packet': 'Get Motion Detected',
-            'getter_transform': '""',
+            'getters': [{
+                'packet': 'Get Motion Detected',
+                'transform': '""'}],
 
-            'callback_packet': 'Detection Cycle Ended',
-            'callback_transform': '""',
+            'callbacks': [{
+                'packet': 'Detection Cycle Ended',
+                'transform': '""'}],
 
             'is_trigger_channel': True
         },
@@ -259,33 +264,40 @@ com['openhab'] = {
             'id': 'Top Left Indicator',
             'label': 'Top Left Indicator',
             'type': 'Indicator',
-            'getter_packet': 'Get Indicator',
-            'getter_transform': 'new QuantityType(value.topLeft, {unit})',
 
-            'setter_packet': 'Set Indicator',
-            'setter_packet_params': ['cmd.intValue()', 'this.getIndicator().topRight', 'this.getIndicator().bottom'],
+            'getters': [{
+                'packet': 'Get Indicator',
+                'transform': 'new QuantityType(value.topLeft, {unit})'}],
+
+            'setters': [{
+                'packet': 'Set Indicator',
+                'packet_params': ['cmd.intValue()', 'this.getIndicator().topRight', 'this.getIndicator().bottom']}],
             'setter_command_type': 'QuantityType',
             'java_unit': 'SmartHomeUnits.ONE'
         },{
             'id': 'Top Right Indicator',
             'label': 'Top Right Indicator',
             'type': 'Indicator',
-            'getter_packet': 'Get Indicator',
-            'getter_transform': 'new QuantityType(value.topRight, {unit})',
+            'getters': [{
+                'packet': 'Get Indicator',
+                'transform': 'new QuantityType(value.topRight, {unit})'}],
 
-            'setter_packet': 'Set Indicator',
-            'setter_packet_params': [ 'this.getIndicator().topLeft', 'cmd.intValue()', 'this.getIndicator().bottom'],
+            'setters': [{
+                'packet': 'Set Indicator',
+                'packet_params': [ 'this.getIndicator().topLeft', 'cmd.intValue()', 'this.getIndicator().bottom']}],
             'setter_command_type': 'QuantityType',
             'java_unit': 'SmartHomeUnits.ONE'
         },{
             'id': 'Bottom Indicator',
             'label': 'Bottom Indicator',
             'type': 'Indicator',
-            'getter_packet': 'Get Indicator',
-            'getter_transform': 'new QuantityType(value.bottom, {unit})',
+            'getters': [{
+                'packet': 'Get Indicator',
+                'transform': 'new QuantityType(value.bottom, {unit})'}],
 
-            'setter_packet': 'Set Indicator',
-            'setter_packet_params': ['this.getIndicator().topLeft', 'this.getIndicator().topRight', 'cmd.intValue()'],
+            'setters': [{
+                'packet': 'Set Indicator',
+                'packet_params': ['this.getIndicator().topLeft', 'this.getIndicator().topRight', 'cmd.intValue()']}],
             'setter_command_type': 'QuantityType',
             'java_unit': 'SmartHomeUnits.ONE'
         }

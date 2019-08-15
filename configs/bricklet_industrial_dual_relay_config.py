@@ -230,15 +230,18 @@ def relay_channel(channel):
 
         'type': 'Relay',
 
-        'getter_packet': 'Get Value',
-        'getter_transform': 'value.channel{} ? OnOffType.ON : OnOffType.OFF'.format(channel),
+        'getters': [{
+            'packet': 'Get Value',
+            'transform': 'value.channel{} ? OnOffType.ON : OnOffType.OFF'.format(channel)}],
 
-        'callback_packet': 'Monoflop Done',
-        'callback_filter': 'channel == {}'.format(channel),
-        'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF',
+        'callbacks': [{
+            'packet': 'Monoflop Done',
+            'filter': 'channel == {}'.format(channel),
+            'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set Selected Value',
-        'setter_packet_params': [str(channel), 'cmd == OnOffType.ON'],
+        'setters': [{
+            'packet': 'Set Selected Value',
+            'packet_params': [str(channel), 'cmd == OnOffType.ON']}],
         'setter_command_type': "OnOffType",
     }
 
@@ -248,12 +251,14 @@ def monoflop_channel(channel):
         'label': 'Monoflop Relay {}'.format(channel),
         'type': 'Monoflop',
 
-        'getter_packet': 'Get Monoflop',
-        'getter_packet_params': ['{}'.format(channel)],
-        'getter_transform': 'value.value ? OnOffType.ON : OnOffType.OFF',
+        'getters': [{
+            'packet': 'Get Monoflop',
+            'packet_params': ['{}'.format(channel)],
+            'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set Monoflop',
-        'setter_packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
+        'setters': [{
+            'packet': 'Set Monoflop',
+            'packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration']}],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
         'setter_refreshs': [{
             'channel': 'Relay {}'.format(channel),

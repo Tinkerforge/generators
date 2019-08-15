@@ -6,6 +6,8 @@
 
 # Multi Touch Bricklet 2.0 communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -369,3 +371,100 @@ com['examples'].append({
 'functions': [('callback', ('Touch State', 'touch state'), [(('State', ['Electrode {}'.format(i) for i in range(0, 12)] + ['Proximity']), 'bool', 13, None, None, None)], None, None),
               ('callback_configuration', ('Touch State', 'touch state'), [], 10, True, None, [])],
 })
+
+
+def electrode_channel(idx):
+    return {
+        'predicate': 'cfg.electrode{}Enabled'.format(idx),
+        'id': 'Electrode {}'.format(idx),
+        'label': 'Electrode {}'.format(idx),
+        'type': 'Electrode',
+        'getters': [{
+            'packet': 'Get Touch State',
+            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+
+        'callbacks': [{
+            'packet': 'Touch State',
+            'transform': 'state[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+    }
+
+def electrode_config(idx):
+    return {
+            'name': 'Electrode {} Enabled'.format(idx),
+            'type': 'boolean',
+            'default': 'true',
+
+            'label': 'Electrode {} Enabled'.format(idx),
+            'description': "True enables the electrode, false disables the electrode. A disabled electrode will always return false as its state. If you don't need all electrodes you can disable the electrodes that are not needed. Disabling electrodes will also reduce power consumption.",
+        }
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Sensitivity',
+            'type': 'integer',
+            'default': 181,
+            'min': 5,
+            'max': 201,
+
+            'label': 'Sensitivity',
+            'description': 'The sensitivity of the electrodes. An electrode with a high sensitivity will register a touch earlier then an electrode with a low sensitivity.<br/><br/>If you build a big electrode you might need to decrease the sensitivity, since the area that can be charged will get bigger. If you want to be able to activate an electrode from further away you need to increase the sensitivity.'
+        }, {
+            'name': 'Proximity Enabled',
+            'type': 'boolean',
+            'default': 'true',
+
+            'label': 'Proximity Enabled',
+            'description': "True enables the proximity feature, false disables it. It is recommended that you disable the proximity feature if not needed. This will reduce the amount of traffic that is produced.",
+        }, {
+            'name': 'Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': 'Update Interval',
+            'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }
+    ] + [electrode_config(i) for i in range(0, 12)],
+    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());this.recalibrate();
+this.setTouchStateCallbackConfiguration(cfg.updateInterval, true);""",
+    'channels': [electrode_channel(i) for i in range(0, 12)] + [
+        {
+            'predicate': 'cfg.proximityEnabled',
+            'id': 'Proximity',
+            'label': 'Proximity',
+            'type': 'Electrode',
+            'getters': [{
+                'packet': 'Get Touch State',
+                'transform': 'value[12] ? OnOffType.ON : OnOffType.OFF'}],
+
+            'callbacks': [{
+                'packet': 'Touch State',
+                'transform': 'state[12] ? OnOffType.ON : OnOffType.OFF'}]
+        },
+        {
+            'id': 'Recalibrate',
+            'type': 'Recalibrate',
+            'setters': [{
+                'packet': 'Recalibrate'}],
+            'setter_command_type': "StringType" # Command type has to be string type to be able to use command options.
+        },
+    ],
+    'channel_types': [
+        #oh_generic_channel_type('Electrode', 'Switch', 'NOT USED', description='NOT USED'),
+        {
+            'id': 'Electrode',
+            'item_type': 'Switch',
+            'label': 'Electrode',
+            'description': 'NOT USED'
+        },
+        {
+            'id': 'Recalibrate',
+            'item_type': 'String',
+            'label': 'Recalibrate Electrodes',
+            'description':'Recalibrates the electrodes. Trigger this channel whenever you changed or moved you electrodes.',
+            'command_options': [('Trigger', 'TRIGGER')]
+        }
+    ]
+}

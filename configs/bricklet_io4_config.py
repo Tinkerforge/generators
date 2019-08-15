@@ -612,12 +612,14 @@ def input_channel(idx):
 
             'type': 'Input Pin',
 
-            'getter_packet': 'Get Value',
-            'getter_transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
-            'callback_filter': '(interruptMask & (1 << {})) > 0'.format(idx),
-            'callback_packet': 'Interrupt',
-            'callback_transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+            'callbacks': [{
+                'filter': '(interruptMask & (1 << {})) > 0'.format(idx),
+                'packet': 'Interrupt',
+                'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
             'init_code':"""this.setInterrupt((short)(this.getInterrupt() | (1 << {idx})));
@@ -633,17 +635,19 @@ def output_channel(idx):
 
             'type': 'Output Pin',
 
-            'getter_packet': 'Get Value',
-            'getter_transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
-            'setter_packet': 'Set Selected Values',
-            'setter_packet_params': ['(short)(1 << {})'.format(idx), 'cmd == OnOffType.ON ? (short)0xFF : (short)0'],
+            'setters': [{
+            'packet': 'Set Selected Values',
+            'packet_params': ['(short)(1 << {})'.format(idx), 'cmd == OnOffType.ON ? (short)0xFF : (short)0']}],
             'setter_command_type': "OnOffType",
 
-            'callback_packet': 'Monoflop Done',
-            'callback_filter': '(selectionMask & (1 << {})) > 0'.format(idx),
-            'callback_transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx),
-
+            'callbacks': [{
+                'packet': 'Monoflop Done',
+                'filter': '(selectionMask & (1 << {})) > 0'.format(idx),
+                'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'init_code':"""this.setConfiguration((short)(1 << {idx}), 'o', cfg.pinConfiguration{idx} % 2 == 1);""".format(idx=idx),
     }
@@ -655,12 +659,14 @@ def monoflop_channel(idx):
         'label': 'Monoflop Pin {}'.format(idx),
         'type': 'Monoflop',
 
-        'getter_packet': 'Get Monoflop',
-        'getter_packet_params': ['(short){}'.format(idx)],
-        'getter_transform': 'value.value > 0 ? OnOffType.ON : OnOffType.OFF',
+        'getters': [{
+            'packet': 'Get Monoflop',
+            'packet_params': ['(short){}'.format(idx)],
+            'transform': 'value.value > 0 ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set Monoflop',
-        'setter_packet_params': ['(short)(1 << {})'.format(idx), 'channelCfg.monoflopValue.booleanValue() ? (short)0xFF : (short)0', 'channelCfg.monoflopDuration.longValue()'],
+        'setters': [{
+            'packet': 'Set Monoflop',
+            'packet_params': ['(short)(1 << {})'.format(idx), 'channelCfg.monoflopValue.booleanValue() ? (short)0xFF : (short)0', 'channelCfg.monoflopDuration.longValue()']}],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
         'setter_refreshs': [{
             'channel': 'Output Pin {}'.format(idx),
@@ -678,9 +684,10 @@ def edge_count_channel(index):
 
             'init_code':"""this.setEdgeCountConfig((short)(1 << {}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
 
-            'getter_packet': 'Get Edge Count',
-            'getter_packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
-            'getter_transform': 'new QuantityType<>(value, {unit})',
+            'getters': [{
+                'packet': 'Get Edge Count',
+                'packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
+                'transform': 'new QuantityType<>(value, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False

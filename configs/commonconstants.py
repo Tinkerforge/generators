@@ -193,12 +193,17 @@ def oh_generic_channel(id_, type_, unit, divisor=1.0, label=None, description=No
         'type': type_,
         'init_code':"""this.set{camel}CallbackConfiguration(channelCfg.updateInterval, true, \'x\', 0, 0);""",
         'dispose_code': """this.set{camel}CallbackConfiguration(0, true, \'x\', 0, 0);""",
-        'getter_packet': 'Get {title_words}',
-        'getter_packet_params': [],
-        'callback_packet': '{title_words}',
-        'callback_transform': 'new QuantityType<>({headless}{divisor}, {unit})',
-        'callback_filter': 'true',
-        'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
+
+        'getters': [{
+            'packet': 'Get {title_words}',
+            'packet_params': [],
+            'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+        'callbacks': [{
+            'packet': '{title_words}',
+            'transform': 'new QuantityType<>({headless}{divisor}, {unit})',
+            'filter': 'true'}],
+
         'java_unit': unit,
         'divisor': divisor,
         'is_trigger_channel': False
@@ -211,12 +216,16 @@ def oh_generic_old_style_channel(id_, type_, unit, divisor=1.0, cast_literal='')
         'init_code':"""this.set{{camel}}CallbackPeriod(channelCfg.updateInterval);
 this.set{{camel}}CallbackThreshold(\'x\', {cast_literal}0, {cast_literal}0);""".format(cast_literal=cast_literal),
         'dispose_code': """this.set{camel}CallbackPeriod(0);""",
-        'getter_packet': 'Get {title_words}',
-        'getter_packet_params': [],
-        'callback_packet': '{title_words}',
-        'callback_transform': 'new QuantityType<>({headless}{divisor}, {unit})',
-        'callback_filter': 'true',
-        'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
+        'getters': [{
+            'packet': 'Get {title_words}',
+            'packet_params': [],
+            'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+        'callbacks': [{
+            'packet': '{title_words}',
+            'transform': 'new QuantityType<>({headless}{divisor}, {unit})',
+            'filter': 'true'}],
+
         'java_unit': unit,
         'divisor': divisor,
         'is_trigger_channel': False

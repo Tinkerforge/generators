@@ -709,12 +709,14 @@ def input_channel(idx):
 
             'type': 'Input Pin',
 
-            'getter_packet': 'Get Value',
-            'getter_transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx),
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
-            'callback_filter': 'channel == {}'.format(idx),
-            'callback_packet': 'Input Value',
-            'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF'.format(idx),
+            'callbacks': [{
+                'filter': 'channel == {}'.format(idx),
+                'packet': 'Input Value',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
             'init_code':"""this.setConfiguration({0}, 'i', cfg.pinConfiguration{0} % 2 == 1);
@@ -730,17 +732,19 @@ def output_channel(idx):
 
             'type': 'Output Pin',
 
-            'getter_packet': 'Get Value',
-            'getter_transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx),
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
-            'setter_packet': 'Set Selected Value',
-            'setter_packet_params': [str(idx), 'cmd == OnOffType.ON'],
+            'setters': [{
+                'packet': 'Set Selected Value',
+                'packet_params': [str(idx), 'cmd == OnOffType.ON']}],
             'setter_command_type': "OnOffType",
 
-            'callback_packet': 'Monoflop Done',
-            'callback_filter': 'channel == {}'.format(idx),
-            'callback_transform': 'value ? OnOffType.ON : OnOffType.OFF',
-
+            'callbacks': [{
+                'packet': 'Monoflop Done',
+                'filter': 'channel == {}'.format(idx),
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
             'init_code':"""this.setConfiguration({0}, 'o', cfg.pinConfiguration{0} % 2 == 1);""".format(idx),
     }
@@ -752,13 +756,14 @@ def monoflop_channel(channel):
         'label': 'Monoflop Pin {}'.format(channel),
         'type': 'Monoflop',
 
-        'getter_packet': 'Get Monoflop',
-        'getter_packet_params': [str(channel)],
-        'getter_transform': 'value.value ? OnOffType.ON : OnOffType.OFF',
+        'getters': [{
+            'packet': 'Get Monoflop',
+            'packet_params': [str(channel)],
+            'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'}],
 
-        'setter_packet': 'Set Monoflop',
-        #TODO: cfg needs monoflop channel number
-        'setter_packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
+        'setters': [{
+            'packet': 'Set Monoflop',
+            'packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration']}],
         'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
         'setter_refreshs': [{
             'channel': 'Output Pin {}'.format(channel),
@@ -775,9 +780,10 @@ def edge_count_channel(index):
 
             'init_code':"""this.setEdgeCountConfiguration({0}, channelCfg.edgeType, channelCfg.debounce);""".format(index),
 
-            'getter_packet': 'Get Edge Count',
-            'getter_packet_params': [str(index), 'channelCfg.resetOnRead'],
-            'getter_transform': 'new QuantityType<>(value, {unit})',
+            'getters': [{
+                'packet': 'Get Edge Count',
+                'packet_params': [str(index), 'channelCfg.resetOnRead'],
+                'transform': 'new QuantityType<>(value, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False

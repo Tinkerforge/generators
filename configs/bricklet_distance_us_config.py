@@ -366,7 +366,7 @@ com['examples'].append({
 
 
 distance_channel = oh_generic_old_style_channel('Distance', 'Distance', 'SmartHomeUnits.ONE')
-distance_channel['getter_packet'] = 'Get Distance Value'
+distance_channel['getters'][0]['packet'] = 'Get Distance Value'
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),

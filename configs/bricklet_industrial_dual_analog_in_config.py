@@ -453,12 +453,17 @@ def voltage_channel(index):
 
             'init_code':"""this.setVoltageCallbackPeriod((short){0}, channelCfg.updateInterval);""".format(index),
             'dispose_code': """this.setVoltageCallbackPeriod((short){0}, 0);""".format(index),
-            'getter_packet': 'Get Voltage',
-            'getter_packet_params': ['(short){}'.format(index)],
-            'callback_filter': 'channel == {0}'.format(index),
-            'callback_packet': 'Voltage',
-            'callback_transform': 'new QuantityType<>(voltage{divisor}, {unit})',
-            'getter_transform': 'new QuantityType<>(value{divisor}, {unit})',
+
+            'getters': [{
+                'packet': 'Get Voltage',
+                'packet_params': ['(short){}'.format(index)],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'filter': 'channel == {0}'.format(index),
+                'packet': 'Voltage',
+                'transform': 'new QuantityType<>(voltage{divisor}, {unit})'}],
+
             'java_unit': 'SmartHomeUnits.VOLT',
             'divisor': '1000.0',
             'is_trigger_channel': False

@@ -6,8 +6,7 @@
 
 # Color Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -390,3 +389,77 @@ com['examples'].append({
 'functions': [('callback', ('Color', 'color'), [(('R', 'Color [R]'), 'uint16', 1, None, None, None), (('G', 'Color [G]'), 'uint16', 1, None, None, None), (('B', 'Color [B]'), 'uint16', 1, None, None, None), (('C', 'Color [C]'), 'uint16', 1, None, None, None)], None, None),
               ('callback_configuration', ('Color', 'color'), [], 100, False, None, [])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.HSBType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
+    'params': [{
+            'name': 'Gain',
+            'type': 'integer',
+            'options': [('1x', 0),
+                        ('4x', 1),
+                        ('16x', 2),
+                        ('60x', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Gain',
+            'description': 'Increasing the gain enables the sensor to detect a color from a higher distance.',
+        }, {
+            'name': 'Integration Time',
+            'type': 'integer',
+            'options': [('2ms', 0),
+                        ('24ms', 1),
+                        ('101ms', 2),
+                        ('154ms', 3),
+                        ('700ms', 4)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Integration Time',
+            'description': 'The integration time provides a trade-off between conversion time and accuracy. With a longer integration time the values read will be more accurate but it will take longer time to get the conversion results.',
+        }],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """this.setConfiguration(cfg.gain, cfg.integrationTime);""",
+    'channels': [
+        {
+            'id': 'Color',
+            'type': 'Color',
+            'init_code':"""this.set{camel}CallbackConfiguration(channelCfg.updateInterval, true);""",
+            'dispose_code': """this.set{camel}CallbackConfiguration(0, false);""",
+
+            'getters': [{
+                'packet': 'Get Color',
+                'transform': 'HSBType.fromRGB(value.r * 255 / 65535, value.g * 255 / 65535, value.b * 255 / 65535)'}],
+            'callbacks': [{
+                'packet': 'Color',
+                'transform': 'HSBType.fromRGB(r * 255 / 65535, g * 255 / 65535, b * 255 / 65535)'}]
+        },
+        oh_generic_channel('Illuminance', 'Illuminance', 'SmartHomeUnits.LUX', divisor='cfg.gain * cfg.integrationTime / 700.0'),
+        oh_generic_channel('Color Temperature', 'Color Temperature', 'SmartHomeUnits.KELVIN', divisor=1),
+        {
+            'id': 'Light',
+            'type': 'Light',
+            'getters': [{
+                'packet': 'Get Light',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+            'setters': [{
+                'packet': 'Set Light',
+                'packet_params': ['cmd == OnOffType.ON']}],
+            'setter_command_type': 'OnOffType'
+        },
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Color', 'Color', 'Color',
+                     description='Measured color',
+                     read_only=True),
+        oh_generic_channel_type('Illuminance', 'Number:Illuminance', 'Illuminance',
+                     description='Measured illuminance. To get a correct illuminance measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
+                     read_only=True),
+        oh_generic_channel_type('Color Temperature', 'Number:Temperature', 'Color Temperature',
+                     description='To get a correct color temperature measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
+                     read_only=True),
+        oh_generic_channel_type('Light', 'Switch', 'Enable Light',
+                     description='Turns the white LED on the Bricklet on/off.'),
+    ]
+}

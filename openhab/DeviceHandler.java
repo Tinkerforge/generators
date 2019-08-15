@@ -159,7 +159,7 @@ public class DeviceHandler extends BaseThingHandler {
     private void refreshValue(String channelId, Configuration channelConfig) {
         try {
             System.out.println("Refreshing " + channelId);
-            device.refreshValue(channelId, channelConfig, this::updateState, this::triggerChannel);
+            device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }

@@ -579,13 +579,14 @@ com['openhab'] = {
             'type': 'IAQ Index',
             'init_code':"""this.set{camel}CallbackConfiguration(channelCfg.updateInterval, true);""",
             'dispose_code': """this.set{camel}CallbackConfiguration(0, true);""",
-            'getter_packet': 'Get {title_words}',
-            'getter_packet_params': [],
-            'getter_transform': 'new QuantityType<>(value.iaqIndex{divisor}, {unit})',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value.iaqIndex{divisor}, {unit})'}],
 
-            'callback_packet': '{title_words}',
-            'callback_transform': 'new QuantityType<>(iaqIndex{divisor}, {unit})',
-            'callback_filter': 'true',
+            'callbacks': [{
+                'packet': '{title_words}',
+                'transform': 'new QuantityType<>(iaqIndex{divisor}, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 1,
@@ -595,13 +596,15 @@ com['openhab'] = {
             'type': 'IAQ Index Accuracy',
             'init_code':"""this.setIAQIndexCallbackConfiguration(channelCfg.updateInterval, true);""",
             'dispose_code': """this.setIAQIndexCallbackConfiguration(0, true);""",
-            'getter_packet': 'Get IAQ Index',
-            'getter_packet_params': [],
-            'getter_transform': 'new QuantityType<>(value.iaqIndexAccuracy{divisor}, {unit})',
+            'getters': [{
+                'packet': 'Get IAQ Index',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value.iaqIndexAccuracy{divisor}, {unit})'}],
 
-            'callback_packet': 'IAQ Index',
-            'callback_transform': 'new QuantityType<>(iaqIndexAccuracy{divisor}, {unit})',
-            'callback_filter': 'true',
+            'callbacks': [{
+                'packet': 'IAQ Index',
+                'transform': 'new QuantityType<>(iaqIndexAccuracy{divisor}, {unit})',
+                'filter': 'true'}],
 
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 1,
