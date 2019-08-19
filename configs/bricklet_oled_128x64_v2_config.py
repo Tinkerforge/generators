@@ -145,10 +145,31 @@ com['packets'].append({
 'en':
 """
 Clears the complete content of the display.
+
+If automatic draw is enabled (default) the pixels are directly cleared.
+
+If automatic draw is disabled the the internal buffer is cleared and
+the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+is called. This can be used to avoid flicker when drawing a complex frame in
+multiple steps.
+
+Automatic draw can be configured with the :func:`Set Display Configuration`
+function.
 """,
 'de':
 """
 Löscht den kompletten aktuellen Inhalt des Displays.
+
+Wenn Automatic Draw aktiviert ist (Standard), dann werden die Pixel direkt
+gelöscht.
+
+Wenn Automatic Draw deaktiviert ist, dann werden die Pixel im internen
+Buffer gelöscht der dann durch einen Aufruf von :func:`Draw Buffered Frame`
+auf dem Display angezeigt werden kann. Dadurch kann Flicker vermieden werden,
+wenn ein komplexes Bild in mehreren Schritten aufgebaut wird.
+
+Automatic Draw kann über die :func:`Set Display Configuration` Funktion
+eingestellt werden.
 """
 }]
 })
@@ -231,6 +252,18 @@ second line of the display.
 
 The display uses a special 5x7 pixel charset. You can view the characters
 of the charset in Brick Viewer.
+
+If automatic draw is enabled (default) the text is directly written to
+the screen. Only pixels that have actually changed are updated on the screen,
+the rest stays the same.
+
+If automatic draw is disabled the text is written to an internal buffer and
+the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+is called. This can be used to avoid flicker when drawing a complex frame in
+multiple steps.
+
+Automatic draw can be configured with the :func:`Set Display Configuration`
+function.
 """,
 'de':
 """
@@ -242,6 +275,18 @@ des Displays.
 
 Das Display nutzt einen speziellen 5x7 Pixel Zeichensatz. Der Zeichensatz
 kann mit Hilfe von Brick Viewer angezeigt werden.
+
+Wenn Automatic Draw aktiviert ist (Standard), dann wird der Text direkt auf
+den Display geschrieben. Nur Pixel die sich wirklich verändert haben werden
+auf dem Display aktualisiert.
+
+Wenn Automatic Draw deaktiviert ist, dann wird der Text in einen internen
+Buffer geschrieben der dann durch einen Aufruf von :func:`Draw Buffered Frame`
+auf dem Display angezeigt werden kann. Dadurch kann Flicker vermieden werden,
+wenn ein komplexes Bild in mehreren Schritten aufgebaut wird.
+
+Automatic Draw kann über die :func:`Set Display Configuration` Funktion
+eingestellt werden.
 """
 }]
 })
