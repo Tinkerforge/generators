@@ -71,7 +71,7 @@ public abstract class Device extends DeviceBase {
 
     public abstract List<SetterRefresh> handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException;
 
-    public abstract List<String> getEnabledChannels(Configuration config);
+    public abstract List<String> getEnabledChannels(Configuration config) throws TinkerforgeException;
 
     /*public abstract ThingType getThingType(ThingTypeUID thingTypeUID);
 

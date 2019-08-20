@@ -175,10 +175,13 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
             oh['channels'][c_idx] = tmp_channel
 
-        for p_idx, param in enumerate(oh['params']):
-            tmp = param_defaults.copy()
-            tmp.update(param)
-            oh['params'][p_idx] = tmp
+        try:
+            for p_idx, param in enumerate(oh['params']):
+                tmp = param_defaults.copy()
+                tmp.update(param)
+                oh['params'][p_idx] = tmp
+        except:
+            print("Hier")
 
         for ct_idx, channel_type in enumerate(oh['channel_types']):
             tmp_channel_type = channel_type_defaults.copy()
@@ -584,7 +587,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     }}
 
     @Override
-    public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config) {{
+    public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config) throws TinkerforgeException{{
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         List<String> result = new ArrayList<String>();
         {channel_enablers}
@@ -712,7 +715,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         with_calls = []
         if self.oh.category is not None:
             with_calls.append('.withCategory("{}")'.format(self.oh.category))
-        with_calls.append('.withDescription("{}")'.format(common.select_lang(self.get_description())))
+        with_calls.append('.withDescription("{}")'.format(common.select_lang(self.get_description()).replace('"', '\\"')))
         with_calls.append('.withChannelDefinitions(Arrays.asList({}))'.format(', '.join(self.get_openhab_channel_definition_builder_call(c) for c in self.oh.channels)))
 
         return template.format(label='Tinkerforge ' + self.get_long_display_name(), with_calls=''.join(with_calls))
@@ -827,7 +830,7 @@ public class {name_camel} {{
                                                                                 name=p.name.headless,
                                                                                 ctor='new BigDecimal(' if p.type == 'decimal' else '',
                                                                                 ctor2=')' if p.type == 'decimal' else '',
-                                                                                default=p.default) for p in self.oh.params))))
+                                                                                default=p.default if p.type != 'text' else '"' + p.default + '"') for p in self.oh.params))))
         for ct in self.oh.channel_types:
             imports = '\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in ct.params] else ''
             class_name = self.get_category().camel + ct.id.camel + 'Config'
@@ -838,7 +841,7 @@ public class {name_camel} {{
                                                                                 name=p.name.headless,
                                                                                 ctor='new BigDecimal(' if p.type == 'decimal' else '',
                                                                                 ctor2=')' if p.type == 'decimal' else '',
-                                                                                default=p.default) for p in ct.params))))
+                                                                                default=p.default if p.type != 'text' else '"' + p.default + '"') for p in ct.params))))
 
         return classes
 

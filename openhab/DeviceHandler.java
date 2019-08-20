@@ -198,7 +198,13 @@ public class DeviceHandler extends BaseThingHandler {
     }
 
     private void configureChannels() {
-        List<String> enabledChannelNames = device.getEnabledChannels(getConfig());
+        List<String> enabledChannelNames = new ArrayList<>();
+        try {
+            enabledChannelNames = device.getEnabledChannels(getConfig());
+        }
+        catch(TinkerforgeException e) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
+        }
 
         List<Channel> enabledChannels = enabledChannelNames.stream()
                                                            .map(s -> new ChannelUID(getThing().getUID(), s))

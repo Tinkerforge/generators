@@ -105,7 +105,7 @@ public class BrickDaemon extends Device {
     }
 
     @Override
-    public List<String> getEnabledChannels(Configuration config) {
+    public List<String> getEnabledChannels(Configuration config) throws TinkerforgeException {
         return new ArrayList<>();
     }
 
