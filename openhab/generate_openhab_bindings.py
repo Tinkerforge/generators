@@ -58,8 +58,6 @@ ParamGroup = namedtuple('ParamGroup', 'name context advanced label description')
 
 class OpenHABBindingsDevice(JavaBindingsDevice):
     def apply_defaults(self, oh):
-        oh = self.raw_data['openhab']
-
         param_defaults = {
             'context': None,
             'default': None,
@@ -145,6 +143,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         oh_defaults = {
             'params': [],
             'param_groups': [],
+            'channels': [],
+            'channel_types': [],
+            'imports': [],
             'init_code': '',
             'dispose_code': '',
             'category': None
@@ -241,10 +242,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if not 'openhab' in self.raw_data:
-            return
-
-        oh = self.apply_defaults(self.raw_data['openhab'])
+        if 'openhab' in self.raw_data:
+            oh = self.apply_defaults(self.raw_data['openhab'])
+        else:
+            oh = self.apply_defaults({})
 
         # Replace config placeholders
         def fmt(format_str, base_name, unit, divisor):
@@ -715,7 +716,12 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         with_calls.append('.withDescription("{}")'.format(common.select_lang(self.get_description()).replace('"', '\\"')))
         with_calls.append('.withChannelDefinitions(Arrays.asList({}))'.format(', '.join(self.get_openhab_channel_definition_builder_call(c) for c in self.oh.channels)))
 
-        return template.format(label='Tinkerforge ' + self.get_long_display_name(), with_calls=''.join(with_calls))
+        label = 'Tinkerforge ' + self.get_long_display_name()
+        not_supported = len(self.oh.channels) == 0
+        if not_supported:
+            label += ' - This device is not supported yet.'
+
+        return template.format(label=label, with_calls=''.join(with_calls))
 
     def get_openhab_get_thing_type_impl(self):
          return """public static ThingType getThingType(ThingTypeUID thingTypeUID) {{
