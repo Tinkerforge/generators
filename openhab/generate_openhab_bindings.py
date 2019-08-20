@@ -175,13 +175,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
             oh['channels'][c_idx] = tmp_channel
 
-        try:
-            for p_idx, param in enumerate(oh['params']):
-                tmp = param_defaults.copy()
-                tmp.update(param)
-                oh['params'][p_idx] = tmp
-        except:
-            print("Hier")
+        for p_idx, param in enumerate(oh['params']):
+            tmp = param_defaults.copy()
+            tmp.update(param)
+            oh['params'][p_idx] = tmp
 
         for ct_idx, channel_type in enumerate(oh['channel_types']):
             tmp_channel_type = channel_type_defaults.copy()
