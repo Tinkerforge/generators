@@ -30,7 +30,7 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
 
     private static final Map<ChannelTypeUID, ChannelType> channelTypeCache = new HashMap<>();
 
-    @Activate
+   /* @Activate
     protected void activate(ComponentContext componentContext) {
         System.out.println("activate");
     }
@@ -39,7 +39,7 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
     protected void deactivate(ComponentContext componentContext) {
         System.out.println("deactivate");
     }
-
+*/
     @Override
     public Collection<ChannelType> getChannelTypes(@Nullable Locale locale) {
         return TinkerforgeBindingConstants.SUPPORTED_CHANNELS.keySet().stream().map(uid -> getChannelType(uid, locale))
@@ -63,7 +63,6 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
             info = DeviceFactory.getDeviceInfo(thingTypeUID.getId());
         }
         catch (Exception e) {
-            System.out.println("ChannelType meta data retrival failed");
             return null;
         }
         ChannelType result = null;
@@ -71,9 +70,6 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
             result = (ChannelType) info.deviceClass.getMethod("getChannelType", ChannelTypeUID.class).invoke(null,
                     channelTypeUID);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            System.out.println("ChannelType creation failed");
             return null;
         }
 

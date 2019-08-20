@@ -47,8 +47,6 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
             info = DeviceFactory.getDeviceInfo(thingTypeUID.getId());
         }
         catch (Exception e) {
-            //e.printStackTrace();
-            System.out.println("ConfigDescription meta-info search failed:" + thingTypeUID + " uri " + uri);
             return null;
         }
 
@@ -56,9 +54,6 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
             Method m = info.deviceClass.getMethod("getConfigDescription", URI.class);
             result = (ConfigDescription) m.invoke(null, uri);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            System.out.println("ConfigDescription creation failed");
             return null;
         }
 

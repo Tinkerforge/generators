@@ -40,48 +40,50 @@ class OpenHABZipGenerator(common.ZipGenerator):
         self.tmp_xml_dir = os.path.join(self.tmp_dir, 'src', 'main', 'resources', 'ESH-INF', 'thing')
 
         self.file_dests = {
-            'about.html': '.',
-            'NOTICE': '.',
-            'pom.xml': '.',
-            'README.md': '.',
+            'about.html':   '.',
+            'NOTICE':       '.',
+            'pom.xml':      '.',
+            'README.md':    '.',
+            'changelog.txt':'.',
+            'readme.txt':   '.',
 
-            'feature.xml': './src/main/feature',
-            'dependencies.xml': './src/main/history',
-            'binding.xml': './src/main/resources/ESH-INF/binding',
+            'feature.xml':                  './src/main/feature',
+            'dependencies.xml':             './src/main/history',
+            'binding.xml':                  './src/main/resources/ESH-INF/binding',
             'tinkerforge_xx_XX.properties': './src/main/resources/ESH-INF/i18n',
-            #'BrickDaemon.xml': './src/main/resources/ESH-INF/thing',
 
             'BrickDaemonDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
-            'TinkerforgeHandlerFactory.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'TinkerforgeChannelTypeProvider.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'TinkerforgeConfigDescriptionProvider.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'TinkerforgeThingTypeProvider.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
 
-            'BrickDaemonHandler.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'DeviceHandler.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'TinkerforgeHandlerFactory.java':               './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'TinkerforgeChannelTypeProvider.java':          './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'TinkerforgeConfigDescriptionProvider.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'TinkerforgeThingTypeProvider.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
 
+            'BrickDaemonHandler.java':  './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'DeviceHandler.java':       './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+
+            'AlreadyConnectedException.java': './src/main/java/com/tinkerforge',
             'BrickDaemon.java':               './src/main/java/com/tinkerforge',
             'BrickDaemonConfig.java':         './src/main/java/com/tinkerforge',
+            'CryptoException.java':           './src/main/java/com/tinkerforge',
             'Device.java':                    './src/main/java/com/tinkerforge',
             'DeviceBase.java':                './src/main/java/com/tinkerforge',
             'DeviceInfo.java':                './src/main/java/com/tinkerforge',
             'DeviceListener.java':            './src/main/java/com/tinkerforge',
             'DeviceProvider.java':            './src/main/java/com/tinkerforge',
+            'Helper.java':                    './src/main/java/com/tinkerforge',
+            'InvalidParameterException.java': './src/main/java/com/tinkerforge',
             'IPConnection.java':              './src/main/java/com/tinkerforge',
             'IPConnectionBase.java':          './src/main/java/com/tinkerforge',
-            'TinkerforgeException.java':      './src/main/java/com/tinkerforge',
-            'TimeoutException.java':          './src/main/java/com/tinkerforge',
-            'AlreadyConnectedException.java': './src/main/java/com/tinkerforge',
-            'NotConnectedException.java':     './src/main/java/com/tinkerforge',
-            'CryptoException.java':           './src/main/java/com/tinkerforge',
             'NetworkException.java':          './src/main/java/com/tinkerforge',
-            'StreamOutOfSyncException.java':  './src/main/java/com/tinkerforge',
-            'InvalidParameterException.java': './src/main/java/com/tinkerforge',
+            'NotConnectedException.java':     './src/main/java/com/tinkerforge',
             'NotSupportedException.java':     './src/main/java/com/tinkerforge',
-            'UnknownErrorCodeException.java': './src/main/java/com/tinkerforge',
+            'StreamOutOfSyncException.java':  './src/main/java/com/tinkerforge',
+            'TimeoutException.java':          './src/main/java/com/tinkerforge',
+            'TinkerforgeException.java':      './src/main/java/com/tinkerforge',
             'TinkerforgeListener.java':       './src/main/java/com/tinkerforge',
-            'changelog.txt':                  '.',
-            'readme.txt':                     '.',
+            'UnknownErrorCodeException.java': './src/main/java/com/tinkerforge',
+
 
             os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'): './src/main/java/com/tinkerforge',
             os.path.join(self.get_bindings_dir(), 'TinkerforgeBindingConstants.java'): './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal'
@@ -105,28 +107,11 @@ class OpenHABZipGenerator(common.ZipGenerator):
         if not device.is_released():
             return
 
-        if not 'openhab' in device.raw_data:
-            return
-
         shutil.copy(os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + '.java'), self.tmp_bindings_dir)
 
         for file in os.listdir(self.get_bindings_dir()):
             if device.get_category().camel+device.get_name().camel in file and file.endswith('Config.java'):
                 shutil.copy(os.path.join(self.get_bindings_dir(), file), self.tmp_bindings_dir)
-
-
-        #shutil.copy(os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + '.xml'), self.tmp_xml_dir)
-
-        # Copy device examples
-        #tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
-        #                                       device.get_category().camel,
-        #                                       device.get_name().camel)
-
-        #if not os.path.exists(tmp_examples_device_dir):
-        #    os.makedirs(tmp_examples_device_dir)
-
-        #for example in common.find_device_examples(device, r'^Example.*\.java$'):
-        #    shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
         root_dir = self.get_root_dir()
@@ -138,7 +123,6 @@ class OpenHABZipGenerator(common.ZipGenerator):
             shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'), self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'custom.txt'), os.path.join(self.tmp_dir, 'readme.txt'))
 
-        # Make zip
         self.create_zip_file(self.tmp_dir)
 
 def generate(root_dir):

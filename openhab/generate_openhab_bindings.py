@@ -311,9 +311,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 callback['packet'] = find_packet(callback['packet'])
                 oh['channels'][c_idx]['callbacks'][cb_idx] = Callback(**callback)
 
-            #for packet in ['getter_packet', 'setter_packet', 'callback_packet']:
-            #    oh['channels'][c_idx][packet] = find_packet(oh['channels'][c_idx][packet])
-
             oh['channels'][c_idx]['setter_refreshs'] = [SetterRefresh(common.FlavoredName(self.get_name().space + ' ' + r['channel']).get(), r['delay']) for r in oh['channels'][c_idx]['setter_refreshs']]
             oh['channels'][c_idx]['type'] = self.find_channel_type(oh['channels'][c_idx], oh['channel_types'])
             oh['channels'][c_idx] = Channel(**channel)
@@ -673,7 +670,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                state_item_type='' if ct.is_trigger_channel else ', "{}"'.format(ct.item_type),
                                with_calls='\n'.join(with_calls))
 
-    #region get_openhab_get_channel_type_impl
     def get_openhab_get_channel_type_impl(self):
         template = """public static ChannelType getChannelType(ChannelTypeUID channelTypeUID) {{
         switch(channelTypeUID.getId()) {{
@@ -689,7 +685,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                       channel_type_builder_call=self.get_openhab_channel_type_builder_call(ct))
                  for ct in self.oh.channel_types]
         return template.format('\n            '.join(cases))
-    #endregion
 
     def get_openhab_channel_definition_builder_call(self, c):
         template = """new ChannelDefinitionBuilder("{channel_id}", new ChannelTypeUID("{binding}", "{channel_type_id}")){with_calls}.build()"""
@@ -768,8 +763,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             ctor_params = (item if item is not None else 'null' for item in [pg.name, pg.context, pg.advanced, pg.label, pg.description])
             ctors.append(ctor_template.format(*ctor_params))
 
-        #ctors = [ctor_template.format(name=pg.name, context=pg.context, advanced=pg.advanced, label=pg.label, description=pg.description) for pg in param_groups]
-
         if len(ctors) > 0:
             return ', Arrays.asList({})'.format(', '.join(ctors))
         return ''
@@ -792,9 +785,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 [case_template.format(uri='channel-type:tinkerforge:' + ct.id.camel,
                                       builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in ct.params),
                                       groups=self.get_openhab_parameter_group_ctor_list(ct.param_groups)) for ct in self.oh.channel_types
-                ] #+ \
-                #[case_template.format(uri='channel:tinkerforge:' + self.get_name().under + '_' + c.id.headless,
-                #                      builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in c.params)) for c in self.oh.channels]
+                ]
 
         return template.format(cases='\n            '.join(cases))
 
@@ -885,9 +876,6 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
         return True
 
     def generate(self, device):
-        if not 'openhab' in device.raw_data:
-            return
-
         class_name = device.get_java_class_name()
 
         with open(os.path.join(self.get_bindings_dir(), class_name + '.java'), 'w') as f:

@@ -39,7 +39,6 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
 
     public static @Nullable ThingType getThingTypeStatic(ThingTypeUID thingTypeUID, @Nullable Locale locale) {
         if (thingTypeCache.containsKey(thingTypeUID)) {
-            System.out.println("Cache hit for " + thingTypeUID);
             return thingTypeCache.get(thingTypeUID);
         }
 
@@ -48,7 +47,6 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
             info = DeviceFactory.getDeviceInfo(thingTypeUID.getId());
         }
         catch (Exception e) {
-            System.out.println("ThingType meta data retrival failed");
             return null;
         }
         ThingType result;
@@ -56,13 +54,10 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
             Method m = info.deviceClass.getMethod("getThingType", ThingTypeUID.class);
             result = (ThingType) m.invoke(null, thingTypeUID);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("ThingType creation failed");
             return null;
         }
 
         thingTypeCache.put(thingTypeUID, result);
-        System.out.println("Cache miss for " + thingTypeUID);
         return result;
     }
 }

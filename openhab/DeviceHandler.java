@@ -66,7 +66,6 @@ public class DeviceHandler extends BaseThingHandler {
     public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier) {
         super(thing);
         channels = new ArrayList<Channel>(thing.getChannels());
-        System.out.println("Constructing " + thing.getUID().getAsString());
         this.deviceSupplier = deviceSupplier;
     }
 
@@ -158,7 +157,6 @@ public class DeviceHandler extends BaseThingHandler {
 
     private void refreshValue(String channelId, Configuration channelConfig) {
         try {
-            System.out.println("Refreshing " + channelId);
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);

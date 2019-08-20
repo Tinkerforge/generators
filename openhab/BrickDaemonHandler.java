@@ -75,9 +75,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         BrickDaemonConfig cfg = getConfigAs(BrickDaemonConfig.class);
 
         try {
-            System.out.println("Connecting...");
             ipcon.connect(cfg.host, cfg.port);
-            System.out.println("Connected");
         } catch (NetworkException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
                     "Could not connect: " + e.getLocalizedMessage());
@@ -90,9 +88,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
         if (cfg.auth) {
             try {
-                System.out.println("Authenticating...");
                 ipcon.authenticate(cfg.password);
-                System.out.println("Authenticated");
             } catch (TinkerforgeException e) {
                 if (e instanceof TimeoutException) {
                     updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
