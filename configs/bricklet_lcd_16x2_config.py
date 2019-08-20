@@ -6,6 +6,8 @@
 
 # LCD 16x2 Bricklet communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -343,3 +345,117 @@ com['examples'].append({
               ('setter', 'Write Line', [('uint8', 1), ('uint8', 0), ('string', 'FIXME')], 'Write a string directly including characters from the LCD charset', None)],
 'incomplete': True # because of Unicode handling
 })
+
+
+
+def button_channel(idx):
+    return {
+            'id': 'Button {}'.format(idx),
+            'label': 'Button {}'.format(idx),
+            'type': 'system.rawbutton',
+            'getters': [{
+                'packet': 'Is Button Pressed',
+                'packet_params': ['(short)({})'.format(idx)],
+                'transform': 'value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+            'callbacks': [{
+                    'filter': 'button == {}'.format(idx),
+                    'packet': 'Button Pressed',
+                    'transform': 'CommonTriggerEvents.PRESSED'
+                },{
+                    'filter': 'button == {}'.format(idx),
+                    'packet': 'Button Released',
+                    'transform': 'CommonTriggerEvents.RELEASED'
+                },
+            ],
+            'is_trigger_channel': True
+    }
+
+button_channels = [button_channel(i) for i in range(0, 3)]
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType','org.eclipse.smarthome.core.library.types.DecimalType', 'org.eclipse.smarthome.core.library.types.OnOffType', 'com.tinkerforge.Helper'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Show Cursor',
+            'type': 'boolean',
+            'default': 'false',
+
+            'label': 'Show Cursor',
+            'description': "Configures if the cursor (shown as '_') should be visible. The cursor position is one character behind the the last text written.",
+        },
+        {
+            'name': 'Show Blinking Cursor',
+            'type': 'boolean',
+            'default': 'false',
+
+            'label': 'Show Blinking Cursor',
+            'description': 'Configures if the blinking cursor (shown as a blinking block) should be visible. The cursor position is one character behind the the last text written.',
+        },
+    ] ,
+    'init_code': """this.setConfig(cfg.showCursor, cfg.showBlinkingCursor);""",
+    'channels': [
+            {
+                'id': 'Text',
+                'type': 'Text',
+                'setters': [{
+                    'packet': 'Write Line',
+                    'packet_params': ['Short.parseShort(cmd.toString().split(",", 3)[0])', 'Short.parseShort(cmd.toString().split(",", 3)[1])', 'Helper.parseDisplayCommand(cmd.toString().split(",", 3)[2])']}],
+                'setter_command_type': "StringType",
+            },
+            {
+                'id': 'Clear Display',
+                'type': 'Clear Display',
+                'setters': [{
+                    'packet': 'Clear Display'}],
+                'setter_command_type': "StringType",
+            },
+            {
+                'id': 'Backlight',
+                'type': 'Backlight',
+                'setter_command_type': "OnOffType",
+                'setters': [{
+                        'predicate': 'cmd == OnOffType.ON',
+                        'packet': 'Backlight On',
+                    }, {
+                        'predicate': 'cmd == OnOffType.OFF',
+                        'packet': 'Backlight Off',
+                    }
+                ],
+                'getters': [{
+                    'packet': 'Is Backlight On',
+                    'transform': 'value ? OnOffType.ON : OnOffType.OFF'
+                }]
+            },
+            # {
+            #     'id': 'Default Text Counter',
+            #     'type': 'Default Text Counter',
+            #     'setter_command_type': "DecimalType",
+            #     'setters': [{
+            #             'packet': 'Set Default Text Counter',
+            #             'packet_params': ['cmd.intValue()']
+            #         }
+            #     ],
+            #     'getters': [{
+            #         'packet': 'Get Default Text Counter',
+            #         'transform': 'new DecimalType(value)'
+            #     }]
+            # }
+    ] + button_channels,
+    'channel_types': [
+        oh_generic_channel_type('Text', 'String', 'Text',
+                     description='The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.'),
+        {
+            'id': 'Clear Display',
+            'item_type': 'String',
+            'label': 'Clear Display',
+            'description':'Deletes all characters from the display.',
+            'command_options': [('Clear', 'CLEAR')]
+        },
+        oh_generic_channel_type('Backlight', 'Switch', 'Backlight',
+                    description="Toggles the LCD's backlight"),
+        # oh_generic_channel_type('Default Text Counter', 'Number:Dimensionless', 'Default Text Counter',
+        #             description=" This counter is decremented each ms by the LCD firmware. If the counter reaches 0, the default text (see setDefaultText()) is shown on the LCD.<br/><br/>This functionality can be used to show a default text if the controlling program crashes or the connection is interrupted.<br/><br/>A possible approach is to set the Default Text Counter every minute to 1000*60*2 (2 minutes). In this case the default text will be shown no later than 2 minutes after the controlling program crashes.<br/><br/>A negative counter turns the default text functionality off.")
+    ]
+}

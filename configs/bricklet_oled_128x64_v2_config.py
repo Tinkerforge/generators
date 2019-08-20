@@ -6,6 +6,8 @@
 
 # OLED 128x64 Bricklet 2.0 communication config
 
+from commonconstants import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -333,3 +335,82 @@ com['examples'].append({
 })
 
 # FIXME: add pixel-matrix example
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType', 'com.tinkerforge.Helper'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Contrast',
+            'type': 'integer',
+            'default': '143',
+            'min': '0',
+            'max': '255',
+
+            'label': 'Contrast',
+            'description': "Sets the contrast of the display (0-255).",
+        },
+        {
+            'name': 'Invert',
+            'type': 'boolean',
+            'default': 'false',
+
+            'label': 'Invert',
+            'description': 'Inverts the color (black/white) of the display.',
+        },
+        {
+            'name': 'Automatic Draw',
+            'type': 'boolean',
+            'default': 'true',
+
+            'label': 'Automatic Draw',
+            'description': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',
+        },
+    ] ,
+    'init_code': """this.setDisplayConfiguration(cfg.contrast.shortValue(), cfg.invert, cfg.automaticDraw);""",
+    'channels': [
+            {
+                'id': 'Text',
+                'type': 'Text',
+                'setters': [{
+                    'packet': 'Write Line',
+                    'packet_params': ['Short.parseShort(cmd.toString().split(",", 3)[0])', 'Short.parseShort(cmd.toString().split(",", 3)[1])', 'Helper.parseDisplayCommand(cmd.toString().split(",", 3)[2])']}],
+                'setter_command_type': "StringType",
+            },
+            {
+                'id': 'Clear Display',
+                'type': 'Clear Display',
+                'setters': [{
+                    'packet': 'Clear Display'}],
+                'setter_command_type': "StringType",
+            },
+            {
+                'id': 'Draw Buffered Frame',
+                'type': 'Draw Buffered Frame',
+                'setters': [{
+                    'packet': 'Draw Buffered Frame',
+                    'packet_params': ['true']
+                }],
+                'setter_command_type': "StringType",
+            }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Text', 'String', 'Text',
+                     description='The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.'),
+        {
+            'id': 'Clear Display',
+            'item_type': 'String',
+            'label': 'Clear Display',
+            'description':'Deletes all characters from the display.',
+            'command_options': [('Clear', 'CLEAR')]
+        },
+        {
+            'id': 'Draw Buffered Frame',
+            'item_type': 'String',
+            'label': 'Draw Buffered Frame',
+            'description':'Draws the currently buffered frame.',
+            'command_options': [('Draw', 'DRAW')]
+        },
+    ]
+}
