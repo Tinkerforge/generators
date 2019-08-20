@@ -6,7 +6,7 @@
 
 # Solid State Relay Bricklet communication config
 
-from commonconstants import *
+from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',

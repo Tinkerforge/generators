@@ -6,8 +6,10 @@
 
 # Rotary Poti Bricklet 2.0 communication config
 
-from commonconstants import *
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import add_callback_value_function
 
+from openhab_common import *
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],

@@ -6,7 +6,10 @@
 
 # Sound Pressure Level Bricklet communication config
 
-from commonconstants import *
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import add_callback_value_function
+
+from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',

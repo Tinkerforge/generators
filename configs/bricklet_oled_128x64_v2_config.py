@@ -6,7 +6,7 @@
 
 # OLED 128x64 Bricklet 2.0 communication config
 
-from commonconstants import *
+from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',

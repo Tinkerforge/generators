@@ -6,7 +6,7 @@
 
 # Industrial Quad Relay Bricklet 2.0 communication config
 
-from commonconstants import *
+from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
