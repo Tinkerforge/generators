@@ -6,8 +6,7 @@
 
 # Sound Pressure Level Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -312,3 +311,50 @@ com['examples'].append({
 'functions': [('callback', ('Decibel', 'decibel'), [(('Decibel', 'Decibel'), 'uint16', 1, 10.0, 'dB(A)', None)], None, None),
               ('callback_configuration', ('Decibel', 'decibel'), [], 1000, False, '>', [(60, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+         {
+            'name': 'FFT Size',
+            'type': 'integer',
+            'default': '3',
+            'options': [('128', 0),
+              ('256', 1),
+              ('512', 2),
+              ('1024', 3)],
+            'limitToOptions': 'true',
+
+            'label': 'FFT Size',
+            'description': 'With different FFT sizes the Bricklet has a different amount of samples per second and the size of the FFT bins changes. The higher the FFT size the more precise is the result of the dB(X) calculation.',
+        },
+        {
+            'name': 'Weighting',
+            'type': 'integer',
+            'default': '0',
+            'options': [('dB(A)', 0),
+              ('dB(B)', 1),
+              ('dB(C)', 2),
+              ('dB(D)', 3),
+              ('dB(Z)', 4),
+              ('ITU-R 468', 5)],
+            'limitToOptions': 'true',
+
+            'label': 'Weighting',
+            'description': 'The Bricklet supports different weighting functions. dB(A/B/C/D) are the standard dB weighting curves. dB(A) is often used to measure volumes at concerts etc. dB(Z) has a flat response, no weighting is applied. ITU-R 468 is an ITU weighting standard mostly used in the UK and Europe.',
+        }
+    ],
+    'init_code': """
+this.setConfiguration(cfg.fftSize, cfg.weighting);""",
+    'channels': [
+        oh_generic_channel('Decibel', 'Sound Pressure', 'SmartHomeUnits.DECIBEL', divisor=10.0),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Sound Pressure', 'Number:Dimensionless', 'Sound Pressure',
+                     description='Measured Sound Pressure',
+                     read_only=True,
+                     pattern='%.1f %unit%'),
+    ]
+}

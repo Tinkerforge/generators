@@ -6,7 +6,7 @@
 
 # Load Cell Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -545,3 +545,50 @@ com['examples'].append({
               ('callback', ('Weight Reached', 'weight reached'), [(('Weight', 'Weight'), 'int32', 1, None, 'g', None)], None, None),
               ('callback_threshold', ('Weight', 'weight'), [], '>', [(200, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Moving Average',
+            'type': 'integer',
+            'default': 4,
+            'min': 1,
+            'max': 100,
+
+            'label': 'Moving Average',
+            'description': 'The length of a moving averaging for the weight value.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+        }
+    ],
+    'init_code': """this.setMovingAverage(cfg.movingAverage.shortValue());""",
+    'channels': [
+        oh_generic_old_style_channel('Weight', 'Weight', 'SIUnits.GRAM', divisor=1),
+        {
+            'id': 'Tare',
+            'type': 'Tare',
+
+            'setters': [{
+                'packet': 'Tare'}],
+            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+            'setter_refreshs': [{
+                'channel': 'Weight',
+                'delay': '0'
+            }]
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Weight', 'Number:Mass', 'Weight',
+                     description='The currently measured weight',
+                     read_only=True,
+                     pattern='%d %unit%',
+                     min_=0),
+        {
+            'id': 'Tare',
+            'item_type': 'String',
+            'label': 'Tare',
+            'description':'Sets the currently measured weight as tare weight.',
+            'command_options': [('Tare', 'TARE')]
+        }
+    ]
+}
