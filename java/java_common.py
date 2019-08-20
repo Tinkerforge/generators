@@ -119,7 +119,7 @@ class JavaPacket(common.Packet):
     def get_java_object_name(self, skip=0):
         name = self.get_name(skip=skip)
 
-        if name.space.startswith('Get ') or name.space.startswith('Set '):
+        if name.space.startswith('Get '):
             return name.camel[3:]
 
         return name.camel
