@@ -392,7 +392,7 @@ static int read_uint32_non_blocking(const char *filename, uint32_t *value) {
 // this function is not meant to be called often,
 // this function is meant to provide a good random seed value
 static uint32_t get_random_uint32(void) {
-	uint32_t r;
+	uint32_t r = 0;
 	struct timeval tv;
 	uint32_t seconds;
 	uint32_t microseconds;
@@ -1260,7 +1260,7 @@ void device_create(Device *device, const char *uid_str,
 
 	device_p->ref_count = 1;
 
-	device_p->uid = uid;
+	device_p->uid = (uint32_t)uid;
 
 	device_p->ipcon_p = ipcon_p;
 
