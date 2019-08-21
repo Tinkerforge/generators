@@ -391,7 +391,7 @@ static int read_uint32_non_blocking(const char *filename, uint32_t *value) {
 
 // this function is not meant to be called often,
 // this function is meant to provide a good random seed value
-uint32_t get_random_uint32(void) {
+static uint32_t get_random_uint32(void) {
 	uint32_t r;
 	struct timeval tv;
 	uint32_t seconds;
