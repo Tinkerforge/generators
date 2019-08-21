@@ -490,12 +490,13 @@ static void hmac_sha1(uint8_t *secret, int secret_length,
  *
  *****************************************************************************/
 
-#define BASE58_MAX_STR_SIZE 13
-
 static const char BASE58_ALPHABET[] = \
 	"123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
 #if 0
+
+#define BASE58_MAX_STR_SIZE 13
+
 static void base58_encode(uint64_t value, char *str) {
 	uint32_t mod;
 	char reverse_str[BASE58_MAX_STR_SIZE] = {'\0'};
@@ -519,6 +520,7 @@ static void base58_encode(uint64_t value, char *str) {
 		str[k] = '\0';
 	}
 }
+
 #endif
 
 // https://www.fefe.de/intof.html
