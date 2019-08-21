@@ -175,9 +175,9 @@ void millisleep(uint32_t msec) {
 #define SHA1_DIGEST_LENGTH 20
 
 typedef struct {
-    uint32_t state[5];
-    uint64_t count;
-    uint8_t buffer[SHA1_BLOCK_LENGTH];
+	uint32_t state[5];
+	uint64_t count;
+	uint8_t buffer[SHA1_BLOCK_LENGTH];
 } SHA1;
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
