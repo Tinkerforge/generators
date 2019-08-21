@@ -121,7 +121,7 @@ typedef struct {
 		#endif
 		#if __GNUC_PREREQ(4, 6)
 			#define STATIC_ASSERT(condition, message) \
-				_Static_assert(condition, message)
+				_Static_assert(condition, message);
 		#else
 			#define STATIC_ASSERT(condition, message) // FIXME
 		#endif
@@ -129,13 +129,13 @@ typedef struct {
 		#define STATIC_ASSERT(condition, message) // FIXME
 	#endif
 
-	STATIC_ASSERT(sizeof(PacketHeader) == 8, "PacketHeader has invalid size");
-	STATIC_ASSERT(sizeof(Packet) == 80, "Packet has invalid size");
-	STATIC_ASSERT(sizeof(DeviceEnumerate_Broadcast) == 8, "DeviceEnumerate_Broadcast has invalid size");
-	STATIC_ASSERT(sizeof(DeviceEnumerate_Callback) == 34, "DeviceEnumerate_Callback has invalid size");
-	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Request) == 8, "BrickDaemonGetAuthenticationNonce_Request has invalid size");
-	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Response) == 12, "BrickDaemonGetAuthenticationNonce_Response has invalid size");
-	STATIC_ASSERT(sizeof(BrickDaemonAuthenticate_Request) == 32, "BrickDaemonAuthenticate_Request has invalid size");
+	STATIC_ASSERT(sizeof(PacketHeader) == 8, "PacketHeader has invalid size")
+	STATIC_ASSERT(sizeof(Packet) == 80, "Packet has invalid size")
+	STATIC_ASSERT(sizeof(DeviceEnumerate_Broadcast) == 8, "DeviceEnumerate_Broadcast has invalid size")
+	STATIC_ASSERT(sizeof(DeviceEnumerate_Callback) == 34, "DeviceEnumerate_Callback has invalid size")
+	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Request) == 8, "BrickDaemonGetAuthenticationNonce_Request has invalid size")
+	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Response) == 12, "BrickDaemonGetAuthenticationNonce_Response has invalid size")
+	STATIC_ASSERT(sizeof(BrickDaemonAuthenticate_Request) == 32, "BrickDaemonAuthenticate_Request has invalid size")
 #endif
 
 void millisleep(uint32_t msec) {
