@@ -726,7 +726,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
             return '\n'
 
         template = """
-void {0}_register_callback({1} *{0}, int16_t callback_id, void *function, void *user_data) {{
+void {0}_register_callback({1} *{0}, int16_t callback_id, void (*function)(void), void *user_data) {{
 	device_register_callback({0}->p, callback_id, function, user_data);
 }}
 """
@@ -743,7 +743,7 @@ static void {device_name_under}_callback_wrapper_{name_under}(DevicePrivate *dev
 	HighLevelCallback *high_level_callback = &device_p->high_level_callbacks[-{device_name_upper}_CALLBACK_{name_upper}];
 	{stream_length_type} {stream_name_under}_chunk_length = {stream_length} - {stream_name_under}_chunk_offset;
 
-	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
+	callback_function = ({name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
 
 	if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
 		{stream_name_under}_chunk_length = {chunk_cardinality};
@@ -798,7 +798,7 @@ static void {device_name_under}_callback_wrapper_{name_under}(DevicePrivate *dev
 	{name_camel}_CallbackFunction callback_function;
 	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
 
-	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
+	callback_function = ({name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
 
 	if (callback_function != NULL) {{
 		callback_function({high_level_parameters}user_data);
@@ -844,7 +844,7 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
 	{packet_name_camel}_CallbackFunction callback_function;
 	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{alignment_copies}{callback_packet_decl}
 
-	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
+	callback_function = ({packet_name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
 
 	if (callback_function == NULL) {{
 		return;
@@ -858,7 +858,7 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
 	{packet_name_camel}_CallbackFunction callback_function;
 	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{alignment_copies}{callback_packet_decl}
 
-	*(void **)(&callback_function) = device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
+	callback_function = ({packet_name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
 {endian_conversions}{bool_unpacks}
 	{device_name_under}_callback_wrapper_{ll_packet_name_under}(device_p, {callback_args});
 
@@ -1130,7 +1130,7 @@ int {device_name_under}_{function_name}({device_name_camel} *{device_name_under}
  * Registers the given \\c function with the given \\c callback_id. The
  * \\c user_data will be passed as the last parameter to the \\c function.
  */
-void {0}_register_callback({1} *{0}, int16_t callback_id, void *function, void *user_data);
+void {0}_register_callback({1} *{0}, int16_t callback_id, void (*function)(void), void *user_data);
 """
         return template.format(self.get_name().under, self.get_name().camel, self.get_category().camel)
 

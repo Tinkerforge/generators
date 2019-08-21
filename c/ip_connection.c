@@ -1371,7 +1371,7 @@ int device_set_response_expected_all(DevicePrivate *device_p, bool response_expe
 }
 
 void device_register_callback(DevicePrivate *device_p, int16_t callback_id,
-                              void *function, void *user_data) {
+                              void (*function)(void), void *user_data) {
 	if (callback_id <= -DEVICE_NUM_FUNCTION_IDS || callback_id >= DEVICE_NUM_FUNCTION_IDS) {
 		return;
 	}
@@ -1571,7 +1571,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 
 	if (meta->function_id == IPCON_CALLBACK_CONNECTED) {
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
-			*(void **)(&connected_callback_function) = ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED];
+			connected_callback_function = (ConnectedCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED];
 			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_CONNECTED];
 
 			connected_callback_function(meta->parameter, user_data);
@@ -1606,7 +1606,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 		millisleep(100);
 
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED] != NULL) {
-			*(void **)(&disconnected_callback_function) = ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
+			disconnected_callback_function = (DisconnectedCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
 			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_DISCONNECTED];
 
 			disconnected_callback_function(meta->parameter, user_data);
@@ -1653,7 +1653,7 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 
 	if (packet->header.function_id == IPCON_CALLBACK_ENUMERATE) {
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
-			*(void **)(&enumerate_callback_function) = ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
+			enumerate_callback_function = (EnumerateCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
 			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_ENUMERATE];
 			enumerate_callback = (DeviceEnumerate_Callback *)packet;
 
@@ -2378,7 +2378,7 @@ void ipcon_unwait(IPConnection *ipcon) {
 }
 
 void ipcon_register_callback(IPConnection *ipcon, int16_t callback_id,
-                             void *function, void *user_data) {
+                             void (*function)(void), void *user_data) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
 
 	if (callback_id <= -1 || callback_id >= IPCON_NUM_CALLBACK_IDS) {
