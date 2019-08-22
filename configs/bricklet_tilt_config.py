@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': False, # replaced by Accelerometer Bricklet 2.0
     'features': [
         'bricklet_get_identity'
     ],

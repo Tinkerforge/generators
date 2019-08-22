@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': False, # selling remaining stock, replaced by OLED 128x64 Bricklet 2.0
     'features': [
         'bricklet_get_identity'
     ],

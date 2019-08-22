@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': False, # selling remaining stock, replaced by LCD 128x64 Bricklet
     'features': [
         'bricklet_get_identity'
     ],

@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True, # currently no replacement available
     'features': [
         'bricklet_get_identity'
     ],

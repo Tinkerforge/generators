@@ -20,7 +20,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True, # replaced by LCD 20x4 Bricklet
+    'discontinued': True, # replaced by LCD 128x64 Bricklet
     'features': [
         'bricklet_get_identity'
     ],
