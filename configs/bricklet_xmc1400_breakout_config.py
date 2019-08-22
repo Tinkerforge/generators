@@ -21,8 +21,8 @@ com = {
         'en': 'Breakout for Infineon XMC1400 microcontroller',
         'de': 'Entwicklungsboard für Infineon XMC1400 Mikrocontroller'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',

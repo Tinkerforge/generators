@@ -18,8 +18,8 @@ com = {
         'en': 'Capacitive touch sensor for 12 electrodes',
         'de': 'Kapazitiver Touch Sensor für 12 Elektroden'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',

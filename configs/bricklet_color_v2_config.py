@@ -21,8 +21,8 @@ com = {
         'en': 'Measures color (RGB value), illuminance and color temperature',
         'de': 'Misst Farbe (RGB Wert), Beleuchtungsstärke und Farbtemperatur'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'comcu_bricklet',
