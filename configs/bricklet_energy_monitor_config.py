@@ -191,7 +191,7 @@ Set the phase shift to 0. It is for future use and currently not supported by th
 """,
 'de':
 """
-Setzt das Transformer-Verhältnis für Strom und Spanning in hunderstel.
+Setzt das Transformer-Verhältnis für Strom und Spannung in hunderstel.
 
 Beispiel: Wenn die Netzspannung 230V beträgt und ein 9V Spannungstransformer sowie
 eine 1V:30A Spannungszange verwendet wird, ergibt das ein Spannungsverhältnis von
