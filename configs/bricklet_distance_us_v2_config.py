@@ -21,7 +21,7 @@ com = {
         'en': 'Measures distance between 30cm and 500cm with ultrasound',
         'de': 'Misst Entfernung zwischen 30cm und 500cm mit Ultraschall'
     },
-    'released': True, # FIXME: update Distance US Bricklet (1.0) replacement recommendation, once this Bricklet is released
+    'released': True,
     'documented': True,
     'discontinued': False,
     'features': [
