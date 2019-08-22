@@ -2991,8 +2991,8 @@ class ZipGenerator(Generator):
             shutil.copy(zipname, self.get_root_dir())
 
 class ExamplesGenerator(Generator):
-    skip_existing_incomplete_example = False
-    forbid_execution = True
+    skip_existing_incomplete_example = True
+    forbid_execution = False
 
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
