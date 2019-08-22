@@ -335,7 +335,7 @@ The default value is 3 (show touch state).
 """
 Konfiguriert die Touch-LED. Die LED kann ausgeschaltet, eingeschaltet,
 im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
-mit der LED den Touch-Zustand anzuzeigen (elektrode berührt = LED an).
+mit der LED den Touch-Zustand anzuzeigen (Elektrode berührt = LED an).
 
 Der Standardwert ist 3 (Touch-Zustand).
 """

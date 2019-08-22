@@ -18,8 +18,8 @@ com = {
     'display_name': 'Compass',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '3-axis compass with 0.1mG (milli Gauss) und 0.1° resolution',
-        'de': '3-Achs Kompass mit 0,1mG (Milligauß) und 0,1° Auflösung'
+        'en': '3-axis compass with 0.1mG (milli Gauss) and 0.1° resolution',
+        'de': '3-Achsen Kompass mit 0,1mG (Milligauß) und 0,1° Auflösung'
     },
     'released': True,
     'documented': True,
@@ -47,17 +47,17 @@ com['constant_groups'].append({
 heading_doc = {
 'en':
 """
-Returns the heading in 1/10 degree (north = 0 degree).
+Returns the heading in 1/10 degree (north = 0 degree, east = 90 degree).
 
-Alternatively you can use :func:`Get Magnetic Flux Density` and calculate the heading
-with ``heading = atan2(y, x)*180/PI``.
+Alternatively you can use :func:`Get Magnetic Flux Density` and calculate the
+heading with ``heading = atan2(y, x) * 180 / PI``.
 """,
 'de':
 """
-Gibt die Richtung in 1/10 Grad zurück (Norden = 0 Grad).
+Gibt die Richtung in 1/10 Grad zurück (Norden = 0 Grad, Osten = 90 Grad).
 
 Alternativ kann die Funktion :func:`Get Magnetic Flux Density` genutzt werden um
-die Richtung per ``heading = atan2(y, x)*180/PI`` zu bestimmen.
+die Richtung per ``heading = atan2(y, x) * 180 / PI`` zu bestimmen.
 """
 }
 
@@ -214,7 +214,7 @@ Konfiguriert die Datenrate und Hintergrundkalibrierung:
   Je niedriger die Datenrate ist, desto weniger Rauschen befindet sich auf den Daten.
 * Background Calibration: Aktiviert die automatische Hintergrundkalibrierung, wenn
   auf *true* gesetzt. Wenn die Hintergrundkalibrierung aktiviert ist, ändert
-  das Bricklet einmal pro Sekunde die Erfassungs-Polarität, um damit automatisch
+  das Bricklet einmal pro Sekunde die Erfassungspolarität, um damit automatisch
   temperaturabhängige Offsets zu entfernen. Das Ändern der Polarität dauert ungefähr
   20ms. Daher werden einmal pro Sekunde für 20ms keine neuen Daten generiert, wenn
   die Kalibrierung aktiviert ist. Wir empfehlen die Kalibrierung nur zu deaktivieren,
@@ -224,7 +224,6 @@ Standardwerte: Datenrate 100Hz und Hintergrundkalibrierung aktiviert.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -253,12 +252,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets offset and gain for each of the three axis.
+Sets offset and gain for each of the three axes.
 
 The Bricklet is factory calibrated. If you want to re-calibrate the
 Bricklet we recommend that you do the calibration through Brick Viewer.
 
-The calibration is saved in non-voltile memory and only has to be
+The calibration is saved in non-volatile memory and only has to be
 done once.
 """,
 'de':
@@ -287,7 +286,7 @@ Returns the calibration parameters as set by :func:`Set Calibration`.
 """,
 'de':
 """
-Gibt die Kalibrierungs-Parameter zurück, wie von :func:`Set Calibration` gesetzt.
+Gibt die Kalibrierungsparameter zurück, wie von :func:`Set Calibration` gesetzt.
 """
 }]
 })

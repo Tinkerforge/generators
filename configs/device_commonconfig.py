@@ -916,7 +916,7 @@ Returns the temperature in °C/10 as measured inside the microcontroller. The
 value returned is not the ambient temperature!
 
 The temperature is only proportional to the real temperature and it has an
-accuracy of +-15%. Practically it is only useful as an indicator for
+accuracy of ±15%. Practically it is only useful as an indicator for
 temperature changes.
 """,
 'de':
@@ -925,7 +925,7 @@ Gibt die Temperatur in °C/10, gemessen im Mikrocontroller, aus. Der
 Rückgabewert ist nicht die Umgebungstemperatur.
 
 Die Temperatur ist lediglich proportional zur echten Temperatur und hat eine
-Genauigkeit von +-15%. Daher beschränkt sich der praktische Nutzen auf die
+Genauigkeit von ±15%. Daher beschränkt sich der praktische Nutzen auf die
 Indikation von Temperaturveränderungen.
 """
 }]

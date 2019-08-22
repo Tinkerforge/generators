@@ -49,17 +49,17 @@ Returns all of the measurements that are done by the Energy Monitor Bricklet.
 
 * Voltage (V): Voltage RMS with a resolution of 10mV (example: 230.05V = 23005)
 * Current (A): Current RMS with a resolution of 10mA (example: 1.42A = 142)
-* Energy (Wh): Energy (integrated over time) with a resoluton of 10mWh (example: 1.1kWh = 110000)
+* Energy (Wh): Energy (integrated over time) with a resolution of 10mWh (example: 1.1kWh = 110000)
 * Real Power (W): Real Power with a resolution of 10mW (example: 1234.56W = 123456)
 * Apparent Power (VA): Apparent Power with a resolution of 10mVA (example: 1234.56VA = 123456)
 * Reactive Power (VAR): Reactive Power with a resolution of 10mVAR (example: 1234.56VAR = 123456)
 * Power Factor: Power Factor with a resolution of 1/1000 (example: PF 0.995 = 995)
 * Frequency (Hz): AC Frequency of the mains voltage with a resolution of 1/100 Hz (example: 50Hz = 5000)
 
-The frequency is recalculated every 6s.
+The frequency is recalculated every 6 seconds.
 
 All other values are integrated over 10 zero-crossings of the voltage sine wave.
-With a standard AC mains voltage frequecy of 50Hz this results in a 5 measurements
+With a standard AC mains voltage frequency of 50Hz this results in a 5 measurements
 per second (or an integration time of 200ms per measurement).
 
 If no voltage transformer is connected, the Bricklet will use the current waveform
@@ -79,9 +79,9 @@ Gibt alle Messdaten des Energy Monitor Bricklets zurück.
 * Power Factor: Leistungsfaktor mit einer Auflösung von 1/1000 (Beispiel: PF 0,995 = 995)
 * Frequency (Hz): AC-Frequenz der Netzspannung mit einer Auflösung von 1/100 Hz (Beispiel: 50Hz = 5000)
 
-Die Frequenz wird alle 6s neu berechnet.
+Die Frequenz wird alle 6 Sekunden neu berechnet.
 
-Alle anderen Werte werden  über 10 Nulldurchgänge der Spannungs-Sinuskurve integriert.
+Alle anderen Werte werden über 10 Nulldurchgänge der Spannungs-Sinuskurve integriert.
 Mit einer Standard Netzspannungsfrequenz von 50Hz entspricht das 5 Messungen pro Sekunde
 (oder einer Integrationszeit von 200ms pro Messung).
 
@@ -140,7 +140,7 @@ diese korrespondieren zu ungefähr 3 vollen Sinuskurven.
 Die Spannung hat eine Auflösung von 100mV und der Strom hat eine Auflösung
 von 10mA.
 
-Die Daten können für eine grafische Repräsentation (nicht-realzeit) der
+Die Daten können für eine grafische Repräsentation (nicht-Realzeit) der
 Kurvenverläufe genutzt werden.
 """
 }]
@@ -191,7 +191,7 @@ Set the phase shift to 0. It is for future use and currently not supported by th
 """,
 'de':
 """
-Setzt das Transformer-Verhältnis für Strom und Spannung in hunderstel.
+Setzt das Transformer-Verhältnis für Strom und Spannung in Hundertstel.
 
 Beispiel: Wenn die Netzspannung 230V beträgt und ein 9V Spannungstransformer sowie
 eine 1V:30A Spannungszange verwendet wird, ergibt das ein Spannungsverhältnis von
@@ -202,13 +202,11 @@ In diesem Fall müssten also die Werte 2556 und 3000 gesetzt werden.
 Die Kalibrierung wird in nicht-flüchtigem Speicher gespeichert und muss nur einmal
 gesetzt werden.
 
-Im Auslieferungszustand ist das Spanungsverhältnis auf 1923 und das Stromverhältnis auf 3000
+Im Auslieferungszustand ist das Spannungsverhältnis auf 1923 und das Stromverhältnis auf 3000
 gesetzt.
 
 Der Parameter *Phase Shift* muss auf 0 gesetzt werden. Dieser Parameter wird
 aktuell von der Firmware nicht genutzt.
-
-
 """
 }]
 })

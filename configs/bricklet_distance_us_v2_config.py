@@ -80,8 +80,8 @@ com['packets'].append({
 """
 Sets the update rate to 2 Hz or 10 Hz.
 
-With 2 Hz update rate the noise is about +-1mm, while with 10 Hz update rate the noise
-increases to about +-5mm.
+With 2 Hz update rate the noise is about ±1mm, while with 10 Hz update rate the noise
+increases to about ±5mm.
 
 The default update rate is 2 Hz.
 """,
@@ -89,8 +89,8 @@ The default update rate is 2 Hz.
 """
 Setzt die Aktualisierungsrate auf 2 Hz oder 10 Hz.
 
-Mit 2 Hz Aktualisierungsrate beträgt das Rauschen ungefähr +-1mm. Bei 10 Hz
-erhöht sich das das Rauschen auf ungefähr +-5mm.
+Mit 2 Hz Aktualisierungsrate beträgt das Rauschen ungefähr ±1mm. Bei 10 Hz
+erhöht sich das das Rauschen auf ungefähr ±5mm.
 
 Der Standardwert beträgt 2 Hz.
 """

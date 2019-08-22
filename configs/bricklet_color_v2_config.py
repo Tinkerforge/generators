@@ -201,7 +201,7 @@ set by :func:`Set Configuration`. To get the illuminance in Lux apply this formu
  lux = illuminance * 700 / gain / integration_time
 
 To get a correct illuminance measurement make sure that the color
-values themself are not saturated. The color value (R, G or B)
+values themselves are not saturated. The color value (R, G or B)
 is saturated if it is equal to the maximum value of 65535.
 In that case you have to reduce the gain, see :func:`Set Configuration`.
 """,
@@ -235,7 +235,7 @@ color_temperature_doc = {
 Returns the color temperature in Kelvin.
 
 To get a correct color temperature measurement make sure that the color
-values themself are not saturated. The color value (R, G or B)
+values themselves are not saturated. The color value (R, G or B)
 is saturated if it is equal to the maximum value of 65535.
 In that case you have to reduce the gain, see :func:`Set Configuration`.
 """,
