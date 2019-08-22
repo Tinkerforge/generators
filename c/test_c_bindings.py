@@ -70,6 +70,8 @@ class CExamplesTester(common.Tester):
             args += ['x86_64-w64-mingw32-gcc', '-Wno-error=return-type']
         elif self.compiler == 'mingw32-g++':
             args += ['x86_64-w64-mingw32-g++', '-Wno-error=return-type']
+        elif self.compiler == 'clang':
+            args += ['clang', '-std=c99', '-pthread']
         elif self.compiler == 'scan-build clang':
             args += ['scan-build', 'clang', '-std=c99', '-pthread']
         else:
@@ -123,6 +125,9 @@ def run(root_dir):
         return False
 
     if not CExamplesTester(root_dir, 'mingw32-g++', extra_paths).run():
+        return False
+
+    if not CExamplesTester(root_dir, 'clang', extra_paths).run():
         return False
 
     return CExamplesTester(root_dir, 'scan-build clang', extra_paths).run()
