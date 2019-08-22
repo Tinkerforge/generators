@@ -605,7 +605,7 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         template = r"""	// Register {function_name_comment}<BP>callback<BP>to<BP>function<BP>cb_{function_name_under}
 	{device_name_under}_register_callback(&{device_name_initial},
 	{spaces}                   {device_name_upper}_CALLBACK_{function_name_upper},
-	{spaces}                   (void *)cb_{function_name_under},
+	{spaces}                   (void (*)(void))cb_{function_name_under},
 	{spaces}                   NULL);
 """
 

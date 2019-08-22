@@ -46,7 +46,7 @@ int main(void) {
 	// Register enumeration callback to "cb_enumerate"
 	ipcon_register_callback(&ipcon,
 	                        IPCON_CALLBACK_ENUMERATE,
-	                        (void *)cb_enumerate,
+	                        (void (*)(void))cb_enumerate,
 	                        NULL);
 
 	// Trigger enumerate

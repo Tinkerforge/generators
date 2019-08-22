@@ -54,13 +54,13 @@ int main(void) {
 	// Register connected callback to "cb_connected"
 	ipcon_register_callback(&ipcon,
 	                        IPCON_CALLBACK_CONNECTED,
-	                        (void *)cb_connected,
+	                        (void (*)(void))cb_connected,
 	                        &ipcon);
 
 	// Register enumeration callback to "cb_enumerate"
 	ipcon_register_callback(&ipcon,
 	                        IPCON_CALLBACK_ENUMERATE,
-	                        (void *)cb_enumerate,
+	                        (void (*)(void))cb_enumerate,
 	                        NULL);
 
 	// Connect to brickd
