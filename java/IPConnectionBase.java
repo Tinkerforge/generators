@@ -320,7 +320,7 @@ class DisconnectProbeThread extends Thread {
 
 	void shutdown() {
 		try {
-			queue.put(new Boolean(true));
+			queue.put(Boolean.valueOf(true));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
