@@ -368,7 +368,7 @@ com['examples'].append({
                                                               (('Apparent Power', 'Apparent Power'), 'int32', 1, 100, 'VA', None),
                                                               (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'VAR', None),
                                                               (('Power Factor', 'Power Factor'), 'uint16', 1, 1000, None, None),
-                                                              (('Frequecy', 'Frequency'), 'uint16', 1, 100, 'Hz', None)
+                                                              (('Frequency', 'Frequency'), 'uint16', 1, 100, 'Hz', None)
 ], [])]})
 
 com['examples'].append({
@@ -380,6 +380,6 @@ com['examples'].append({
                                                             (('Apparent Power', 'Apparent Power'), 'int32', 1, 100, 'VA', None),
                                                             (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'VAR', None),
                                                             (('Power Factor', 'Power Factor'), 'uint16', 1, 1000, None, None),
-                                                            (('Frequecy', 'Frequency'), 'uint16', 1, 100, 'Hz', None)], None, None),
+                                                            (('Frequency', 'Frequency'), 'uint16', 1, 100, 'Hz', None)], None, None),
               ('callback_configuration', ('Energy Data', 'Energy Data'), [], 1000, False, None, [])]
 })
