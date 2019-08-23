@@ -112,19 +112,40 @@ def strip_trailing_whitespace(text):
 
 def get_changelog_version(root_dir):
     r = re.compile(r'^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
-    last = None
+    versions = []
 
     with open(os.path.join(root_dir, 'changelog.txt'), 'r') as f:
         for line in f.readlines():
             m = r.match(line)
 
             if m is not None:
-                last = (m.group(1), m.group(2), m.group(3))
+                version = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
 
-    if last == None:
+                if version[0] not in [1, 2]:
+                    raise GeneratorError('invalid major version in changelog {0}: {1}'.format(root_dir, version))
+
+                if len(versions) > 0:
+                    if versions[-1] >= version:
+                        raise GeneratorError('invalid version order in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+
+                    if versions[-1][0] == version[0] and versions[-1][1] == version[1] and versions[-1][2] + 1 != version[2]:
+                        raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+
+                    if versions[-1][1] != version[1] and version[2] != 0:
+                        if root_dir.endswith('/javascript') and versions[-1] == (2, 0, 18) and version == (2, 1, 19):
+                            pass # ignore historical glitch
+                        else:
+                            raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+
+                    if versions[-1][0] != version[0] and (version[1] != 0 or version[2] != 0):
+                        raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+
+                versions.append(version)
+
+    if len(versions) == 0:
         raise GeneratorError('no version found in changelog: ' + root_dir)
 
-    return last
+    return (str(versions[-1][0]), str(versions[-1][1]), str(versions[-1][2]))
 
 def get_image_size(path):
     from PIL import Image
