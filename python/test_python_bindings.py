@@ -72,7 +72,6 @@ class PylintTester(common.Tester):
 
 def run(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/demo/starter_kit_weather_station_demo/main.py'),
-                   os.path.join(root_dir, '../../weather-station/xively/python/weather_xively.py'),
                    os.path.join(root_dir, '../../weather-station/write_to_lcd/python/weather_station.py'),
                    os.path.join(root_dir, '../../hardware-hacking/remote_switch/python/remote_switch.py'),
                    os.path.join(root_dir, '../../hardware-hacking/smoke_detector/python/smoke_detector.py'),
