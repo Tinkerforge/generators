@@ -284,8 +284,8 @@
 - Break API to fix moving-average-length type in Distance IR Bricklet 2.0 API
 
 2018-11-28: 2.1.21 (0e3b130)
-- Add Get/SetSamplesPerSecond functions to Humidity Bricklet 2.0 API
-- Add button, slider, graph and tab functions to LCD 128x64 Bricklet API
+- Add Get/SetSamplesPerSecond methods to Humidity Bricklet 2.0 API
+- Add button, slider, graph and tab methods to LCD 128x64 Bricklet API
 
 2019-01-29: 2.1.22 (2617875)
 - Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
@@ -294,6 +294,12 @@
 - Add support for CO2 2.0, E-Paper 296x128, Hall Effect 2.0, Joystick 2.0,
   Laser Range Finder 2.0, Linear Poti 2.0, Piezo Speaker 2.0, RGB LED 2.0 and
   Segment Display 4x7 2.0 Bricklet and HAT and HAT Zero Brick
-- Add RemoveCalibration and Get/SetBackgroundCalibrationDuration functions to
+- Add RemoveCalibration and Get/SetBackgroundCalibrationDuration methods to
   Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
+
+2019-08-23: 2.1.24 (<unknown>)
+- Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
+  Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
+- Add Get/SetFilterConfiguration methods to Accelerometer Bricklet 2.0 API
+- Add CONVERSION_TIME constants to Voltage/Current Bricklet 2.0 API

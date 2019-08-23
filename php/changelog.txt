@@ -245,3 +245,9 @@
   Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
 - Fix handling of empty input streams
+
+2019-08-23: 2.1.23 (<unknown>)
+- Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
+  Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
+- Add get/setFilterConfiguration functions to Accelerometer Bricklet 2.0 API
+- Add CONVERSION_TIME constants to Voltage/Current Bricklet 2.0 API

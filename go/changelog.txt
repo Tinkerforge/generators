@@ -17,6 +17,10 @@
 - Fix IP Connection auto-reconnect setting
 - Properly strip trailing NUL-bytes from UIDs in enumerate callback
 
-<unknown>: 2.0.4 (<unknown>)
-- Breaking Change: Remove enumerate response structure. Enumerate callback uses parameters directly,
-  which is more in line with all other callbacks.
+2019-08-23: 2.0.4 (<unknown>)
+- Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
+  Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
+- Add Get/SetFilterConfiguration functions to Accelerometer Bricklet 2.0 API
+- Add ConversionTime constants to Voltage/Current Bricklet 2.0 API
+- Break API to remove enumerate response structure: enumerate callback uses
+  parameters directly, which is more in line with all other callbacks

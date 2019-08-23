@@ -93,7 +93,7 @@
   Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, RS232 2.0,
   Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
 - Add get/setMaximumTimeout functions to NFC Bricklet API
-- Add isSensorConnected functino and SENSOR_CONNECTED callback to PTC Bricklet API
+- Add isSensorConnected function and SENSOR_CONNECTED callback to PTC Bricklet API
 - Break Humidity 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
   fix types for callback threshold min/max configuration
 - Add general streaming support
@@ -122,3 +122,9 @@
   Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
 - Fix IP Connection disconnect probe handling
+
+2019-08-23: 2.1.24 (<unknown>)
+- Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
+  Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
+- Add get/setFilterConfiguration functions to Accelerometer Bricklet 2.0 API
+- Add CONVERSION_TIME constants to Voltage/Current Bricklet 2.0 API

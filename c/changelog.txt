@@ -304,3 +304,12 @@
 - Add remove_calibration and get/set_background_calibration_duration functions
   to Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
+
+2019-08-23: 2.1.26 (<unknown>)
+- Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
+  Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
+- Add Get/SetFilterConfiguration functions to Accelerometer Bricklet 2.0 API
+- Add ConversionTime constants to Voltage/Current Bricklet 2.0 API
+- Fix misaligned array access in callback wrapper function
+- Don't leak the get_random_uint32 symbol
+- Stop mixing object and function pointers for callback functions
