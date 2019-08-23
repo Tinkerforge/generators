@@ -84,7 +84,7 @@ class CPrintfFormatMixin(object):
         type_ = self.get_type().split(':')[0]
 
         if type_ == 'bool':
-            return' ? "true" : "false"'
+            return ' ? "true" : "false"'
         else:
             return ''
 
