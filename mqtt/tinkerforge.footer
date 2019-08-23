@@ -20,7 +20,7 @@ class MQTTBindings:
         self.ipcon_connected_event = threading.Event()
 
         self.ipcon = IPConnection()
-        self.ipcon.enable_retry_first_connection(lambda e: logging.info("Could not connect to Brick Daemon: {}. Will retry.".format(str(e))))
+        self.ipcon.set_auto_reconnect_internal(True, lambda e: logging.info("Could not connect to Brick Daemon: {}. Will retry.".format(str(e))))
         self.handle_ipcon_exceptions(lambda i: i.set_timeout(ipcon_timeout))
 
         self.mqttc = mqtt.Client(userdata=len(global_prefix))

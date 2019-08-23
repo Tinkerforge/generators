@@ -535,6 +535,8 @@ class IPConnection(object):
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
+        self.auto_reconnect_internal = False
+        self.connect_failure_callback = None
         self.sequence_number_lock = threading.Lock()
         self.next_sequence_number = 0 # protected by sequence_number_lock
         self.authentication_lock = threading.Lock() # protects authentication handshake
@@ -553,19 +555,6 @@ class IPConnection(object):
         self.disconnect_probe_thread = None
         self.waiter = threading.Semaphore()
         self.brickd = BrickDaemon('2', self)
-        self.retry_first_connection = False
-        self.reconnect_sleep_time = 0.1
-
-    def enable_retry_first_connection(self, log_fn):
-        """
-        Used for MQTT bindings. This will enable reconnect attempts even if there was no successful connection yet.
-
-        log_fn will be called with an exception to signal, that the first connection attempt was unsuccessful and will be retried.
-        """
-        self.auto_reconnect_allowed = True
-        self.retry_first_connection = True
-        self.log_fn = log_fn
-        self.reconnect_sleep_time = 5
 
     def connect(self, host, port):
         """
@@ -802,27 +791,29 @@ class IPConnection(object):
                 tmp.settimeout(None)
         except Exception as e:
             def cleanup1():
-                # end callback thread
-                if not is_auto_reconnect:
-                    self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
+                if self.auto_reconnect_internal:
+                    if not is_auto_reconnect and self.connect_failure_callback is not None:
+                        self.connect_failure_callback(e)
 
-                    if threading.current_thread() is not self.callback.thread:
-                        self.callback.thread.join()
+                    self.auto_reconnect_allowed = True
 
-                    self.callback = None
+                    # FIXME: don't misuse disconnected-callback here to trigger an auto-reconnect
+                    #        because not actual connection has been established yet
+                    self.callback.queue.put((IPConnection.QUEUE_META,
+                                             (IPConnection.CALLBACK_DISCONNECTED,
+                                              IPConnection.DISCONNECT_REASON_ERROR, None)))
+                else:
+                    # end callback thread
+                    if not is_auto_reconnect:
+                        self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
 
-            if not self.retry_first_connection:
-                cleanup1()
-            else:
-                if not is_auto_reconnect and self.log_fn is not None:
-                    self.log_fn(e)
-                self.callback.queue.put((IPConnection.QUEUE_META,
-                                    (IPConnection.CALLBACK_DISCONNECTED,
-                                    IPConnection.DISCONNECT_REASON_ERROR, self.socket_id)))
+                        if threading.current_thread() is not self.callback.thread:
+                            self.callback.thread.join()
+
+                        self.callback = None
+
+            cleanup1()
             raise
-
-        if self.retry_first_connection:
-            self.reconnect_sleep_time = 0.1
 
         self.socket = tmp
         self.socket_id += 1
@@ -885,8 +876,7 @@ class IPConnection(object):
             cleanup3()
             raise
 
-        if not self.retry_first_connection:
-            self.auto_reconnect_allowed = False
+        self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
 
         if is_auto_reconnect:
@@ -933,6 +923,10 @@ class IPConnection(object):
         # close socket
         self.socket.close()
         self.socket = None
+
+    def set_auto_reconnect_internal(self, auto_reconnect, connect_failure_callback):
+        self.auto_reconnect_internal = auto_reconnect
+        self.connect_failure_callback = connect_failure_callback
 
     def receive_loop(self, socket_id):
         if sys.hexversion < 0x03000000:
@@ -1027,7 +1021,7 @@ class IPConnection(object):
                             self.auto_reconnect_pending = False
 
                     if retry:
-                        time.sleep(self.reconnect_sleep_time)
+                        time.sleep(0.1)
 
     def dispatch_packet(self, packet):
         uid = get_uid_from_data(packet)
