@@ -132,7 +132,7 @@ def get_changelog_version(root_dir):
                         raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
 
                     if versions[-1][1] != version[1] and version[2] != 0:
-                        if root_dir.endswith('/javascript') and versions[-1] == (2, 0, 18) and version == (2, 1, 19):
+                        if (root_dir == 'javascript' or root_dir.endswith('/javascript')) and versions[-1] == (2, 0, 18) and version == (2, 1, 19):
                             pass # ignore historical glitch
                         else:
                             raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
