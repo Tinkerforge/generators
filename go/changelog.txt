@@ -22,5 +22,6 @@
   Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
 - Add Get/SetFilterConfiguration functions to Accelerometer Bricklet 2.0 API
 - Add ConversionTime constants to Voltage/Current Bricklet 2.0 API
+- Allow to pass non-constant values to parameters with constants
 - Break API to remove enumerate response structure: enumerate callback uses
   parameters directly, which is more in line with all other callbacks
