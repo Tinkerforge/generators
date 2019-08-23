@@ -80,6 +80,12 @@ func Uint16SliceToByteSlice(slice []uint16) []byte {
 	return buf.Bytes()
 }
 
+func Int16SliceToByteSlice(slice []int16) []byte {
+	var buf bytes.Buffer
+	binary.Write(&buf, binary.LittleEndian, slice)
+	return buf.Bytes()
+}
+
 func Int8SliceToByteSlice(slice []int8) []byte {
 	var buf bytes.Buffer
 	binary.Write(&buf, binary.LittleEndian, slice)
