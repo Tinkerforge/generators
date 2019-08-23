@@ -709,7 +709,7 @@ aktiviert ist (siehe :func:`Set Sync Rect`).
 
 Für eine gute Erläuterung der verschiedenen Decay Modi siehe
 `diesen <https://ebldc.com/?p=86/>`__ Blogeintrag (Englisch) von Avayan oder
-`diesen <https://www.schrittmotor-blog.de/stromregelung-von-schrittmotoren-auf-das-abschalten-kommt-es-an/>`__
+`diesen <http://www.schrittmotor-blog.de/stromregelung-von-schrittmotoren-auf-das-abschalten-kommt-es-an/>`__
 Blogeintrag (Deutsch) von T. Ostermann.
 
 Ein guter Decay Modus ist leider unterschiedlich für jeden Motor. Der beste
