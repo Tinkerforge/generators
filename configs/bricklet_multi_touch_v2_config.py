@@ -361,11 +361,11 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Touch LED Config` gesetzt
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Touch State', 'touch state'), [(('State', 'Touch State'), 'bool', 13, None, None, None)], [])],
+'functions': [('getter', ('Get Touch State', 'touch state'), [(('State', ['Electrode {}'.format(i) for i in range(0, 12)] + ['Proximity']), 'bool', 13, None, None, None)], [])],
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Touch State', 'touch state'), [(('State', 'Touch State'), 'uint16', 1, None, None, None)], None, None),
+'functions': [('callback', ('Touch State', 'touch state'), [(('State', ['Electrode {}'.format(i) for i in range(0, 12)] + ['Proximity']), 'bool', 13, None, None, None)], None, None),
               ('callback_configuration', ('Touch State', 'touch state'), [], 10, True, None, [])],
 })
