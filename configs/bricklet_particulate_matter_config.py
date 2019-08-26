@@ -48,6 +48,10 @@ Returns the particulate matter concentration in µg/m³, broken down as:
 
 If the sensor is disabled (see :func:`Set Enable`) then the last known good
 values from the sensor are returned.
+
+If you want to get the values periodically, it is recommended to use the
+:cb:`PM Concentration` callback. You can set the callback configuration
+with :func:`Set PM Concentration Callback Configuration`.
 """,
 'de':
 """
@@ -59,6 +63,10 @@ Gibt die Feinstaub-Konzentration in µg/m³ zurück, aufgeschlüsselt nach:
 
 Wenn der Sensor deaktiviert ist (siehe :func:`Set Enable`), dann wird weiterhin
 der letzte Sensorwert zurückgegeben.
+
+Wenn die Werte periodisch benötigt werden, kann auch der :cb:`PM Concentration` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set PM Concentration Callback Configuration` konfiguriert.
 """
 }]
 })
@@ -88,6 +96,10 @@ diameter:
 
 If the sensor is disabled (see :func:`Set Enable`) then the last known good
 value from the sensor is returned.
+
+If you want to get the values periodically, it is recommended to use the
+:cb:`PM Count` callback. You can set the callback configuration
+with :func:`Set PM Count Callback Configuration`.
 """,
 'de':
 """
@@ -103,6 +115,10 @@ nach deren Durchmesser:
 
 Wenn der Sensor deaktiviert ist (siehe :func:`Set Enable`), dann wird weiterhin
 der letzte Sensorwert zurückgegeben.
+
+Wenn die Werte periodisch benötigt werden, kann auch der :cb:`PM Count` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set PM Count Callback Configuration` konfiguriert.
 """
 }]
 })
