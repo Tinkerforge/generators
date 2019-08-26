@@ -792,7 +792,10 @@ class IPConnection(object):
         except Exception as e:
             def cleanup1():
                 if self.auto_reconnect_internal:
-                    if not is_auto_reconnect and self.connect_failure_callback is not None:
+                    if is_auto_reconnect:
+                        return
+
+                    if self.connect_failure_callback is not None:
                         self.connect_failure_callback(e)
 
                     self.auto_reconnect_allowed = True
