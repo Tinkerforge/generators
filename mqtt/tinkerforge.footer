@@ -88,7 +88,9 @@ class MQTTBindings:
             pass
 
         self.ipcon_connected_event.wait()
-        self.ipcon.register_callback(self.ipcon.CALLBACK_CONNECTED, None)
+        self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, lambda *args: self.ip_connection_callback_fn(IPConnection.CALLBACK_CONNECTED, *args))
+        self.ipcon.register_callback(IPConnection.CALLBACK_DISCONNECTED, lambda *args: self.ip_connection_callback_fn(IPConnection.CALLBACK_DISCONNECTED, *args))
+        self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, lambda *args: self.ip_connection_callback_fn(IPConnection.CALLBACK_ENUMERATE, *args))
         logging.debug("Connected to brickd at {}:{}".format(ipcon_host, ipcon_port))
         if ipcon_auth_secret != "":
             self.authenticate(ipcon_auth_secret, "Could not authenticate.")
@@ -120,7 +122,44 @@ class MQTTBindings:
             self.mqttc.loop_stop()
 
 
+    def ip_connection_callback_log(self, callback_id, *args):
+        d_dis = {
+                IPConnection.DISCONNECT_REASON_REQUEST: 'Disconnect was requested by user.',
+                IPConnection.DISCONNECT_REASON_ERROR: 'Disconnect because of an unresolvable error.',
+                IPConnection.DISCONNECT_REASON_SHUTDOWN: 'Disconnect initiated by Brick Daemon or WIFI/Ethernet Extension.'
+            }
+        d_con = {
+                IPConnection.CONNECT_REASON_REQUEST: 'Connection established after request from user.',
+                IPConnection.CONNECT_REASON_AUTO_RECONNECT: 'Connection after auto-reconnect.'
+        }
+
+        d_enum = {
+            IPConnection.ENUMERATION_TYPE_AVAILABLE: 'Device available',
+            IPConnection.ENUMERATION_TYPE_CONNECTED: 'Device connected',
+            IPConnection.ENUMERATION_TYPE_DISCONNECTED: 'Device disconnected'
+        }
+
+        message = ''
+        if callback_id == IPConnection.CALLBACK_CONNECTED:
+            message = 'Connected to Brick Daemon: {}'.format(d_con[args[0]])
+        elif callback_id == IPConnection.CALLBACK_DISCONNECTED:
+            message = 'Disconnected from Brick Daemon: {}'.format(d_dis[args[0]])
+        elif callback_id == IPConnection.CALLBACK_ENUMERATE:
+            uid, conn_uid, pos, hw_ver, fw_ver, dev_id, reason = args
+            if reason == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
+                message = '{}: UID: {}'.format(d_enum[reason], uid)
+            else:
+                message = '{}: {} at {} (Pos {}), Hardware: {}.{}.{}, Firmware: {}.{}.{}, Dev ID: {}'
+                message = message.format(d_enum[reason], uid, conn_uid, pos, hw_ver[0], hw_ver[1], hw_ver[2], fw_ver[0], fw_ver[1], fw_ver[2], dev_id)
+        else:
+            logging.warning("Received unknown IPConnection callback with id {}".format(callback_id))
+            return
+
+        logging.debug(message)
+
     def ip_connection_callback_fn(self, callback_id, *args):
+        self.ip_connection_callback_log(callback_id, *args)
+
         d = dict(zip(self.ip_connection_callback_names[callback_id], args))
         if "enumeration_type" in d and d["enumeration_type"] != 2 and "device_identifier" in d:
             dev_id = d["device_identifier"]
@@ -137,16 +176,12 @@ class MQTTBindings:
             self.mqttc.publish(path, payload)
 
     def register_ip_connection_callback(self, callback_id, response_path):
-        if len(self.ip_connection_response_paths[callback_id]) == 0:
-            self.ipcon.register_callback(callback_id, lambda *args: self.ip_connection_callback_fn(callback_id, *args))
         self.ip_connection_response_paths[callback_id].add(response_path)
         logging.debug("Registered ip connection callback {} under topic {}.".format(callback_id, response_path))
 
     def deregister_ip_connection_callback(self, callback_id, response_path):
         self.ip_connection_response_paths[callback_id].discard(response_path)
         logging.debug("Deregistered ip connection callback {} for topic {}.".format(callback_id, response_path))
-        if len(self.ip_connection_response_paths[callback_id]) == 0:
-            self.ipcon.register_callback(callback_id, None)
 
     def handle_ip_connection_call(self, request_type, device, function, json_args, response_path):
         if request_type == "request":
