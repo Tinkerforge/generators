@@ -312,4 +312,4 @@
 - Add CONVERSION_TIME constants to Voltage/Current Bricklet 2.0 API
 - Fix misaligned array access in callback wrapper function
 - Don't leak the get_random_uint32 symbol
-- Stop mixing object and function pointers for callback functions
+- Break API to stop mixing object and function pointers for callback functions
