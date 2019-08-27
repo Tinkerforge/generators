@@ -382,6 +382,7 @@ com['openhab'] = {
         {
             'id': 'Pressed',
             'type': 'system.rawbutton',
+            'label': 'Pressed',
 
             'getters': [{
                 'packet': 'Is Pressed',
