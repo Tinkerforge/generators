@@ -331,6 +331,7 @@ com['openhab'] = {
             'default': '3',
 
             'label': 'Averaging',
+            'description': 'Configures the number of samples to average over.'
         }, {
             'name': 'Voltage Conversion Time',
             'type': 'integer',
@@ -346,6 +347,7 @@ com['openhab'] = {
             'default': '4',
 
             'label': 'Voltage Conversion Time',
+            'description': 'Configures the voltage conversion time.'
         }, {
             'name': 'Current Conversion Time',
             'type': 'integer',
@@ -361,6 +363,7 @@ com['openhab'] = {
             'default': '4',
 
             'label': 'Current Conversion Time',
+            'description': 'Configures the current conversion time.'
         },
     ],
     'init_code': """this.setConfiguration(cfg.averaging, cfg.voltageConversionTime, cfg.currentConversionTime);""",
@@ -370,20 +373,20 @@ com['openhab'] = {
         oh_generic_channel('Power', 'Power', 'SmartHomeUnits.WATT', divisor=1000.0)
     ],
     'channel_types': [
-        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Measured Voltage',
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Measured Voltage', description='The measured voltage between 0 and 36V.',
                      read_only=True,
                      pattern='%.3f %unit%',
                      min_=0,
                      max_=36),
-        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Measured Current',
+        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Measured Current', description='The measured current between -20 and 20A.',
                      read_only=True,
                      pattern='%.3f %unit%',
                      min_=-20,
                      max_=20),
-        oh_generic_channel_type('Power', 'Number:Power', 'Measured Power',
+        oh_generic_channel_type('Power', 'Number:Power', 'Measured Power', description='The measured power between 0 and 720W.',
                      read_only=True,
                      pattern='%.3f %unit%',
                      min_=0,
-                     max_=0.024)
+                     max_=720)
     ]
 }

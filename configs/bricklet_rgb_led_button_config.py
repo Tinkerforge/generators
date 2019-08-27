@@ -224,7 +224,7 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Color', 'Color', 'LED Color',
+        oh_generic_channel_type('Color', 'Color', 'LED Color', description='The color of the LED.',
                      read_only=False)
     ]
 }
