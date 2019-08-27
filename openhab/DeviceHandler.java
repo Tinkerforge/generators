@@ -73,7 +73,7 @@ public class DeviceHandler extends BaseThingHandler {
     short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
         String id = thing.getUID().getId();
 
-        if (uid.equals(id)) {
+        if (!uid.equals(id)) {
             return;
         }
 
