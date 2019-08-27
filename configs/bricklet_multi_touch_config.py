@@ -311,6 +311,7 @@ com['openhab'] = {
             'predicate': 'cfg.proximityEnabled',
             'id': 'Proximity',
             'label': 'Proximity',
+            'description': 'The current touch state. If a hand or similar is in proximity to the electrodes, this channel is toggled. The proximity is activated with a distance of 1-2cm. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.',
             'type': 'Electrode',
             'getters': [{
                 'packet': 'Get Touch State',
@@ -329,7 +330,7 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Electrode', 'Switch', 'NOT USED', description='NOT USED'),
+        oh_generic_channel_type('Electrode', 'Switch', 'NOT USED', description='The current touch state. An electrode is already counted as touched if a finger is nearly touching the electrode. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.'),
         {
             'id': 'Recalibrate',
             'item_type': 'String',
