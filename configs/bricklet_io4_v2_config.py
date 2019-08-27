@@ -552,7 +552,7 @@ Activates a PWM for the given channel with the frequency given in 1/10Hz and the
 cycle given in 1/100%.
 
 You need to set the channel to output before you call this function, otherwise it will
-be ignored. To turn the PWM off again, you can set the frequency to 0 or any other
+report an invalid parameter error. To turn the PWM off again, you can set the frequency to 0 or any other
 function that changes a value of the channel (e.g. :func:`Set Selected Value`).
 
 The maximum frequency value is 320000000 (32MHz). The maximum duty cycle value is
@@ -569,7 +569,7 @@ Aktiviert ein PWM auf dem angegebenen Kanal. Die Frequenz wird in 1/10Hz angegeb
 die Duty Cycle in 1/100%.
 
 Bevor diese Funktion aufgerufen wird, muss der Kanal als Ausgabe konfiguriert werden,
-ansonsten wird der Aufruf ignoriert. Um die PWM wieder auszustellen, kann die Frequenz auf
+ansonsten wird ein "invalid parameter"-Fehler gemeldet. Um die PWM wieder auszustellen, kann die Frequenz auf
 0 gesetzt werden oder eine andere Funktion aufgerufen werden die Einstellungen am
 Kanal verändert (z.B. :func:`Set Selected Value`).
 
