@@ -6,6 +6,8 @@
 
 # Particulate Matter Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -384,3 +386,101 @@ com['examples'].append({
 'functions': [('callback', ('PM Concentration', 'PM concentration'), [(('PM10', 'PM 1.0'), 'uint16', 1, None, 'µg/m³', None), (('PM25', 'PM 2.5'), 'uint16', 1, None, 'µg/m³', None), (('PM100', 'PM 10.0'), 'uint16', 1, None, 'µg/m³', None)], None, None),
               ('callback_configuration', ('PM Concentration', 'PM concentration'), [], 1000, False, None, [])]
 })
+
+def concentration_channel(size):
+    return {
+        'id': 'PM{} Concentration'.format(size),
+        'type': 'PM{} Concentration'.format(size),
+        'init_code':"""this.setPMConcentrationCallbackConfiguration(cfg.pmConcentrationUpdateInterval, true);""",
+        'dispose_code': """this.setPMConcentrationCallbackConfiguration(0, true);""",
+        'getters': [{
+            'packet': 'Get PM Concentration',
+            'packet_params': [],
+            'transform': 'new QuantityType<>(value.pm{}{{divisor}}, {{unit}})'.format(size)}],
+
+        'callbacks': [{
+            'packet': 'PM Concentration',
+            'transform': 'new QuantityType<>(pm{}{{divisor}}, {{unit}})'.format(size)}],
+
+        'java_unit': 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE',
+        'divisor': 1,
+        'is_trigger_channel': False
+    }
+
+def concentration_channel_type(size):
+    return oh_generic_channel_type('PM{} Concentration'.format(size), 'Number:Density', 'PM {:.1f} Concentration'.format(size / 10),
+                     description='The particulate matter {:.1f} concentration. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
+                     read_only=True,
+                     pattern='%d %unit%')
+
+def count_channel(size):
+    return {
+        'id': 'Part Count {}'.format(size),
+        'type': 'Part Count {}'.format(size),
+        'init_code':"""this.setPMCountCallbackConfiguration(cfg.pmCountUpdateInterval, true);""",
+        'dispose_code': """this.setPMCountCallbackConfiguration(0, true);""",
+        'getters': [{
+            'packet': 'Get PM Count',
+            'packet_params': [],
+            'transform': 'new QuantityType<>(value.greater{:02}um{{divisor}}, {{unit}})'.format(size)}],
+
+        'callbacks': [{
+            'packet': 'PM Count',
+            'transform': 'new QuantityType<>(greater{:02}um{{divisor}}, {{unit}})'.format(size)}],
+
+        'java_unit': 'SmartHomeUnits.ONE',
+        'divisor': 1,
+        'is_trigger_channel': False
+    }
+def count_channel_type(size):
+    return oh_generic_channel_type('Part Count {}'.format(size), 'Number:Dimensionless', 'Particulates greater {:.1f}µm'.format(size / 10),
+                     description='The number of particulates greater than {:.1f}µm in 100 ml of air. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
+                     read_only=True,
+                     pattern='%d')
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'PM Concentration Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': 'PM Concentration Update Interval',
+            'description': 'Specifies the update interval for all PM concentration data in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }, {
+            'name': 'PM Count Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': 'PM Count Update Interval',
+            'description': 'Specifies the update interval for all PM count data in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }],
+    'channels': [concentration_channel(i) for i in [10, 25, 100]] +
+                [count_channel(i) for i in [3, 5, 10, 25, 50, 100]] + [
+                {
+                    'id': 'Sensor Enabled',
+                    'label': 'Sensor Enabled',
+                    'description': 'Enables/Disables the fan and the laser diode of the sensors.<br/><br/>The sensor takes about 30 seconds after it is enabled to settle and produce stable values.<br/><br/>The laser diode has a lifetime of about 8000 hours. If you want to measure in an interval with a long idle time (e.g. hourly) you should turn the laser diode off between the measurements.',
+
+                    'type': 'Sensor Enabled',
+
+                    'getters': [{
+                        'packet': 'Get Enable',
+                        'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+
+                    'setters': [{
+                        'packet': 'Set Enable',
+                        'packet_params': ['cmd == OnOffType.ON']}],
+                    'setter_command_type': "OnOffType",
+                }
+                ],
+    'channel_types':
+        [concentration_channel_type(i) for i in [10, 25, 100]] +
+        [count_channel_type(i) for i in [3, 5, 10, 25, 50, 100]] +
+        [oh_generic_channel_type('Sensor Enabled', 'Switch', 'NOT USED',
+                        description='NOT USED')]
+}
+
