@@ -401,7 +401,7 @@ com['openhab'] = {
                 'type': 'Text',
                 'setters': [{
                     'packet': 'Write Line',
-                    'packet_params': ['Short.parseShort(cmd.toString().split(",", 3)[0])', 'Short.parseShort(cmd.toString().split(",", 3)[1])', 'Helper.parseDisplayCommand(cmd.toString().split(",", 3)[2])']}],
+                    'packet_params': ['Helper.parseDisplayCommandLine(cmd.toString(), logger)', 'Helper.parseDisplayCommandPosition(cmd.toString(), logger)', 'Helper.parseDisplayCommandText(cmd.toString(), logger)']}],
                 'setter_command_type': "StringType",
             },
             {

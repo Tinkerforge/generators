@@ -1,8 +1,49 @@
 package com.tinkerforge;
 
+import org.slf4j.Logger;
+
 public class Helper {
 
-    public static String parseDisplayCommand(String cmd) {
+
+    public static short parseDisplayCommandLine(String cmd, Logger logger) {
+        String[] splt = cmd.toString().split(",", 3);
+        if(splt.length != 3) {
+            logger.warn("Could not parse display command {}: Could not split into line, position and text. Format is [LINE],[POSITION],[TEXT].", cmd);
+            return 0;
+        }
+
+        try {
+            return Short.parseShort(splt[0]);
+        } catch (NumberFormatException e) {
+            logger.warn("Could not parse display command {}: Line {} could not be parsed as short", cmd, splt[0]);
+        }
+        return 0;
+    }
+
+    public static short parseDisplayCommandPosition(String cmd, Logger logger) {
+        String[] splt = cmd.toString().split(",", 3);
+        if(splt.length != 3) {
+            // No need to log an error here, parseDisplayCommandLine will already have complained about this.
+            return 0;
+        }
+        try {
+            return Short.parseShort(splt[1]);
+        } catch (NumberFormatException e) {
+            logger.warn("Could not parse display command {}: Position {} could not be parsed as short", cmd, splt[1]);
+        }
+        return 0;
+    }
+
+
+    public static String parseDisplayCommandText(String cmd, Logger logger) {
+        String[] splt = cmd.toString().split(",", 3);
+        if(splt.length != 3) {
+            // No need to log an error here, parseDisplayCommandLine will already have complained about this.
+            return "";
+        }
+        cmd = splt[2];
+
+        String copy = cmd;
         StringBuilder result = new StringBuilder();
 
         int backslash_idx = cmd.indexOf("\\");
@@ -10,19 +51,31 @@ public class Helper {
         while(backslash_idx >= 0) {
             result.append(cmd.substring(0, backslash_idx));
             cmd = cmd.substring(backslash_idx + 1);
-            //cmd = cmd.substring(1);
 
-            if(cmd.isEmpty())
+            if(cmd.isEmpty()) {
+                logger.warn("Could not parse display command {}: Found \\ as last character.", copy);
                 break;
+            }
 
             switch(cmd.charAt(0)) {
                 case 'x':
                     cmd = cmd.substring(1);
-                    String char_code = cmd.substring(0, 2);
-                    if(char_code.length() != 2)
+                    if(cmd.length() < 2) {
+                        logger.warn("Could not parse display command {}: Found hex command \\x{} with character code of wrong length {} (expected: 2).", copy, cmd, cmd.length());
                         break;
+                    }
+                    String char_code = cmd.substring(0, 2);
+
                     cmd = cmd.substring(2);
-                    result.append(Character.toString((char)Integer.parseInt(char_code, 16)));
+                    try {
+                        result.append(Character.toString((char)Integer.parseInt(char_code, 16)));
+                    }
+                    catch (NumberFormatException e) {
+                        logger.warn("Could not parse display command {}: Found hex command that could not be parsed as hexadecimal number:{}", copy, e.getMessage());
+                    }
+                    break;
+                default:
+                    logger.warn("Could not parse display command {}: Found unknown command \\{}.", copy, cmd.charAt(0));
                     break;
             }
 
