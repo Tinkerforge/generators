@@ -434,6 +434,9 @@ configure the edges that are counted with :func:`Set Edge Count Configuration`.
 
 If you set the reset counter to *true*, the count is set back to 0
 directly after it is read.
+
+.. note::
+ Calling this function is only allowed for channels configured as input.
 """,
 'de':
 """
@@ -443,6 +446,9 @@ konfiguriert werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
+
+.. note::
+ Aufrufen dieser Funktion ist nur für Kanäle erlaubt, die als Eingang konfiguriert sind.
 """
 }]
 })
@@ -474,6 +480,9 @@ If you don't know what any of this means, just leave it at default. The
 default configuration is very likely OK for you.
 
 Default values: 0 (edge type) and 100ms (debounce time)
+
+.. note::
+ Calling this function is only allowed for channels configured as input.
 """,
 'de':
 """
@@ -495,6 +504,9 @@ Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
 ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
 
 Standardwerte: 0 (edge type) und 100ms (debounce).
+
+.. note::
+ Aufrufen dieser Funktion ist nur für Kanäle erlaubt, die als Eingang konfiguriert sind.
 """
 }]
 })
@@ -511,11 +523,17 @@ com['packets'].append({
 """
 Returns the edge type and debounce time for the selected channel as set by
 :func:`Set Edge Count Configuration`.
+
+.. note::
+ Calling this function is only allowed for channels configured as input.
 """,
 'de':
 """
 Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Kanal zurück,
 wie von :func:`Set Edge Count Configuration` gesetzt.
+
+.. note::
+ Aufrufen dieser Funktion ist nur für Kanäle erlaubt, die als Eingang konfiguriert sind.
 """
 }]
 })
