@@ -903,7 +903,7 @@ public class {name_camel} {{
 
             cfg.append(param_template.format(name=p.label, type=p.type if p.limitToOptions != 'true' else 'choice', description=desc))
 
-        channel_template = """        {name}{setter_type}
+        channel_template = """        {name} ({type})
                 {description}"""
         channels = []
         for c in self.oh.channels:
@@ -920,12 +920,12 @@ public class {name_camel} {{
             desc = desc.replace('<br/>', '\n                ')
             channels.append(channel_template.format(name=c.label if c.label is not None else c.type.label,
                                                     description=desc,
-                                                    setter_type='' if c.setter_command_type is None else ' (Accepts {} commands)'.format(c.setter_command_type)))
+                                                    type=c.type.item_type))
 
         return template.format(device=self.get_long_display_name(),
                                description=self.get_description()['en'],
-                               cfg='\n    '.join(cfg),
-                               channels='\n    '.join(channels))
+                               cfg='\n\n    '.join(cfg),
+                               channels='\n\n    '.join(channels))
 
 class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def __init__(self, *args, **kwargs):
