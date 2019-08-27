@@ -875,6 +875,57 @@ public class {name_camel} {{
 
         return (thing_type_caps, thing_type_decl, channel_types_caps, channel_type_decls, config_description_types_caps, config_description_type_decls)
 
+    def get_openhab_docs(self):
+        not_supported = len(self.oh.channels) == 0
+        if not_supported:
+            return None
+
+        template = """{device}: {description}
+    Configuration
+    {cfg}
+    Channels
+    {channels}
+"""
+        param_template = """        {name} ({type}):
+                {description}"""
+        cfg = []
+        for p in self.oh.params:
+            if p.description is not None:
+                desc = p.description
+            else:
+                try:
+                    group = [g for g in self.oh.param_groups if g.name == p.groupName][0]
+                except:
+                    print(self.get_long_display_name())
+                    print(p.name)
+                desc = group.description
+            desc = desc.replace('<br/>', '\n                ')
+
+            cfg.append(param_template.format(name=p.label, type=p.type if p.limitToOptions != 'true' else 'choice', description=desc))
+
+        channel_template = """        {name}{setter_type}
+                {description}"""
+        channels = []
+        for c in self.oh.channels:
+            if c.description is not None:
+                desc = c.description
+            elif c.type.description is not None:
+                desc = c.type.description
+            elif c.type.id.under.startswith('system.'):
+                desc = 'Default ' + c.type.id.under.replace('system.', '') + ' channel.'
+            else:
+                print(self.get_long_display_name())
+                print(c.id)
+
+            desc = desc.replace('<br/>', '\n                ')
+            channels.append(channel_template.format(name=c.label if c.label is not None else c.type.label,
+                                                    description=desc,
+                                                    setter_type='' if c.setter_command_type is None else ' (Accepts {} commands)'.format(c.setter_command_type)))
+
+        return template.format(device=self.get_long_display_name(),
+                               description=self.get_description()['en'],
+                               cfg='\n    '.join(cfg),
+                               channels='\n    '.join(channels))
 
 class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def __init__(self, *args, **kwargs):
@@ -936,6 +987,10 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
                                     {
                                         '{devices}': ',\n\t\t\t'.join(d.get_java_class_name() + '.DEVICE_INFO' for d in self.released_devices)
                                     })
+
+        documentation = '\n\n'.join([d.get_openhab_docs() for d in self.released_devices if d.get_openhab_docs() is not None])
+        with open(os.path.join(self.get_bindings_dir(), 'openhab_docs.txt'), 'w') as f:
+            f.write(documentation)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', OpenHABBindingsGenerator)
