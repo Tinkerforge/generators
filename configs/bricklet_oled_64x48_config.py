@@ -272,7 +272,7 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Text', 'String', 'Text',
-                     description='The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.'),
+                     description="Text to display on the LCD. Command format is [line],[position],[text].<br/><br/>Additional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\x[two hex digits] to use a character of the LCD character set directly."),
         {
             'id': 'Clear Display',
             'item_type': 'String',
