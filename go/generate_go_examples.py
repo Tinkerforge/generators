@@ -245,7 +245,7 @@ class GoExampleParameter(common.ExampleParameter):
 
             result = []
 
-            unit_param = self.get_formatted_unit_name(' {0}')
+            unit_param = self.get_formatted_unit_name(' {0}').replace('%', '%%')
 
             for index in range(self.get_label_count()):
                 result.append(template.format(global_line_prefix=global_line_prefix,
@@ -310,7 +310,7 @@ class GoExampleResult(common.ExampleResult):
 
             result = []
 
-            unit_param = self.get_formatted_unit_name(' {0}')
+            unit_param = self.get_formatted_unit_name(' {0}').replace('%', '%%')
 
             for index in range(self.get_label_count()):
                 result.append(template.format(global_line_prefix=global_line_prefix,
