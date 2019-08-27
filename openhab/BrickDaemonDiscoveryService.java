@@ -52,13 +52,16 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
                                                      .findFirst();
                 }
                 catch (IllegalArgumentException e){ //DeviceFactory throws if the deviceIdentifier is unknown.
+                    logger.debug("Discovered unknown device {} with UID {} connected to {} at port {}.", deviceIdentifier, uid, connectedUid, position);
                     return;
                 }
-                if (!opt.isPresent())
+                if (!opt.isPresent()) {
+                     logger.debug("Discovered unknown device {} with UID {} connected to {} at port {}.", deviceIdentifier, uid, connectedUid, position);
                     return;
+                }
 
                 if (enumerationType == IPConnection.ENUMERATION_TYPE_CONNECTED) {
-                    //TODO: call dispose and init on existing device
+                    //TODO: call dispose and init on existing device?
                 }
 
                 ThingTypeUID ttuid = opt.get();

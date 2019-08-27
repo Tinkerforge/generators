@@ -21,11 +21,15 @@ import org.eclipse.smarthome.config.core.ParameterOption;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(service = { TinkerforgeConfigDescriptionProvider.class, ConfigDescriptionProvider.class }, immediate = true)
 public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionProvider {
 
     private final Map<URI, ConfigDescription> configDescriptionCache = new HashMap<>();
+
+    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
 
     @Override
     public Collection<ConfigDescription> getConfigDescriptions(@Nullable Locale locale) {
@@ -47,6 +51,7 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
             info = DeviceFactory.getDeviceInfo(thingTypeUID.getId());
         }
         catch (Exception e) {
+            logger.debug("Could not find device info for configDescriptionURI {}: {}.", uri, e.getMessage());
             return null;
         }
 
@@ -54,6 +59,7 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
             Method m = info.deviceClass.getMethod("getConfigDescription", URI.class);
             result = (ConfigDescription) m.invoke(null, uri);
         } catch (Exception e) {
+            logger.debug("Could not find config description for configDescriptionURI {} of device {}: {}.", uri, info.deviceDisplayName, e.getMessage());
             return null;
         }
 

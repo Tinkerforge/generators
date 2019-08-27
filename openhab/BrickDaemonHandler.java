@@ -10,6 +10,8 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,8 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     @Nullable
     private ScheduledFuture<?> connectFuture;
 
+    private final Logger logger = LoggerFactory.getLogger(BrickDaemonHandler.class);
+
     public BrickDaemonHandler(Bridge bridge, Consumer<BrickDaemonDiscoveryService> registerFn,
             Consumer<BrickDaemonDiscoveryService> deregisterFn) {
         super(bridge);
@@ -45,10 +49,6 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
     @Override
     public void handleCommand(@NonNull ChannelUID channelUID, @NonNull Command command) {
-        /// Note: if communication with thing fails for some reason,
-        // indicate that by setting the status with detail information:
-        // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-        // "Could not control device at IP address x.x.x.x");
 
     }
 
@@ -83,7 +83,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
                 connectFuture = scheduler.schedule(this::connect, cfg.reconnectInterval, TimeUnit.SECONDS);
             return;
         } catch (AlreadyConnectedException e) {
-
+            logger.debug("Tried to connect to {}:{} but was already connected.", cfg.host, cfg.port);
         }
 
         if (cfg.auth) {

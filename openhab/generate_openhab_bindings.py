@@ -352,7 +352,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'org.eclipse.smarthome.core.thing.type.ThingType',
                       'org.eclipse.smarthome.core.thing.type.ThingTypeBuilder',
                       'org.eclipse.smarthome.core.types.StateDescriptionFragmentBuilder',
-                      'org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants'] + self.oh.imports
+                      'org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants',
+                      'org.slf4j.Logger',
+                      'org.slf4j.LoggerFactory'] + self.oh.imports
 
         java_imports += '\n'.join('import {};'.format(i) for i in oh_imports) + '\n'
 
@@ -432,8 +434,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         switch(value) {{
             {channel_cases}
+            default:
+                logger.warn("Refresh for unknown channel {{}}", value);
+                break;
         }}
-        throw new RuntimeException("Refresh for unknown or trigger channel " + value + ". Should never happen.");
     }}
     """
 
@@ -499,6 +503,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         switch(channel) {{
             {channel_cases}
+            default:
+                logger.warn("Command for unknown channel {{}}", channel);
         }}
         return result;
     }}"""
@@ -514,6 +520,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                     {command_type} cmd = ({command_type}) command;
                     {setters}
                     {setter_refreshs}
+                }} else {{
+                    logger.warn("Command type {{}} not supported for channel {{}}. Please use a {command_type}.", command.getClass().getName(), channel);
                 }}
                 break;"""
         channel_cases = []
@@ -567,6 +575,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_openhab_device_impl(self):
         template = """
+    private final Logger logger = LoggerFactory.getLogger({name_camel}.class);
+    private final static Logger static_logger = LoggerFactory.getLogger({name_camel}.class);
+
     @Override
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
@@ -674,7 +685,11 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         template = """public static ChannelType getChannelType(ChannelTypeUID channelTypeUID) {{
         switch(channelTypeUID.getId()) {{
             {}
+            default:
+                static_logger.debug("Unknown channel type ID {{}}", channelTypeUID.getId());
+                break;
         }}
+
         return null;
     }}"""
 
@@ -771,6 +786,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         template = """public static ConfigDescription getConfigDescription(URI uri) {{
         switch(uri.toASCIIString()) {{
             {cases}
+            default:
+                static_logger.debug("Unknown config description URI {{}}", uri.toASCIIString());
+                break;
         }}
         return null;
     }}"""

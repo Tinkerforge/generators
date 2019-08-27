@@ -31,6 +31,8 @@ import org.eclipse.smarthome.core.thing.type.ThingType;
 import org.eclipse.smarthome.core.thing.type.ThingTypeBuilder;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BrickDaemon extends Device {
 	public final static int DEVICE_IDENTIFIER = -1;
@@ -40,6 +42,8 @@ public class BrickDaemon extends Device {
 
     public final static byte FUNCTION_GET_AUTHENTICATION_NONCE = (byte)1;
     public final static byte FUNCTION_AUTHENTICATE = (byte)2;
+
+    private final static Logger logger = LoggerFactory.getLogger(BrickDaemon.class);
 
 	public BrickDaemon(String uid, IPConnection ipcon) {
 		super(uid, ipcon);
@@ -182,6 +186,7 @@ public class BrickDaemon extends Device {
                                                      .build()
                 ));
         }
+        logger.debug("Unknown config description URI {}", uri);
         return null;
     }
 }

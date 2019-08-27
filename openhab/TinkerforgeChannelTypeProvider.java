@@ -24,22 +24,26 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(service = ChannelTypeProvider.class, immediate = true)
 public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
 
     private static final Map<ChannelTypeUID, ChannelType> channelTypeCache = new HashMap<>();
 
-   /* @Activate
+    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+
+    @Activate
     protected void activate(ComponentContext componentContext) {
-        System.out.println("activate");
+        logger.trace("Activate");
     }
 
     @Deactivate
     protected void deactivate(ComponentContext componentContext) {
-        System.out.println("deactivate");
+        logger.trace("Deactivate");
     }
-*/
+
     @Override
     public Collection<ChannelType> getChannelTypes(@Nullable Locale locale) {
         return TinkerforgeBindingConstants.SUPPORTED_CHANNELS.keySet().stream().map(uid -> getChannelType(uid, locale))
@@ -63,6 +67,7 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
             info = DeviceFactory.getDeviceInfo(thingTypeUID.getId());
         }
         catch (Exception e) {
+            logger.debug("Could not find device info for channelTypeUID {}: {}.", channelTypeUID, e.getMessage());
             return null;
         }
         ChannelType result = null;
@@ -70,6 +75,7 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
             result = (ChannelType) info.deviceClass.getMethod("getChannelType", ChannelTypeUID.class).invoke(null,
                     channelTypeUID);
         } catch (Exception e) {
+            logger.debug("Could not find channel type for channelTypeUID {} of device {}: {}.", channelTypeUID, info.deviceDisplayName, e.getMessage());
             return null;
         }
 

@@ -20,11 +20,14 @@ import org.eclipse.smarthome.core.thing.binding.ThingTypeProvider;
 import org.eclipse.smarthome.core.thing.type.ThingType;
 import org.eclipse.smarthome.core.thing.type.ThingTypeBuilder;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(service = ThingTypeProvider.class, immediate = true)
 public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
 
     private static final Map<ThingTypeUID, ThingType> thingTypeCache = new HashMap<>();
+    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
 
     @Override
     public Collection<ThingType> getThingTypes(@Nullable Locale locale) {
@@ -47,6 +50,7 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
             info = DeviceFactory.getDeviceInfo(thingTypeUID.getId());
         }
         catch (Exception e) {
+            logger.debug("Could not find device info for thingTypeUID {}: {}.", thingTypeUID, e.getMessage());
             return null;
         }
         ThingType result;
@@ -54,6 +58,7 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
             Method m = info.deviceClass.getMethod("getThingType", ThingTypeUID.class);
             result = (ThingType) m.invoke(null, thingTypeUID);
         } catch (Exception e) {
+            logger.debug("Could not find thing type for thingTypeUID {} of device {}: {}.", thingTypeUID, info.deviceDisplayName, e.getMessage());
             return null;
         }
 

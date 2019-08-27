@@ -40,6 +40,8 @@ import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link TinkerforgeHandlerFactory} is responsible for creating things and thing
@@ -52,17 +54,20 @@ import org.osgi.service.component.annotations.Component;
 public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
     private final Map<BrickDaemonDiscoveryService, @Nullable ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
+    private final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
         return TinkerforgeBindingConstants.SUPPORTED_DEVICES.contains(thingTypeUID);
     }
 
-    private Device createDevice(String thingName, String uid, IPConnection ipcon) {
+    private @Nullable Device createDevice(String thingName, String uid, IPConnection ipcon) {
         try {
             return (Device)DeviceFactory.createDevice(thingName, uid, ipcon);
         }
         catch(Exception e) {
-            throw new RuntimeException();
+            logger.warn("Could not create device {} with uid {}: {}.", thingName, uid, e);
+            return null;
         }
     }
 
