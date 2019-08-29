@@ -899,7 +899,7 @@ public class {name_camel} {{
                     print(self.get_long_display_name())
                     print(p.name)
                 desc = group.description
-            desc = desc.replace('<br/>', '\n                ')
+            desc = desc.replace('<br/>', '\n                ').replace('\\\\', '\\')
 
             cfg.append(param_template.format(name=p.label, type=p.type if p.limitToOptions != 'true' else 'choice', description=desc))
 
@@ -917,10 +917,10 @@ public class {name_camel} {{
                 print(self.get_long_display_name())
                 print(c.id)
 
-            desc = desc.replace('<br/>', '\n                ')
+            desc = desc.replace('<br/>', '\n                ').replace('\\\\', '\\')
             channels.append(channel_template.format(name=c.label if c.label is not None else c.type.label,
                                                     description=desc,
-                                                    type=c.type.item_type))
+                                                    type=c.type.item_type if c.type.item_type is not None else 'trigger channel'))
 
         return template.format(device=self.get_long_display_name(),
                                description=self.get_description()['en'],
