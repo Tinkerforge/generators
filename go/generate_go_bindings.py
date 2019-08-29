@@ -227,7 +227,11 @@ func (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
 	buf := make([]{buf_type}, 0)
 	wrapper := func({params})  {{
 		if int({message_chunk_offset}) != len(buf) {{
-			buf = make([]{buf_type}, 0)
+			if len(buf) != 0 {{
+				buf = nil
+				fn({high_level_params})
+				buf = make([]{buf_type}, 0)
+			}}
 			if {message_chunk_offset} != 0 {{
 				return
 			}}
