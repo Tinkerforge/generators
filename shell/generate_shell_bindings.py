@@ -189,12 +189,12 @@ def call_{0}_{1}(ctx, argv):
                     constant_group = element.get_constant_group()
 
                     if constant_group != None:
-                        symbols = {}
+                        symbols = []
 
                         for constant in constant_group.get_constants():
-                            symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)
+                            symbols.append('{0}: {1}'.format(repr(constant.get_value()), repr('{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash))))
 
-                        output_symbols.append(str(symbols))
+                        output_symbols.append('{{{0}}}'.format(', '.join(symbols)))
                     else:
                         output_symbols.append('None')
 
@@ -281,12 +281,12 @@ def call_{0}_{1}(ctx, argv):
                 constant_group = element.get_constant_group()
 
                 if constant_group != None:
-                    symbols = {}
+                    symbols = []
 
                     for constant in constant_group.get_constants():
-                        symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)
+                        symbols.append('{0}: {1}'.format(repr(constant.get_value()), repr('{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash))))
 
-                    output_symbols.append(str(symbols))
+                    output_symbols.append('{{{0}}}'.format(', '.join(symbols)))
                 else:
                     output_symbols.append('None')
 
@@ -421,12 +421,12 @@ def dispatch_{0}_{1}(ctx, argv):
                 constant_group = element.get_constant_group()
 
                 if constant_group != None:
-                    symbols = {}
+                    symbols = []
 
                     for constant in constant_group.get_constants():
-                        symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)
+                        symbols.append('{0}: {1}'.format(repr(constant.get_value()), repr('{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash))))
 
-                    output_symbols.append(str(symbols))
+                    output_symbols.append('{{{0}}}'.format(', '.join(symbols)))
                 else:
                     output_symbols.append('None')
 
@@ -461,12 +461,12 @@ def dispatch_{0}_{1}(ctx, argv):
                 constant_group = element.get_constant_group()
 
                 if constant_group != None:
-                    symbols = {}
+                    symbols = []
 
                     for constant in constant_group.get_constants():
-                        symbols[constant.get_value()] = '{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)
+                        symbols.append('{0}: {1}'.format(repr(constant.get_value()), repr('{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash))))
 
-                    output_symbols.append(str(symbols))
+                    output_symbols.append('{{{0}}}'.format(', '.join(symbols)))
                 else:
                     output_symbols.append('None')
 
