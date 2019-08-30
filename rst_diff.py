@@ -10,12 +10,26 @@ import common
 
 args = sys.argv[1:]
 
+for path in [os.path.expanduser('~/.rst_diffrc'), './.rst_diffrc']:
+    if os.path.exists(path):
+        with open(path) as f:
+            args += f.readline().replace('\n', '').split(' ')
+
+diff_tool = 'geany'
+
+try:
+    diff_tool_idx = args.index('--diff-tool')
+    diff_tool = args[diff_tool_idx + 1]
+    args = args[:diff_tool_idx] + args[diff_tool_idx + 2:]
+except:
+    pass
+
 if '--prepare' in args:
     for d in os.listdir('.'):
         if not os.path.isdir(d):
             continue
 
-        if d in ['configs', 'stubs', 'json', 'tvpl', '.git', '__pycache__', '.vscode']:
+        if d in ['configs', 'stubs', 'json', 'tvpl', '.git', '__pycache__', '.vscode', 'openhab']:
             continue
 
         doc_path = os.path.join(d, 'doc')
@@ -39,10 +53,62 @@ else:
     base = os.path.join(root, bindings)
     tmp = tempfile.mkdtemp()
 
-    if os.system('bash -cx "pushd {0} && diff -ur doc_old/ doc/ > {1}/diff.diff; popd"'.format(base, tmp)) != 0:
-        print 'diff old vs new failed'
+    if os.system('bash -cx "pushd {0} && diff -ur doc_old/ doc/ > {1}/diff1.diff; popd"'.format(base, tmp)) != 0:
+        print('diff old vs new failed')
         sys.exit(1)
 
-    if os.system('bash -c "geany {0}/diff.diff && popd"'.format(tmp)) != 0:
-        print 'geany diff.diff failed'
+    with open(os.path.join(tmp, 'diff1.diff'), 'r') as f:
+        diffs = [[[]]] # list of diffs as lists of lines
+
+        for line in f.readlines():
+            if line.startswith('diff ') or line[0] not in ['@', '-', '+', ' ']:
+                diffs.append([[]])
+
+            if line.startswith('@@ '):
+                diffs[-1].append([])
+
+            diffs[-1][-1].append(line)
+
+    header = re.compile(r"""^@@ -1,6 \+1,6 @@
+ \.\.
+  #############################################################
+- # This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #
+\+ # This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #
+  #                                                           #
+  # If you have a bugfix for this file and want to commit it, #
+  # please fix the bug in the generator\. You can find a link  #$""")
+
+    filtered = []
+
+    for diff in diffs:
+        filtered_lines = []
+
+        for lines in diff:
+            if len(lines) == 0:
+                continue
+
+            hunk = ''.join(lines)
+
+            if not header.match(hunk):
+                filtered_lines += lines
+            else:
+                filtered_lines += [lines[0].rstrip() + ' // dropped header hunk\n']
+
+        if len(filtered_lines) == 0:
+            continue
+
+        if len(filtered_lines) == 4 and \
+        filtered_lines[0].startswith('diff -ur ') and \
+        filtered_lines[1].startswith('--- ') and \
+        filtered_lines[2].startswith('+++ ') and \
+        filtered_lines[3].endswith('// dropped header hunk\n'):
+            filtered += [filtered_lines[0].rstrip() + ' // dropped header diff\n']
+        else:
+            filtered += filtered_lines
+
+    with open(os.path.join(tmp, 'diff2.diff'), 'w') as f:
+        f.writelines(filtered)
+
+    if os.system('bash -c "{} {}/diff2.diff && popd"'.format(diff_tool, tmp)) != 0:
+        print('{} diff.diff failed'.format(diff_tool))
         sys.exit(1)

@@ -9,6 +9,20 @@ import common
 
 args = sys.argv[1:]
 
+for path in [os.path.expanduser('~/.zip_diffrc'), './.zip_diffrc']:
+    if os.path.exists(path):
+        with open(path) as f:
+            args += f.readline().replace('\n', '').split(' ')
+
+diff_tool = 'geany'
+
+try:
+    diff_tool_idx = args.index('--diff-tool')
+    diff_tool = args[diff_tool_idx + 1]
+    args = args[:diff_tool_idx] + args[diff_tool_idx + 2:]
+except:
+    pass
+
 if len(args) == 0:
     bindings = os.path.split(os.getcwd())[-1]
 else:
@@ -26,19 +40,19 @@ base = os.path.join(root, bindings)
 tmp = tempfile.mkdtemp()
 
 if os.system('bash -cex "curl https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/tinkerforge_{0}_bindings_latest.zip"'.format(bindings, tmp)) != 0:
-    print 'download latest.zip failed'
+    print('download latest.zip failed')
     sys.exit(1)
 
 if os.system('bash -cex "pushd {1} && unzip -q -d latest tinkerforge_{0}_bindings_latest.zip && popd"'.format(bindings, tmp)) != 0:
-    print 'unzip latest.zip failed'
+    print('unzip latest.zip failed')
     sys.exit(1)
 
 if os.system('bash -cex "cp {0}/tinkerforge_{1}_bindings_{3}_{4}_{5}.zip {2} && pushd {2} && unzip -q -d {3}_{4}_{5} tinkerforge_{1}_bindings_{3}_{4}_{5}.zip && popd"'.format(base, bindings, tmp, *version)) != 0:
-    print 'copy/unzip current.zip failed'
+    print('copy/unzip current.zip failed')
     sys.exit(1)
 
 if os.system('bash -cx "pushd {0} && diff -ur latest/ {1}_{2}_{3}/ > diff1.diff; popd"'.format(tmp, *version)) != 0:
-    print 'diff latest vs current failed'
+    print('diff latest vs current failed')
     sys.exit(1)
 
 with open(os.path.join(tmp, 'diff1.diff'), 'r') as f:
@@ -256,6 +270,6 @@ for diff in diffs:
 with open(os.path.join(tmp, 'diff2.diff'), 'w') as f:
     f.writelines(filtered)
 
-if os.system('bash -c "pushd {0} && geany diff2.diff && popd"'.format(tmp)) != 0:
-    print 'geany diff.diff failed'
+if os.system('bash -c "pushd {} && {} diff2.diff && popd"'.format(tmp, diff_tool)) != 0:
+    print('{} diff.diff failed'.format(diff_tool))
     sys.exit(1)
