@@ -48,7 +48,7 @@ class GoExamplesTester(common.Tester):
             self.firstRun = False
 
 
-        args = ['go', 'build', '-o', 'example', path]
+        args = ['go', 'build', '-o', os.path.join(os.path.dirname(path), 'example'), path]
         #args = ['pwd']
         #print(">>> Compiling examples, this will take a while...")
         self.execute(cookie, args, env={'GOPATH': os.path.normpath(root_dir), 'GOCACHE': self.go_cache_dir})
