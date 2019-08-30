@@ -504,6 +504,12 @@ class MathematicaDocGenerator(common.DocGenerator):
     def get_doc_rst_filename_part(self):
         return 'Mathematica'
 
+    def get_doc_null_value_name(self):
+        return 'Null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
+
     def get_doc_example_regex(self):
         return r'^Example.*\.nb.txt$'
 

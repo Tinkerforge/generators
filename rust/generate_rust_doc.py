@@ -331,7 +331,7 @@ class RustDocPacket(rust_common.RustPacket):
 
         return common.shift_right(text, 1)
 
-class RustDocGenerator(common.DocGenerator):
+class RustDocGenerator(rust_common.RustGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'rust'
 

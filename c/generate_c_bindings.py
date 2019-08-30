@@ -93,10 +93,14 @@ extern "C" {{
 """
 
         for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                doc = 'See {0}_CALLBACK_{1}'.format(self.get_name().upper, packet.get_name(skip=-2).upper)
+            else:
+                doc = packet.get_c_formatted_doc()
             defines += template.format(self.get_name().upper,
                                        packet.get_name().upper,
                                        packet.get_function_id(),
-                                       packet.get_c_formatted_doc(),
+                                       doc,
                                        self.get_name().camel,
                                        self.get_category().camel)
 
@@ -1350,7 +1354,7 @@ class CBindingsPacket(c_common.CPacket):
 
         return return_list, needs_i
 
-class CBindingsGenerator(common.BindingsGenerator):
+class CBindingsGenerator(c_common.CGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'c'
 

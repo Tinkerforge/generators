@@ -71,7 +71,7 @@ class {0}(MQTTCallbackDevice):
         entries = []
         for packet in self.get_packets('function'):
             entries.append("'{mqtt_name}': FunctionInfo({id}, {arg_names}, {arg_types}, {arg_symbols}, '{payload_fmt}', {result_names}, {result_symbols}, '{response_fmt}')".format(
-                 mqtt_name=packet.get_mqtt_name(), 
+                 mqtt_name=packet.get_mqtt_name(),
                  id=packet.get_function_id(),
                  arg_names=[elem.get_name().under for elem in packet.get_elements(direction='in')],
                  arg_types=[elem.get_mqtt_type() for elem in packet.get_elements(direction='in')],
@@ -102,7 +102,7 @@ class {0}(MQTTCallbackDevice):
                 for element in packet.get_elements(direction='in', high_level=True):
                     input_names.append('{0}'.format(element.get_name().under))
                     input_types.append(element.get_mqtt_type())
-                    high_level_roles_in.append(element.get_role())                    
+                    high_level_roles_in.append(element.get_role())
                     constant_group = element.get_constant_group()
 
                     symbols = {}
@@ -132,7 +132,7 @@ class {0}(MQTTCallbackDevice):
                         for constant in constant_group.get_constants():
                             symbols[constant.get_value()] =  constant.get_name().under
 
-                    output_symbols.append(symbols)                   
+                    output_symbols.append(symbols)
 
                 for element in packet.get_elements(direction='out'):
                     low_level_roles_out.append(element.get_role())
@@ -162,8 +162,8 @@ class {0}(MQTTCallbackDevice):
                     single_read = stream_out.has_single_chunk()
                     fixed_length = stream_out.get_fixed_length()
 
-                entries.append("'{mqtt_name}': HighLevelFunctionInfo({low_level_id}, '{direction}', {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, {arg_names}, {arg_types}, {arg_symbols}, '{format_in}', {result_names}, {result_symbols}, '{format_out}',{chunk_padding}, {chunk_cardinality}, {chunk_max_offset},{short_write}, {single_read}, {fixed_length})".format(                    
-                    mqtt_name=packet.get_mqtt_name(skip=-2), 
+                entries.append("'{mqtt_name}': HighLevelFunctionInfo({low_level_id}, '{direction}', {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, {arg_names}, {arg_types}, {arg_symbols}, '{format_in}', {result_names}, {result_symbols}, '{format_out}',{chunk_padding}, {chunk_cardinality}, {chunk_max_offset},{short_write}, {single_read}, {fixed_length})".format(
+                    mqtt_name=packet.get_mqtt_name(skip=-2),
                     low_level_id=packet.get_function_id(),
                     direction=direction,
                     high_level_roles_in=high_level_roles_in,
@@ -202,7 +202,7 @@ class {0}(MQTTCallbackDevice):
                 roles = []
 
                 for element in packet.get_elements(direction='out'):
-                    roles.append(element.get_role())                
+                    roles.append(element.get_role())
                 skip=-2
                 hl_info = hl_template.format(stream.get_fixed_length(),
                                             stream.has_single_chunk(),
@@ -219,13 +219,13 @@ class {0}(MQTTCallbackDevice):
         source  = self.get_mqtt_class()
         source += self.get_mqtt_function_map()
         source += self.get_mqtt_callback_map()
-        source += self.get_mqtt_init_method()        
+        source += self.get_mqtt_init_method()
         return source
 
-class MQTTBindingsGenerator(common.BindingsGenerator):
+class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGenerator):
     def __init__(self, *args, **kwargs):
         common.BindingsGenerator.__init__(self, *args, **kwargs)
-        
+
         self.part_files = []
         self.devices = []
         self.device_mqtt_names = []

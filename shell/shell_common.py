@@ -200,3 +200,10 @@ class ShellElement(common.Element):
             common.GeneratorError('Invalid array item type: ' + self.get_type())
 
         return value
+
+class ShellGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'None'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().dash

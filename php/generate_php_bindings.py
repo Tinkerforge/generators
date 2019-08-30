@@ -98,7 +98,10 @@ class {0} extends Device
 """
 
         for packet in self.get_packets('callback'):
-            doc = packet.get_php_formatted_doc([])
+            if packet.has_high_level():
+                doc = 'See CALLBACK_{}'.format(packet.get_name(skip=-2).upper)
+            else:
+                doc = packet.get_php_formatted_doc([])
             callbacks += template.format(packet.get_name().upper, packet.get_function_id(), doc)
 
         for packet in self.get_packets('callback'):
@@ -904,7 +907,7 @@ class PHPBindingsPacket(php_common.PHPPacket):
 
         return '\n'.join(param)
 
-class PHPBindingsGenerator(common.BindingsGenerator):
+class PHPBindingsGenerator(php_common.PHPGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'php'
 

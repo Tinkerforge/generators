@@ -37,6 +37,9 @@ class VBNETBindingsGenerator(CSharpBindingsGenerator):
     def get_bindings_display_name(self):
         return 'Visual Basic .NET'
 
+    def get_doc_null_value_name(self):
+        return 'Nothing'
+
 def generate(root_dir):
     common.generate(root_dir, 'en', VBNETBindingsGenerator)
 

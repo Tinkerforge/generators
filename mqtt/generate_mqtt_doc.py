@@ -320,7 +320,7 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
 
         return common.shift_right(text, 1)
 
-class MQTTDocGenerator(common.DocGenerator):
+class MQTTDocGenerator(mqtt_common.MQTTGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'mqtt'
 

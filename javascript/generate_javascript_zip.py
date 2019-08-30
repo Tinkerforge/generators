@@ -31,8 +31,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import javascript_common
 
-class JavaScriptZipGenerator(common.ZipGenerator):
+class JavaScriptZipGenerator(javascript_common.JavascriptGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

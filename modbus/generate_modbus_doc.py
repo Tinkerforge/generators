@@ -162,6 +162,10 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
         return doc
 
 class ModbusDocPacket(common.Packet):
+    # There are no high level callbacks here.
+    def add_high_level_callback_note(self):
+        pass
+
     def get_modbus_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
         constants = {'en': 'meanings', 'de': 'Bedeutungen'}
@@ -302,6 +306,12 @@ class ModbusDocGenerator(common.DocGenerator):
 
     def get_element_class(self):
         return ModbusDocElement
+
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
 
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:

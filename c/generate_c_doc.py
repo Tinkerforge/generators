@@ -421,7 +421,7 @@ class CDocPacket(c_common.CPacket):
 
         return common.shift_right(text, 1)
 
-class CDocGenerator(common.DocGenerator):
+class CDocGenerator(c_common.CGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'c'
 

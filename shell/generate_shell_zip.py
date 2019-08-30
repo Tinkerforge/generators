@@ -30,8 +30,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import shell_common
 
-class ShellZipGenerator(common.ZipGenerator):
+class ShellZipGenerator(shell_common.ShellGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

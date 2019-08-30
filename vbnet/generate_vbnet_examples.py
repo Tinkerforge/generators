@@ -696,6 +696,12 @@ class VBNETExamplesGenerator(common.ExamplesGenerator):
     def get_example_special_function_class(self):
         return VBNETExampleSpecialFunction
 
+    def get_doc_null_value_name(self):
+        return 'Nothing'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
+
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')

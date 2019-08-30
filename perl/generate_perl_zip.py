@@ -30,8 +30,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import perl_common
 
-class PerlZipGenerator(common.ZipGenerator):
+class PerlZipGenerator(perl_common.PerlGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

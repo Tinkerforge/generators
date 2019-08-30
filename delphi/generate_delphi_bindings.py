@@ -351,7 +351,13 @@ uses
         high_level_callback_data_variables = ''
 
         for packet in self.get_packets('callback'):
-            doc = packet.get_delphi_formatted_doc()
+            if packet.has_high_level():
+                doc = '<see cref="{}.{}.On{}"/>'.format(self.get_delphi_class_name()[1:],
+                                                              self.get_delphi_class_name(),
+                                                              packet.get_name(skip=-2).camel)
+            else:
+                doc = packet.get_delphi_formatted_doc()
+
             props.append(prop.format(packet.get_name().camel,
                                      self.get_delphi_class_name(),
                                      packet.get_name().headless,
@@ -369,7 +375,7 @@ uses
             props.append(prop.format(packet.get_name(skip=-2).camel,
                                      self.get_delphi_class_name(),
                                      packet.get_name(skip=-2).headless,
-                                     doc))
+                                     packet.get_delphi_formatted_doc()))
 
         if self.get_long_display_name() == 'RS232 Bricklet':
             props.append("""
@@ -1542,7 +1548,7 @@ class DelphiBindingsElement(delphi_common.DelphiElement):
 
         return name
 
-class DelphiBindingsGenerator(common.BindingsGenerator):
+class DelphiBindingsGenerator(delphi_common.DelphiGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'delphi'
 

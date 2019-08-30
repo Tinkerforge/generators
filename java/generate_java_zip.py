@@ -30,8 +30,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import java_common
 
-class JavaZipGenerator(common.ZipGenerator):
+class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

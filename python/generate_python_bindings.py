@@ -621,7 +621,7 @@ class PythonBindingsPacket(python_common.PythonPacket):
 
         return '\n        '.join(coercions)
 
-class PythonBindingsGenerator(common.BindingsGenerator):
+class PythonBindingsGenerator(python_common.PythonGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'python'
 

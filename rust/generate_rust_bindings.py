@@ -373,8 +373,15 @@ pub struct {name} {{
     }}"""
 
         for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                doc = 'See [`get_{}_callback_receiver`](crate::{}::{}::get_{}_callback_receiver)'.format(packet.get_name(skip=-2).under,
+                                                             self.get_name().under,
+                                                             self.get_name().camel,
+                                                             packet.get_name(skip=-2).under)
+            else:
+                doc = packet.get_rust_formatted_doc()
             functions.append(callback_template.format(name = packet.get_name().under,
-                                                      description= packet.get_rust_formatted_doc(),
+                                                      description=doc,
                                                       type = self.returnTypes[packet],
                                                       fun_enum = self.get_rust_name() + "Function",
                                                       fn_id = packet.get_name().camel_abbrv))
@@ -641,7 +648,7 @@ class RustBindingsPacket(rust_common.RustPacket):
     def get_rust_derive_string(self, high_level_only=False):
         return "#[derive({traits})]".format(traits=", ".join(self.get_rust_derivable_traits(high_level_only)))
 
-class RustBindingsGenerator(common.BindingsGenerator):
+class RustBindingsGenerator(rust_common.RustGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'rust'
 

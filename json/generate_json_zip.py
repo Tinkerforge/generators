@@ -30,7 +30,9 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class JSONZipGenerator(common.ZipGenerator):
+import generate_json_bindings
+
+class JSONZipGenerator(generate_json_bindings.JSONGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

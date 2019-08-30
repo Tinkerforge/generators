@@ -173,7 +173,7 @@ class MathematicaExampleParameter(common.ExampleParameter):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -656,6 +656,12 @@ class MathematicaExamplesGenerator(common.ExamplesGenerator):
 
     def get_example_special_function_class(self):
         return MathematicaExampleSpecialFunction
+
+    def get_doc_null_value_name(self):
+        return 'Null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:

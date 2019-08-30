@@ -30,6 +30,7 @@ import xml.dom.minidom
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import tvpl_common
 
 global_line_prefix = ''
 
@@ -609,7 +610,7 @@ class TVPLExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\r'
 
-class TVPLExamplesGenerator(common.ExamplesGenerator):
+class TVPLExamplesGenerator(tvpl_common.TVPLGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'tvpl'
 

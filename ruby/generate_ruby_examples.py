@@ -150,7 +150,7 @@ class RubyExampleParameter(common.ExampleParameter):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -545,7 +545,7 @@ class RubyExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\rend\n'
 
-class RubyExamplesGenerator(common.ExamplesGenerator):
+class RubyExamplesGenerator(ruby_common.RubyGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'ruby'
 

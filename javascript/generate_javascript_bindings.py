@@ -1191,7 +1191,7 @@ class JavaScriptBindingsPacket(javascript_common.JavaScriptPacket):
 
         return ' '.join(forms)
 
-class JavaScriptBindingsGenerator(common.BindingsGenerator):
+class JavaScriptBindingsGenerator(javascript_common.JavascriptGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'javascript'
 

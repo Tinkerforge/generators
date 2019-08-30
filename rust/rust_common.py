@@ -63,6 +63,10 @@ class RustDevice(common.Device):
         return result
 
 class RustPacket(common.Packet):
+    # FIXME: Remove this once the rust high level callback implementation is triggered on failed stream reassembly."
+    def add_high_level_callback_note(self):
+        pass
+
     def get_rust_return_type(self, high_level=False):
         if high_level:
             results = [x for x in self.get_elements(direction='out') if x.get_level() != 'low']
@@ -299,3 +303,10 @@ def get_rust_type(type_, cardinality):
         rust_type = '[{}]'.format(rust_type)
 
     return rust_type
+
+class RustGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'None'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().under

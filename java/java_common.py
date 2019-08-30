@@ -295,3 +295,10 @@ class JavaElement(common.Element):
             return 'null'
         else:
             return self.get_java_default_item_value()
+
+class JavaGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless

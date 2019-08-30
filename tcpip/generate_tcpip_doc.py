@@ -163,6 +163,10 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
         return doc
 
 class TCPIPDocPacket(common.Packet):
+    # There are no high level callbacks here.
+    def add_high_level_callback_note(self):
+        pass
+
     def get_tcpip_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
         constants = {'en': 'meanings', 'de': 'Bedeutungen'}

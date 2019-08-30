@@ -37,6 +37,12 @@ class MathematicaBindingsGenerator(CSharpBindingsGenerator):
     def get_bindings_display_name(self):
         return 'Mathematica'
 
+    def get_doc_null_value_name(self):
+        return 'Null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
+
 def generate(root_dir):
     common.generate(root_dir, 'en', MathematicaBindingsGenerator)
 

@@ -29,8 +29,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import mqtt_common
 
-class MQTTZipGenerator(common.ZipGenerator):
+class MQTTZipGenerator(mqtt_common.MQTTGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 
@@ -69,7 +70,7 @@ class MQTTZipGenerator(common.ZipGenerator):
                 shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
-        shutil.copy(os.path.join(bindings_dir, 'tinkerforge_mqtt'),           self.tmp_dir)        
+        shutil.copy(os.path.join(bindings_dir, 'tinkerforge_mqtt'),           self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),   self.tmp_dir)

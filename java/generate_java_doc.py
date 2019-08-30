@@ -434,7 +434,7 @@ class JavaDocPacket(java_common.JavaPacket):
         else:
             return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
-class JavaDocGenerator(common.DocGenerator):
+class JavaDocGenerator(java_common.JavaGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'java'
 

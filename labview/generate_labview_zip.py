@@ -44,6 +44,12 @@ class LabVIEWZipGenerator(common.ZipGenerator):
     def get_bindings_name(self):
         return 'labview'
 
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
+
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_tinkerforge_dir)

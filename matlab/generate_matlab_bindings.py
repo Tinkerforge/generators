@@ -29,9 +29,10 @@ import sys
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import matlab_common
 from java.generate_java_bindings import JavaBindingsGenerator
 
-class MATLABBindingsGenerator(JavaBindingsGenerator):
+class MATLABBindingsGenerator(matlab_common.MATLABGeneratorTrait, JavaBindingsGenerator):
     def get_bindings_name(self):
         return 'matlab'
 
@@ -41,7 +42,7 @@ class MATLABBindingsGenerator(JavaBindingsGenerator):
     def is_matlab(self):
         return True
 
-class OcatveBindingsGenerator(JavaBindingsGenerator):
+class OcatveBindingsGenerator(matlab_common.MATLABGeneratorTrait, JavaBindingsGenerator):
     check_root_dir_name = False
     recreate_bindings_dir = False
 

@@ -179,7 +179,10 @@ namespace Tinkerforge
         for packet in self.get_packets('callback'):
             name = packet.get_name().camel
             parameters = common.wrap_non_empty(', ', packet.get_csharp_parameters(), '')
-            doc = packet.get_csharp_formatted_doc()
+            if packet.has_high_level():
+                doc = '<see cref="Tinkerforge.{}.{}Callback"/>'.format(self.get_csharp_class_name(), packet.get_name(skip=-2).camel)
+            else:
+                doc = packet.get_csharp_formatted_doc()
 
             delegates += template.format(name, parameters, doc, self.get_csharp_class_name())
 
@@ -1028,7 +1031,7 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
 
         return '\n\t\t///  '.join(text.strip().split('\n'))
 
-class CSharpBindingsGenerator(common.BindingsGenerator):
+class CSharpBindingsGenerator(csharp_common.CSharpGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'csharp'
 

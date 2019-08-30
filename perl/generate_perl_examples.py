@@ -157,7 +157,7 @@ class PerlExampleParameter(common.ExampleParameter):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -563,7 +563,7 @@ ${device_name}->set_debounce_period({period_msec});
 
             return '\r}\n'
 
-class PerlExamplesGenerator(common.ExamplesGenerator):
+class PerlExamplesGenerator(perl_common.PerlGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'perl'
 

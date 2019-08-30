@@ -449,7 +449,7 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
         else:
             return '\n' + '\n'.join(desc) + '\n'
 
-class JavaScriptDocGenerator(common.DocGenerator):
+class JavaScriptDocGenerator(javascript_common.JavascriptGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'javascript'
 

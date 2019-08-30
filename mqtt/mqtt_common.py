@@ -117,3 +117,10 @@ class MQTTElement(common.Element):
                 symbols[constant.get_value()] = constant.get_name().under
 
         return symbols
+
+class MQTTGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().under

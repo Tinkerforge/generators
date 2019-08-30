@@ -403,7 +403,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
         else:
             return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
-class RubyDocGenerator(common.DocGenerator):
+class RubyDocGenerator(ruby_common.RubyGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'ruby'
 

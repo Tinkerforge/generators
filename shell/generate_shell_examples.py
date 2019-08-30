@@ -28,6 +28,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import shell_common
 
 global_line_prefix = ''
 
@@ -382,7 +383,7 @@ tinkerforge call {device_name}-{device_category} $uid set-debounce-period {perio
 
             return '\rdone\n'
 
-class ShellExamplesGenerator(common.ExamplesGenerator):
+class ShellExamplesGenerator(shell_common.ShellGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'shell'
 

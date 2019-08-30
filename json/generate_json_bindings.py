@@ -97,7 +97,15 @@ class JSONBindingsElement(common.Element):
 
         return members
 
-class JSONBindingsGenerator(common.BindingsGenerator):
+
+class JSONGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().space
+
+class JSONBindingsGenerator(JSONGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'json'
 

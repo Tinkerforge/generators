@@ -410,6 +410,12 @@ class VBNETDocGenerator(common.DocGenerator):
     def get_element_class(self):
         return VBNETDocElement
 
+    def get_doc_null_value_name(self):
+        return 'Nothing'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
+
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_vbnet_doc())

@@ -343,7 +343,7 @@ class GoDocPacket(go_common.GoPacket):
 
         return common.shift_right(text, 1)
 
-class GoDocGenerator(common.DocGenerator):
+class GoDocGenerator(go_common.GoGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'go'
 
@@ -362,12 +362,15 @@ class GoDocGenerator(common.DocGenerator):
     def get_packet_class(self):
         return GoDocPacket
 
-    def get_element_class(self):
-        return go_common.GoElement
-
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_go_doc())
+
+    def get_doc_null_value_name(self):
+        return 'nil'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_go_name()
 
 def generate(root_dir, language):
     common.generate(root_dir, language, GoDocGenerator)

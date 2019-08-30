@@ -30,8 +30,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import csharp_common
 
-class CSharpZipGenerator(common.ZipGenerator):
+class CSharpZipGenerator(csharp_common.CSharpGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

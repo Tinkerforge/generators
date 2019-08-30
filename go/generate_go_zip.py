@@ -30,8 +30,9 @@ import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import go_common
 
-class GoZipGenerator(common.ZipGenerator):
+class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 
@@ -45,7 +46,7 @@ class GoZipGenerator(common.ZipGenerator):
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_bindings_dir)
-        os.makedirs(self.tmp_examples_dir)        
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
@@ -68,7 +69,7 @@ class GoZipGenerator(common.ZipGenerator):
         if self.get_config_name().space == 'Tinkerforge':
             for example in common.find_examples(root_dir, r'^example_.*\.go$'):
                 shutil.copy(example[1], self.tmp_examples_dir)
-        
+
 
         for filename in self.get_released_files():
             path = os.path.join(self.get_bindings_dir(), filename)
@@ -91,8 +92,8 @@ class GoZipGenerator(common.ZipGenerator):
                 "doc.go"
             ]
         }
-        
-        top_level_files = [          
+
+        top_level_files = [
             'changelog.txt',
             'readme.txt',
             'LICENSE',

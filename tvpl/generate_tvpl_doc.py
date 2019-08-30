@@ -291,7 +291,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
 
         return ret
 
-class TVPLDocGenerator(common.DocGenerator):
+class TVPLDocGenerator(tvpl_common.TVPLGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'tvpl'
 

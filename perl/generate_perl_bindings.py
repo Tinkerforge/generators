@@ -804,7 +804,7 @@ class PerlBindingsPacket(common.Packet):
 
         return ' '.join(forms)
 
-class PerlBindingsGenerator(common.BindingsGenerator):
+class PerlBindingsGenerator(perl_common.PerlGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'perl'
 

@@ -185,7 +185,7 @@ class JavaExampleParameter(common.ExampleParameter):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -591,7 +591,7 @@ class JavaExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\r\t\t}\n'
 
-class JavaExamplesGenerator(common.ExamplesGenerator):
+class JavaExamplesGenerator(java_common.JavaGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'java'
 

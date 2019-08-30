@@ -236,3 +236,11 @@ class MATLABElement(common.Element):
 
     def get_matlab_byte_buffer_storage_type(self):
         return MATLABElement.matlab_byte_buffer_storage_type[self.get_type()]
+
+
+class MATLABGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless

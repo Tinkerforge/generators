@@ -104,3 +104,10 @@ class TVPLElement(common.Element):
             return t[0]
 
         return '{0}{1} {2}'.format(common.select_lang(list_of), c, t[0 if c == 1 else 1])
+
+class TVPLGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().space

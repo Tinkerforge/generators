@@ -430,7 +430,7 @@ class PythonDocPacket(python_common.PythonPacket):
         else:
             return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
-class PythonDocGenerator(common.DocGenerator):
+class PythonDocGenerator(python_common.PythonGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'python'
 

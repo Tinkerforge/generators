@@ -465,7 +465,7 @@ class PerlDocPacket(common.Packet):
 
         return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
-class PerlDocGenerator(common.DocGenerator):
+class PerlDocGenerator(perl_common.PerlGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'perl'
 

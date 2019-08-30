@@ -272,7 +272,11 @@ public class {0} extends Device {{
             else:
                 parameter = packet.get_java_parameters()
 
-            doc = packet.get_java_formatted_doc()
+            if packet.has_high_level():
+                doc = '@see {}Listener'.format(packet.get_name(skip=-2).camel)
+            else:
+                doc = packet.get_java_formatted_doc()
+
             listeners += template.format(name_camel, name_headless, parameter, doc)
 
         # high-level
@@ -1494,7 +1498,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
 
         return bbgets, bbret
 
-class JavaBindingsGenerator(common.BindingsGenerator):
+class JavaBindingsGenerator(java_common.JavaGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'java'
 

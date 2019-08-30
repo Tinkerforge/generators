@@ -119,3 +119,10 @@ class PerlElement(common.Element):
             common.GeneratorError('Invalid array item type: ' + self.get_type())
 
         return value
+
+class PerlGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'undef'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().under

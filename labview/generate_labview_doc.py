@@ -441,6 +441,12 @@ class LabVIEWDocGenerator(common.DocGenerator):
     def get_element_class(self):
         return LabVIEWDocElement
 
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
+
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_labview_doc())

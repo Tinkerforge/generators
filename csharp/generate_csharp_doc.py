@@ -336,7 +336,7 @@ class CSharpDocPacket(csharp_common.CSharpPacket):
 
         return common.shift_right(text, shift_right)
 
-class CSharpDocGenerator(common.DocGenerator):
+class CSharpDocGenerator(csharp_common.CSharpGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'csharp'
 

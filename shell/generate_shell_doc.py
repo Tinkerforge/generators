@@ -479,7 +479,7 @@ class ShellDocPacket(shell_common.ShellPacket):
 
         return ret
 
-class ShellDocGenerator(common.DocGenerator):
+class ShellDocGenerator(shell_common.ShellGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):
         return 'shell'
 

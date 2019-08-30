@@ -28,6 +28,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import mqtt_common
 
 import functools
 
@@ -412,7 +413,7 @@ publish '{{"debounce": {period_msec}}}' to tinkerforge/request/{device_name}_{de
 
             return '\rdone\n'
 
-class MQTTExamplesGenerator(common.ExamplesGenerator):
+class MQTTExamplesGenerator(mqtt_common.MQTTGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'mqtt'
 

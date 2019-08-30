@@ -144,3 +144,10 @@ class PythonElement(common.Element):
             return coercion[0]
         else:
             return coercion[1]
+
+class PythonGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'None'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().under

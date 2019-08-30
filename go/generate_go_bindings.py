@@ -206,7 +206,8 @@ func (device *{name}) GetAPIVersion() [3]uint8 {{
 
         functions = []
 
-        callback_template = """{description}\nfunc (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
+        callback_template = """{description}
+func (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
 	wrapper := func(byteSlice []byte) {{
 		{buf_decl}
 		{param_decls}
@@ -258,6 +259,12 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
             param_decls = ["var {} {}".format(param.get_go_name(), param.get_go_type()) for param in params]
             param_reads = self.go_read_results(params, "buf", low_level_in_bits=False)
 
+            if packet.has_high_level():
+                doc = '// See Register{}Callback'.format(packet.get_name(skip=-2).camel)
+            else:
+                doc = packet.get_go_formatted_doc()
+
+
             functions.append(callback_template.format(name=packet.get_name().camel,
                                                       name_desc=packet.get_name().space,
                                                       device_name=self.get_go_name(),
@@ -265,7 +272,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
                                                       param_reads="\n\t\t".join(param_reads),
                                                       buf_decl="buf := bytes.NewBuffer(byteSlice[8:])" if len(params) > 0 else "",
                                                       params=", ".join(param.get_go_name() for param in params),
-                                                      description= packet.get_go_formatted_doc(),
+                                                      description=doc,
                                                       type=", ".join(ret.get_go_type() for ret in params),
                                                       fun_enum="Function",
                                                       fn_id=packet.get_name().camel))
@@ -528,7 +535,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
             self.get_go_device_implementation()
         ])
 
-class GoBindingsGenerator(common.BindingsGenerator):
+class GoBindingsGenerator(go_common.GoGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'go'
 
@@ -540,9 +547,6 @@ class GoBindingsGenerator(common.BindingsGenerator):
 
     def get_packet_class(self):
         return go_common.GoPacket
-
-    def get_element_class(self):
-        return go_common.GoElement
 
     def get_constant_group_class(self):
         return go_common.GoConstantGroup

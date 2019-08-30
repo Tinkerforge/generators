@@ -793,7 +793,7 @@ class TVPLBindingsPacket(tvpl_common.TVPLPacket):
 
         return function_in_args
 
-class TVPLBindingsGenerator(common.BindingsGenerator):
+class TVPLBindingsGenerator(tvpl_common.TVPLGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'tvpl'
 

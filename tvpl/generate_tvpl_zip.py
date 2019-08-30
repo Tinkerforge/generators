@@ -30,8 +30,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import tvpl_common
 
-class TVPLZipGenerator(common.ZipGenerator):
+class TVPLZipGenerator(tvpl_common.TVPLGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 
@@ -91,8 +92,8 @@ class TVPLZipGenerator(common.ZipGenerator):
 
         # Generate JavaScript bindings
         with common.ChangedDirectory(os.path.join(root_dir, '..', 'javascript')):
-            common.execute(['python', 'generate_javascript_bindings.py'])
-            common.execute(['python', 'generate_javascript_zip.py'])
+            common.execute(['python2', 'generate_javascript_bindings.py'])
+            common.execute(['python2', 'generate_javascript_zip.py'])
 
         shutil.copy(os.path.join(self.tmp_javascript_dir, 'browser', 'source', 'Tinkerforge.js'),
                     os.path.join(self.tmp_source_dir, 'js', 'Tinkerforge.js'))
@@ -196,7 +197,7 @@ goog.require(\'Blockly.Python\');
 
         # Compile with closure library
         with common.ChangedDirectory(self.tmp_build_blockly_dir):
-            common.execute(['python', 'build.py'])
+            common.execute(['python2', 'build.py'])
 
         # Get necessary files from the build directory
         shutil.rmtree(os.path.join(self.tmp_build_blockly_dir, 'msg', 'json'))

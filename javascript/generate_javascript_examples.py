@@ -28,6 +28,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import javascript_common
 
 global_line_prefix = ''
 global_output_prefix = None
@@ -323,7 +324,7 @@ class JavaScriptExampleParameter(common.ExampleParameter):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -707,7 +708,7 @@ class JavaScriptExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return result + '\r        }\n'
 
-class JavaScriptExamplesGenerator(common.ExamplesGenerator):
+class JavaScriptExamplesGenerator(javascript_common.JavascriptGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'javascript'
 

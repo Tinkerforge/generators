@@ -95,3 +95,10 @@ class JavaScriptElement(common.Element):
             f = f + str(cardinality)
 
         return f
+
+class JavascriptGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless

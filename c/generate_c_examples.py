@@ -29,6 +29,7 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import c_common
 
 global_line_prefix = ''
 
@@ -800,7 +801,7 @@ class CExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\r\t}\n'
 
-class CExamplesGenerator(common.ExamplesGenerator):
+class CExamplesGenerator(c_common.CGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'c'
 

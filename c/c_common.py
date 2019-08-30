@@ -147,3 +147,10 @@ class CElement(common.Element):
             return int(math.ceil(self.get_cardinality() / 8.0))
 
         return self.get_cardinality()
+
+class CGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'NULL'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().under

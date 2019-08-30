@@ -30,8 +30,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import ruby_common
 
-class RubyZipGenerator(common.ZipGenerator):
+class RubyZipGenerator(ruby_common.RubyGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

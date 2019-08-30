@@ -29,6 +29,7 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from java.java_common import JavaDevice, get_java_type
+import matlab_common
 
 global_line_prefix = ''
 global_quote = None
@@ -280,7 +281,7 @@ class MATLABExampleParameter(common.ExampleParameter, MATLABFprintfFormatMixin):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -759,7 +760,7 @@ class MATLABExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\r    end\n'
 
-class MATLABExamplesGenerator(common.ExamplesGenerator):
+class MATLABExamplesGenerator(matlab_common.MATLABGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'matlab'
 

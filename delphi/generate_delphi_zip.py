@@ -30,8 +30,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import delphi_common
 
-class DelphiZipGenerator(common.ZipGenerator):
+class DelphiZipGenerator(delphi_common.DelphiGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

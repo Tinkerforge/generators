@@ -242,7 +242,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
-                
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
@@ -702,7 +702,7 @@ class DelphiExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\r  end;\n'
 
-class DelphiExamplesGenerator(common.ExamplesGenerator):
+class DelphiExamplesGenerator(delphi_common.DelphiGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'delphi'
 

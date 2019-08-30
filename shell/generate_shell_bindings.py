@@ -519,7 +519,7 @@ def dispatch_{0}_{1}(ctx, argv):
 
         return source
 
-class ShellBindingsGenerator(common.BindingsGenerator):
+class ShellBindingsGenerator(shell_common.ShellGeneratorTrait, common.BindingsGenerator):
     def __init__(self, *args, **kwargs):
         common.BindingsGenerator.__init__(self, *args, **kwargs)
 

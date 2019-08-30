@@ -28,6 +28,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import php_common
 
 global_line_prefix = ''
 
@@ -565,7 +566,7 @@ ${device_name_initial}->setDebouncePeriod({period_msec});
 
             return '\r}\n'
 
-class PHPExamplesGenerator(common.ExamplesGenerator):
+class PHPExamplesGenerator(php_common.PHPGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'php'
 

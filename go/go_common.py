@@ -282,3 +282,13 @@ def get_go_type(type_, cardinality, array=False):
         go_type = '[]{}'.format(go_type)
 
     return go_type
+
+class GoGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'nil'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_go_name()
+
+    def get_element_class(self):
+        return GoElement

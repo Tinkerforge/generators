@@ -72,7 +72,10 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 """
 
         for packet in self.get_packets('callback'):
-            doc = packet.get_ruby_formatted_doc()
+            if packet.has_high_level():
+                doc = 'See CALLBACK_{}'.format(packet.get_name(skip=-2).upper)
+            else:
+                doc = packet.get_ruby_formatted_doc()
             callback_ids += template.format(packet.get_name().upper, packet.get_function_id(), doc)
 
         if self.get_long_display_name() == 'RS232 Bricklet':
@@ -627,7 +630,7 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
 
         return ' '.join(forms), total_size
 
-class RubyBindingsGenerator(common.BindingsGenerator):
+class RubyBindingsGenerator(ruby_common.RubyGeneratorTrait, common.BindingsGenerator):
     def get_bindings_name(self):
         return 'ruby'
 

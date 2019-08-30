@@ -1418,6 +1418,22 @@ class Packet(object):
             if constant_group != None and constant_group not in self.constant_groups:
                 self.constant_groups.append(constant_group)
 
+        self.add_high_level_callback_note()
+
+    def add_high_level_callback_note(self):
+        if self.get_type() == 'callback' and self.has_high_level():
+            null = self.get_generator().get_doc_null_value_name()
+            param = self.get_generator().get_doc_formatted_param(self.get_high_level('stream_*').get_data_element())
+            doc = self.raw_data['doc'][1]
+            doc['de'] += """
+.. note::
+ Falls das Rekonstruieren des Wertes fehlschlägt, wird der Callback mit {} für {} ausgelöst.
+""".format(null, param)
+            doc['en'] += """
+.. note::
+ If reconstructing the value fails, the callback is triggered with {} for {}.
+""".format(null, param)
+
     def get_device(self): # parent
         return self.device
 
@@ -2835,6 +2851,12 @@ class Generator:
 
     def get_config_name(self, *args, **kwargs):
         return self.config_name.get(*args, **kwargs)
+
+    def get_doc_null_value_name(self):
+        raise GeneratorError("get_doc_null_value_name() not implemented")
+
+    def get_doc_formatted_param(self, element):
+        raise GeneratorError("get_doc_formatted_param() not implemented")
 
     def get_config_dir(self):
         parts = [self.root_dir, '..', 'configs']

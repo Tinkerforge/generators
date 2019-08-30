@@ -629,7 +629,7 @@ class RustExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\r\t\t}\n'
 
-class RustExamplesGenerator(common.ExamplesGenerator):
+class RustExamplesGenerator(rust_common.RustGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
         return 'rust'
 

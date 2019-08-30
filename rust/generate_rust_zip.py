@@ -30,8 +30,9 @@ import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import rust_common
 
-class RustZipGenerator(common.ZipGenerator):
+class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

@@ -30,8 +30,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import matlab_common
 
-class MATLABZipGenerator(common.ZipGenerator):
+class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 

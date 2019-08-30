@@ -177,3 +177,10 @@ class DelphiElement(common.Element):
 
     def get_delphi_le_convert_type(self):
         return DelphiElement.delphi_le_convert_types[self.get_type()]
+
+class DelphiGeneratorTrait:
+    def get_doc_null_value_name(self):
+        return 'nil'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().headless
