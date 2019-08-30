@@ -374,7 +374,7 @@ pub struct {name} {{
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
-                doc = 'See [`get_{}_callback_receiver`](crate::{}::{}::get_{}_callback_receiver)'.format(packet.get_name(skip=-2).under,
+                doc = '/// See [`get_{}_callback_receiver`](crate::{}::{}::get_{}_callback_receiver)'.format(packet.get_name(skip=-2).under,
                                                              self.get_name().under,
                                                              self.get_name().camel,
                                                              packet.get_name(skip=-2).under)
