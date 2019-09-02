@@ -404,17 +404,26 @@ def parse(ctx, argv):
 
 	if not ctx.no_escaped_input:
 		try:
-			ctx.item_separator = ctx.item_separator.decode('string-escape')
+			if sys.hexversion < 0x03000000:
+				ctx.item_separator = ctx.item_separator.decode('string-escape')
+			else:
+				ctx.item_separator = ctx.item_separator.encode('utf-8').decode('unicode-escape')
 		except ValueError:
 			parser.error('argument --item-separator: invalid escape sequence: %r' % ctx.item_separator)
 
 		try:
-			ctx.group_separator = ctx.group_separator.decode('string-escape')
+			if sys.hexversion < 0x03000000:
+				ctx.group_separator = ctx.group_separator.decode('string-escape')
+			else:
+				ctx.group_separator = ctx.group_separator.encode('utf-8').decode('unicode-escape')
 		except ValueError:
 			parser.error('argument --group-separator: invalid escape sequence: %r' % ctx.group_separator)
 
 		try:
-			ctx.array_ellipsis = ctx.array_ellipsis.decode('string-escape')
+			if sys.hexversion < 0x03000000:
+				ctx.array_ellipsis = ctx.array_ellipsis.decode('string-escape')
+			else:
+				ctx.array_ellipsis = ctx.array_ellipsis.encode('utf-8').decode('unicode-escape')
 		except ValueError:
 			parser.error('argument --array-ellipsis: invalid escape sequence: %r' % ctx.array_ellipsis)
 
