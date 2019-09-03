@@ -574,6 +574,18 @@ def format_symbolic_output(ctx, values, symbols):
 
 	return tuple(translated_values)
 
+def deescape_input(string):
+	if sys.hexversion < 0x03000000:
+		return string.decode('string-escape')
+	else:
+		return string.encode('ascii', 'backslashreplace').decode('unicode-escape')
+
+def escape_output(string):
+	if sys.hexversion < 0x03000000:
+		return string.encode('string-escape')
+	else:
+		return string.encode('unicode-escape').decode('utf-8')
+
 def format_escaped_output(ctx, values):
 	if ctx.no_escaped_output:
 		return values
@@ -587,10 +599,7 @@ def format_escaped_output(ctx, values):
 			for item in value:
 				if type(item) == str:
 					try:
-						if sys.hexversion < 0x03000000:
-							translated_items.append(item.encode('string-escape'))
-						else:
-							translated_items.append(item.encode('utf-8').decode('unicode-escape'))
+						translated_items.append(escape_output(item))
 					except ValueError:
 						message = 'output not escapable: %r' % item
 						raise FatalError(message, ERROR_OUTPUT_NOT_ESCAPABLE_ERROR)
@@ -600,10 +609,7 @@ def format_escaped_output(ctx, values):
 			translated_values.append(tuple(translated_items))
 		elif type(value) == str:
 			try:
-				if sys.hexversion < 0x03000000:
-					translated_values.append(value.encode('string-escape'))
-				else:
-					translated_values.append(value.encode('utf-8').decode('unicode-escape'))
+				translated_values.append(escape_output(value))
 			except ValueError:
 				message = 'output not escapable: %r' % value
 				raise FatalError(message, ERROR_OUTPUT_NOT_ESCAPABLE_ERROR)
@@ -627,10 +633,7 @@ def create_char_converter(ctx):
 	def convert_char(string):
 		if not ctx.no_escaped_input:
 			try:
-				if sys.hexversion < 0x03000000:
-					string = string.decode('string-escape')
-				else:
-					string = string.encode('utf-8').decode('unicode-escape')
+				string = deescape_input(string)
 			except ValueError:
 				msg = 'invalid escape sequence: %r' % string
 				raise argparse.ArgumentTypeError(msg)
@@ -671,10 +674,7 @@ def create_string_converter(ctx, type_, length):
 	def convert_string(string):
 		if not ctx.no_escaped_input:
 			try:
-				if sys.hexversion < 0x03000000:
-					string = string.decode('string-escape')
-				else:
-					string = string.encode('utf-8').decode('unicode-escape')
+				string = deescape_input(string)
 			except ValueError:
 				msg = 'invalid escape sequence: %r' % string
 				raise argparse.ArgumentTypeError(msg)
