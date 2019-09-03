@@ -44,10 +44,10 @@ class ShellDevice(common.Device):
         return self.get_name().dash + '-' + self.get_category().dash
 
 class ShellPacket(common.Packet):
-    def get_shell_parameter_list(self):
+    def get_shell_parameter_list(self, high_level=False):
         params = []
 
-        for element in self.get_elements(direction='in'):
+        for element in self.get_elements(direction='in', high_level=high_level):
             params.append('<{0}>'.format(element.get_name().dash))
 
         return ' '.join(params)
@@ -113,16 +113,18 @@ class ShellElement(common.Element):
         'string': None
     }
 
-    def get_shell_type(self, for_doc=False):
-        t = ShellElement.shell_types[self.get_type()]
+    def get_shell_doc_type(self):
+        shell_type = ShellElement.shell_types[self.get_type()]
+        cardinality = self.get_cardinality()
 
-        if self.get_cardinality() == 1 or t == 'string':
-            return t
-
-        if for_doc and self.get_cardinality() > 5:
-            return '{0},{0},..{1}x..,{0}'.format(t, self.get_cardinality() - 3)
+        if cardinality == 1 or self.get_type() == 'string':
+            return shell_type
+        elif cardinality < 0:
+            return '{0},{0},...'.format(shell_type)
+        elif cardinality <= 5:
+            return ','.join([shell_type] * cardinality)
         else:
-            return ','.join([t]*self.get_cardinality())
+            return '{0},{0},..{1}x..,{0}'.format(shell_type, cardinality - 3)
 
     def get_shell_struct_format(self):
         f = ShellElement.shell_struct_formats[self.get_type()]

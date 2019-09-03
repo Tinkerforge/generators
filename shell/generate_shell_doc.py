@@ -66,8 +66,9 @@ class ShellDocDevice(shell_common.ShellDevice):
             if packet.get_doc_type() != typ:
                 continue
 
-            name = packet.get_name().dash
-            params = packet.get_shell_parameter_list()
+            skip = -2 if packet.has_high_level() else 0
+            name = packet.get_name(skip=skip).dash
+            params = packet.get_shell_parameter_list(high_level=True)
             pd = packet.get_shell_parameter_desc()
             r = packet.get_shell_return_desc()
             d = packet.get_shell_formatted_doc()
@@ -92,10 +93,11 @@ class ShellDocDevice(shell_common.ShellDevice):
 
             param_desc = packet.get_shell_return_desc()
             desc = packet.get_shell_formatted_doc()
+            skip = -2 if packet.has_high_level() else 0
 
             func = '{0} tinkerforge dispatch {1} <uid> {2}\n{3}\n{4}'.format(func_start,
                                                                              device_name,
-                                                                             packet.get_name().dash,
+                                                                             packet.get_name(skip).dash,
                                                                              param_desc,
                                                                              desc)
             cbs += func + '\n'
@@ -440,8 +442,8 @@ class ShellDocPacket(shell_common.ShellPacket):
             'de': 'hat Symbole'
         }
 
-        for element in self.get_elements(direction='in'):
-            t = element.get_shell_type(True)
+        for element in self.get_elements(direction='in', high_level=True):
+            t = element.get_shell_doc_type()
             desc += param.format(element.get_name().dash, t)
 
             if element.get_constant_group() != None:
@@ -460,7 +462,7 @@ class ShellDocPacket(shell_common.ShellPacket):
             'en': 'has symbols',
             'de': 'hat Symbole'
         }
-        elements = self.get_elements(direction='out')
+        elements = self.get_elements(direction='out', high_level=True)
 
         if len(elements) == 0:
             return '\n :noreturn: {0}\n'.format(common.select_lang(nothing))
@@ -468,7 +470,7 @@ class ShellDocPacket(shell_common.ShellPacket):
         ret = '\n'
 
         for element in elements:
-            t = element.get_shell_type(True)
+            t = element.get_shell_doc_type()
             ret += ' :returns {0}: {1}'.format(element.get_name().dash, t)
 
             if element.get_constant_group() != None or \
