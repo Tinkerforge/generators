@@ -35,3 +35,5 @@
   Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
 - Add get/set_filter_configuration functions to Accelerometer Bricklet 2.0 API
 - Add conversion_time symbols to Voltage/Current Bricklet 2.0 API
+- More robust connection handling
+- Fix init file loading
