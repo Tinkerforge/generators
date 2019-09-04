@@ -703,7 +703,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports(),
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
@@ -734,6 +734,13 @@ com['openhab'] = {
 this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency.shortValue());""",
     'channels': [
         oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        {
+            'id': 'Sensor Connected',
+            'type': 'Sensor Connected',
+            'getters': [{
+                'packet': 'Is Sensor Connected',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}]
+        },
     ],
     'channel_types': [
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
@@ -741,6 +748,8 @@ this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency.shortValue());"""
                      read_only=True,
                      pattern='%.2f %unit%',
                      min_=-246,
-                     max_=849)
+                     max_=849),
+        oh_generic_channel_type('Sensor Connected', 'Switch', 'Sensor Connected',
+                     description='Indicates if the sensor is connected correctly. If this is disabled, there is either no Pt100 or Pt1000 sensor connected, the sensor is connected incorrectly or the sensor itself is faulty.'),
     ]
 }
