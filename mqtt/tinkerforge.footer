@@ -167,9 +167,16 @@ class MQTTBindings:
             if not self.no_symbolic_response:
                 d["device_identifier"] = mqtt_names[dev_id]
 
-        if not self.no_symbolic_response and "enumeration_type" in d:
-            symbols = {0: "available", 1: "connected", 2: "disconnected"}
-            d["enumeration_type"] = symbols[d["enumeration_type"]]
+        if not self.no_symbolic_response:
+            if "enumeration_type" in d:
+                symbols = {0: "available", 1: "connected", 2: "disconnected"}
+                d["enumeration_type"] = symbols[d["enumeration_type"]]
+            elif "connect_reason" in d:
+                symbols = {0: "request", 1: "auto-reconnect"}
+                d["connect_reason"] = symbols[d["connect_reason"]]
+            elif "disconnect_reason" in d:
+                symbols = {0: "request", 1: "error", 2: "shutdown"}
+                d["disconnect_reason"] = symbols[d["disconnect_reason"]]
 
         payload = json.dumps(d)
         for path in self.ip_connection_response_paths[callback_id]:
