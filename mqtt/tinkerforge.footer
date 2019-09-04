@@ -211,7 +211,6 @@ class MQTTBindings:
                     self.ipcon.CONNECTION_STATE_CONNECTED: "connected",
                     self.ipcon.CONNECTION_STATE_PENDING: "pending"}], [state])[0]
                 return json.dumps({'connection_state': state})
-
             else:
                 return json_error("Unknown ip connection function " + function)
 
@@ -255,8 +254,11 @@ class MQTTBindings:
 
         logging.debug("Resetting callbacks")
 
-        self.enumerate_response_paths = set()
-        self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, None)
+        self.ip_connection_response_paths = {
+            IPConnection.CALLBACK_ENUMERATE: set(),
+            IPConnection.CALLBACK_CONNECTED: set(),
+            IPConnection.CALLBACK_DISCONNECTED: set()
+        }
 
         self.callback_devices = {}
         self.ipcon.devices = {}
