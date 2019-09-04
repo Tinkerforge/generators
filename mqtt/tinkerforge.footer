@@ -99,6 +99,7 @@ class MQTTBindings:
     def connect_to_broker(self, broker_host, broker_port):
         logging.debug("Configuring connection to MQTT broker at {}:{}".format(broker_host, broker_port))
         try:
+            self.mqttc.will_set(self.global_prefix + 'callback/bindings/last_will', 'null')
             # Don't use connect: connect_async + loop_start support retrying to connect.
             self.mqttc.connect_async(broker_host, broker_port)
         except Exception as e:
@@ -121,7 +122,7 @@ class MQTTBindings:
                 self.ipcon.disconnect()
             except:
                 pass
-            time.sleep(0.2)
+            self.mqttc.publish(self.global_prefix + 'callback/bindings/shutdown', 'null')
             self.mqttc.disconnect()
             self.mqttc.loop_stop()
 
