@@ -842,7 +842,7 @@ def main():
         try:
             with open(args.init_file) as f:
                 initial_config = json.load(f, object_pairs_hook=OrderedDict)
-        except IOError as e:
+        except Exception as e:
             print("Could not read init file: {}".format(str(e)))
             sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
     else:
