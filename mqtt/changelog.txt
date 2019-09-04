@@ -30,7 +30,7 @@
 2019-06-11: 2.0.6 (6ec2351)
 - Fix JSON parsing in Python < 3.6
 
-2019-08-23: 2.0.7 (<unknown>)
+2019-08-23: 2.0.7 (59d9363)
 - Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
   Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
 - Add get/set_filter_configuration functions to Accelerometer Bricklet 2.0 API
