@@ -872,11 +872,11 @@ def main():
     try:
         bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
         bindings.connect_to_broker(args.broker_host, args.broker_port)
-        if 'pre-connect' in initial_config:
-            bindings.run_config(initial_config['pre-connect'])
+        if 'pre_connect' in initial_config:
+            bindings.run_config(initial_config['pre_connect'])
         bindings.connect_to_brickd(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret)
-        if 'post-connect' in initial_config:
-            bindings.run_config(initial_config['post-connect'])
+        if 'post_connect' in initial_config:
+            bindings.run_config(initial_config['post_connect'])
         else:
             bindings.run_config(initial_config)
         bindings.run()
