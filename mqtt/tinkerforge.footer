@@ -164,23 +164,27 @@ class MQTTBindings:
     def ip_connection_callback_fn(self, callback_id, *args):
         self.ip_connection_callback_log(callback_id, *args)
 
-        d = dict(zip(self.ip_connection_callback_names[callback_id], args))
-        if "enumeration_type" in d and d["enumeration_type"] != 2 and "device_identifier" in d:
-            dev_id = d["device_identifier"]
-            d["_display_name"] = display_names[dev_id]
-            if not self.no_symbolic_response:
-                d["device_identifier"] = mqtt_names[dev_id]
+        if callback_id == self.ipcon.CALLBACK_ENUMERATE:
+            symbols = [{}, {}, {}, {}, {}, mqtt_names,
+                       {self.ipcon.ENUMERATION_TYPE_AVAILABLE: "available",
+                        self.ipcon.ENUMERATION_TYPE_CONNECTED: "connected",
+                        self.ipcon.ENUMERATION_TYPE_DISCONNECTED: "disconnected"}]
+            dev_id = args[5]
+        elif callback_id == self.ipcon.CALLBACK_CONNECTED:
+            symbols = [{self.ipcon.CONNECT_REASON_REQUEST: "request",
+                        self.ipcon.CONNECT_REASON_AUTO_RECONNECT: "auto-reconnect"}]
+        elif callback_id == self.ipcon.CALLBACK_DISCONNECTED:
+            symbols = [{self.ipcon.DISCONNECT_REASON_REQUEST: "request",
+                        self.ipcon.DISCONNECT_REASON_ERROR: "error",
+                        self.ipcon.DISCONNECT_REASON_SHUTDOWN: "shutdown"}]
 
         if not self.no_symbolic_response:
-            if "enumeration_type" in d:
-                symbols = {0: "available", 1: "connected", 2: "disconnected"}
-                d["enumeration_type"] = symbols[d["enumeration_type"]]
-            elif "connect_reason" in d:
-                symbols = {0: "request", 1: "auto-reconnect"}
-                d["connect_reason"] = symbols[d["connect_reason"]]
-            elif "disconnect_reason" in d:
-                symbols = {0: "request", 1: "error", 2: "shutdown"}
-                d["disconnect_reason"] = symbols[d["disconnect_reason"]]
+            args = self.translate_symbols(symbols, args)
+
+        d = dict(zip(self.ip_connection_callback_names[callback_id], args))
+
+        if "enumeration_type" in d and d["enumeration_type"] != 2 and "device_identifier" in d:
+            d["_display_name"] = display_names[dev_id]
 
         payload = json.dumps(d)
         for path in self.ip_connection_response_paths[callback_id]:
