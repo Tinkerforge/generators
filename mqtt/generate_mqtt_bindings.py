@@ -70,14 +70,14 @@ class {0}(MQTTCallbackDevice):
         template = "\tfunctions = {{\n\t\t{entries}\n\t}}\n"
         entries = []
         for packet in self.get_packets('function'):
-            entries.append("'{mqtt_name}': FunctionInfo({id}, {arg_names}, {arg_types}, {arg_symbols}, '{payload_fmt}', {result_names}, {result_symbols}, '{response_fmt}')".format(
+            entries.append("'{mqtt_name}': FunctionInfo({id}, {arg_names}, {arg_types}, [{arg_symbols}], '{payload_fmt}', {result_names}, [{result_symbols}], '{response_fmt}')".format(
                  mqtt_name=packet.get_mqtt_name(),
                  id=packet.get_function_id(),
                  arg_names=[elem.get_name().under for elem in packet.get_elements(direction='in')],
                  arg_types=[elem.get_mqtt_type() for elem in packet.get_elements(direction='in')],
-                 arg_symbols=[elem.get_symbols() for elem in packet.get_elements(direction='in')],
+                 arg_symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='in')]),
                  result_names=[elem.get_name().under for elem in packet.get_elements(direction='out')],
-                 result_symbols=[elem.get_symbols() for elem in packet.get_elements(direction='out')],
+                 result_symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='out')]),
                  payload_fmt=packet.get_mqtt_format_list('in'),
                  response_fmt=packet.get_mqtt_format_list('out')))
 
@@ -188,7 +188,7 @@ class {0}(MQTTCallbackDevice):
 
     def get_mqtt_callback_map(self):
         template = "\tcallbacks = {{\n\t\t{entries}\n\t}}\n"
-        entry_template = "'{mqtt_name}': CallbackInfo({id}, {names}, {symbols}, '{fmt}', {hl_info})"
+        entry_template = "'{mqtt_name}': CallbackInfo({id}, {names}, [{symbols}], '{fmt}', {hl_info})"
         hl_template = "[{2}, {{'fixed_length': {0}, 'single_chunk': {1}}}, None]"
 
         entries = []
@@ -210,7 +210,7 @@ class {0}(MQTTCallbackDevice):
             entries.append(entry_template.format(mqtt_name=packet.get_mqtt_name(skip),
                                                 id=callback_id,
                                                 names=[elem.get_name().under for elem in packet.get_elements(direction='out')],
-                                                symbols=[elem.get_symbols() for elem in packet.get_elements(direction='out')],
+                                                symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='out')]),
                                                 fmt=packet.get_mqtt_format_list('out'),
                                                 hl_info=hl_info))
         return template.format(entries=",\n\t\t".join(entries))

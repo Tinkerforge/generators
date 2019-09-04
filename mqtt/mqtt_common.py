@@ -109,14 +109,13 @@ class MQTTElement(common.Element):
         return f
 
     def get_symbols(self):
-        symbols = {}
+        symbols = []
         constant_group = self.get_constant_group()
 
         if constant_group != None:
-            for constant in constant_group.get_constants():
-                symbols[constant.get_value()] = constant.get_name().under
+            symbols = ["{}: {}".format(repr(c.get_value()), repr(c.get_name().under)) for c in constant_group.get_constants()]
 
-        return symbols
+        return '{' + ', '.join(symbols) + '}'
 
 class MQTTGeneratorTrait:
     def get_doc_null_value_name(self):
