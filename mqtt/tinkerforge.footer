@@ -200,10 +200,20 @@ class MQTTBindings:
 
     def handle_ip_connection_call(self, request_type, device, function, json_args, response_path):
         if request_type == "request":
-            if function != "enumerate":
+            if function == "enumerate":
+                logging.debug("Enumerating devices.")
+                self.handle_ipcon_exceptions(lambda i: i.enumerate())
+            elif function == "get_connection_state":
+                state = self.handle_ipcon_exceptions(lambda i: i.get_connection_state())
+                state = self.translate_symbols([{
+                    self.ipcon.CONNECTION_STATE_DISCONNECTED: "disconnected",
+                    self.ipcon.CONNECTION_STATE_CONNECTED: "connected",
+                    self.ipcon.CONNECTION_STATE_PENDING: "pending"}], [state])[0]
+                return json.dumps({'connection_state': state})
+
+            else:
                 return json_error("Unknown ip connection function " + function)
-            logging.debug("Enumerating devices.")
-            self.handle_ipcon_exceptions(lambda i: i.enumerate())
+
         elif request_type == "register":
             if function not in self.ip_connection_callbacks.keys():
                 return json_error("Unknown ip connection callback " + function)
