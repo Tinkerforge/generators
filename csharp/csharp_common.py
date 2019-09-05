@@ -71,7 +71,7 @@ class CSharpPacket(common.Packet):
             return None
 
     def get_csharp_method_signature(self, print_full_name=False, is_doc=False, high_level=False):
-        sig_format = "public {4}{0} {1}{2}({3})"
+        sig_format = "{5}{4}{0} {1}{2}({3})"
         ret_count = len(self.get_elements(direction='out', high_level=high_level))
         params = self.get_csharp_parameters(high_level=high_level)
         return_type = 'void'
@@ -91,7 +91,7 @@ class CSharpPacket(common.Packet):
 
         skip = -2 if high_level and self.has_high_level() else 0
 
-        return sig_format.format(return_type, class_prefix, self.get_name(skip=skip).camel, params, override)
+        return sig_format.format(return_type, class_prefix, self.get_name(skip=skip).camel, params, override, '' if is_doc else 'public ')
 
 csharp_types = {
     'int8':   'short',

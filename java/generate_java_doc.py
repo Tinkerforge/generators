@@ -79,24 +79,24 @@ class JavaDocDevice(java_common.JavaDevice):
     def get_java_callbacks(self):
         cb = {
             'en': """
-.. java:function:: public class {0}.{1}Listener()
+.. java:function:: class {0}::{1}Listener()
 
  This listener can be added with the ``add{1}Listener()`` function.
  An added listener can be removed with the ``remove{1}Listener()`` function.
 
- .. java:function:: public void {2}({3})
+ .. java:function:: void {2}({3})
   :noindex:
 
 {4}
 """,
             'de': """
-.. java:function:: public class {0}.{1}Listener()
+.. java:function:: class {0}::{1}Listener()
 
  Dieser Listener kann mit der Funktion ``add{1}Listener()`` hinzugefügt werde.
  Ein hinzugefügter Listener kann mit der Funktion ``remove{1}Listener()`` wieder
  entfernt werden.
 
- .. java:function:: public void {2}({3})
+ .. java:function:: void {2}({3})
   :noindex:
 
 {4}
@@ -301,7 +301,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 Constants
 ^^^^^^^^^
 
-.. java:member:: public static final int {1}.DEVICE_IDENTIFIER
+.. java:member:: static final int {1}::DEVICE_IDENTIFIER
 
  This constant is used to identify a {3}.
 
@@ -310,7 +310,7 @@ Constants
  listener of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
-.. java:member:: public static final String {1}.DEVICE_DISPLAY_NAME
+.. java:member:: static final String {1}::DEVICE_DISPLAY_NAME
 
  This constant represents the human readable name of a {3}.
 """,
@@ -320,7 +320,7 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. java:member:: public static final int {1}.DEVICE_IDENTIFIER
+.. java:member:: static final int {1}::DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
@@ -329,7 +329,7 @@ Konstanten
  Listener der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. java:member:: public static final String {1}.DEVICE_DISPLAY_NAME
+.. java:member:: static final String {1}::DEVICE_DISPLAY_NAME
 
  Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """

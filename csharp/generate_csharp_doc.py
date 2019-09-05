@@ -67,7 +67,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
 
     def get_csharp_callbacks(self):
         cb = """
-.. csharp:function:: public event {0}::{1}Callback({0} sender{2})
+.. csharp:function:: event {0}::{1}Callback({0} sender{2})
 
 {3}
 """
@@ -238,7 +238,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 Constants
 ^^^^^^^^^
 
-.. csharp:member:: public int {1}::DEVICE_IDENTIFIER
+.. csharp:member:: int {1}::DEVICE_IDENTIFIER
 
  This constant is used to identify a {3}.
 
@@ -247,7 +247,7 @@ Constants
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
-.. csharp:member:: public string {1}::DEVICE_DISPLAY_NAME
+.. csharp:member:: string {1}::DEVICE_DISPLAY_NAME
 
  This constant represents the human readable name of a {3}.
 """,
@@ -257,7 +257,7 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. csharp:member:: public int {1}::DEVICE_IDENTIFIER
+.. csharp:member:: int {1}::DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
@@ -266,7 +266,7 @@ Konstanten
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. csharp:member:: public string {1}::DEVICE_DISPLAY_NAME
+.. csharp:member:: string {1}::DEVICE_DISPLAY_NAME
 
  Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """
