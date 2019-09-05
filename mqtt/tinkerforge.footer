@@ -113,19 +113,8 @@ class MQTTBindings:
             self.on_message(self.mqttc, len(self.global_prefix), message_tup(topic, json.dumps(payload)))
 
     def run(self):
-        try:
-            while(True):
-                time.sleep(1)
-        except KeyboardInterrupt:
-            logging.debug("Keyboard interrupt, disconnecting from brickd and mqtt broker.")
-            try:
-                self.ipcon.disconnect()
-            except:
-                pass
-            self.mqttc.publish(self.global_prefix + 'callback/bindings/shutdown', 'null')
-            self.mqttc.disconnect()
-            self.mqttc.loop_stop()
-
+        while(True):
+            time.sleep(1)
 
     def ip_connection_callback_log(self, callback_id, *args):
         d_dis = {
@@ -818,7 +807,33 @@ BROKER_HOST = 'localhost'
 BROKER_PORT = 1883 # 8883 for TLS
 GLOBAL_TOPIC_PREFIX = 'tinkerforge/'
 
+bindings = None
+
+def terminate(signal=None, frame=None):
+    global bindings
+
+    logging.debug("Disconnecting from brickd and mqtt broker.")
+
+    if bindings is not None:
+        try:
+            bindings.ipcon.disconnect()
+        except:
+            pass
+
+        bindings.mqttc.publish(bindings.global_prefix + 'callback/bindings/shutdown', 'null')
+        bindings.mqttc.disconnect()
+        bindings.mqttc.loop_stop()
+
+    sys.exit(0)
+
+
 def main():
+    global bindings
+
+    signal.signal(signal.SIGINT, terminate)
+    signal.signal(signal.SIGTERM, terminate)
+    signal.signal(signal.SIGQUIT, terminate)
+
     parser = argparse.ArgumentParser(description='Tinkerforge MQTT Bindings')
     parser.add_argument('--ipcon-host', dest='ipcon_host', type=str, default=IPCON_HOST,
                         help='hostname or IP address of Brick Daemon, WIFI or Ethernet Extension (default: {0})'.format(IPCON_HOST))
@@ -869,21 +884,16 @@ def main():
     else:
         initial_config = {}
 
-    try:
-        bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
-        bindings.connect_to_broker(args.broker_host, args.broker_port)
-        if 'pre_connect' in initial_config:
-            bindings.run_config(initial_config['pre_connect'])
-        bindings.connect_to_brickd(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret)
-        if 'post_connect' in initial_config:
-            bindings.run_config(initial_config['post_connect'])
-        else:
-            bindings.run_config(initial_config)
-        bindings.run()
-    except KeyboardInterrupt:
-        pass
-    except:
-        raise
+    bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
+    bindings.connect_to_broker(args.broker_host, args.broker_port)
+    if 'pre_connect' in initial_config:
+        bindings.run_config(initial_config['pre_connect'])
+    bindings.connect_to_brickd(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret)
+    if 'post_connect' in initial_config:
+        bindings.run_config(initial_config['post_connect'])
+    else:
+        bindings.run_config(initial_config)
+    bindings.run()
 
 if __name__ == '__main__':
     main()
