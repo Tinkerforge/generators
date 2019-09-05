@@ -401,22 +401,16 @@ class CDocPacket(c_common.CPacket):
         text = common.select_lang(self.get_doc_text())
         text = self.get_device().specialize_c_doc_function_links(text)
 
-        constants = {'en': 'defines', 'de': 'Defines'}
-
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME
 
         text = common.handle_rst_param(text, format_parameter)
-        text = common.handle_rst_word(text, constants=constants)
+        text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_name().upper + '_'
 
-        if self.get_name().space == 'Set Response Expected':
-            text += common.format_function_id_constants(prefix, self.get_device(), constants)
-        else:
-            text += common.format_constants(prefix, self, constants, bool_format_func=lambda value: str(value).lower())
-
+        text += common.format_constants(prefix, self, bool_format_func=lambda value: str(value).lower())
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

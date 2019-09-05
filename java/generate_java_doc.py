@@ -394,11 +394,7 @@ class JavaDocPacket(java_common.JavaPacket):
 
         prefix = self.get_device().get_java_class_name() + '.'
 
-        if self.get_name().space == 'Set Response Expected':
-            text += common.format_function_id_constants(prefix, self.get_device())
-        else:
-            text += common.format_constants(prefix, self, bool_format_func=lambda value: str(value).lower())
-
+        text += common.format_constants(prefix, self, bool_format_func=lambda value: str(value).lower())
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, shift_right)

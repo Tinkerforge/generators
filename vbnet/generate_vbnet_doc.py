@@ -317,11 +317,7 @@ class VBNETDocPacket(common.Packet):
 
         prefix = self.get_device().get_vbnet_class_name() + '.'
 
-        if self.get_name().space == 'Set Response Expected':
-            text += common.format_function_id_constants(prefix, self.get_device())
-        else:
-            text += common.format_constants(prefix, self, char_format_func='"{0}"C'.format)
-
+        text += common.format_constants(prefix, self, char_format_func='"{0}"C'.format)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

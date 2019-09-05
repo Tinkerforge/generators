@@ -330,11 +330,7 @@ class LabVIEWDocPacket(common.Packet):
 
         prefix = self.get_device().get_labview_class_name() + '.'
 
-        if self.get_name().space == 'Set Response Expected':
-            text += common.format_function_id_constants(prefix, self.get_device())
-        else:
-            text += common.format_constants(prefix, self)
-
+        text += common.format_constants(prefix, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

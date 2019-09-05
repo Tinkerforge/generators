@@ -309,12 +309,8 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
 
             return group.get_name().under
 
-        if self.get_name().space == 'Set Response Expected':
-            text += common.format_function_id_constants(prefix, self.get_device(), constants, constant_format_func=const_func_id_fmt_func)
-        else:
-            _for = common.select_lang({'en': 'for', 'de': 'für'})
-            text += common.format_constants(prefix, self, constants, constant_format_func=const_fmt_func, show_constant_group=True, group_format_func=lambda g: "\n" + _for + " " + constant_group_func(g) + ":\n\n")
-
+        _for = common.select_lang({'en': 'for', 'de': 'für'})
+        text += common.format_constants(prefix, self, constants, constant_format_func=const_fmt_func, show_constant_group=True, group_format_func=lambda g: "\n" + _for + " " + constant_group_func(g) + ":\n\n")
         text += common.format_since_firmware(self.get_device(), self)
         text = text.replace('|device_identifier_constant|\n', '')
 

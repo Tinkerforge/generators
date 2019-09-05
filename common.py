@@ -580,37 +580,13 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 
     if len(constants) == 0:
         return ''
+
     result = select_lang(constants_intro).format(select_lang(constants_name))
+
     if show_constant_group: # newline before first constant group is redundant
         result = result[:-1]
+
     return result + ''.join(constants)
-
-def default_function_id_constant_format(prefix, func_name, value):
-    return '* {0}FUNCTION_{1} = {2}\n'.format(prefix, func_name.upper, value)
-
-def format_function_id_constants(prefix, device, constants_name=None, constant_format_func=default_function_id_constant_format):
-    if constants_name == None:
-        constants_name = {'en': 'constants', 'de': 'Konstanten'}
-
-    str_constants = {
-        'en': """
-The following function ID {0} are available for this function:
-
-""",
-        'de': """
-Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
-
-"""
-    }
-    str_constants = select_lang(str_constants).format(select_lang(constants_name))
-
-    for packet in device.get_packets('function'):
-        if len(packet.get_elements(direction='out', high_level=True)) == 0 and packet.get_function_id() >= 0:
-            str_constants += constant_format_func(prefix,
-                                                 packet.get_name(skip=-2 if packet.has_high_level() else 0),
-                                                 packet.get_function_id())
-
-    return str_constants
 
 def handle_rst_word(text, parameter=None, parameters=None, constants=None):
     if parameter == None:
@@ -1071,6 +1047,7 @@ class Constant(object):
 class ConstantGroup(object):
     def __init__(self, raw_data, device):
         assert isinstance(raw_data, dict)
+
         check_name(raw_data['name'])
 
         self.raw_data = raw_data
@@ -1106,6 +1083,9 @@ class ConstantGroup(object):
                 elements.append(element)
 
         return elements
+
+    def is_virtual(self):
+        return self.raw_data.get('is_virtual', False)
 
 class Element(object):
     def __init__(self, raw_data, packet, level, role):
@@ -1598,6 +1578,9 @@ class Packet(object):
         constants = []
 
         for constant_group in self.get_constant_groups():
+            if constant_group.is_virtual():
+                continue
+
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
                     value = char_format_func(constant.get_value())
@@ -1637,6 +1620,17 @@ class Device(object):
 
         self.category = FlavoredName(raw_data['category'])
         self.name = FlavoredName(raw_data['name'])
+
+        raw_function_constant_group = {
+            'is_virtual': True,
+            'name': 'Function',
+            'type': 'uint8',
+            'constants': []
+        }
+
+        function_constant_group = generator.get_constant_group_class()(raw_function_constant_group, self)
+
+        self.constant_groups.append(function_constant_group)
 
         for raw_constant_group in raw_data['constant_groups']:
             constant_group = generator.get_constant_group_class()(raw_constant_group, self)
@@ -1711,6 +1705,12 @@ class Device(object):
 
         for raw_example in raw_data['examples']:
             self.examples.append(generator.get_example_class()(raw_example, self))
+
+        for packet in self.get_packets('function'):
+            if len(packet.get_elements(direction='out', high_level=True)) == 0 and packet.get_function_id() >= 0:
+                raw_constant = (packet.get_name(skip=-2 if packet.has_high_level() else 0).space, packet.get_function_id())
+
+                function_constant_group.constants.append(generator.get_constant_class()(raw_constant, self))
 
     def get_generator(self): # parent
         return self.generator
@@ -1867,6 +1867,9 @@ class Device(object):
         constants = []
 
         for constant_group in self.get_constant_groups():
+            if constant_group.is_virtual():
+                continue
+
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
                     value = char_format_func(constant.get_value())

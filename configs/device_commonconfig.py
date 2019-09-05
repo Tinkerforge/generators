@@ -98,7 +98,7 @@ common_packets.append({
 'type': 'function',
 'function_id': -1,
 'name': 'Get Response Expected',
-'elements': [('Function Id', 'uint8', 1, 'in'),
+'elements': [('Function Id', 'uint8', 1, 'in', {'constant_group': 'Function'}),
              ('Response Expected', 'bool', 1, 'out')],
 'since_firmware': None,
 'doc': ['af', {
@@ -119,9 +119,6 @@ timeouts and other error conditions calls of this setter as well. The
 device will then send a response for this purpose. If this flag is disabled for
 a setter function then no response is send and errors are silently ignored,
 because they cannot be detected.
-
-See :func:`Set Response Expected` for the list of function ID :word:`constants`
-available for this function.
 """,
 'de':
 """
@@ -141,9 +138,6 @@ detektiert werden. Das Gerät sendet dann eine Antwort extra für diesen Zweck.
 Wenn das Flag für eine Setter-Funktion nicht gesetzt ist, dann wird keine
 Antwort vom Gerät gesendet und Fehler werden stillschweigend ignoriert, da sie
 nicht detektiert werden können.
-
-Siehe :func:`Set Response Expected` für die Liste der verfügbaren Funktions
-ID :word:`constants` für diese Funktion.
 """
 }]
 })
@@ -153,7 +147,7 @@ common_packets.append({
 'type': 'function',
 'function_id': -1,
 'name': 'Set Response Expected',
-'elements': [('Function Id', 'uint8', 1, 'in'),
+'elements': [('Function Id', 'uint8', 1, 'in', {'constant_group': 'Function'}),
              ('Response Expected', 'bool', 1, 'in')],
 'since_firmware': None,
 'doc': ['af', {

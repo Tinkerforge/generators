@@ -320,8 +320,6 @@ class GoDocPacket(go_common.GoPacket):
         text = common.select_lang(self.get_doc_text())
         text = self.get_device().specialize_go_doc_function_links(text)
 
-        constants = {'en': 'constants', 'de': 'Konstanten'}
-
         callback_parameter = {'en': 'callback parameter', 'de': 'Parameter des Callbacks'}
         callback_parameters = {'en': 'callback parameters', 'de': 'Parameter des Callbacks'}
 
@@ -329,25 +327,21 @@ class GoDocPacket(go_common.GoPacket):
             return '``{0}``'.format(name) # FIXME
 
         text = common.handle_rst_param(text, format_parameter)
+
         if self.get_type() == 'callback':
-            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)
+            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters)
         else:
-            text = common.handle_rst_word(text, constants=constants)
+            text = common.handle_rst_word(text)
+
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = ''
+        prefix = self.get_device().get_go_package() + '.'
 
-        const_fmt_func = lambda prefix, constant_group, constant, value: '* {0}{1}{2} = {3}\n'.format(
-                                                                prefix, constant_group.get_name().camel,
-                                                                constant.get_name().camel, value)
-        const_func_id_fmt_func = lambda prefix, func_name, value: '* {0}Function{1} = {2}\n'.format(
-                                                                  prefix, func_name.camel, value)
+        def constant_format(prefix, constant_group, constant, value):
+            return '* {0}{1}{2} = {3}\n'.format(prefix, constant_group.get_name().camel,
+                                                constant.get_name().camel, value)
 
-        if self.get_name().space == 'Set Response Expected':
-            text += common.format_function_id_constants(prefix, self.get_device(), constants, constant_format_func=const_func_id_fmt_func)
-        else:
-            text += common.format_constants(prefix, self, constants, constant_format_func=const_fmt_func)
-
+        text += common.format_constants(prefix, self, constant_format_func=constant_format)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

@@ -305,8 +305,6 @@ class RustDocPacket(rust_common.RustPacket):
         text = common.select_lang(self.get_doc_text())
         text = self.get_device().specialize_rust_doc_function_links(text)
 
-        constants = {'en': 'constants', 'de': 'Konstanten'}
-
         callback_parameter = {'en': 'received variable', 'de': 'empfangene Variable'}
         callback_parameters = {'en': 'members of the received struct', 'de': 'Felder der empfangenen Struktur'}
 
@@ -315,18 +313,14 @@ class RustDocPacket(rust_common.RustPacket):
 
         text = common.handle_rst_param(text, format_parameter)
         if self.get_type() == 'callback':
-            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)
+            text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters)
         else:
-            text = common.handle_rst_word(text, constants=constants)
+            text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_rust_module_name().upper() + '_'
 
-        if self.get_name().space == 'Set Response Expected':
-            text += common.format_function_id_constants(prefix, self.get_device(), constants)
-        else:
-            text += common.format_constants(prefix, self, constants, bool_format_func=lambda value: str(value).lower())
-
+        text += common.format_constants(prefix, self, bool_format_func=lambda value: str(value).lower())
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)
