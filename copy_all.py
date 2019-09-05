@@ -60,7 +60,7 @@ bindings = []
 
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if not d in ('configs', 'json', 'stubs', '.git', '__pycache__', '.vscode'):
+        if not d in ('configs', 'json', 'stubs', '.git', '__pycache__', '.vscode', 'openhab'):
             bindings.append(d)
 
 bindings = sorted(bindings)
