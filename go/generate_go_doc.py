@@ -108,18 +108,18 @@ class GoDocDevice(go_common.GoDevice):
     def get_go_api(self):
         create_str = {
             'en': """
-.. go:function:: func New{bricklet_camel}(uid string, ipcon *IPConnection) (device {bricklet_camel}, err error)
+.. go:function:: func {device_name_under}.New{device_name_camel}(uid string, ipcon *IPConnection) (device {device_name_camel}, err error)
 
- Creates a new ``{bricklet_camel}`` object with the unique device ID ``uid`` and adds
+ Creates a new ``{device_name_camel}`` object with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
 
  This device object can be used after the IPConnection has been connected
  (see examples :ref:`above <{rst_ref_name}_go_examples>`).
 """,
             'de': """
-.. go:function:: func New{bricklet_camel}(uid string, ipcon *IPConnection) (device {bricklet_camel}, err error)
+.. go:function:: func {device_name_under}.New{device_name_camel}(uid string, ipcon *IPConnection) (device {device_name_camel}, err error)
 
- Erzeugt ein neues ``{bricklet_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
+ Erzeugt ein neues ``{device_name_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IPConnection ``ipcon`` hinzu:
 
  Dieses Geräteobjekt kann benutzt werden, nachdem die IPConnection verbunden
@@ -261,7 +261,8 @@ Konstanten
         }
 
         cre = common.select_lang(create_str).format(rst_ref_name=self.get_doc_rst_ref_name(),
-                                                    bricklet_camel=self.get_go_name())
+                                                    device_name_under=self.get_go_package(),
+                                                    device_name_camel=self.get_go_name())
         bf = self.get_go_methods('bf')
         af = self.get_go_methods('af')
         ccf = self.get_go_methods('ccf')
