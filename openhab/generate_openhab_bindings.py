@@ -942,6 +942,12 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def get_bindings_display_name(self):
         return 'OpenHAB'
 
+    def get_doc_null_value_name(self):
+        return 'null'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().camel
+
     def is_openhab(self):
         return True
 
@@ -973,7 +979,7 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
         config_descs = [x[4] for x in consts]
         config_desc_decls = common.flatten([x[5] for x in consts])
 
-        common.specialize_template('TinkerforgeBindingConstants.java.template',
+        common.specialize_template(os.path.join(self.get_root_dir(), 'TinkerforgeBindingConstants.java.template'),
                                     os.path.join(self.get_bindings_dir(), 'TinkerforgeBindingConstants.java'),
                                     {
                                         '{thing_type_decls}': '\n\t'.join(thing_type_decls),
@@ -983,7 +989,7 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
                                         '{config_description_decls}': '\n\t'.join(config_desc_decls),
                                         '{config_description_assigns}': '\n\t\t'.join('SUPPORTED_CONFIG_DESCRIPTIONS.put({}, {});'.format(ctype, ttype) for ctypes, ttype in zip(config_descs, thing_types) for ctype in ctypes)
                                     })
-        common.specialize_template('DeviceFactory.java.template',
+        common.specialize_template(os.path.join(self.get_root_dir(), 'DeviceFactory.java.template'),
                                     os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'),
                                     {
                                         '{devices}': ',\n\t\t\t'.join(d.get_java_class_name() + '.DEVICE_INFO' for d in self.released_devices)
