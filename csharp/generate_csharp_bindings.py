@@ -208,9 +208,8 @@ namespace Tinkerforge
         template_function = """
 		/// <summary>
 		///  Function ID to be used with
-		///  <see cref="Tinkerforge.Device.GetResponseExpected"/>,
-		///  <see cref="Tinkerforge.Device.SetResponseExpected"/> and
-		///  <see cref="Tinkerforge.Device.SetResponseExpectedAll"/>.
+		///  <see cref="Tinkerforge.Device.GetResponseExpected"/> and
+		///  <see cref="Tinkerforge.Device.SetResponseExpected"/>.
 		/// </summary>
 		public const byte FUNCTION_{0} = {1};
 """
