@@ -243,6 +243,9 @@ namespace Tinkerforge
         constants = []
 
         for constant_group in self.get_constant_groups():
+            if constant_group.is_virtual():
+                continue
+
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
                     value = "'{0}'".format(constant.get_value())

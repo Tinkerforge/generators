@@ -112,9 +112,13 @@ impl From<{function}> for u8 {{
 
         # Create constants used in function parameters
         for constant_group in self.get_constant_groups():
+            if constant_group.is_virtual():
+                continue
+
             constant_type = constant_group.get_rust_type()
             constant_name = self.get_name().upper + "_" + self.get_category().upper +'_'+ constant_group.get_name().upper + "_"
             enum_values = []
+
             for constant in constant_group.get_constants():
                 name = constant_name + constant.get_name().upper
                 value = str(constant.get_value()) if not "char" in constant_type else "'" + constant.get_value() + "'"
@@ -131,10 +135,10 @@ impl From<{function}> for u8 {{
                     value = value[::-1]
 
                 enum_values.append("pub const {name}: {type} = {value};".format(type=constant_type, name=name, value=value))
+
             result += "\n" + "\n".join(enum_values)
 
         return result
-
 
     def get_rust_structs_and_trait_impls(self):
         result = ""

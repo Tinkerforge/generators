@@ -686,6 +686,9 @@ public class {0} extends Device {{
         constants = []
 
         for constant_group in self.get_constant_groups():
+            if constant_group.is_virtual():
+                continue
+
             type_ = java_common.get_java_type(constant_group.get_type(), 1, legacy=self.has_java_legacy_types(), octave=self.get_generator().is_octave())
 
             for constant in constant_group.get_constants():

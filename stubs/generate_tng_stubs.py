@@ -41,6 +41,9 @@ class TNGStubDevice(common.Device):
         constants = []
 
         for i, constant_group in enumerate(self.get_constant_groups()):
+            if constant_group.is_virtual():
+                continue
+
             if i != 0:
                 constants.append('')
 

@@ -85,15 +85,22 @@ const (
 
         # Create constants used in function parameters
         for constant_group in self.get_constant_groups():
+            if constant_group.is_virtual():
+                continue
+
             constant_type = constant_group.get_go_type()
             constant_group_name = constant_group.get_name().camel
             enum_values = []
+
             for constant in constant_group.get_constants():
                 name = constant.get_name().camel
                 value = str(constant.get_value()) if not "rune" in constant_type else "'" + constant.get_value() + "'"
+
                 if constant_type == "bool":
                     value = value.lower()
+
                 enum_values.append("{const_prefix}{name} {const_prefix} = {value}".format(const_prefix = constant_group_name, name=name, value=value))
+
             result += "\n" + template.format(name=constant_group_name, type=constant_type, values="\n\t".join(enum_values))
 
         return result
