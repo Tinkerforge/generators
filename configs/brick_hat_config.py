@@ -81,11 +81,11 @@ Parameter:
 * Raspberry Pi Off: RPi wird ausgeschaltet, falls auf *true* gesetzt.
 * Bricklets Off: Bricklets werden ausgeschaltet falls auf *true* gesetzt.
 * Enable Sleep Indicator: Wenn dieser Parameter auf *true* gesetzt wird, blinkt
-  die Status LED während der Schlafdauer mit einem Intervall von 1s. Dies verbraucht
+  die Status-LED während der Schlafdauer mit einem Intervall von 1s. Dies verbraucht
   zusätzliche 0,3mA.
 
 Beispiel: Um den RPi und die Bricklets in 5 Sekunden für 10 Minuten mit aktivierter
-Indicator-LED auszuschalten, rufe (5, 60*10, *true*, *true*, *true*) auf.
+Status-LED auszuschalten, rufe (5, 60*10, *true*, *true*, *true*) auf.
 
 Diese Funktion kann auch genutzt werden um einen Watchdog zu implementieren. Dazu
 kann ein Programm geschrieben werden, welches in einer Schleife einmal pro Sekunde folgendes
