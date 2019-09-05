@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/Tinkerforge/go-api-bindings/ipconnection"
 )
 
@@ -16,7 +15,8 @@ func main() {
 	defer ipcon.Disconnect()
 	// Don't use device before ipcon is connected.
 
-	ipcon.RegisterEnumerateCallback(func(uid string, connectedUID string, position rune, hardwareVersion [3]uint8, firmwareVersion [3]uint8, deviceIdentifier uint16, enumerationType ipconnection.EnumerationType) {
+	ipcon.RegisterEnumerateCallback(func(uid string, connectedUid string, position rune, hardwareVersion [3]uint8,
+	                                     firmwareVersion [3]uint8, deviceIdentifier uint16, enumerationType ipconnection.EnumerationType) {
 		fmt.Printf("UID:               %s\n", uid)
 		switch enumerationType {
 		case ipconnection.EnumerationTypeAvailable:
@@ -28,7 +28,7 @@ func main() {
 			return
 		}
 
-		fmt.Printf("Connected UID:     %s\n", connectedUID)
+		fmt.Printf("Connected UID:     %s\n", connectedUid)
 		fmt.Printf("Position:          %c\n", position)
 		fmt.Printf("Hardware Version:  %d.%d.%d\n", hardwareVersion[0], hardwareVersion[1], hardwareVersion[2])
 		fmt.Printf("Firmware Version:  %d.%d.%d\n", firmwareVersion[0], firmwareVersion[1], firmwareVersion[2])
