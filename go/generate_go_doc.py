@@ -113,6 +113,10 @@ class GoDocDevice(go_common.GoDevice):
  Creates a new ``{device_name_camel}`` object with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
 
+ .. code-block:: go
+
+    device, err := {device_name_under}.New("YOUR_DEVICE_UID", &ipcon)
+
  This device object can be used after the IPConnection has been connected
  (see examples :ref:`above <{rst_ref_name}_go_examples>`).
 """,
@@ -121,6 +125,10 @@ class GoDocDevice(go_common.GoDevice):
 
  Erzeugt ein neues ``{device_name_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IPConnection ``ipcon`` hinzu:
+
+ .. code-block:: go
+
+    device, err := {device_name_under}.New("YOUR_DEVICE_UID", &ipcon)
 
  Dieses Geräteobjekt kann benutzt werden, nachdem die IPConnection verbunden
  wurde (siehe Beispiele :ref:`oben <{rst_ref_name}_go_examples>`).
