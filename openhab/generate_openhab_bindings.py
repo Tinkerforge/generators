@@ -241,7 +241,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             raise common.GeneratorError('openhab: Device "{}" Channel "{}" has type {}, but no such channel type was found.'.format(self.get_long_display_name(), channel['id'].space, channel['type']))
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        JavaBindingsDevice.__init__(self, *args, **kwargs)
 
         if 'openhab' in self.raw_data:
             oh = self.apply_defaults(self.raw_data['openhab'])
@@ -328,7 +328,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         self.sanity_check_config(self.oh)
 
     def get_java_import(self):
-        java_imports = super().get_java_import()
+        java_imports = JavaBindingsDevice.get_java_import(self)
         oh_imports = ['java.net.URI',
                       'java.math.BigDecimal',
                       'java.util.ArrayList',
@@ -362,7 +362,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return java_imports
 
     def get_java_class(self):
-        java_class = super().get_java_class()
+        java_class = JavaBindingsDevice.get_java_class(self)
         java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class);\n\n'.format(self.get_name().lower_no_space, self.get_java_class_name())
         return java_class
 
@@ -809,7 +809,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return template.format(cases='\n            '.join(cases))
 
     def get_java_source(self, close_device_class=False):
-        source =  super().get_java_source(close_device_class=False)
+        source =  JavaBindingsDevice.get_java_source(self, close_device_class=False)
         source += self.get_openhab_device_impl()
         source += '}\n'
         return source
@@ -930,7 +930,7 @@ public class {name_camel} {{
 
 class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        JavaBindingsGenerator.__init__(self, *args, **kwargs)
         self.released_devices = []
 
     def get_device_class(self):
@@ -968,7 +968,7 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
             self.released_files.append(class_name + 'Config.java')
 
     def finish(self):
-        super().finish()
+        JavaBindingsGenerator.finish(self)
         consts = [d.get_openhab_binding_constant() for d in self.released_devices]
         thing_types = [x[0] for x in consts]
         thing_type_decls = [x[1] for x in consts]

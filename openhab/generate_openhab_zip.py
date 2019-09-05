@@ -109,8 +109,10 @@ class OpenHABZipGenerator(common.ZipGenerator):
 
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
+
         for directory in self.file_dests.values():
-            os.makedirs(directory, exist_ok=True)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
 
     def generate(self, device):
         if not device.is_released():
