@@ -321,8 +321,9 @@ bool handle_{0}_callback(void) {{
 {0}
 """
         cv_declaration = ''
+
         for callback_value in callback_values:
-            cv_declaration += '\tcallback_value_init_{0}(&callback_value_{1}, NULL);;\n'.format(*callback_value)
+            cv_declaration += '\tcallback_value_init_{0}(&callback_value_{1}, NULL);\n'.format(*callback_value)
 
         return cv.format(cv_declaration)
 
