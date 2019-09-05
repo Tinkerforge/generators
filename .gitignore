@@ -6,7 +6,7 @@
 *.swp
 *.class
 .settings/*
-*/tinkerforge_*
+*/tinkerforge_*/
 */bindings/
 */bindings_*/
 */doc/
