@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 
 from collections import namedtuple
 import os
+import shutil
 import sys
 
 sys.path.append(os.path.split(os.getcwd())[0])
@@ -988,9 +989,14 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
                                         '{devices}': ',\n\t\t\t'.join(d.get_java_class_name() + '.DEVICE_INFO' for d in self.released_devices)
                                     })
 
-        documentation = '\n\n'.join([d.get_openhab_docs() for d in self.released_devices if d.get_openhab_docs() is not None])
-        with open(os.path.join(self.get_bindings_dir(), 'openhab_docs.txt'), 'w') as f:
-            f.write(documentation)
+        docs = [(d.get_name().under + '_' + d.get_category().under, d.get_openhab_docs()) for d in self.released_devices if d.get_openhab_docs() is not None]
+        doc_folder = os.path.join(self.get_bindings_dir(), '..', 'docs')
+        shutil.rmtree(doc_folder, ignore_errors=True)
+        os.makedirs(doc_folder)
+
+        for file, content in docs:
+            with open(os.path.join(doc_folder, file + '.txt'), 'w') as f:
+                f.write(content)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', OpenHABBindingsGenerator)
