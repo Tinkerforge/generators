@@ -39,6 +39,7 @@ class OpenHABZipGenerator(common.ZipGenerator):
         self.tmp_bindings_dir = os.path.join(self.tmp_dir, 'src', 'main', 'java', 'com', 'tinkerforge')
         self.tmp_xml_dir = os.path.join(self.tmp_dir, 'src', 'main', 'resources', 'ESH-INF', 'thing')
 
+        #TODO: use os.path.join
         self.file_dests = {
             'about.html':   '.',
             'NOTICE':       '.',
@@ -62,27 +63,29 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'BrickDaemonHandler.java':  './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'DeviceHandler.java':       './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
 
-            'AlreadyConnectedException.java': './src/main/java/com/tinkerforge',
+            # Reuse from java generator
+            '../java/AlreadyConnectedException.java': './src/main/java/com/tinkerforge',
+            '../java/CryptoException.java':           './src/main/java/com/tinkerforge',
+            '../java/DeviceBase.java':                './src/main/java/com/tinkerforge',
+            '../java/DeviceListener.java':            './src/main/java/com/tinkerforge',
+            '../java/DeviceProvider.java':            './src/main/java/com/tinkerforge',
+            '../java/InvalidParameterException.java': './src/main/java/com/tinkerforge',
+            '../java/NetworkException.java':          './src/main/java/com/tinkerforge',
+            '../java/NotConnectedException.java':     './src/main/java/com/tinkerforge',
+            '../java/NotSupportedException.java':     './src/main/java/com/tinkerforge',
+            '../java/StreamOutOfSyncException.java':  './src/main/java/com/tinkerforge',
+            '../java/TimeoutException.java':          './src/main/java/com/tinkerforge',
+            '../java/TinkerforgeException.java':      './src/main/java/com/tinkerforge',
+            '../java/UnknownErrorCodeException.java': './src/main/java/com/tinkerforge',
+
             'BrickDaemon.java':               './src/main/java/com/tinkerforge',
             'BrickDaemonConfig.java':         './src/main/java/com/tinkerforge',
-            'CryptoException.java':           './src/main/java/com/tinkerforge',
             'Device.java':                    './src/main/java/com/tinkerforge',
-            'DeviceBase.java':                './src/main/java/com/tinkerforge',
             'DeviceInfo.java':                './src/main/java/com/tinkerforge',
-            'DeviceListener.java':            './src/main/java/com/tinkerforge',
-            'DeviceProvider.java':            './src/main/java/com/tinkerforge',
             'Helper.java':                    './src/main/java/com/tinkerforge',
-            'InvalidParameterException.java': './src/main/java/com/tinkerforge',
             'IPConnection.java':              './src/main/java/com/tinkerforge',
             'IPConnectionBase.java':          './src/main/java/com/tinkerforge',
-            'NetworkException.java':          './src/main/java/com/tinkerforge',
-            'NotConnectedException.java':     './src/main/java/com/tinkerforge',
-            'NotSupportedException.java':     './src/main/java/com/tinkerforge',
-            'StreamOutOfSyncException.java':  './src/main/java/com/tinkerforge',
-            'TimeoutException.java':          './src/main/java/com/tinkerforge',
-            'TinkerforgeException.java':      './src/main/java/com/tinkerforge',
             'TinkerforgeListener.java':       './src/main/java/com/tinkerforge',
-            'UnknownErrorCodeException.java': './src/main/java/com/tinkerforge',
 
 
             os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'): './src/main/java/com/tinkerforge',
