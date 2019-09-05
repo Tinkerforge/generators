@@ -1,0 +1,13 @@
+[Unit]
+Description=Tinkerforge MQTT Bindings
+# Enable if brickd is running locally
+#After=brickd.service
+
+# Enable if mosquitto is running locally
+#After=mosquitto.service
+
+[Service]
+ExecStart=/usr/local/bin/tinkerforge_mqtt
+
+[Install]
+WantedBy=multi-user.target
