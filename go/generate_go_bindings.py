@@ -93,14 +93,34 @@ const (
             enum_values = []
 
             for constant in constant_group.get_constants():
-                name = constant.get_name().camel
                 value = str(constant.get_value()) if not "rune" in constant_type else "'" + constant.get_value() + "'"
 
                 if constant_type == "bool":
                     value = value.lower()
 
-                enum_values.append("{const_prefix}{name} {const_prefix} = {value}".format(const_prefix = constant_group_name, name=name, value=value))
+                # These devices are using old constant names,
+                # i.e. those where a constant of the form 1 1 ms is used as
+                # camel case without separator -> 11ms,
+                # in a released bindings version (2.0.4, released 2019-08-23).
+                # This list is fixed and must never be changed.
+                devices_with_old_constant_names = [
+                    2130, # Accelerometer 2.0
+                    2117, # Barometer 2.0
+                    18, # IMU Brick 2.0
+                    13, # Master Brick
+                    2105 # Voltage/Current 2.0
+                ]
 
+                name = constant.get_name().camel_constant_safe
+                old_name = constant.get_name().camel
+
+                const_template = "{const_prefix}{name} {const_prefix} = {value}"
+
+                if self.get_device_identifier() in devices_with_old_constant_names and name != old_name:
+                    enum_values.append("//Deprecated: Use {} instead.".format(name))
+                    enum_values.append(const_template.format(const_prefix=constant_group_name, name=old_name, value=value))
+
+                enum_values.append(const_template.format(const_prefix=constant_group_name, name=name, value=value))
             result += "\n" + template.format(name=constant_group_name, type=constant_type, values="\n\t".join(enum_values))
 
         return result

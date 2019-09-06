@@ -32,6 +32,7 @@ import sys
 import copy
 import math
 import multiprocessing.dummy
+import functools
 from collections import namedtuple
 
 gen_text_rst = """..
@@ -985,7 +986,7 @@ def check_output_and_error(*popenargs, **kwargs):
 class GeneratorError(Exception):
     pass
 
-NameFlavors = namedtuple('NameFlavors', 'space lower camel headless under upper dash camel_abbrv lower_no_space')
+NameFlavors = namedtuple('NameFlavors', 'space lower camel headless under upper dash camel_abbrv lower_no_space camel_constant_safe')
 
 class FlavoredName(object):
     def __init__(self, name):
@@ -1013,7 +1014,9 @@ class FlavoredName(object):
                                           '_'.join(words).upper(), # upper
                                           '-'.join(words).lower(), # dash
                                           ''.join([word.capitalize() for word in words]),  # camel_abbrv; like camel, but produces GetSpiTfp... instead of GetSPITFP...
-                                          ''.join(words).lower()) # lower_no_space
+                                          ''.join(words).lower(),
+                                          # camel_constant_safe; inserts '_' between digit-words to disambiguate between 1,1ms and 11ms
+                                          functools.reduce(lambda l, r: l + '_' + r if (l[-1].isdigit() and r[0].isdigit()) else l + r, words))
 
             return self.cache[key]
 

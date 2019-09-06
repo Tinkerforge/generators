@@ -339,7 +339,7 @@ class GoDocPacket(go_common.GoPacket):
 
         def constant_format(prefix, constant_group, constant, value):
             return '* {0}{1}{2} = {3}\n'.format(prefix, constant_group.get_name().camel,
-                                                constant.get_name().camel, value)
+                                                constant.get_name().camel_constant_safe, value)
 
         text += common.format_constants(prefix, self, constant_format_func=constant_format)
         text += common.format_since_firmware(self.get_device(), self)

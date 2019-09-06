@@ -40,7 +40,7 @@ class GoConstant(common.Constant):
         return template.format(device_category=self.get_device().get_category().under,
                                device_name=self.get_device().get_name().under,
                                constant_group_name=self.get_constant_group().get_name().camel,
-                               constant_name=self.get_name().camel)
+                               constant_name=self.get_name().camel_constant_safe)
 
 class GoExample(common.Example):
     def get_go_source(self):
