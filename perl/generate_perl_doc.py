@@ -261,6 +261,8 @@ error code:
 * Error->INVALID_PARAMETER = 41
 * Error->FUNCTION_NOT_SUPPORTED = 42
 * Error->UNKNOWN_ERROR = 43
+* Error->STREAM_OUT_OF_SYNC = 51
+* Error->INVALID_UID = 61
 
 All methods listed below are thread-safe.
 
@@ -287,6 +289,8 @@ Fehlercodes definiert:
 * Error->INVALID_PARAMETER = 41
 * Error->FUNCTION_NOT_SUPPORTED = 42
 * Error->UNKNOWN_ERROR = 43
+* Error->STREAM_OUT_OF_SYNC = 51
+* Error->INVALID_UID = 61
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
