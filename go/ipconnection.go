@@ -13,14 +13,19 @@ import (
 	"unicode"
 )
 
-type BrickletError uint8
+type DeviceError uint8
 
-type DeviceError = BrickletError
+//Deprecated: BrickletError exists for historical compatibility. Use DeviceError instead.
+type BrickletError = DeviceError
 
 const (
+	//Deprecated: BrickletErrorSuccess exists for historical compatibility. Use DeviceErrorSuccess instead.
 	BrickletErrorSuccess DeviceError = 0
+	//Deprecated: BrickletErrorInvalidParameter exists for historical compatibility. Use DeviceErrorInvalidParameter instead.
 	BrickletErrorInvalidParameter DeviceError = 1
+	//Deprecated: BrickletErrorFunctionNotSupported exists for historical compatibility. Use DeviceErrorFunctionNotSupported instead.
 	BrickletErrorFunctionNotSupported DeviceError = 2
+	//Deprecated: BrickletErrorUnknownError exists for historical compatibility. Use DeviceErrorUnknownError instead.
 	BrickletErrorUnknownError DeviceError = 3
 	DeviceErrorSuccess DeviceError = 0
 	DeviceErrorInvalidParameter DeviceError = 1
