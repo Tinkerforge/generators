@@ -268,10 +268,10 @@ API
 
 Generally, every method of the JavaScript bindings can take two optional
 parameters, ``returnCallback`` and ``errorCallback``. These are two user
-defined callback functions. The ``returnCallback`` is called with the return
-values as parameters, if the method returns something. The ``errorCallback``
-is called with an error code in case of an error. The error code can be one
-of the following values:
+defined callback functions. The ``returnCallback`` function is called with the
+results as arguments, if the method returns its results asynchronously. The
+``errorCallback`` is called with an error code in case of an error. The error
+code can be one of the following values:
 
 * IPConnection.ERROR_ALREADY_CONNECTED = 11
 * IPConnection.ERROR_NOT_CONNECTED = 12
@@ -297,8 +297,9 @@ API
 
 Allgemein kann jede Methode der JavaScript Bindings zwei optionale Parameter
 haben, ``returnCallback`` und ``errorCallback``. Dies sind benutzerdefinierte
-Callback-Funktionen. Der ``returnCallback`` wird aufgerufen mit den
-Rückgabewerten der Methode, sofern vorhanden. Der ``errorCallback`` wird im
+Callback-Funktionen. Die ``returnCallback``-Funktion wird mit dem Ergebnissen
+der Methode als Argumente aufgerufen, falls die Methode ihre
+Ergebnisse asynchron zurückgibt. Die ``errorCallback``-Funktion wird im
 Fehlerfall mit einem Fehlercode aufgerufen. Der Fehlercode kann einer der
 folgenden Werte sein:
 
