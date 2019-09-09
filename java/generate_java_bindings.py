@@ -160,7 +160,7 @@ public class {0} extends Device {{
                 params.append('\t\tpublic {0} {1};'.format(type_, name))
                 assignments.append('\t\t\tthis.{0} = {0};'.format(name))
 
-            objects += template.format(packet.get_java_object_name(skip=-2),
+            objects += template.format(packet.get_java_object_name(high_level=True),
                                        '\n'.join(params),
                                        ' ", " + '.join(tostr),
                                        common.wrap_non_empty(', ', packet.get_java_parameters(high_level=True), ''),
@@ -224,7 +224,7 @@ public class {0} extends Device {{
             else:
                 template2 = template
 
-            return template2.format(packet.get_java_object_name(skip=-2 if high_level else 0),
+            return template2.format(packet.get_java_object_name(high_level),
                                     '\n'.join(params),
                                     ' ", " + '.join(tostr),
                                     ', '.join(ctors),
@@ -1137,7 +1137,7 @@ public class {0} extends Device {{
 
                 if len(return_elements) > 0:
                     if len(return_elements) > 1:
-                        return_type = packet.get_java_object_name(skip=-2)
+                        return_type = packet.get_java_object_name(high_level=True)
                         result_type = packet.get_java_object_name()
                         result_default = 'null'
                     else:
@@ -1164,7 +1164,7 @@ public class {0} extends Device {{
                         else:
                             result_variable = '\n\t\t{0} ret = {1}; // stop the compiler from wrongly complaining that this variable is used unassigned YYY1'.format(result_type, result_default)
 
-                        result_return = template_stream_in_namedtuple_result.format(result_name_camel=packet.get_java_object_name(skip=-2),
+                        result_return = template_stream_in_namedtuple_result.format(result_name_camel=packet.get_java_object_name(high_level=True),
                                                                                     result_fields=', '.join(fields))
                     elif not stream_in.has_single_chunk() and return_elements[0].get_role() == 'stream_written':
                         result_variable = '\n\t\t{0} ret;'.format(result_type)
@@ -1240,7 +1240,7 @@ public class {0} extends Device {{
 
                 if len(return_elements) > 0:
                     if len(return_elements) > 1:
-                        return_type = packet.get_java_object_name(skip=-2)
+                        return_type = packet.get_java_object_name(high_level=True)
                         fields = []
 
                         for element in packet.get_elements(direction='out', high_level=True):
@@ -1249,7 +1249,7 @@ public class {0} extends Device {{
                             else:
                                 fields.append('ret.{0}'.format(element.get_name().headless))
 
-                        result_return = template_stream_out_namedtuple_result.format(result_name_camel=packet.get_java_object_name(skip=-2),
+                        result_return = template_stream_out_namedtuple_result.format(result_name_camel=packet.get_java_object_name(high_level=True),
                                                                                      result_fields=', '.join(fields))
                     else:
                         return_type = return_elements[0].get_java_type()

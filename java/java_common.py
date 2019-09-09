@@ -116,7 +116,12 @@ class JavaDevice(common.Device):
         return self.get_java_class_name() in LEGACY_TYPE_DEVICES
 
 class JavaPacket(common.Packet):
-    def get_java_object_name(self, skip=0):
+    def get_java_object_name(self, high_level=False):
+        skip = 0
+
+        if high_level and self.has_high_level():
+            skip = -2
+
         name = self.get_name(skip=skip)
 
         if name.space.startswith('Get '):
@@ -131,9 +136,9 @@ class JavaPacket(common.Packet):
             return 'void'
         elif len(elements) > 1:
             if for_doc:
-                return self.get_device().get_java_class_name() + '.' + self.get_java_object_name()
+                return self.get_device().get_java_class_name() + '.' + self.get_java_object_name(high_level)
             else:
-                return self.get_java_object_name()
+                return self.get_java_object_name(high_level)
         else:
             return elements[0].get_java_type()
 
