@@ -247,8 +247,8 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
 
         params = []
         has_symbols = {
-            'en': ' `(has symbols)`',
-            'de': ' `(hat Symbole)`'
+            'en': ' (has symbols)',
+            'de': ' (hat Symbole)'
         }
 
         # The bindings are patched to translate device_identifier constants. Document this behaviour
