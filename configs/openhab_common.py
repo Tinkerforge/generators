@@ -84,3 +84,14 @@ def oh_generic_channel_type(id_, item_type, label, description=None, read_only=N
         'is_trigger_channel': is_trigger_channel,
         'command_options': command_options
     }
+
+def update_interval(prefix, description_name):
+    return {
+        'name': prefix + ' Update Interval',
+        'type': 'integer',
+        'unit': 'ms',
+        'label': prefix + ' Update Interval',
+        'description': 'Specifies the update interval for {} in milliseconds. A value of 0 disables automatic updates.'.format(description_name),
+        'default': 1000,
+        'groupName': 'update_intervals'
+    }

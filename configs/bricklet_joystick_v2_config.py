@@ -6,6 +6,8 @@
 
 # Joystick Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -288,3 +290,71 @@ com['examples'].append({
 'functions': [('callback', ('Pressed', 'pressed'), [(('Pressed', 'Pressed'), 'bool', 1, None, None, None)], None, None),
               ('callback_configuration', ('Pressed', 'pressed'), [], 10, True, None, [])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        update_interval('Position', 'X and Y position')
+    ],
+    'channels': [ {
+            'id': 'Position X',
+            'type': 'Position',
+            'label': 'Position X',
+            'init_code':"""this.setPositionCallbackConfiguration(cfg.positionUpdateInterval, true);""",
+            'dispose_code': """this.setPositionCallbackConfiguration(0, true);""",
+            'getters': [{
+                'packet': 'Get Position',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value.x{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'packet': 'Position',
+                'transform': 'new QuantityType<>(x{divisor}, {unit})'}],
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'divisor': 1,
+            'is_trigger_channel': False
+        }, {
+            'id': 'Position Y',
+            'type': 'Position',
+            'label': 'Position Y',
+            'init_code':"""this.setPositionCallbackConfiguration(cfg.positionUpdateInterval, true);""",
+            'dispose_code': """this.setPositionCallbackConfiguration(0, true);""",
+            'getters': [{
+                'packet': 'Get Position',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value.y{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'packet': 'Position',
+                'transform': 'new QuantityType<>(y{divisor}, {unit})'}],
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'divisor': 1,
+            'is_trigger_channel': False
+        }, {
+            'id': 'Pressed',
+            'label': 'Pressed',
+            'type': 'system.rawbutton',
+            'getters': [{
+                'packet': 'Is Pressed',
+                'transform': 'value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+            'callbacks': [{
+                'packet': 'Pressed',
+                'transform': 'pressed ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+            'is_trigger_channel': True,
+            'init_code': """this.setPressedCallbackConfiguration(10, true);"""
+        },
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+                    description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.',
+                    read_only=True,
+                    pattern='%d %unit%',
+                    min_=-100,
+                    max_=100)
+    ]
+}
