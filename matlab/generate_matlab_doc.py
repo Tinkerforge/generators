@@ -80,13 +80,13 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
             params = packet.get_matlab_parameter_list(high_level=True)
             desc = packet.get_matlab_formatted_doc(1)
             obj_desc = packet.get_matlab_object_desc(high_level=True)
-            func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start,
-                                                                ret_type,
-                                                                cls,
-                                                                name,
-                                                                params,
-                                                                desc,
-                                                                obj_desc)
+            func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
+                                                         ret_type,
+                                                         cls,
+                                                         name,
+                                                         params,
+                                                         desc,
+                                                         obj_desc)
             methods += func + '\n'
 
         return methods
@@ -94,7 +94,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
     def get_matlab_callbacks(self):
         cb = {
             'en': """
-.. matlab:member:: public callback {0}.{1}Callback
+.. matlab:member:: callback {0}::{1}Callback
 
 {2}
 
@@ -109,7 +109,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
 """,
             'de': """
-.. matlab:member:: public callback {0}.{1}Callback
+.. matlab:member:: callback {0}::{1}Callback
 
 {2}
 
@@ -381,7 +381,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 Constants
 ^^^^^^^^^
 
-.. matlab:member:: public static final int {1}.DEVICE_IDENTIFIER
+.. matlab:member:: static final int {1}::DEVICE_IDENTIFIER
 
  This constant is used to identify a {3}.
 
@@ -390,7 +390,7 @@ Constants
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
-.. matlab:member:: public static final String {1}.DEVICE_DISPLAY_NAME
+.. matlab:member:: static final String {1}::DEVICE_DISPLAY_NAME
 
  This constant represents the human readable name of a {3}.
 """,
@@ -400,7 +400,7 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. matlab:member:: public static final int {1}.DEVICE_IDENTIFIER
+.. matlab:member:: static final int {1}::DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
@@ -409,7 +409,7 @@ Konstanten
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. matlab:member:: public static final String {1}.DEVICE_DISPLAY_NAME
+.. matlab:member:: static final String {1}::DEVICE_DISPLAY_NAME
 
  Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """
