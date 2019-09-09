@@ -3069,7 +3069,7 @@ def tester_worker(cookie, args, env):
     return cookie, exit_code, output
 
 class Tester(object):
-    PROCESSES = 4
+    PROCESSES = 8
 
     def __init__(self, name, extension, root_dir, subdirs=None, comment=None, extra_paths=None):
         version = get_changelog_version(root_dir)
