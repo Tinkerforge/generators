@@ -53,7 +53,8 @@ enum {
 	E_NOT_SUPPORTED = -10, // error response from device
 	E_UNKNOWN_ERROR_CODE = -11, // error response from device
 	E_STREAM_OUT_OF_SYNC = -12,
-	E_INVALID_UID = -13
+	E_INVALID_UID = -13,
+	E_NON_ASCII_CHAR_IN_SECRET = -14
 };
 
 #ifdef IPCON_EXPOSE_MILLISLEEP

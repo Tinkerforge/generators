@@ -560,11 +560,28 @@ begin
   end;
 end;
 
+function IsASCII(const s: string): boolean;
+var c: char;
+begin
+  result := true;
+  for c in s do
+  begin
+    if Ord(c) > 127 then begin
+        result := false;
+        break;
+    end;
+  end;
+end;
+
 procedure TIPConnection.Authenticate(const secret: string);
 var serverNonce, clientNonce: TArray0To3OfUInt8; i: longint;
     secretBytes, clientNonceBytes, data: TByteArray;
     digest: TSHAoneDigest;
 begin
+  if not IsASCII(secret) then begin
+    raise Exception.Create('Authentication secret contains non-ASCII characters.');
+  end;
+
   authenticationMutex.Acquire;
   try
     if (nextAuthenticationNonce = 0) then begin

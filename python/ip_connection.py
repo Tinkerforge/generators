@@ -310,6 +310,7 @@ class Error(Exception):
     UNKNOWN_ERROR_CODE = -11
     STREAM_OUT_OF_SYNC = -12
     INVALID_UID = -13
+    NON_ASCII_CHAR_IN_SECRET = -14
 
     def __init__(self, value, description, suppress_context=False):
         Exception.__init__(self, '{0} ({1})'.format(description, value))
@@ -624,7 +625,10 @@ class IPConnection(object):
         https://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
         """
 
-        secret_bytes = secret.encode('ascii')
+        try:
+            secret_bytes = secret.encode('ascii')
+        except UnicodeEncodeError:
+            raise Error(Error.NON_ASCII_CHAR_IN_SECRET, 'Authentication secret contains non-ASCII characters')
 
         with self.authentication_lock:
             if self.next_authentication_nonce == 0:

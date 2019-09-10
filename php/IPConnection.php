@@ -858,6 +858,10 @@ class IPConnection
      */
     public function authenticate($secret)
     {
+        if (!mb_check_encoding($secret, 'ASCII')) {
+            throw new \Exception("Authentication secret contains non-ASCII characters");
+        }
+
         if ($this->next_authentication_nonce === 0) {
             $this->next_authentication_nonce = self::getRandomUInt32();
         }

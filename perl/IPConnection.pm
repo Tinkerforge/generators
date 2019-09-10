@@ -733,6 +733,10 @@ sub authenticate
 {
 	my ($self, $secret) = @_;
 
+	if ( $secret =~ /[[:^ascii:]]/ ) {
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->NON_ASCII_CHAR_IN_SECRET, "Authentication secret contains non-ASCII characters."));
+	}
+
 	lock(${$self->{authentication_lock_ref}});
 
 	if($self->{next_authentication_nonce} == 0)

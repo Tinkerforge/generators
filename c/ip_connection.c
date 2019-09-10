@@ -2286,6 +2286,16 @@ int ipcon_authenticate(IPConnection *ipcon, const char secret[64]) {
 	int ret;
 	uint32_t nonces[2]; // server, client
 	uint8_t digest[SHA1_DIGEST_LENGTH];
+	int i;
+	int secret_length;
+
+	secret_length = string_length(secret, IPCON_MAX_SECRET_LENGTH);
+
+	for (i = 0; i < secret_length; ++i) {
+		if ((secret[i] & 0x80) != 0) {
+			return E_NON_ASCII_CHAR_IN_SECRET;
+		}
+	}
 
 	mutex_lock(&ipcon_p->authentication_mutex);
 
@@ -2303,7 +2313,7 @@ int ipcon_authenticate(IPConnection *ipcon, const char secret[64]) {
 
 	nonces[1] = ipcon_p->next_authentication_nonce++;
 
-	hmac_sha1((uint8_t *)secret, string_length(secret, IPCON_MAX_SECRET_LENGTH),
+	hmac_sha1((uint8_t *)secret, secret_length,
 	          (uint8_t *)nonces, sizeof(nonces), digest);
 
 	ret = brickd_authenticate(&ipcon_p->brickd, (uint8_t *)&nonces[1], digest);

@@ -48,6 +48,7 @@ IPConnection.ERROR_INVALID_PARAMETER = 41;
 IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42;
 IPConnection.ERROR_UNKNOWN_ERROR = 43;
 IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51;
+IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET = 71;
 
 IPConnection.TASK_KIND_CONNECT = 0;
 IPConnection.TASK_KIND_DISCONNECT = 1;
@@ -1419,7 +1420,19 @@ function IPConnection() {
         }
     };
 
+    function isASCII(s) {
+        for (var i = 0; i < s.length; ++i) {
+            if (s.charCodeAt(i) > 0x7f) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     this.authenticateInternal = function (secret, returnCallback, errorCallback) {
+        if (!isASCII(secret)) {
+            errorCallback(IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET);
+        }
         this.brickd.getAuthenticationNonce(function (serverNonce) {
             var serverNonceBytes = this.pack([serverNonce], 'B4');
             var clientNonceNumber = this.nextAuthenticationNonce++;

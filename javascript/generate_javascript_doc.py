@@ -282,6 +282,7 @@ code can be one of the following values:
 * IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42
 * IPConnection.ERROR_UNKNOWN_ERROR = 43
 * IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51
+* IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET = 71
 
 The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 

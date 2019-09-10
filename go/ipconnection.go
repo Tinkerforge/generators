@@ -220,14 +220,14 @@ func (ipcon *IPConnection) Enumerate() {
 }
 
 func (ipcon *IPConnection) Authenticate(secret string) error {
-	ipcon.authenticateMutex.Lock()
-	defer ipcon.authenticateMutex.Unlock()
-
 	for _, r := range secret {
 		if r > unicode.MaxASCII {
 			return fmt.Errorf("secret contained non-ASCII character")
 		}
 	}
+
+	ipcon.authenticateMutex.Lock()
+	defer ipcon.authenticateMutex.Unlock()
 
 	//Get server nonce
 	header := PacketHeader{1, PacketHeaderSize, 1, 0, true, 0}

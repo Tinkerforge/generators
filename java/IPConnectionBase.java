@@ -18,6 +18,7 @@ import java.math.BigInteger;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -678,6 +679,14 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		}
 	}
 
+	boolean isASCII(String s) {
+		return StandardCharsets.US_ASCII.newEncoder().canEncode(s);
+	}
+
+	ByteBuffer encodeToASCII(String s) {
+		return StandardCharsets.US_ASCII.encode(s);
+	}
+
 	/**
 	 * Performs an authentication handshake with the connected Brick Daemon or
 	 * WIFI/Ethernet Extension. If the handshake succeeds the connection switches
@@ -690,6 +699,10 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	 * https://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
 	 */
 	public void authenticate(String secret) throws TinkerforgeException {
+		if (!isASCII(secret)) {
+			throw new IllegalArgumentException("Authentication secret contains non-ASCII characters.");
+		}
+
 		synchronized (authenticationMutex) {
 			if (nextAuthenticationNonce == 0) {
 				byte[] seed = new SecureRandom().generateSeed(4);
@@ -719,7 +732,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 			try {
 				Mac mac = Mac.getInstance("HmacSHA1");
 
-				mac.init(new SecretKeySpec(secret.getBytes(), "HmacSHA1"));
+				mac.init(new SecretKeySpec(encodeToASCII(secret).array(), "HmacSHA1"));
 
 				digest = mac.doFinal(data);
 			} catch (Exception e) {

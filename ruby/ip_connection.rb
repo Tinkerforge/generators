@@ -628,6 +628,9 @@ module Tinkerforge
     # For more information about authentication see
     # https://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
     def authenticate(secret)
+      if not secret.ascii_only?
+        raise ArgumentError, "Authentication secret contains non-ASCII characters"
+      end
       @authentication_mutex.synchronize {
         if @next_authentication_nonce == 0
           @next_authentication_nonce = SecureRandom.random_number(1 << 32)

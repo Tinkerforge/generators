@@ -238,6 +238,7 @@ Generally, every method of the Python bindings can throw an
 * Error.UNKNOWN_ERROR_CODE = -11
 * Error.STREAM_OUT_OF_SYNC = -12
 * Error.INVALID_UID = -13
+* Error.NON_ASCII_CHAR_IN_SECRET = -14
 
 All methods listed below are thread-safe.
 

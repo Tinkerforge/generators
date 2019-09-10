@@ -405,6 +405,14 @@ namespace Tinkerforge
 		/// </summary>
 		public void Authenticate(string secret)
 		{
+			for (int i = 0; i < secret.Length; ++i)
+			{
+				if (secret[i] > 0x7f)
+				{
+					throw new ArgumentException("Authentication secret contains non-ASCII characters.");
+				}
+			}
+
 			lock (authenticationLock)
 			{
 				if (nextAuthenticationNonce == 0)

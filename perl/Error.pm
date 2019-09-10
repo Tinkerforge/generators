@@ -117,6 +117,14 @@ Possible return value of the get_code() subroutine.
 
 use constant INVALID_UID => 61;
 
+=item NON_ASCII_CHAR_IN_SECRET
+
+Possible return value of the get_code() subroutine.
+
+=cut
+
+use constant NON_ASCII_CHAR_IN_SECRET => 71;
+
 =back
 =cut
 
