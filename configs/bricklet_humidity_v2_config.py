@@ -288,7 +288,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports(),
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups() +  [{
         'name': 'average',
         'label': 'Averaging',
@@ -296,14 +296,6 @@ com['openhab'] = {
         'advanced': 'true'
     }],
     'params': [
-         {
-            'name': 'Enable Heater',
-            'type': 'boolean',
-            'default': 'false',
-
-            'label': 'Enable Heater',
-            'description': 'Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.',
-        },
         {
             'name': 'Humidity Moving Average Length',
             'type': 'integer',
@@ -342,11 +334,23 @@ com['openhab'] = {
         }
     ],
     'init_code': """this.setSamplesPerSecond(cfg.sampleRate);
-this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperatureMovingAverageLength);
-this.setHeaterConfiguration(cfg.enableHeater ? 1 : 0);""",
+this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperatureMovingAverageLength);""",
     'channels': [
         oh_generic_channel('Humidity', 'Humidity', 'SmartHomeUnits.PERCENT', divisor=100.0),
         oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        {
+            'id': 'Heater',
+            'type': 'Heater',
+
+            'setters': [{
+                'packet': 'Set Heater Configuration',
+                'packet_params': ['cmd == OnOffType.ON ? HEATER_CONFIG_ENABLED : HEATER_CONFIG_DISABLED']}],
+            'setter_command_type': "OnOffType",
+
+            'getters': [{
+                'packet': 'Get Heater Configuration',
+                'transform': 'value == HEATER_CONFIG_ENABLED ? OnOffType.ON : OnOffType.OFF'}]
+        }
     ],
     'channel_types': [
         oh_generic_channel_type('Humidity', 'Number:Dimensionless', 'Humidity',
@@ -361,5 +365,7 @@ this.setHeaterConfiguration(cfg.enableHeater ? 1 : 0);""",
                      pattern='%.2f %unit%',
                      min_=-40,
                      max_=165),
+        oh_generic_channel_type('Heater', 'Switch', 'Heater',
+                     description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
     ]
 }

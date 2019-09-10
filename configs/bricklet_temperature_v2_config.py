@@ -125,22 +125,23 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports(),
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
-    'params': [
-         {
-            'name': 'Enable Heater',
-            'type': 'boolean',
-            'default': 'false',
-
-            'label': 'Enable Heater',
-            'description': 'Enables/disables the heater. The heater can be used to test the sensor.',
-        }
-    ],
-    'init_code': """
-this.setHeaterConfiguration(cfg.enableHeater ? 1 : 0);""",
     'channels': [
         oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        {
+            'id': 'Heater',
+            'type': 'Heater',
+
+            'setters': [{
+                'packet': 'Set Heater Configuration',
+                'packet_params': ['cmd == OnOffType.ON ? HEATER_CONFIG_ENABLED : HEATER_CONFIG_DISABLED']}],
+            'setter_command_type': "OnOffType",
+
+            'getters': [{
+                'packet': 'Get Heater Configuration',
+                'transform': 'value == HEATER_CONFIG_ENABLED ? OnOffType.ON : OnOffType.OFF'}]
+        }
     ],
     'channel_types': [
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
@@ -149,5 +150,7 @@ this.setHeaterConfiguration(cfg.enableHeater ? 1 : 0);""",
                      pattern='%.1f %unit%',
                      min_=-45,
                      max_=130),
+        oh_generic_channel_type('Heater', 'Switch', 'Heater',
+                     description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
     ]
 }
