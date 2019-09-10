@@ -292,6 +292,7 @@ Fehlercodes definiert:
 * Error->UNKNOWN_ERROR = 43
 * Error->STREAM_OUT_OF_SYNC = 51
 * Error->INVALID_UID = 61
+* Error->NON_ASCII_CHAR_IN_SECRET = 71
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
