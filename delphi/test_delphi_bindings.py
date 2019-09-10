@@ -37,6 +37,10 @@ class DelphiExamplesTester(common.Tester):
 
     def __init__(self, root_dir, extra_paths):
         common.Tester.__init__(self, 'delphi', '.pas', root_dir, extra_paths=extra_paths)
+        exit_code, output = common.check_output_and_error(['gcc', '--print-file-name', 'crtbeginS.o'])
+        if exit_code != 0:
+            raise common.GeneratorError('Failed to run gcc --print-file-name crtbeginS.o: exit_code: {}\n\t{}'.format(exit_code, output))
+        self.lib_path = os.path.dirname(output)
 
     def test(self, cookie, path, extra):
         if extra:
@@ -45,6 +49,7 @@ class DelphiExamplesTester(common.Tester):
 
         args = ['fpc',
                 '-vw',
+                '-Fl{}/'.format(self.lib_path),
                 '-Fu/tmp/tester/delphi/source',
                 '-l',
                 path]
