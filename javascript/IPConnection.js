@@ -86,7 +86,11 @@ function TFSocket(PORT, HOST, ipcon) {
                 // Websockets in browsers return a MessageEvent. We just
                 // expose the data from the event as a Buffer as in Node.js.
                 this.socket.onmessage = function (messageEvent) {
-                    var data = new Buffer(new Uint8Array(messageEvent.data));
+                    if (Buffer.from && Buffer.from !== Uint8Array.from) {
+                        var data = Buffer.from(new Uint8Array(messageEvent.data));
+                    } else {
+                        var data = new Buffer(new Uint8Array(messageEvent.data));
+                    }
                     func(data);
                 };
                 break;
@@ -207,7 +211,7 @@ function IPConnection() {
     this.taskQueue = [];
     this.isConnected = false;
     this.connectErrorCallback = undefined;
-    this.mergeBuffer = new Buffer(0);
+    this.mergeBuffer = Buffer.concat([]); //See https://nodejs.org/en/docs/guides/buffer-constructor-deprecation/#buffer-0
     this.brickd = new BrickDaemon('2', this);
 
     this.disconnectProbe = function () {
@@ -368,7 +372,7 @@ function IPConnection() {
                 return; // wait for complete packet
             }
 
-            var newPacket = new Buffer(length);
+            var newPacket = buffer_wrapper(length);
             this.mergeBuffer.copy(newPacket, 0, 0, length);
             this.handlePacket(newPacket);
             this.mergeBuffer = this.mergeBuffer.slice(length);
@@ -497,25 +501,24 @@ function IPConnection() {
     };
 
     this.getPayloadFromPacket = function (packetPayload) {
-        var payloadReturn = new Buffer(packetPayload.length - 8);
+        var payloadReturn = buffer_wrapper(packetPayload.length - 8);
         packetPayload.copy(payloadReturn, 0, 8, packetPayload.length);
-        return new Buffer(payloadReturn);
+        return buffer_wrapper(payloadReturn);
     };
 
     this.pack = function (data, format) {
         var formatArray = format.split(' ');
 
         if (formatArray.length <= 0) {
-            return new Buffer(0);
+            return buffer_wrapper(0);
         }
 
-        var packedBuffer = new Buffer(0);
+        var packedBuffer = buffer_wrapper(0);
 
         for (var i=0; i<formatArray.length; i++){
             if (formatArray[i].split('').length === 1) {
                 if (formatArray[i] === 's') {
-                    var tmpPackedBuffer = new Buffer(1);
-                    tmpPackedBuffer.fill(0x00);
+                    var tmpPackedBuffer = buffer_wrapper(1);
                     tmpPackedBuffer.writeUInt8(data[i].charCodeAt(0), 0);
                     packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                     continue;
@@ -523,74 +526,62 @@ function IPConnection() {
 
                 switch (formatArray[i]) {
                     case 'c':
-                        var tmpPackedBuffer = new Buffer(1);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(1);
                         tmpPackedBuffer.writeUInt8(data[i].charCodeAt(0), 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'b':
-                        var tmpPackedBuffer = new Buffer(1);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(1);
                         tmpPackedBuffer.writeInt8(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'B':
-                        var tmpPackedBuffer = new Buffer(1);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(1);
                         tmpPackedBuffer.writeUInt8(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'h':
-                        var tmpPackedBuffer = new Buffer(2);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(2);
                         tmpPackedBuffer.writeInt16LE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'H':
-                        var tmpPackedBuffer = new Buffer(2);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(2);
                         tmpPackedBuffer.writeUInt16LE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'i':
-                        var tmpPackedBuffer = new Buffer(4);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(4);
                         tmpPackedBuffer.writeInt32LE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'I':
-                        var tmpPackedBuffer = new Buffer(4);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(4);
                         tmpPackedBuffer.writeUInt32LE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'q':
-                        var tmpPackedBuffer = new Buffer(8);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(8);
                         tmpPackedBuffer.writeDoubleLE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'Q':
-                        var tmpPackedBuffer = new Buffer(8);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(8);
                         tmpPackedBuffer.writeDoubleLE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'f':
-                        var tmpPackedBuffer = new Buffer(4);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(4);
                         tmpPackedBuffer.writeFloatLE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'd':
-                        var tmpPackedBuffer = new Buffer(8);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(8);
                         tmpPackedBuffer.writeDoubleLE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case '?':
-                        var tmpPackedBuffer = new Buffer(1);
-                        tmpPackedBuffer.fill(0x00);
+                        var tmpPackedBuffer = buffer_wrapper(1);
 
                         if(data[i] === 0 || data[i] === false || data[i] === undefined ||
                            data[i] === null || data[i] === NaN || data[i] === -0) {
@@ -614,8 +605,7 @@ function IPConnection() {
                     var count = parseInt(singleFormatArray.slice(1, singleFormatArray.length).join(''));
                     var count_bits = Math.ceil(count / 8);
 
-                    var tmpPackedBuffer = new Buffer(count_bits);
-                    tmpPackedBuffer.fill(0x00);
+                    var tmpPackedBuffer = buffer_wrapper(count_bits);
 
                     for(var _i = 0; _i < count; _i++) {
                         if(data[i][_i] === 0 || data[i][_i] === false || data[i][_i] === undefined ||
@@ -636,14 +626,12 @@ function IPConnection() {
                 for(var j=0; j<parseInt(formatArray[i].match(/\d/g).join('')); j++) {
                     if(singleFormatArray[0] === 's') {
                         if(!isNaN(data[i].charCodeAt(j))) {
-                            var tmpPackedBuffer = new Buffer(1);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(1);
                             tmpPackedBuffer.writeUInt8(data[i].charCodeAt(j), 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         }
                         else {
-                            var tmpPackedBuffer = new Buffer(1);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(1);
                             tmpPackedBuffer.writeUInt8(0x00, 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         }
@@ -653,74 +641,62 @@ function IPConnection() {
 
                     switch(singleFormatArray[0]) {
                         case 'c':
-                            var tmpPackedBuffer = new Buffer(1);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(1);
                             tmpPackedBuffer.writeUInt8(data[i][j].charCodeAt(0), 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'b':
-                            var tmpPackedBuffer = new Buffer(1);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(1);
                             tmpPackedBuffer.writeInt8(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'B':
-                            var tmpPackedBuffer = new Buffer(1);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(1);
                             tmpPackedBuffer.writeUInt8(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'h':
-                            var tmpPackedBuffer = new Buffer(2);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(2);
                             tmpPackedBuffer.writeInt16LE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'H':
-                            var tmpPackedBuffer = new Buffer(2);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(2);
                             tmpPackedBuffer.writeUInt16LE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'i':
-                            var tmpPackedBuffer = new Buffer(4);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(4);
                             tmpPackedBuffer.writeInt32LE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'I':
-                            var tmpPackedBuffer = new Buffer(4);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(4);
                             tmpPackedBuffer.writeUInt32LE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'q':
-                            var tmpPackedBuffer = new Buffer(8);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(8);
                             tmpPackedBuffer.writeDoubleLE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'Q':
-                            var tmpPackedBuffer = new Buffer(8);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(8);
                             tmpPackedBuffer.writeDoubleLE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'f':
-                            var tmpPackedBuffer = new Buffer(4);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(4);
                             tmpPackedBuffer.writeFloatLE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'd':
-                            var tmpPackedBuffer = new Buffer(8);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(8);
                             tmpPackedBuffer.writeDoubleLE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case '?':
-                            var tmpPackedBuffer = new Buffer(1);
-                            tmpPackedBuffer.fill(0x00);
+                            var tmpPackedBuffer = buffer_wrapper(1);
 
                             if(data[i][j] === 0 || data[i][j] === false || data[i][j] === undefined ||
                                data[i][j] === null || data[i][j] === NaN || data[i][j] === -0) {
@@ -1430,13 +1406,13 @@ function IPConnection() {
                             returnCallback(Math.ceil(Math.random() * 4294967295));
                         }
                         else {
-                            var data = new Buffer(buffer);
+                            var data = buffer_wrapper(buffer);
                             returnCallback(data.readUInt32LE(0));
                         }
                     });
                 }
                 else {
-                    var data = new Buffer(buffer);
+                    var data = buffer_wrapper(buffer);
                     returnCallback(data.readUInt32LE(0));
                 }
             });
@@ -1550,7 +1526,7 @@ function IPConnection() {
             seqResponseOOBits |= (responseBits << 3);
         }
 
-        var returnHeader = new Buffer(8);
+        var returnHeader = buffer_wrapper(8);
         returnHeader.writeUInt32LE(UID, 0);
         returnHeader.writeUInt8(len, 4);
         returnHeader.writeUInt8(FID, 5);
@@ -1581,7 +1557,7 @@ function IPConnection() {
             newBufferSize += arrayOfBuffers[i].length;
         }
 
-        var returnBufferConcat = new Buffer(newBufferSize);
+        var returnBufferConcat = buffer_wrapper(newBufferSize);
 
         for (var j=0; j<arrayOfBuffers.length; j++) {
             arrayOfBuffers[j].copy(returnBufferConcat, targetStart);
@@ -1589,6 +1565,27 @@ function IPConnection() {
         }
 
         return returnBufferConcat;
+    }
+
+    // new Buffer() is deprecated since nodejs v10.0.0. Use recommended replacements
+    // as described here: https://nodejs.org/en/docs/guides/buffer-constructor-deprecation
+    // Fallback to buffer constructor to be compatible to v0.10.x.
+    function buffer_wrapper(size_or_array, encoding) {
+        if (typeof size_or_array === 'number') {
+            if (Buffer.alloc) {
+                return Buffer.alloc(size_or_array);
+            }
+
+            var buf = new Buffer(size_or_array);
+            buf.fill(0);
+            return buf;
+        } else {
+            if (Buffer.from && Buffer.from !== Uint8Array.from) {
+                return Buffer.from(size_or_array, encoding);
+            }
+
+            return new Buffer(size_or_array, encoding);
+        }
     }
 }
 
