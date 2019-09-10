@@ -302,6 +302,7 @@ Mögliche Fehlercodes sind:
 * E_UNKNOWN_ERROR_CODE = -11
 * E_STREAM_OUT_OF_SYNC = -12
 * E_INVALID_UID = -13
+* E_NON_ASCII_CHAR_IN_SECRET = -14
 
 wie in :file:`ip_connection.h` definiert.
 
