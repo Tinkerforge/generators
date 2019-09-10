@@ -384,7 +384,7 @@ The default values are
 
 * Region Of Interest = (0, 0, 79, 59),
 * Dampening Factor = 64,
-* Clip Limit = (4800, 512) and
+* Clip Limit = (512, 4800) and
 * Empty Counts = 2.
 """,
 'de':
@@ -435,7 +435,7 @@ Die Standardwerte sind:
 
 * Region Of Interest = (0, 0, 79, 59),
 * Dampening Factor = 64,
-* Clip Limit = (4800, 512) und
+* Clip Limit = (512, 4800) und
 * Empty Counts = 2.
 """
 }]
