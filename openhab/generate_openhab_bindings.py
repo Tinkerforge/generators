@@ -368,7 +368,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_filtered_elements_and_type(self, packet, elements):
         if len(elements) > 1:
-            type_ = packet.get_java_object_name(skip=-2 if packet.has_high_level() else 0)
+            type_ = packet.get_java_object_name(packet.has_high_level())
         else:
             type_ = elements[0].get_java_type()
 
