@@ -6,6 +6,8 @@
 
 # Industrial Digital Out 4 Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -347,3 +349,84 @@ com['examples'].append({
               ('setter', 'Set Value', [('uint16:bitmask:4', 1 << 3)], None, None),
               ('loop_footer',)]
 })
+
+def output_channel(idx):
+    return {
+            'id': 'Output Pin {}'.format(idx),
+            'label': 'Set Level (Pin {})'.format(idx),
+
+            'type': 'Output Pin',
+
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+
+            'setters': [{
+            'packet': 'Set Selected Values',
+            'packet_params': ['(short)(1 << {})'.format(idx), 'cmd == OnOffType.ON ? (short)0xFF : (short)0']}],
+            'setter_command_type': "OnOffType",
+
+            'callbacks': [{
+                'packet': 'Monoflop Done',
+                'filter': '(selectionMask & (1 << {})) > 0'.format(idx),
+                'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+    }
+
+def monoflop_channel(idx):
+    return {
+        'id': 'Monoflop Pin {}'.format(idx),
+        'label': 'Monoflop Pin {}'.format(idx),
+        'type': 'Monoflop',
+
+        'getters': [{
+            'packet': 'Get Monoflop',
+            'packet_params': ['(short){}'.format(idx)],
+            'transform': 'value.value > 0 ? OnOffType.ON : OnOffType.OFF'}],
+
+        'setters': [{
+            'packet': 'Set Monoflop',
+            'packet_params': ['(short)(1 << {})'.format(idx), 'channelCfg.monoflopValue.booleanValue() ? (short)0xFF : (short)0', 'channelCfg.monoflopDuration.longValue()']}],
+        'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+        'setter_refreshs': [{
+            'channel': 'Output Pin {}'.format(idx),
+            'delay': '0'
+        }]
+    }
+
+channels =[output_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)]
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'channels': channels,
+    'channel_types': [
+        oh_generic_channel_type('Output Pin', 'Switch', 'Set Level',
+                     description='The logic level that is currently set on the pin.',
+                     read_only=False),
+        {
+            'id': 'Monoflop',
+            'item_type': 'String',
+            'params': [{
+                'name': 'Monoflop Duration',
+                'type': 'integer',
+                'default': 1000,
+                'min': 0,
+                'max': 2**31 - 1,
+                'unit': 'ms',
+
+                'label': 'Monoflop duration',
+                'description': 'The time (in ms) that the pin should hold the configured value.',
+            },
+            {
+                'name': 'Monoflop Value',
+                'type': 'boolean',
+                'default': 'true',
+
+                'label': 'Monoflop value',
+                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+            }],
+            'label': 'NOT USED',
+            'description':'Triggers a monoflop as configured',
+            'command_options': [('Trigger', 'TRIGGER')]
+        }
+    ]
+}

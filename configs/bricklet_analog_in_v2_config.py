@@ -7,6 +7,7 @@
 # Analog In Bricklet 2.0 communication config
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -551,3 +552,31 @@ com['examples'].append({
               ('callback', ('Voltage Reached', 'voltage reached'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], None, None),
               ('callback_threshold', ('Voltage', 'voltage'), [], '<', [(5, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Moving Average Length',
+            'type': 'integer',
+            'default': 50,
+            'min': 1,
+            'max': 50,
+
+            'label': 'Moving Average Length',
+            'description': 'The length of a moving averaging for the voltage.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+        }],
+    'channels': [
+        oh_generic_old_style_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
+    ],
+    'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
+    'channel_types': [
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
+                     description='Measured voltage',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=0,
+                     max_=42)
+    ]
+}

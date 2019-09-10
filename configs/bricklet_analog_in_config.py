@@ -7,6 +7,7 @@
 # Analog In Bricklet communication config
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -624,3 +625,46 @@ com['examples'].append({
               ('callback', ('Voltage Reached', 'voltage reached'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], None, None),
               ('callback_threshold', ('Voltage', 'voltage'), [], '<', [(5, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Moving Average Length',
+            'type': 'integer',
+            'default': 50,
+            'min': 1,
+            'max': 50,
+
+            'label': 'Moving Average Length',
+            'description': 'The length of a moving averaging for the voltage.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+        },{
+            'name': 'Measurement Range',
+            'type': 'integer',
+            'options': [('Automatic', 0),
+                        ('Up To 6V', 1),
+                        ('Up To 10V', 2),
+                        ('Up To 36V', 3),
+                        ('Up To 45V', 4),
+                        ('Up To 3V', 5)],
+            'limitToOptions': 'true',
+            'default': '0',
+
+            'label': 'Measurement Range',
+            'description': 'The measurement range.<br/><br/>Possible ranges are: <ul><li>Automatically switched</li><li>0V - 6.05V, ~1.48mV resolution</li><li>0V - 10.32V, ~2.52mV resolution</li><li>0V - 36.30V, ~8.86mV resolution</li><li>- 45.00V, ~11.25mV resolution</li><li>0V - 3.3V, ~0.81mV resolution</li>',
+        }
+        ],
+    'channels': [
+        oh_generic_old_style_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
+    ],
+    'init_code': """this.setAveraging(cfg.movingAverageLength.shortValue());
+    this.setRange(cfg.measurementRange.shortValue());""",
+    'channel_types': [
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
+                     description='Measured voltage',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=0,
+                     max_=42)
+    ]
+}

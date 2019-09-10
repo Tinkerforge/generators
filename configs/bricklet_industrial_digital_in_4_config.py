@@ -6,6 +6,8 @@
 
 # Industrial Digital In 4 Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -425,3 +427,85 @@ com['examples'].append({
 'functions': [('callback', ('Interrupt', 'interrupt'), [(('Interrupt Mask', 'Interrupt Mask'), 'uint16:bitmask:4', 1, None, None, None), (('Value Mask', 'Value Mask'), 'uint16:bitmask:4', 1, None, None, None)], None, None),
               ('setter', 'Set Interrupt', [('uint16:bitmask:4', 1 << 0)], 'Enable interrupt on pin 0', None)]
 })
+
+def input_channel(idx):
+    return {
+            'id': 'Input Pin {}'.format(idx),
+            'label': 'Measured Level (Pin {})'.format(idx),
+
+            'type': 'Input Pin',
+
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+
+            'callbacks': [{
+                'filter': '(interruptMask & (1 << {})) > 0'.format(idx),
+                'packet': 'Interrupt',
+                'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+
+            # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
+            'init_code':"""this.setInterrupt((short)(this.getInterrupt() | (1 << {idx})));""".format(idx=idx),
+            'dispose_code': """this.setInterrupt((short)(this.getInterrupt() & ~(1 << {idx})));""".format(idx=idx),
+    }
+
+def edge_count_channel(index):
+    return {
+            'id': 'Edge Count Pin {0}'.format(index),
+            'type': 'Edge Count',
+            'label': 'Edge Count Pin {0}'.format(index),
+
+            'init_code':"""this.setEdgeCountConfig((short)(1 << {}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
+
+            'getters': [{
+                'packet': 'Get Edge Count',
+                'packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
+                'transform': 'new QuantityType<>(value, {unit})'}],
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'is_trigger_channel': False
+        }
+
+
+channels = [input_channel(i) for i in range(0, 4)] + [edge_count_channel(i) for i in range(0, 4)]
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'channels': channels,
+    'channel_types': [
+        oh_generic_channel_type('Input Pin', 'Switch', 'Measured Level',
+                     description='The logic level that is currently measured on the pin.',
+                     read_only=True),
+        oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+            description='The current value of the edge counter for the selected channel',
+            read_only=True,
+            params=[{
+                'name': 'Edge Type',
+                'type': 'integer',
+                'options':[('Rising', 0),
+                            ('Falling', 1),
+                            ('Both', 2)],
+                'limitToOptions': 'true',
+                'default': '0',
+
+                'label': 'Edge Type',
+                'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
+            },{
+                'name': 'Debounce',
+                'type': 'integer',
+
+                'default': '100',
+
+                'label': 'Debounce Time',
+                'description': 'The debounce time in ms.',
+            },{
+                'name': 'Reset On Read',
+                'type': 'boolean',
+
+                'default': 'false',
+
+                'label': 'Reset Edge Count on Update',
+                'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
+            }])
+    ]
+}
