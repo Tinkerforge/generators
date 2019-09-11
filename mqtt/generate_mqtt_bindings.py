@@ -209,8 +209,8 @@ class {0}(MQTTCallbackDevice):
                                             repr(tuple(roles)))
             entries.append(entry_template.format(mqtt_name=packet.get_mqtt_name(skip),
                                                 id=callback_id,
-                                                names=[elem.get_name().under for elem in packet.get_elements(direction='out')],
-                                                symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='out')]),
+                                                names=[elem.get_name().under for elem in packet.get_elements(direction='out', high_level=True)],
+                                                symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='out', high_level=True)]),
                                                 fmt=packet.get_mqtt_format_list('out'),
                                                 hl_info=hl_info))
         return template.format(entries=",\n\t\t".join(entries))
