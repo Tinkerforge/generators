@@ -385,6 +385,7 @@ class MQTTBindings:
             'int': int,
             'float': float,
             'bool': bool,
+            'char': str
         }
 
         for a, n, t in zip(args, arg_names, arg_types):
