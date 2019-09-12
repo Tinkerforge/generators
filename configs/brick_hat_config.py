@@ -6,6 +6,8 @@
 
 # HAT Brick communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -292,3 +294,132 @@ com['examples'].append({
 'name': 'Print Voltages',
 'functions': [('getter', ('Get Voltages', 'get voltages'), [(('Voltage USB', 'Voltage USB'), 'uint16', 1, 1000.0, 'V', None), (('Voltage DC', 'Voltage DC'), 'uint16', 1, 1000.0, 'V', None)], [])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups() +  [{
+        'name': 'sleep',
+        'label': 'Sleep Mode',
+        'description': 'Configures the sleep mode.',
+        'advanced': 'true'
+    }],
+    'channels': [{
+            'id': 'Sleep',
+            'type': 'Sleep',
+
+            'setters': [{
+                'packet': 'Set Sleep Mode',
+                'packet_params': ['channelCfg.powerOffDelay', 'channelCfg.powerOffDuration', 'channelCfg.raspberryPiOff', 'channelCfg.brickletsOff', 'channelCfg.sleepIndicator']
+            }],
+            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+        }, {
+            'id': 'Power Bricklets',
+            'type': 'Power Bricklets',
+
+            'setters': [{
+                'packet': 'Set Bricklet Power',
+                'packet_params': ['cmd == OnOffType.ON']}],
+            'setter_command_type': "OnOffType",
+
+            'getters': [{
+                'packet': 'Get Bricklet Power',
+                'transform': 'value? OnOffType.ON : OnOffType.OFF'}]
+        }, {
+            'id': 'USB Voltage',
+            'type': 'USB Voltage',
+            'getters': [{
+                'packet': 'Get Voltages',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value.voltageUSB{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'packet': 'Voltages',
+                'transform': 'new QuantityType<>(voltageUSB{divisor}, {unit})',
+                'filter': 'true'}],
+
+            'init_code':"""this.setVoltagesCallbackConfiguration(channelCfg.updateInterval, true);""",
+            'dispose_code': """this.setVoltagesCallbackConfiguration(0, true);""",
+
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': 1000.0,
+            'is_trigger_channel': False
+        }, {
+            'id': 'DC Voltage',
+            'type': 'DC Voltage',
+            'getters': [{
+                'packet': 'Get Voltages',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value.voltageDC{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'packet': 'Voltages',
+                'transform': 'new QuantityType<>(voltageDC{divisor}, {unit})',
+                'filter': 'true'}],
+
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': 1000.0,
+            'is_trigger_channel': False
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('USB Voltage', 'Number:ElectricPotential', 'USB Voltage',
+                     description='The USB supply voltage.<br/><br/>There are three possible combinations:<ul><li>Only USB connected: The USB supply voltage will be fed back to the DC input connector. You will read the USB voltage and a slightly lower voltage on the DC input.</li><li>Only DC input connected: The DC voltage will not be fed back to the USB connector. You will read the DC input voltage and the USB voltage will be 0.</li><li>USB and DC input connected: You will read both voltages. In this case the USB supply will be without load, but it will work as backup if you disconnect the DC input (or if the DC input voltage falls below the USB voltage).</li></ul>',
+                     read_only=True,
+                     pattern='%.3f %unit%'),
+        oh_generic_channel_type('DC Voltage', 'Number:ElectricPotential', 'DC Voltage',
+                     description='The DC supply voltage.<br/><br/>There are three possible combinations:<ul><li>Only USB connected: The USB supply voltage will be fed back to the DC input connector. You will read the USB voltage and a slightly lower voltage on the DC input.</li><li>Only DC input connected: The DC voltage will not be fed back to the USB connector. You will read the DC input voltage and the USB voltage will be 0.</li><li>USB and DC input connected: You will read both voltages. In this case the USB supply will be without load, but it will work as backup if you disconnect the DC input (or if the DC input voltage falls below the USB voltage).</li></ul>',
+                     read_only=True,
+                     pattern='%.3f %unit%'),
+        oh_generic_channel_type('Power Bricklets', 'Switch', 'Power Bricklets',
+                     description='Enable/disable to turn the power supply of the connected Bricklets on/off.'),
+        {
+            'id': 'Sleep',
+            'item_type': 'String',
+            'params': [{
+                    'name': 'Power Off Delay',
+                    'type': 'integer',
+                    'default': '60',
+
+                    'label': 'Power Off Delay',
+                    'description': 'Time in seconds before the RPi/Bricklets are powered off.',
+                    'groupName': 'sleep'
+                }, {
+                    'name': 'Power Off Duration',
+                    'type': 'integer',
+                    'default': '10',
+
+                    'label': 'Power Off Duration',
+                    'description': 'Duration in seconds that the RPi/Bricklets stay powered off.',
+                    'groupName': 'sleep'
+                }, {
+                    'name': 'Raspberry Pi Off',
+                    'type': 'boolean',
+                    'default': 'false',
+
+                    'label': 'Raspberry Pi Off',
+                    'description': 'Raspberry Pi is powered off if enabled.',
+                    'groupName': 'sleep'
+                }, {
+                    'name': 'Bricklets Off',
+                    'type': 'boolean',
+                    'default': 'true',
+
+                    'label': 'Bricklets Off',
+                    'description': 'Bricklets are powered off if enabled.',
+                    'groupName': 'sleep'
+                }, {
+                    'name': 'Sleep Indicator',
+                    'type': 'boolean',
+                    'default': 'true',
+
+                    'label': 'Sleep Indicator',
+                    'description': 'If enabled, the status LED will blink in a 1s interval during the whole power off duration. This will draw additional 0.3mA.',
+                    'groupName': 'sleep'
+                }
+            ],
+            'label': 'Sleep',
+            'description': "Starts the configured sleep mode. Note: Triggering this will cut the Raspberry Pi's power after the configured amount of seconds. You have to shut down the operating system yourself, e.g. by calling 'sudo shutdown -h now'.",
+            'command_options': [('Trigger', 'Start Sleep Mode')]
+        }
+    ]
+}

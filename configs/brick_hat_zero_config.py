@@ -9,6 +9,8 @@
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -58,3 +60,37 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get USB Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], [])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        #oh_generic_channel('USB Voltage', 'USB Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
+        {
+            'id': 'USB Voltage',
+            'type': 'USB Voltage',
+            'init_code':"""this.set{camel}CallbackConfiguration(channelCfg.updateInterval, true, \'x\', 0, 0);""",
+            'dispose_code': """this.set{camel}CallbackConfiguration(0, true, \'x\', 0, 0);""",
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'packet': 'USB Voltage',
+                'transform': 'new QuantityType<>(voltage{divisor}, {unit})',
+                'filter': 'true'}],
+
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': 1000.0,
+            'is_trigger_channel': False
+    }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('USB Voltage', 'Number:ElectricPotential', 'USB Voltage',
+                     description='The USB supply voltage of the Raspberry Pi.',
+                     read_only=True,
+                     pattern='%.3f %unit%')
+    ]
+}
