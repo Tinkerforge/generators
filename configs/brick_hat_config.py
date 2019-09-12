@@ -200,6 +200,89 @@ Es gibt drei mögliche Kombinationen:
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Voltages Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in'),
+             ('Value Has To Change', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+The period in ms is the period with which the :cb:`Voltages`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
+""",
+'de':
+"""
+Die Periode in ms ist die Periode mit der der :cb:`Voltages`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Voltages Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out'),
+             ('Value Has To Change', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set  Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Voltages Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Voltages',
+'elements': [('Voltage USB', 'uint16', 1, 'out'),
+             ('Voltage DC', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically according to the configuration set by
+:func:`Set Voltages Callback Configuration`.
+
+The :word:`parameters` are the same as :func:`Get Voltages`.
+""",
+'de':
+"""
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set Voltages Callback Configuration` gesetzten Konfiguration
+
+Die :word:`parameters` sind der gleiche wie :func:`Get Voltages`.
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Sleep',
 'functions': [('setter', 'Set Sleep Mode', [('uint32', 2), ('uint32', 60*30), ('bool', True), ('bool', True), ('bool', True)], 'Turn Raspberry Pi and Bricklets off in 2 seconds for 30 minutes with sleep indicator enabled', None)]
