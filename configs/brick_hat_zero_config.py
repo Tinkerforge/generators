@@ -6,6 +6,9 @@
 
 # HAT Zero Brick communication config
 
+from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from commonconstants import add_callback_value_function
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -30,12 +33,9 @@ com = {
     'examples': []
 }
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get USB Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+voltage_doc = {
 'en':
 """
 Returns the USB supply voltage of the Raspberry Pi in mV.
@@ -44,8 +44,15 @@ Returns the USB supply voltage of the Raspberry Pi in mV.
 """
 Gibt die USB-Versorgungsspannung des Raspberry Pi in mV zurück.
 """
-}]
-})
+}
+
+add_callback_value_function(
+    packets   = com['packets'],
+    name      = 'Get USB Voltage',
+    data_name = 'Voltage',
+    data_type = 'uint16',
+    doc       = voltage_doc
+)
 
 com['examples'].append({
 'name': 'Simple',
