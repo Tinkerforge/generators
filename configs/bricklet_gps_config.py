@@ -6,6 +6,8 @@
 
 # GPS Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -226,13 +228,13 @@ com['packets'].append({
 Returns the current date and time. The date is
 given in the format ``ddmmyy`` and the time is given
 in the format ``hhmmss.sss``. For example, 140713 means
-14.05.13 as date and 195923568 means 19:59:23.568 as time.
+14.07.13 as date and 195923568 means 19:59:23.568 as time.
 """,
 'de':
 """
 Gibt das aktuelle Datum und die aktuelle Zeit zurück. Das Datum ist
 im Format ``ddmmyy`` und die Zeit im Format ``hhmmss.sss`` angegeben. Zum
-Beispiel, 140713 bedeutet 14.05.13 als Datum und 195923568 bedeutet
+Beispiel, 140713 bedeutet 14.07.13 als Datum und 195923568 bedeutet
 19:59:23.568 als Zeit.
 """
 }]
@@ -672,3 +674,196 @@ com['examples'].append({
 'functions': [('callback', ('Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1, 1000000.0, '°', None), (('NS', 'N/S'), 'char', 1, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1, 1000000.0, '°', None), (('EW', 'E/W'), 'char', 1, None, None, None), (('PDOP', None), 'uint16', 1, None, None, None), (('HDOP', None), 'uint16', 1, None, None, None), (('VDOP', None), 'uint16', 1, None, None, None), (('EPE', None), 'uint16', 1, 100.0, 'm', None)], None, None),
               ('callback_period', ('Coordinates', 'coordinates'), [], 1000)]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +
+                ['org.eclipse.smarthome.core.library.types.StringType',
+                 'org.eclipse.smarthome.core.library.types.PointType',
+                 'org.eclipse.smarthome.core.library.types.DateTimeType',
+                 'org.eclipse.smarthome.core.library.types.DecimalType',
+                 'org.eclipse.smarthome.core.library.types.OnOffType',
+                 'java.time.ZoneId'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        {
+            'id': 'Location',
+            'type': 'Location',
+            'callbacks': [{
+                'packet': 'Coordinates',
+                'transform': "new PointType(new DecimalType(latitude / 1000000.0 * (ns == 'N' ? 1 : -1)), new DecimalType(longitude / 1000000.0 * (ew == 'E' ? 1 : -1)))"}],
+            'is_trigger_channel': False,
+            'init_code': 'this.setCoordinatesCallbackPeriod(channelCfg.updateInterval);',
+            'dispose_code': 'this.setCoordinatesCallbackPeriod(0);'
+        }, {
+            'id': 'Fix',
+            'type': 'Fix',
+
+            'getters': [{
+                'packet': 'Get Status',
+                'packet_params': [],
+                'transform': "value.fix > 1 ? OnOffType.ON : OnOffType.OFF"}],
+
+            'callbacks': [{
+                'packet': 'Status',
+                'transform': "fix > 1 ? OnOffType.ON : OnOffType.OFF"}],
+
+            'is_trigger_channel': False,
+            'init_code': 'this.setStatusCallbackPeriod(channelCfg.updateInterval);',
+            'dispose_code': 'this.setStatusCallbackPeriod(0);'
+        }, {
+            'id': 'Satellites In View',
+            'type': 'SatellitesInView',
+
+            'getters': [{
+                'packet': 'Get Status',
+                'packet_params': [],
+                'transform': "new QuantityType(value.satellitesView, SmartHomeUnits.ONE)"}],
+
+            'callbacks': [{
+                'packet': 'Status',
+                'transform': "new QuantityType(satellitesView, SmartHomeUnits.ONE)"}],
+
+            'is_trigger_channel': False
+        },  {
+            'id': 'Satellites Used',
+            'type': 'SatellitesUsed',
+
+            'getters': [{
+                'packet': 'Get Status',
+                'packet_params': [],
+                'transform': "new QuantityType(value.satellitesUsed, SmartHomeUnits.ONE)"}],
+
+            'callbacks': [{
+                'packet': 'Status',
+                'transform': "new QuantityType(satellitesUsed, SmartHomeUnits.ONE)"}],
+
+            'is_trigger_channel': False
+        }, {
+            'id': 'Altitude',
+            'type': 'Altitude',
+
+            'getters': [{
+                'packet': 'Get Altitude',
+                'packet_params': [],
+                'transform': "new QuantityType(value.altitude / 100.0, SIUnits.METRE)"}],
+
+            'callbacks': [{
+                'packet': 'Altitude',
+                'transform': "new QuantityType(altitude / 100.0, SIUnits.METRE)"}],
+
+            'is_trigger_channel': False,
+            'init_code': 'this.setAltitudeCallbackPeriod(channelCfg.updateInterval);',
+            'dispose_code': 'this.setAltitudeCallbackPeriod(0);'
+        },  {
+            'id': 'Geoidal Separation',
+            'type': 'GeoidalSeparation',
+
+            'getters': [{
+                'packet': 'Get Altitude',
+                'packet_params': [],
+                'transform': "new QuantityType(value.geoidalSeparation / 100.0, SIUnits.METRE)"}],
+
+            'callbacks': [{
+                'packet': 'Altitude',
+                'transform': "new QuantityType(geoidalSeparation / 100.0, SIUnits.METRE)"}],
+
+            'is_trigger_channel': False
+        },  {
+            'id': 'Course',
+            'type': 'Course',
+
+            'getters': [{
+                'packet': 'Get Motion',
+                'packet_params': [],
+                'transform': "new QuantityType(value.course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
+
+            'callbacks': [{
+                'packet': 'Motion',
+                'transform': "new QuantityType(course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
+
+            'is_trigger_channel': False,
+            'init_code': 'this.setMotionCallbackPeriod(channelCfg.updateInterval);',
+            'dispose_code': 'this.setMotionCallbackPeriod(0);'
+        },  {
+            'id': 'Speed',
+            'type': 'Speed',
+
+            'getters': [{
+                'packet': 'Get Motion',
+                'packet_params': [],
+                'transform': "new QuantityType(value.speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
+
+            'callbacks': [{
+                'packet': 'Motion',
+                'transform': "new QuantityType(speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
+
+            'is_trigger_channel': False
+        },  {
+            'id': 'Date Time',
+            'type': 'DateTime',
+
+            'getters': [{
+                'packet': 'Get Date Time',
+                'packet_params': [],
+                'transform': 'new DateTimeType(Helper.parseGPSDateTime(value.date, value.time).withZoneSameInstant(ZoneId.systemDefault()))'}],
+
+            'callbacks': [{
+                'packet': 'Date Time',
+                'transform': "new DateTimeType(Helper.parseGPSDateTime(date, time).withZoneSameInstant(ZoneId.systemDefault()))"}],
+
+            'is_trigger_channel': False,
+            'init_code': 'this.setDateTimeCallbackPeriod(channelCfg.updateInterval);',
+            'dispose_code': 'this.setDateTimeCallbackPeriod(0);'
+        }, {
+            'id': 'Restart',
+            'type': 'Restart',
+
+            'setters': [{
+                'packet': 'Restart',
+                'packet_params': ['Short.valueOf(cmd.toString())']}],
+            'setter_command_type': "StringType"
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Location', 'Location', 'Location',
+                     description='The location as determined by the bricklet.',
+                     read_only=True),
+        oh_generic_channel_type('Fix', 'Switch', 'Fix',
+                     description='If enabled, a fix is currently available',
+                     read_only=True),
+        oh_generic_channel_type('SatellitesInView', 'Number:Dimensionless', 'Satellites In View',
+                     description='The number of satellites that are in view.',
+                     read_only=True,
+                     pattern='%d %unit%'),
+        oh_generic_channel_type('SatellitesUsed', 'Number:Dimensionless', 'Satellites Used',
+                     description='The number of satellites that are currently used.',
+                     read_only=True,
+                     pattern='%d %unit%'),
+        oh_generic_channel_type('Altitude', 'Number:Length', 'Altitude',
+                     description='The current altitude',
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_generic_channel_type('GeoidalSeparation', 'Number:Length', 'Geoidal Separation',
+                     description='The geoidal separation corresponding to the current altitude',
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_generic_channel_type('Course', 'Number:Angle', 'Course',
+                     description='The current course. A course of 0° means the Bricklet is traveling north bound and 90° means it is traveling east bound. Please note that this only returns useful values if an actual movement is present.',
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_generic_channel_type('Speed', 'Number:Speed', 'Speed',
+                     description='The current speed. Please note that this only returns useful values if an actual movement is present.',
+                     read_only=True,
+                     pattern='%.2f'),
+        oh_generic_channel_type('DateTime', 'DateTime', 'Date Time',
+                     description='The current date and time.',
+                     read_only=True),
+        oh_generic_channel_type('Restart', 'String', 'Restart',
+                    description="Restarts the GPS Bricklet, the following restart types are available:<ul><li>Hot start (use all available data in the NV store)</li> <li>Warm start (don't use ephemeris at restart)</li> <li>Cold start (don't use time, position, almanacs and ephemeris at restart)</li> <li>Factory reset (clear all system/user configurations at restart)</li></ul>",
+                    command_options=[('Hot Start', '0'),
+                                     ('Warm Start', '1'),
+                                     ('Cold Start', '2'),
+                                     ('Factory reset', '3')])
+    ]
+}

@@ -1,5 +1,11 @@
 package com.tinkerforge;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 
 public class Helper {
@@ -175,5 +181,75 @@ public class Helper {
         }
 
         return ks0066u;
+    }
+
+	public static int parseLEDValueIndex(String string, Logger logger) {
+		try {
+            return Integer.valueOf(string.split(",")[0]);
+        } catch (Exception e) {
+            logger.warn("Could not parse LED Value command: {}", e.getMessage());
+            return 0;
+        }
+	}
+
+	public static int[] parseLEDValues(String string, Logger logger) {
+		try {
+            return Arrays.stream(string.split(",")).skip(1).mapToInt(Integer::valueOf).toArray();
+        } catch (Exception e) {
+            logger.warn("Could not parse LED Value command: {}", e.getMessage());
+            return new int[]{};
+        }
+	}
+
+    public static short parseLED1ValueLength(String string, boolean usesFourChannels, Logger logger) {
+        int elements = (int)string.chars().filter(c -> c == ',').count(); // there should be a + 1 here, but the first element is the index, which must not be counted.
+        int result = elements / (usesFourChannels ? 4 : 3);
+
+        short maxControllableLEDs = (short) (usesFourChannels ? 12 : 16);
+        if(result > maxControllableLEDs) {
+            logger.warn("Could not parse LED Value command: A maximum of {} LEDs can be set with one command, but got {}.", maxControllableLEDs, result);
+            return 0;
+        }
+
+        return (short)result;
+    }
+
+    public static short[] parseLED1Values(String string, int channel, boolean usesFourChannels, Logger logger)
+    {
+        try {
+            String[] splt = string.split(",");
+            short[] result = new short[usesFourChannels ? 12 : 16];
+            int nextInsert = 0;
+
+            for (int i = 1 + channel; i < splt.length; i += (usesFourChannels ? 4 : 3)) {
+                result[nextInsert] = Short.valueOf(splt[i]);
+            }
+            return result;
+        } catch (Exception e) {
+            logger.warn("Could not parse LED Value command: {}", e.getMessage());
+            return new short[]{};
+        }
+    }
+
+    public static ZonedDateTime parseGPSDateTime(long date, long time) {
+        int year = 2000 + (int)date % 100;
+        date /= 100;
+        int month = (int)date % 100;
+        date /= 100;
+        int day = (int)date;
+
+        int millisecond = (int)time % 1000;
+        time /= 1000;
+        int second = (int)time % 100;
+        time /= 100;
+        int minute = (int)time % 100;
+        time /= 100;
+        int hour = (int)time;
+        try {
+            return ZonedDateTime.of(year, month, day, hour, minute, second, millisecond * 1000 * 1000, ZoneId.of("UTC"));
+        }
+        catch(Exception e) {
+            return ZonedDateTime.now();
+        }
     }
 }

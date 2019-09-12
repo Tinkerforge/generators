@@ -6,6 +6,8 @@
 
 # LED Strip Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 3],
@@ -751,3 +753,124 @@ com['examples'].append({
               ('callback', ('Frame Rendered', 'frame rendered'), [(('Length', 'Length'), 'uint16', 1, None, None, None)], 'Use frame rendered callback to move the active LED every frame', None)],
 'incomplete': True # because of array parameters and special logic in callback
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """this.setChipType(cfg.chipType);
+    this.setChannelMapping(cfg.channelMapping.shortValue());
+    this.setFrameDuration(cfg.frameDuration);
+    this.setClockFrequency(cfg.clockFrequency.longValue());""",
+    'params': [ {
+            'name': 'Chip Type',
+            'type': 'integer',
+            'options': [('WS2801', 2801),
+                        ('WS2811', 2811),
+                        ('WS2812', 2812),
+                        ('LPD8806', 8806),
+                        ('APA102', 102)],
+            'limitToOptions': 'true',
+            'default': '2801',
+
+            'label': 'LED Driver Chip Type',
+            'description': 'The type of the LED driver chip. We currently support the chips<br/><br/><ul><li>WS2801</li><li>WS2811</li><li>WS2812 / SK6812 / NeoPixel RGB</li><li>SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812)</li><li>LPD8806</li><li>APA102 / DotStar</li></ul>'
+        }, {
+            'name': 'Channel Mapping',
+            'type': 'integer',
+            'options': [('RGB', 6),
+                        ('RBG', 9),
+                        ('BRG', 33),
+                        ('BGR', 36),
+                        ('GRB', 18),
+                        ('GBR', 24),
+                        ('RGBW', 27),
+                        ('RGWB', 30),
+                        ('RBGW', 39),
+                        ('RBWG', 45),
+                        ('RWGB', 54),
+                        ('RWBG', 57),
+                        ('GRWB', 78),
+                        ('GRBW', 75),
+                        ('GBWR', 108),
+                        ('GBRW', 99),
+                        ('GWBR', 120),
+                        ('GWRB', 114),
+                        ('BRGW', 135),
+                        ('BRWG', 141),
+                        ('BGRW', 147),
+                        ('BGWR', 156),
+                        ('BWRG', 177),
+                        ('BWGR', 180),
+                        ('WRBG', 201),
+                        ('WRGB', 198),
+                        ('WGBR', 216),
+                        ('WGRB', 210),
+                        ('WBGR', 228),
+                        ('WBRG', 225)],
+            'limitToOptions': 'true',
+            'default': '36',
+
+            'label': 'LED Channel Mapping',
+            'description': 'The channel mapping for the connected LEDs.<br><br>If the mapping has 4 colors, the LED Values channel expects 4 values per pixel and if the mapping has 3 colors it expects 3 values per pixel.<br/><br/>The LED Values channel always expects the order RGB(W). The connected LED driver chips might have their 3 or 4 channels in a different order. For example, the WS2801 chips typically use BGR order, then WS2812 chips typically use GRB order and the APA102 chips typically use WBGR order.<br/><br/>The APA102 chips are special. They have three 8-bit channels for RGB and an additional 5-bit channel for the overall brightness of the RGB LED making them 4-channel chips. Internally the brightness channel is the first channel, therefore one of the Wxyz channel mappings should be used. Then the W channel controls the brightness.'
+        }, {
+            'name': 'Frame Duration',
+            'type': 'integer',
+            'default': 100,
+            'label': 'Frame Duration',
+            'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger.'
+        }, {
+            'name': 'Clock Frequency',
+            'type': 'integer',
+            'default': 1660000,
+            'min': 10000,
+            'max': 2000000,
+
+            'label': 'Clock Frequency',
+            'description': 'The frequency of the clock in Hz. The Bricklet will choose the nearest achievable frequency, which may be off by a few Hz.<br/><br/>If you have problems with flickering LEDs, they may be bits flipping. You can fix this by either making the connection between the LEDs and the Bricklet shorter or by reducing the frequency.<br/><br/>With a decreasing frequency your maximum frames per second will decrease too.<br/><br/>The default value is 1.66MHz (1660000Hz).'
+        },
+        ],
+    'channels': [
+        {
+            'id': 'Frame Started',
+            'label': 'Frame Started',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Frame Rendered',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+            'init_code': 'this.enableFrameRenderedCallback();',
+            'dispose_code': 'this.disableFrameRenderedCallback();',
+        },
+        {
+            'id': 'LED Values',
+            'type': 'LED Values',
+            'setters': [{
+                    'predicate': 'Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)',
+                    'packet': 'Set RGB Values',
+                    'packet_params': ['Helper.parseLEDValueIndex(cmd.toString(), logger)',
+                                    'Helper.parseLED1ValueLength(cmd.toString(), false, logger)',
+                                    'Helper.parseLED1Values(cmd.toString(), 0, false, logger)',
+                                    'Helper.parseLED1Values(cmd.toString(), 1, false, logger)',
+                                    'Helper.parseLED1Values(cmd.toString(), 2, false, logger)',]
+                }, {
+                    'predicate': '!Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)',
+                    'packet': 'Set RGBW Values',
+                    'packet_params': ['Helper.parseLEDValueIndex(cmd.toString(), logger)',
+                                    'Helper.parseLED1ValueLength(cmd.toString(), true, logger)',
+                                    'Helper.parseLED1Values(cmd.toString(), 0, true, logger)',
+                                    'Helper.parseLED1Values(cmd.toString(), 1, true, logger)',
+                                    'Helper.parseLED1Values(cmd.toString(), 2, true, logger)',
+                                    'Helper.parseLED1Values(cmd.toString(), 3, true, logger)']
+                }
+            ],
+            'setter_command_type': "StringType",
+        },
+    ],
+    'channel_types': [
+        oh_generic_channel_type('LED Values', 'String', 'LED Values',
+                     description="The RGB(W) values for the LEDs.<br/><br/>Command format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...<br/><br/>The data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.<br/><br/> For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.")
+    ]
+}
