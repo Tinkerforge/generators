@@ -249,7 +249,7 @@ com['packets'].append({
 'en':
 """
 Returns the callback configuration as set by
-:func:`Set  Callback Configuration`.
+:func:`Set Voltages Callback Configuration`.
 """,
 'de':
 """
