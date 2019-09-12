@@ -500,7 +500,7 @@ com['openhab'] = {
             'type': 'Date Time',
             'getters': [{
                 'packet': 'Get Date Time',
-                'transform': 'new DateTimeType(ZonedDateTime.of(value.year, value.month, value.day, value.hour, value.minute, value.second, value.centisecond * 10 * 100 * 100, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))'}],
+                'transform': 'new DateTimeType(ZonedDateTime.of(value.year, value.month, value.day, value.hour, value.minute, value.second, value.centisecond * 10 * 1000 * 1000, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))'}],
 
             'setters': [{
                 'packet': 'Set Date Time',
@@ -516,7 +516,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Date Time',
-                'transform': 'new DateTimeType(ZonedDateTime.of(year, month, day, hour, minute, second, centisecond * 10 * 100 * 100, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))'}]
+                'transform': 'new DateTimeType(ZonedDateTime.of(year, month, day, hour, minute, second, centisecond * 10 * 1000 * 1000, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))'}]
 
         }, {
             'id': 'Timestamp',
