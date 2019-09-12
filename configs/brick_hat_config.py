@@ -48,7 +48,7 @@ Sets the sleep mode.
 
 .. note::
  Calling this function will cut the Raspberry Pi's power after Power Off Delay seconds.
- You have to shut down the Operating System yourself, e.g. by calling 'sudo shutdown -h now'.
+ You have to shut down the operating system yourself, e.g. by calling 'sudo shutdown -h now'.
 
 Parameters:
 
