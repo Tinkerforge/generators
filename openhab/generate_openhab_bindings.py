@@ -279,7 +279,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if name is None:
                 return None
             try:
-                return next(p for p in self.get_packets() if p.get_name().space == name)
+                return next(p for p in self.get_packets() if p.get_name().space == name or(len(p.name.words) > 2 and p.get_name(skip=-2).space == name))
             except StopIteration:
                 raise common.GeneratorError('openhab: Device {}: Packet {} not found.'.format(self.get_long_display_name(), name))
 
@@ -418,6 +418,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                 i=i,
                                                 comma=', ' if len(elements) > 0 else ''))
 
+                packet_name = callback.packet.get_name().camel if not callback.packet.has_high_level() else callback.packet.get_name(skip=-2).camel
                 deregs.append(cb_deregistration.format(camel=callback.packet.get_name().camel))
                 dispose_code += c.dispose_code.split('\n')
                 lambda_transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
@@ -472,9 +473,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             template = case_template if c.type.id.camel.startswith('system.') else case_template_with_config
             channel_getters = []
             for i, getter in enumerate(c.getters):
+                packet_name = getter.packet.get_name().headless if not getter.packet.has_high_level() else getter.packet.get_name(skip=-2).headless
                 channel_getters.append(getter_template.format(updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
                                                               camel=c.id.camel,
-                                                              getter=getter.packet.get_name().headless,
+                                                              getter=packet_name,
                                                               getter_params=', '.join(getter.packet_params),
                                                               i=i))
 
@@ -535,10 +537,11 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
             setters = []
             for s in c.setters:
+                packet_name = s.packet.get_name().headless if not s.packet.has_high_level() else s.packet.get_name(skip=-2).headless
                 if s.predicate == 'true':
-                    setters.append(setter_template.format(setter=s.packet.get_name().headless, setter_params=', '.join(s.packet_params)))
+                    setters.append(setter_template.format(setter=packet_name, setter_params=', '.join(s.packet_params)))
                 else:
-                    setters.append(setter_with_predicate_template.format(setter=s.packet.get_name().headless,
+                    setters.append(setter_with_predicate_template.format(setter=packet_name,
                                                                          setter_params=', '.join(s.packet_params),
                                                                          pred=s.predicate))
 
