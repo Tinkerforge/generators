@@ -342,6 +342,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'org.eclipse.smarthome.config.core.ConfigDescriptionParameterGroup',
                       'org.eclipse.smarthome.config.core.ParameterOption',
                       'org.eclipse.smarthome.core.types.State',
+                      'org.eclipse.smarthome.core.types.StateOption',
                       'org.eclipse.smarthome.core.types.Command',
                       'org.eclipse.smarthome.core.types.CommandDescriptionBuilder',
                       'org.eclipse.smarthome.core.types.CommandOption',
@@ -659,7 +660,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 opts = []
                 for name, value in options:
                     opts.append('new StateOption("{}", "{}")'.format(value, name))
-                with_calls.append('.withOptions(Arrays.asList({})))'.format(', '.join(opts)))
+                with_calls.append('.withOptions(Arrays.asList({}))'.format(', '.join(opts)))
 
             return template.format(with_calls=''.join(with_calls))
 
