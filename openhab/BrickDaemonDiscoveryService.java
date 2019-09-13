@@ -12,6 +12,7 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingCons
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
+import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.slf4j.Logger;
@@ -68,8 +69,14 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
 
                 ThingUID thingUid = new ThingUID(ttuid, handler.getThing().getUID(), uid);
 
-                DiscoveryResult result = DiscoveryResultBuilder.create(thingUid).withThingType(ttuid)
-                        .withLabel(uid).withBridge(handler.getThing().getUID()).build();
+                String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
+
+                DiscoveryResult result = DiscoveryResultBuilder.create(thingUid)
+                                                               .withThingType(ttuid)
+                                                               .withLabel(uid)
+                                                               .withBridge(handler.getThing().getUID())
+                                                               .withProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion)
+                                                               .build();
                 thingDiscovered(result);
             }
         };
