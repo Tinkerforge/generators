@@ -208,11 +208,11 @@ wird für die Kalibrierung benötigt, siehe :func:`Set Calibration`.
 }]
 })
 
-
 led_channel_config_description = """Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED can either be turned on with a pre-defined threshold or the intensity
 of the LED can change with the measured value."""
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
@@ -294,8 +294,8 @@ com['packets'].append({
 Sets the channel LED status config. This config is used if the channel LED is
 configured as "Channel Status", see :func:`Set Channel LED Config`.
 
-For each channel you can choose between threshold and intensity mode.
 {}
+
 By default the channel LED status config is set to intensity with min=0V and
 max=10V.
 """.format(led_status_config_description),
