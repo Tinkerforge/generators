@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -356,3 +358,31 @@ com['examples'].append({
               ('callback', ('Moisture Reached', 'moisture value reached'), [(('Moisture', 'Moisture Value'), 'uint16', 1, None, None, None)], None, None),
               ('callback_threshold', ('Moisture', 'moisture value'), [], '>', [(200, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+        'name': 'Moving Average Length',
+        'type': 'integer',
+        'default': 100,
+        'min': 0,
+        'max': 100,
+
+        'label': 'Moving Average Length',
+        'description': 'The length of a moving averaging for the moisture value.<br/><br/>Setting the length to 0 will turn the averaging off. With less averaging, there is more noise on the data.'
+
+    }],
+    'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
+    'channels': [
+        oh_generic_old_style_channel('Moisture', 'Moisture', 'SmartHomeUnits.ONE')
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Moisture', 'Number:Dimensionless', 'Moisture',
+                    description='The current moisture value. The value has a range of 0 to 4095. A small value corresponds to little moisture, a big value corresponds to much moisture.',
+                    read_only=True,
+                    pattern='%d',
+                    min_=0,
+                    max_=4095)
+    ]
+}

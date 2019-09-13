@@ -6,6 +6,8 @@
 
 # Segment Display 4x7 Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -102,7 +104,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-The brightness can be set between 0 (dark) and 7 (bright). 
+The brightness can be set between 0 (dark) and 7 (bright).
 
 The default value is 7.
 """,
@@ -340,3 +342,132 @@ com['examples'].append({
 'functions': [('setter', 'Set Brightness', [('uint8', 7)], None, 'Set to full brightness'),
               ('setter', 'Set Segments', [('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*2), ('bool', True)], 'Activate all segments', None)],
 })
+
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+            'id': 'Brightness',
+            'type': 'Brightness',
+
+            'getters': [{
+                'packet': 'Get Brightness',
+                'transform': 'new QuantityType(value, SmartHomeUnits.ONE)'}],
+            'setters': [{
+                'packet': 'Set Brightness',
+                'packet_params': ['cmd.shortValue()']}],
+            'setter_command_type': 'QuantityType'
+        }, {
+            'id': 'Colon Upper',
+            'type': 'Colon Upper',
+
+            'getters': [{
+                'packet': 'Get Selected Segment',
+                'packet_params': ['32'],
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+            'setters': [{
+                'packet': 'Set Selected Segment',
+                'packet_params': ['32', 'cmd == OnOffType.ON']}],
+            'setter_command_type': 'OnOffType'
+        }, {
+            'id': 'Colon Lower',
+            'type': 'Colon Lower',
+
+            'getters': [{
+                'packet': 'Get Selected Segment',
+                'packet_params': ['33'],
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+            'setters': [{
+                'packet': 'Set Selected Segment',
+                'packet_params': ['33', 'cmd == OnOffType.ON']}],
+            'setter_command_type': 'OnOffType'
+        }, {
+            'id': 'Tick',
+            'type': 'Tick',
+
+            'getters': [{
+                'packet': 'Get Selected Segment',
+                'packet_params': ['34'],
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+            'setters': [{
+                'packet': 'Set Selected Segment',
+                'packet_params': ['34', 'cmd == OnOffType.ON']}],
+            'setter_command_type': 'OnOffType'
+        }, {
+            'id': 'Segments',
+            'type': 'Segments',
+
+            'getters': [{
+                'packet': 'Get Segments',
+                'transform': 'new QuantityType((Helper.bitsToLong(value.digit0) << 24) | (Helper.bitsToLong(value.digit0) << 16) | (Helper.bitsToLong(value.digit0) << 8) | Helper.bitsToLong(value.digit0), SmartHomeUnits.ONE)'
+            }],
+            'setters': [{
+                'packet': 'Set Segments',
+                'packet_params': [
+                    'Helper.shortToBits((short)(cmd.intValue() >> 24))',
+                    'Helper.shortToBits((short)(cmd.intValue() >> 16))',
+                    'Helper.shortToBits((short)(cmd.intValue() >> 8))',
+                    'Helper.shortToBits((short)cmd.intValue())',
+                    'this.getSegments().colon',
+                    'this.getSegments().tick',
+                ]
+            }],
+            'setter_command_type': 'QuantityType'
+        },  {
+            'id': 'Text',
+            'type': 'Text',
+
+            'setters': [{
+                'packet': 'Set Segments',
+                'packet_params': ['Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 0)',
+                                  'Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 1)',
+                                  'Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 2)',
+                                  'Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 3)',
+                                  'new boolean[]{cmd.toString().contains("`") || cmd.toString().contains(":"), cmd.toString().contains(",") || cmd.toString().contains(":")}',
+                                  'cmd.toString().contains("\'")']
+            }],
+            'setter_refreshs': [
+                {'channel': 'Segments', 'delay': '0'},
+                {'channel': 'Colon Upper', 'delay': '0'},
+                {'channel': 'Colon Lower', 'delay': '0'},
+                {'channel': 'Tick', 'delay': '0'},
+            ],
+            'setter_command_type': 'StringType'
+        }
+    ],
+    'channel_types': [ {
+            'id': 'Brightness',
+            'item_type': 'Number:Dimensionless',
+            'label': 'Brightness',
+            'description': 'The brightness can be set between 0 (dark) and 7 (bright).',
+            'read_only': False,
+            'pattern': '%d',
+            'min': 0,
+            'max': 7,
+            'is_trigger_channel': False,
+            'options': [('0', '0'),
+                        ('1', '1'),
+                        ('2', '2'),
+                        ('3', '3'),
+                        ('4', '4'),
+                        ('5', '5'),
+                        ('6', '6'),
+                        ('7', '7')]
+        },
+        oh_generic_channel_type('Segments', 'Number:Dimensionless', 'Segments',
+                      description='The seven segment display can be set with bitmaps. Every bit controls one segment as shown <a href=https://www.tinkerforge.com/en/doc/_images/bricklet_segment_display_4x7_bit_order.png>here</a>. The channel accepts an integer, that is split into 4 bytes, controlling one segment each. For example 1717263183, which is 0x665b5b4f in hex will be split into 0x66 for the first segment, 0x5b for the second, 0x5b for the third and 0x4f for the fourth.',
+                      pattern='%d'),
+        oh_generic_channel_type('Colon Upper', 'Switch', 'Show upper colon dot',
+                     description='Turns the colon of the display on or off.'),
+        oh_generic_channel_type('Colon Lower', 'Switch', 'Show lower colon dot',
+                     description='Turns the colon of the display on or off.'),
+        oh_generic_channel_type('Tick', 'Switch', 'Show tick',
+                     description='Turns the colon of the display on or off.'),
+        oh_generic_channel_type('Text', 'String', 'Text',
+                     description="Text to display on the seven segment display. Supported are A-Z, a-z, 0-9, \\\", (, ), +, -, =, [, ], ^, _ and |. An unsupported character will show as empty. A colon (:) anywhere in the text will light on the display's colon. Alternatively, you can enable only the upper colon dot with a backtick (`) or the lower one with a comma (,). An apostrophe (') anywhere will light up the tick after the third digit. A dot (.) after another character will light the corresponding digit's dot. For example H.i,T.'F will show HiTF on the display and activate the first and third dot, lower colon dot and the tick."),
+    ]
+}
+

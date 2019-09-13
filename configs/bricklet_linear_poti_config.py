@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -503,3 +505,19 @@ com['examples'].append({
 'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint16', 1, None, None, (0, 100))], None, None),
               ('callback_period', ('Position', 'position'), [], 50)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('Position', 'Position', 'SmartHomeUnits.ONE')
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+                    description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
+                    read_only=True,
+                    pattern='%d %unit%',
+                    min_=0,
+                    max_=100)
+    ]
+}

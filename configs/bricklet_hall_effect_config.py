@@ -6,6 +6,8 @@
 
 # Hall Effect Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -318,3 +320,86 @@ com['examples'].append({
 'functions': [('callback', ('Edge Count', 'edge count'), [(('Count', 'Count'), 'uint32', 1, None, None, None), (('Value', None), 'bool', 1, None, None, None)], None, None),
               ('callback_period', ('Edge Count', 'edge count'), [], 50)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Edge Type',
+            'type': 'integer',
+            'options':[('Rising', 0),
+                        ('Falling', 1),
+                        ('Both', 2)],
+            'limitToOptions': 'true',
+            'default': '0',
+
+            'label': 'Edge Type',
+            'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
+        }, {
+            'name': 'Debounce',
+            'type': 'integer',
+
+            'default': '100',
+
+            'label': 'Debounce Time',
+            'description': 'The debounce time in ms.',
+        }, {
+            'name': 'Reset On Read',
+            'type': 'boolean',
+
+            'default': 'false',
+
+            'label': 'Reset Edge Count on Update',
+            'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
+    }],
+    'channels': [
+        {
+            'id': 'Edge Count',
+            'type': 'Edge Count',
+            'label': 'Edge Count',
+
+            'init_code':"""this.setEdgeCountConfig(cfg.edgeType.shortValue(), cfg.debounce.shortValue());
+            this.setEdgeInterrupt(channelCfg.refreshCount);""",
+
+            'getters': [{
+                'packet': 'Get Edge Count',
+                'packet_params': ['cfg.resetOnRead'],
+                'transform': 'new QuantityType<>(value, {unit})'}],
+
+            'callbacks': [{
+                'packet': 'Edge Count',
+                'transform': 'new QuantityType<>(count, {unit})'
+            }],
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'is_trigger_channel': False
+        }, {
+            'id': 'Magnetic Field Detected',
+            'type': 'Magnetic Field Detected',
+            'label': 'Magnetic Field Detected',
+
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+
+            'is_trigger_channel': False
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+                    description='The current value of the edge counter.',
+                    read_only=True,
+                    pattern='%d',
+                    params=[{
+                        'name': 'Refresh Count',
+                        'type': 'integer',
+
+                        'default': '1',
+
+                        'label': 'Refresh value every n-th edge.',
+                    }]),
+        oh_generic_channel_type('Magnetic Field Detected', 'Switch', 'Magnetic Field Detected',
+                     description='Enabled if a magnetic field of 35 Gauss (3.5mT) or greater is detected.',
+                     read_only=True),
+    ]
+}

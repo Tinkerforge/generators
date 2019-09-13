@@ -6,6 +6,8 @@
 
 # Tilt Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -161,3 +163,44 @@ com['examples'].append({
 'functions': [('setter', 'Enable Tilt State Callback', [], 'Enable tilt state callback', None),
               ('callback', ('Tilt State', 'tilt state'), [(('State', 'Tilt State'), 'uint8:constant', 1, None, None, None)], None, None)]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        {
+            'id': 'Tilted',
+            'type': 'Tilted',
+            'init_code':"""this.enableTiltStateCallback();""",
+            'dispose_code': """this.disableTiltStateCallback();""",
+
+            'getters': [{
+                'packet': 'Get Tilt State',
+                'transform': 'value == 1 ? OnOffType.ON : OnOffType.OFF'}],
+            'callbacks': [{
+                'packet': 'Tilt State',
+                'transform': 'state == 1 ? OnOffType.ON : OnOffType.OFF'}]
+        }, {
+            'id': 'Vibrating',
+            'type': 'Vibrating',
+            'init_code':"""this.enableTiltStateCallback();""",
+            'dispose_code': """this.disableTiltStateCallback();""",
+
+            'getters': [{
+                'packet': 'Get Tilt State',
+                'transform': 'value == 2 ? OnOffType.ON : OnOffType.OFF'}],
+            'callbacks': [{
+                'packet': 'Tilt State',
+                'transform': 'state == 2 ? OnOffType.ON : OnOffType.OFF'}]
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Tilted', 'Switch', 'Tilted',
+                     description='The current tilt state. Enabled if tilted, disabled if closed or vibrating.',
+                     read_only=True),
+        oh_generic_channel_type('Vibrating', 'Switch', 'Vibrating',
+                     description='The current vibration state. Enabled if vibration is detected, disabled if not. Vibration can only be detected if the bricklet is not tilted.',
+                     read_only=True)
+    ]
+}

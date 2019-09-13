@@ -851,3 +851,4 @@ com['examples'].append({
               ('callback_threshold', ('Distance', 'distance'), [], '>', [(20, 0)])],
 'cleanups': [('setter', 'Disable Laser', [], None, 'Turn laser off')]
 })
+

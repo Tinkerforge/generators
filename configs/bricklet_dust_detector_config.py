@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -289,7 +291,7 @@ com['packets'].append({
 'en':
 """
 Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-for the dust_density.
+for the dust density.
 
 Setting the length to 0 will turn the averaging completely off. With less
 averaging, there is more noise on the data.
@@ -347,3 +349,31 @@ com['examples'].append({
               ('callback', ('Dust Density Reached', 'dust density reached'), [(('Dust Density', 'Dust Density'), 'uint16', 1, None, 'µg/m³', None)], None, None),
               ('callback_threshold', ('Dust Density', 'dust density'), [], '>', [(10, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Moving Average Length',
+            'type': 'integer',
+            'default': 100,
+            'min': 0,
+            'max': 100,
+
+            'label': 'Moving Average Length',
+            'description': 'The length of a moving averaging for the dust_density.<br/><br/>Setting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.'
+        }
+    ],
+    'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
+    'channels': [
+        oh_generic_old_style_channel('Dust Density', 'Dust Density', 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE')
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Dust Density', 'Number:Density', 'Dust Density',
+                    description='The dust density.',
+                    read_only=True,
+                    pattern='%d %unit%',
+                    min_=0,
+                    max_=500)
+    ]
+}

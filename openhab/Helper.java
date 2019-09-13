@@ -4,7 +4,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
@@ -251,5 +253,98 @@ public class Helper {
         catch(Exception e) {
             return ZonedDateTime.now();
         }
+    }
+
+    public static boolean[] shortToBits(short s) {
+        boolean[] result = new boolean[8];
+        for (int i = 0; i < 8; ++i) {
+            result[i] = (s & (1 << (i))) != 0;
+        }
+        return result;
+    }
+
+    private static short translateCharacter(char c) {
+        short[] digits = {
+            0x3f,0x06,0x5b,0x4f,0x66, //0-4
+            0x6d,0x7d,0x07,0x7f,0x6f  //5-9
+        };
+        short[] capitals = {
+            0x77,0x7f,0x39,0x3f,0x79,0x71, //A-F
+            0x7d,0x76,0x30,0x0E,0x76,0x38, //G-L
+            0x15,0x15,0x3F,0x73,0x67,0x77, //M-R
+            0x6d,0x31,0x3e,0x3e,0x2a,0x76, //S-X
+            0x66,0x5b,                     //Y-Z
+        };
+        short[] minuscules = {
+            0x5c,0x7c,0x58,0x5e,0x7B,0x71, //a-f
+            0x6f,0x74,0x10,0x0C,0x76,0x18, //g-l
+            0x15,0x54,0x63,0x73,0x67,0x50, //m-r
+            0x6d,0x78,0x1c,0x62,0x2a,0x76, //s-x
+            0x6E,0x5b,                     //y-z
+        };
+        Map<Character, Short> special_characters = new HashMap<>();
+        special_characters.put((char)'"', (short)0x22);
+        special_characters.put((char)'(', (short)0x39);
+        special_characters.put((char)')', (short)0x0F);
+        special_characters.put((char)'+', (short)0x70);
+        special_characters.put((char)'-', (short)0x40);
+        special_characters.put((char)'=', (short)0x09);
+        special_characters.put((char)'[', (short)0x39);
+        special_characters.put((char)']', (short)0x0F);
+        special_characters.put((char)'^', (short)0x23);
+        special_characters.put((char)'_', (short)0x08);
+        special_characters.put((char)'|', (short)0x06);
+
+        short digit = 0;
+        if (c >= 48 && c <= 57) {
+            digit = digits[c - 48];
+        } else if (c >= 65 && c <= 90) {
+            digit = capitals[c - 65];
+        } else if (c >= 97 && c <= 122) {
+            digit = minuscules[c - 97];
+        } else {
+            digit = special_characters.getOrDefault(c, (short)0);
+        }
+
+        return digit;
+    }
+
+    public static long bitsToLong(boolean[] bits) {
+        long result = 0;
+        for(int i = 0; i < bits.length; ++i) {
+            if (bits[i]) {
+                result |= (1 << i);
+            }
+        }
+        return result;
+    }
+
+    public static boolean[] parseSegmentDisplay2TextDigit(String string, int digit) {
+        boolean[][] result = new boolean[4][8];
+
+        int seenDigits = 0;
+
+        for (int i = 0; i < string.length(); ++i) {
+            char c = string.charAt(i);
+            short s = translateCharacter(c);
+            if (s != 0 && seenDigits < 4) {
+                result[seenDigits] = shortToBits(s);
+                ++seenDigits;
+            }
+            if(seenDigits > 0 && c == '.') {
+                result[seenDigits - 1][7] = true;
+            }
+        }
+
+        return result[digit];
+    }
+
+    public static short[] parseSegmentDisplayText(String string) {
+        String copy = string.replace(":", "");
+        short[] result = new short[4];
+        for (int i = 0; i < Math.min(copy.length(), 4); ++i) {
+            result[i] = translateCharacter(copy.charAt(i));
+        }
+        return result;
     }
 }

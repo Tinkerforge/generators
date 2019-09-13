@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -302,3 +304,20 @@ com['examples'].append({
               ('callback', ('CO2 Concentration Reached', 'CO2 concentration reached'), [(('CO2 Concentration', 'CO2 Concentration'), 'uint16', 1, None, 'ppm', None)], None, None),
               ('callback_threshold', ('CO2 Concentration', 'CO2 concentration'), [], '>', [(750, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('CO2 Concentration', 'Concentration', 'SmartHomeUnits.PARTS_PER_MILLION')
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Concentration', 'Number:Dimensionless', 'CO₂ Concentration',
+                    description='The measured CO₂ concentration.',
+                    read_only=True,
+                    pattern='%d %unit%',
+                    min_=0,
+                    max_=10000)
+    ]
+}
