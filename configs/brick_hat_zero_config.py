@@ -13,7 +13,7 @@ from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 112,
     'name': 'HAT Zero',
@@ -53,14 +53,14 @@ add_callback_value_function(
     name      = 'Get USB Voltage',
     data_name = 'Voltage',
     data_type = 'uint16',
-    doc       = voltage_doc
+    doc       = voltage_doc,
+    callback_since_firmware = [2, 0, 1]
 )
 
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get USB Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], [])]
 })
-
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),

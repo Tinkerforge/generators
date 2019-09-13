@@ -15,16 +15,35 @@ THRESHOLD_OPTION_CONSTANT_GROUP = {
 }
 
 def add_callback_value_function(packets, name, data_name, data_type, doc,
-                                has_channels=False, since_firmware=[1, 0, 0]):
+                                has_channels=False, since_firmware=None,
+                                getter_since_firmware=None,
+                                callback_since_firmware=None,
+                                callback_config_getter_since_firmware=None,
+                                callback_config_setter_since_firmware=None):
     name_get = name
     name_set = name.replace('Get ', 'Set ')
     name = name.replace('Get ', '')
+
+    if since_firmware == None:
+        since_firmware = [1, 0, 0]
+
+    if getter_since_firmware == None:
+        getter_since_firmware = since_firmware[:]
+
+    if callback_since_firmware == None:
+        callback_since_firmware = since_firmware[:]
+
+    if callback_config_getter_since_firmware == None:
+        callback_config_getter_since_firmware = callback_since_firmware[:]
+
+    if callback_config_setter_since_firmware == None:
+        callback_config_setter_since_firmware = callback_since_firmware[:]
 
     getter = {
         'type': 'function',
         'name': name_get,
         'elements': [(data_name, data_type, 1, 'out')],
-        'since_firmware': since_firmware,
+        'since_firmware': getter_since_firmware,
         'doc': ['bf', doc]
     }
 
@@ -54,7 +73,7 @@ verwendet werden. Der Callback wird mit der Funktion
                      ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
                      ('Min', data_type, 1, 'in'),
                      ('Max', data_type, 1, 'in')],
-        'since_firmware': since_firmware,
+        'since_firmware': callback_config_setter_since_firmware,
         'doc': ['ccf', {
         'en': """
 The period in ms is the period with which the :cb:`{0}` callback is triggered
@@ -134,7 +153,7 @@ Der Standardwert ist (0, false, 'x', 0, 0).
                      ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
                      ('Min', data_type, 1, 'out'),
                      ('Max', data_type, 1, 'out')],
-        'since_firmware': since_firmware,
+        'since_firmware': callback_config_getter_since_firmware,
         'doc': ['ccf', {
         'en': """
 Returns the callback configuration as set by :func:`{0} Callback Configuration`.
@@ -153,7 +172,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels :func:`{0} Callback Configu
         'name': name,
         'corresponding_getter': name_get,
         'elements': [(data_name, data_type, 1, 'out')],
-        'since_firmware': since_firmware,
+        'since_firmware': callback_since_firmware,
         'doc': ['c', {
         'en': """
 This callback is triggered periodically according to the configuration set by

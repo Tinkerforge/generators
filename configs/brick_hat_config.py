@@ -10,7 +10,7 @@ from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 111,
     'name': 'HAT',
@@ -207,7 +207,7 @@ com['packets'].append({
 'name': 'Set Voltages Callback Configuration',
 'elements': [('Period', 'uint32', 1, 'in'),
              ('Value Has To Change', 'bool', 1, 'in')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
 """
@@ -246,7 +246,7 @@ com['packets'].append({
 'name': 'Get Voltages Callback Configuration',
 'elements': [('Period', 'uint32', 1, 'out'),
              ('Value Has To Change', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
 """
@@ -266,7 +266,7 @@ com['packets'].append({
 'name': 'Voltages',
 'elements': [('Voltage USB', 'uint16', 1, 'out'),
              ('Voltage DC', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 1],
 'doc': ['c', {
 'en':
 """
