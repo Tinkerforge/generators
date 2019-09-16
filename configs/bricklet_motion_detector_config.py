@@ -179,7 +179,8 @@ com['openhab'] = {
                 'packet': 'Motion Detected',
                 'transform': '""'}],
 
-            'is_trigger_channel': True
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered after a motion was detected.'
         }, {
             'id': 'Detection Cycle Ended',
             'label': 'Detection Cycle Ended',
@@ -193,7 +194,8 @@ com['openhab'] = {
                 'packet': 'Detection Cycle Ended',
                 'transform': '""'}],
 
-            'is_trigger_channel': True
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered when the detection cycle ended. A new motion can be detected again after approximately 2 seconds.'
         },
     ],
     'channel_types': []
