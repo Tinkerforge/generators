@@ -81,7 +81,7 @@ public class DeviceHandler extends BaseThingHandler {
             case IPConnection.ENUMERATION_TYPE_AVAILABLE:
                 break;
             case IPConnection.ENUMERATION_TYPE_CONNECTED:
-                initialize_device();
+                initializeDevice();
                 break;
             case IPConnection.ENUMERATION_TYPE_DISCONNECTED:
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device was unplugged.");
@@ -110,7 +110,7 @@ public class DeviceHandler extends BaseThingHandler {
         configureChannels();
 
         if(this.getBridge().getStatus() == ThingStatus.ONLINE) {
-            initialize_device();
+            initializeDevice();
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
         }
@@ -120,7 +120,7 @@ public class DeviceHandler extends BaseThingHandler {
         return getThing().getChannel(channelID).getConfiguration();
     }
 
-    private void initialize_device() {
+    private void initializeDevice() {
         String id = thing.getUID().getId();
         Bridge bridge = getBridge();
         if (bridge == null)
@@ -147,7 +147,7 @@ public class DeviceHandler extends BaseThingHandler {
     @Override
     public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
         if (bridgeStatusInfo.getStatus() == ThingStatus.ONLINE) {
-            initialize_device();
+            initializeDevice();
         } else if (bridgeStatusInfo.getStatus() == ThingStatus.OFFLINE) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
         }
