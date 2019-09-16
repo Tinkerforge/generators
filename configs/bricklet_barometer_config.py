@@ -679,8 +679,8 @@ com['openhab'] = {
             'min': 10,
             'max': 1200,
 
-            'label': 'Reference Air Pressure in mbar',
-            'description': 'The reference air pressure for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+            'label': 'Reference Air Pressure',
+            'description': 'The reference air pressure in mbar for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
         },
         {
             'name': 'Pressure Moving Average Length',

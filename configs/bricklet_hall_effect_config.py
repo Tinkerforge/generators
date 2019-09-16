@@ -349,7 +349,7 @@ com['openhab'] = {
 
             'default': 'false',
 
-            'label': 'Reset Edge Count on Update',
+            'label': 'Reset Edge Count On Update',
             'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
     }],
     'channels': [
@@ -396,7 +396,7 @@ com['openhab'] = {
 
                         'default': '1',
 
-                        'label': 'Refresh value every n-th edge.',
+                        'label': 'Refresh Value Every N-th Edge.',
                     }]),
         oh_generic_channel_type('Magnetic Field Detected', 'Switch', 'Magnetic Field Detected',
                      description='Enabled if a magnetic field of 35 Gauss (3.5mT) or greater is detected.',

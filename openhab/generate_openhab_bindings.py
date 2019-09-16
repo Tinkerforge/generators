@@ -201,6 +201,23 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return oh
 
     def sanity_check_config(self, oh):
+        # Channel labels must be title case
+        for c in self.oh.channels:
+            label = c.label if c.label is not None else c.type.label
+            if any(word[0].islower() for word in label.split(' ')):
+                raise common.GeneratorError('openhab: Device {}: Channel Label "{}" is not in title case.'.format(self.get_long_display_name(), label))
+
+        # Parameter labels must be title case
+        for param in oh.params:
+            if any(word[0].islower() for word in param.label.split(' ')):
+                raise common.GeneratorError('openhab: Device {}: Parameter label "{}" is not in title case.'.format(self.get_long_display_name(), param.label))
+
+        for ct in self.oh.channel_types:
+            for param in ct.params:
+                if any(word[0].islower() for word in param.label.split(' ')):
+                    raise common.GeneratorError('openhab: Device {}: Channel Type {}: Parameter label "{}" is not in title case.'.format(self.get_long_display_name(), ct.id.space, param.label))
+
+
         # Params must be used
         for param in oh.params:
             needle = 'cfg.{}'.format(param.name.headless)

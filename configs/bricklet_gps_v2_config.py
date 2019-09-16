@@ -1012,7 +1012,7 @@ com['openhab'] = {
             'id': 'Pulse Per Second',
             'type': 'system.trigger',
 
-            'label': 'Pulse per Second',
+            'label': 'Pulse Per Second',
             'description': 'This channel is triggered precisely once per second, see <a href=https://en.wikipedia.org/wiki/Pulse-per-second_signal>PPS</a>.<br/><br/>The precision of two subsequent pulses will be skewed because of the latency in the USB/RS485/Ethernet connection. But in the long run this will be very precise. For example a count of 3600 pulses will take exactly 1 hour.',
 
             'callbacks': [{

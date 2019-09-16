@@ -431,7 +431,7 @@ com['examples'].append({
 def input_channel(idx):
     return {
             'id': 'Input Pin {}'.format(idx),
-            'label': 'Measured Level (Pin {})'.format(idx),
+            'label': 'Input Value (Pin {})'.format(idx),
 
             'type': 'Input Pin',
 
@@ -473,7 +473,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Input Pin', 'Switch', 'Measured Level',
+        oh_generic_channel_type('Input Pin', 'Switch', 'Input Value',
                      description='The logic level that is currently measured on the pin.',
                      read_only=True),
         oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
@@ -504,7 +504,7 @@ com['openhab'] = {
 
                 'default': 'false',
 
-                'label': 'Reset Edge Count on Update',
+                'label': 'Reset Edge Count On Update',
                 'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
             }])
     ]

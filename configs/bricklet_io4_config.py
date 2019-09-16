@@ -608,7 +608,7 @@ def input_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} > 1'.format(idx),
             'id': 'Input Pin {}'.format(idx),
-            'label': 'Measured Level (Pin {})'.format(idx),
+            'label': 'Input Value Pin {}'.format(idx),
 
             'type': 'Input Pin',
 
@@ -631,7 +631,7 @@ def output_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} <= 1'.format(idx),
             'id': 'Output Pin {}'.format(idx),
-            'label': 'Set Level (Pin {})'.format(idx),
+            'label': 'Output Value Pin {}'.format(idx),
 
             'type': 'Output Pin',
 
@@ -718,10 +718,10 @@ com['openhab'] = {
     'params': params,
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Input Pin', 'Switch', 'Measured Level',
+        oh_generic_channel_type('Input Pin', 'Switch', 'Input Value',
                      description='The logic level that is currently measured on the pin.',
                      read_only=True),
-        oh_generic_channel_type('Output Pin', 'Switch', 'Set Level',
+        oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
                      description='The logic level that is currently set on the pin.',
                      read_only=False),
         {
@@ -735,7 +735,7 @@ com['openhab'] = {
                 'max': 2**31 - 1,
                 'unit': 'ms',
 
-                'label': 'Monoflop duration',
+                'label': 'Monoflop Duration',
                 'description': 'The time (in ms) that the pin should hold the configured value.',
             },
             {
@@ -743,7 +743,7 @@ com['openhab'] = {
                 'type': 'boolean',
                 'default': 'true',
 
-                'label': 'Monoflop value',
+                'label': 'Monoflop Value',
                 'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
             }],
             'label': 'NOT USED',
@@ -778,7 +778,7 @@ com['openhab'] = {
 
                 'default': 'false',
 
-                'label': 'Reset Edge Count on Update',
+                'label': 'Reset Edge Count On Update',
                 'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
             }])
     ]

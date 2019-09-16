@@ -283,7 +283,7 @@ com['openhab'] = {
                 'max': 2**31 - 1,
                 'unit': 'ms',
 
-                'label': 'Monoflop duration',
+                'label': 'Monoflop Duration',
                 'description': 'The time (in ms) that the relay should hold the configured value.',
             },
             {
@@ -291,7 +291,7 @@ com['openhab'] = {
                 'type': 'boolean',
                 'default': 'true',
 
-                'label': 'Monoflop value',
+                'label': 'Monoflop Value',
                 'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
             }],
             'label': 'NOT USED',

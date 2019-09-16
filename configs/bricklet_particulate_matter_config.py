@@ -433,7 +433,7 @@ def count_channel(size):
         'is_trigger_channel': False
     }
 def count_channel_type(size):
-    return oh_generic_channel_type('Part Count {}'.format(size), 'Number:Dimensionless', 'Particulates greater {:.1f}µm'.format(size / 10),
+    return oh_generic_channel_type('Part Count {}'.format(size), 'Number:Dimensionless', 'Particulates Greater {:.1f}µm'.format(size / 10),
                      description='The number of particulates greater than {:.1f}µm in 100 ml of air. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
                      read_only=True,
                      pattern='%d')

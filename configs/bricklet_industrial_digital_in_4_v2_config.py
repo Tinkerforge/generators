@@ -426,7 +426,7 @@ def input_channel(index):
     return {
             'id': 'Input {0}'.format(index),
             'type': 'Input',
-            'label': 'Input {0}'.format(index),
+            'label': 'Input Value {0}'.format(index),
 
             'init_code':"""this.setValueCallbackConfiguration({0}, channelCfg.updateInterval, true);
 this.setChannelLEDConfig({0}, channelCfg.ledConfig);""".format(index),
@@ -466,7 +466,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'channels': [input_channel(i) for i in range(0, 4)] + [edge_count_channel(i) for i in range(0, 4)],
     'channel_types': [
-        oh_generic_channel_type('Input', 'Switch', 'Measured Level',
+        oh_generic_channel_type('Input', 'Switch', 'Input Value',
                      description='The logic level that is currently measured on the input.',
                      read_only=True,
                      params=[{
@@ -510,7 +510,7 @@ com['openhab'] = {
 
                             'default': 'false',
 
-                            'label': 'Reset Edge Count on Update',
+                            'label': 'Reset Edge Count On Update',
                             'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
                         }])
     ]

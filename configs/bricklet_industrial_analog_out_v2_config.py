@@ -414,7 +414,7 @@ com['openhab'] = {
             'limitToOptions': 'true',
             'default': '1',
 
-            'label': 'Output configuration',
+            'label': 'Output Configuration',
             'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
         }, {
             'name': 'Voltage Range',

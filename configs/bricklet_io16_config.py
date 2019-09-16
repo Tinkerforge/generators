@@ -625,12 +625,14 @@ com['examples'].append({
               ('setter', 'Set Port Interrupt', [('char', 'a'), ('uint8:bitmask:8', 1 << 2)], 'Enable interrupt on pin 2 of port A', None)]
 })
 
+def pin_name(idx):
+    return 'Pin {}/{}'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8))
 
 def input_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} > 1'.format(idx),
             'id': 'Input Pin {}'.format(idx),
-            'label': 'Measured Level (Pin {}/{})'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
+            'label': 'Input Value {}'.format(pin_name(idx)),
 
             'type': 'Input Pin',
 
@@ -654,7 +656,7 @@ def output_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} <= 1'.format(idx),
             'id': 'Output Pin {}'.format(idx),
-            'label': 'Set Level (Pin {}/{})'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
+            'label': 'Output Value {}'.format(pin_name(idx)),
 
             'type': 'Output Pin',
 
@@ -680,7 +682,7 @@ def monoflop_channel(idx):
     return {
         'predicate': 'cfg.pinConfiguration{} <= 1'.format(idx),
         'id': 'Monoflop Pin {}'.format(idx),
-        'label': 'Monoflop Pin {}'.format(idx),
+        'label': 'Monoflop {}'.format(pin_name(idx)),
         'type': 'Monoflop',
 
 
@@ -704,7 +706,7 @@ def edge_count_channel(index):
             'predicate': 'cfg.pinConfiguration{} > 1'.format(index),
             'id': 'Edge Count Pin {0}'.format(index),
             'type': 'Edge Count',
-            'label': 'Edge Count Pin {0}'.format(index),
+            'label': 'Edge Count {0}'.format(pin_name(index)),
 
             'init_code':"""this.setEdgeCountConfig((short)(1 << {}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
 
@@ -742,10 +744,10 @@ com['openhab'] = {
     'params': params,
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Input Pin', 'Switch', 'Measured Level',
+        oh_generic_channel_type('Input Pin', 'Switch', 'Input Value',
                      description='The logic level that is currently measured on the pin.',
                      read_only=True),
-        oh_generic_channel_type('Output Pin', 'Switch', 'Set Level',
+        oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
                      description='The logic level that is currently set on the pin.',
                      read_only=False),
         {
@@ -759,7 +761,7 @@ com['openhab'] = {
                 'max': 2**31 - 1,
                 'unit': 'ms',
 
-                'label': 'Monoflop duration',
+                'label': 'Monoflop Duration',
                 'description': 'The time (in ms) that the pin should hold the configured value.',
             },
             {
@@ -767,7 +769,7 @@ com['openhab'] = {
                 'type': 'boolean',
                 'default': 'true',
 
-                'label': 'Monoflop value',
+                'label': 'Monoflop Value',
                 'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
             }],
             'label': 'NOT USED',
@@ -802,7 +804,7 @@ com['openhab'] = {
 
                 'default': 'false',
 
-                'label': 'Reset Edge Count on Update',
+                'label': 'Reset Edge Count On Update',
                 'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
             }])
     ]

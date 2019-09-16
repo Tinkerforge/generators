@@ -313,8 +313,8 @@ com['openhab'] = {
         oh_generic_old_style_channel('CO2 Concentration', 'Concentration', 'SmartHomeUnits.PARTS_PER_MILLION')
     ],
     'channel_types': [
-        oh_generic_channel_type('Concentration', 'Number:Dimensionless', 'CO₂ Concentration',
-                    description='The measured CO₂ concentration.',
+        oh_generic_channel_type('Concentration', 'Number:Dimensionless', 'CO2 Concentration',
+                    description='The measured CO2 concentration.',
                     read_only=True,
                     pattern='%d %unit%',
                     min_=0,
