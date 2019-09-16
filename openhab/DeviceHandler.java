@@ -100,16 +100,14 @@ public class DeviceHandler extends BaseThingHandler {
         {
             brickd.addEnumerateListener(this::enumerateListener);
         }
+        wasInitialized = true;
 
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
 
         String id = thing.getUID().getId();
         device = deviceSupplier.apply(id, ipcon);
 
-        if (!wasInitialized) {
-            configureChannels();
-        }
-        wasInitialized = true;
+        configureChannels();
 
         if(this.getBridge().getStatus() == ThingStatus.ONLINE) {
             initialize_device();
@@ -209,11 +207,5 @@ public class DeviceHandler extends BaseThingHandler {
                                                            .map(cuid -> channels.stream().filter(c -> c.getUID().equals(cuid)).findFirst().get())
                                                            .collect(Collectors.toList());
         updateThing(editThing().withChannels(enabledChannels).build());
-    }
-
-    @Override
-    public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
-        super.handleConfigurationUpdate(configurationParameters);
-        configureChannels();
     }
 }
