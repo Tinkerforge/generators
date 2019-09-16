@@ -7,6 +7,7 @@
 # Industrial Dual 0-20mA Bricklet communication config
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
@@ -409,3 +410,61 @@ com['examples'].append({
               ('callback', ('Current Reached', 'current reached'), [(('Sensor', 'Sensor'), 'uint8', 1, None, None, None), (('Current', 'Current'), 'int32', 1, 1000000.0, 'mA', None)], None, None),
               ('callback_threshold', ('Current', 'current (sensor 1)'), [('uint8', 1)], '>', [(10, 0)])]
 })
+
+def current_channel(index):
+    return {
+            'id': 'Current Sensor {0}'.format(index),
+            'type': 'Current',
+            'label': 'Current Sensor {0}'.format(index),
+
+            'init_code':"""this.setCurrentCallbackPeriod((short){0}, channelCfg.updateInterval);""".format(index),
+            'dispose_code': """this.setCurrentCallbackPeriod((short){0}, 0);""".format(index),
+
+            'getters': [{
+                'packet': 'Get Current',
+                'packet_params': ['(short){}'.format(index)],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'filter': 'sensor == {0}'.format(index),
+                'packet': 'Current',
+                'transform': 'new QuantityType<>(current{divisor}, {unit})'}],
+
+            'java_unit': 'SmartHomeUnits.AMPERE',
+            'divisor': '1000000000.0',
+            'is_trigger_channel': False
+        }
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Sample Rate',
+            'type': 'integer',
+            'options': [('240 SPS', 0),
+                        ('60 SPS', 1),
+                        ('15 SPS', 2),
+                        ('4 SPS', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Sample Rate',
+            'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
+            'advanced': 'true'
+        }
+    ],
+    'init_code': """this.setSampleRate(cfg.sampleRate.shortValue());""",
+    'channels': [
+        current_channel(0),
+        current_channel(1),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'NOT USED',
+                     description='Measured current between 0 and 0.022505322A (22.5mA)',
+                     read_only=True,
+                     pattern='%.6f %unit%',
+                     min_=0,
+                     max_=0.022505322)
+    ]
+}

@@ -6,6 +6,8 @@
 
 # Accelerometer Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -635,3 +637,97 @@ com['examples'].append({
 'functions': [('callback', ('Acceleration', 'acceleration'), [(('X', 'Acceleration [X]'), 'int32', 1, 10000.0, 'g', None), (('Y', 'Acceleration [Y]'), 'int32', 1, 10000.0, 'g', None), (('Z', 'Acceleration [Z]'), 'int32', 1, 10000.0, 'g', None)], None, None),
               ('callback_configuration', ('Acceleration', 'acceleration'), [], 1000, False, None, [])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
+    'params': [{
+            'name': 'Data Rate',
+            'type': 'integer',
+            'options': [('0.781Hz', 0),
+                        ('1.563Hz', 1),
+                        ('3.125Hz', 2),
+                        ('6.2512Hz', 3),
+                        ('12.5Hz', 4),
+                        ('25Hz', 5),
+                        ('50Hz', 6),
+                        ('100Hz', 7),
+                        ('200Hz', 8),
+                        ('400Hz', 9),
+                        ('800Hz', 10),
+                        ('1600Hz', 11),
+                        ('3200Hz', 12),
+                        ('6400Hz', 13),
+                        ('12800Hz', 14),
+                        ('25600Hz', 15)],
+            'limitToOptions': 'true',
+            'default': 7,
+            'label': 'Data Rate',
+            'description': 'The data rate of 0.781Hz to 25600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
+        }, {
+            'name': 'Full Scale Range',
+            'type': 'integer',
+            'options': [('2g', 0),
+                        ('4g', 1),
+                        ('8g', 3)],
+            'limitToOptions': 'true',
+            'default': 1,
+            'label': 'Full Scale Range',
+            'description': 'Full scale range of -2g to +2g up to -8g to +8g. Decreasing data rate or full scale range will also decrease the noise on the data.'
+        }, {
+            'name': 'Info LED Mode',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2)],
+            'limitToOptions': 'true',
+            'default': 0,
+            'label': 'Info LED Mode',
+            'description': 'Configures the info LED (marked as \\\"Force\\\" on the Bricklet) to be either turned off, turned on, or blink in heartbeat mode.'
+        }, {
+            'name': 'IIR Filter',
+            'type': 'boolean',
+            'default': 'true',
+            'label': 'IIR Filter',
+            'description': 'Enable to apply the IIR filter.'
+        }, {
+            'name': 'Low Pass Filter',
+            'type': 'integer',
+            'options': [('Ninth', 0),
+                        ('Half', 1)],
+            'limitToOptions': 'true',
+            'default': 1,
+            'label': 'Low Pass Filter Corner Frequency',
+            'description': 'The low pass filter roll off corner frequency can be half or a ninth of the output data rate.'
+        },
+        update_interval('Acceleration', 'the acceleration')],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """this.setConfiguration(cfg.dataRate, cfg.fullScaleRange);
+    this.setFilterConfiguration(cfg.iirFilter ? 0 : 1, cfg.lowPassFilter);
+    this.setInfoLEDConfig(cfg.infoLEDMode);
+    this.setAccelerationCallbackConfiguration(cfg.accelerationUpdateInterval, true);""",
+    'channels': [
+        {
+            'id': 'Acceleration {}'.format(axis.upper()),
+            'type': 'Acceleration',
+            'label': 'Acceleration {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Acceleration',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis)}],
+
+            'callbacks': [{
+                'packet': 'Acceleration',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis)}],
+            'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
+            'divisor': '10000.0',
+            'is_trigger_channel': False
+        } for axis in ['x', 'y', 'z']
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
+                     description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
+                     read_only=True,
+                     pattern='%.4f %unit%')
+    ]
+}

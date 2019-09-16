@@ -9,6 +9,8 @@
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
+from openhab_common import *
+
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -264,21 +266,7 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config'})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Sets the channel LED status config. This config is used if the channel LED is
-configured as "Channel Status", see :func:`Set Channel LED Config`.
-
-For each channel you can choose between threshold and intensity mode.
+led_status_config_description = """For each channel you can choose between threshold and intensity mode.
 
 In threshold mode you can define a positive or a negative threshold.
 For a positive threshold set the "min" parameter to the threshold value in nA
@@ -294,11 +282,27 @@ In intensity mode you can define a range in nA that is used to scale the brightn
 of the LED. Example with min=4mA and max=20mA: The LED is off at 4mA and below,
 on at 20mA and above and the brightness is linearly scaled between the values
 4mA and 20mA. If the min value is greater than the max value, the LED brightness
-is scaled the other way around.
+is scaled the other way around."""
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Channel LED Status Config',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in'),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the channel LED status config. This config is used if the channel LED is
+configured as "Channel Status", see :func:`Set Channel LED Config`.
+
+{}
 
 By default the channel LED status config is set to intensity with min=4mA and
 max=20mA.
-""",
+""".format(led_status_config_description),
 'de':
 """
 Setzt die Kanal-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
@@ -367,3 +371,126 @@ com['examples'].append({
 'functions': [('callback', ('Current', 'current'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Current', 'Current'), 'int32', 1, 1000000.0, 'mA', None)], None, None),
               ('callback_configuration', ('Current', 'current (channel 0)'), [('uint8', 0)], 10000, False, '>', [(10, 0)])]
 })
+
+
+def current_channel(index):
+    return {
+            'id': 'Current Sensor {0}'.format(index),
+            'type': 'Current',
+            'label': 'Current Sensor {0}'.format(index),
+
+            'init_code':"""this.setCurrentCallbackConfiguration({0}, channelCfg.updateInterval, true, \'x\', 0, 0);
+            this.setChannelLEDConfig({0}, channelCfg.ledConfig);
+            this.setChannelLEDStatusConfig({0}, channelCfg.ledStatusMinimum, channelCfg.ledStatusMaximum, channelCfg.ledStatusMode);""".format(index),
+            'dispose_code': """this.setCurrentCallbackConfiguration({0}, 0, true, \'x\', 0, 0);""".format(index),
+
+            'getters': [{
+                'packet': 'Get Current',
+                'packet_params': ['{}'.format(index)],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+            'callbacks': [{
+                'filter': 'channel == {0}'.format(index),
+                'packet': 'Current',
+                'transform': 'new QuantityType<>(current{divisor}, {unit})'}],
+
+            'java_unit': 'SmartHomeUnits.AMPERE',
+            'divisor': '1000000000.0',
+            'is_trigger_channel': False
+        }
+
+def led_status_config():
+    return [{
+            'name': 'LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Channel Status', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'LED Configuration',
+            'description': """Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Show Channel Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the measured value.""",
+        },
+        {
+            'name': 'LED Status Mode',
+            'type': 'integer',
+            'options': [('Threshold', 0),
+                        ('Intensity', 1)],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'LED Status Mode',
+            'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
+        },
+        {
+            'name': 'LED Status Minimum',
+            'type': 'integer',
+            'min': '-35',
+            'max': '35',
+            'unit': 'V',
+            'default': '0',
+
+            'label': 'LED Status Maximum',
+            'description': 'See LED Status Mode for further explaination.',
+        },
+        {
+            'name': 'LED Status Maximum',
+            'type': 'integer',
+            'min': '-35',
+            'max': '35',
+            'unit': 'V',
+            'default': '10',
+
+            'label': 'LED Status Maximum',
+            'description': 'See LED Status Mode for further explaination.',
+        }]
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Sample Rate',
+            'type': 'integer',
+            'options': [('240 SPS', 0),
+                        ('60 SPS', 1),
+                        ('15 SPS', 2),
+                        ('4 SPS', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Sample Rate',
+            'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
+            'advanced': 'true'
+        }, {
+            'name': 'Gain',
+            'type': 'integer',
+            'options': [('1x', 0),
+                        ('2x', 1),
+                        ('4x', 2),
+                        ('8x', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Gain',
+            'description': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.<br/><br/>Example: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",
+            'advanced': 'true'
+        }
+    ],
+    'init_code': """this.setSampleRate(cfg.sampleRate);
+    this.setGain(cfg.gain);""",
+    'channels': [
+        current_channel(0),
+        current_channel(1),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'NOT USED',
+                     description='Measured current between 0 and 0.022505322A (22.5mA)',
+                     read_only=True,
+                     pattern='%.6f %unit%',
+                     min_=0,
+                     max_=0.022505322,
+                     params=led_status_config())
+    ]
+}

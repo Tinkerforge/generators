@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -477,3 +479,108 @@ com['examples'].append({
               ('callback', ('Acceleration Reached', 'acceleration reached'), [(('X', 'Acceleration [X]'), 'int16', 1, 1000.0, 'g', None), (('Y', 'Acceleration [Y]'), 'int16', 1, 1000.0, 'g', None), (('Z', 'Acceleration [Z]'), 'int16', 1, 1000.0, 'g', None)], None, None),
               ('callback_threshold', ('Acceleration', 'acceleration'), [], '>', [(2, 0), (2, 0), (2, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
+    'params': [{
+            'name': 'Data Rate',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('3Hz', 1),
+                        ('6Hz', 2),
+                        ('12Hz', 3),
+                        ('25Hz', 4),
+                        ('50Hz', 5),
+                        ('100Hz', 6),
+                        ('400Hz', 7),
+                        ('800Hz', 8),
+                        ('1600Hz', 9)],
+            'limitToOptions': 'true',
+            'default': 6,
+            'label': 'Data Rate',
+            'description': 'The data rate of 0Hz to 1600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
+        }, {
+            'name': 'Full Scale Range',
+            'type': 'integer',
+            'options': [('2g', 0),
+                        ('4g', 1),
+                        ('6g', 2),
+                        ('8g', 3),
+                        ('16g', 4)],
+            'limitToOptions': 'true',
+            'default': 1,
+            'label': 'Full Scale Range',
+            'description': 'Full scale range of -2g to +2g up to -16g to +16g. Decreasing data rate or full scale range will also decrease the noise on the data.'
+        }, {
+            'name': 'Frequency Filter',
+            'type': 'integer',
+            'options': [('800Hz', 0),
+                        ('400Hz', 1),
+                        ('200Hz', 2),
+                        ('50Hz', 3)],
+            'limitToOptions': 'true',
+            'default': 0,
+            'label': 'Frequency Filter',
+            'description': 'Filter bandwidth between 50Hz and 800Hz.'
+        },
+        update_interval('Acceleration', 'the acceleration')],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """this.setConfiguration(cfg.dataRate.shortValue(), cfg.fullScaleRange.shortValue(), cfg.frequencyFilter.shortValue());
+    this.setAccelerationCallbackPeriod(cfg.accelerationUpdateInterval);""",
+    'channels': [
+        {
+            'id': 'Acceleration {}'.format(axis.upper()),
+            'type': 'Acceleration',
+            'label': 'Acceleration {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Acceleration',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis)}],
+
+            'callbacks': [{
+                'packet': 'Acceleration',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis)}],
+            'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
+            'divisor': '1000.0',
+            'is_trigger_channel': False
+        } for axis in ['x', 'y', 'z']
+    ] + [{
+            'id': 'Temperature',
+            'type': 'Temperature',
+            'label': 'Temperature',
+
+            'getters': [{
+                'packet': 'Get Temperature',
+                'transform': 'new QuantityType(value{divisor}, {unit})'}],
+            'java_unit': 'SIUnits.CELSIUS',
+            'is_trigger_channel': False
+        }, {
+            'id': 'LED',
+            'type': 'LED',
+
+            'setters': [{
+                'predicate': 'cmd == OnOffType.ON',
+                'packet': 'LED On'
+            }, {
+                'predicate': 'cmd == OnOffType.OFF',
+                'packet': 'LED Off'
+            }],
+            'setter_command_type': "OnOffType",
+
+            'getters': [{
+                'packet': 'Is LED On',
+                'transform': 'value? OnOffType.ON : OnOffType.OFF'}]
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
+                     description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
+                     read_only=True,
+                     pattern='%.3f %unit%'),
+        oh_generic_channel_type('LED', 'Switch', 'LED',
+                     description='Enables/Disables the LED on the Bricklet.'),
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                     description='The temperature of the accelerometer',
+                     read_only=True),
+    ]
+}

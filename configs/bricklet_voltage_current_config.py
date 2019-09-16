@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -871,3 +873,83 @@ com['examples'].append({
               ('callback', ('Power Reached', 'power reached'), [(('Power', 'Power'), 'int32', 1, 1000.0, 'W', None)], None, None),
               ('callback_threshold', ('Power', 'power'), [], '>', [(10, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Averaging',
+            'type': 'integer',
+            'options': [('1', 0),
+                        ('4', 1),
+                        ('16', 2),
+                        ('64', 3),
+                        ('128', 4),
+                        ('256', 5),
+                        ('512', 6),
+                        ('1024', 7)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Averaging',
+            'description': 'Configures the number of samples to average over.'
+        }, {
+            'name': 'Voltage Conversion Time',
+            'type': 'integer',
+            'options': [('140µs', 0),
+                        ('204µs', 1),
+                        ('332µs', 2),
+                        ('588µs', 3),
+                        ('1.1ms', 4),
+                        ('2.116ms', 5),
+                        ('4.156ms', 6),
+                        ('8.244ms', 7)],
+            'limitToOptions': 'true',
+            'default': '4',
+
+            'label': 'Voltage Conversion Time',
+            'description': 'Configures the voltage conversion time.'
+        }, {
+            'name': 'Current Conversion Time',
+            'type': 'integer',
+            'options': [('140µs', 0),
+                        ('204µs', 1),
+                        ('332µs', 2),
+                        ('588µs', 3),
+                        ('1.1ms', 4),
+                        ('2.116ms', 5),
+                        ('4.156ms', 6),
+                        ('8.244ms', 7)],
+            'limitToOptions': 'true',
+            'default': '4',
+
+            'label': 'Current Conversion Time',
+            'description': 'Configures the current conversion time.'
+        },
+    ],
+    'init_code': """this.setConfiguration(cfg.averaging.shortValue(), cfg.voltageConversionTime.shortValue(), cfg.currentConversionTime.shortValue());""",
+    'channels': [
+        oh_generic_old_style_channel('Current', 'Current', 'SmartHomeUnits.AMPERE', divisor=1000.0),
+        oh_generic_old_style_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
+        oh_generic_old_style_channel('Power', 'Power', 'SmartHomeUnits.WATT', divisor=1000.0)
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Measured Voltage', description='The measured voltage between 0 and 36V.',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=36),
+        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Measured Current', description='The measured current between -20 and 20A.',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=-20,
+                     max_=20),
+        oh_generic_channel_type('Power', 'Number:Power', 'Measured Power', description='The measured power between 0 and 720W.',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=720)
+    ]
+}

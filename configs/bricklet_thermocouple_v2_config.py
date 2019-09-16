@@ -9,6 +9,8 @@
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
+from openhab_common import *
+
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -259,3 +261,95 @@ com['examples'].append({
               ('callback_configuration', ('Temperature', 'temperature'), [], 10000, False, '>', [(30, 0)])]
 })
 
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
+    'params': [{
+            'name': 'Moving Average Length',
+            'type': 'integer',
+            'options': [('1', 1),
+                        ('2', 2),
+                        ('4', 4),
+                        ('8', 8),
+                        ('16', 16)],
+            'limitToOptions': 'true',
+            'default': 16,
+            'label': 'Moving Average Length',
+            'description': 'Available averaging sizes are 1, 2, 4, 8 and 16 samples.<br/><br/>The conversion time depends on the averaging and filter configuration, it can be calculated as follows:<ul><li>60Hz: time = 82 + (samples - 1) * 16.67</li><li>50Hz: time = 98 + (samples - 1) * 20</li></ul>'
+        }, {
+            'name': 'Thermocouple Type',
+            'type': 'integer',
+            'options': [('B', 0),
+                        ('E', 1),
+                        ('J', 2),
+                        ('K', 3),
+                        ('N', 4),
+                        ('R', 5),
+                        ('S', 6),
+                        ('T', 7),
+                        ('G8', 8),
+                        ('G32', 9)],
+            'limitToOptions': 'true',
+            'default': 3,
+            'label': 'Thermocouple Type',
+            'description': 'As thermocouple type you can use B, E, J, K, N, R, S and T. If you have a different thermocouple or a custom thermocouple you can also use G8 and G32. With these types the returned value will not be in °C/100, it will be calculated by the following formulas:<ul><li>G8: value = 8 * 1.6 * 2^17 * Vin</li><li>G32: value = 32 * 1.6 * 2^17 * Vin</li></ul>where Vin is the thermocouple input voltage.'
+        }, {
+            'name': 'Frequency Filter',
+            'type': 'integer',
+            'options': [('50Hz', 0),
+                        ('60Hz', 1)],
+            'limitToOptions': 'true',
+            'default': 0,
+            'label': 'Frequency Filter',
+            'description': 'The frequency filter can be either configured to 50Hz or to 60Hz. You should configure it according to your utility frequency.'
+        }],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """this.setConfiguration(cfg.movingAverageLength, cfg.thermocoupleType, cfg.frequencyFilter);""",
+    'channels': [
+        oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        {
+            'id': 'Over Under Voltage',
+            'type': 'Over Under Voltage',
+            'label': 'Over/Under Voltage',
+
+            'getters': [{
+                'packet': 'Get Error State',
+                'transform': 'value.overUnder ? OnOffType.ON : OnOffType.OFF'}],
+
+            'callbacks': [{
+                'packet': 'Error State',
+                'transform': 'overUnder ? OnOffType.ON : OnOffType.OFF'}],
+
+            'is_trigger_channel': False
+        }, {
+            'id': 'Open Circuit',
+            'type': 'Open Circuit',
+            'label': 'Open Circuit',
+
+            'getters': [{
+                'packet': 'Get Error State',
+                'transform': 'value.openCircuit ? OnOffType.ON : OnOffType.OFF'}],
+
+            'callbacks': [{
+                'packet': 'Error State',
+                'transform': 'openCircuit ? OnOffType.ON : OnOffType.OFF'}],
+
+            'is_trigger_channel': False
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                     description='The temperature of the thermocouple.',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=-210,
+                     max_=1800),
+        oh_generic_channel_type('Over Under Voltage', 'Switch', 'Over/Under Voltage Error',
+                     description='Over/Under Voltage happens for voltages below 0V or above 3.3V. In this case it is very likely that your thermocouple is defective.',
+                     read_only=True),
+        oh_generic_channel_type('Open Circuit', 'Switch', 'Open Circuit Error',
+                     description='An Open Circuit error indicates that there is no thermocouple connected.',
+                     read_only=True),
+    ]
+}
