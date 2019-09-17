@@ -24,6 +24,7 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
+import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.slf4j.Logger;
@@ -194,6 +195,15 @@ public class DeviceHandler extends BaseThingHandler {
     }
 
     private void configureChannels() {
+        for(int i = 0; i < this.channels.size(); ++i) {
+            Channel toUpdate = this.channels.get(i);
+            Channel upToDate = this.thing.getChannel(toUpdate.getUID());
+            if(upToDate == null)
+                continue;
+
+            this.channels.set(i, ChannelBuilder.create(toUpdate).withConfiguration(upToDate.getConfiguration()).build());
+        }
+
         List<String> enabledChannelNames = new ArrayList<>();
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
