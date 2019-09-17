@@ -6,6 +6,8 @@
 
 # Analog Out Bricklet 3.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -85,3 +87,50 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('setter', 'Set Output Voltage', [('uint16', 3300)], 'Set output voltage to 3.3V', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+            'id': 'Input Voltage',
+            'type': 'Input Voltage',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': 1000.0,
+            'is_trigger_channel': False
+        }, {
+            'id': 'Output Voltage',
+            'type': 'Output Voltage',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+            'setters':[{
+                'packet': 'Set {title_words}',
+                'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)'],
+            }],
+            'setter_command_type': 'QuantityType',
+
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': 1000.0,
+            'is_trigger_channel': False
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Input Voltage', 'Number:ElectricPotential', 'Input Voltage',
+                     description='The input voltage',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=15),
+         oh_generic_channel_type('Output Voltage', 'Number:ElectricPotential', 'Output Voltage',
+                     description='The output voltage. The possible range is 0V to 12V',
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=12)
+    ]
+}

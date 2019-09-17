@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -588,3 +590,35 @@ com['examples'].append({
               ('callback', ('Current Reached', 'current reached'), [(('Current', 'Current'), 'int16', 1, 1000.0, 'A', None)], None, None),
               ('callback_threshold', ('Current', 'current'), [], '>', [(5, 0)])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('Current', 'Current', 'SmartHomeUnits.AMPERE', divisor=1000.0, cast_literal='(short)'),
+        {
+            'id': 'Over Current',
+            'type': 'Over Current',
+
+            'getters': [{
+                'packet': 'Is Over Current',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+
+            'callbacks': [{
+                'packet': 'Over Current',
+                'transform': 'OnOffType.ON'}]
+        },
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Current',
+                     description='The current of the sensor.',
+                     read_only=True,
+                     pattern='%.3f %unit%',
+                     min_=-12.5,
+                     max_=12.5),
+        oh_generic_channel_type('Over Current', 'Switch', 'Over Current',
+                     description='Enabled if more than 12.5A were measured. To reset this value you have to power cycle the Bricklet.'),
+    ]
+}
+

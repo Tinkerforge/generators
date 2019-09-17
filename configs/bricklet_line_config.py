@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -305,3 +307,19 @@ com['examples'].append({
               ('callback', ('Reflectivity Reached', 'reflectivity reached'), [(('Reflectivity', 'Reflectivity'), 'uint16', 1, None, None, None)], None, None),
               ('callback_threshold', ('Reflectivity', 'reflectivity'), [], '>', [(2000, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('Reflectivity', 'Reflectivity', 'SmartHomeUnits.ONE'),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Reflectivity', 'Number:Dimensionless', 'Reflectivity',
+                     description='The currently measured reflectivity. The reflectivity is a value between 0 (not reflective) and 4095 (very reflective).<br/><br/>Usually black has a low reflectivity while white has a high reflectivity.',
+                     read_only=True,
+                     pattern='%d',
+                     min_=0,
+                     max_=4095),
+    ]
+}

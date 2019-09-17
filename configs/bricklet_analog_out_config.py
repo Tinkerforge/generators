@@ -6,6 +6,8 @@
 
 # Analog Out Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -137,3 +139,68 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('setter', 'Set Voltage', [('uint16', 3300)], 'Set output voltage to 3.3V', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+            'id': 'Voltage',
+            'type': 'Voltage',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+            'setters':[{
+                'packet': 'Set {title_words}',
+                'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)'],
+            }],
+            'setter_command_type': 'QuantityType',
+            'setter_refreshs': [{
+                'channel': 'Mode',
+                'delay': 0
+            }],
+
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': 1000.0,
+            'is_trigger_channel': False
+        }, {
+            'id': 'Mode',
+            'type': 'Mode',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'transform': 'new QuantityType(value, SmartHomeUnits.ONE)'}],
+            'setters':[{
+                'packet': 'Set {title_words}',
+                'packet_params': ['cmd.shortValue()'],
+            }],
+            'setter_command_type': 'QuantityType',
+            'setter_refreshs': [{
+                'channel': 'Voltage',
+                'delay': 0
+            }],
+            'is_trigger_channel': False
+        }
+    ],
+    'channel_types': [
+         oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
+                     description='The output voltage. The possible range is 0V to 5V. Sending a command to this channel will set the Mode to Analog Value.',
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=5),
+         {
+            'id': 'Mode',
+            'item_type': 'Number:Dimensionless',
+            'label': 'Mode',
+            'description': 'The mode of the output. Setting the mode to Analog Value will result in an output voltage of 0. You can jump to a higher output voltage directly by sending a command to the Voltage Channel.',
+            'read_only': False,
+            'pattern': '%d',
+            'min': 0,
+            'max': 7,
+            'is_trigger_channel': False,
+            'options':[('Analog Value', 0),
+                        ('1k To Ground', 1),
+                        ('100k To Ground', 2),
+                        ('500k To Ground', 3)]
+        },
+    ]
+}

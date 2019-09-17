@@ -9,6 +9,8 @@
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -243,3 +245,71 @@ com['examples'].append({
 'functions': [('callback', ('Position Reached', 'position reached'), [(('Position', 'Position'), 'uint16', 1, None, None, (0, 100))], None, None),
               ('setter', 'Set Motor Position', [('uint16', 50), ('uint8:constant', 1), ('bool', False)], 'Move slider smooth to the middle', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Smooth Drive Mode',
+            'type': 'boolean',
+            'default': 'false',
+
+            'label': 'Smooth Drive Mode',
+            'description': ' Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.',
+        }, {
+            'name': 'Hold Position',
+            'type': 'boolean',
+            'default': 'false',
+
+            'label': 'Hold Position',
+            'description': 'If you enable the hold position flag, the position will automatically be retained. If a user changes the position of the potentiometer, it will automatically drive back to the original set point.<br/><br/>If the hold position flag disabled, the potentiometer can be changed again by the user as soon as the set point was reached once.',
+        }],
+    'channels': [
+        oh_generic_channel('Position', 'Position', 'SmartHomeUnits.ONE'),
+        {
+            'id': 'Motor Position',
+            'label': 'Motor Position',
+            'description': 'The motor position of the potentiometer. The motorized potentiometer will immediately start to approach the position. Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.<br/><br/>The position has to be between 0 (slider down) and 100 (slider up).',
+            'type': 'Motor Position',
+
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value.position{divisor}, {unit})'}],
+
+            'setters': [{
+                'packet': 'Set {title_words}',
+                'packet_params': ['cmd.intValue()', 'cfg.smoothDriveMode ? 1 : 0', 'cfg.holdPosition']
+            }],
+            'setter_command_type': 'QuantityType',
+            'java_unit': 'SmartHomeUnits.ONE',
+            'divisor': 1.0,
+            'is_trigger_channel': False
+        }, {
+            'id': 'Position Reached',
+            'type': 'system.trigger',
+
+            'label': 'Position Reached',
+            'description': 'This channel is triggered if a new position as set by the Motor Position Channel is reached.',
+
+            'callbacks': [{
+                'packet': 'Position Reached',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        },
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+                    description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
+                    read_only=True,
+                    pattern='%d %unit%',
+                    min_=0,
+                    max_=100),
+        oh_generic_channel_type('Motor Position', 'Number:Dimensionless', 'Motor Position',
+                    description='The motor position of the potentiometer. The value is between 0 (slider down) and 100 (slider up).',
+                    pattern='%d %unit%',
+                    min_=0,
+                    max_=100)
+    ]
+}
