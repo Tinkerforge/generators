@@ -138,7 +138,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'label': None,
             'description': None,
             'context': None,
-            'advanced': None,
+            'advanced': 'false',
         }
 
         oh_defaults = {
