@@ -485,7 +485,7 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
     'params': [{
-            'name': 'Moving Average Length',
+            'name': 'Average Length',
             'type': 'integer',
             'options': [('1', 1),
                         ('2', 2),
@@ -494,7 +494,7 @@ com['openhab'] = {
                         ('16', 16)],
             'limitToOptions': 'true',
             'default': 16,
-            'label': 'Moving Average Length',
+            'label': 'Average Length',
             'description': 'Available averaging sizes are 1, 2, 4, 8 and 16 samples.<br/><br/>The conversion time depends on the averaging and filter configuration, it can be calculated as follows:<ul><li>60Hz: time = 82 + (samples - 1) * 16.67</li><li>50Hz: time = 98 + (samples - 1) * 20</li></ul>'
         }, {
             'name': 'Thermocouple Type',
@@ -524,7 +524,7 @@ com['openhab'] = {
             'description': 'The frequency filter can be either configured to 50Hz or to 60Hz. You should configure it according to your utility frequency.'
         }],
     'param_groups': oh_generic_channel_param_groups(),
-    'init_code': """this.setConfiguration(cfg.movingAverageLength.shortValue(), cfg.thermocoupleType.shortValue(), cfg.frequencyFilter.shortValue());""",
+    'init_code': """this.setConfiguration(cfg.averageLength.shortValue(), cfg.thermocoupleType.shortValue(), cfg.frequencyFilter.shortValue());""",
     'channels': [
         oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
         {

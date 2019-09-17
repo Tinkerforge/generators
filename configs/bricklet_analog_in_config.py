@@ -630,14 +630,12 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
-            'name': 'Moving Average Length',
+            'name': 'Average Length',
             'type': 'integer',
             'default': 50,
-            'min': 1,
-            'max': 50,
 
-            'label': 'Moving Average Length',
-            'description': 'The length of a moving averaging for the voltage.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+            'label': 'Average Length',
+            'description': 'The length of a averaging for the voltage value.<br/><br/>Setting the length to 0 will turn the averaging completely off. If the averaging is off, there is more noise on the data, but the data is without delay.<br/><br/>The default value is 50.'
         },{
             'name': 'Measurement Range',
             'type': 'integer',
@@ -657,7 +655,7 @@ com['openhab'] = {
     'channels': [
         oh_generic_old_style_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
     ],
-    'init_code': """this.setAveraging(cfg.movingAverageLength.shortValue());
+    'init_code': """this.setAveraging(cfg.averageLength.shortValue());
     this.setRange(cfg.measurementRange.shortValue());""",
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
