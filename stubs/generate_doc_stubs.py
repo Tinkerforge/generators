@@ -312,6 +312,12 @@ Beschreibung.
     def get_element_class(self):
         return c_common.CElement
 
+    def get_doc_null_value_name(self):
+        return 'NULL'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().under
+
     def prepare(self):
         if self.get_config_name().space == 'Tinkerforge':
             name = 'doc'
@@ -325,6 +331,9 @@ Beschreibung.
                 os.makedirs(os.path.join(self.get_root_dir(), name, language, category))
 
     def generate(self, device):
+        if device.is_tng():
+            return # FIXME
+
         if self.get_config_name().space == 'Tinkerforge':
             folder = 'doc'
         else:
