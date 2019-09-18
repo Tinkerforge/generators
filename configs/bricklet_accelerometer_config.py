@@ -307,13 +307,13 @@ Configures the data rate, full scale range and filter bandwidth.
 Possible values are:
 
 * Data rate of 0Hz to 1600Hz.
-* Full scale range of -2G to +2G up to -16G to +16G.
+* Full scale range of ±2g up to ±16g.
 * Filter bandwidth between 50Hz and 800Hz.
 
 Decreasing data rate or full scale range will also decrease the noise on
 the data.
 
-The default values are 100Hz data rate, -4G to +4G range and 200Hz
+The default values are 100Hz data rate, ±4g range and 200Hz
 filter bandwidth.
 """,
 'de':
@@ -322,13 +322,13 @@ Konfiguriert die Datenrate, den Wertebereich und die Filterbandbreite.
 Mögliche Konfigurationswerte sind:
 
 * Datenrate zwischen 0Hz und 1600Hz.
-* Wertebereich von -2G bis +2G bis zu -16G bis +16G.
+* Wertebereich von ±2g bis zu ±16g.
 * Filterbandbreite zwischen 50Hz und 800Hz.
 
 Eine Verringerung der Datenrate oder des Wertebereichs verringert auch
 automatisch das Rauschen auf den Daten.
 
-Die Standardwerte sind 100Hz Datenrate, -4G bis +4G Wertebereich und 200Hz
+Die Standardwerte sind 100Hz Datenrate, ±4g Wertebereich und 200Hz
 Filterbandbreite.
 """
 }]

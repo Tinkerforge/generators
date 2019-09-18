@@ -133,12 +133,12 @@ Configures the data rate and full scale range.
 Possible values are:
 
 * Data rate of 0.781Hz to 25600Hz.
-* Full scale range of -2g to +2g up to -8g to +8g.
+* Full scale range of ±2g up to ±8g.
 
 Decreasing data rate or full scale range will also decrease the noise on
 the data.
 
-The default values are 100Hz data rate and -2g to +2g range.
+The default values are 100Hz data rate and ±2g range.
 """,
 'de':
 """
@@ -146,12 +146,12 @@ Konfiguriert die Datenrate und den Wertebereich.
 Mögliche Konfigurationswerte sind:
 
 * Datenrate zwischen 0,781Hz und 25600Hz.
-* Wertebereich von -2g bis +2g bis zu -8g bis +8g.
+* Wertebereich von ±2g bis zu ±8g.
 
 Eine Verringerung der Datenrate oder des Wertebereichs verringert auch
 automatisch das Rauschen auf den Daten.
 
-Die Standardwerte sind 100Hz Datenrate und -2g bis +2g Wertebereich.
+Die Standardwerte sind 100Hz Datenrate und ±2g Wertebereich.
 """
 }]
 })
