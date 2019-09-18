@@ -265,7 +265,7 @@ The default value is (0, false).
 """,
 'de':
 """
-Die Periode in ms ist die Periode mit der der :cb:`Statistisc`
+Die Periode in ms ist die Periode mit der der :cb:`Statistics`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
 Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
@@ -291,12 +291,12 @@ com['packets'].append({
 'en':
 """
 Returns the callback configuration as set by
-:func:`Set Statistisc Callback Configuration`.
+:func:`Set Statistics Callback Configuration`.
 """,
 'de':
 """
 Gibt die Callback-Konfiguration zurück, wie mittels
-:func:`Set Statistisc Callback Configuration` gesetzt.
+:func:`Set Statistics Callback Configuration` gesetzt.
 """
 }]
 })
