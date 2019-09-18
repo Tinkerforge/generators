@@ -91,13 +91,13 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
 'elements': [('ADC Count Zero', 'uint32', 1, 'in'),
-             ('Temperature Zero', 'int16', 1, 'in')        # 1/100 °C
+             ('Temperature Zero', 'int16', 1, 'in'),       # 1/100 °C
              ('Humidity Zero', 'int16', 1, 'in'),          # 1/100 %RH
              ('Compensation Zero Low', 'int32', 1, 'in'),  # 1/1000
              ('Compensation Zero High', 'int32', 1, 'in'), # 1/1000
              ('PPM Span', 'uint32', 1, 'in'),              # 1/100
              ('ADC Count Span', 'uint32', 1, 'in'),
-             ('Temperature Span', 'int16', 1, 'in')        # 1/100 °C
+             ('Temperature Span', 'int16', 1, 'in'),       # 1/100 °C
              ('Humidity Span', 'int16', 1, 'in'),          # 1/100 %RH
              ('Compensation Span Low', 'int32', 1, 'in'),  # 1/1000 
              ('Compensation Span High', 'int32', 1, 'in'), # 1/1000
@@ -120,19 +120,18 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
 'elements': [('ADC Count Zero', 'uint32', 1, 'out'),
-             ('Temperature Zero', 'int16', 1, 'out')        # 1/100 °C
+             ('Temperature Zero', 'int16', 1, 'out'),       # 1/100 °C
              ('Humidity Zero', 'int16', 1, 'out'),          # 1/100 %RH
              ('Compensation Zero Low', 'int32', 1, 'out'),  # 1/1000
              ('Compensation Zero High', 'int32', 1, 'out'), # 1/1000
              ('PPM Span', 'uint32', 1, 'out'),              # 1/100
              ('ADC Count Span', 'uint32', 1, 'out'),
-             ('Temperature Span', 'int16', 1, 'out'         # 1/100 °C
+             ('Temperature Span', 'int16', 1, 'out'),       # 1/100 °C
              ('Humidity Span', 'int16', 1, 'out'),          # 1/100 %RH
              ('Compensation Span Low', 'int32', 1, 'out'),  # 1/1000 
              ('Compensation Span High', 'int32', 1, 'out'), # 1/1000
-             ('Gas Type', 'uint8', 1, 'in', {'constant_group': 'Gas Type'}),
+             ('Gas Type', 'uint8', 1, 'out', {'constant_group': 'Gas Type'}),
              ('Sensitivity', 'int32', 1, 'out')],           # 1/100 nA/PPM
-
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
