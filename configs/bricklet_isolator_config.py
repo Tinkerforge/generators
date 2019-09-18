@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2122,
     'name': 'Isolator',
@@ -238,6 +238,91 @@ Die Fehler sind aufgeteilt in
 * Message-Checksummen Fehler,
 * Framing Fehler und
 * Overflow Fehler.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Statistics Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in'),
+             ('Value Has To Change', 'bool', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['ccf', {
+'en':
+"""
+The period in ms is the period with which the :cb:`Statistics`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+
+The default value is (0, false).
+""",
+'de':
+"""
+Die Periode in ms ist die Periode mit der der :cb:`Statistisc`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+
+Der Standardwert ist (0, false).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Statistics Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out'),
+             ('Value Has To Change', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set Statistisc Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Statistisc Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Statistics',
+'elements': [('Messages From Brick', 'uint32', 1, 'out'),
+             ('Messages From Bricklet', 'uint32', 1, 'out'),
+             ('Connected Bricklet Device Identifier', 'uint16', 1, 'out'),
+             ('Connected Bricklet UID', 'string', 8, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically according to the configuration set by
+:func:`Set Statistics Callback Configuration`.
+
+The :word:`parameters` are the same as :func:`Get Statistics`.
+""",
+'de':
+"""
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set Statistics Callback Configuration` gesetzten Konfiguration
+
+Die :word:`parameters` sind der gleiche wie :func:`Get Statistics`.
 """
 }]
 })
