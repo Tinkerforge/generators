@@ -103,7 +103,6 @@ com['packets'].append({
              ('Compensation Span High', 'int32', 1, 'in'), # 1/1000
              ('Temperature Offset', 'int16', 1, 'in'),     # 1/100 °C
              ('Humidity Offset', 'int16', 1, 'in'),        # 1/100 %RH
-             ('Gas Type', 'uint8', 1, 'in', {'constant_group': 'Gas Type'}),
              ('Sensitivity', 'int32', 1, 'in')],           # 1/100 nA/PPM
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -134,7 +133,6 @@ com['packets'].append({
              ('Compensation Span High', 'int32', 1, 'out'), # 1/1000
              ('Temperature Offset', 'int16', 1, 'out'),     # 1/100 °C
              ('Humidity Offset', 'int16', 1, 'out'),        # 1/100 %RH
-             ('Gas Type', 'uint8', 1, 'out', {'constant_group': 'Gas Type'}),
              ('Sensitivity', 'int32', 1, 'out')],           # 1/100 nA/PPM
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
