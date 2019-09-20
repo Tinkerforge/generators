@@ -359,34 +359,34 @@ com['packets'].append({
 """
 Sets the counter configuration for the given channel.
 
-* Count Edge: Counter can count on rising, falling or both edges.
+* Count Edge: Counter can count on rising, falling or both edges. Default is rising.
 * Count Direction: Counter can count up or down. You can also use
   another channel as direction input, see
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
-  for details.
+  for details. Default is up.
 * Duty Cycle Prescaler: Sets a divider for the internal clock. See
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
-  for details.
+  for details. Default is 1.
 * Frequency Integration Time: Sets the integration time for the
   frequency measurement. See
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
-  for details.
+  for details. Default is 1024ms.
 """,
 'de':
 """
 Setzt die Zähler-Konfiguration für den gegebenen Kanal.
 
-* Zählflanke: Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen.
+* Zählflanke: Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen. Standardwert ist steigend.
 * Zählrichtung: Der Zähler kann hoch- oder runterzählen. Es kann auch ein weiterer
   Kanal als Richtungseingang genutzt werden. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
-  für weitere Details.
+  für weitere Details. Standardwert ist hochzählend.
 * Tastverhältnis Prescaler: Setzt einen Teiler für die interne Clock. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__
-  für weitere Details.
+  für weitere Details. Standardwert ist 1.
 * Frequenz-Integration: Setzt die Integrationszeit für die Frequenzmessung. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__
-  für weitere Details.
+  für weitere Details. Standardwert ist 1024ms.
 """
 }]
 })

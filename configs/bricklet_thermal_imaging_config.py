@@ -364,17 +364,17 @@ influence the previous HEQ transformation function has on the current function. 
 lower the value of N the higher the influence of the current video frame whereas
 the higher the value of N the more influence the previous damped transfer function has.
 
-Clip Limit Index 0 (AGC HEQ Clip Limit Low): This parameter defines an artificial population that is added to
+Clip Limit Index 0 (AGC HEQ Clip Limit High): This parameter defines the maximum number of pixels allowed
+to accumulate in any given histogram bin. Any additional pixels in a given bin are clipped.
+The effect of this parameter is to limit the influence of highly-populated bins on the
+resulting HEQ transformation function.
+
+Clip Limit Index 1 (AGC HEQ Clip Limit Low): This parameter defines an artificial population that is added to
 every non-empty histogram bin. In other words, if the Clip Limit Low is set to L, a bin
 with an actual population of X will have an effective population of L + X. Any empty bin
 that is nearby a populated bin will be given an artificial population of L. The effect of
 higher values is to provide a more linear transfer function; lower values provide a more
 non-linear (equalized) transfer function.
-
-Clip Limit Index 1 (AGC HEQ Clip Limit High): This parameter defines the maximum number of pixels allowed
-to accumulate in any given histogram bin. Any additional pixels in a given bin are clipped.
-The effect of this parameter is to limit the influence of highly-populated bins on the
-resulting HEQ transformation function.
 
 Empty Counts: This parameter specifies the maximum number of pixels in a bin that will be
 interpreted as an empty bin. Histogram bins with this number of pixels or less will be
@@ -384,16 +384,16 @@ The default values are
 
 * Region Of Interest = (0, 0, 79, 59),
 * Dampening Factor = 64,
-* Clip Limit = (512, 4800) and
+* Clip Limit = (4800, 512) and
 * Empty Counts = 2.
 """,
 'de':
 """
-Setzt die *Region of Interest* für das High Contrast Image, den *Dampening Faktor*, das
-*Clip Limit* und die *Empty Counts*. Diese Konfiguration wird nur im *High Contrast Modus*
+Setzt die Region of Interest für das High Contrast Image, den Dampening Faktor, das
+Clip Limit und die Empty Counts. Diese Konfiguration wird nur im High Contrast Modus
 genutzt (siehe :func:`Set Image Transfer Config`).
 
-Die *High Contrast Region of Interest* besteht aus vier Werten:
+Die High Contrast Region of Interest besteht aus vier Werten:
 
 * Index 0: Spaltenstart (muss kleiner sein wie Spaltenende).
 * Index 1: Zeilenstart (muss kleiner sein wie Zeilenende).
@@ -402,7 +402,7 @@ Die *High Contrast Region of Interest* besteht aus vier Werten:
 
 Der Algorithmus zum Erzeugen eines High Contrast Images wird auf diese Region angewandt.
 
-*Dampening Factor*: Dieser Parameter stellt die Stärke der zeitlichen Dämpfung dar, die auf der
+Dampening Factor: Dieser Parameter stellt die Stärke der zeitlichen Dämpfung dar, die auf der
 HEQ (History Equalization) Transformationsfunktion angewendet wird. Ein IIR-Filter der
 Form::
 
@@ -415,19 +415,19 @@ auf die aktuelle ist. Umso niedriger der Wert von N um so größer ist der Einfl
 aktuellen Bildes. Umso größer der Wert von N umso kleiner ist der Einfluss der vorherigen
 Dämpfungs-Transferfunktion.
 
-*Clip Limit Index 0 (AGC HEQ Clip Limit Low)*: Dieser Parameter definiert einen künstliche Menge,
-die jeder nicht leeren Histogrammklasse hinzugefügt wird. Wenn *Clip Limit Low* mit L dargestellt
+Clip Limit Index 0 (AGC HEQ Clip Limit High): Dieser Parameter definiert die maximale Anzahl
+an Pixeln, die sich in jeder Histogrammklasse sammeln dürfen. Jedes weitere Pixel wird verworfen.
+Der Effekt dieses Parameters ist den Einfluss von stark gefüllten Klassen in der HEQ Transformation
+zu beschränken.
+
+Clip Limit Index 1 (AGC HEQ Clip Limit Low): Dieser Parameter definiert einen künstliche Menge,
+die jeder nicht leeren Histogrammklasse hinzugefügt wird. Wenn Clip Limit Low mit L dargestellt
 wird, so erhält jede Klasse mit der aktuellen Menge X die effektive Menge L + X. Jede Klasse, die
 nahe einer gefüllten Klasse ist erhält die Menge L. Der Effekt von höheren Werten ist eine stärkere
 lineare Transferfunktion bereitzustellen. Niedrigere Werte führen zu einer nichtlinearen
 Transferfunktion.
 
-*Clip Limit Index 1 (AGC HEQ Clip Limit High)*: Dieser Parameter definiert die maximale Anzahl
-an Pixeln, die sich in jeder Histogrammklasse sammeln dürfen. Jedes weitere Pixel wird verworfen.
-Der Effekt dieses Parameters ist den Einfluss von stark gefüllten Klassen in der HEQ Transformation
-zu beschränken.
-
-*Empty Counts*: Dieser Parameter spezifiziert die maximale Anzahl von Pixeln in einer Klasse, damit
+Empty Counts: Dieser Parameter spezifiziert die maximale Anzahl von Pixeln in einer Klasse, damit
 die Klasse als leere Klasse interpretiert wird. Jede Histogrammklasse mit dieser Anzahl an Pixeln oder
 weniger wird als leere Klasse behandelt.
 
@@ -435,7 +435,7 @@ Die Standardwerte sind:
 
 * Region Of Interest = (0, 0, 79, 59),
 * Dampening Factor = 64,
-* Clip Limit = (512, 4800) und
+* Clip Limit = (4800, 512) und
 * Empty Counts = 2.
 """
 }]

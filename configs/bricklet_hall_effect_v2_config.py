@@ -130,8 +130,8 @@ Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.
 
 Die Standardwerte sind
 
-* Unterer Schwellwert: 2000µT
-* Oberer Schwellwert: -2000µT
+* Oberer Schwellwert: 2000µT
+* Unterer Schwellwert: -2000µT
 * Entprellzeit: 100000µs (100ms)
 """
 }]
