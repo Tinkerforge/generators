@@ -466,7 +466,7 @@ com['openhab'] = {
 this.setMovingAverageConfiguration(cfg.airPressureMovingAverageLength, cfg.temperatureMovingAverageLength);
 this.setSensorConfiguration(cfg.dataRate, cfg.airPressureLowPassFilter);""",
     'channels': [
-        oh_generic_channel('Air Pressure', 'Air Pressure', 'SmartHomeUnits.MILLIBAR', divisor=1000.0),
+        oh_generic_channel('Air Pressure', 'Air Pressure', 'SmartHomeUnits.BAR', divisor=1000000.0),
         oh_generic_channel('Altitude', 'Altitude', 'SIUnits.METRE', divisor=1000.0),
         oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
     ],
@@ -474,7 +474,7 @@ this.setSensorConfiguration(cfg.dataRate, cfg.airPressureLowPassFilter);""",
         oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
                     description='Measured air pressure',
                     read_only=True,
-                    pattern='%.2f %unit%',
+                    pattern='%.5f %unit%',
                     min_=260,
                     max_=1260),
         oh_generic_channel_type('Altitude', 'Number:Length', 'Altitude',
