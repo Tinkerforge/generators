@@ -227,8 +227,7 @@ Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Configuration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })

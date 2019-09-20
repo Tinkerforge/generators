@@ -163,8 +163,7 @@ Returns the position of the specified servo as set by :func:`Set Position`.
 """,
 'de':
 """
-Gibt die Position des angegebenen Servos zurück, wie von :func:`Set Position`
-gesetzt.
+Gibt die Position des angegebenen Servos zurück, wie von :func:`Set Position` gesetzt.
 """
 }]
 })
@@ -596,8 +595,7 @@ Returns the period for the specified servo as set by :func:`Set Period`.
 """,
 'de':
 """
-Gibt die Periode für den angegebenen Servo zurück, wie von :func:`Set Period`
-gesetzt.
+Gibt die Periode für den angegebenen Servo zurück, wie von :func:`Set Period` gesetzt.
 """
 }]
 })

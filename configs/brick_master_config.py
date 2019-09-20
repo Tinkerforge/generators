@@ -296,8 +296,7 @@ Returns the type for a given extension as set by :func:`Set Extension Type`.
 """,
 'de':
 """
-Gibt den Typ der angegebenen Extension zurück, wie von :func:`Set Extension Type`
-gesetzt.
+Gibt den Typ der angegebenen Extension zurück, wie von :func:`Set Extension Type` gesetzt.
 """
 }]
 })
@@ -853,8 +852,7 @@ Returns the configuration as set by :func:`Set RS485 Configuration`.
 """,
 'de':
 """
-Gibt die Schnittstellenkonfiguration zurück, wie von :func:`Set RS485 Configuration`
-gesetzt.
+Gibt die Schnittstellenkonfiguration zurück, wie von :func:`Set RS485 Configuration` gesetzt.
 """
 }]
 })
@@ -970,8 +968,7 @@ Returns the configuration as set by :func:`Set Wifi Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Wifi Configuration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Wifi Configuration` gesetzt.
 """
 }]
 })
@@ -1581,8 +1578,7 @@ Returns the period as set by :func:`Set Stack Current Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Stack Current Callback Period`
-gesetzt
+Gibt die Periode zurück, wie von :func:`Set Stack Current Callback Period` gesetzt
 """
 }]
 })
@@ -1628,8 +1624,7 @@ Returns the period as set by :func:`Set Stack Voltage Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Stack Voltage Callback Period`
-gesetzt
+Gibt die Periode zurück, wie von :func:`Set Stack Voltage Callback Period` gesetzt
 """
 }]
 })
@@ -1675,8 +1670,7 @@ Returns the period as set by :func:`Set USB Voltage Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set USB Voltage Callback Period`
-gesetzt
+Gibt die Periode zurück, wie von :func:`Set USB Voltage Callback Period` gesetzt
 """
 }]
 })
@@ -1742,8 +1736,7 @@ Returns the threshold as set by :func:`Set Stack Current Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Stack Current Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Stack Current Callback Threshold` gesetzt.
 """
 }]
 })
@@ -1809,8 +1802,7 @@ Returns the threshold as set by :func:`Set Stack Voltage Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Stack Voltage Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Stack Voltage Callback Threshold` gesetzt.
 """
 }]
 })
@@ -1876,8 +1868,7 @@ Returns the threshold as set by :func:`Set USB Voltage Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set USB Voltage Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set USB Voltage Callback Threshold` gesetzt.
 """
 }]
 })
@@ -1939,8 +1930,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })
@@ -2213,8 +2203,7 @@ Returns the configuration as set by :func:`Set Ethernet Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Ethernet Configuration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Ethernet Configuration` gesetzt.
 """
 }]
 })
@@ -2372,8 +2361,7 @@ Returns the configuration as set by :func:`Set Ethernet Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Ethernet Configuration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Ethernet Configuration` gesetzt.
 """
 }]
 })
@@ -2787,8 +2775,7 @@ Returns the general configuration as set by :func:`Set Wifi2 Configuration`.
 """,
 'de':
 """
-Gibt die allgemeine Konfiguration zurück, wie von :func:`Set Wifi2 Configuration`
-gesetzt.
+Gibt die allgemeine Konfiguration zurück, wie von :func:`Set Wifi2 Configuration` gesetzt.
 """
 }]
 })
@@ -2971,8 +2958,7 @@ Returns the client hostname as set by :func:`Set Wifi2 Client Hostname`.
 """,
 'de':
 """
-Gibt den Client Hostnamen zurück, wie von :func:`Set Wifi2 Client Hostname`
-gesetzt.
+Gibt den Client Hostnamen zurück, wie von :func:`Set Wifi2 Client Hostname` gesetzt.
 """
 }]
 })
@@ -3023,8 +3009,7 @@ Returns the client password as set by :func:`Set Wifi2 Client Password`.
 """,
 'de':
 """
-Gibt das Client-Passwort zurück, wie von :func:`Set Wifi2 Client Password`
-gesetzt.
+Gibt das Client-Passwort zurück, wie von :func:`Set Wifi2 Client Password` gesetzt.
 
 .. note::
  Seit WIFI Extension 2.0 Firmware Version 2.1.3 wird das Passwort
@@ -3195,8 +3180,7 @@ Returns the access point password as set by :func:`Set Wifi2 AP Password`.
 """,
 'de':
 """
-Gibt das Access-Point-Passwort zurück, wie von :func:`Set Wifi2 AP Password`
-gesetzt.
+Gibt das Access-Point-Passwort zurück, wie von :func:`Set Wifi2 AP Password` gesetzt.
 
 .. note::
  Seit WIFI Extension 2.0 Firmware Version 2.1.3 wird das Passwort
@@ -3413,8 +3397,7 @@ Returns the mesh configuration as set by :func:`Set Wifi2 Mesh Configuration`.
 """
 Benötigt WIFI Extension 2.0 Firmware 2.1.0.
 
-Gibt das Mesh Konfiguration zurück, wie von :func:`Set Wifi2 Mesh Configuration`
-gesetzt.
+Gibt das Mesh Konfiguration zurück, wie von :func:`Set Wifi2 Mesh Configuration` gesetzt.
 """
 }]
 })
@@ -3481,8 +3464,7 @@ Returns the mesh router SSID as set by :func:`Set Wifi2 Mesh Router SSID`.
 """
 Benötigt WIFI Extension 2.0 Firmware 2.1.0.
 
-Gibt das Mesh-Router-SSID zurück, wie von :func:`Set Wifi2 Mesh Router SSID`
-gesetzt.
+Gibt das Mesh-Router-SSID zurück, wie von :func:`Set Wifi2 Mesh Router SSID` gesetzt.
 """
 }]
 })
@@ -3539,8 +3521,7 @@ Returns the mesh router password as set by :func:`Set Wifi2 Mesh Router Password
 """
 Benötigt WIFI Extension 2.0 Firmware 2.1.0.
 
-Gibt das Mesh-Router-Password zurück, wie von :func:`Set Wifi2 Mesh Router Password`
-gesetzt.
+Gibt das Mesh-Router-Password zurück, wie von :func:`Set Wifi2 Mesh Router Password` gesetzt.
 """
 }]
 })

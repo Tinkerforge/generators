@@ -204,8 +204,8 @@ In diesem Fall müssten also die Werte 2556 und 3000 gesetzt werden.
 Die Kalibrierung wird in nicht-flüchtigem Speicher gespeichert und muss nur einmal
 gesetzt werden.
 
-Im Auslieferungszustand ist das Spannungsverhältnis auf 1923 und das Stromverhältnis auf 3000
-gesetzt.
+Im Auslieferungszustand ist das Spannungsverhältnis auf 1923 und das
+Stromverhältnis auf 3000 gesetzt.
 
 Der Parameter *Phase Shift* muss auf 0 gesetzt werden. Dieser Parameter wird
 aktuell von der Firmware nicht genutzt.

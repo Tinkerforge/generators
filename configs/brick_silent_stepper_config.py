@@ -247,8 +247,7 @@ Returns the acceleration and deacceleration as set by
 """,
 'de':
 """
-Gibt die Beschleunigung und Verzögerung zurück, wie von :func:`Set Speed Ramping`
-gesetzt.
+Gibt die Beschleunigung und Verzögerung zurück, wie von :func:`Set Speed Ramping` gesetzt.
 """
 }]
 })
@@ -375,8 +374,7 @@ Returns the last target position as set by :func:`Set Target Position`.
 """,
 'de':
 """
-Gibt die letzte Zielposition zurück, wie von :func:`Set Target Position`
-gesetzt.
+Gibt die letzte Zielposition zurück, wie von :func:`Set Target Position` gesetzt.
 """
 }]
 })

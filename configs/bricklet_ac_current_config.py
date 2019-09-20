@@ -126,8 +126,7 @@ Returns the period as set by :func:`Set Current Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Current Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Current Callback Period` gesetzt.
 """
 }]
 })
@@ -173,8 +172,7 @@ Returns the period as set by :func:`Set Analog Value Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Analog Value Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Analog Value Callback Period` gesetzt.
 """
 }]
 })
@@ -240,8 +238,7 @@ Returns the threshold as set by :func:`Set Current Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Current Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Current Callback Threshold` gesetzt.
 """
 }]
 })
@@ -307,8 +304,7 @@ Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Analog Value Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Analog Value Callback Threshold` gesetzt.
 """
 }]
 })
@@ -366,8 +362,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })

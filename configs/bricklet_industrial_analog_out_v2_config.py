@@ -377,8 +377,7 @@ Returns the Out LED status configuration as set by :func:`Set Out LED Status Con
 """,
 'de':
 """
-Gibt die Out-LED-Status-Konfiguration zurück, wie von :func:`Set Out LED Status Config`
-gesetzt.
+Gibt die Out-LED-Status-Konfiguration zurück, wie von :func:`Set Out LED Status Config` gesetzt.
 """
 }]
 })

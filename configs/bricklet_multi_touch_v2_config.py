@@ -251,8 +251,7 @@ Returns the electrode configuration, as set by :func:`Set Electrode Config`.
 """,
 'de':
 """
-Gibt die Elektrodenkonfiguration zurück, wie von :func:`Set Electrode Config`
-gesetzt.
+Gibt die Elektrodenkonfiguration zurück, wie von :func:`Set Electrode Config` gesetzt.
 """
 }]
 })

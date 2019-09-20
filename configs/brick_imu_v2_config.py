@@ -760,8 +760,7 @@ Returns the period as set by :func:`Set Linear Acceleration Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Linear Acceleration Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Linear Acceleration Period` gesetzt.
 """
 }]
 })

@@ -317,8 +317,7 @@ Returns the period as set by :func:`Set Coordinates Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Coordinates Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Coordinates Callback Period` gesetzt.
 """
 }]
 })
@@ -364,8 +363,7 @@ Returns the period as set by :func:`Set Status Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Status Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Status Callback Period` gesetzt.
 """
 }]
 })
@@ -411,8 +409,7 @@ Returns the period as set by :func:`Set Altitude Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Altitude Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Altitude Callback Period` gesetzt.
 """
 }]
 })
@@ -458,8 +455,7 @@ Returns the period as set by :func:`Set Motion Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Motion Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Motion Callback Period` gesetzt.
 """
 }]
 })
@@ -505,8 +501,7 @@ Returns the period as set by :func:`Set Date Time Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period` gesetzt.
 """
 }]
 })

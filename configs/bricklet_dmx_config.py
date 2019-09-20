@@ -266,8 +266,7 @@ Returns the frame duration as set by :func:`Set Frame Duration`.
 """,
 'de':
 """
-Gibt die Frame duration zurück die mittels :func:`Set Frame Duration`
-gesetzt wurde.
+Gibt die Frame duration zurück die mittels :func:`Set Frame Duration` gesetzt wurde.
 """
 }]
 })

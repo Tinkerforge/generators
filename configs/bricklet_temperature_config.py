@@ -112,8 +112,7 @@ Returns the period as set by :func:`Set Temperature Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Temperature Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Temperature Callback Period` gesetzt.
 """
 }]
 })
@@ -179,8 +178,7 @@ Returns the threshold as set by :func:`Set Temperature Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Temperature Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Temperature Callback Threshold` gesetzt.
 """
 }]
 })
@@ -234,8 +232,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })

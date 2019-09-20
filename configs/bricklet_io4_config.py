@@ -241,8 +241,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })

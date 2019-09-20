@@ -233,8 +233,7 @@ Returns the configuration as set by :func:`Set Station Callback Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück wie von :func:`Set Station Callback Configuration`
-gesetzt.
+Gibt die Konfiguration zurück wie von :func:`Set Station Callback Configuration` gesetzt.
 """
 }]
 })
@@ -269,8 +268,7 @@ Returns the configuration as set by :func:`Set Sensor Callback Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück wie von :func:`Set Sensor Callback Configuration`
-gesetzt.
+Gibt die Konfiguration zurück wie von :func:`Set Sensor Callback Configuration` gesetzt.
 """
 }]
 })

@@ -152,8 +152,7 @@ Returns the period as set by :func:`Set Color Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Color Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Color Callback Period` gesetzt.
 """
 }]
 })
@@ -231,8 +230,7 @@ Returns the threshold as set by :func:`Set Color Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Color Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Color Callback Threshold` gesetzt.
 """
 }]
 })
@@ -286,8 +284,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })
@@ -492,8 +489,7 @@ Returns the configuration as set by :func:`Set Config`.
 """,
 'de':
 """
-Gibt die Einstellungen zurück, wie von :func:`Set Config`
-gesetzt.
+Gibt die Einstellungen zurück, wie von :func:`Set Config` gesetzt.
 """
 }]
 })
@@ -601,8 +597,7 @@ Returns the period as set by :func:`Set Illuminance Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Illuminance Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Illuminance Callback Period` gesetzt.
 """
 }]
 })
@@ -648,8 +643,7 @@ Returns the period as set by :func:`Set Color Temperature Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Color Temperature Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Color Temperature Callback Period` gesetzt.
 """
 }]
 })

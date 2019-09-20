@@ -290,8 +290,7 @@ Returns the period as set by :func:`Set Date Time Callback Configuration`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Date Time Callback Configuration`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Date Time Callback Configuration` gesetzt.
 """
 }]
 })

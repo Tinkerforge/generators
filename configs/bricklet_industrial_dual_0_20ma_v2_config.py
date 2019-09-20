@@ -162,8 +162,7 @@ Returns the gain as set by :func:`Set Sample Rate`.
 """,
 'de':
 """
-Gibt die Verstärkung zurück, wie von :func:`Set Sample Rate`
-gesetzt.
+Gibt die Verstärkung zurück, wie von :func:`Set Sample Rate` gesetzt.
 """
 }]
 })

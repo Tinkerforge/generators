@@ -247,8 +247,7 @@ Returns the reference air pressure as set by :func:`Set Reference Air Pressure`.
 """,
 'de':
 """
-Gibt den Referenzluftdruckwert zurück, wie von :func:`Set Reference Air Pressure`
-gesetzt.
+Gibt den Referenzluftdruckwert zurück, wie von :func:`Set Reference Air Pressure` gesetzt.
 """
 }]
 })
@@ -374,8 +373,7 @@ Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
 """,
 'de':
 """
-Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration`
-gesetzt.
+Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration` gesetzt.
 """
 }]
 })

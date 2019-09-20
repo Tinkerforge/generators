@@ -139,8 +139,7 @@ Returns the sample rate as set by :func:`Set Sample Rate`.
 """,
 'de':
 """
-Gibt die Abtastrate zurück, wie von :func:`Set Sample Rate`
-gesetzt.
+Gibt die Abtastrate zurück, wie von :func:`Set Sample Rate` gesetzt.
 """
 }]
 })

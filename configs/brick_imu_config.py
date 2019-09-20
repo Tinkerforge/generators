@@ -517,8 +517,7 @@ Returns the convergence speed as set by :func:`Set Convergence Speed`.
 """,
 'de':
 """
-Gibt die Konvergenzgeschwindigkeit zurück, wie von :func:`Set Convergence Speed`
-gesetzt.
+Gibt die Konvergenzgeschwindigkeit zurück, wie von :func:`Set Convergence Speed` gesetzt.
 """
 }]
 })

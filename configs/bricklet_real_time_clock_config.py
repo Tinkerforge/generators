@@ -288,8 +288,7 @@ Returns the period as set by :func:`Set Date Time Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period` gesetzt.
 """
 }]
 })

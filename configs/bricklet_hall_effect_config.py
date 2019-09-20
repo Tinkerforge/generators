@@ -250,8 +250,7 @@ Returns the period as set by :func:`Set Edge Count Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Edge Count Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Edge Count Callback Period` gesetzt.
 """
 }]
 })

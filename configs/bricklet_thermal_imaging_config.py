@@ -326,8 +326,7 @@ Returns the spotmeter config as set by :func:`Set Spotmeter Config`.
 """,
 'de':
 """
-Gibt die Spotmeter Konfiguration zurück, wie von :func:`Set Spotmeter Config`
-gesetzt.
+Gibt die Spotmeter Konfiguration zurück, wie von :func:`Set Spotmeter Config` gesetzt.
 """
 }]
 })

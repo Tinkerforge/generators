@@ -215,8 +215,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })
@@ -249,8 +248,7 @@ z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 Beispiel: Eine Interrupt Bitmaske von 9 bzw. 0b1001 aktiviert den Interrupt für
 die Pins 0 und 3.
 
-Die Interrupts benutzen die Gruppierung, wie von :func:`Set Group`
-gesetzt.
+Die Interrupts benutzen die Gruppierung, wie von :func:`Set Group` gesetzt.
 
 Der Interrupt wird mit dem :cb:`Interrupt` Callback zugestellt.
 """

@@ -232,8 +232,7 @@ Returns the configuration as set by :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Configuration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 """
 }]
 })
@@ -282,8 +281,7 @@ Returns the calibration as set by :func:`Set Calibration`.
 """,
 'de':
 """
-Gibt die Kalibrierung zurück, wie von :func:`Set Calibration`
-gesetzt.
+Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
 """
 }]
 })
@@ -329,8 +327,7 @@ Returns the period as set by :func:`Set Current Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Current Callback Period`
-gesetzt
+Gibt die Periode zurück, wie von :func:`Set Current Callback Period` gesetzt
 """
 }]
 })
@@ -376,8 +373,7 @@ Returns the period as set by :func:`Set Voltage Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Voltage Callback Period`
-gesetzt
+Gibt die Periode zurück, wie von :func:`Set Voltage Callback Period` gesetzt
 """
 }]
 })
@@ -423,8 +419,7 @@ Returns the period as set by :func:`Get Power Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Get Power Callback Period`
-gesetzt
+Gibt die Periode zurück, wie von :func:`Get Power Callback Period` gesetzt
 """
 }]
 })
@@ -490,8 +485,7 @@ Returns the threshold as set by :func:`Set Current Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Current Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Current Callback Threshold` gesetzt.
 """
 }]
 })
@@ -557,8 +551,7 @@ Returns the threshold as set by :func:`Set Voltage Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Voltage Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Voltage Callback Threshold` gesetzt.
 """
 }]
 })
@@ -624,8 +617,7 @@ Returns the threshold as set by :func:`Set Power Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Power Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Power Callback Threshold` gesetzt.
 """
 }]
 })
@@ -687,8 +679,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })

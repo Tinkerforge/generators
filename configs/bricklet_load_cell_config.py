@@ -116,8 +116,7 @@ Returns the period as set by :func:`Set Weight Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Weight Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Weight Callback Period` gesetzt.
 """
 }]
 })
@@ -183,8 +182,7 @@ Returns the threshold as set by :func:`Set Weight Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Weight Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Weight Callback Threshold` gesetzt.
 """
 }]
 })
@@ -238,8 +236,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })

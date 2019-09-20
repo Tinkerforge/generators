@@ -205,8 +205,7 @@ Returns the configuration as set by :func:`Set Communication LED Config`
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` gesetzt.
 """
 }]
 })

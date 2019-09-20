@@ -135,8 +135,7 @@ Returns the period as set by :func:`Set Air Pressure Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Air Pressure Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Air Pressure Callback Period` gesetzt.
 """
 }]
 })
@@ -182,8 +181,7 @@ Returns the period as set by :func:`Set Altitude Callback Period`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`Set Altitude Callback Period`
-gesetzt.
+Gibt die Periode zurück, wie von :func:`Set Altitude Callback Period` gesetzt.
 """
 }]
 })
@@ -249,8 +247,7 @@ Returns the threshold as set by :func:`Set Air Pressure Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Air Pressure Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Air Pressure Callback Threshold` gesetzt.
 """
 }]
 })
@@ -316,8 +313,7 @@ Returns the threshold as set by :func:`Set Altitude Callback Threshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`Set Altitude Callback Threshold`
-gesetzt.
+Gibt den Schwellwert zurück, wie von :func:`Set Altitude Callback Threshold` gesetzt.
 """
 }]
 })
@@ -375,8 +371,7 @@ Returns the debounce period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period`
-gesetzt.
+Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 """
 }]
 })
@@ -570,8 +565,7 @@ Returns the reference air pressure as set by :func:`Set Reference Air Pressure`.
 """,
 'de':
 """
-Gibt den Referenzluftdruckwert zurück, wie von :func:`Set Reference Air Pressure`
-gesetzt.
+Gibt den Referenzluftdruckwert zurück, wie von :func:`Set Reference Air Pressure` gesetzt.
 """
 }]
 })
@@ -645,8 +639,7 @@ Returns the averaging configuration as set by :func:`Set Averaging`.
 """,
 'de':
 """
-Gibt die Averaging-Konfiguration zurück, wie von :func:`Set Averaging`
-gesetzt.
+Gibt die Averaging-Konfiguration zurück, wie von :func:`Set Averaging` gesetzt.
 """
 }]
 })

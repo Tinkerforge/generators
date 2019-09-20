@@ -249,8 +249,7 @@ Returns the configuration as set by :func:`Set State Changed Callback Configurat
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set State Changed Callback Configuration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set State Changed Callback Configuration` gesetzt.
 """
 }]
 })

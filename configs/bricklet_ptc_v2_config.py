@@ -324,8 +324,7 @@ Returns the configuration as set by :func:`Set Sensor Connected Callback Configu
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`Set Sensor Connected Callback Configuration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`Set Sensor Connected Callback Configuration` gesetzt.
 """
 }]
 })
