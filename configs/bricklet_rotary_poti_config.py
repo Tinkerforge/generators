@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -504,3 +506,19 @@ com['examples'].append({
 'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'int16', 1, None, None, (-150, 150))], None, None),
               ('callback_period', ('Position', 'position'), [], 50)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('Position', 'Position', 'SmartHomeUnits.DEGREE_ANGLE', cast_literal='(short)')
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Position', 'Number:Angle', 'Position',
+                     description='The position of the rotary potentiometer. The value is and between -150° (turned left) and 150° (turned right).',
+                     read_only=True,
+                     pattern='%d %unit%',
+                     min_=-150,
+                     max_=150)
+    ]
+}

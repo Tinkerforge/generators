@@ -6,6 +6,8 @@
 
 # Thermal Imaging Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -597,3 +599,322 @@ com['examples'].append({
               ('setter', 'Set Image Transfer Config', [('uint8:constant', 2)], 'Enable high contrast image transfer for callback', None)],
 'incomplete': True # because of callback with array parameters
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Image Type',
+            'type': 'integer',
+            'options': [('High Contrast Image', 0),
+                        ('Linear Temperature Image', 1)],
+            'limitToOptions': 'true',
+            'default': '0',
+
+            'label': 'Image Type',
+            'description': 'The necessary bandwidth of this Bricklet is too high to use the high contrast and temperature image at the same time. You have to configure the one you want to use, the Bricklet will optimize the internal configuration accordingly.',
+        }, {
+            'name': 'Resolution',
+            'type': 'integer',
+            'options': [('0 To 6553 Kelvin', 0),
+                        ('0 To 655 Kelvin', 1)],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Resolution',
+            'description': 'The Thermal Imaging Bricklet can either measure<ul><li>from 0 to 6553 Kelvin (-273.15°C to +6279.85°C) with 0.1°C resolution or</li><li>from 0 to 655 Kelvin (-273.15°C to +381.85°C) with 0.01°C resolution.</li></ul><br/>The accuracy is specified for -10°C to 450°C in the first range and -10°C and 140°C in the second range.',
+        }, {
+            'name': 'Spotmeter Column Start',
+            'type': 'integer',
+            'min': '0',
+            'max': '79',
+            'default': '39',
+
+            'label': 'Spotmeter Column Start',
+            'description': 'First column of the spotmeter region of interest.',
+        }, {
+            'name': 'Spotmeter Row Start',
+            'type': 'integer',
+            'min': '0',
+            'max': '59',
+            'default': '29',
+
+            'label': 'Spotmeter Row Start',
+            'description': 'First row of the spotmeter region of interest.',
+        }, {
+            'name': 'Spotmeter Column End',
+            'type': 'integer',
+            'min': '0',
+            'max': '79',
+            'default': '40',
+
+            'label': 'Spotmeter Column End',
+            'description': 'Last column of the spotmeter region of interest.',
+        }, {
+            'name': 'Spotmeter Row End',
+            'type': 'integer',
+            'min': '0',
+            'max': '59',
+            'default': '30',
+
+            'label': 'Spotmeter Row End',
+            'description': 'Last row of the spotmeter region of interest.',
+        }],
+    'init_code': """this.setImageTransferConfig(cfg.imageType);
+    this.setResolution(cfg.resolution);
+    this.setSpotmeterConfig(new int[]{cfg.spotmeterColumnStart, cfg.spotmeterRowStart, cfg.spotmeterColumnEnd, cfg.spotmeterRowEnd});""",
+    'channels': [{
+        'predicate': 'cfg.imageType == 0',
+        'id': 'High Contrast Image',
+        'label': 'High Contrast Image',
+        'type': 'High Contrast Image',
+
+        'init_code': """this.setHighContrastConfig(new int[]{{channelCfg.highContrastColumnStart, channelCfg.highContrastRowStart, channelCfg.highContrastColumnEnd, channelCfg.highContrastRowEnd}}, channelCfg.dampeningFactor, new int[]{{channelCfg.clipLimitHigh, channelCfg.clipLimitLow}}, channelCfg.emptyCounts);""",
+
+        'getters': [{
+            'packet': 'Get {title_words}',
+            'packet_params': [],
+            'transform': 'new RawType(Helper.convertThermalHighContrastImage(value, logger), "image/png")'}],
+        'is_trigger_channel': False
+    }, {
+        'predicate': 'cfg.imageType == 1',
+        'id': 'Temperature Image',
+        'label': 'Temperature Image',
+        'type': 'Temperature Image',
+
+        'getters': [{
+            'packet': 'Get {title_words}',
+            'packet_params': [],
+            'transform': 'new RawType(Helper.convertThermalTemperatureImage(value, logger), "image/png")'}],
+        'is_trigger_channel': False
+    }, {
+        'id': 'Spotmeter Mean Temperature',
+        'label': 'Spotmeter Mean Temperature',
+        'type': 'Temperature',
+
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.spotmeterStatistics[0] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+        'java_unit': 'SmartHomeUnits.KELVIN',
+        'is_trigger_channel': False
+    }, {
+        'id': 'Spotmeter Maximum Temperature',
+        'label': 'Spotmeter Maximum Temperature',
+        'type': 'Temperature',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.spotmeterStatistics[1] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+        'java_unit': 'SmartHomeUnits.KELVIN',
+        'is_trigger_channel': False
+    }, {
+        'id': 'Spotmeter Minimum Temperature',
+        'label': 'Spotmeter Minimum Temperature',
+        'type': 'Temperature',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.spotmeterStatistics[2] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+        'java_unit': 'SmartHomeUnits.KELVIN',
+        'is_trigger_channel': False
+    }, {
+        'id': 'Spotmeter ROI Pixel Count',
+        'type': 'Spotmeter ROI Pixel Count',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.spotmeterStatistics[3], {unit})'}],
+        'java_unit': 'SmartHomeUnits.ONE',
+        'is_trigger_channel': False
+    }, {
+        'id': 'Focal Plain Array Temperature',
+        'label': 'Focal Plain Array Temperature',
+        'type': 'Temperature',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.temperatures[0] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+        'java_unit': 'SmartHomeUnits.KELVIN',
+        'is_trigger_channel': False
+    }, {
+        'id': 'Focal Plain Array Temperature FFC',
+        'label': 'Focal Plain Array Temperature (last FFC)',
+        'type': 'Temperature',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.temperatures[1] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+        'java_unit': 'SmartHomeUnits.KELVIN',
+        'is_trigger_channel': False
+    },  {
+        'id': 'Housing Temperature',
+        'label': 'Housing Temperature',
+        'type': 'Temperature',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.temperatures[2] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+        'java_unit': 'SmartHomeUnits.KELVIN',
+        'is_trigger_channel': False
+    }, {
+        'id': 'Housing Temperature FFC',
+        'label': 'Housing Temperature (last FFC)',
+        'type': 'Temperature',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.temperatures[3] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+        'java_unit': 'SmartHomeUnits.KELVIN',
+        'is_trigger_channel': False
+    }, {
+        'id': 'FFC Status',
+        'label': 'Flat Field Correction Status',
+        'type': 'FFC Status',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType(value.ffcStatus, {unit})'}],
+        'java_unit': 'SmartHomeUnits.ONE',
+        'is_trigger_channel': False
+    }, {
+        'id': 'Shutter Lockout',
+        'type': 'Shutter Lockout',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'value.temperatureWarning[0] ? OnOffType.ON : OnOffType.OFF'}],
+        'is_trigger_channel': False
+    }, {
+        'id': 'Overtemperature Shutdown Imminent',
+        'type': 'Overtemperature Shutdown Imminent',
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'value.temperatureWarning[1] ? OnOffType.ON : OnOffType.OFF'}],
+        'is_trigger_channel': False
+    },
+
+
+    ],
+    'channel_types': [
+        oh_generic_channel_type('High Contrast Image', 'Image', 'High Contrast Image',
+                    description="The current high contrast image. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Thermal_Imaging.html#high-contrast-image-vs-temperature-image\\\">here</a> for the difference between High Contrast and Temperature Image. If you don't know what to use the High Contrast Image is probably right for you.",
+                    read_only=True,
+                    params=[{
+                            'name': 'High Contrast Column Start',
+                            'type': 'integer',
+                            'min': '0',
+                            'max': '79',
+                            'default': '39',
+
+                            'label': 'High Contrast Column Start',
+                            'description': 'First column of the high contrast region of interest.',
+                        }, {
+                            'name': 'High Contrast Row Start',
+                            'type': 'integer',
+                            'min': '0',
+                            'max': '59',
+                            'default': '29',
+
+                            'label': 'High Contrast Row Start',
+                            'description': 'First row of the high contrast region of interest.',
+                        }, {
+                            'name': 'High Contrast Column End',
+                            'type': 'integer',
+                            'min': '0',
+                            'max': '79',
+                            'default': '40',
+
+                            'label': 'High Contrast Column End',
+                            'description': 'Last column of the high contrast region of interest.',
+                        }, {
+                            'name': 'High Contrast Row End',
+                            'type': 'integer',
+                            'min': '0',
+                            'max': '59',
+                            'default': '30',
+
+                            'label': 'High Contrast Row End',
+                            'description': 'Last row of the high contrast region of interest.',
+                        }, {
+                            'name': 'Dampening Factor',
+                            'type': 'integer',
+                            'min': '0',
+                            'max': '256',
+                            'default': '64',
+
+                            'label': 'Dampening Factor',
+                            'description': 'This parameter is the amount of temporal dampening applied to the HEQ (history equalization) transformation function. An IIR filter of the form:<pre>(N / 256) * previous + ((256 - N) / 256) * current</pre>is applied, and the HEQ dampening factor represents the value N in the equation, i.e., a value that applies to the amount of influence the previous HEQ transformation function has on the current function. The lower the value of N the higher the influence of the current video frame whereas the higher the value of N the more influence the previous damped transfer function has.',
+                        }, {
+                            'name': 'Clip Limit Low',
+                            'type': 'integer',
+                            'min': '0',
+                            'max': '1024',
+                            'default': '512',
+
+                            'label': 'AGC HEQ Clip Limit Low',
+                            'description': 'This parameter defines an artificial population that is added to every non-empty histogram bin. In other words, if the Clip Limit Low is set to L, a bin with an actual population of X will have an effective population of L + X. Any empty bin that is nearby a populated bin will be given an artificial population of L. The effect of higher values is to provide a more linear transfer function; lower values provide a more non-linear (equalized) transfer function.',
+                        },  {
+                            'name': 'Clip Limit High',
+                            'type': 'integer',
+                            'min': '0',
+                            'max': '4800',
+                            'default': '4800',
+
+                            'label': 'AGC HEQ Clip Limit High',
+                            'description': 'This parameter defines the maximum number of pixels allowed to accumulate in any given histogram bin. Any additional pixels in a given bin are clipped. The effect of this parameter is to limit the influence of highly-populated bins on the resulting HEQ transformation function.',
+                        },   {
+                            'name': 'Empty Counts',
+                            'type': 'integer',
+                            'min': '0',
+                            'max': '16383',
+                            'default': '2',
+
+                            'label': 'Empty Counts',
+                            'description': ' This parameter specifies the maximum number of pixels in a bin that will be interpreted as an empty bin. Histogram bins with this number of pixels or less will be processed as an empty bin.',
+                        },
+                    ]),
+        oh_generic_channel_type('Temperature Image', 'Image', 'Temperature Image',
+                    description="The current temperature image. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Thermal_Imaging.html#high-contrast-image-vs-temperature-image\\\">here</a> for the difference between High Contrast and Temperature Image. If you don't know what to use the High Contrast Image is probably right for you.",
+                    read_only=True),
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'NOT USED',
+                    pattern='%.3f %unit%',
+                    read_only=True),
+        oh_generic_channel_type('Spotmeter ROI Pixel Count', 'Number:Dimensionless', 'Spotmeter ROI Pixel Count',
+                    pattern='%.3f %unit%',
+                    read_only=True),
+        {
+            'id': 'FFC Status',
+            'item_type': 'Number:Dimensionless',
+            'label': 'FFC Status',
+            'description': 'Flat Field Correction Status',
+            'read_only': True,
+            'min': 0,
+            'max': 3,
+            'is_trigger_channel': False,
+            'options': [('Never Commanded', 0),
+                        ('Imminent', 1),
+                        ('In Progress', 2),
+                        ('Complete', 3)]
+        },
+        oh_generic_channel_type('Shutter Lockout', 'Switch', 'Shutter Lockout',
+                     description='If enabled, shutter is locked out because temperature is outside -10°C to +65°C',
+                     read_only=True),
+        oh_generic_channel_type('Overtemperature Shutdown Imminent', 'Switch', 'Overtemperature Shutdown Imminent',
+                     description='Gets enabled 10 seconds before shutdown.',
+                     read_only=True),
+    ]
+}

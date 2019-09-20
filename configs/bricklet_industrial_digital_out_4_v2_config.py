@@ -6,6 +6,8 @@
 
 # Industrial Digital Out 4 Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -336,3 +338,97 @@ com['examples'].append({
               ('setter', 'Set Value', [('bool', [False, False, False, True])], None, None),
               ('loop_footer',)]
 })
+
+def output_channel(idx):
+    return {
+            'id': 'Output Pin {}'.format(idx),
+            'label': 'Output Value (Pin {})'.format(idx),
+
+            'type': 'Output Pin',
+
+            'getters': [{
+                'packet': 'Get Value',
+                'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+
+            'setters': [{
+                'packet': 'Set Selected Value',
+                'packet_params': [str(idx), 'cmd == OnOffType.ON']}],
+            'setter_command_type': "OnOffType",
+
+            'callbacks': [{
+                'packet': 'Monoflop Done',
+                'filter': 'channel == {}'.format(idx),
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+    }
+
+def monoflop_channel(idx):
+    return {
+        'id': 'Monoflop Pin {}'.format(idx),
+        'label': 'Monoflop Pin {}'.format(idx),
+        'type': 'Monoflop',
+
+        'getters': [{
+            'packet': 'Get Monoflop',
+            'packet_params': [str(idx)],
+            'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'}],
+
+        'setters': [{
+            'packet': 'Set Monoflop',
+            'packet_params': [str(idx), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration.longValue()']}],
+        'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+        'setter_refreshs': [{
+            'channel': 'Output Pin {}'.format(idx),
+            'delay': '0'
+        }]
+    }
+
+channels =[output_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)]
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'channels': channels,
+    'channel_types': [
+        oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
+                     description='The logic level that is currently set on the pin.',
+                     read_only=False,
+                     params=[{
+                        'name': 'LED Config',
+                        'type': 'integer',
+                        'options': [('Off', 0),
+                                    ('On', 1),
+                                    ('Show Heartbeat', 2),
+                                    ('Show Channel Status', 3)],
+                        'limitToOptions': 'true',
+                        'default': '3',
+
+                        'label': 'LED Configuration',
+                        'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to \\\"Channel Status\\\". In this mode the LED is on if the channel is high and off otherwise.',
+                    }]),
+        {
+            'id': 'Monoflop',
+            'item_type': 'String',
+            'params': [{
+                'name': 'Monoflop Duration',
+                'type': 'integer',
+                'default': 1000,
+                'min': 0,
+                'max': 2**31 - 1,
+                'unit': 'ms',
+
+                'label': 'Monoflop Duration',
+                'description': 'The time (in ms) that the pin should hold the configured value.',
+            },
+            {
+                'name': 'Monoflop Value',
+                'type': 'boolean',
+                'default': 'true',
+
+                'label': 'Monoflop Value',
+                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+            }],
+            'label': 'NOT USED',
+            'description':'Triggers a monoflop as configured',
+            'command_options': [('Trigger', 'TRIGGER')]
+        }
+    ]
+}

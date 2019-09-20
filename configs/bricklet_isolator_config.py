@@ -6,6 +6,8 @@
 
 # Isolator Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -331,3 +333,81 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Statistics', 'statistics'), [(('Messages From Brick', 'Messages From Brick'), 'uint32', 1, None, None, None), (('Messages From Bricklet', 'Messages From Bricklet'), 'uint32', 1, None, None, None), (('Connected Bricklet Device Identifier', 'Connected Bricklet Device Identifier'), 'uint16', 1, None, None, None), (('Connected Bricklet UID', 'Connected Bricklet UID'), 'string', 8, None, None, None)], [])]
 })
+
+def statistics_channel(name_words, name_headless):
+    return  {
+        'id': name_words,
+        'type': name_words,
+
+        'getters': [{
+            'packet': 'Get Statistics',
+            'packet_params': [],
+            'transform': 'new QuantityType<>(value.{}, SmartHomeUnits.ONE)'.format(name_headless)}],
+
+        'callbacks': [{
+            'packet': 'Statistics',
+            'transform': 'new QuantityType<>({}, SmartHomeUnits.ONE)'.format(name_headless),
+            'filter': 'true'}],
+
+        'is_trigger_channel': False
+    }
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        update_interval('Statistics', 'all statistics data')
+    ],
+    'init_code': """this.setStatisticsCallbackConfiguration(cfg.statisticsUpdateInterval, true);""",
+    'channels': [
+        statistics_channel('Messages From Brick', 'messagesFromBrick'),
+        statistics_channel('Messages From Bricklet', 'messagesFromBricklet'),
+        {
+            'id': 'Connected Bricklet Device Name',
+            'type': 'Connected Bricklet Device Name',
+
+            'getters': [{
+                'packet': 'Get Statistics',
+                'packet_params': [],
+                'transform': 'new StringType(Helper.getDeviceName(value.connectedBrickletDeviceIdentifier))'}],
+
+            'callbacks': [{
+                'packet': 'Statistics',
+                'transform': 'new StringType(Helper.getDeviceName(connectedBrickletDeviceIdentifier))',
+                'filter': 'true'}],
+
+            'is_trigger_channel': False
+        }, {
+            'id': 'Connected Bricklet UID',
+            'type': 'Connected Bricklet UID',
+
+            'getters': [{
+                'packet': 'Get Statistics',
+                'packet_params': [],
+                'transform': 'new StringType(value.connectedBrickletUID)'}],
+
+            'callbacks': [{
+                'packet': 'Statistics',
+                'transform': 'new StringType(connectedBrickletUID)',
+                'filter': 'true'}],
+
+            'is_trigger_channel': False
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Messages From Brick', 'Number:Dimensionless', 'Messages From Brick',
+                    description='Messages passed through the Isolator from the controlling Brick.',
+                    read_only=True,
+                    pattern='%d'),
+        oh_generic_channel_type('Messages From Bricklet', 'Number:Dimensionless', 'Messages From Bricklet',
+                    description='Messages passed through the Isolator from the isolated Bricklet.',
+                    read_only=True,
+                    pattern='%d'),
+        oh_generic_channel_type('Connected Bricklet Device Name', 'String', 'Connected Bricklet Device Name',
+                     description='Device Name of the isolated Bricklet.',
+                     read_only=True),
+        oh_generic_channel_type('Connected Bricklet UID', 'String', 'Connected Bricklet UID',
+                     description='UID of the isolated Bricklet.',
+                     read_only=True),
+    ]
+}

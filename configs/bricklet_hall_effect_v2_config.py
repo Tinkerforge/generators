@@ -9,6 +9,8 @@
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -255,3 +257,77 @@ com['examples'].append({
               ('callback', ('Counter', 'counter'), [(('Counter', 'Counter'), 'uint32', 1, None, None, None)], None, None),
               ('callback_configuration', ('Counter', 'counter'), [], 100, True, None, [])]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'Low Threshold',
+            'type': 'integer',
+
+            'default': '-2000',
+
+            'label': 'Low Threshold',
+            'description': 'The low threshold in µT. If the measured magnetic flux density goes below the low threshold, the count of the counter is increased by 1.',
+        }, {
+            'name': 'High Threshold',
+            'type': 'integer',
+
+            'default': '2000',
+
+            'label': 'High Threshold',
+            'description': 'The high threshold in µT. If the measured magnetic flux density goes above the high threshold, the count of the counter is increased by 1.',
+        }, {
+            'name': 'Debounce',
+            'type': 'integer',
+
+            'default': '100000',
+
+            'label': 'Debounce Time',
+            'description': 'The debounce time in µs is the minimum time between two count increments.',
+        }, {
+            'name': 'Reset On Read',
+            'type': 'boolean',
+
+            'default': 'false',
+
+            'label': 'Reset Counter On Update',
+            'description': 'Enabling this will reset the counter after OpenHAB reads its value. Use this if you want relative counts per update.',
+    }],
+    'channels': [
+        {
+            'id': 'Counter',
+            'type': 'Counter',
+            'label': 'Counter',
+
+            'init_code':"""this.setCounterConfig(cfg.highThreshold, cfg.lowThreshold, cfg.debounce.longValue());
+            this.setCounterCallbackConfiguration(channelCfg.updateInterval, true);""",
+            'dispose_code': """this.setCounterCallbackConfiguration(0, true);""",
+
+            'getters': [{
+                'packet': 'Get Counter',
+                'packet_params': ['cfg.resetOnRead'],
+                'transform': 'new QuantityType<>(value, {unit})'}],
+
+            'callbacks': [{
+                'packet': 'Counter',
+                'transform': 'new QuantityType<>(count, {unit})'
+            }],
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'is_trigger_channel': False
+        },
+        oh_generic_channel('Magnetic Flux Density', 'Magnetic Flux Density', 'SmartHomeUnits.TESLA', divisor=1000000.0)
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Counter', 'Number:Dimensionless', 'Counter',
+                    description='The current value of the counter.',
+                    read_only=True,
+                    pattern='%d'),
+        oh_generic_channel_type('Magnetic Flux Density', 'Number:MagneticFluxDensity', 'Magnetic Flux Density',
+                     description='Measured magnetic flux density.',
+                     pattern='%.6f',
+                     read_only=True),
+    ]
+}

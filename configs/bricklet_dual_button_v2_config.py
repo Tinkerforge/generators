@@ -6,6 +6,8 @@
 
 # Dual Button Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -258,3 +260,67 @@ com['examples'].append({
 'functions': [('callback', ('State Changed', 'state changed'), [(('Button L', 'Left Button'), 'uint8:constant', 1, None, None, None), (('Button R', 'Right Button'), 'uint8:constant', 1, None, None, None), (('LED L', None), 'uint8:constant', 1, None, None, None), (('LED R', None), 'uint8:constant', 1, None, None, None)], None, None),
               ('setter', 'Set State Changed Callback Configuration', [('bool', True)], 'Enable state changed callback', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_trigger_channel_imports(),
+    'params': [
+        {
+            'name': 'Left LED State',
+            'type': 'integer',
+            'default': 1,
+
+            'label': 'Left LED State',
+            'description': 'Left LED State',
+            'options':  [('Auto Toggle On', 0),
+                         ('Auto Toggle Off', 1),
+                         ('On', 2),
+                         ('Off', 3)],
+        },
+        {
+            'name': 'Right LED State',
+            'type': 'integer',
+            'default': 1,
+
+            'label': 'Right LED State',
+            'description': 'Right LED State',
+            'options': [('Auto Toggle On', 0),
+                        ('Auto Toggle Off', 1),
+                        ('On', 2),
+                        ('Off', 3)],
+        }
+    ],
+    'init_code': """this.setLEDState(cfg.leftLEDState, cfg.rightLEDState);
+    this.setStateChangedCallbackConfiguration(true);""",
+    'dispose_code': """this.setStateChangedCallbackConfiguration(false);""",
+    'channels': [
+        {
+            'id': 'Left Button',
+            'label': 'Left Button',
+            'type': 'system.rawbutton',
+            'getters': [{
+                'packet': 'Get Button State',
+                'transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+            'callbacks': [{
+                'packet': 'State Changed',
+                'transform': 'buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+            'is_trigger_channel': True
+        },
+        {
+            'id': 'Right Button',
+            'label': 'Right Button',
+            'type': 'system.rawbutton',
+            'getters': [{
+                'packet': 'Get Button State',
+                'transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+            'callbacks': [{
+                'packet': 'State Changed',
+                'transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+            'is_trigger_channel': True
+        },
+    ],
+    'channel_types': []
+}

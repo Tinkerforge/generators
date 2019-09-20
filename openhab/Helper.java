@@ -1,5 +1,9 @@
 package com.tinkerforge;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -7,6 +11,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 
@@ -346,5 +352,75 @@ public class Helper {
             result[i] = translateCharacter(copy.charAt(i));
         }
         return result;
+    }
+
+    public static String getDeviceName(int deviceID) {
+        return DeviceFactory.getDeviceInfo(deviceID).deviceDisplayName;
+    }
+
+    private static int[] thermalColorStandard = new int[] {
+        0xff000000,0xff100006,0xff17000d,0xff1c0013,0xff200019,0xff24001f,0xff270026,0xff2a002c,
+        0xff2d0032,0xff300038,0xff32003e,0xff350044,0xff37004a,0xff3a0050,0xff3c0056,0xff3e005c,
+        0xff400062,0xff420068,0xff44006d,0xff460073,0xff470079,0xff49007e,0xff4b0084,0xff4d0089,
+        0xff4e008e,0xff500093,0xff510098,0xff53009d,0xff5400a2,0xff5600a7,0xff5700ac,0xff5900b0,
+        0xff5a01b5,0xff5c01b9,0xff5d01be,0xff5e01c2,0xff6001c6,0xff6101ca,0xff6201cd,0xff6401d1,
+        0xff6501d5,0xff6601d8,0xff6701db,0xff6901de,0xff6a01e1,0xff6b01e4,0xff6c01e7,0xff6d02ea,
+        0xff6f02ec,0xff7002ee,0xff7102f1,0xff7202f3,0xff7302f4,0xff7402f6,0xff7502f8,0xff7603f9,
+        0xff7703fa,0xff7903fb,0xff7a03fc,0xff7b03fd,0xff7c03fe,0xff7d03fe,0xff7e04ff,0xff7f04ff,
+        0xff8004ff,0xff8104ff,0xff8204ff,0xff8305fe,0xff8405fe,0xff8505fd,0xff8605fc,0xff8706fb,
+        0xff8706fa,0xff8806f8,0xff8906f7,0xff8a06f5,0xff8b07f3,0xff8c07f2,0xff8d07ef,0xff8e08ed,
+        0xff8f08eb,0xff9008e8,0xff9108e6,0xff9109e3,0xff9209e0,0xff9309dd,0xff940ada,0xff950ad6,
+        0xff960ad3,0xff970bcf,0xff970bcb,0xff980cc8,0xff990cc4,0xff9a0cc0,0xff9b0dbb,0xff9c0db7,
+        0xff9c0eb3,0xff9d0eae,0xff9e0ea9,0xff9f0fa5,0xffa00fa0,0xffa0109b,0xffa11096,0xffa21191,
+        0xffa3118c,0xffa41286,0xffa41281,0xffa5137b,0xffa61376,0xffa71470,0xffa7146b,0xffa81565,
+        0xffa9165f,0xffaa1659,0xffaa1753,0xffab174d,0xffac1847,0xffad1941,0xffad193b,0xffae1a35,
+        0xffaf1b2f,0xffb01b29,0xffb01c22,0xffb11d1c,0xffb21d16,0xffb31e10,0xffb31f09,0xffb42003,
+        0xffb52000,0xffb52100,0xffb62200,0xffb72300,0xffb72300,0xffb82400,0xffb92500,0xffba2600,
+        0xffba2700,0xffbb2800,0xffbc2800,0xffbc2900,0xffbd2a00,0xffbe2b00,0xffbe2c00,0xffbf2d00,
+        0xffc02e00,0xffc02f00,0xffc13000,0xffc23100,0xffc23200,0xffc33300,0xffc43400,0xffc43500,
+        0xffc53600,0xffc63700,0xffc63800,0xffc73900,0xffc73a00,0xffc83c00,0xffc93d00,0xffc93e00,
+        0xffca3f00,0xffcb4000,0xffcb4100,0xffcc4300,0xffcc4400,0xffcd4500,0xffce4600,0xffce4800,
+        0xffcf4900,0xffd04a00,0xffd04c00,0xffd14d00,0xffd14e00,0xffd25000,0xffd35100,0xffd35200,
+        0xffd45400,0xffd45500,0xffd55700,0xffd65800,0xffd65a00,0xffd75b00,0xffd75d00,0xffd85e00,
+        0xffd96000,0xffd96100,0xffda6300,0xffda6500,0xffdb6600,0xffdc6800,0xffdc6900,0xffdd6b00,
+        0xffdd6d00,0xffde6f00,0xffde7000,0xffdf7200,0xffe07400,0xffe07600,0xffe17700,0xffe17900,
+        0xffe27b00,0xffe27d00,0xffe37f00,0xffe48100,0xffe48300,0xffe58400,0xffe58600,0xffe68800,
+        0xffe68a00,0xffe78c00,0xffe78e00,0xffe89000,0xffe99300,0xffe99500,0xffea9700,0xffea9900,
+        0xffeb9b00,0xffeb9d00,0xffec9f00,0xffeca200,0xffeda400,0xffeda600,0xffeea800,0xffeeab00,
+        0xffefad00,0xfff0af00,0xfff0b200,0xfff1b400,0xfff1b600,0xfff2b900,0xfff2bb00,0xfff3be00,
+        0xfff3c000,0xfff4c300,0xfff4c500,0xfff5c800,0xfff5ca00,0xfff6cd00,0xfff6cf00,0xfff7d200,
+        0xfff7d500,0xfff8d700,0xfff8da00,0xfff9dd00,0xfff9df00,0xfffae200,0xfffae500,0xfffbe800,
+        0xfffbeb00,0xfffced00,0xfffcf000,0xfffdf300,0xfffdf600,0xfffef900,0xfffefc00,0xffffff00,
+    };
+
+
+    public static byte[] convertThermalHighContrastImage(int[] pixels, Logger logger) {
+        BufferedImage image = new BufferedImage(80, 60, BufferedImage.TYPE_INT_ARGB);
+        int[] rgbArray = new int[80 * 60];
+        for (int y = 0; y < 60; ++y) {
+            for (int x = 0; x < 80; ++x) {
+                int stride = y * 80 + x;
+                int pixel = pixels[stride];
+                rgbArray[stride] = thermalColorStandard[pixel];
+            }
+        }
+        image.setRGB(0, 0, 80, 60, rgbArray, 0, 80);
+
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "png", result);
+        } catch (IOException e) {
+            logger.debug("Failed to convert thermal image to PNG: {}", e.getMessage());
+        }
+        return result.toByteArray();
+    }
+
+    public static byte[] convertThermalTemperatureImage(int[] pixels, Logger logger) {
+        int max = Arrays.stream(pixels).max().getAsInt();
+        int min = Arrays.stream(pixels).min().getAsInt();
+        int interval = max - min;
+        int [] relative = Arrays.stream(pixels).map(i -> ((i - min) * 255) / interval).toArray();
+
+        return convertThermalHighContrastImage(relative, logger);
     }
 }

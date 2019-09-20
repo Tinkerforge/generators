@@ -6,6 +6,8 @@
 
 # Industrial Counter Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -632,3 +634,197 @@ com['examples'].append({
 })
 
 # FIXME: add all-counter / all-signal-data callback example
+
+
+def signal_data_channel(idx, data_words, data_headless, divisor, java_unit):
+    return {
+        'predicate': 'cfg.enableChannel{}'.format(idx),
+        'id': '{} {}'.format(data_words, idx),
+        'label': 'Channel {} - {}'.format(idx, data_words),
+        'type': data_words,
+
+        'getters': [{
+            'packet': 'Get Signal Data',
+            'packet_params': [str(idx)],
+            'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(data_headless)
+        }],
+        'callbacks': [{
+                'packet': 'All Signal Data',
+                'transform': 'new QuantityType<>({}[{}]{{divisor}}, {{unit}})'.format(data_headless, idx)
+        }],
+
+        'java_unit': java_unit,
+        'divisor': divisor
+    }
+
+def value_channel(idx):
+    return {
+        'predicate': 'cfg.enableChannel{}'.format(idx),
+        'id': 'Value {}'.format(idx),
+        'label': 'Channel {} - Value'.format(idx),
+        'type': 'Value',
+
+        'getters': [{
+            'packet': 'Get Signal Data',
+            'packet_params': [str(idx)],
+            'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'
+        }],
+        'callbacks': [{
+                'packet': 'All Signal Data',
+                'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)
+        }],
+    }
+
+
+def counter_channel(idx):
+    return {
+            'predicate': 'cfg.enableChannel{}'.format(idx),
+            'id': 'Counter Channel {0}'.format(idx),
+            'type': 'Counter',
+            'label': 'Channel {0} - Counter'.format(idx),
+
+            'init_code':"""this.setCounterConfiguration({0}, channelCfg.countEdge, channelCfg.countDirection, channelCfg.dutyCyclePrescaler, channelCfg.frequencyIntegrationTime);
+            this.setChannelLEDConfig({0}, channelCfg.channelLEDConfiguration);""".format(idx),
+
+            'getters': [{
+                'packet': 'Get Counter',
+                'packet_params': [str(idx)],
+                'transform': 'new QuantityType<>(value, {unit})'
+            }],
+            'callbacks': [{
+                'packet': 'All Counter',
+                'transform': 'new QuantityType<>(counter[{}], {{unit}})'.format(idx)
+            }],
+            'setters': [{
+                'packet': 'Set Counter',
+                'packet_params': [str(idx), 'cmd.longValue()']
+            }],
+            'setter_command_type': 'QuantityType',
+
+            'java_unit': 'SmartHomeUnits.ONE',
+            'is_trigger_channel': False
+        }
+
+def enable_config(idx):
+    return {
+            'name': 'Enable Channel {}'.format(idx),
+            'type': 'boolean',
+            'default': 'true',
+
+            'label': 'Enable Channel {}'.format(idx),
+            'description': 'Activates/deactivates the counter of channel {}.'.format(idx),
+        }
+
+channels = [counter_channel(i) for i in range(0, 4)]
+channels += [signal_data_channel(i, 'Duty Cycle', 'dutyCycle', 100.0, 'SmartHomeUnits.PERCENT') for i in range(0, 4)]
+channels += [signal_data_channel(i, 'Period', 'period', 1e9, 'SmartHomeUnits.SECOND') for i in range(0, 4)]
+channels += [signal_data_channel(i, 'Frequency', 'frequency', 1000.0, 'SmartHomeUnits.HERTZ') for i in range(0, 4)]
+channels += [value_channel(i) for i in range(0, 4)]
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'params': [enable_config(i) for i in range(0, 4)] + [update_interval('Counter', 'all counters'), update_interval('Signal Data', 'all signal data')],
+    'init_code': """this.setAllCounterCallbackConfiguration(cfg.counterUpdateInterval, true);
+    this.setAllSignalDataCallbackConfiguration(cfg.signalDataUpdateInterval, true);""",
+    'dispose_code': """this.setAllCounterCallbackConfiguration(0, true);
+    this.setAllSignalDataCallbackConfiguration(0, true);""",
+    'channels': channels,
+    'channel_types': [
+        oh_generic_channel_type('Duty Cycle', 'Number:Dimensionless', 'NOT USED',
+                     description='The signal duty cycle.',
+                     min_=0,
+                     max_=100,
+                     read_only=True),
+        oh_generic_channel_type('Period', 'Number:Time', 'NOT USED',
+                     description='The signal period',
+                     read_only=False),
+        oh_generic_channel_type('Frequency', 'Number:Frequency', 'NOT USED',
+                     description='The signal frequency.',
+                     read_only=True),
+        oh_generic_channel_type('Value', 'Switch', 'NOT USED',
+                     description='The signal value',
+                     read_only=False),
+        oh_generic_channel_type('Counter', 'Number:Dimensionless', 'Counter',
+            description='The current counter value for the given channel.',
+            read_only=False,
+            params=[{
+                'name': 'Count Edge',
+                'type': 'integer',
+                'options': [('Rising', 0),
+                            ('Falling', 1),
+                            ('Both', 2)],
+                'limitToOptions': 'true',
+                'default': '0',
+
+                'label': 'Count Edge',
+                'description': 'Counter can count on rising, falling or both edges.',
+            }, {
+                'name': 'Count Direction',
+                'type': 'integer',
+                'options': [('Up', 0),
+                            ('Down', 1),
+                            ('External Up', 2),
+                            ('External Down', 3)],
+                'limitToOptions': 'true',
+                'default': '0',
+
+                'label': 'Count Direction',
+                'description': 'Counter can count up or down. You can also use another channel as direction input: Channel 0 additionally supports to use the input of channel 2 as direction. You can configure channel 0 to count up if the value of channel 2 is high and down if the value is low and the other way around. Additionally channel 3 can use channel 1 as direction input in the same manner.',
+            }, {
+                'name': 'Duty Cycle Prescaler',
+                'type': 'integer',
+                'options': [('1', 0),
+                            ('2', 1),
+                            ('4', 2),
+                            ('8', 3),
+                            ('16', 4),
+                            ('32', 5),
+                            ('64', 6),
+                            ('128', 7),
+                            ('256', 8),
+                            ('512', 9),
+                            ('1024', 10),
+                            ('2048', 11),
+                            ('4096', 12),
+                            ('8192', 13),
+                            ('16384', 14),
+                            ('32768', 15)],
+                'limitToOptions': 'true',
+                'default': '0',
+
+                'label': 'Duty Cycle Prescaler',
+                'description': 'Sets a divider for the internal clock. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time\\\">here</a> for details.',
+            }, {
+                'name': 'Frequency Integration Time',
+                'type': 'integer',
+                'options': [('128 MS', 0),
+                            ('256 MS', 1),
+                            ('512 MS', 2),
+                            ('1024 MS', 3),
+                            ('2048 MS', 4),
+                            ('4096 MS', 5),
+                            ('8192 MS', 6),
+                            ('16384 MS', 7),
+                            ('32768 MS', 8)],
+                'limitToOptions': 'true',
+                'default': '3',
+
+                'label': 'Frequency Integration Time',
+                'description': 'Sets the integration time for the frequency measurement. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time\\\">here</a> for details.',
+            }, {
+                'name': 'Channel LED Configuration',
+                'type': 'integer',
+                'options': [('Off', 0),
+                            ('On', 1),
+                            ('Show Heartbeat', 2),
+                            ('Show Channel Status', 3)],
+                'limitToOptions': 'true',
+                'default': '3',
+
+                'label': 'Channel LED Configuration',
+                'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to \\\"Channel Status\\\". In this mode the LED is on if the channel is high and off otherwise.',
+            },
+
+            ])
+    ]
+}

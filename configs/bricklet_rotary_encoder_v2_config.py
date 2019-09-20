@@ -9,6 +9,8 @@
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -138,3 +140,59 @@ com['examples'].append({
 'functions': [('callback', ('Count', 'count'), [(('Count', 'Count'), 'int32', 1, None, None, None)], None, None),
               ('callback_configuration', ('Count', 'count'), [], 1000, False, 'x', [(0, 0)])]
 })
+
+
+count_channel = oh_generic_channel('Count', 'Count', 'SmartHomeUnits.ONE')
+count_channel['getters'][0]['packet_params'] = ['false']
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        count_channel,
+        {
+            'id': 'Reset Counter',
+            'type': 'Reset Counter',
+
+            'setters': [{
+                'packet': 'Get Count',
+                'packet_params': ['true']}],
+            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+            'setter_refreshs': [{
+                'channel': 'Count',
+                'delay': '0'
+            }]
+        },
+        {
+            'id': 'Pressed',
+            'type': 'system.rawbutton',
+            'label': 'Pressed',
+
+            'getters': [{
+                'packet': 'Is Pressed',
+                'transform': "value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED"}],
+
+            'callbacks': [{
+                    'packet': 'Pressed',
+                    'transform': 'CommonTriggerEvents.PRESSED'
+                },{
+                    'packet': 'Released',
+                    'transform': 'CommonTriggerEvents.RELEASED'
+                }],
+            'is_trigger_channel': True
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Count', 'Number:Dimensionless', 'Count',
+                     description='The current count of the encoder. The encoder has 24 steps per rotation. Turning the encoder to the left decrements the counter, so a negative count is possible.',
+                     read_only=True,
+                     pattern='%d'),
+        {
+            'id': 'Reset Counter',
+            'item_type': 'String',
+            'label': 'Reset Counter',
+            'description':'Resets the counter to 0.',
+            'command_options': [('Reset', 'RESET')]
+        }
+    ]
+}

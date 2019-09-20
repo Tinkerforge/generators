@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -510,3 +512,19 @@ com['examples'].append({
               ('callback', ('Voltage Reached', 'voltage reached'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], None, None),
               ('callback_threshold', ('Voltage', 'voltage'), [], '>', [(5, 0)])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_old_style_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
+                     description='Measured voltage',
+                     read_only=True,
+                     pattern='%.2f %unit%',
+                     min_=0,
+                     max_=50)
+    ]
+}

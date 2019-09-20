@@ -6,6 +6,8 @@
 
 # RGB LED Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -72,3 +74,29 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('setter', 'Set RGB Value', [('uint8', 0), ('uint8', 170), ('uint8', 234)], 'Set light blue color', None)]
 })
+
+def percent_type_to_int(name):
+    return '(int)({}.doubleValue() * 255.0 / 100.0)'.format(name)
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.HSBType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+            'id': 'Color',
+            'type': 'Color',
+
+            'setters': [{
+                'packet': 'Set RGB Value',
+                'packet_params': [percent_type_to_int('cmd.getRed()'), percent_type_to_int('cmd.getGreen()'), percent_type_to_int('cmd.getBlue()'),]}],
+            'setter_command_type': "HSBType",
+
+            'getters': [{
+                'packet': 'Get RGB Value',
+                'transform': 'HSBType.fromRGB(value.r, value.g, value.b)'}],
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Color', 'Color', 'LED Color', description='The color of the LED.',
+                     read_only=False)
+    ]
+}

@@ -9,6 +9,8 @@
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -348,3 +350,48 @@ com['examples'].append({
 'functions': [('callback', ('All Values', 'all values'), [(('CO2 Concentration', 'CO2 Concentration'), 'uint16', 1, None, 'ppm', None), (('Temperature', 'Temperature'), 'int16', 1, 100.0, '°C', None), (('Humidity', 'Humidity'), 'uint16', 1, 100.0, '%RH', None)], None, None),
               ('callback_configuration', ('All Values', 'all values'), [], 1000, False, None, [])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_channel('CO2 Concentration', 'Concentration', 'SmartHomeUnits.PARTS_PER_MILLION'),
+        oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        oh_generic_channel('Humidity', 'Humidity', 'SmartHomeUnits.PERCENT', divisor=100.0),
+        {
+            'id': 'Air Pressure',
+            'type': 'Air Pressure',
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'packet_params': [],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+
+            'setters': [{
+                'packet': 'Set {title_words}',
+                'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)']
+            }],
+            'setter_command_type': 'QuantityType',
+
+            'java_unit': 'SmartHomeUnits.BAR',
+            'divisor': 1000.0,
+            'is_trigger_channel': False
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Concentration', 'Number:Dimensionless', 'CO2 Concentration',
+                    description='The measured CO2 concentration.',
+                    read_only=True,
+                    pattern='%d %unit%'),
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                    description='The measured temperature.',
+                    read_only=True,
+                    pattern='%.2f %unit%'),
+        oh_generic_channel_type('Humidity', 'Number:Dimensionless', 'Humidity',
+                    description='The measured humidity.',
+                    read_only=True,
+                    pattern='%.2f %unit%'),
+        oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
+                    description='The CO2 concentration (among other things) depends on the ambient air pressure. To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure. You use the Barometer Bricklet 2.0 or the Air Quality Bricklet to get the current air pressure. The expected unit of the ambient air pressure value is bar. By default air pressure compensation is disabled. Once you set a value it will be used for compensation. You can turn the compensation off again by setting the value to 0. It is sufficient to update the value every few minutes.',
+                    pattern='%.3f %unit%')
+    ]
+}

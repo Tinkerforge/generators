@@ -6,6 +6,8 @@
 
 # Industrial Analog Out Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -263,3 +265,115 @@ com['examples'].append({
               ('wait',)],
 'cleanups': [('setter', 'Disable', [], None, None)]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'params': [
+        {
+            'name': 'Control Voltage',
+            'type': 'integer',
+            'options': [
+                ('Current', '0'),
+                ('Voltage', '1'),
+            ],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Output Configuration',
+            'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
+        }, {
+            'name': 'Voltage Range',
+            'type': 'integer',
+            'options': [('0 To 5V', 0),
+                        ('0 To 10V', 1)
+            ],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Voltage Range',
+            'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+        }, {
+            'name': 'Current Range',
+            'type': 'integer',
+            'options': [('4 To 20mA', 0),
+                        ('0 To 20mA', 1),
+                        ('0 To 24mA', 2)
+            ],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Current Range',
+            'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+        }
+    ],
+    'init_code': """this.setConfiguration(cfg.voltageRange.shortValue(), cfg.currentRange.shortValue());""",
+    'channels': [{
+            'id': 'Enabled',
+            'type': 'Enabled',
+
+            'setters': [{
+                    'predicate': 'cmd == OnOffType.ON',
+                    'packet': 'Enable',
+                    'packet_params': []
+                }, {
+                    'predicate': 'cmd == OnOffType.OFF',
+                    'packet': 'Disable',
+                    'packet_params': []
+                }
+            ],
+            'setter_command_type': "OnOffType",
+
+            'getters': [{
+                'packet': 'Is Enabled',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'
+            }]
+        }, {
+            'id': 'Current',
+            'type': 'Current',
+
+            'predicate': 'cfg.controlVoltage == 0',
+
+            'setters': [{
+                'packet': 'Set {title_words}',
+                'packet_params': ['(int)(cmd.doubleValue() * 1000000.0)']}],
+            'setter_command_type': "QuantityType",
+
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'transform': 'new QuantityType(value / 1000000.0, SmartHomeUnits.AMPERE)'}]
+        },
+        {
+            'id': 'Voltage',
+            'type': 'Voltage',
+
+            'predicate': 'cfg.controlVoltage == 1',
+
+            'setters': [{
+                'packet': 'Set {title_words}',
+                'packet_params': ['(int)(cmd.doubleValue() * 1000.0)']}],
+            'setter_command_type': "QuantityType",
+
+            'getters': [{
+                'packet': 'Get {title_words}',
+                'transform': 'new QuantityType(value / 1000.0, SmartHomeUnits.VOLT)'}]
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Enabled', 'Switch', 'Output Enabled',
+                     description='Enables/disables the output of voltage and current.',
+                     read_only=False),
+        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Output Voltage',
+                     description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
+                     read_only=False,
+                     pattern='%.3f %unit%',
+                     min_=0,
+                     max_=10),
+        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Output Current',
+                     description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.',
+                     read_only=False,
+                     pattern='%.6f %unit%',
+                     min_=0,
+                     max_=0.024)
+    ]
+}
