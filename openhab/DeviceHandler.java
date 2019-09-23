@@ -14,17 +14,23 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
+import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingRegistry;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
+import org.eclipse.smarthome.core.thing.type.ChannelDefinition;
+import org.eclipse.smarthome.core.thing.type.ChannelType;
+import org.eclipse.smarthome.core.thing.type.ThingType;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.slf4j.Logger;
@@ -43,7 +49,6 @@ import com.tinkerforge.TinkerforgeException;
 import com.tinkerforge.Device.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
-
 /**
  * The {@link DeviceHandler} is responsible for handling commands,
  * which are sent to one of the channels.
@@ -52,7 +57,6 @@ import com.tinkerforge.IPConnection.EnumerateListener;
  */
 @NonNullByDefault
 public class DeviceHandler extends BaseThingHandler {
-
     private final Logger logger = LoggerFactory.getLogger(DeviceHandler.class);
 
     private boolean wasInitialized = false;
@@ -62,11 +66,9 @@ public class DeviceHandler extends BaseThingHandler {
 
     private final BiFunction<String, IPConnection, Device> deviceSupplier;
 
-    private List<Channel> channels;
-
     public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier) {
         super(thing);
-        channels = new ArrayList<Channel>(thing.getChannels());
+
         this.deviceSupplier = deviceSupplier;
     }
 
@@ -194,16 +196,27 @@ public class DeviceHandler extends BaseThingHandler {
         }
     }
 
-    private void configureChannels() {
-        for(int i = 0; i < this.channels.size(); ++i) {
-            Channel toUpdate = this.channels.get(i);
-            Channel upToDate = this.thing.getChannel(toUpdate.getUID());
-            if(upToDate == null)
-                continue;
+    private Channel buildChannel(ThingType tt, ChannelDefinition def){
+        ChannelType ct = TinkerforgeChannelTypeProvider.getChannelTypeStatic(def.getChannelTypeUID(), null);
 
-            this.channels.set(i, ChannelBuilder.create(toUpdate).withConfiguration(upToDate.getConfiguration()).build());
+        ChannelBuilder builder = ChannelBuilder.create(new ChannelUID(getThing().getUID(), def.getId()), ct.getItemType())
+                                               .withAutoUpdatePolicy(def.getAutoUpdatePolicy())
+                                               .withProperties(def.getProperties())
+                                               .withType(def.getChannelTypeUID());
+
+        String desc = def.getDescription();
+        if(desc != null) {
+            builder.withDescription(desc);
+        }
+        String label = def.getLabel();
+        if(label != null) {
+            builder.withLabel(label);
         }
 
+        return builder.build();
+    }
+
+    private void configureChannels() {
         List<String> enabledChannelNames = new ArrayList<>();
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
@@ -212,10 +225,21 @@ public class DeviceHandler extends BaseThingHandler {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
 
-        List<Channel> enabledChannels = enabledChannelNames.stream()
-                                                           .map(s -> new ChannelUID(getThing().getUID(), s))
-                                                           .map(cuid -> channels.stream().filter(c -> c.getUID().equals(cuid)).findFirst().get())
-                                                           .collect(Collectors.toList());
+        ThingType tt = TinkerforgeThingTypeProvider.getThingTypeStatic(this.getThing().getThingTypeUID(), null);
+
+        List<Channel> enabledChannels = new ArrayList<>();
+        for(String s : enabledChannelNames) {
+            ChannelUID cuid = new ChannelUID(getThing().getUID(), s);
+            ChannelDefinition def = tt.getChannelDefinitions().stream().filter(d -> d.getId().equals(cuid.getId())).findFirst().get();
+            Channel newChannel = buildChannel(tt, def);
+
+            Channel existingChannel = this.thing.getChannel(newChannel.getUID());
+            if(existingChannel != null)
+                newChannel = ChannelBuilder.create(newChannel).withConfiguration(existingChannel.getConfiguration()).build();
+
+            enabledChannels.add(newChannel);
+        }
+
         updateThing(editThing().withChannels(enabledChannels).build());
     }
 }
