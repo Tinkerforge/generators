@@ -6,6 +6,8 @@
 
 # Outdoor Weather Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -364,3 +366,7 @@ com['examples'].append({
               ],
               None, None)]
 })
+
+com['openhab'] = {
+    'custom': True
+}

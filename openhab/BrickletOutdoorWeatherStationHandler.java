@@ -33,6 +33,7 @@ import org.eclipse.smarthome.core.thing.type.ChannelType;
 import org.eclipse.smarthome.core.thing.type.ThingType;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import com.tinkerforge.BrickletOutdoorWeather;
+import com.tinkerforge.BrickletOutdoorWeatherStation;
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
@@ -50,73 +53,36 @@ import com.tinkerforge.Device.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
 /**
- * The {@link DeviceHandler} is responsible for handling commands,
- * which are sent to one of the channels.
+ * The {@link BrickletOutdoorWeatherStationHandler} is responsible for handling
+ * commands, which are sent to one of the channels.
  *
  * @author Erik Fleckstein - Initial contribution
  */
 @NonNullByDefault
-public class DeviceHandler extends BaseThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(DeviceHandler.class);
+public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(BrickletOutdoorWeatherStationHandler.class);
 
     private boolean wasInitialized = false;
 
-    @Nullable
-    private Device device;
+    private @Nullable BrickletOutdoorWeatherStation device;
 
-    private final BiFunction<String, IPConnection, Device> deviceSupplier;
-
-    public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier) {
+    public BrickletOutdoorWeatherStationHandler(Thing thing) {
         super(thing);
-
-        this.deviceSupplier = deviceSupplier;
-    }
-
-	public @Nullable Device getDevice() {
-		return device;
-	}
-
-    private void enumerateListener(String uid, String connectedUid, char position, short[] hardwareVersion,
-    short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
-        String id = thing.getUID().getId();
-
-        if (!uid.equals(id)) {
-            return;
-        }
-
-        switch(enumerationType) {
-            case IPConnection.ENUMERATION_TYPE_AVAILABLE:
-                break;
-            case IPConnection.ENUMERATION_TYPE_CONNECTED:
-                initializeDevice();
-                break;
-            case IPConnection.ENUMERATION_TYPE_DISCONNECTED:
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device was unplugged.");
-                break;
-        }
     }
 
     @Override
     public void initialize() {
-        if (getBridge() == null) {
+        String id = thing.getUID().getId();
+        Bridge bridge = getBridge();
+        if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Bridge not found.");
             return;
         }
-        BrickDaemonHandler brickd = ((BrickDaemonHandler) getBridge().getHandler());
-        if (!wasInitialized)
-        {
-            brickd.addEnumerateListener(this::enumerateListener);
-        }
-        wasInitialized = true;
-
-        com.tinkerforge.IPConnection ipcon = brickd.ipcon;
-
-        String id = thing.getUID().getId();
-        device = deviceSupplier.apply(id, ipcon);
-
+        BrickletOutdoorWeatherHandler outdoorWeatherHandler = ((BrickletOutdoorWeatherHandler) bridge.getHandler());
+        device = new BrickletOutdoorWeatherStation(Integer.valueOf(id), outdoorWeatherHandler.getDevice());
         configureChannels();
 
-        if(this.getBridge().getStatus() == ThingStatus.ONLINE) {
+        if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
             initializeDevice();
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
@@ -130,22 +96,14 @@ public class DeviceHandler extends BaseThingHandler {
     private void initializeDevice() {
         String id = thing.getUID().getId();
         Bridge bridge = getBridge();
-        if (bridge == null)
-        {
+        if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
             return;
         }
-        BrickDaemonHandler brickd = ((BrickDaemonHandler) bridge.getHandler());
-        com.tinkerforge.IPConnection ipcon = brickd.ipcon;
-        device = deviceSupplier.apply(id, ipcon);
+        BrickletOutdoorWeatherHandler outdoorWeatherHandler = ((BrickletOutdoorWeatherHandler) bridge.getHandler());
+        device = new BrickletOutdoorWeatherStation(Integer.valueOf(id), outdoorWeatherHandler.getDevice());
+        device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
 
-        try {
-            device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
-        }
-        catch (TinkerforgeException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
-            return;
-        }
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 
         this.getThing().getChannels().forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
@@ -160,9 +118,22 @@ public class DeviceHandler extends BaseThingHandler {
         }
     }
 
+    @Override
+    protected void updateState(String channelID, State state) {
+        super.updateState(channelID, state);
+        updateStatus(ThingStatus.ONLINE);
+    }
+
+    @Override
+    protected void triggerChannel(String channelID, String event) {
+        super.triggerChannel(channelID, event);
+        updateStatus(ThingStatus.ONLINE);
+    }
+
     private void refreshValue(String channelId, Configuration channelConfig) {
         try {
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
+            updateStatus(ThingStatus.ONLINE);
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
@@ -171,49 +142,39 @@ public class DeviceHandler extends BaseThingHandler {
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         if (this.getBridge().getStatus() == ThingStatus.OFFLINE) {
-            //updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
+            // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
             return;
         }
 
         try {
             if (command instanceof RefreshType) {
                 refreshValue(channelUID.getId(), getThing().getChannel(channelUID).getConfiguration());
-            }
-            else {
-                List<SetterRefresh> refreshs = device.handleCommand(getConfig(), getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
-                refreshs.forEach(r -> scheduler.schedule(() -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay, TimeUnit.MILLISECONDS));
+            } else {
+                List<SetterRefresh> refreshs = device.handleCommand(getConfig(),
+                        getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
+                refreshs.forEach(r -> scheduler.schedule(
+                        () -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay,
+                        TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
 
-    @Override
-    public void handleRemoval() {
-        try {
-            if (device != null) {
-                device.dispose(getConfig());
-            }
-            updateStatus(ThingStatus.REMOVED);
-        } catch (TinkerforgeException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
-        }
-    }
-
-    private Channel buildChannel(ThingType tt, ChannelDefinition def){
+    private Channel buildChannel(ThingType tt, ChannelDefinition def) {
         ChannelType ct = TinkerforgeChannelTypeProvider.getChannelTypeStatic(def.getChannelTypeUID(), null);
 
-        ChannelBuilder builder = ChannelBuilder.create(new ChannelUID(getThing().getUID(), def.getId()), ct.getItemType())
-                                               .withAutoUpdatePolicy(def.getAutoUpdatePolicy())
-                                               .withProperties(def.getProperties())
-                                               .withType(def.getChannelTypeUID());
+        ChannelBuilder builder = ChannelBuilder
+                .create(new ChannelUID(getThing().getUID(), def.getId()), ct.getItemType())
+                .withAutoUpdatePolicy(def.getAutoUpdatePolicy()).withProperties(def.getProperties())
+                .withType(def.getChannelTypeUID());
 
         String desc = def.getDescription();
-        if(desc != null) {
+        if (desc != null) {
             builder.withDescription(desc);
         }
         String label = def.getLabel();
-        if(label != null) {
+        if (label != null) {
             builder.withLabel(label);
         }
 
@@ -224,22 +185,23 @@ public class DeviceHandler extends BaseThingHandler {
         List<String> enabledChannelNames = new ArrayList<>();
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
-        }
-        catch(TinkerforgeException e) {
+        } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
 
         ThingType tt = TinkerforgeThingTypeProvider.getThingTypeStatic(this.getThing().getThingTypeUID(), null);
 
         List<Channel> enabledChannels = new ArrayList<>();
-        for(String s : enabledChannelNames) {
+        for (String s : enabledChannelNames) {
             ChannelUID cuid = new ChannelUID(getThing().getUID(), s);
-            ChannelDefinition def = tt.getChannelDefinitions().stream().filter(d -> d.getId().equals(cuid.getId())).findFirst().get();
+            ChannelDefinition def = tt.getChannelDefinitions().stream().filter(d -> d.getId().equals(cuid.getId()))
+                    .findFirst().get();
             Channel newChannel = buildChannel(tt, def);
 
             Channel existingChannel = this.thing.getChannel(newChannel.getUID());
-            if(existingChannel != null)
-                newChannel = ChannelBuilder.create(newChannel).withConfiguration(existingChannel.getConfiguration()).build();
+            if (existingChannel != null)
+                newChannel = ChannelBuilder.create(newChannel).withConfiguration(existingChannel.getConfiguration())
+                        .build();
 
             enabledChannels.add(newChannel);
         }

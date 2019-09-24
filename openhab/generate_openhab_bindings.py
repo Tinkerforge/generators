@@ -35,7 +35,7 @@ from java.generate_java_bindings import JavaBindingsGenerator, JavaBindingsDevic
 
 
 
-OpenHAB = namedtuple('OpenHAB', 'channels channel_types imports params param_groups init_code dispose_code category')
+OpenHAB = namedtuple('OpenHAB', 'channels channel_types imports params param_groups init_code dispose_code category custom')
 Channel = namedtuple('Channel', ['id', 'type', 'init_code', 'dispose_code',
                                     'java_unit', 'divisor', 'is_trigger_channel',
                                     'getters',
@@ -149,7 +149,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'imports': [],
             'init_code': '',
             'dispose_code': '',
-            'category': None
+            'category': None,
+            'custom': False
         }
 
         tmp = oh_defaults.copy()
@@ -973,6 +974,8 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
         return True
 
     def generate(self, device):
+        if device.oh.custom:
+            return
         class_name = device.get_java_class_name()
 
         with open(os.path.join(self.get_bindings_dir(), class_name + '.java'), 'w') as f:

@@ -54,14 +54,19 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'tinkerforge_xx_XX.properties': './src/main/resources/ESH-INF/i18n',
 
             'BrickDaemonDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
+            'OutdoorWeatherDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
+            'TinkerforgeDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
 
             'TinkerforgeHandlerFactory.java':               './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
             'TinkerforgeChannelTypeProvider.java':          './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
             'TinkerforgeConfigDescriptionProvider.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
             'TinkerforgeThingTypeProvider.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
 
-            'BrickDaemonHandler.java':  './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'DeviceHandler.java':       './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'BrickDaemonHandler.java':                      './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'BrickletOutdoorWeatherHandler.java':           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'BrickletOutdoorWeatherSensorHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'BrickletOutdoorWeatherStationHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'DeviceHandler.java':                           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
 
             # Reuse from java generator
             '../java/AlreadyConnectedException.java': './src/main/java/com/tinkerforge',
@@ -86,6 +91,10 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'IPConnection.java':              './src/main/java/com/tinkerforge',
             'IPConnectionBase.java':          './src/main/java/com/tinkerforge',
             'TinkerforgeListener.java':       './src/main/java/com/tinkerforge',
+
+            'BrickletOutdoorWeather.java':       './src/main/java/com/tinkerforge',
+            'BrickletOutdoorWeatherSensor.java':'./src/main/java/com/tinkerforge',
+            'BrickletOutdoorWeatherStation.java':'./src/main/java/com/tinkerforge',
 
 
             os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'): './src/main/java/com/tinkerforge',
@@ -118,7 +127,9 @@ class OpenHABZipGenerator(common.ZipGenerator):
         if not device.is_released():
             return
 
-        shutil.copy(os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + '.java'), self.tmp_bindings_dir)
+        device_file = os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + '.java')
+        if os.path.exists(device_file):
+            shutil.copy(device_file, self.tmp_bindings_dir)
 
         for file in os.listdir(self.get_bindings_dir()):
             if device.get_category().camel+device.get_name().camel in file and file.endswith('Config.java'):

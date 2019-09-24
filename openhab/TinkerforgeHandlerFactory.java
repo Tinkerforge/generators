@@ -28,7 +28,11 @@ import com.tinkerforge.IPConnection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
+import org.eclipse.smarthome.binding.tinkerforge.discovery.TinkerforgeDiscoveryService;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherSensorHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherStationHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -52,7 +56,7 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 @Component(configurationPid = "binding.tinkerforge", service = ThingHandlerFactory.class)
 public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
-    private final Map<BrickDaemonDiscoveryService, @Nullable ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
+    private final Map<TinkerforgeDiscoveryService, @Nullable ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
     private final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
 
@@ -79,22 +83,33 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
             BrickDaemonHandler handler = new BrickDaemonHandler((Bridge) thing, this::registerBrickDaemonDiscoveryService, this::deregisterBrickDaemonDiscoveryService);
             //registerBrickDaemonDiscoveryService(handler);
             return handler;
+        } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER)) {
+            assert (thing instanceof Bridge);
+            BrickletOutdoorWeatherHandler handler = new BrickletOutdoorWeatherHandler((Bridge) thing, (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon), this::registerBrickDaemonDiscoveryService, this::deregisterBrickDaemonDiscoveryService);
+            //registerBrickDaemonDiscoveryService(handler);
+            return handler;
+        } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_STATION)) {
+            BrickletOutdoorWeatherStationHandler handler = new BrickletOutdoorWeatherStationHandler(thing);
+            return handler;
+        } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_SENSOR)) {
+            BrickletOutdoorWeatherSensorHandler handler = new BrickletOutdoorWeatherSensorHandler(thing);
+            return handler;
         }
 
         return new DeviceHandler(thing, (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon));
     }
 
-    private synchronized void registerBrickDaemonDiscoveryService(BrickDaemonDiscoveryService service) {
+    private synchronized void registerBrickDaemonDiscoveryService(TinkerforgeDiscoveryService service) {
         this.discoveryServiceRegs.put(service, bundleContext.registerService(DiscoveryService.class.getName(), service, new Hashtable<String, Object>()));
     }
 
-    private synchronized void deregisterBrickDaemonDiscoveryService(BrickDaemonDiscoveryService service) {
+    private synchronized void deregisterBrickDaemonDiscoveryService(TinkerforgeDiscoveryService service) {
         ServiceRegistration<?> serviceReg = this.discoveryServiceRegs.remove(service);
         if (serviceReg != null) {
             // remove discovery service, if bridge handler is removed
             serviceReg.unregister();
             if (service != null) {
-                service.deactivate();
+                service.stopDiscovery();
             }
         }
     }

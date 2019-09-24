@@ -19,7 +19,10 @@ public class DeviceFactory {
     static {
         deviceInfos = Arrays.asList(
             BrickDaemon.DEVICE_INFO,
-            {devices}
+            {devices},
+            BrickletOutdoorWeather.DEVICE_INFO,
+            BrickletOutdoorWeatherSensor.DEVICE_INFO,
+            BrickletOutdoorWeatherStation.DEVICE_INFO
         );
     }
 
@@ -38,10 +41,10 @@ public class DeviceFactory {
     }
 
 	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {
-		return getDeviceInfo(deviceIdentifier).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+		return (Device)getDeviceInfo(deviceIdentifier).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
     }
 
     public static Device createDevice(String thingName, String uid, IPConnection ipcon) throws Exception {
-		return getDeviceInfo(thingName).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+		return (Device)getDeviceInfo(thingName).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
 	}
 }

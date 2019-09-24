@@ -25,7 +25,7 @@ import com.tinkerforge.IPConnectionBase;
 import com.tinkerforge.NotConnectedException;
 
 
-public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
+public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implements TinkerforgeDiscoveryService {
     BrickDaemonHandler handler;
     EnumerateListener listener;
     ScheduledFuture<?> job = null;
@@ -128,6 +128,12 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
     @Override
     public Set<ThingTypeUID> getSupportedThingTypes() {
         return new HashSet<ThingTypeUID>(TinkerforgeBindingConstants.SUPPORTED_DEVICES);
+    }
+
+    @Override
+    public void stopDiscovery() {
+        stopBackgroundDiscovery();
+        deactivate();
     }
 
 }

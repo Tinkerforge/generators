@@ -3,6 +3,7 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
+import org.eclipse.smarthome.binding.tinkerforge.discovery.TinkerforgeDiscoveryService;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -30,16 +31,16 @@ import com.tinkerforge.TinkerforgeException;
 
 public class BrickDaemonHandler extends BaseBridgeHandler {
     public IPConnection ipcon;
-    private Consumer<BrickDaemonDiscoveryService> registerFn;
-    private Consumer<BrickDaemonDiscoveryService> deregisterFn;
+    private Consumer<TinkerforgeDiscoveryService> registerFn;
+    private Consumer<TinkerforgeDiscoveryService> deregisterFn;
     private BrickDaemonDiscoveryService discoveryService;
     @Nullable
     private ScheduledFuture<?> connectFuture;
 
     private final Logger logger = LoggerFactory.getLogger(BrickDaemonHandler.class);
 
-    public BrickDaemonHandler(Bridge bridge, Consumer<BrickDaemonDiscoveryService> registerFn,
-            Consumer<BrickDaemonDiscoveryService> deregisterFn) {
+    public BrickDaemonHandler(Bridge bridge, Consumer<TinkerforgeDiscoveryService> registerFn,
+            Consumer<TinkerforgeDiscoveryService> deregisterFn) {
         super(bridge);
         this.registerFn = registerFn;
         this.deregisterFn = deregisterFn;
