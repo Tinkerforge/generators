@@ -6,6 +6,8 @@
 
 # RGB LED Matrix Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -285,3 +287,48 @@ ausgelöst wird.
 """
 }]
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """this.setFrameDuration(cfg.frameDuration);""",
+    'params': [ {
+            'name': 'Frame Duration',
+            'type': 'integer',
+            'default': 100,
+            'label': 'Frame Duration',
+            'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger.'
+        }],
+    'channels': [{
+            'id': 'Frame Started',
+            'label': 'Frame Started',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Frame Started',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
+            'id': 'LED Values',
+            'type': 'LED Values',
+            'setters': [{
+                    'packet': 'Set Red',
+                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 0, logger)']
+                }, {
+                    'packet': 'Set Green',
+                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 1, logger)']
+                }, {
+                    'packet': 'Set Blue',
+                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 2, logger)']
+                }
+            ],
+            'setter_command_type': "StringType",
+        },
+    ],
+    'channel_types': [
+        oh_generic_channel_type('LED Values', 'String', 'LED Values',
+                     description="The RGB(W) values for the LEDs.<br/><br/>Command format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...<br/><br/>The data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.<br/><br/> For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.")
+    ]
+}

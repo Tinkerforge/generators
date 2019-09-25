@@ -6,6 +6,8 @@
 
 # IMU Brick 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 3],
@@ -1235,3 +1237,290 @@ com['examples'].append({
 'functions': [('callback', ('All Data', 'all data'), [(('Acceleration', ['Acceleration [X]', 'Acceleration [Y]', 'Acceleration [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Magnetic Field', ['Magnetic Field [X]', 'Magnetic Field [Y]', 'Magnetic Field [Z]']), 'int16', 3, 16.0, 'µT', None), (('Angular Velocity', ['Angular Velocity [X]', 'Angular Velocity [Y]', 'Angular Velocity [Z]']), 'int16', 3, 16.0, '°/s', None), (('Euler Angle', ['Euler Angle [X]', 'Euler Angle [Y]', 'Euler Angle [Z]']), 'int16', 3, 16.0, '°', None), (('Quaternion', ['Quaternion [W]', 'Quaternion [X]', 'Quaternion [Y]', 'Quaternion [Z]']), 'int16', 4, 16383.0, None, None), (('Linear Acceleration', ['Linear Acceleration [X]', 'Linear Acceleration [Y]', 'Linear Acceleration [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Gravity Vector', ['Gravity Vector [X]', 'Gravity Vector [Y]', 'Gravity Vector [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Temperature', 'Temperature'), 'int8', 1, None, '°C', None), (('Calibration Status', 'Calibration Status'), 'uint8:bitmask:8', 1, None, None, None)], None, None),
               ('callback_period', ('All Data', 'all data'), [], 100)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
+    'params': [{
+            'name': 'Magnetometer Rate',
+            'type': 'integer',
+            'options':[('2Hz', 0),
+                       ('6Hz', 1),
+                       ('8Hz', 2),
+                       ('10Hz', 3),
+                       ('15Hz', 4),
+                       ('20Hz', 5),
+                       ('25Hz', 6),
+                       ('30Hz', 7)],
+            'limitToOptions': 'true',
+            'default': 5,
+            'label': 'Magnetometer Rate',
+            'description': 'This option is auto-controlled in fusion mode.'
+        }, {
+            'name': 'Gyroscope Range',
+            'type': 'integer',
+            'options':[('2000°/s', 0),
+                        ('1000°/s', 1),
+                        ('500°/s', 2),
+                        ('250°/s', 3),
+                        ('125°/s', 4)],
+            'limitToOptions': 'true',
+            'default': 0,
+            'label': 'Gyroscope Range',
+            'description': 'This option is auto-controlled in fusion mode.'
+        }, {
+            'name': 'Gyroscope Bandwidth',
+            'type': 'integer',
+            'options':[('523Hz', 0),
+                       ('230Hz', 1),
+                       ('116Hz', 2),
+                       ('47Hz', 3),
+                       ('23Hz', 4),
+                       ('12Hz', 5),
+                       ('64Hz', 6),
+                       ('32Hz', 7)],
+            'limitToOptions': 'true',
+            'default': 7,
+            'label': 'Gyroscope Bandwidth',
+            'description': 'This option is auto-controlled in fusion mode.'
+        }, {
+            'name': 'Accelerometer Range',
+            'type': 'integer',
+            'options':[('±2G', 0),
+                       ('±4G', 1),
+                       ('±8G', 2),
+                       ('±16G', 3)],
+            'limitToOptions': 'true',
+            'default': 1,
+            'label': 'Accelerometer Range',
+            'description': 'This option is user selectable in all fusion modes.'
+        }, {
+            'name': 'Accelerometer Bandwidth',
+            'type': 'integer',
+            'options':[('7.81Hz', 0),
+                       ('15.63Hz', 1),
+                       ('31.25Hz', 2),
+                       ('62.5Hz', 3),
+                       ('125Hz', 4),
+                       ('250Hz', 5),
+                       ('500Hz', 6),
+                       ('1000Hz', 7)],
+            'limitToOptions': 'true',
+            'default': 3,
+            'label': 'Accelerometer Bandwidth',
+            'description': 'This option is auto-controlled in fusion mode.'
+        }, {
+            'name': 'Sensor Fusion Mode',
+            'type': 'integer',
+            'options':[('Off', 0),
+                       ('On', 1),
+                       ('On Without Magnetometer', 2),
+                       ('On Without Fast Magnetometer Calibration', 3)],
+            'default': 1,
+            'limitToOptions': 'true',
+            'label': 'Sensor Fusion Mode',
+            'description': "If the fusion mode is turned off, the Acceleration, Magnetic Field and Angular Velocity channels return uncalibrated and uncompensated sensor data. All other sensor channels return no data.<br/><br/>Since firmware version 2.0.6 you can also use a fusion mode without magnetometer. In this mode the calculated orientation is relative (with magnetometer it is absolute with respect to the earth). However, the calculation can't be influenced by spurious magnetic fields.<br/><br/>Since firmware version 2.0.13 you can also use a fusion mode without fast magnetometer calibration. This mode is the same as the normal fusion mode, but the fast magnetometer calibration is turned off. So to find the orientation the first time will likely take longer, but small magnetic influences might not affect the automatic calibration as much.<br/><br/>By default sensor fusion is on."
+        },
+        update_interval('Acceleration', 'the acceleration'),
+        update_interval('Magnetic Field', 'the magnetic field'),
+        update_interval('Angular Velocity', 'the angular velocity'),
+        update_interval('Orientation', 'the orientation as euler angles'),
+        update_interval('Quaternion', 'the orientation as quaternion'),
+        update_interval('Linear Acceleration', 'the linear acceleration'),
+        update_interval('Gravity Vector', 'the gravity vector'),
+        update_interval('Temperature', 'the temperature'),
+        ],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """
+    this.setAccelerationPeriod(cfg.accelerationUpdateInterval);
+    this.setMagneticFieldPeriod(cfg.magneticFieldUpdateInterval);
+    this.setAngularVelocityPeriod(cfg.angularVelocityUpdateInterval);
+    this.setOrientationPeriod(cfg.orientationUpdateInterval);
+    this.setQuaternionPeriod(cfg.quaternionUpdateInterval);
+    this.setLinearAccelerationPeriod(cfg.linearAccelerationUpdateInterval);
+    this.setGravityVectorPeriod(cfg.gravityVectorUpdateInterval);
+    this.setTemperaturePeriod(cfg.temperatureUpdateInterval);
+    this.setSensorConfiguration(cfg.magnetometerRate.shortValue(), cfg.gyroscopeRange.shortValue(), cfg.gyroscopeBandwidth.shortValue(), cfg.accelerometerRange.shortValue(), cfg.accelerometerBandwidth.shortValue());
+    this.setSensorFusionMode(cfg.sensorFusionMode.shortValue());
+    """,
+    'channels': [{
+            'id': 'Acceleration {}'.format(axis.upper()),
+            'type': 'Acceleration',
+            'label': 'Acceleration - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Acceleration',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Acceleration',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.METRE_PER_SQUARE_SECOND',
+            'divisor': 100.0,
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+            'id': 'Magnetic Field {}'.format(axis.upper()),
+            'type': 'Magnetic Field',
+            'label': 'Magnetic Field - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Magnetic Field',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Magnetic Field',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.TESLA',
+            'divisor': 16000000.0,
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z']
+    ] +  [{
+            'id': 'Angular Velocity {}'.format(axis.upper()),
+            'type': 'Angular Velocity',
+            'label': 'Angular Velocity - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Angular Velocity',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Angular Velocity',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.ONE',
+            'divisor': 16.0,
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+            'id': 'Orientation {}'.format(angle),
+            'type': 'Orientation',
+            'label': 'Orientation - {}'.format(angle),
+
+            'getters': [{
+                'packet': 'Get Orientation',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(angle.lower())}],
+
+            'callbacks': [{
+                'packet': 'Orientation',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(angle.lower())}],
+            'java_unit': 'SmartHomeUnits.DEGREE_ANGLE',
+            'divisor': 16.0,
+            'is_trigger_channel': False
+        } for angle in ['Heading', 'Roll', 'Pitch']
+    ] + [{
+            'id': 'Quaternion {}'.format(axis.upper()),
+            'type': 'Quaternion',
+            'label': 'Quaternion - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Quaternion',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Quaternion',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.ONE',
+            'divisor': 16383.0,
+            'is_trigger_channel': False
+        } for axis in ['W', 'X', 'Y', 'Z']
+    ] + [{
+            'id': 'Linear Acceleration {}'.format(axis.upper()),
+            'type': 'Linear Acceleration',
+            'label': 'Linear Acceleration - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Linear Acceleration',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Linear Acceleration',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.METRE_PER_SQUARE_SECOND',
+            'divisor': 100.0,
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+            'id': 'Gravity Vector {}'.format(axis.upper()),
+            'type': 'Gravity Vector',
+            'label': 'Gravity Vector - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Gravity Vector',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Gravity Vector',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
+            'divisor': 980.665,
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+        'id': 'Temperature',
+        'type': 'Temperature',
+        'label': 'Temperature',
+
+        'getters': [{
+            'packet': 'Get Temperature',
+            'transform': 'new QuantityType(value{divisor}, {unit})'}],
+
+        'callbacks': [{
+            'packet': 'Temperature',
+            'transform': 'new QuantityType(temperature{divisor}, {unit})'}],
+        'java_unit': 'SIUnits.CELSIUS',
+        'divisor': 1.0,
+        'is_trigger_channel': False
+    }] + [{
+            'id': 'Enable LEDs',
+            'type': 'Enable LEDs',
+
+            'setters': [{
+                'predicate': 'cmd == OnOffType.ON',
+                'packet': 'Leds On',
+            }, {
+                'predicate': 'cmd == OnOffType.OFF',
+                'packet': 'Leds Off',
+            },],
+            'setter_command_type': "OnOffType",
+
+            'getters': [{
+                'packet': 'Are Leds On',
+                'transform': 'value? OnOffType.ON : OnOffType.OFF'}]
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
+                     description='The acceleration from the accelerometer for the x, y and z axis in m/s².',
+                     read_only=True,
+                     pattern='%.3f %unit%'),
+        oh_generic_channel_type('Magnetic Field', 'Number:MagneticFluxDensity', 'NOT USED',
+                     description='The calibrated magnetic field from the magnetometer for the x, y and z axis in Tesla.',
+                     read_only=True,
+                     pattern='%.9f %unit%'),
+        oh_generic_channel_type('Angular Velocity', 'Number:Dimensionless', 'NOT USED',
+                     description='The calibrated angular velocity from the gyroscope for the x, y and z axis in °/s.',
+                     read_only=True,
+                     pattern='%.3f'),
+        oh_generic_channel_type('Orientation', 'Number:Angle', 'NOT USED',
+                     description='The current orientation (heading, roll, pitch) of the IMU Brick as independent Euler angles in 1/16 degree. Note that Euler angles always experience a gimbal lock. We recommend that you use quaternions instead, if you need the absolute orientation.',
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_generic_channel_type('Quaternion', 'Number:Dimensionless', 'NOT USED',
+                     description='The current orientation (w, x, y, z) of the IMU Brick as quaternions.',
+                     read_only=True,
+                     pattern='%.4f %unit%'),
+        oh_generic_channel_type('Linear Acceleration', 'Number:Acceleration', 'NOT USED',
+                     description='The linear acceleration from the accelerometer for the x, y and z axis in m/s. The linear acceleration is the acceleration in each of the three axis of the IMU Brick with the influences of gravity removed.',
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_generic_channel_type('Gravity Vector', 'Number:Acceleration', 'NOT USED',
+                     description='The current gravity vector of the IMU Brick for the x, y and z axis in g (1g = 9.80665m/s²). The gravity vector is the acceleration that occurs due to gravity. Influences of additional linear acceleration are removed.',
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'NOT USED',
+                     description='The temperature of the IMU Brick. The temperature is given in °C. The temperature is measured in the core of the BNO055 IC, it is not the ambient temperature.',
+                     read_only=True,
+                     pattern='%d %unit%'),
+        oh_generic_channel_type('Enable LEDs', 'Switch', 'Enable LEDs',
+                     description='Enable/disable the orientation and direction LEDs of the IMU Brick.'),
+    ]
+}

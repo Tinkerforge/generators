@@ -423,4 +423,16 @@ public class Helper {
 
         return convertThermalHighContrastImage(relative, logger);
     }
+
+    public static int[] parseLEDMatrixValues(String command, int channel, Logger logger) {
+        String[] splt = command.split(",");
+        int offset = Integer.valueOf(splt[0]);
+        int[] result = new int[64];
+
+        for(int i = channel + 1; i < splt.length; i += 3) {
+            result[offset + (i - 1) / 3] = Integer.valueOf(splt[i]);
+        }
+
+        return result;
+    }
 }

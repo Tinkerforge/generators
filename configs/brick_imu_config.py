@@ -6,6 +6,8 @@
 
 # IMU Brick communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 4],
@@ -1081,3 +1083,164 @@ com['examples'].append({
 'functions': [('callback', ('Quaternion', 'quaternion'), [(('X', 'Quaternion [X]'), 'float', 1, None, None, None), (('Y', 'Quaternion [Y]'), 'float', 1, None, None, None), (('Z', 'Quaternion [Z]'), 'float', 1, None, None, None), (('W', 'Quaternion [W]'), 'float', 1, None, None, None)], None, None),
               ('callback_period', ('Quaternion', 'quaternion'), [], 1000)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
+    'params': [{
+            'name': 'Enable Orientation',
+            'type': 'boolean',
+            'default': 'true',
+            'label': 'Enable Orientation',
+            'description': 'Turns the orientation calculation of the IMU Brick on or off. The trigonometric functions that are needed to calculate the orientation are very expensive. We recommend to turn the orientation calculation off if the orientation is not needed, to free calculation time for the sensor fusion algorithm.'
+        }, {
+            'name': 'Convergence Speed',
+            'type': 'integer',
+            'min': 0,
+            'max': 65536,
+            'default': 30,
+            'label': 'Convergence Speed',
+            'description': "Sets the convergence speed of the IMU Brick in °/s. The convergence speed determines how the different sensor measurements are fused.<br/><br/>If the orientation of the IMU Brick is off by 10° and the convergence speed is set to 20°/s, it will take 0.5s until the orientation is corrected. However, if the correct orientation is reached and the convergence speed is too high, the orientation will fluctuate with the fluctuations of the accelerometer and the magnetometer.<br/><br/>If you set the convergence speed to 0, practically only the gyroscope is used to calculate the orientation. This gives very smooth movements, but errors of the gyroscope will not be corrected. If you set the convergence speed to something above 500, practically only the magnetometer and the accelerometer are used to calculate the orientation. In this case the movements are abrupt and the values will fluctuate, but there won't be any errors that accumulate over time.<br/><br/>In an application with high angular velocities, we recommend a high convergence speed, so the errors of the gyroscope can be corrected fast. In applications with only slow movements we recommend a low convergence speed. You can change the convergence speed on the fly. So it is possible (and recommended) to increase the convergence speed before an abrupt movement and decrease it afterwards again.<br/><br/>You might want to play around with the convergence speed in the Brick Viewer to get a feeling for a good value for your application.<br/><br/>The default value is 30."
+        },
+        update_interval('Orientation', 'the orientation as euler angles'),
+        update_interval('Quaternion', 'the orientation as quaternion'),
+        update_interval('Acceleration', 'the acceleration'),
+        update_interval('Magnetic Field', 'the magnetic field'),
+        update_interval('Angular Velocity', 'the angular velocity'),
+        ],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """if(cfg.enableOrientation) {{
+        this.orientationCalculationOn();
+        this.setOrientationPeriod(cfg.orientationUpdateInterval);
+    }} else {{
+        this.orientationCalculationOff();
+        this.setOrientationPeriod(0);
+    }}
+    this.setConvergenceSpeed(cfg.convergenceSpeed);
+    this.setQuaternionPeriod(cfg.quaternionUpdateInterval);
+    this.setAccelerationPeriod(cfg.accelerationUpdateInterval);
+    this.setMagneticFieldPeriod(cfg.magneticFieldUpdateInterval);
+    this.setAngularVelocityPeriod(cfg.angularVelocityUpdateInterval);
+    """,
+    'channels': [ {
+            'predicate': 'cfg.enableOrientation',
+            'id': 'Orientation {}'.format(angle),
+            'type': 'Orientation',
+            'label': 'Orientation - {}'.format(angle),
+
+            'getters': [{
+                'packet': 'Get Orientation',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(angle.lower())}],
+
+            'callbacks': [{
+                'packet': 'Orientation',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(angle.lower())}],
+            'java_unit': 'SmartHomeUnits.DEGREE_ANGLE',
+            'divisor': '100.0',
+            'is_trigger_channel': False
+        } for angle in ['Roll', 'Pitch', 'Yaw']
+    ] + [{
+            'id': 'Quaternion {}'.format(axis.upper()),
+            'type': 'Quaternion',
+            'label': 'Quaternion - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Quaternion',
+                'transform': 'new QuantityType(value.{}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Quaternion',
+                'transform': 'new QuantityType({}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.ONE',
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z', 'W']
+    ] + [{
+            'id': 'Enable LEDs',
+            'type': 'Enable LEDs',
+
+            'setters': [{
+                'predicate': 'cmd == OnOffType.ON',
+                'packet': 'Leds On',
+            }, {
+                'predicate': 'cmd == OnOffType.OFF',
+                'packet': 'Leds Off',
+            },],
+            'setter_command_type': "OnOffType",
+
+            'getters': [{
+                'packet': 'Are Leds On',
+                'transform': 'value? OnOffType.ON : OnOffType.OFF'}]
+        }
+    ] + [{
+            'id': 'Acceleration {}'.format(axis.upper()),
+            'type': 'Acceleration',
+            'label': 'Acceleration - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Acceleration',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Acceleration',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
+            'divisor': 1000.0,
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+            'id': 'Magnetic Field {}'.format(axis.upper()),
+            'type': 'Magnetic Field',
+            'label': 'Magnetic Field - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Magnetic Field',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Magnetic Field',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.TESLA',
+            'divisor': 1000000000.0,
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+            'id': 'Angular Velocity {}'.format(axis.upper()),
+            'type': 'Angular Velocity',
+            'label': 'Angular Velocity - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Angular Velocity',
+                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Angular Velocity',
+                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.ONE',
+            'divisor': 14.375,
+            'is_trigger_channel': False
+        } for axis in ['X', 'Y', 'Z']
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Orientation', 'Number:Angle', 'NOT USED',
+                     description='The current orientation (roll, pitch, yaw) of the IMU Brick as Euler angles in °. Note that Euler angles always experience a gimbal lock.<br/><br/>We recommend that you use quaternions instead.<br/><br/>The order to sequence in which the orientation values should be applied is roll, yaw, pitch.',
+                     read_only=True,
+                     pattern='%.2f %unit%'),
+        oh_generic_channel_type('Quaternion', 'Number:Dimensionless', 'NOT USED',
+                     description='The current orientation (x, y, z, w) of the IMU as quaternions.',
+                     read_only=True,
+                     pattern='%f %unit%'),
+        oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
+                     description='The calibrated acceleration from the accelerometer for the x, y and z axis in g (1g = 9.80665m/s²).',
+                     read_only=True,
+                     pattern='%.3f %unit%'),
+        oh_generic_channel_type('Magnetic Field', 'Number:MagneticFluxDensity', 'NOT USED',
+                     description='The calibrated magnetic field from the magnetometer for the x, y and z axis in Tesla.',
+                     read_only=True,
+                     pattern='%.9f %unit%'),
+        oh_generic_channel_type('Angular Velocity', 'Number:Dimensionless', 'NOT USED',
+                     description='The calibrated angular velocity from the gyroscope for the x, y and z axis in °/s.',
+                     read_only=True,
+                     pattern='%.3f'),
+        oh_generic_channel_type('Enable LEDs', 'Switch', 'Enable LEDs',
+                     description='Enable/disable the orientation and direction LEDs of the IMU Brick.'),
+    ]
+}
