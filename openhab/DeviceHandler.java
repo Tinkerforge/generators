@@ -30,6 +30,7 @@ import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
 import org.eclipse.smarthome.core.thing.type.ChannelDefinition;
 import org.eclipse.smarthome.core.thing.type.ChannelType;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 import org.eclipse.smarthome.core.thing.type.ThingType;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
@@ -202,11 +203,19 @@ public class DeviceHandler extends BaseThingHandler {
 
     private Channel buildChannel(ThingType tt, ChannelDefinition def){
         ChannelType ct = TinkerforgeChannelTypeProvider.getChannelTypeStatic(def.getChannelTypeUID(), null);
-
+        if(ct == null) {
+            ChannelTypeRegistry reg = this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class));
+            if(reg == null) {
+                logger.warn("Could not get build channel {}: ChannelTypeRegistry not found.", def.getId());
+                return null;
+            }
+            ct = reg.getChannelType(def.getChannelTypeUID());
+        }
         ChannelBuilder builder = ChannelBuilder.create(new ChannelUID(getThing().getUID(), def.getId()), ct.getItemType())
                                                .withAutoUpdatePolicy(def.getAutoUpdatePolicy())
                                                .withProperties(def.getProperties())
-                                               .withType(def.getChannelTypeUID());
+                                               .withType(def.getChannelTypeUID())
+                                               .withKind(ct.getKind());
 
         String desc = def.getDescription();
         if(desc != null) {
