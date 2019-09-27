@@ -1769,14 +1769,14 @@ com['openhab'] = {
             'description': "Sets the contrast of the display (0-63).",
         },
         {
-            'name': 'Backlight Intensity',
+            'name': 'Default Backlight Intensity',
             'type': 'integer',
             'default': '100',
             'min': '0',
             'max': '100',
 
-            'label': 'Backlight Intensity',
-            'description': "Sets the backlight intensity of the display (0-100).",
+            'label': 'Default Backlight Intensity',
+            'description': "Sets the default backlight intensity of the display (0-100).",
         },
         {
             'name': 'Invert',
@@ -1795,7 +1795,7 @@ com['openhab'] = {
             'description': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',
         },
     ] ,
-    'init_code': """this.setDisplayConfiguration(cfg.contrast, cfg.backlightIntensity, cfg.invert, cfg.automaticDraw);""",
+    'init_code': """this.setDisplayConfiguration(cfg.contrast, cfg.defaultBacklightIntensity, cfg.invert, cfg.automaticDraw);""",
     'channels': [
             {
                 'id': 'Text',
@@ -1820,7 +1820,21 @@ com['openhab'] = {
                     'packet_params': ['true']
                 }],
                 'setter_command_type': "StringType",
-            }
+            },
+            {
+                'id': 'Backlight',
+                'type': 'Backlight',
+                'setter_command_type': "Number",
+                'setters': [{
+                        'packet': 'Set Display Configuration',
+                        'packet_params': ['cfg.contrast', 'cmd.intValue()', 'cfg.invert', 'cfg.automaticDraw']
+                    }
+                ],
+                'getters': [{
+                    'packet': 'Get Display Configuration',
+                    'transform': 'new QuantityType<>(value.backlight, SmartHomeUnits.ONE)'
+                }]
+            },
     ],
     'channel_types': [
         oh_generic_channel_type('Text', 'String', 'Text',
@@ -1839,5 +1853,9 @@ com['openhab'] = {
             'description':'Draws the currently buffered frame.',
             'command_options': [('Draw', 'DRAW')]
         },
+        oh_generic_channel_type('Backlight', 'Number:Dimensionless', 'Backlight',
+            description="The backlight intensity value from 0 to 100.",
+            min_=0,
+            max_=100)
     ]
 }
