@@ -337,7 +337,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set {title_words}',
                 'packet_params': ['(int)(cmd.doubleValue() * 1000000.0)']}],
-            'setter_command_type': "QuantityType",
+            'setter_command_type': "Number",
 
             'getters': [{
                 'packet': 'Get {title_words}',
@@ -352,7 +352,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set {title_words}',
                 'packet_params': ['(int)(cmd.doubleValue() * 1000.0)']}],
-            'setter_command_type': "QuantityType",
+            'setter_command_type': "Number",
 
             'getters': [{
                 'packet': 'Get {title_words}',

@@ -281,7 +281,7 @@ com['openhab'] = {
                 'packet': 'Set {title_words}',
                 'packet_params': ['cmd.intValue()', 'cfg.smoothDriveMode ? 1 : 0', 'cfg.holdPosition']
             }],
-            'setter_command_type': 'QuantityType',
+            'setter_command_type': 'Number',
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 1.0,
             'is_trigger_channel': False

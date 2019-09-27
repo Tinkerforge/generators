@@ -153,7 +153,7 @@ com['openhab'] = {
                 'packet': 'Set {title_words}',
                 'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)'],
             }],
-            'setter_command_type': 'QuantityType',
+            'setter_command_type': 'Number',
             'setter_refreshs': [{
                 'channel': 'Mode',
                 'delay': 0
@@ -172,7 +172,7 @@ com['openhab'] = {
                 'packet': 'Set {title_words}',
                 'packet_params': ['cmd.shortValue()'],
             }],
-            'setter_command_type': 'QuantityType',
+            'setter_command_type': 'Number',
             'setter_refreshs': [{
                 'channel': 'Voltage',
                 'delay': 0

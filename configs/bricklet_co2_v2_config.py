@@ -370,7 +370,7 @@ com['openhab'] = {
                 'packet': 'Set {title_words}',
                 'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)']
             }],
-            'setter_command_type': 'QuantityType',
+            'setter_command_type': 'Number',
 
             'java_unit': 'SmartHomeUnits.BAR',
             'divisor': 1000.0,

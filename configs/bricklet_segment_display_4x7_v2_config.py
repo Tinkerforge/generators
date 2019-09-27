@@ -359,7 +359,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set Brightness',
                 'packet_params': ['cmd.shortValue()']}],
-            'setter_command_type': 'QuantityType'
+            'setter_command_type': 'Number'
         }, {
             'id': 'Colon Upper',
             'type': 'Colon Upper',
@@ -415,7 +415,7 @@ com['openhab'] = {
                     'this.getSegments().tick',
                 ]
             }],
-            'setter_command_type': 'QuantityType'
+            'setter_command_type': 'Number'
         },  {
             'id': 'Text',
             'type': 'Text',

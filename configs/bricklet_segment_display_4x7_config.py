@@ -204,7 +204,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set Segments',
                 'packet_params': ['this.getSegments().segments', 'cmd.shortValue()', 'this.getSegments().colon']}],
-            'setter_command_type': 'QuantityType'
+            'setter_command_type': 'Number'
         }, {
             'id': 'Colon',
             'type': 'Colon',
@@ -228,7 +228,7 @@ com['openhab'] = {
                 'packet': 'Set Segments',
                 'packet_params': ['new short[]{(short)(cmd.intValue() >> 24), (short)(cmd.intValue() >> 16), (short)(cmd.intValue() >> 8), (short)(cmd.intValue())}', 'this.getSegments().brightness', 'this.getSegments().colon',]
             }],
-            'setter_command_type': 'QuantityType'
+            'setter_command_type': 'Number'
         },  {
             'id': 'Text',
             'type': 'Text',

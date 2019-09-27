@@ -275,7 +275,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set Indicator',
                 'packet_params': ['cmd.intValue()', 'this.getIndicator().topRight', 'this.getIndicator().bottom']}],
-            'setter_command_type': 'QuantityType',
+            'setter_command_type': 'Number',
             'java_unit': 'SmartHomeUnits.ONE'
         },{
             'id': 'Top Right Indicator',
@@ -288,7 +288,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set Indicator',
                 'packet_params': [ 'this.getIndicator().topLeft', 'cmd.intValue()', 'this.getIndicator().bottom']}],
-            'setter_command_type': 'QuantityType',
+            'setter_command_type': 'Number',
             'java_unit': 'SmartHomeUnits.ONE'
         },{
             'id': 'Bottom Indicator',
@@ -301,7 +301,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set Indicator',
                 'packet_params': ['this.getIndicator().topLeft', 'this.getIndicator().topRight', 'cmd.intValue()']}],
-            'setter_command_type': 'QuantityType',
+            'setter_command_type': 'Number',
             'java_unit': 'SmartHomeUnits.ONE'
         }
     ],
