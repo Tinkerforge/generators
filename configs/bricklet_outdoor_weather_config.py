@@ -324,7 +324,7 @@ com['packets'].append({
 Reports the sensor data every time a new data packet is received.
 See :func:`Get Sensor Data` for information about the data.
 
-For each station the callback will be called about every 45 seconds.
+For each sensor the callback will be called about every 45 seconds.
 
 Turn the callback on/off with :func:`Set Sensor Callback Configuration`
 (by default it is turned off).
