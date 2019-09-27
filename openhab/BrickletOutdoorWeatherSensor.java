@@ -105,7 +105,7 @@ public class BrickletOutdoorWeatherSensor {
             return ChannelTypeBuilder
                     .state(new ChannelTypeUID("tinkerforge", "OutdoorWeatherSensorLastChange"), "Last Change", "DateTime")
                     .withConfigDescriptionURI(URI.create("channel-type:tinkerforge:OutdoorWeatherSensorLastChange"))
-                    .withDescription("Time when the last data was received from the sensor.")
+                    .withDescription("Time when the last data was received from the sensor. The sensor sends data every 45 to 60 seconds.")
                     .withStateDescription(
                             StateDescriptionFragmentBuilder.create().withReadOnly(true).build().toStateDescription())
                     .build();
