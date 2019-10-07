@@ -439,7 +439,7 @@ unter der Annahme, dass kein Schreib-Buffer verwendet wird. Jeder Lese-Buffer
 hat seine eigene Filter-Konfiguration (siehe
 :func:`Set Read Filter Configuration`).
 
-Eine gültige Queue-Konfiguration erfüllt diese Bedingungen:
+Eine gültige Queue-Konfiguration erfüllt diese Bedingungen::
 
  write_buffer_size + read_buffer_size_0 + read_buffer_size_1 + ... + read_buffer_size_31 <= 32
  write_backlog_size + read_backlog_size <= 768
