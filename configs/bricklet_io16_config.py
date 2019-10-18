@@ -635,7 +635,7 @@ def input_channel(idx):
 
             'type': 'Input Pin',
 
-            'callbacks': [{
+            'getters': [{
                 'packet': 'Get Port',
                 'packet_params': ["\'a\'" if idx <= 7 else "\'b\'"],
                 'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
