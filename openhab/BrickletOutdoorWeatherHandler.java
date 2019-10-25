@@ -55,6 +55,10 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
         }
     }
 
+    public void handleTimeout() {
+        ((BrickDaemonHandler)(this.getBridge().getHandler())).handleTimeout(this);
+    }
+
     @Override
     public void initialize() {
         super.initialize();

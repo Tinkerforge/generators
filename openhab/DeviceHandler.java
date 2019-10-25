@@ -75,7 +75,25 @@ public class DeviceHandler extends BaseThingHandler {
 
 	public @Nullable Device getDevice() {
 		return device;
-	}
+    }
+
+
+    public boolean checkReachablity() {
+        try {
+            logger.info("Checking reachability of {}", thing.getUID().getId());
+            getDevice().getIdentity();
+            logger.info("Done checking reachability of {}", thing.getUID().getId());
+
+            // Initialize will set the status itself if the configuration succeeds.
+            if(!thing.getStatus().equals(ThingStatus.INITIALIZING))
+                updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
+            return true;
+        } catch(TinkerforgeException e) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Device is unreachable.");
+            logger.info("Failed checking reachability of {}", thing.getUID().getId());
+            return false;
+        }
+    }
 
     private void enumerateListener(String uid, String connectedUid, char position, short[] hardwareVersion,
     short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
@@ -103,7 +121,8 @@ public class DeviceHandler extends BaseThingHandler {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Bridge not found.");
             return;
         }
-        BrickDaemonHandler brickd = ((BrickDaemonHandler) getBridge().getHandler());
+
+        BrickDaemonHandler brickd = (BrickDaemonHandler) (getBridge().getHandler());
         if (!wasInitialized)
         {
             brickd.addEnumerateListener(this::enumerateListener);
@@ -136,15 +155,19 @@ public class DeviceHandler extends BaseThingHandler {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
             return;
         }
-        BrickDaemonHandler brickd = ((BrickDaemonHandler) bridge.getHandler());
+        BrickDaemonHandler brickd = (BrickDaemonHandler) (bridge.getHandler());
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
         device = deviceSupplier.apply(id, ipcon);
+
+        if(!checkReachablity()) {
+            return;
+        }
 
         try {
             device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
         }
         catch (TinkerforgeException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
+            brickd.handleTimeout(this);
             return;
         }
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
@@ -165,14 +188,13 @@ public class DeviceHandler extends BaseThingHandler {
         try {
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
         } catch (TinkerforgeException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
+            ((BrickDaemonHandler)(getBridge().getHandler())).handleTimeout(this);
         }
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         if (this.getBridge().getStatus() == ThingStatus.OFFLINE) {
-            //updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
             return;
         }
 
@@ -185,7 +207,7 @@ public class DeviceHandler extends BaseThingHandler {
                 refreshs.forEach(r -> scheduler.schedule(() -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay, TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
+            ((BrickDaemonHandler)(getBridge().getHandler())).handleTimeout(this);
         }
     }
 
@@ -235,7 +257,7 @@ public class DeviceHandler extends BaseThingHandler {
             enabledChannelNames = device.getEnabledChannels(getConfig());
         }
         catch(TinkerforgeException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
+            ((BrickDaemonHandler)(getBridge().getHandler())).handleTimeout(this);
         }
 
         ThingType tt = TinkerforgeThingTypeProvider.getThingTypeStatic(this.getThing().getThingTypeUID(), null);

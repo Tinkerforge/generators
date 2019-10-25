@@ -135,6 +135,7 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
             updateStatus(ThingStatus.ONLINE);
         } catch (TinkerforgeException e) {
+            ((BrickletOutdoorWeatherHandler)getBridge()).handleTimeout();
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
@@ -157,6 +158,7 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
                         TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
+            ((BrickletOutdoorWeatherHandler)getBridge()).handleTimeout();
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
@@ -186,6 +188,7 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
         } catch (TinkerforgeException e) {
+            ((BrickletOutdoorWeatherHandler)getBridge()).handleTimeout();
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
 

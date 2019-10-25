@@ -49,6 +49,7 @@ public class OutdoorWeatherDiscoveryService extends AbstractDiscoveryService imp
             newSensorIDs = this.device.getSensorIdentifiers();
             newStationIDs = this.device.getStationIdentifiers();
         } catch (TinkerforgeException e) {
+            handler.handleTimeout();
             return;
         }
 

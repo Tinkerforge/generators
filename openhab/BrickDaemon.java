@@ -146,19 +146,6 @@ public class BrickDaemon extends Device {
                                                      .withMaximum(BigDecimal.valueOf(65535))
                                                      .withStepSize(BigDecimal.valueOf(1))
                                                      .build(),
-                    ConfigDescriptionParameterBuilder.create("enableReconnect", Type.BOOLEAN)
-                                                     .withLabel("Enable reconnects")
-                                                     .withDescription("Enable reattempting to connect to the Brick Daemon instance if the connection could not be established.")
-                                                     .withAdvanced(true)
-                                                     .withDefault("true")
-                                                     .build(),
-                    ConfigDescriptionParameterBuilder.create("reconnectInterval", Type.DECIMAL)
-                                                     .withLabel("Reconnect Interval")
-                                                     .withDescription("Seconds to wait between attempts to connect.")
-                                                     .withAdvanced(true)
-                                                     .withDefault("10.0")
-                                                     .withUnit("s")
-                                                     .build(),
                     ConfigDescriptionParameterBuilder.create("auth", Type.BOOLEAN)
                                                      .withLabel("Use authentication")
                                                      .withDescription("Use authentication when connecting to the Brick Daemon.")

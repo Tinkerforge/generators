@@ -494,14 +494,26 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 			try {
 				callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0, (short)0, 0, null));
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				// This thread is typically interrupted here because of the connection establishment above.
+				// The raised exception should have cleared the interrupted flag, so just retry to put into the (unbounded) queue,
+				// to ensure, that the callback thread exits.
+				try {
+					callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte) 0, (short) 0, 0, null));
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 			}
 
 			if (Thread.currentThread() != callbackThreadTmp) {
 				try {
 					callbackThreadTmp.join();
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					// Same reasoning as above.
+					try {
+						callbackThreadTmp.join();
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 
