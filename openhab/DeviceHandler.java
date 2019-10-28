@@ -80,9 +80,9 @@ public class DeviceHandler extends BaseThingHandler {
 
     public boolean checkReachablity() {
         try {
-            logger.info("Checking reachability of {}", thing.getUID().getId());
+            logger.debug("Checking reachability of {}", thing.getUID().getId());
             getDevice().getIdentity();
-            logger.info("Done checking reachability of {}", thing.getUID().getId());
+            logger.debug("Done checking reachability of {}", thing.getUID().getId());
 
             // Initialize will set the status itself if the configuration succeeds.
             if(!thing.getStatus().equals(ThingStatus.INITIALIZING))
@@ -90,7 +90,7 @@ public class DeviceHandler extends BaseThingHandler {
             return true;
         } catch(TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Device is unreachable.");
-            logger.info("Failed checking reachability of {}", thing.getUID().getId());
+            logger.debug("Failed checking reachability of {}: {}", thing.getUID().getId(), e.getMessage());
             return false;
         }
     }

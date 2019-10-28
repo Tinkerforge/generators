@@ -102,8 +102,8 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         this.connect();
         if(!thing.getStatus().equals(ThingStatus.ONLINE))
         {
-            logger.trace("Failed to reconnect");
             final int newReconnectInterval = Math.min(MAX_RECONNECT_INTERVAL_SECS, reconnectInterval * 2);
+            logger.trace("Failed to reconnect. Will try again in {} seconds.", newReconnectInterval);
             connectFuture = scheduler.schedule(() -> this.attemptReconnect(newReconnectInterval), newReconnectInterval, TimeUnit.SECONDS);
         } else {
             logger.trace("Reconnected");
