@@ -343,6 +343,7 @@ Sets the type of the LED driver chip. We currently support the chips
 * WS2811,
 * WS2812 / SK6812 / NeoPixel RGB,
 * SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812),
+* WS2813 / WS2815 (Chip Type = WS2812)
 * LPD8806 and
 * APA102 / DotStar.
 
@@ -357,6 +358,7 @@ wir die folgenden Chips
 * WS2811,
 * WS2812 / SK6812 / NeoPixel RGB,
 * SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812),
+* WS2813 / WS2815 (Chip Type = WS2812)
 * LPD8806 and
 * APA102 / DotStar.
 
