@@ -6,6 +6,8 @@
 
 # Piezo Speaker Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -54,10 +56,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Beeps with the given frequency and volume for the duration in ms. 
+Beeps with the given frequency and volume for the duration in ms.
 
 For example: If you set a duration of 1000, with a volume of 10 and a frequency
-value of 2000 the piezo buzzer will beep with maximum loudness for one 
+value of 2000 the piezo buzzer will beep with maximum loudness for one
 second with a frequency of 2 kHz.
 
 A duration of 0 stops the current beep if any is ongoing.
@@ -71,14 +73,14 @@ The ranges are:
 """,
 'de':
 """
-Erzeugt einen Piepton mit der gegebenen Frequenz und Lautstärke für die 
+Erzeugt einen Piepton mit der gegebenen Frequenz und Lautstärke für die
 angegebene Dauer in ms.
 
 Beispiel: Wenn *duration* auf 1000, *volume* auf 10 und *frequency* auf 2000 gesetzt wird,
-erzeugt der Piezosummer einen Piepton mit maximaler Lautstärke für eine Sekunde mit einer 
+erzeugt der Piezosummer einen Piepton mit maximaler Lautstärke für eine Sekunde mit einer
 Frequenz von 2 kHz.
 
-Eine *duration* von 0 stoppt den aktuellen Piepton. 
+Eine *duration* von 0 stoppt den aktuellen Piepton.
 Eine *duration* von 4294967295 führt zu einem unendlich langen Piepton.
 
 Die Wertebereiche sind:
@@ -101,10 +103,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the last beep settings as set by :func:`Set Beep`. If a beep is currently 
+Returns the last beep settings as set by :func:`Set Beep`. If a beep is currently
 running it also returns the remaining duration of the beep in ms.
 
-If the frequency or volume is updated during a beep (with :func:`Update Frequency` 
+If the frequency or volume is updated during a beep (with :func:`Update Frequency`
 or :func:`Update Volume`) this function returns the updated value.
 """,
 'de':
@@ -177,7 +179,7 @@ The ranges are:
 """,
 'de':
 """
-Startet einen Alarm (Einen Ton der zwischen zwei spezifizierten Frequenzen 
+Startet einen Alarm (Einen Ton der zwischen zwei spezifizierten Frequenzen
 hin und her läuft).
 
 Die folgenden Parameter können genutzt werden:
@@ -237,11 +239,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the last alarm settings as set by :func:`Set Alarm`. If an alarm is currently 
+Returns the last alarm settings as set by :func:`Set Alarm`. If an alarm is currently
 running it also returns the remaining duration of the alarm in ms as well as the
 current frequency of the alarm in Hz.
 
-If the volume is updated during a beep (with :func:`Update Volume`) 
+If the volume is updated during a beep (with :func:`Update Volume`)
 this function returns the updated value.
 """,
 'de':
@@ -337,3 +339,188 @@ com['examples'].append({
 'name': 'Alarm',
 'functions': [('setter', 'Set Alarm', [('uint16', 800), ('uint16', 2000), ('uint16', 10), ('uint16', 1), ('uint8', 10), ('uint32', 10000)], '10 seconds of loud annoying fast alarm', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType',
+                                               'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        {
+            'id': 'Beep',
+            'type': 'Beep',
+            'label': 'Beep',
+
+            'setters': [{
+                'packet': 'Set Beep',
+                'packet_params': ['channelCfg.defaultFrequency, channelCfg.defaultVolume, cmd == OnOffType.ON ? channelCfg.duration : 0']}],
+            'setter_command_type': "OnOffType",
+            'setter_refreshs': [{
+                'channel': 'Volume',
+                'delay': 0
+            }, {
+                'channel': 'Frequency',
+                'delay': 0
+            }],
+
+            'getters': [{
+                'packet': 'Get Beep',
+                'transform': 'value.duration > 0 ? OnOffType.ON : OnOffType.OFF'}],
+
+            'callbacks': [{
+                'packet': 'Beep Finished',
+                'transform': 'OnOffType.OFF'}],
+        },  {
+            'id': 'Alarm',
+            'type': 'Alarm',
+            'label': 'Alarm',
+
+            'setters': [{
+                'packet': 'Set Alarm',
+                'packet_params': ['channelCfg.startFrequency, channelCfg.endFrequency, channelCfg.stepSize, channelCfg.stepDelay, channelCfg.defaultVolume, cmd == OnOffType.ON ? channelCfg.duration : 0']}],
+            'setter_command_type': "OnOffType",
+            'setter_refreshs': [{
+                'channel': 'Volume',
+                'delay': 0
+            }, {
+                'channel': 'Frequency',
+                'delay': 0
+            }],
+
+            'getters': [{
+                'packet': 'Get Alarm',
+                'transform': 'value.duration > 0 ? OnOffType.ON : OnOffType.OFF'}],
+
+            'callbacks': [{
+                'packet': 'Alarm Finished',
+                'transform': 'OnOffType.OFF'}],
+        }, {
+            'id': 'Volume',
+            'type': 'Volume',
+            'label': 'Volume',
+
+            'setters': [{
+                'packet': 'Update Volume',
+                'packet_params': ['cmd.intValue()']}],
+            'setter_command_type': "Number",
+
+            'getters': [{
+                'packet': 'Get Beep',
+                'predicate': 'value.durationRemaining > 0',
+                'transform': 'new DecimalType(value.volume)'
+            }, {
+                'packet': 'Get Alarm',
+                'predicate': 'value.durationRemaining > 0',
+                'transform': 'new DecimalType(value.volume)'
+            }]
+        }, {
+            'id': 'Beep Frequency',
+            'type': 'Beep Frequency',
+            'label': 'Beep Frequency',
+
+            'setters': [{
+                'packet': 'Update Frequency',
+                'packet_params': ['cmd.intValue()']}],
+            'setter_command_type': "Number",
+
+            'getters': [{
+                    'packet': 'Get Beep',
+                    'predicate': 'value.durationRemaining > 0',
+                    'transform': 'new QuantityType<>(value.frequency, SmartHomeUnits.HERTZ)'
+            }]
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Beep', 'Switch', 'Beep',
+                     description='Beeps with the configured default frequency and volume for the configured duration. Frequency and Volume can be updated using the corresponding channels.',
+                     read_only=False,
+                     params=[{
+                        'name': 'Default Frequency',
+                        'type': 'integer',
+                        'default': '2000',
+                        'min': '50',
+                        'max': '15000',
+                        'label': 'Default Frequency',
+                        'description': 'The frequency in Hz to start the beep with. The range of the frequency is 50Hz to 15000Hz.'
+                     }, {
+                        'name': 'Default Volume',
+                        'type': 'integer',
+                        'default': '0',
+                        'min': '0',
+                        'max': '10',
+                        'label': 'Default Volume',
+                        'description': 'The volume to start the beep with. The range of the volume is 0 to 10.'
+                     },  {
+                        'name': 'Duration',
+                        'type': 'integer',
+                        'default': '0',
+                        'min': '0',
+                        'max': '4294967295L',
+                        'label': 'Duration',
+                        'description': 'The duration in ms to beep for. A duration of 0 stops the current beep if any is ongoing. A duration of 4294967295 results in an infinite beep.'
+                     },
+                     ]),
+        oh_generic_channel_type('Alarm', 'Switch', 'Alarm',
+                     description='Creates an alarm (a tone that goes back and force between two specified frequencies). The following parameters can be set:<br/><br/><ul><li>Start Frequency: Start frequency of the alarm in Hz.</li></br><li>End Frequency: End frequency of the alarm in Hz.</li></br><li>Step Size: Size of one step of the sweep between the start/end frequencies in Hz.</li></br><li>Step Delay: Delay between two steps (duration of time that one tone is used in a sweep) in ms.</li></br><li>Duration: Duration of the alarm in ms.</li></ul></br><br/>A duration of 0 stops the current alarm if any is ongoing. A duration of 4294967295 results in an infinite alarm.',
+                     read_only=False,
+                     params=[{
+                        'name': 'Start Frequency',
+                        'type': 'integer',
+                        'default': '250',
+                        'min': '50',
+                        'max': '14999',
+                        'label': 'Start Frequency',
+                        'description': 'Start frequency of the alarm in Hz. The range of the start frequency is 50Hz to 14999Hz. (has to be smaller than end frequency)'
+                     }, {
+                        'name': 'End Frequency',
+                        'type': 'integer',
+                        'default': '750',
+                        'min': '51',
+                        'max': '15000',
+                        'label': 'End Frequency',
+                        'description': 'End frequency of the alarm in Hz. The range of the end frequency is 51Hz to 15000Hz. (has to be bigger than start frequency)'
+                     }, {
+                        'name': 'Step Size',
+                        'type': 'integer',
+                        'default': '1',
+                        'min': '1',
+                        'max': '65535',
+                        'label': 'Step Size',
+                        'description': 'Size of one step of the sweep between the start/end frequencies in Hz. 1Hz - 65536Hz (has to be small enough to fit into the frequency range)'
+                     }, {
+                        'name': 'Step Delay',
+                        'type': 'integer',
+                        'default': '1',
+                        'min': '1',
+                        'max': '65535',
+                        'label': 'Step Delay',
+                        'description': 'Delay between two steps (duration of time that one tone is used in a sweep) in ms. 1ms - 65535ms (has to be small enough to fit into the duration)'
+                     },{
+                        'name': 'Default Volume',
+                        'type': 'integer',
+                        'default': '0',
+                        'min': '0',
+                        'max': '10',
+                        'label': 'Default Volume',
+                        'description': 'The volume to start the alarm with. The range of the volume is 0 to 10.'
+                     }, {
+                        'name': 'Duration',
+                        'type': 'integer',
+                        'default': '0',
+                        'min': '0',
+                        'max': '4294967295L',
+                        'label': 'Duration',
+                        'description': 'The duration in ms to sound the alarm for. A duration of 0 stops the current alarm if any is ongoing. A duration of 4294967295 results in an infinite alarm.'
+                     },
+                     ]),
+        oh_generic_channel_type('Volume', 'Number', 'Volume',
+                     description='Volume of an ongoing beep or alarm. The range of the volume is 0 to 10.',
+                     read_only=False,
+                     min_=0,
+                     max_=10),
+        oh_generic_channel_type('Beep Frequency', 'Number', 'Beep Frequency',
+                     description='Frequency of an ongoing beep. The range of the frequency is 50Hz to 15000Hz.',
+                     read_only=False,
+                     min_=50,
+                     max_=15000),
+    ]
+}
