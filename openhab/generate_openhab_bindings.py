@@ -48,7 +48,7 @@ ChannelType = namedtuple('ChannelType', ['id', 'params', 'param_groups', 'item_t
                                             'read_only', 'pattern', 'min', 'max', 'step', 'options',
                                             'is_trigger_channel', 'command_options'])
 Setter = namedtuple('Setter', ['packet', 'packet_params', 'predicate'])
-Getter = namedtuple('Getter', ['packet', 'packet_params', 'transform'])
+Getter = namedtuple('Getter', ['packet', 'packet_params', 'predicate', 'transform'])
 Callback = namedtuple('Callback', ['packet', 'filter', 'transform'])
 SetterRefresh = namedtuple('SetterRefresh', ['channel', 'delay'])
 
@@ -104,6 +104,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         getter_defaults = {
             'packet': None,
             'packet_params': [],
+            'predicate': 'true',
             'transform': None
         }
 
@@ -451,18 +452,22 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_openhab_getter_impl(self):
         func_template = """    @Override
-    public void refreshValue(String value, org.eclipse.smarthome.config.core.Configuration config, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
+    public void refreshValue(String channel, org.eclipse.smarthome.config.core.Configuration config, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
-        switch(value) {{
+        switch(channel) {{
             {channel_cases}
             default:
-                logger.warn("Refresh for unknown channel {{}}", value);
+                logger.warn("Refresh for unknown channel {{}}", channel);
                 break;
         }}
     }}
     """
 
-        getter_template = """{updateFn}.accept(value, transform{camel}Getter{i}(this.{getter}({getter_params}), cfg));"""
+        getter_template = """{{
+            {type_} value = this.{getter}({getter_params});
+            if({predicate})
+                {updateFn}.accept(channel, transform{camel}Getter{i}(value, cfg));
+        }}"""
 
         transformation_template = """    private {state_or_string} transform{camel}Getter{i}({type_} value, {device_camel}Config cfg) {{
         return {transform};
@@ -493,14 +498,18 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             channel_getters = []
             for i, getter in enumerate(c.getters):
                 packet_name = getter.packet.get_name().headless if not getter.packet.has_high_level() else getter.packet.get_name(skip=-2).headless
+                elements = getter.packet.get_elements(direction='out', high_level=True)
+                _, type_ = self.get_filtered_elements_and_type(getter.packet, elements)
+
                 channel_getters.append(getter_template.format(updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
                                                               camel=c.id.camel,
                                                               getter=packet_name,
                                                               getter_params=', '.join(getter.packet_params),
-                                                              i=i))
+                                                              i=i,
+                                                              type_=type_,
+                                                              predicate=getter.predicate))
 
-                elements = getter.packet.get_elements(direction='out', high_level=True)
-                _, type_ = self.get_filtered_elements_and_type(getter.packet, elements)
+
 
                 transforms.append(transformation_template.format(device_camel=self.get_category().camel + self.get_name().camel,
                                                                  state_or_string='String' if c.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
