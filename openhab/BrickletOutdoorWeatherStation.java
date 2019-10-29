@@ -61,7 +61,7 @@ public class BrickletOutdoorWeatherStation {
     public final static String DEVICE_DISPLAY_NAME = "Outdoor Weather Station";
 
     public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "outdoorweatherstation",
-            DEVICE_IDENTIFIER, BrickletOutdoorWeatherStation.class);
+            DEVICE_IDENTIFIER, BrickletOutdoorWeatherStation.class, DefaultActions.class);
 
     private final Logger logger = LoggerFactory.getLogger(BrickletOutdoorWeather.class);
     private final static Logger static_logger = LoggerFactory.getLogger(BrickletOutdoorWeather.class);

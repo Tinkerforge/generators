@@ -85,6 +85,7 @@ class OpenHABZipGenerator(common.ZipGenerator):
 
             'BrickDaemon.java':               './src/main/java/com/tinkerforge',
             'BrickDaemonConfig.java':         './src/main/java/com/tinkerforge',
+            'DefaultActions.java':             './src/main/java/com/tinkerforge',
             'Device.java':                    './src/main/java/com/tinkerforge',
             'DeviceInfo.java':                './src/main/java/com/tinkerforge',
             'Helper.java':                    './src/main/java/com/tinkerforge',

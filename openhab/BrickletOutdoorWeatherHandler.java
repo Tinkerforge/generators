@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import com.tinkerforge.BrickletOutdoorWeather;
+import com.tinkerforge.DefaultActions;
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 
@@ -30,7 +31,7 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
         BiFunction<String, IPConnection, Device> deviceSupplier,
         Consumer<OutdoorWeatherDiscoveryService> registerFn,
         Consumer<OutdoorWeatherDiscoveryService> deregisterFn) {
-        super(bridge, deviceSupplier);
+        super(bridge, deviceSupplier, DefaultActions.class);
         this.registerFn = registerFn;
         this.deregisterFn = deregisterFn;
     }

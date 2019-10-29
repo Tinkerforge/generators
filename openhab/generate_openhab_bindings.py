@@ -390,7 +390,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_java_class(self):
         java_class = JavaBindingsDevice.get_java_class(self)
-        java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class);\n\n'.format(self.get_name().lower_no_space, self.get_java_class_name())
+        java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, DefaultActions.class);\n\n'.format(self.get_name().lower_no_space, self.get_java_class_name())
         return java_class
 
     def get_filtered_elements_and_type(self, packet, elements):

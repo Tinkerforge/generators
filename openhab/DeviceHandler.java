@@ -27,6 +27,7 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
 import org.eclipse.smarthome.core.thing.type.ChannelDefinition;
 import org.eclipse.smarthome.core.thing.type.ChannelType;
@@ -38,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -67,10 +70,13 @@ public class DeviceHandler extends BaseThingHandler {
 
     private final BiFunction<String, IPConnection, Device> deviceSupplier;
 
-    public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier) {
+    private Class<? extends ThingHandlerService> actionsClass;
+
+    public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier, Class<? extends ThingHandlerService> actionsClass) {
         super(thing);
 
         this.deviceSupplier = deviceSupplier;
+        this.actionsClass = actionsClass;
     }
 
 	public @Nullable Device getDevice() {
@@ -276,5 +282,10 @@ public class DeviceHandler extends BaseThingHandler {
         }
 
         updateThing(editThing().withChannels(enabledChannels).build());
+    }
+
+    @Override
+    public Collection<Class<? extends ThingHandlerService>> getServices() {
+        return Collections.singletonList(actionsClass);
     }
 }

@@ -96,7 +96,8 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
             return handler;
         }
 
-        return new DeviceHandler(thing, (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon));
+        String thingName = thingTypeUID.getId();
+        return new DeviceHandler(thing, (String uid, IPConnection ipcon) -> createDevice(thingName, uid, ipcon), DeviceFactory.getDeviceInfo(thingName).deviceActionsClass);
     }
 
     private synchronized void registerBrickDaemonDiscoveryService(TinkerforgeDiscoveryService service) {
