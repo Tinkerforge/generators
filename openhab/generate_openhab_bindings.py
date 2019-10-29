@@ -251,6 +251,13 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if has_state_description and is_trigger_channel:
                 raise common.GeneratorError('openhab: Device {} Channel Type {} has state description, but is flagged as trigger channel (which is stateless).'.format(self.get_long_display_name(), ct.id))
 
+        # SetterRefreshs must refresh a known channel
+        ids = [c.id for c in oh.channels]
+        for c in oh.channels:
+            for r in c.setter_refreshs:
+                if not r.channel in ids:
+                    raise common.GeneratorError('openhab: Device "{}" Channel "{}" has setter refresh for channel "{}" but no such channel was found.'.format(self.get_long_display_name(), c.id.space, r.channel.space))
+
     def find_channel_type(self, channel, channel_types):
         if channel['type'].startswith('system.'):
             return ChannelType._make([common.FlavoredName(channel['type']).get()] + [None] * (len(ChannelType._fields) - 1))
