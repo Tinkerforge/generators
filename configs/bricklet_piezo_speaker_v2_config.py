@@ -352,19 +352,19 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Beep',
-                'packet_params': ['channelCfg.defaultFrequency, channelCfg.defaultVolume, cmd == OnOffType.ON ? channelCfg.duration : 0']}],
+                'packet_params': ['channelCfg.defaultFrequency, channelCfg.defaultVolume, cmd == OnOffType.ON ? channelCfg.duration.longValue() : 0']}],
             'setter_command_type': "OnOffType",
             'setter_refreshs': [{
                 'channel': 'Volume',
                 'delay': 0
             }, {
-                'channel': 'Frequency',
+                'channel': 'Beep Frequency',
                 'delay': 0
             }],
 
             'getters': [{
                 'packet': 'Get Beep',
-                'transform': 'value.duration > 0 ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value.durationRemaining > 0 ? OnOffType.ON : OnOffType.OFF'}],
 
             'callbacks': [{
                 'packet': 'Beep Finished',
@@ -381,14 +381,11 @@ com['openhab'] = {
             'setter_refreshs': [{
                 'channel': 'Volume',
                 'delay': 0
-            }, {
-                'channel': 'Frequency',
-                'delay': 0
             }],
 
             'getters': [{
                 'packet': 'Get Alarm',
-                'transform': 'value.duration > 0 ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value.durationRemaining > 0 ? OnOffType.ON : OnOffType.OFF'}],
 
             'callbacks': [{
                 'packet': 'Alarm Finished',
@@ -451,10 +448,11 @@ com['openhab'] = {
                         'description': 'The volume to start the beep with. The range of the volume is 0 to 10.'
                      },  {
                         'name': 'Duration',
-                        'type': 'integer',
+                        'type': 'decimal',
                         'default': '0',
                         'min': '0',
                         'max': '4294967295L',
+                        'step': '1',
                         'label': 'Duration',
                         'description': 'The duration in ms to beep for. A duration of 0 stops the current beep if any is ongoing. A duration of 4294967295 results in an infinite beep.'
                      },
