@@ -399,9 +399,11 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, {}Actions.class);\n\n'.format(self.get_name().lower_no_space, self.get_java_class_name(), actions)
         return java_class
 
-    def get_filtered_elements_and_type(self, packet, elements):
+    def get_filtered_elements_and_type(self, packet, elements, out_of_class=False):
         if len(elements) > 1:
             type_ = packet.get_java_object_name(packet.has_high_level())
+            if out_of_class:
+                type_ = packet.get_device().get_java_class_name() + '.' + type_
         else:
             type_ = elements[0].get_java_type()
 
@@ -948,7 +950,7 @@ public class {device_camel}Actions implements ThingActions {{
                 output_annotations = [output_template.format(id=elem.get_name().headless,
                                                       type=elem.get_java_type()) for elem in outputs]
 
-                _, result_type = self.get_filtered_elements_and_type(packet, outputs)
+                _, result_type = self.get_filtered_elements_and_type(packet, outputs, out_of_class=True)
 
                 if len(outputs) == 1:
                     transforms = [transform_template.format(id=outputs[0].get_name().headless, transform='value')]
