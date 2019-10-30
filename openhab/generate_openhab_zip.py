@@ -133,7 +133,7 @@ class OpenHABZipGenerator(common.ZipGenerator):
             shutil.copy(device_file, self.tmp_bindings_dir)
 
         for file in os.listdir(self.get_bindings_dir()):
-            if device.get_category().camel+device.get_name().camel in file and file.endswith('Config.java'):
+            if device.get_category().camel+device.get_name().camel in file and (file.endswith('Config.java') or file.endswith('Actions.java')):
                 shutil.copy(os.path.join(self.get_bindings_dir(), file), self.tmp_bindings_dir)
 
     def finish(self):

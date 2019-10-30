@@ -411,5 +411,8 @@ com['openhab'] = {
             'description':'Draws the currently buffered frame.',
             'command_options': [('Draw', 'DRAW')]
         },
+    ],
+    'actions': [
+        'Write Pixels', 'Read Pixels', 'Clear Display', 'Draw Buffered Frame', 'Write Line'
     ]
 }

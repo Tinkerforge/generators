@@ -35,7 +35,7 @@ from java.generate_java_bindings import JavaBindingsGenerator, JavaBindingsDevic
 
 
 
-OpenHAB = namedtuple('OpenHAB', 'channels channel_types imports params param_groups init_code dispose_code category custom')
+OpenHAB = namedtuple('OpenHAB', 'channels channel_types imports params param_groups init_code dispose_code category custom actions')
 Channel = namedtuple('Channel', ['id', 'type', 'init_code', 'dispose_code',
                                     'java_unit', 'divisor', 'is_trigger_channel',
                                     'getters',
@@ -56,6 +56,7 @@ Param = namedtuple('Param', ['name', 'type', 'context', 'default', 'description'
                                 'pattern', 'unit', 'unitLabel', 'advanced', 'limitToOptions', 'multiple',
                                 'readOnly', 'required', 'verify', 'min', 'max', 'step', 'options', 'filter'])
 ParamGroup = namedtuple('ParamGroup', 'name context advanced label description')
+
 
 class OpenHABBindingsDevice(JavaBindingsDevice):
     def apply_defaults(self, oh):
@@ -151,7 +152,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'init_code': '',
             'dispose_code': '',
             'category': None,
-            'custom': False
+            'custom': False,
+            'actions': []
         }
 
         tmp = oh_defaults.copy()
@@ -350,6 +352,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         for g_idx, group in enumerate(oh['param_groups']):
             oh['param_groups'][g_idx] = ParamGroup(**group)
 
+        for a_idx, action in enumerate(oh['actions']):
+            oh['actions'][a_idx] = find_packet(action)
+
         self.oh = OpenHAB(**oh)
         self.sanity_check_config(self.oh)
 
@@ -390,7 +395,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_java_class(self):
         java_class = JavaBindingsDevice.get_java_class(self)
-        java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, DefaultActions.class);\n\n'.format(self.get_name().lower_no_space, self.get_java_class_name())
+        actions = 'Default' if len(self.oh.actions) == 0 else self.get_java_class_name()
+        java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, {}Actions.class);\n\n'.format(self.get_name().lower_no_space, self.get_java_class_name(), actions)
         return java_class
 
     def get_filtered_elements_and_type(self, packet, elements):
@@ -846,6 +852,125 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         return template.format(cases='\n            '.join(cases))
 
+    def get_openhab_actions_class(self):
+        template = """package com.tinkerforge;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingActions;
+import org.eclipse.smarthome.core.thing.binding.ThingActionsScope;
+import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.openhab.core.automation.annotation.ActionInput;
+import org.openhab.core.automation.annotation.ActionOutput;
+import org.openhab.core.automation.annotation.RuleAction;
+
+import java.util.Map;
+import java.util.HashMap;
+
+@ThingActionsScope(name = "tinkerforge")
+@NonNullByDefault
+public class {device_camel}Actions implements ThingActions {{
+
+    private @Nullable DeviceHandler handler;
+
+    @Override
+    public void setThingHandler(@Nullable ThingHandler handler) {{ this.handler = (DeviceHandler) handler; }}
+
+    @Override
+    public @Nullable ThingHandler getThingHandler() {{ return handler; }}
+
+    {actions}
+}}
+"""
+        input_action_template = """    @RuleAction(label = "{label}")
+    public void {id_headless}(
+            {annotated_inputs}) throws TinkerforgeException {{
+        (({device_camel})this.handler.getDevice()).{packet_headless}({packet_params});
+    }}
+
+    public static void {id_headless}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
+        if (actions instanceof {device_camel}Actions) {{
+            (({device_camel}Actions) actions).{id_headless}({inputs});
+        }} else {{
+            throw new IllegalArgumentException("Instance is not an {device_camel}Actions class.");
+        }}
+    }}"""
+
+        output_action_template = """    @RuleAction(label = "{label}")
+    public {output_annotations}
+           Map<String, Object> {id_headless}(
+            {annotated_inputs}) throws TinkerforgeException {{
+        Map<String, Object> result = new HashMap<>();
+        {result_type} value = (({device_camel})this.handler.getDevice()).{packet_headless}({packet_params});
+        {transforms}
+        return result;
+    }}
+
+    public static Map<String, Object> {id_headless}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
+        if (actions instanceof {device_camel}Actions) {{
+            return (({device_camel}Actions) actions).{id_headless}({inputs});
+        }} else {{
+            throw new IllegalArgumentException("Instance is not an {device_camel}Actions class.");
+        }}
+    }}"""
+
+        input_template = """@ActionInput(name = "{id}") {type} {id}"""
+
+        output_template = """@ActionOutput(name = "{id}", type="{type}")"""
+
+        transform_template = """result.put("{id}", {transform});"""
+
+        actions = []
+        for packet in self.oh.actions:
+            inputs = packet.get_elements(direction='in', high_level=True)
+            outputs = packet.get_elements(direction='out', high_level=True)
+
+            annotated_inputs = [input_template.format(id=elem.get_name().headless,
+                                                      type=elem.get_java_type()) for elem in inputs]
+            typed_inputs = ["{type} {id}".format(id=elem.get_name().headless,
+                                                 type=elem.get_java_type()) for elem in inputs]
+            input_names = [elem.get_name().headless for elem in inputs]
+
+            packet_name = packet.get_name() if not packet.has_high_level() else packet.get_name(skip=-2)
+
+            if len(outputs) == 0:
+                actions.append(input_action_template.format(label=packet_name.space,
+                                                    id_headless=packet_name.headless,
+                                                    annotated_inputs=',\n            '.join(annotated_inputs),
+                                                    device_camel=self.get_category().camel + self.get_name().camel,
+                                                    packet_headless=packet_name.headless,
+                                                    packet_params=', '.join(input_names),
+                                                    typed_inputs=common.wrap_non_empty(', ', ', '.join(typed_inputs), ''),
+                                                    inputs=', '.join(input_names)))
+            else:
+
+                output_annotations = [output_template.format(id=elem.get_name().headless,
+                                                      type=elem.get_java_type()) for elem in outputs]
+
+                _, result_type = self.get_filtered_elements_and_type(packet, outputs)
+
+                if len(outputs) == 1:
+                    transforms = [transform_template.format(id=outputs[0].get_name().headless, transform='value')]
+                else:
+                    transforms = [transform_template.format(id=elem.get_name().headless, transform='value.' + elem.get_name().headless) for elem in outputs]
+
+                actions.append(output_action_template.format(label=packet_name.space,
+                                                    id_headless=packet_name.headless,
+                                                    annotated_inputs=',\n            '.join(annotated_inputs),
+                                                    device_camel=self.get_category().camel + self.get_name().camel,
+                                                    packet_headless=packet_name.headless,
+                                                    packet_params=', '.join(input_names),
+                                                    typed_inputs=common.wrap_non_empty(', ', ', '.join(typed_inputs), ''),
+                                                    inputs=', '.join(input_names),
+                                                    output_annotations='\n           '.join(output_annotations),
+                                                    result_type=result_type,
+                                                    transforms='\n        '.join(transforms)
+                                                    ))
+
+        return template.format(device_camel=self.get_category().camel + self.get_name().camel,
+                               actions='\n\n'.join(actions))
+
     def get_java_source(self, close_device_class=False):
         source =  JavaBindingsDevice.get_java_source(self, close_device_class=False)
         source += self.get_openhab_device_impl()
@@ -1001,6 +1126,10 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
         for config_class_name, config_class in config_classes:
             with open(os.path.join(self.get_bindings_dir(), config_class_name + '.java'), 'w') as f:
                 f.write(config_class)
+
+        if len(device.oh.actions) > 0:
+            with open(os.path.join(self.get_bindings_dir(), class_name + 'Actions.java'), 'w') as f:
+                f.write(device.get_openhab_actions_class())
 
         if device.is_released():
             self.released_devices.append(device)
