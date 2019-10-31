@@ -260,6 +260,11 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 if not r.channel in ids:
                     raise common.GeneratorError('openhab: Device "{}" Channel "{}" has setter refresh for channel "{}" but no such channel was found.'.format(self.get_long_display_name(), c.id.space, r.channel.space))
 
+        for c in oh.channels:
+            if len(c.setters) > 0 and c.setter_command_type is None:
+                raise common.GeneratorError('openhab: Device "{}" Channel "{}" has setters but no setter_command_type.'.format(self.get_long_display_name(), c.id.space))
+
+
     def find_channel_type(self, channel, channel_types):
         if channel['type'].startswith('system.'):
             return ChannelType._make([common.FlavoredName(channel['type']).get()] + [None] * (len(ChannelType._fields) - 1))
