@@ -381,5 +381,6 @@ com['openhab'] = {
                     pattern='%d',
                     min_=0,
                     max_=4095)
-    ]
+    ],
+    'actions': ['Get Moisture Value', 'Get Moving Average']
 }

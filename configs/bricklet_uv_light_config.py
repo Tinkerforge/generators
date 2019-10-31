@@ -323,5 +323,6 @@ com['openhab'] = {
                      pattern='%.3f %unit%',
                      min_=0,
                      max_=50),
-    ]
+    ],
+    'actions': ['Get UV Light']
 }

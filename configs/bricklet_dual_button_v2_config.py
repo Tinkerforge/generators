@@ -357,4 +357,5 @@ com['openhab'] = {
         oh_generic_channel_type('Right LED', 'Switch', 'Right LED',
                      description='Controlls the right LED.'),
     ],
+    'actions': ['Get LED State', 'Get Button State']
 }

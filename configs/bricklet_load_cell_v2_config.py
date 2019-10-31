@@ -380,5 +380,6 @@ this.setInfoLEDConfig(cfg.infoLED);""",
             'description':'Sets the currently measured weight as tare weight.',
             'command_options': [('Tare', 'TARE')]
         }
-    ]
+    ],
+    'actions': ['Get Weight', 'Get Info LED Config', 'Tare', 'Get Moving Average', 'Get Configuration']
 }

@@ -491,5 +491,6 @@ com['openhab'] = {
                      min_=0,
                      max_=0.022505322,
                      params=led_status_config())
-    ]
+    ],
+    'actions': ['Get Current', 'Get Channel LED Config', 'Get Channel LED Status Config', 'Get Sample Rate', 'Get Gain']
 }

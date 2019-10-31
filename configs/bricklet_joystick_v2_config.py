@@ -356,5 +356,6 @@ com['openhab'] = {
                     pattern='%d %unit%',
                     min_=-100,
                     max_=100)
-    ]
+    ],
+    'actions': ['Get Position', 'Is Pressed']
 }

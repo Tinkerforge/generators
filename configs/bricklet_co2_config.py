@@ -316,5 +316,6 @@ com['openhab'] = {
                     pattern='%d %unit%',
                     min_=0,
                     max_=10000)
-    ]
+    ],
+    'actions': ['Get CO2 Concentration']
 }

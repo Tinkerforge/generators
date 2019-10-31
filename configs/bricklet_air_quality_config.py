@@ -645,5 +645,12 @@ com['openhab'] = {
                      pattern='%d',
                      min_=0,
                      max_=500),
-    ]
+    ],
+    'actions': ['Get All Values',
+                'Get Temperature Offset',
+                'Get IAQ Index',
+                'Get Temperature',
+                'Get Humidity',
+                'Get Air Pressure',
+                'Get Background Calibration Duration']
 }

@@ -276,5 +276,6 @@ com['openhab'] = {
                      pattern='%.3f %unit%',
                      min_=0,
                      max_=50),
-    ]
+    ],
+    'actions': ['Get UVA', 'Get UVB', 'Get UVI', 'Get Configuration']
 }

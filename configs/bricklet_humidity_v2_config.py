@@ -367,5 +367,6 @@ this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperat
                      max_=165),
         oh_generic_channel_type('Heater', 'Switch', 'Heater',
                      description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
-    ]
+    ],
+    'actions': ['Get Humidity', 'Get Temperature', 'Get Heater Configuration', 'Get Moving Average Configuration', 'Get Samples Per Second']
 }

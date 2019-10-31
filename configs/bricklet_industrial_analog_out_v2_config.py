@@ -545,7 +545,8 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
                      pattern='%.6f %unit%',
                      min_=0,
                      max_=0.024)
-    ]
+    ],
+    'actions': ['Get Enabled', 'Get Voltage', 'Get Current', 'Get Configuration', 'Get Out LED Config', 'Get Out LED Status Config']
 }
 
 

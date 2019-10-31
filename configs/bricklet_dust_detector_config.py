@@ -372,5 +372,6 @@ com['openhab'] = {
                     pattern='%d %unit%',
                     min_=0,
                     max_=500)
-    ]
+    ],
+    'actions': ['Get Dust Density', 'Get Moving Average']
 }

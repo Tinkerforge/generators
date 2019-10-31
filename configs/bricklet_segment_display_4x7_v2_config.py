@@ -468,6 +468,7 @@ com['openhab'] = {
                      description='Turns the colon of the display on or off.'),
         oh_generic_channel_type('Text', 'String', 'Text',
                      description="Text to display on the seven segment display. Supported are A-Z, a-z, 0-9, \\\", (, ), +, -, =, [, ], ^, _ and |. An unsupported character will show as empty. A colon (:) anywhere in the text will light on the display's colon. Alternatively, you can enable only the upper colon dot with a backtick (`) or the lower one with a comma (,). An apostrophe (') anywhere will light up the tick after the third digit. A dot (.) after another character will light the corresponding digit's dot. For example H.i,T.'F will show HiTF on the display and activate the first and third dot, lower colon dot and the tick."),
-    ]
+    ],
+    'actions': ['Get Segments', 'Get Brightness', 'Get Selected Segment', 'Start Counter', 'Get Counter Value']
 }
 

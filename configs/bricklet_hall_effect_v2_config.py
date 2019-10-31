@@ -329,5 +329,6 @@ com['openhab'] = {
                      description='Measured magnetic flux density.',
                      pattern='%.6f',
                      read_only=True),
-    ]
+    ],
+    'actions': ['Get Magnetic Flux Density', 'Get Counter', 'Get Counter Config']
 }

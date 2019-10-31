@@ -915,5 +915,6 @@ com['openhab'] = {
         oh_generic_channel_type('Overtemperature Shutdown Imminent', 'Switch', 'Overtemperature Shutdown Imminent',
                      description='Gets enabled 10 seconds before shutdown.',
                      read_only=True),
-    ]
+    ],
+    'actions': ['Get High Contrast Image', 'Get Temperature Image', 'Get Statistics', 'Get Resolution', 'Get Spotmeter Config', 'Get High Contrast Config']
 }

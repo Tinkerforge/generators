@@ -215,5 +215,6 @@ this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
                      pattern='%.3f %unit%',
                      min_=0.3,
                      max_=5)
-    ]
+    ],
+    'actions': ['Get Distance', 'Get Update Rate', 'Get Distance LED Config']
 }

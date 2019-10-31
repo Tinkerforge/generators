@@ -729,5 +729,6 @@ com['openhab'] = {
                      description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
                      read_only=True,
                      pattern='%.4f %unit%')
-    ]
+    ],
+    'actions': ['Get Acceleration', 'Get Configuration', 'Get Info LED Config', 'Get Filter Configuration']
 }

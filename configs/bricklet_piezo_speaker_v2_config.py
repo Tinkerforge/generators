@@ -520,5 +520,6 @@ com['openhab'] = {
                      read_only=False,
                      min_=50,
                      max_=15000),
-    ]
+    ],
+    'actions': ['Set Beep', 'Get Beep', 'Set Alarm', 'Get Alarm', 'Update Volume', 'Update Frequency']
 }

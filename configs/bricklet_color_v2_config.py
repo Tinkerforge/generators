@@ -463,5 +463,6 @@ com['openhab'] = {
                      read_only=True),
         oh_generic_channel_type('Light', 'Switch', 'Enable Light',
                      description='Turns the white LED on the Bricklet on/off.'),
-    ]
+    ],
+    'actions': ['Get Color', 'Get Illuminance', 'Get Color Temperature', 'Get Light', 'Get Configuration']
 }

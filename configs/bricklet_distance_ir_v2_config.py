@@ -318,5 +318,6 @@ this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
                      pattern='%.3f %unit%',
                      min_=40,
                      max_=1500)
-    ]
+    ],
+    'actions': ['Get Distance', 'Get Analog Value', 'Get Moving Average Configuration', 'Get Distance LED Config', 'Get Sensor Type']
 }

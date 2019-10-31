@@ -412,7 +412,5 @@ com['openhab'] = {
             'command_options': [('Draw', 'DRAW')]
         },
     ],
-    'actions': [
-        'Write Pixels', 'Read Pixels', 'Clear Display', 'Draw Buffered Frame', 'Write Line'
-    ]
+    'actions': ['Write Pixels', 'Read Pixels', 'Clear Display', 'Draw Buffered Frame', 'Write Line', 'Get Display Configuration']
 }

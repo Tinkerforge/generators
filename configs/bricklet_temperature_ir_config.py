@@ -613,5 +613,6 @@ com['openhab'] = {
                      pattern='%.1f %unit%',
                      min_=-70,
                      max_=380)
-    ]
+    ],
+    'actions': ['Get Ambient Temperature', 'Get Object Temperature', 'Get Emissivity']
 }

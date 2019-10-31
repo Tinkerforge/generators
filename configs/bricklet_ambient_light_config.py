@@ -531,5 +531,6 @@ com['openhab'] = {
                      pattern='%.1f %unit%',
                      min_=0,
                      max_=900)
-    ]
+    ],
+    'actions': ['Get Illuminance', 'Get Analog Value']
 }

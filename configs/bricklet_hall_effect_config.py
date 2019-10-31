@@ -400,5 +400,6 @@ com['openhab'] = {
         oh_generic_channel_type('Magnetic Field Detected', 'Switch', 'Magnetic Field Detected',
                      description='Enabled if a magnetic field of 35 Gauss (3.5mT) or greater is detected.',
                      read_only=True),
-    ]
+    ],
+    'actions': ['Get Value', 'Get Edge Count', 'Get Edge Count Config']
 }

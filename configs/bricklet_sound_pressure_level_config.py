@@ -359,5 +359,6 @@ this.setConfiguration(cfg.fftSize, cfg.weighting);""",
                      description='Measured Sound Pressure',
                      read_only=True,
                      pattern='%.1f %unit%'),
-    ]
+    ],
+    'actions': ['Get Decibel', 'Get Spectrum', 'Get Configuration']
 }

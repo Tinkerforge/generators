@@ -592,5 +592,6 @@ com['openhab'] = {
                      pattern='%.3f %unit%',
                      min_=40,
                      max_=1500)
-    ]
+    ],
+    'actions': ['Get Distance', 'Get Analog Value', 'Get Sampling Point']
 }

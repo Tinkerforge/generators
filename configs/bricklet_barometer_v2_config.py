@@ -485,5 +485,6 @@ this.setSensorConfiguration(cfg.dataRate, cfg.airPressureLowPassFilter);""",
                      pattern='%.2f %unit%',
                      min_=-40,
                      max_=85),
-    ]
+    ],
+    'actions': ['Get Air Pressure', 'Get Altitude', 'Get Temperature', 'Get Moving Average Configuration', 'Get Reference Air Pressure']
 }

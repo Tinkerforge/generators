@@ -730,6 +730,7 @@ this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAver
                      description='Relative Altitude derived from air pressure',
                      read_only=True,
                      pattern='%.2f %unit%')
-    ]
+    ],
+    'actions': ['Get Air Pressure', 'Get Altitude', 'Get Reference Air Pressure', 'Get Averaging']
 }
 

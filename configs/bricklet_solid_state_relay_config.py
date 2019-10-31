@@ -282,6 +282,7 @@ com['openhab'] = {
             'description':'Triggers a monoflop as configured',
             'command_options': [('Trigger', 'TRIGGER')]
         }
-    ]
+    ],
+    'actions': ['Get State', 'Get Monoflop']
 }
 

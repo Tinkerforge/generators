@@ -474,5 +474,6 @@ com['openhab'] = {
         oh_generic_channel_type('Reset', 'String', 'Reset Energy Value',
                     description='Sets the energy value back to 0 Wh',
                     command_options=[('Reset', 'RESET')])
-    ]
+    ],
+    'actions': ['Get Energy Data', 'Reset Energy', 'Get Waveform', 'Get Transformer Status', 'Get Transformer Calibration']
 }

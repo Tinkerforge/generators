@@ -992,6 +992,7 @@ com['openhab'] = {
                      max_=127),
         oh_generic_channel_type('Enable Laser', 'Switch', 'Enable Laser',
                      description='Activates the laser of the LIDAR.'),
-    ]
+    ],
+    'actions': ['Get Distance', 'Get Velocity', 'Get Mode', 'Is Laser Enabled', 'Get Configuration', 'Get Moving Average', 'Get Sensor Hardware Version']
 }
 

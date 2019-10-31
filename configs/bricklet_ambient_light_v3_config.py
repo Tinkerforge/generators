@@ -243,5 +243,6 @@ com['openhab'] = {
                      pattern='%.2f %unit%',
                      min_=0,
                      max_=100000)
-    ]
+    ],
+    'actions': ['Get Illuminance', 'Get Configuration']
 }

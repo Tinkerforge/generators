@@ -567,6 +567,7 @@ com['openhab'] = {
         oh_generic_channel_type('Open Circuit', 'Switch', 'Open Circuit Error',
                      description='An Open Circuit error indicates that there is no thermocouple connected.',
                      read_only=True),
-    ]
+    ],
+    'actions': ['Get Temperature', 'Get Configuration', 'Get Error State']
 }
 

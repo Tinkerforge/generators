@@ -430,5 +430,6 @@ com['openhab'] = {
             'description':'Triggers a monoflop as configured',
             'command_options': [('Trigger', 'TRIGGER')]
         }
-    ]
+    ],
+    'actions': ['Get Value', 'Get Monoflop', 'Get Channel LED Config', 'Set PWM Configuration', 'Get PWM Configuration']
 }

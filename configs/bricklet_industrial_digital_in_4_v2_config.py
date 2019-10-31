@@ -513,5 +513,6 @@ com['openhab'] = {
                             'label': 'Reset Edge Count On Update',
                             'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
                         }])
-    ]
+    ],
+    'actions': ['Get Value', 'Get Channel LED Config', 'Get Edge Count Configuration']
 }

@@ -609,4 +609,5 @@ com['openhab'] = {
         oh_generic_channel_type('LED', 'Switch', 'LED',
                      description='Activates/Deactivates the LED.'),
     ],
+    'actions': ['Get Weight', 'Tare', 'Get Moving Average', 'Get Configuration', 'Is LED On']
 }

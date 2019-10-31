@@ -502,6 +502,7 @@ com['openhab'] = {
                      pattern='%.3f %unit%',
                      min_=-35,
                      max_=35)
-    ]
+    ],
+    'actions': ['Get Voltage', 'Get Sample Rate', 'Get Calibration', 'Get ADC Values']
 }
 

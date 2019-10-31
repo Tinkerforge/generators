@@ -131,5 +131,6 @@ com['openhab'] = {
                      pattern='%.3f %unit%',
                      min_=0,
                      max_=12)
-    ]
+    ],
+    'actions': ['Get Output Voltage', 'Get Input Voltage']
 }

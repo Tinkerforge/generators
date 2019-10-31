@@ -409,5 +409,6 @@ com['openhab'] = {
         oh_generic_channel_type('Connected Bricklet UID', 'String', 'Connected Bricklet UID',
                      description='UID of the isolated Bricklet.',
                      read_only=True),
-    ]
+    ],
+    'actions': ['Get Statistics']
 }

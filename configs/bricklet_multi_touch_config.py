@@ -337,5 +337,6 @@ com['openhab'] = {
             'description':'Recalibrates the electrodes. Trigger this channel whenever you changed or moved you electrodes.',
             'command_options': [('Trigger', 'TRIGGER')]
         }
-    ]
+    ],
+    'actions': ['Get Touch State', 'Recalibrate', 'Get Electrode Config', 'Get Electrode Sensitivity']
 }

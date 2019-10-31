@@ -392,5 +392,6 @@ com['openhab'] = {
                      pattern='%.1f %unit%',
                      min_=-25,
                      max_=85),
-    ]
+    ],
+    'actions': ['Get Temperature', 'Get I2C Mode']
 }

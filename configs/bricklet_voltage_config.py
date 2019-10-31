@@ -521,5 +521,6 @@ com['openhab'] = {
                      pattern='%.2f %unit%',
                      min_=0,
                      max_=50)
-    ]
+    ],
+    'actions': ['Get Voltage', 'Get Analog Value']
 }

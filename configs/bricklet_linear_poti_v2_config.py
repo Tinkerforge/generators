@@ -83,5 +83,6 @@ com['openhab'] = {
                     pattern='%d %unit%',
                     min_=0,
                     max_=100)
-    ]
+    ],
+    'actions': ['Get Position']
 }

@@ -427,21 +427,7 @@ com['openhab'] = {
                     'packet': 'Is Backlight On',
                     'transform': 'value ? OnOffType.ON : OnOffType.OFF'
                 }]
-            },
-            # {
-            #     'id': 'Default Text Counter',
-            #     'type': 'Default Text Counter',
-            #     'setter_command_type': "DecimalType",
-            #     'setters': [{
-            #             'packet': 'Set Default Text Counter',
-            #             'packet_params': ['cmd.intValue()']
-            #         }
-            #     ],
-            #     'getters': [{
-            #         'packet': 'Get Default Text Counter',
-            #         'transform': 'new DecimalType(value)'
-            #     }]
-            # }
+            }
     ] + button_channels,
     'channel_types': [
         oh_generic_channel_type('Text', 'String', 'Text',
@@ -455,7 +441,6 @@ com['openhab'] = {
         },
         oh_generic_channel_type('Backlight', 'Switch', 'Backlight',
                     description="Toggles the LCD's backlight"),
-        # oh_generic_channel_type('Default Text Counter', 'Number:Dimensionless', 'Default Text Counter',
-        #             description=" This counter is decremented each ms by the LCD firmware. If the counter reaches 0, the default text (see setDefaultText()) is shown on the LCD.<br/><br/>This functionality can be used to show a default text if the controlling program crashes or the connection is interrupted.<br/><br/>A possible approach is to set the Default Text Counter every minute to 1000*60*2 (2 minutes). In this case the default text will be shown no later than 2 minutes after the controlling program crashes.<br/><br/>A negative counter turns the default text functionality off.")
-    ]
+    ],
+    'actions': ['Write Line', 'Clear Display', 'Is Backlight On', 'Get Config', 'Is Button Pressed', 'Set Custom Character', 'Get Custom Character']
 }

@@ -198,5 +198,6 @@ com['openhab'] = {
             'description': 'This channel is triggered when the detection cycle ended. A new motion can be detected again after approximately 2 seconds.'
         },
     ],
-    'channel_types': []
+    'channel_types': [],
+    'actions': ['Get Motion Detected']
 }

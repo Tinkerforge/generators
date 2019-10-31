@@ -311,5 +311,6 @@ com['openhab'] = {
                      pattern='%d',
                      min_=0,
                      max_=255)
-    ]
+    ],
+    'actions': ['Get Motion Detected', 'Get Sensitivity', 'Get Indicator']
 }

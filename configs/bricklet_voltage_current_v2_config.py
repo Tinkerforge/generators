@@ -388,5 +388,6 @@ com['openhab'] = {
                      pattern='%.3f %unit%',
                      min_=0,
                      max_=720)
-    ]
+    ],
+    'actions': ['Get Voltage', 'Get Current', 'Get Power', 'Get Configuration', 'Get Calibration']
 }

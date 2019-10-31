@@ -236,5 +236,6 @@ com['openhab'] = {
                      pattern='%.2f %unit%',
                      min_=0,
                      max_=42)
-    ]
+    ],
+    'actions': ['Get Voltage', 'Get Oversampling', 'Get Calibration']
 }

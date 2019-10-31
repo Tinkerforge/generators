@@ -573,5 +573,6 @@ com['openhab'] = {
                      pattern='%.2f %unit%',
                      min_=0,
                      max_=42)
-    ]
+    ],
+    'actions': ['Get Voltage', 'Get Analog Value', 'Get Moving Average']
 }

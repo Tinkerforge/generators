@@ -481,6 +481,7 @@ com['openhab'] = {
         [concentration_channel_type(i) for i in [10, 25, 100]] +
         [count_channel_type(i) for i in [3, 5, 10, 25, 50, 100]] +
         [oh_generic_channel_type('Sensor Enabled', 'Switch', 'NOT USED',
-                        description='NOT USED')]
+                        description='NOT USED')],
+    'actions': ['Get PM Concentration', 'Get PM Count', 'Get Sensor Info']
 }
 

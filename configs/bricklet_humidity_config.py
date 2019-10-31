@@ -530,5 +530,6 @@ com['openhab'] = {
                      pattern='%.1f %%',
                      min_=0,
                      max_=100)
-    ]
+    ],
+    'actions': ['Get Humidity', 'Get Analog Value']
 }

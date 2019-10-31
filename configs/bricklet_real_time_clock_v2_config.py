@@ -530,5 +530,6 @@ com['openhab'] = {
     'channel_types': [
         date_time_type,
         timestamp_type
-    ]
+    ],
+    'actions': ['Get Date Time', 'Get Timestamp', 'Get Offset']
 }

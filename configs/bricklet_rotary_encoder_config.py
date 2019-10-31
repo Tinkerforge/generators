@@ -407,5 +407,6 @@ com['openhab'] = {
             'description':'Resets the counter to 0.',
             'command_options': [('Reset', 'RESET')]
         }
-    ]
+    ],
+    'actions': ['Get Count', 'Is Pressed']
 }

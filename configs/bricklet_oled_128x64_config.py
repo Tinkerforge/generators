@@ -280,5 +280,6 @@ com['openhab'] = {
             'description':'Deletes all characters from the display.',
             'command_options': [('Clear', 'CLEAR')]
         },
-    ]
+    ],
+    'actions': ['Write', 'New Window', 'Clear Display', 'Write Line', 'Get Display Configuration']
 }

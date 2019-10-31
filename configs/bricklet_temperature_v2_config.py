@@ -152,5 +152,6 @@ com['openhab'] = {
                      max_=130),
         oh_generic_channel_type('Heater', 'Switch', 'Heater',
                      description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
-    ]
+    ],
+    'actions': ['Get Temperature', 'Get Heater Configuration']
 }

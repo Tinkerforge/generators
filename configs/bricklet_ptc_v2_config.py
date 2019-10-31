@@ -430,5 +430,6 @@ this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency);""",
                      max_=849),
          oh_generic_channel_type('Sensor Connected', 'Switch', 'Sensor Connected',
                      description='Indicates if the sensor is connected correctly. If this is disabled, there is either no Pt100 or Pt1000 sensor connected, the sensor is connected incorrectly or the sensor itself is faulty.'),
-    ]
+    ],
+    'actions': ['Get Temperature', 'Is Sensor Connected', 'Get Wire Mode', 'Get Resistance', 'Get Noise Rejection Filter', 'Get Moving Average Configuration']
 }

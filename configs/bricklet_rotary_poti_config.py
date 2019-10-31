@@ -515,5 +515,6 @@ com['openhab'] = {
                      pattern='%d %unit%',
                      min_=-150,
                      max_=150)
-    ]
+    ],
+    'actions': ['Get Position', 'Get Analog Value']
 }

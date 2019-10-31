@@ -321,5 +321,6 @@ com['openhab'] = {
                      pattern='%.0f %unit%',
                      min_=0,
                      max_=4095)
-    ]
+    ],
+    'actions': ['Get Intensity']
 }

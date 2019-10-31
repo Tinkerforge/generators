@@ -579,5 +579,6 @@ com['openhab'] = {
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
                      description='The temperature of the accelerometer',
                      read_only=True),
-    ]
+    ],
+    'actions': ['Get Acceleration', 'Get Temperature', 'Is LED On', 'Get Configuration']
 }

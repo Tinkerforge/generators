@@ -612,6 +612,7 @@ com['openhab'] = {
                      max_=25),
         oh_generic_channel_type('Over Current', 'Switch', 'Over Current',
                      description='Enabled if more than 25A were measured. To reset this value you have to power cycle the Bricklet.'),
-    ]
+    ],
+    'actions': ['Get Current', 'Is Over Current', 'Get Analog Value']
 }
 

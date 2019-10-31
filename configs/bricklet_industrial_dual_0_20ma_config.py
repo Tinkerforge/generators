@@ -462,5 +462,6 @@ com['openhab'] = {
                      pattern='%.6f %unit%',
                      min_=0,
                      max_=0.022505322)
-    ]
+    ],
+    'actions': ['Get Current', 'Get Sample Rate']
 }
