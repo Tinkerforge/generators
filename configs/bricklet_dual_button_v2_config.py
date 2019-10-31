@@ -261,7 +261,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_trigger_channel_imports(),
+    'imports': oh_generic_trigger_channel_imports() + oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [
         {
             'name': 'Left LED State',
@@ -269,11 +269,11 @@ com['openhab'] = {
             'default': 1,
 
             'label': 'Left LED State',
-            'description': 'Left LED State',
-            'options':  [('Auto Toggle On', 0),
-                         ('Auto Toggle Off', 1),
-                         ('On', 2),
-                         ('Off', 3)],
+            'description': """<ul><li>Auto Toggle - Default On: Enables auto toggle. LED initially enabled</li><li>Auto Toggle - Default Off: Enables auto toggle. LED initially disabled</li><li>Channel - Default On: Creates a control channel. LED initially enabled.</li><li>Channel - Default Off: Creates a control channel. LED initially disabled.</li></ul>""",
+            'options':  [('Auto Toggle - Default On', 0),
+                         ('Auto Toggle - Default Off', 1),
+                         ('Channel - Default On', 2),
+                         ('Channel - Default Off', 3)],
         },
         {
             'name': 'Right LED State',
@@ -281,11 +281,11 @@ com['openhab'] = {
             'default': 1,
 
             'label': 'Right LED State',
-            'description': 'Right LED State',
-            'options': [('Auto Toggle On', 0),
-                        ('Auto Toggle Off', 1),
-                        ('On', 2),
-                        ('Off', 3)],
+            'description': """<ul><li>Auto Toggle - Default On: Enables auto toggle. LED initially enabled</li><li>Auto Toggle - Default Off: Enables auto toggle. LED initially disabled</li><li>Channel - Default On: Creates a control channel. LED initially enabled.</li><li>Channel - Default Off: Creates a control channel. LED initially disabled.</li></ul>""",
+            'options':  [('Auto Toggle - Default On', 0),
+                         ('Auto Toggle - Default Off', 1),
+                         ('Channel - Default On', 2),
+                         ('Channel - Default Off', 3)],
         }
     ],
     'init_code': """this.setLEDState(cfg.leftLEDState, cfg.rightLEDState);
@@ -319,7 +319,42 @@ com['openhab'] = {
                 'transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'is_trigger_channel': True
+        }, {
+            'id': 'Left LED',
+            'label': 'Left LED',
+            'type': 'Left LED',
+
+            'predicate': 'cfg.leftLEDState > 1',
+
+            'getters': [{
+                'packet': 'Get LED State',
+                'transform': 'value.ledL == BrickletDualButton.LED_STATE_ON ? OnOffType.ON : OnOffType.OFF'}],
+
+            'setters': [{
+                'packet': 'Set Selected LED State',
+                'packet_params': ['BrickletDualButton.LED_LEFT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF']}],
+            'setter_command_type': 'OnOffType'
+        }, {
+            'id': 'Right LED',
+            'label': 'Right LED',
+            'type': 'Right LED',
+
+            'predicate': 'cfg.rightLEDState > 1',
+
+            'getters': [{
+                'packet': 'Get LED State',
+                'transform': 'value.ledR == BrickletDualButton.LED_STATE_ON ? OnOffType.ON : OnOffType.OFF'}],
+
+            'setters': [{
+                'packet': 'Set Selected LED State',
+                'packet_params': ['BrickletDualButton.LED_RIGHT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF']}],
+            'setter_command_type': 'OnOffType'
         },
     ],
-    'channel_types': []
+    'channel_types': [
+        oh_generic_channel_type('Left LED', 'Switch', 'Left LED',
+                     description='Controlls the left LED.'),
+        oh_generic_channel_type('Right LED', 'Switch', 'Right LED',
+                     description='Controlls the right LED.'),
+    ],
 }
