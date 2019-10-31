@@ -547,7 +547,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'name': 'Moving Average',
@@ -574,6 +574,23 @@ com['openhab'] = {
                 'channel': 'Weight',
                 'delay': '0'
             }]
+        }, {
+            'id': 'LED',
+            'type': 'LED',
+
+            'setters': [{
+                'predicate': 'cmd == OnOffType.ON',
+                'packet': 'LED On'
+            }, {
+                'predicate': 'cmd == OnOffType.OFF',
+                'packet': 'LED On'
+            }],
+            'setter_command_type': "OnOffType",
+
+            'getters': [{
+                'packet': 'Is LED On',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'
+            }]
         }
     ],
     'channel_types': [
@@ -588,6 +605,8 @@ com['openhab'] = {
             'label': 'Tare',
             'description':'Sets the currently measured weight as tare weight.',
             'command_options': [('Tare', 'TARE')]
-        }
-    ]
+        },
+        oh_generic_channel_type('LED', 'Switch', 'LED',
+                     description='Activates/Deactivates the LED.'),
+    ],
 }

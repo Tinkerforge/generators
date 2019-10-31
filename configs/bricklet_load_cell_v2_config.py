@@ -336,10 +336,22 @@ com['openhab'] = {
 
             'label': 'Gain',
             'description': "The gain can be 128x, 64x or 32x. It represents a measurement range of ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an excitation voltage of 5V and most load cells use an output of 2mV/V. That means the voltage range is ±15mV for most load cells (i.e. gain of 128x is best). If you don't know what all of this means you should keep it at 128x, it will most likely be correct.",
+        }, {
+            'name': 'Info LED',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2)],
+            'limitToOptions': 'true',
+            'default': '1',
+
+            'label': 'Info LED',
+            'description': 'Configures the info LED to be either turned off, turned on, or blink in heartbeat mode.',
         },
     ],
     'init_code': """this.setConfiguration(cfg.measurementRate, cfg.gain);
-this.setMovingAverage(cfg.movingAverage);""",
+this.setMovingAverage(cfg.movingAverage);
+this.setInfoLEDConfig(cfg.infoLED);""",
     'channels': [
         oh_generic_channel('Weight', 'Weight', 'SIUnits.GRAM', divisor=1),
         {
