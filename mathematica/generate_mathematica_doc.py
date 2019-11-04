@@ -94,12 +94,9 @@ class MathematicaDocDevice(common.Device):
             params_desc = packet.get_mathematica_parameter_description(high_level=True)
             doc = packet.get_mathematica_formatted_doc()
 
-            if len(params) > 0:
-                params = ', ' + params
-
             callbacks.append(callback.format(self.get_mathematica_class_name(),
                                              packet.get_name(skip=skip).camel,
-                                             params,
+                                             common.wrap_non_empty(', ', params, ''),
                                              params_desc,
                                              doc))
 

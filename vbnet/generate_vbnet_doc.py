@@ -90,12 +90,9 @@ class VBNETDocDevice(common.Device):
             desc = packet.get_vbnet_formatted_doc()
             params = packet.get_vbnet_parameter_list(high_level=True)
 
-            if len(params) > 0:
-                params = ', ' + params
-
             cbs += cb.format(self.get_vbnet_class_name(),
                              packet.get_name(skip=skip).camel,
-                             params,
+                             common.wrap_non_empty(', ', params, ''),
                              desc)
 
         return cbs

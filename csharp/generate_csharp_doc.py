@@ -79,12 +79,9 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
             desc = packet.get_csharp_formatted_doc(2)
             params = packet.get_csharp_parameters(high_level=True)
 
-            if len(params) > 0:
-                params = ', ' + params
-
             cbs += cb.format(self.get_csharp_class_name(),
                              packet.get_name(skip=skip).camel,
-                             params,
+                             common.wrap_non_empty(', ', params, ''),
                              desc)
 
         return cbs
