@@ -3,7 +3,7 @@
 
 """
 JSON Bindings Generator
-Copyright (C) 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_json_bindings.py: Generator for JSON bindings
 
@@ -26,25 +26,28 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import json
+from collections import OrderedDict
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class JSONBindingsDevice(common.Device):
     def get_json_source(self):
-        members = {}
+        members = OrderedDict()
 
         members['author'] = self.get_author()
         members['api_version'] = self.get_api_version()
         members['category'] = self.get_category().space
         members['device_identifier'] = self.get_device_identifier()
         members['name'] = self.get_name().space
-        members['display_name'] = {'short': self.get_short_display_name(), 'long': self.get_long_display_name()}
+        members['display_name'] = OrderedDict([('short', self.get_short_display_name()),
+                                               ('long', self.get_long_display_name())])
         members['manufacturer'] = self.get_manufacturer()
         members['description'] = self.get_description()
         members['released'] = self.is_released()
         members['documented'] = self.is_documented()
-        members['doc'] = self.get_doc()
+        members['doc'] = OrderedDict([('en', self.get_doc()['en']),
+                                      ('de', self.get_doc()['de'])])
         members['packets'] = []
         #members['examples'] = [] # FIXME
 
@@ -55,13 +58,14 @@ class JSONBindingsDevice(common.Device):
 
 class JSONBindingsPacket(common.Packet):
     def get_json_members(self):
-        members = {}
+        members = OrderedDict()
 
         members['type'] = self.get_type()
         members['name'] = self.get_name().space
         members['function_id'] = self.get_function_id()
         members['since_firmware'] = self.get_since_firmware()
-        members['doc'] = {'type': self.get_doc_type(), 'text': self.get_doc_text()}
+        members['doc'] = OrderedDict([('type', self.get_doc_type()),
+                                      ('text', self.get_doc_text())])
         members['elements'] = []
 
         for element in self.get_elements():
@@ -71,7 +75,7 @@ class JSONBindingsPacket(common.Packet):
 
 class JSONBindingsElement(common.Element):
     def get_json_members(self):
-        members = {}
+        members = OrderedDict()
 
         members['name'] = self.get_name().space
         members['type'] = self.get_type()
@@ -87,16 +91,15 @@ class JSONBindingsElement(common.Element):
             members['constant_group']['constants'] = []
 
             for constant in constant_group.get_constants():
-                members['constant_group']['constants'].append({
-                'name': constant.get_name().space,
-                'value': constant.get_value()
-                })
+                members['constant_group']['constants'].append(OrderedDict([
+                    ('name', constant.get_name().space),
+                    ('value', constant.get_value())
+                ]))
 
         else:
             members['constant_group'] = None
 
         return members
-
 
 class JSONGeneratorTrait:
     def get_doc_null_value_name(self):
