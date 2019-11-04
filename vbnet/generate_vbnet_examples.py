@@ -143,10 +143,7 @@ class VBNETExampleArgument(common.ExampleArgument):
 
         def helper(value):
             if type_ == 'bool':
-                if value:
-                    return 'True'
-                else:
-                    return 'False'
+                return str(bool(value))
             elif type_ == 'char':
                 return '"{0}"C'.format(value.replace('"', '""'))
             elif type_ == 'string':

@@ -127,10 +127,7 @@ class PHPExampleArgument(common.ExampleArgument):
 
         def helper(value):
             if type_ == 'bool':
-                if value:
-                    return 'TRUE'
-                else:
-                    return 'FALSE'
+                return str(bool(value)).upper()
             elif type_ in ['char', 'string']:
                 return "'{0}'".format(value.replace("'", "\\'"))
             elif ':bitmask:' in type_:

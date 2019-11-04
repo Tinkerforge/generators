@@ -117,10 +117,7 @@ class MathematicaExampleArgument(common.ExampleArgument):
 
         def helper(value):
             if type_ == 'bool':
-                if value:
-                    return 'True'
-                else:
-                    return 'False'
+                return str(bool(value))
             elif type_ == 'char':
                 return 'ToCharacterCode["{0}"][[1]]'.format(value.replace('"', '\\"'))
             elif type_ == 'string':

@@ -292,10 +292,7 @@ class JavaScriptExampleArgument(common.ExampleArgument):
 
         def helper(value):
             if type_ == 'bool':
-                if value:
-                    return 'true'
-                else:
-                    return 'false'
+                return str(bool(value)).lower()
             elif type_ in ['char', 'string']:
                 return "'{0}'".format(value.replace("'", "\\'"))
             elif ':bitmask:' in type_:

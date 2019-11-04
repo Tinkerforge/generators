@@ -230,12 +230,9 @@ class TVPLExampleArgument(common.ExampleArgument):
         value = self.get_value()
 
         if type_ == 'bool':
-            if value:
-                return 'TRUE'
-            else:
-                return 'FALSE'
-        else:
-            return str(value)
+            return str(bool(value)).upper()
+
+        return str(value)
 
 class TVPLExampleParameter(common.ExampleParameter):
     def get_tvpl_source_X(self):

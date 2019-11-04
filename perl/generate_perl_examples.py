@@ -121,10 +121,7 @@ class PerlExampleArgument(common.ExampleArgument):
 
         def helper(value):
             if type_ == 'bool':
-                if value:
-                    return '1'
-                else:
-                    return '0'
+                return str(int(bool(value)))
             elif type_ == 'char':
                 return "'{0}'".format(value.replace("'", "\\'"))
             elif type_ == 'string':
