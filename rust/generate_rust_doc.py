@@ -81,14 +81,14 @@ class RustDocDevice(rust_common.RustDevice):
         'en': """
 .. rust:function:: {device}::get_{callback_name_under}_callback_receiver(&self) -> {receiver_type}<{result_type}>
 
-Receivers created with this function receive {callback_name_space} events.
+ Receivers created with this function receive {callback_name_space} events.
 
 {desc}
 """,
             'de': """
 .. rust:function:: {device}::get_{callback_name_under}_callback_receiver(&self) -> {receiver_type}<{result_type}>
 
-Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space}-Events.
+ Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space}-Events.
 
 {desc}
 """
