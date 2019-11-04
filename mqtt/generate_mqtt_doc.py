@@ -57,6 +57,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
                 continue
+
             if packet.is_virtual():
                 continue
 
@@ -120,6 +121,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
                 skip = -2
             else:
                 skip = 0
+
             cbs += common.select_lang(cb).format(device=device,
                                                     callback_name_under=packet.get_mqtt_name(skip=skip),
                                                     result_type=result_type,
@@ -285,10 +287,12 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
             return '``{0}``'.format(name) # FIXME
 
         text = common.handle_rst_param(text, format_parameter)
+
         if self.get_type() == 'callback':
             text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters, constants=constants)
         else:
             text = common.handle_rst_word(text, constants=constants)
+
         text = common.handle_rst_substitutions(text, self)
 
         prefix = ''
