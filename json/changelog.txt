@@ -1,2 +1,2 @@
-<unknown>: 2.0.0 (<unknown>)
+2019-11-04: 2.0.0 (<unknown>)
 - Initial version
