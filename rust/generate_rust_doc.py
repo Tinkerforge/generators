@@ -123,7 +123,11 @@ Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space
 .. rust:function:: {device_camel}::new(uid: &str, ip_connection: &IpConnection) -> {device_camel}
 
  Creates a new ``{device_camel}`` object with the unique device ID ``uid`` and adds
- it to the IPConnection ``ipcon``:
+ it to the IPConnection ``ip_connection``:
+
+ .. code-block:: rust
+
+    let {device_under} = {device_camel}::new("YOUR_DEVICE_UID", &ip_connection);
 
  This device object can be used after the IP connection has been connected
  (see examples :ref:`above <{rst_ref_name}_rust_examples>`).
@@ -132,7 +136,11 @@ Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space
 .. rust:function:: {device_camel}::new(uid: &str, ip_connection: &IpConnection) -> {device_camel}
 
  Erzeugt ein neues ``{device_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
- fügt es der IP-Connection ``ipcon`` hinzu:
+ fügt es der IP-Connection ``ip_connection`` hinzu:
+
+ .. code-block:: rust
+
+    let {device_under} = {device_camel}::new("YOUR_DEVICE_UID", &ip_connection);
 
  Dieses Geräteobjekt kann benutzt werden, nachdem die IP-Connection verbunden
  wurde (siehe Beispiele :ref:`oben <{rst_ref_name}_rust_examples>`).
@@ -262,7 +270,8 @@ Konstanten
         }
 
         cre = common.select_lang(create_str).format(rst_ref_name=self.get_doc_rst_ref_name(),
-                                                    device_camel=self.get_rust_name())
+                                                    device_camel=self.get_rust_name(),
+                                                    device_under=self.get_name().under)
         bf = self.get_rust_methods('bf')
         af = self.get_rust_methods('af')
         ccf = self.get_rust_methods('ccf')
