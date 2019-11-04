@@ -4,6 +4,7 @@
 """
 MQTT Examples Generator
 Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_mqtt_examples.py: Generator for MQTT examples
 
@@ -25,12 +26,12 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import json
+import functools
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import mqtt_common
-
-import functools
 
 global_line_prefix = ''
 
@@ -101,34 +102,14 @@ class MQTTExampleArgument(common.ExampleArgument):
                 return packet.get_elements(direction='in')[self.get_index()]
 
     def get_mqtt_source(self, callback_fn=""):
-        type_ = self.get_type()
-
-        def helper(value):
-            constant = self.get_value_constant(value)
-
-            if constant != None:
-                return '"{0}"'.format(constant.get_name().under)
-
-            if type_ == 'bool':
-                if value:
-                    return 'true'
-                else:
-                    return 'false'
-            elif type_ == 'char':
-                return '"{0}"'.format(value)
-            elif type_ == 'string':
-                return '"{0}"'.format(value)
-            elif ':bitmask:' in type_:
-                return str(value)
-            else:
-                return str(value)
-
+        name = self.get_mqtt_element(callback_fn).get_name().under
         value = self.get_value()
-        name = '"' + self.get_mqtt_element(callback_fn).get_name().under + '"'
-        if isinstance(value, list):
-            return name + ": [" +','.join([helper(item) for item in value])+']'
+        constant = self.get_value_constant(value)
 
-        return name + ": " + helper(value)
+        if constant != None:
+            value = constant.get_name().under
+
+        return json.dumps(name, separators=(',', ':')) + ": " + json.dumps(value, separators=(',', ':'))
 
 class MQTTExampleArgumentsMixin(object):
     def get_mqtt_arguments(self, callback_fn=""):
