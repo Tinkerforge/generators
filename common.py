@@ -2,7 +2,7 @@
 
 """
 Common Generator Library
-Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2012-2015, 2019 Olaf Lüke <olaf@tinkerforge.com>
 
 common.py: Common Library for generation of bindings and documentation
@@ -522,6 +522,14 @@ re_camel_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])|([a-zA-Z][0-9])')
 
 def camel_to_space(name):
     return re_camel_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
+
+def format_float(value):
+    string = '{0:.20f}'.format(value).rstrip('0')
+
+    if string.endswith('.'):
+        string += '0'
+
+    return string
 
 def format_since_firmware(device, packet):
     since = packet.get_since_firmware()

@@ -134,12 +134,13 @@ func main() {{
                                constructor_break=constructor_break)
 
 class GoExampleArgument(common.ExampleArgument):
-
     def get_go_source(self):
         type_ = self.get_type()
 
         def helper(value):
-            if type_ == 'bool':
+            if type_ == 'float':
+                return common.format_float(value)
+            elif type_ == 'bool':
                 return str(bool(value)).lower()
             elif type_ == 'char':
                 return "'{0}'".format(value.replace("'", "\\'"))

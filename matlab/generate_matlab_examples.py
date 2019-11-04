@@ -242,7 +242,9 @@ class MATLABExampleArgument(common.ExampleArgument):
         type_ = self.get_type()
 
         def helper(value):
-            if type_ == 'bool':
+            if type_ == 'float':
+                return common.format_float(value)
+            elif type_ == 'bool':
                 return str(bool(value)).lower()
             elif type_ in  ['char', 'string']:
                 return global_quote + value.replace(global_quote, '\\' + global_quote) + global_quote

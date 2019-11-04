@@ -108,7 +108,9 @@ class ShellExampleArgument(common.ExampleArgument):
             if constant != None:
                 return '{0}-{1}'.format(constant.get_constant_group().get_name().dash, constant.get_name().dash)
 
-            if type_ == 'bool':
+            if type_ == 'float':
+                return common.format_float(value)
+            elif type_ == 'bool':
                 return str(bool(value)).lower()
             elif type_ == 'char':
                 return '{0}'.format(value) # FIXME: how to escape a single quote?
