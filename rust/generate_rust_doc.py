@@ -62,7 +62,7 @@ class RustDocDevice(rust_common.RustDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).under
             plist = common.wrap_non_empty(', ', packet.get_rust_parameters(high_level=True), '')
-            returns = packet.get_rust_return_type(high_level = packet.has_high_level())
+            returns = packet.get_rust_return_type(high_level=packet.has_high_level())
 
             if not packet.has_high_level() and name not in synchronous_methods:
                 returns = "ConvertingReceiver<" + returns + ">"
@@ -98,6 +98,7 @@ Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space
         device = self.get_rust_name()
         for packet in self.get_packets('callback'):
             desc = packet.get_rust_formatted_doc()
+
             if packet.has_high_level():
                 skip = -2
                 receiver_type = "ConvertingHighLevelCallbackReceiver"
@@ -106,13 +107,16 @@ Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space
                 skip = 0
                 receiver_type = "ConvertingCallbackReceiver"
                 result_type = packet.get_rust_return_type()
+
             cbs += common.select_lang(cb).format(device=device,
-                                                    callback_name_under=packet.get_name(skip=skip).under,
-                                                    callback_name_space=packet.get_name(skip=skip).space,
-                                                    receiver_type=receiver_type,
-                                                    result_type=result_type,
-                                                    desc=desc)
+                                                 callback_name_under=packet.get_name(skip=skip).under,
+                                                 callback_name_space=packet.get_name(skip=skip).space,
+                                                 receiver_type=receiver_type,
+                                                 result_type=result_type,
+                                                 desc=desc)
+
         return cbs
+
     def get_rust_api(self):
         create_str = {
             'en': """
