@@ -3,7 +3,7 @@
 
 """
 C# Examples Generator
-Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_csharp_examples.py: Generator for C# examples
 
@@ -138,9 +138,9 @@ class CSharpExampleArgument(common.ExampleArgument):
                 else:
                     return 'false'
             elif type_ == 'char':
-                return "'{0}'".format(value)
+                return "'{0}'".format(value.replace("'", "\\'"))
             elif type_ == 'string':
-                return '"{0}"'.format(value)
+                return '"{0}"'.format(value.replace('"', '\\"'))
             elif ':bitmask:' in type_:
                 return common.make_c_like_bitmask(value)
             elif type_.endswith(':constant'):

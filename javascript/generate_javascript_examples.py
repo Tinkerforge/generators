@@ -3,7 +3,7 @@
 
 """
 JavaScript Examples Generator
-Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_examples.py: Generator for JavaScript examples
 
@@ -297,7 +297,7 @@ class JavaScriptExampleArgument(common.ExampleArgument):
                 else:
                     return 'false'
             elif type_ in ['char', 'string']:
-                return "'{0}'".format(value)
+                return "'{0}'".format(value.replace("'", "\\'"))
             elif ':bitmask:' in type_:
                 return common.make_c_like_bitmask(value)
             elif type_.endswith(':constant'):

@@ -3,7 +3,7 @@
 
 """
 Mathematica Examples Generator
-Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_mathematica_examples.py: Generator for Mathematica examples
 
@@ -122,9 +122,9 @@ class MathematicaExampleArgument(common.ExampleArgument):
                 else:
                     return 'False'
             elif type_ == 'char':
-                return 'ToCharacterCode["{0}"][[1]]'.format(value)
+                return 'ToCharacterCode["{0}"][[1]]'.format(value.replace('"', '\\"'))
             elif type_ == 'string':
-                return '"{0}"'.format(value)
+                return '"{0}"'.format(value.replace('"', '\\"'))
             elif ':bitmask:' in type_:
                 bits = []
 

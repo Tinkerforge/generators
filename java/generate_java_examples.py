@@ -3,7 +3,7 @@
 
 """
 Java Examples Generator
-Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_java_examples.py: Generator for Java examples
 
@@ -134,9 +134,9 @@ class JavaExampleArgument(common.ExampleArgument):
                 else:
                     return 'false'
             elif type_ == 'char':
-                return "'{0}'".format(value)
+                return "'{0}'".format(value.replace("'", "\\'"))
             elif type_ == 'string':
-                return '"{0}"'.format(value)
+                return '"{0}"'.format(value.replace('"', '\\"'))
             elif ':bitmask:' in type_:
                 value = common.make_c_like_bitmask(value)
                 cast = java_common.get_java_type(type_.split(':')[0], 1, legacy=self.get_device().has_java_legacy_types())

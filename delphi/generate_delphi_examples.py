@@ -3,7 +3,7 @@
 
 """
 Delphi/Lazarus Examples Generator
-Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_delphi_examples.py: Generator for Delphi/Lazarus examples
 
@@ -196,7 +196,7 @@ class DelphiExampleArgument(common.ExampleArgument):
                 else:
                     return 'false'
             elif type_ in ['char', 'string']:
-                return "'{0}'".format(value)
+                return "'{0}'".format(value.replace("'", "''"))
             elif ':bitmask:' in type_:
                 return common.make_c_like_bitmask(value, shift='{0} shl {1}', combine='({0}) or ({1})')
             elif type_.endswith(':constant'):

@@ -4,6 +4,7 @@
 """
 Rust Examples Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_rust_examples.py: Generator for Rust examples
 
@@ -142,9 +143,9 @@ class RustExampleArgument(common.ExampleArgument):
                 else:
                     return 'false'
             elif type_ == 'char':
-                return "'{0}'".format(value)
+                return "'{0}'".format(value.replace("'", "\\'"))
             elif type_ == 'string':
-                return '"{0}".to_string()'.format(value)
+                return '"{0}".to_string()'.format(value.replace('"', '\\"'))
             elif ':bitmask:' in type_:
                 return common.make_c_like_bitmask(value)
             elif type_.endswith(':constant'):

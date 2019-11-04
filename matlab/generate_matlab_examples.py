@@ -3,7 +3,7 @@
 
 """
 MATLAB/Octave Examples Generator
-Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_examples.py: Generator for MATLAB/Octave examples
 
@@ -248,7 +248,7 @@ class MATLABExampleArgument(common.ExampleArgument):
                 else:
                     return 'false'
             elif type_ in  ['char', 'string']:
-                return global_quote + value + global_quote
+                return global_quote + value.replace(global_quote, '\\' + global_quote) + global_quote
             elif ':bitmask:' in type_:
                 return common.make_c_like_bitmask(value, shift='bitshift({0}, {1})', combine='bitor({0}, {1})')
             elif type_.endswith(':constant'):

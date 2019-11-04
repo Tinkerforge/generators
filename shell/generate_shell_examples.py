@@ -4,6 +4,7 @@
 """
 Shell Examples Generator
 Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_shell_examples.py: Generator for Shell examples
 
@@ -113,9 +114,9 @@ class ShellExampleArgument(common.ExampleArgument):
                 else:
                     return 'false'
             elif type_ == 'char':
-                return '{0}'.format(value)
+                return '{0}'.format(value) # FIXME: how to escape a single quote?
             elif type_ == 'string':
-                return '"{0}"'.format(value)
+                return '"{0}"'.format(value) # FIXME: how to escape a double quote?
             elif ':bitmask:' in type_:
                 return str(value)
             else:

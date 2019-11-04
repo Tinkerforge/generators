@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Examples Generator
-Copyright (C) 2015-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_vbnet_examples.py: Generator for Visual Basic .NET examples
 
@@ -148,9 +148,9 @@ class VBNETExampleArgument(common.ExampleArgument):
                 else:
                     return 'False'
             elif type_ == 'char':
-                return '"{0}"C'.format(value)
+                return '"{0}"C'.format(value.replace('"', '""'))
             elif type_ == 'string':
-                return '"{0}"'.format(value)
+                return '"{0}"'.format(value.replace('"', '""'))
             elif ':bitmask:' in type_:
                 return common.make_c_like_bitmask(value, combine='({0}) or ({1})')
             elif type_.endswith(':constant'):
