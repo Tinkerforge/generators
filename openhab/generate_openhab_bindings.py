@@ -779,7 +779,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         with_calls.append('.withChannelDefinitions(Arrays.asList({}))'.format(', '.join(self.get_openhab_channel_definition_builder_call(c) for c in self.oh.channels)))
 
         label = 'Tinkerforge ' + self.get_long_display_name()
-        not_supported = len(self.oh.channels) == 0
+        not_supported = len(self.oh.channels) == 0 and len(self.oh.actions) == 0
         if not_supported:
             label += ' - This device is not supported yet.'
 
@@ -1056,6 +1056,8 @@ public class {name_camel} {{
     {cfg}
     Channels
     {channels}
+    Actions
+    {actions}
 """
         param_template = """        {name} ({type}):
                 {description}"""
@@ -1096,7 +1098,8 @@ public class {name_camel} {{
         return template.format(device=self.get_long_display_name(),
                                description=self.get_description()['en'],
                                cfg='\n\n    '.join(cfg),
-                               channels='\n\n    '.join(channels))
+                               channels='\n\n    '.join(channels),
+                               actions=', '.join(a.get_name().headless for a in self.oh.actions))
 
 class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def __init__(self, *args, **kwargs):
