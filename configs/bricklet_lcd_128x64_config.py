@@ -1754,11 +1754,46 @@ com['examples'].append({
 # FIXME: add pixel-matrix example
 
 
+def gui_button_pressed_channel(index):
+    return {
+        'id': 'GUI Button {}'.format(index),
+        'label': 'GUI Button {}'.format(index),
+        'type': 'system.rawbutton',
+        'getters': [{
+            'packet': 'Get GUI Button Pressed',
+            'packet_params': ['{}'.format(index)],
+            'transform': 'value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+        'callbacks': [{
+            'filter': 'index ==  {}'.format(index),
+            'packet': 'GUI Button Pressed',
+            'transform': 'pressed ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+
+        'is_trigger_channel': True
+    }
+
+def gui_slider_value_channel(index):
+    return {
+        'id': 'GUI Slider {}'.format(index),
+        'label': 'GUI Slider {}'.format(index),
+        'type': 'GUI Slider',
+        'getters': [{
+            'packet': 'Get GUI Slider Value',
+            'packet_params': ['{}'.format(index)],
+            'transform': 'new DecimalType(value)'}],
+
+        'callbacks': [{
+            'filter': 'index ==  {}'.format(index),
+            'packet': 'GUI Slider Value',
+            'transform': 'new DecimalType(value)'}],
+
+        'is_trigger_channel': False
+    }
+
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType', 'com.tinkerforge.Helper'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
     'param_groups': oh_generic_channel_param_groups(),
-    'params': [
-        {
+    'params': [{
             'name': 'Contrast',
             'type': 'integer',
             'default': '14',
@@ -1767,8 +1802,7 @@ com['openhab'] = {
 
             'label': 'Contrast',
             'description': "Sets the contrast of the display (0-63).",
-        },
-        {
+        }, {
             'name': 'Default Backlight Intensity',
             'type': 'integer',
             'default': '100',
@@ -1777,42 +1811,59 @@ com['openhab'] = {
 
             'label': 'Default Backlight Intensity',
             'description': "Sets the default backlight intensity of the display (0-100).",
-        },
-        {
+        }, {
             'name': 'Invert',
             'type': 'boolean',
             'default': 'false',
 
             'label': 'Invert',
             'description': 'Inverts the color (black/white) of the display.',
-        },
-        {
+        }, {
             'name': 'Automatic Draw',
             'type': 'boolean',
             'default': 'true',
 
             'label': 'Automatic Draw',
             'description': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',
+        }, {
+            'name': 'Touch LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Touch', 3)],
+            'limitToOptions': 'true',
+            'default': 3,
+            'label': 'Touch LED Config',
+            'description': 'The touch LED configuration. By default the LED is on if the LCD is touched.<br/>You can also turn the LED permanently on/off or show a heartbeat.<br/>If the Bricklet is in bootloader mode, the LED is off.'
         },
+        update_interval('GUI Button', 'the GUI buttons', default=100),
+        update_interval('GUI Slider', 'the GUI sliders', default=100),
+        update_interval('GUI Tab', 'the GUI tabs', default=100),
+        update_interval("Touch Position", "touch positions", default=100),
+        update_interval("Touch Gesture", "touch gestures", default=100),
     ] ,
-    'init_code': """this.setDisplayConfiguration(cfg.contrast, cfg.defaultBacklightIntensity, cfg.invert, cfg.automaticDraw);""",
-    'channels': [
-            {
+    'init_code': """this.setDisplayConfiguration(cfg.contrast, cfg.defaultBacklightIntensity, cfg.invert, cfg.automaticDraw);
+    this.setTouchLEDConfig(cfg.touchLEDConfig);
+    this.setGUIButtonPressedCallbackConfiguration(cfg.guiButtonUpdateInterval.longValue(), true);
+    this.setGUISliderValueCallbackConfiguration(cfg.guiSliderUpdateInterval.longValue(), true);
+    this.setGUITabSelectedCallbackConfiguration(cfg.guiTabUpdateInterval.longValue(), true);
+    this.setTouchPositionCallbackConfiguration(cfg.touchPositionUpdateInterval, true);
+    this.setTouchGestureCallbackConfiguration(cfg.touchGestureUpdateInterval, true);""",
+    'channels': [{
                 'id': 'Text',
                 'type': 'Text',
                 'setters': [{
                     'packet': 'Write Line',
                     'packet_params': ['Helper.parseDisplayCommandLine(cmd.toString(), logger)', 'Helper.parseDisplayCommandPosition(cmd.toString(), logger)', 'Helper.parseDisplayCommandText(cmd.toString(), logger)']}],
                 'setter_command_type': "StringType",
-            },
-            {
+            }, {
                 'id': 'Clear Display',
                 'type': 'Clear Display',
                 'setters': [{
                     'packet': 'Clear Display'}],
                 'setter_command_type': "StringType",
-            },
-            {
+            }, {
                 'id': 'Draw Buffered Frame',
                 'type': 'Draw Buffered Frame',
                 'setters': [{
@@ -1820,8 +1871,7 @@ com['openhab'] = {
                     'packet_params': ['true']
                 }],
                 'setter_command_type': "StringType",
-            },
-            {
+            }, {
                 'id': 'Backlight',
                 'type': 'Backlight',
                 'setter_command_type': "Number",
@@ -1834,8 +1884,53 @@ com['openhab'] = {
                     'packet': 'Get Display Configuration',
                     'transform': 'new QuantityType<>(value.backlight, SmartHomeUnits.ONE)'
                 }]
-            },
-    ],
+            }, {
+                'id': 'Touch Position',
+                'label': 'Touch Position',
+                'type': 'system.trigger',
+                'getters': [{
+                    'packet': 'Get Touch Position',
+                    'transform': 'CommonTriggerEvents.PRESSED'}],
+
+                'callbacks': [{
+                    'packet': 'Touch Position',
+                    'transform': 'CommonTriggerEvents.PRESSED'}],
+
+                'is_trigger_channel': True,
+            }, {
+                'id': 'Touch Gesture',
+                'label': 'Touch Gesture',
+                'type': 'system.trigger',
+                'getters': [{
+                    'packet': 'Get Touch Gesture',
+                    'transform': 'CommonTriggerEvents.PRESSED'}],
+
+                'callbacks': [{
+                    'packet': 'Touch Gesture',
+                    'transform': 'CommonTriggerEvents.PRESSED'}],
+
+                'is_trigger_channel': True,
+            }, {
+                'id': 'Selected GUI Tab',
+                'type': 'Selected GUI Tab',
+                'setter_command_type': "Number",
+                'setters': [{
+                        'packet': 'Set GUI Tab Selected',
+                        'packet_params': ['cmd.intValue()']
+                    }
+                ],
+
+                'getters': [{
+                    'packet': 'Get GUI Tab Selected',
+                    'transform': 'new DecimalType(value)'
+                }],
+
+                'callbacks': [{
+                    'packet': 'GUI Tab Selected',
+                    'transform': 'new DecimalType(index)'
+                }]
+            }
+    ] + [gui_button_pressed_channel(i) for i in range(0, 12)] + [gui_slider_value_channel(i) for i in range(0, 6)],
     'channel_types': [
         oh_generic_channel_type('Text', 'String', 'Text',
                      description="Text to display on the LCD. Command format is [line],[position],[text].<br/><br/>Additional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly."),
@@ -1856,6 +1951,24 @@ com['openhab'] = {
         oh_generic_channel_type('Backlight', 'Number:Dimensionless', 'Backlight',
             description="The backlight intensity value from 0 to 100.",
             min_=0,
-            max_=100)
-    ]
+            max_=100),
+        oh_generic_channel_type('Selected GUI Tab', 'Number', 'Selected GUI Tab',
+            description="Returns the index of the currently selected tab. If there are not tabs, the returned index is -1.",
+            min_=-1,
+            max_=10),
+        oh_generic_channel_type('GUI Slider', 'Number', 'GUI Slider',
+            description="The current slider value for the given index.",
+            min_=0,
+            max_=120),
+    ],
+    'actions': ['Write Pixels', 'Read Pixels', 'Clear Display', 'Write Line', 'Draw Buffered Frame',
+                'Get Touch Position', 'Get Touch Gesture',
+                'Draw Line', 'Draw Box', 'Draw Text',
+                'Set GUI Button', 'Get GUI Button', 'Remove GUI Button', 'Get GUI Button Pressed',
+                'Set GUI Slider', 'Get GUI Slider', 'Remove GUI Slider', 'Get GUI Slider Value',
+                'Set GUI Tab Configuration', 'Get GUI Tab Configuration',
+                'Set GUI Tab Text', 'Get GUI Tab Text', 'Set GUI Tab Icon', 'Get GUI Tab Icon', 'Remove GUI Tab', 'Set GUI Tab Selected', 'Get GUI Tab Selected',
+                'Set GUI Graph Configuration', 'Get GUI Graph Configuration', 'Set GUI Graph Data', 'Get GUI Graph Data', 'Remove GUI Graph',
+                'Remove All GUI',
+                'Get Display Configuration', 'Get Touch LED Config']
 }

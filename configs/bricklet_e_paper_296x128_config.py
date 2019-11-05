@@ -6,6 +6,8 @@
 
 # E-Paper 296x128 Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -609,3 +611,27 @@ com['examples'].append({
               ('setter', 'Draw Text', [('uint8', 16), ('uint8', 48), ('uint8:constant', 9), ('uint8:constant', 1), ('uint8:constant', 0), ('string', 'Hello World')], 'Write big white "Hello World" in the middle of the screen', None),
               ('setter', 'Draw', [], None, None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+        'id': 'Draw Status',
+        'type': 'Draw Status',
+        'getters': [{
+            'packet': 'Get Draw Status',
+            'transform': 'new DecimalType(value)'}],
+
+        'callbacks': [{
+            'packet': 'Draw Status',
+            'transform': 'new DecimalType(drawStatus)'}]
+    }],
+    'channel_types': [
+        oh_generic_channel_type('Draw Status', 'Number', 'Draw Status',
+                     description="One of three draw statuses:<ul><li>0: Idle</li><li>1: Copying: Data is being copied from the buffer of the Bricklet to the buffer of the display.</li><li>2: Drawing: The display is updating its content (during this phase the flickering etc happens).</li></ul><br/><br/>You can write to the buffer (through one of the write or draw functions) when the status is either idle or drawing. You should not write to the buffer while it is being copied to the display. There is no double-buffering."),
+    ],
+    'actions': ['Draw', 'Get Draw Status',
+                'Write Black White', 'Read Black White', 'Write Color', 'Read Color', 'Fill Display',
+                'Draw Text', 'Draw Line', 'Draw Box',
+                'Set Update Mode', 'Get Update Mode', 'Get Display Type']
+}

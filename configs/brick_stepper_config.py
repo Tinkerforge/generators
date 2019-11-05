@@ -6,6 +6,8 @@
 
 # Stepper Brick communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 4],
@@ -1095,3 +1097,119 @@ com['examples'].append({
 'cleanups': [('setter', 'Disable', [], None, None)],
 'incomplete': True # because of special random movement logic in callback
 })
+
+def data_channel(name_words, name_headless, type_, divisor, unit):
+    return {
+        'id': name_words,
+        'type': name_words,
+        'getters': [{
+            'packet': 'Get All Data',
+            'packet_params': [],
+            'transform': 'new {type}(value.{headless}{divisor}{unit})'.format(type=type_,headless=name_headless,divisor=divisor,unit=unit)}],
+        'callbacks': [{
+            'packet': 'All Data',
+            'transform': 'new {type}({headless}{divisor}{unit})'.format(type=type_,headless=name_headless,divisor=divisor,unit=unit)}],
+
+        'is_trigger_channel': False
+    }
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        update_interval("All Data", "all data"),
+        {
+            'name': 'Minimum Voltage',
+            'type': 'decimal',
+            'unit': 'V',
+            'label': 'Minimum Voltage',
+            'description': 'The minimum voltage in V, below which the Unter Voltage channel is triggered. The minimum possible value that works with the Stepper Brick is 8V. You can use this function to detect the discharge of a battery that is used to drive the stepper motor. If you have a fixed power supply, you likely do not need this functionality. The default value is 8V.',
+            'default': 8,
+        }
+    ],
+
+    'init_code': """this.setAllDataPeriod(cfg.allDataUpdateInterval);
+    this.setMinimumVoltage((int)(cfg.minimumVoltage.doubleValue() * 1000.0));""",
+
+    'channels': [
+        data_channel('Velocity', 'currentVelocity', 'DecimalType', '', ''),
+        data_channel('Position', 'currentPosition', 'DecimalType', '', ''),
+        data_channel('Remaining Steps', 'remainingSteps', 'DecimalType', '', ''),
+        data_channel('Stack Voltage', 'stackVoltage', 'QuantityType<>', '/ 1000.0', ', SmartHomeUnits.VOLT'),
+        data_channel('External Voltage', 'externalVoltage', 'QuantityType<>', '/ 1000.0', ', SmartHomeUnits.VOLT'),
+        data_channel('Current Consumption', 'currentConsumption', 'QuantityType<>', '/ 1000.0', ', SmartHomeUnits.AMPERE'),
+        {
+            'id': 'State',
+            'type': 'State',
+            'label': 'State',
+
+            'callbacks': [{
+                'packet': 'New State',
+                'transform': 'new DecimalType(stateNew)'}],
+
+            'is_trigger_channel': False
+        }, {
+            'id': 'Previous State',
+            'type': 'State',
+            'label': 'Previous State',
+
+            'callbacks': [{
+                'packet': 'New State',
+                'transform': 'new DecimalType(statePrevious)'}],
+
+            'is_trigger_channel': False
+        }, {
+            'id': 'Position Reached',
+            'type': 'system.trigger',
+            'label': 'Position Reached',
+
+            'callbacks': [{
+                'packet': 'Position Reached',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        },  {
+            'id': 'Unter Voltage',
+            'type': 'system.trigger',
+            'label': 'Unter Voltage',
+
+            'callbacks': [{
+                'packet': 'Under Voltage',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Velocity', 'Number', 'Velocity',
+            description='The current velocity of the stepper motor in steps per second.',
+            read_only=True),
+        oh_generic_channel_type('Position', 'Number', 'Position',
+            description='The current position of the stepper motor in steps. On startup the position is 0.',
+            read_only=True),
+        oh_generic_channel_type('Remaining Steps', 'Number', 'Remaining Steps',
+            description='The remaining steps of the last call of the setSteps() action.',
+            read_only=True),
+        oh_generic_channel_type('Stack Voltage', 'Number:ElectricPotential', 'Stack Voltage',
+            description='The stack input voltage in V. The stack input voltage is the voltage that is supplied via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.',
+            pattern='%.3f %unit%',
+            read_only=True),
+        oh_generic_channel_type('External Voltage', 'Number:ElectricPotential', 'External Voltage',
+            description='The external input voltage in mV. The external input voltage is given via the black power input connector on the Stepper Brick.<br/><br/>If there is an external input voltage and a stack input voltage, the motor will be driven by the external input voltage. If there is only a stack voltage present, the motor will be driven by this voltage.<br/><br/><b>Warning: This means, if you have a high stack voltage and a low external voltage, the motor will be driven with the low external voltage. If you then remove the external connection, it will immediately be driven by the high stack voltage</b>',
+            pattern='%.3f %unit%',
+            read_only=True),
+        oh_generic_channel_type('Current Consumption', 'Number:ElectricCurrent', 'Current Consumption',
+            description='The current consumption of the motor in A.',
+            pattern='%.3f %unit%',
+            read_only=True),
+        oh_generic_channel_type('State', 'Number', 'State',
+            description='State of the brick: <ul><li>Stop = 1</li><li>Acceleration = 2</li><li>Run = 3</li><li>Deacceleration = 4</li><li>Direction change to forward = 5</li><li>Direction change to backward = 6</li></ul>',
+            read_only=True),
+    ],
+    'actions': ['Set Max Velocity', 'Get Max Velocity', 'Get Current Velocity', 'Set Speed Ramping', 'Get Speed Ramping',
+                'Full Brake', 'Set Steps', 'Get Steps', 'Get Remaining Steps', 'Drive Forward', 'Drive Backward', 'Stop',
+                'Set Motor Current', 'Get Motor Current', 'Enable', 'Disable', 'Is Enabled',
+                'Set Current Position', 'Get Current Position', 'Set Target Position', 'Get Target Position', 'Set Step Mode',
+                'Get Step Mode', 'Get Stack Input Voltage', 'Get External Input Voltage', 'Get Current Consumption',
+                'Set Decay', 'Get Decay', 'Set Sync Rect', 'Is Sync Rect', 'Set Time Base', 'Get Time Base', 'Get All Data', 'Get All Data Period']
+}

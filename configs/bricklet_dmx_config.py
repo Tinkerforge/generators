@@ -6,6 +6,8 @@
 
 # DMX Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -566,3 +568,102 @@ com['examples'].append({
 'functions': [('setter', 'Set DMX Mode', [('uint8:constant', 0)], 'Configure Bricklet as DMX master', None),
               ('setter', 'Write Frame', [('uint8', [255, 128, 0])], 'Write DMX frame with 3 channels', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'name': 'DMX Mode',
+            'type': 'integer',
+            'options': [('Master', 0),
+                        ('Slave', 1)],
+            'limitToOptions': 'true',
+            'default': '0',
+
+            'label': 'DMX Mode',
+            'description': "Sets the DMX mode to either master or slave.",
+        }, {
+            'name': 'Communication LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Communication', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Communication LED Config',
+            'description': "By default the LED shows communication traffic, it flickers once for every 10 received data packets. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+        }, {
+            'name': 'Error LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Error', 3)],
+            'limitToOptions': 'true',
+            'default': '3',
+
+            'label': 'Error LED Config',
+            'description': "By default the error LED turns on if there is any error (see FrameErrorCountListener callback). If you call this function with the Show-Error option again, the LED will turn off until the next error occurs. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+        }, {
+            'name': 'Frame Duration',
+            'type': 'integer',
+            'default': 100,
+            'label': 'Frame Duration',
+            'description': 'the duration of a frame in ms. Example: If you want to achieve 20 frames per second, you should set the frame duration to 50ms (50ms * 20 = 1 second). If you always want to send a frame as fast as possible you can set this value to 0. This setting is only used in master mode.'
+    }],
+
+    'init_code': """this.setDMXMode(cfg.dmxMode);
+        this.setCommunicationLEDConfig(cfg.communicationLEDConfig);
+        this.setErrorLEDConfig(cfg.errorLEDConfig);
+        this.setFrameDuration(cfg.frameDuration);
+        this.setFrameCallbackConfig(true, true, false, true);""",
+
+    'channels': [{
+            'id': 'Frame Started',
+            'label': 'Frame Started',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Frame Started',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
+            'id': 'Overrun Error Count',
+            'label': 'Overrun Error Count',
+            'type': 'Overrun Error Count',
+
+            'getters': [{
+                'packet': 'Get Frame Error Count',
+                'transform': 'new DecimalType(value.overrunErrorCount)'
+            }],
+
+            'callbacks': [{
+                'packet': 'Frame Error Count',
+                'transform': 'new DecimalType(overrunErrorCount)'}],
+        }, {
+            'id': 'Framing Error Count',
+            'label': 'Framing Error Count',
+            'type': 'Framing Error Count',
+
+            'getters': [{
+                'packet': 'Get Frame Error Count',
+                'transform': 'new DecimalType(value.framingErrorCount)'
+            }],
+
+            'callbacks': [{
+                'packet': 'Frame Error Count',
+                'transform': 'new DecimalType(framingErrorCount)'}],
+        }],
+    'channel_types': [
+        oh_generic_channel_type('Overrun Error Count', 'Number', 'Overrun Error Count',
+            description='The current number of overrun errors',
+            read_only=True),
+        oh_generic_channel_type('Framing Error Count', 'Number', 'Framing Error Count',
+            description='The current number of framing errors',
+            read_only=True),
+    ],
+    'actions': ['Write Frame', 'Get DMX Mode', 'Read Frame', 'Get Frame Duration', 'Get Frame Error Count', 'Get Communication LED Config', 'Get Error LED Config']
+}

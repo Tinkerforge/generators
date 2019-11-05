@@ -6,6 +6,8 @@
 
 # One Wire Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -240,3 +242,25 @@ com['examples'].append({
               ('loop_footer',)],
 'incomplete': True # because of special print logic
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+        'name': 'Communication LED Config',
+        'type': 'integer',
+        'options': [('Off', 0),
+                    ('On', 1),
+                    ('Show Heartbeat', 2),
+                    ('Show Communication', 3)],
+        'limitToOptions': 'true',
+        'default': '3',
+
+        'label': 'Communication LED Config',
+        'description': "The communication LED configuration. By default the LED shows 1-wire communication traffic by flickering. You can also turn the LED permanently on/off or show a heartbeat.",
+    }],
+    'init_code': """this.setCommunicationLEDConfig(cfg.communicationLEDConfig);""",
+    'channels': [],
+    'channel_types': [],
+    'actions': ['Search Bus', 'Reset Bus', 'Write', 'Read', 'Write Command', 'Get Communication LED Config']
+}

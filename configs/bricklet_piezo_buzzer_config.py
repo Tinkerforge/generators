@@ -6,6 +6,8 @@
 
 # Piezo Buzzer Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -127,3 +129,58 @@ com['examples'].append({
 'name': 'Morse Code',
 'functions': [('setter', 'Morse Code', [('string', '... --- ...')], 'Morse SOS', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+            'id': 'Beep',
+            'type': 'Beep',
+            'label': 'Beep',
+
+            'setters': [{
+                'packet': 'Beep',
+                'packet_params': ['cmd.longValue() * 1000']}],
+            'setter_command_type': "Number",
+        }, {
+            'id': 'Morse Code',
+            'type': 'Morse Code',
+            'label': 'Morse Code',
+
+            'setters': [{
+                'packet': 'Morse Code',
+                'packet_params': ['cmd.toString()']}],
+            'setter_command_type': "StringType",
+        }, {
+            'id': 'Beep Finished',
+            'label': 'Beep Finished',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Beep Finished',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered if a beep set by the beep action is finished.'
+        }, {
+            'id': 'Morse Code Finished',
+            'label': 'Morse Code Finished',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Morse Code Finished',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered if the playback of the morse code set by the morseCode action is finished.'
+        },
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Beep', 'Number:Time', 'Beep',
+                     description='Beeps with the duration in s.',
+                     pattern='%.3f %unit%'),
+        oh_generic_channel_type('Morse Code', 'String', 'Morse Code',
+                     description="Morse code that will be played by the piezo buzzer. The morse code is given as a string consisting of '.' (dot), '-' (minus) and ' ' (space) for dits, dahs and pauses. Every other character is ignored. For example: If you set the string '...---...', the piezo buzzer will beep nine times with the durations 'short short short long long long short short short'. The maximum string size is 60."),
+    ],
+    'actions': ['Beep', 'Morse Code']
+}

@@ -6,6 +6,8 @@
 
 # Piezo Speaker Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -197,3 +199,36 @@ com['examples'].append({
 'name': 'Morse Code',
 'functions': [('setter', 'Morse Code', [('string', '... --- ...'), ('uint16', 2000)], 'Morse SOS with a frequency of 2kHz', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType',
+                                               'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+            'id': 'Beep Finished',
+            'label': 'Beep Finished',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Beep Finished',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered if a beep set by the beep action is finished.'
+        }, {
+            'id': 'Morse Code Finished',
+            'label': 'Morse Code Finished',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Morse Code Finished',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered if the playback of the morse code set by the morseCode action is finished.'
+        },
+    ],
+    'channel_types': [
+    ],
+    'actions': ['Beep', 'Morse Code']
+}
