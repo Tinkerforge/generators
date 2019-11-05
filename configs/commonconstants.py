@@ -119,7 +119,7 @@ unabhängig von den Änderungen des Werts.
 
 Desweiteren ist es möglich den Callback mittels Thresholds einzuschränken.
 
-Der `option`-Parameter`zusammen mit min/max setzt einen Threshold für den :cb:`{0}` Callback.
+Der `option`-Parameter zusammen mit min/max setzt einen Threshold für den :cb:`{0}` Callback.
 
 Die folgenden Optionen sind möglich:
 
