@@ -170,38 +170,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        def constant_format(prefix, constant_group, constant, value):
-            c = '* {0} = {1}, '.format(constant.get_name().space, value)
-
-            for_ = {
-                'en': 'for',
-                'de': 'für'
-            }
-
-            c += common.select_lang(for_) + ' '
-
-            e = []
-
-            for element in constant_group.get_elements(self):
-                e.append(element.get_name().space)
-
-            if len(e) > 1:
-                and_ = {
-                    'en': 'and',
-                    'de': 'und'
-                }
-
-                c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
-            else:
-                c += e[0]
-
-            return c + '\n'
-
-        text += common.format_constants('', self, constants_name=constants,
-                                        char_format_func=str,
-                                        bool_format_func=lambda value: str(value).lower(),
-                                        constant_format_func=constant_format)
-
+        text += common.format_constants('', self, constants_name=constants)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

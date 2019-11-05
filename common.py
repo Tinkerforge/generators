@@ -659,16 +659,10 @@ def default_constant_format(prefix, constant_group, constant, value):
                                                    constant.get_name().upper, value)
 
 def format_constants(prefix, packet,
-                     constants_name=None,
-                     char_format_func="'{0}'".format,
-                     bool_format_func=str,
-                     constant_format_func=default_constant_format,
                      constants_intro=None,
-                     show_constant_group=False,
-                     group_format_func=lambda g: "\n" + g.get_name().space + "\n"):
-    if constants_name == None:
-        constants_name = {'en': 'constants', 'de': 'Konstanten'}
-
+                     constants_name=None,
+                     element_format_func=None,
+                     constant_format_func=default_constant_format):
     if constants_intro == None:
         constants_intro = {
             'en': """
@@ -681,31 +675,29 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 """
         }
 
+    if constants_name == None:
+        constants_name = {'en': 'constants', 'de': 'Konstanten'}
+
     constants = []
 
-    for constant_group in packet.get_constant_groups():
-        if show_constant_group:
-            constants.append(group_format_func(constant_group))
+    for element in packet.get_elements():
+        constant_group = element.get_constant_group()
+
+        if constant_group == None:
+            continue
+
+        if element_format_func != None:
+            constants.append(element_format_func(element))
 
         for constant in constant_group.get_constants():
-            if constant_group.get_type() == 'char':
-                value = char_format_func(constant.get_value())
-            elif constant_group.get_type() == 'bool':
-                value = bool_format_func(constant.get_value())
-            else:
-                value = str(constant.get_value())
+            value = element.format_value(constant.get_value())
 
             constants.append(constant_format_func(prefix, constant_group, constant, value))
 
     if len(constants) == 0:
         return ''
 
-    result = select_lang(constants_intro).format(select_lang(constants_name))
-
-    if show_constant_group: # newline before first constant group is redundant
-        result = result[:-1]
-
-    return result + ''.join(constants)
+    return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
 
 def handle_rst_word(text, parameter=None, parameters=None, constants=None):
     if parameter == None:
@@ -1735,13 +1727,12 @@ class Packet(object):
                                    explicit_fixed_stream_cardinality=False,
                                    explicit_common_cardinality=False,
                                    include_function_id=False,
-                                   constants_or_symbols='constants',
+                                   include_constants=True,
                                    high_level=False):
         assert output_parameter in ['never', 'always', 'conditional']
         assert return_object in ['never', 'always', 'conditional']
         assert callback_object in ['never', 'always', 'conditional']
         assert element_range in ['always', 'conditional']
-        assert constants_or_symbols in ['constants', 'symbols']
 
         type_title = select_lang({'en': 'Type', 'de': 'Typ'})
         length_title = select_lang({'en': 'Length', 'de': 'Länge'})
@@ -1749,7 +1740,6 @@ class Packet(object):
         variable_hint = select_lang({'en': 'variable', 'de': 'variabel'})
         unit_title = select_lang({'en': 'Unit', 'de': 'Einheit'})
         constant_group_title = select_lang({'en': 'Constants', 'de': 'Konstanten'})
-        symbols_hint = select_lang({'en': 'Symbols: Yes', 'de': 'Symbole: Ja'})
         range_title = select_lang({'en': 'Range', 'de': 'Wertebereich'})
         default_title = select_lang({'en': 'Default', 'de': 'Standardwert'})
         formatted_meta_in = []
@@ -1820,11 +1810,8 @@ class Packet(object):
 
             constant_group = element.get_constant_group()
 
-            if constant_group != None:
-                if constants_or_symbols == 'constants':
-                    meta.append('{0}: {1}'.format(constant_group_title, constant_group_name_func(constant_group)))
-                else: # symbols
-                    meta.append(symbols_hint)
+            if constant_group != None and include_constants:
+                meta.append('{0}: {1}'.format(constant_group_title, constant_group_name_func(constant_group)))
 
             range_ = element.get_range()
 

@@ -78,6 +78,7 @@ class ShellDocDevice(shell_common.ShellDevice):
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
+                                                     include_constants=False,
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_shell_formatted_doc()
@@ -109,6 +110,7 @@ class ShellDocDevice(shell_common.ShellDevice):
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
+                                                     include_constants=False,
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_shell_formatted_doc()
@@ -416,39 +418,10 @@ class ShellDocPacket(shell_common.ShellPacket):
         text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant_group, constant, value):
-            c = '* ``{0}-{1}`` = {2}, '.format(constant_group.get_name().dash, constant.get_name().dash, value)
+            return '* **{0}**-{1} = {2}\n'.format(constant_group.get_name().dash, constant.get_name().dash, value)
 
-            for_ = {
-                'en': 'for',
-                'de': 'für'
-            }
-
-            c += common.select_lang(for_) + ' '
-
-            e = []
-
-            for element in constant_group.get_elements(self):
-                name = element.get_name().dash
-                if element.get_direction() == 'in':
-                    e.append('<{0}>'.format(name))
-                else:
-                    e.append(name)
-
-            if len(e) > 1:
-                and_ = {
-                    'en': 'and',
-                    'de': 'und'
-                }
-
-                c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
-            else:
-                c += e[0]
-
-            return c + '\n'
-
-        text += common.format_constants('', self, constants_name=constants,
-                                        char_format_func=str,
-                                        bool_format_func=lambda value: str(value).lower(),
+        text += common.format_constants('', self,
+                                        constants_name=constants,
                                         constant_format_func=constant_format)
 
         text += common.format_since_firmware(self.get_device(), self)

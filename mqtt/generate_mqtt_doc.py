@@ -74,7 +74,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
-                                                     constants_or_symbols='symbols',
+                                                     include_constants=False,
                                                      high_level=True)
 
             if packet.get_name().space == 'Get Identity':
@@ -140,7 +140,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
                                                       explicit_variable_stream_cardinality=True,
                                                       explicit_fixed_stream_cardinality=True,
                                                       explicit_common_cardinality=True,
-                                                      constants_or_symbols='symbols',
+                                                      include_constants=False,
                                                       high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_mqtt_formatted_doc()
@@ -285,26 +285,17 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
 
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = ''
+        def element_format(element):
+            return common.select_lang({'en': '\nFor **{0}** field:\n\n', 'de': '\nFür **{0}** Feld:\n\n'}).format(element.get_name().under)
 
-        const_fmt_func = lambda prefix, constant_group, constant, value: '* "{0}" = {1}\n'.format(
-                                                                constant.get_name().camel, value)
-        const_func_id_fmt_func = lambda prefix, func_name, value: '* {0}Function{1} = {2}\n'.format(
-                                                                  prefix, func_name.camel, value)
+        def constant_format(prefix, constant_group, constant, value):
+            return '* "{0}" = {1}\n'.format(constant.get_name().camel, value)
 
-        def constant_group_func(group):
-            splt = group.get_name().under.split('_')
+        text += common.format_constants('', self,
+                                        constants_name=constants,
+                                        element_format_func=element_format,
+                                        constant_format_func=constant_format)
 
-            found = None
-
-            for elem in group.get_elements(self):
-                if elem.get_packet().get_name().under == self.get_name().under:
-                    return elem.get_name().under
-
-            return group.get_name().under
-
-        _for = common.select_lang({'en': 'for', 'de': 'für'})
-        text += common.format_constants(prefix, self, constants, constant_format_func=const_fmt_func, show_constant_group=True, group_format_func=lambda g: "\n" + _for + " " + constant_group_func(g) + ":\n\n")
         text += common.format_since_firmware(self.get_device(), self)
         text = text.replace('|device_identifier_constant|\n', '')
 

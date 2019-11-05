@@ -63,7 +63,8 @@ class ModbusDocDevice(common.Device):
                                                      return_title_override={'en': 'Response', 'de': 'Antwort'},
                                                      no_in_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                      no_out_value={'en': 'no response', 'de': 'keine Antwort'},
-                                                     include_function_id=True)
+                                                     include_function_id=True,
+                                                     include_constants=False)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_modbus_formatted_doc()
             func = '.. modbus:function:: {0}.{1}\n\n{2}{3}'.format(cls, name, meta_table, desc)
@@ -83,7 +84,8 @@ class ModbusDocDevice(common.Device):
                                                      return_title_override={'en': 'Response', 'de': 'Antwort'},
                                                      callback_parameter_title_override={'en': 'Response', 'de': 'Antwort'},
                                                      no_out_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
-                                                     include_function_id=True)
+                                                     include_function_id=True,
+                                                     include_constants=False)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_modbus_formatted_doc()
             func = '.. modbus:function:: {0}.CALLBACK_{1}\n\n{2}{3}'.format(cls,
@@ -179,11 +181,11 @@ class ModbusDocPacket(common.Packet):
         constants = {'en': 'meanings', 'de': 'Bedeutungen'}
         constants_intro = {
         'en': """
-The following {0} are defined for the parameters of this function:
+The following {0} are defined for the elements of this function:
 
 """,
         'de': """
-Die folgenden {0} sind für die Parameter dieser Funktion definiert:
+Die folgenden {0} sind für die Elemente dieser Funktion definiert:
 
 """
         }
@@ -206,39 +208,28 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
+        def element_format(element):
+            return common.select_lang({'en': '\nFor **{0}** element:\n\n', 'de': '\nFor **{0}** Element:\n\n'}).format(element.get_name().under)
+
         def constant_format(prefix, constant_group, constant, value):
-            c = '* {0}: {1}, '.format(value, constant.get_name().lower)
+            text = ''
 
-            for_ = {
-            'en': 'for',
-            'de': 'für'
-            }
+            for word in constant.get_name().space.split(' '):
+                if len(text) > 0:
+                    if word[0] in '0123456789' and text[-1] in '0123456789':
+                        text += common.select_lang({'en': '.', 'de': ','})
+                    else:
+                        text += ' '
 
-            c += common.select_lang(for_) + ' '
+                text += word
 
-            e = []
+            return '* {0} = {1}\n'.format(value, text)
 
-            for element in constant_group.get_elements(self):
-                name = element.get_name().under
-                e.append(name)
-
-            if len(e) > 1:
-                and_ = {
-                'en': 'and',
-                'de': 'und'
-                }
-
-                c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
-            else:
-                c += e[0]
-
-            return c + '\n'
-
-        text += common.format_constants('', self, constants_name=constants,
-                                        char_format_func=str,
-                                        bool_format_func=lambda value: str(int(value)),
-                                        constant_format_func=constant_format,
-                                        constants_intro=constants_intro)
+        text += common.format_constants('', self,
+                                        constants_intro=constants_intro,
+                                        constants_name=constants,
+                                        element_format_func=element_format,
+                                        constant_format_func=constant_format)
 
         return common.shift_right(text, 1)
 

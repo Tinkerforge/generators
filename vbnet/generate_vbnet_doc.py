@@ -335,7 +335,7 @@ class VBNETDocPacket(common.Packet):
 
         prefix = self.get_device().get_vbnet_class_name() + '.'
 
-        text += common.format_constants(prefix, self, char_format_func='"{0}"C'.format)
+        text += common.format_constants(prefix, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

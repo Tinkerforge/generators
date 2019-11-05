@@ -366,7 +366,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
 
         prefix = self.get_device().get_ruby_class_name() + '::'
 
-        text += common.format_constants(prefix, self, bool_format_func=lambda value: str(value).lower())
+        text += common.format_constants(prefix, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)
