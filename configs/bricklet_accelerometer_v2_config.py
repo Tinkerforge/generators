@@ -509,7 +509,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-Returns 30 acceleration values with 8 bit resolution. The data rate can
+Returns 60 acceleration values with 8 bit resolution. The data rate can
 be configured with :func:`Set Configuration` and this callback can be
 enabled with :func:`Set Continuous Acceleration Configuration`.
 
@@ -537,7 +537,7 @@ the enabled axis. Examples:
 """,
 'de':
 """
-Gibt 30 Beschleunigungswerte mit 8 bit Auflösung zurück. Die Datenrate
+Gibt 60 Beschleunigungswerte mit 8 bit Auflösung zurück. Die Datenrate
 kann mit der Funktion :func:`Set Configuration` eingestellt werden und
 der Callback kann per :func:`Set Continuous Acceleration Configuration`
 aktiviert werden.
