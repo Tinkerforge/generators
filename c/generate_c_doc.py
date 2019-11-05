@@ -214,11 +214,8 @@ class CDocDevice(common.Device):
 Callbacks
 ^^^^^^^^^
 
-Callbacks can be registered to receive
-time critical or recurring data from the device. The registration is done
-with the :c:func:`{1}_register_callback` function. The parameters consist of
-the device object, the callback ID, the callback function and optional
-user data:
+Callbacks can be registered to receive time critical or recurring data from the
+device. The registration is done with the :c:func:`{1}_register_callback` function:
 
  .. code-block:: c
 
@@ -228,8 +225,7 @@ user data:
 
     {1}_register_callback(&{1}, {2}_CALLBACK_EXAMPLE, (void (*)(void))my_callback, NULL);
 
-The available constants with corresponding callback function signatures
-are described below.
+The available constants with corresponding function signatures are described below.
 
 .. note::
  Using callbacks for recurring events is *always* preferred
@@ -244,11 +240,9 @@ are described below.
 Callbacks
 ^^^^^^^^^
 
-Callbacks können registriert werden um zeitkritische
-oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :c:func:`{1}_register_callback` durchgeführt werden. Die
-Parameter bestehen aus dem Geräteobjekt, der Callback ID, der Callback Funktion
-und optionalen Benutzer Daten:
+Callbacks können registriert werden um zeitkritische oder wiederkehrende Daten
+vom Gerät zu erhalten. Die Registrierung kann mit der :c:func:`{1}_register_callback`
+Funktion durchgeführt werden:
 
  .. code-block:: c
 
@@ -258,8 +252,8 @@ und optionalen Benutzer Daten:
 
     {1}_register_callback(&{1}, {2}_CALLBACK_EXAMPLE, (void (*)(void))my_callback, NULL);
 
-Die verfügbaren IDs mit den zugehörigen Callback Funktionssignaturen
-werden weiter unten beschrieben.
+Die verfügbaren Konstanten mit den zugehörigen Funktionssignaturen werden weiter
+unten beschrieben.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist
