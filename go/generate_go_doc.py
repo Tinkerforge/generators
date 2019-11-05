@@ -165,7 +165,8 @@ Callbacks
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
 with the corresponding ``Register*Callback`` function, which returns a unique callback ID.
-This ID can be used to deregister the callback later.
+This ID can be used to deregister the callback later with the corresponding ``Deregister*Callback``
+function.
 
 .. note::
  Using callbacks for recurring events is *always* preferred
