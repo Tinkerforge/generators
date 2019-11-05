@@ -144,7 +144,7 @@ Gibt die Periode zurück, wie von :func:`Set Temperature Callback Period` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'int32', 1, 'in'),
              ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -191,7 +191,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'int32', 1, 'out'),
              ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],

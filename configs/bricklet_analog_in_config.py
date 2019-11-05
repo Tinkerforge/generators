@@ -209,7 +209,7 @@ Gibt die Periode zurück, wie von :func:`Set Analog Value Callback Period` geset
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -256,7 +256,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -275,7 +275,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set Voltage Callback Threshold` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -322,7 +322,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],

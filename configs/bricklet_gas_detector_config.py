@@ -118,7 +118,7 @@ Gibt die Periode zurück, wie von :func:`Set Value Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'uint16', 1, 'in'),
              ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -165,7 +165,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'uint16', 1, 'out'),
              ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],

@@ -160,7 +160,7 @@ Gibt die Periode zurück, wie von :func:`Set Color Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Color Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min R', 'uint16', 1, 'in'),
              ('Max R', 'uint16', 1, 'in'),
              ('Min G', 'uint16', 1, 'in'),
@@ -213,7 +213,7 @@ Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Color Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min R', 'uint16', 1, 'out'),
              ('Max R', 'uint16', 1, 'out'),
              ('Min G', 'uint16', 1, 'out'),

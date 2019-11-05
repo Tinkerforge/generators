@@ -150,7 +150,7 @@ Gibt die Periode zurück, wie von :func:`Set Illuminance Callback Period` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Illuminance Callback Threshold',
-'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'uint32', 1, 'in'),
              ('Max', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -197,7 +197,7 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance Callback Threshold',
-'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
+'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
              ('Min', 'uint32', 1, 'out'),
              ('Max', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
