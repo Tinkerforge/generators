@@ -203,28 +203,24 @@ Zustand bedeutet:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in')],
+'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the debounce period of the :cb:`Interrupt` callback in ms.
+Sets the debounce period of the :cb:`Interrupt` callback.
 
 For example: If you set this value to 100, you will get the interrupt
 maximal every 100ms. This is necessary if something that bounces is
 connected to the IO-4 Bricklet, such as a button.
-
-The default value is 100.
 """,
 'de':
 """
-Setzt die Entprellperiode der :cb:`Interrupt` Callback in ms.
+Setzt die Entprellperiode der :cb:`Interrupt` Callback.
 
 Beispiel: Wenn dieser Wert auf 100 gesetzt wird, erhält man den Interrupt
 maximal alle 100ms. Dies ist notwendig falls etwas prellendes an
 das IO-4 Bricklet angeschlossen ist, wie z.B. eine Taste.
-
-Der Standardwert ist 100.
 """
 }]
 })
@@ -232,7 +228,7 @@ Der Standardwert ist 100.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out')],
+'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

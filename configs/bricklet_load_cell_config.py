@@ -190,12 +190,12 @@ Gibt den Schwellwert zurück, wie von :func:`Set Weight Callback Threshold` gese
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in')],
+'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the threshold callback
+Sets the period with which the threshold callback
 
 * :cb:`Weight Reached`
 
@@ -204,12 +204,10 @@ is triggered, if the threshold
 * :func:`Set Weight Callback Threshold`
 
 keeps being reached.
-
-The default value is 100.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher die Schwellwert Callback
+Setzt die Periode mit welcher die Schwellwert Callback
 
 * :cb:`Weight Reached`
 
@@ -218,8 +216,6 @@ ausgelöst wird, wenn der Schwellwert
 * :func:`Set Weight Callback Threshold`
 
 weiterhin erreicht bleibt.
-
-Der Standardwert ist 100.
 """
 }]
 })
@@ -227,7 +223,7 @@ Der Standardwert ist 100.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out')],
+'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

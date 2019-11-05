@@ -321,12 +321,12 @@ Gibt den Schwellwert zurück, wie von :func:`Set Altitude Callback Threshold` ge
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in')],
+'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the threshold callbacks
+Sets the period with which the threshold callbacks
 
 * :cb:`Air Pressure Reached`,
 * :cb:`Altitude Reached`
@@ -337,12 +337,10 @@ are triggered, if the thresholds
 * :func:`Set Altitude Callback Threshold`
 
 keep being reached.
-
-The default value is 100.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher die Schwellwert Callbacks
+Setzt die Periode mit welcher die Schwellwert Callbacks
 
 * :cb:`Air Pressure Reached`,
 * :cb:`Altitude Reached`
@@ -353,8 +351,6 @@ ausgelöst werden, wenn die Schwellwerte
 * :func:`Set Altitude Callback Threshold`
 
 weiterhin erreicht bleiben.
-
-Der Standardwert ist 100.
 """
 }]
 })
@@ -362,7 +358,7 @@ Der Standardwert ist 100.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out')],
+'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

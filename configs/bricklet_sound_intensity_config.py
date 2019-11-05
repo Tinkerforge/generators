@@ -185,12 +185,12 @@ Gibt den Schwellwert zurück, wie von :func:`Set Intensity Callback Threshold` g
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in')],
+'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the threshold callback
+Sets the period with which the threshold callback
 
 * :cb:`Intensity Reached`
 
@@ -199,12 +199,10 @@ is triggered, if the thresholds
 * :func:`Set Intensity Callback Threshold`
 
 keeps being reached.
-
-The default value is 100.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der Schwellwert-Callback
+Setzt die Periode mit welcher der Schwellwert-Callback
 
 * :cb:`Intensity Reached`
 
@@ -213,8 +211,6 @@ ausgelöst wird, wenn der Schwellwert
 * :func:`Set Intensity Callback Threshold`
 
 weiterhin erreicht bleibt.
-
-Der Standardwert ist 100.
 """
 }]
 })
@@ -222,7 +218,7 @@ Der Standardwert ist 100.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out')],
+'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
