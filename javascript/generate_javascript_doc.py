@@ -4,7 +4,7 @@
 """
 JavaScript Documentation Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_doc.py: Generator for JavaScript documentation
 
@@ -78,20 +78,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).headless
             params = packet.get_javascript_parameter_list(high_level=True)
-            pd = packet.get_javascript_parameter_desc('in')
-            r = packet.get_javascript_return_desc()
-
-            if name == 'getAPIVersion':
-                r = ' :rtype: [int, int, int]\n'
-            elif name == 'getResponseExpected':
-                r = ' :rtype: boolean\n'
-            elif name == 'setResponseExpected':
-                r = ''
-            elif name == 'setResponseExpectedAll':
-                r = ''
-
-            d = packet.get_javascript_formatted_doc()
-            desc = '{0}{1}{2}'.format(pd, r, d)
+            desc = packet.get_javascript_formatted_doc()
             callbacks = '[returnCallback], [errorCallback]'
 
             if name == 'getAPIVersion':
@@ -106,12 +93,27 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             if len(params) > 0 and len(callbacks) > 0:
                 params += ", "
 
-            func = '{0}{1}.{2}({3}{4})\n{5}'.format(func_start,
-                                                    cls,
-                                                    name,
-                                                    params,
-                                                    callbacks,
-                                                    desc)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_javascript_type(),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     output_parameter='never' if packet.is_virtual() else 'always',
+                                                     output_parameter_title_override={'en': 'Callback Parameters', 'de': 'Callback-Parameter'},
+                                                     no_out_value={'en': 'undefined', 'de': 'undefined'},
+                                                     no_return_value={'en': 'undefined', 'de': 'undefined'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
+
+            func = '{0}{1}.{2}({3}{4})\n\n{5}\n{6}'.format(func_start,
+                                                           cls,
+                                                           name,
+                                                           params,
+                                                           callbacks,
+                                                           meta_table,
+                                                           desc)
 
             methods += func + '\n'
 
@@ -124,14 +126,23 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
-            param_desc = packet.get_javascript_parameter_desc('out')
+            meta = packet.get_formatted_element_meta(lambda element: element.get_javascript_type(),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     no_out_value={'en': 'undefined', 'de': 'undefined'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_javascript_formatted_doc()
 
-            func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                          cls,
-                                                          packet.get_name(skip=skip).upper,
-                                                          param_desc,
-                                                          desc)
+            func = '{0}{1}.CALLBACK_{2}\n\n{3}\n{4}'.format(func_start,
+                                                            cls,
+                                                            packet.get_name(skip=skip).upper,
+                                                            meta_table,
+                                                            desc)
             cbs += func + '\n'
 
         return cbs
@@ -141,8 +152,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             'en': """
 .. javascript:function:: new {1}(uid, ipcon)
 
- :param uid: string
- :param ipcon: IPConnection
+{3}
 
  Creates an object with the unique device ID ``uid``:
 
@@ -156,8 +166,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             'de': """
 .. javascript:function:: new {1}(uid, ipcon)
 
- :param uid: string
- :param ipcon: IPConnection
+{3}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
@@ -174,8 +183,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             'en': """
 .. javascript:function:: {1}.on(callback_id, function)
 
- :param callback_id: int
- :param function: function
+{2}
 
  Registers the given ``function`` with the given ``callback_id``.
 
@@ -185,8 +193,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             'de': """
 .. javascript:function:: {1}.on(callback_id, function)
 
- :param callback_id: int
- :param function: function
+{2}
 
  Registriert die ``function`` für die gegebene ``callback_id``.
 
@@ -273,16 +280,16 @@ results as arguments, if the method returns its results asynchronously. The
 ``errorCallback`` is called with an error code in case of an error. The error
 code can be one of the following values:
 
-* IPConnection.ERROR_ALREADY_CONNECTED = 11
-* IPConnection.ERROR_NOT_CONNECTED = 12
-* IPConnection.ERROR_CONNECT_FAILED = 13
-* IPConnection.ERROR_INVALID_FUNCTION_ID = 21
-* IPConnection.ERROR_TIMEOUT = 31
-* IPConnection.ERROR_INVALID_PARAMETER = 41
-* IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42
-* IPConnection.ERROR_UNKNOWN_ERROR = 43
-* IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51
-* IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET = 71
+* IPConnection.\\ **ERROR**\\ _ALREADY_CONNECTED = 11
+* IPConnection.\\ **ERROR**\\ _NOT_CONNECTED = 12
+* IPConnection.\\ **ERROR**\\ _CONNECT_FAILED = 13
+* IPConnection.\\ **ERROR**\\ _INVALID_FUNCTION_ID = 21
+* IPConnection.\\ **ERROR**\\ _TIMEOUT = 31
+* IPConnection.\\ **ERROR**\\ _INVALID_PARAMETER = 41
+* IPConnection.\\ **ERROR**\\ _FUNCTION_NOT_SUPPORTED = 42
+* IPConnection.\\ **ERROR**\\ _UNKNOWN_ERROR = 43
+* IPConnection.\\ **ERROR**\\ _STREAM_OUT_OF_SYNC = 51
+* IPConnection.\\ **ERROR**\\ _NON_ASCII_CHAR_IN_SECRET = 71
 
 The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 
@@ -304,16 +311,16 @@ Ergebnisse asynchron zurückgibt. Die ``errorCallback``-Funktion wird im
 Fehlerfall mit einem Fehlercode aufgerufen. Der Fehlercode kann einer der
 folgenden Werte sein:
 
-* IPConnection.ERROR_ALREADY_CONNECTED = 11
-* IPConnection.ERROR_NOT_CONNECTED = 12
-* IPConnection.ERROR_CONNECT_FAILED = 13
-* IPConnection.ERROR_INVALID_FUNCTION_ID = 21
-* IPConnection.ERROR_TIMEOUT = 31
-* IPConnection.ERROR_INVALID_PARAMETER = 41
-* IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42
-* IPConnection.ERROR_UNKNOWN_ERROR = 43
-* IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51
-* IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET = 71
+* IPConnection.\\ **ERROR**\\ _ALREADY_CONNECTED = 11
+* IPConnection.\\ **ERROR**\\ _NOT_CONNECTED = 12
+* IPConnection.\\ **ERROR**\\ _CONNECT_FAILED = 13
+* IPConnection.\\ **ERROR**\\ _INVALID_FUNCTION_ID = 21
+* IPConnection.\\ **ERROR**\\ _TIMEOUT = 31
+* IPConnection.\\ **ERROR**\\ _INVALID_PARAMETER = 41
+* IPConnection.\\ **ERROR**\\ _FUNCTION_NOT_SUPPORTED = 42
+* IPConnection.\\ **ERROR**\\ _UNKNOWN_ERROR = 43
+* IPConnection.\\ **ERROR**\\ _STREAM_OUT_OF_SYNC = 51
+* IPConnection.\\ **ERROR**\\ _NON_ASCII_CHAR_IN_SECRET = 71
 
 Der Namespace der JavaScript Bindings ist ``Tinkerforge.*``.
 
@@ -364,11 +371,24 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', 'string', 1, 'in'),
+                                                         ('ipcon', 'IPConnection', 1, 'in'),
+                                                         (self.get_name().headless, self.get_javascript_class_name(), 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_javascript_class_name(),
-                                                    self.get_name().headless)
+                                                    self.get_name().headless,
+                                                    create_meta_table)
+
+        reg_meta = common.format_simple_element_meta([('callback_id', 'int', 1, 'in'),
+                                                      ('function', 'function', 1, 'in')],
+                                                     no_out_value={'en': 'undefined', 'de': 'undefined'})
+        reg_meta_table = common.make_rst_meta_table(reg_meta)
+
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
-                                                      self.get_javascript_class_name())
+                                                      self.get_javascript_class_name(),
+                                                      reg_meta_table)
 
         bf = self.get_javascript_methods('bf')
         af = self.get_javascript_methods('af')

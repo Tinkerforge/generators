@@ -3,7 +3,7 @@
 
 """
 Java Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_doc.py: Generator for Java documentation
@@ -52,7 +52,6 @@ class JavaDocDevice(java_common.JavaDevice):
 
     def get_java_methods(self, type_):
         methods = ''
-        func_start = '.. java:function:: '
         cls = self.get_java_class_name()
 
         for packet in self.get_packets('function'):
@@ -63,15 +62,23 @@ class JavaDocDevice(java_common.JavaDevice):
             ret_type = packet.get_java_return_type(True, high_level=True)
             name = packet.get_name(skip=skip).headless
             params = packet.get_java_parameters(high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_java_type(),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     return_object='conditional',
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_java_formatted_doc(1)
-            obj_desc = packet.get_java_object_desc(high_level=True)
-            func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start,
-                                                                ret_type,
-                                                                cls,
-                                                                name,
-                                                                params,
-                                                                desc,
-                                                                obj_desc)
+            func = '.. java:function:: {0} {1}::{2}({3})\n\n{4}\n{5}'.format(ret_type,
+                                                                             cls,
+                                                                             name,
+                                                                             params,
+                                                                             meta_table,
+                                                                             desc)
             methods += func + '\n'
 
         return methods
@@ -88,6 +95,8 @@ class JavaDocDevice(java_common.JavaDevice):
   :noindex:
 
 {4}
+
+{5}
 """,
             'de': """
 .. java:function:: class {0}::{1}Listener()
@@ -100,20 +109,34 @@ class JavaDocDevice(java_common.JavaDevice):
   :noindex:
 
 {4}
+
+{5}
 """
         }
 
         cbs = ''
         cls = self.get_java_class_name()
+
         for packet in self.get_packets('callback'):
             desc = packet.get_java_formatted_doc(2)
             params = packet.get_java_parameters(high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_java_type(),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     callback_parameter_title_override={'en': 'Parameters', 'de': 'Parameter'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta, indent_level=2)
             skip = -2 if packet.has_high_level() else 0
 
             cbs += common.select_lang(cb).format(cls,
                                                  packet.get_name(skip=skip).camel,
                                                  packet.get_name(skip=skip).headless,
                                                  params,
+                                                 meta_table,
                                                  desc)
 
         return cbs
@@ -122,6 +145,8 @@ class JavaDocDevice(java_common.JavaDevice):
         create_str = {
             'en': """
 .. java:function:: class {1}(String uid, IPConnection ipcon)
+
+{3}
 
  Creates an object with the unique device ID ``uid``:
 
@@ -134,6 +159,8 @@ class JavaDocDevice(java_common.JavaDevice):
 """,
             'de': """
 .. java:function:: class {1}(String uid, IPConnection ipcon)
+
+{3}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
@@ -335,9 +362,15 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', 'String', 1, 'in'),
+                                                         ('ipcon', 'IPConnection', 1, 'in'),
+                                                         (self.get_name().headless, self.get_java_class_name(), 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_java_class_name(),
-                                                    self.get_name().headless)
+                                                    self.get_name().headless,
+                                                    create_meta_table)
 
         bf = self.get_java_methods('bf')
         af = self.get_java_methods('af')
@@ -398,37 +431,6 @@ class JavaDocPacket(java_common.JavaPacket):
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, shift_right)
-
-    def get_java_object_desc(self, high_level=False):
-        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
-            return ''
-
-        desc = {
-            'en': """
- The returned object has the public member variables {0}.
-""",
-            'de': """
- Das zurückgegebene Objekt enthält die Public-Member-Variablen {0}.
-"""
-        }
-
-        and_ = {
-            'en': ' and ',
-            'de': ' und '
-        }
-
-        var = []
-
-        for element in self.get_elements(direction='out', high_level=high_level):
-            var.append('``{0} {1}``'.format(element.get_java_type(),
-                                            element.get_name().headless))
-
-        if len(var) == 1:
-            return common.select_lang(desc).format(var[0])
-        elif len(var) == 2:
-            return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
-        else:
-            return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class JavaDocGenerator(java_common.JavaGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):

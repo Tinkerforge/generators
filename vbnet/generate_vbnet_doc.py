@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Documentation Generator
-Copyright (C) 2012-2014, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_vbnet_doc.py: Generator for Visual Basic .NET documentation
@@ -54,8 +54,8 @@ class VBNETDocDevice(common.Device):
 
     def get_vbnet_methods(self, typ):
         methods = ''
-        function = '.. vbnet:function:: Function {0}.{1}({2}) As {3}\n{4}'
-        sub = '.. vbnet:function:: Sub {0}.{1}({2})\n{3}'
+        function = '.. vbnet:function:: Function {0}.{1}({2}) As {3}\n\n{4}{5}'
+        sub = '.. vbnet:function:: Sub {0}.{1}({2})\n\n{3}{4}'
         cls = self.get_vbnet_class_name()
 
         for packet in self.get_packets('function'):
@@ -66,12 +66,22 @@ class VBNETDocDevice(common.Device):
             ret_type = packet.get_vbnet_return_type(high_level=True)
             name = packet.get_name(skip=skip).camel
             params = packet.get_vbnet_parameter_list(high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_vbnet_type(context='meta'),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     output_parameter='conditional',
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_vbnet_formatted_doc()
 
             if len(ret_type) > 0:
-                method = function.format(cls, name, params, ret_type, desc)
+                method = function.format(cls, name, params, ret_type, meta_table, desc)
             else:
-                method = sub.format(cls, name, params, desc)
+                method = sub.format(cls, name, params, meta_table, desc)
 
             methods += method + '\n'
 
@@ -81,7 +91,7 @@ class VBNETDocDevice(common.Device):
         cb = """
 .. vbnet:function:: Event {0}.{1}Callback(ByVal sender As {0}{2})
 
-{3}
+{3}{4}
 """
         cbs = ''
 
@@ -89,10 +99,21 @@ class VBNETDocDevice(common.Device):
             skip = -2 if packet.has_high_level() else 0
             desc = packet.get_vbnet_formatted_doc()
             params = packet.get_vbnet_parameter_list(high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_vbnet_type(context='meta'),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     prefix_elements=[('sender', self.get_vbnet_class_name(), 1, 'out')],
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
 
             cbs += cb.format(self.get_vbnet_class_name(),
                              packet.get_name(skip=skip).camel,
                              common.wrap_non_empty(', ', params, ''),
+                             meta_table,
                              desc)
 
         return cbs
@@ -378,8 +399,32 @@ class VBNETDocElement(common.Element):
         'string': 'String'
     }
 
-    def get_vbnet_type(self):
-        return VBNETDocElement.vbnet_types[self.get_type()]
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ == 'char':
+            return '"{0}"C'.format(value.replace('"', '""'))
+
+        if type_ == 'string':
+            return '"{0}"'.format(value.replace('"', '""'))
+
+        return str(value)
+
+    def get_vbnet_type(self, context='default'):
+        assert context in ['default', 'meta'], context
+
+        vbnet_type = VBNETDocElement.vbnet_types[self.get_type()]
+
+        if context == 'meta' and self.get_cardinality() != 1 and self.get_type() != 'string':
+            vbnet_type += ' Array'
+
+        return vbnet_type
 
 class VBNETDocGenerator(common.DocGenerator):
     def get_bindings_name(self):

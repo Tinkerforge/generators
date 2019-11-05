@@ -4,6 +4,7 @@
 """
 Go Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 go_common.py: Common Library for generation of Go bindings and documentation
 
@@ -55,8 +56,8 @@ class GoDevice(common.Device):
         return self.specialize_doc_rst_links(text, specializer)
 
 class GoPacket(common.Packet):
-    def get_go_return_type(self, high_level=False):
-        returns = list("{} {}".format(r.get_go_name(), r.get_go_type()) for r in self.get_elements(direction='out') if not high_level or r.get_level() != 'low')
+    def get_go_return_type(self, high_level=False, ignore_constant_group=False):
+        returns = list("{} {}".format(r.get_go_name(), r.get_go_type(ignore_constant_group=ignore_constant_group)) for r in self.get_elements(direction='out') if not high_level or r.get_level() != 'low')
 
         if high_level and self.has_high_level():
             if self.get_high_level('stream_in') != None:
@@ -67,7 +68,7 @@ class GoPacket(common.Packet):
                     returns.append("{} {}".format(written_elements[0].get_go_name(), "uint64"))
             elif self.get_high_level('stream_out') != None:
                 data = self.get_high_level('stream_out').get_data_element()
-                returns.insert(0, "{} []{}".format(data.get_go_name(), data.get_go_type(ignore_cardinality=True)))
+                returns.insert(0, "{} []{}".format(data.get_go_name(), data.get_go_type(ignore_cardinality=True, ignore_constant_group=True)))
 
         if self.get_type() == 'callback':
             return ", ".join(returns)
@@ -77,14 +78,14 @@ class GoPacket(common.Packet):
     def get_high_level_payload_type(self):
         return [elem.get_go_type(ignore_cardinality=True) for elem in self.get_elements(direction='out') if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data'][0]
 
-    def get_go_parameters(self, high_level=False):
+    def get_go_parameters(self, high_level=False, ignore_constant_group=False):
         parameters = []
 
         for element in self.get_elements(high_level=high_level):
             if element.get_direction() == 'out' and self.get_type() == 'function':
                 continue
 
-            go_type = element.get_go_type()
+            go_type = element.get_go_type(ignore_constant_group=ignore_constant_group)
             name = element.get_go_name()
             parameters.append('{name} {type}'.format(name=name, type=go_type))
 
@@ -204,6 +205,23 @@ class GoPacket(common.Packet):
 
 
 class GoElement(common.Element):
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ == 'char':
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        if type_ == 'string':
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
+
     def get_go_name(self):
         blacklist = ["break", "default", "func", "interface", "select", "case", "defer", "go", "map", "struct", "chan", "else", "goto", "package", "switch", "const", "fallthrough", "if", "range", "type", "continue", "for", "import", "return", "var"]
         name = self.get_name().headless
@@ -213,10 +231,11 @@ class GoElement(common.Element):
 
         return name
 
-    def get_go_type(self, ignore_cardinality=False, ignore_constant_group=False):
+    def get_go_type(self, ignore_cardinality=False, ignore_constant_group=False, context='default'):
+        assert context in ['default', 'meta'], context
+
         if not ignore_constant_group and self.get_constant_group() is not None:
-            group_name = self.get_constant_group().get_name().camel
-            return group_name
+            return self.get_constant_group().get_name().camel
 
         if self.get_type() == 'char':
             element_type = 'rune'
@@ -230,11 +249,14 @@ class GoElement(common.Element):
             element_type = self.get_type()
 
         if self.get_cardinality() > 1 and not ignore_cardinality:
-            return "[{count}]{type}".format(type=element_type, count=self.get_cardinality())
+            if context == 'meta' and self.get_role() == 'stream_data':
+                element_type = "[]{}".format(element_type)
+            else:
+                element_type = "[{count}]{type}".format(type=element_type, count=self.get_cardinality())
         elif self.get_cardinality() < 0 and not ignore_cardinality:
-            return "[]{}".format(element_type)
-        else:
-            return element_type
+            element_type = "[]{}".format(element_type)
+
+        return element_type
 
 class GoConstantGroup(common.ConstantGroup):
     def get_go_type(self):

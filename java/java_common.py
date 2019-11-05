@@ -3,7 +3,7 @@
 
 """
 Java Generator
-Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 java_common.py: Common Library for generation of Java bindings and documentation
@@ -257,6 +257,23 @@ class JavaElement(common.Element):
         'char':   "'\\0'",
         'string': None
     }
+
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value) + 'f'
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ == 'char':
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        if type_ == 'string':
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
 
     def get_java_type(self):
         return get_java_type(self.get_type(), self.get_cardinality(),

@@ -4,7 +4,7 @@
 """
 MQTT Documentation Generator
 Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
-Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_mqtt_doc.py: Generator for MQTT documentation
 
@@ -63,12 +63,25 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
 
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_mqtt_name(skip=skip)
-            params = packet.get_mqtt_parameters(high_level=True)
-            if len(params) > 0:
-                params = params + "\n "
-            returns = packet.get_mqtt_return_type(high_level=True)
-            if len(returns) > 0:
-                returns = returns + "\n "
+            meta = packet.get_formatted_element_meta(lambda element: element.get_mqtt_type(for_doc=True),
+                                                     lambda element: element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
+                                                     return_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     no_in_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
+                                                     no_out_value={'en': 'no response', 'de': 'keine Antwort'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     constants_or_symbols='symbols',
+                                                     high_level=True)
+
+            if packet.get_name().space == 'Get Identity':
+                meta += common.format_simple_element_meta([('_display_name', 'string', None, 'out')],
+                                                          return_title_override={'en': 'Response', 'de': 'Antwort'})
+
+            meta_table = common.make_rst_meta_table(common.merge_meta_sections(meta))
             desc = packet.get_mqtt_formatted_doc()
 
             if packet.get_name().under == 'get_identity':
@@ -81,7 +94,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
  Der Display Name enthält den Anzeigenamen des {}."""}
                 desc += common.select_lang(get_id_desc).format(self.get_short_display_name())
 
-            func = '{start}request/{struct_name}/<UID>/{func_name}\n\n {params}{returns}{desc}'.format(start=func_start, struct_name=self.get_mqtt_device_name(), func_name=name, params=params, returns = returns, desc=desc)
+            func = '{start}request/{struct_name}/<UID>/{func_name}\n\n{meta_table}{desc}'.format(start=func_start, struct_name=self.get_mqtt_device_name(), func_name=name, meta_table=meta_table, desc=desc)
             methods += func + '\n'
 
         return methods
@@ -89,7 +102,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
     def get_mqtt_callbacks(self):
         cb = {
         'en': """
-.. mqtt:function:: register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]\n\n :register register: bool\n {result_type}\n
+.. mqtt:function:: register/{device}/<UID>/{callback_name_under}\n\n{meta_table}\n
 
  A callback can be registered for this event by publishing to the ``.../register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]`` topic with the payload "true".
  An added callback can be removed by publishing to the same topic with the payload "false".
@@ -100,7 +113,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
 {desc}
 """,
             'de': """
-.. mqtt:function:: register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]\n\n :register register: bool\n {result_type}\n
+.. mqtt:function:: register/{device}/<UID>/{callback_name_under}\n\n{meta_table}\n
 
  Ein Callback für dieses Event kann durch Senden des Payloads "true" an das ``.../register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]``-Topic hinzugefügt werden.
  Ein hinzugefügtes Callback kann durch Senden des Payloads "false" an das selbe Topic wieder entfernt werden.
@@ -115,17 +128,32 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
         cbs = ''
         device = self.get_mqtt_device_name()
         for packet in self.get_packets('callback'):
+
+            meta = common.format_simple_element_meta([('register', 'bool', 1, 'in')],
+                                                      parameter_title_override={'en': 'Register Request', 'de': 'Registrierungsanfrage'})
+            meta += packet.get_formatted_element_meta(lambda element: element.get_mqtt_type(for_doc=True),
+                                                      lambda element: element.get_name().under,
+                                                      lambda constant_group: constant_group.get_name().upper,
+                                                      callback_parameter_title_override={'en': 'Callback Response', 'de': 'Callback-Antwort'},
+                                                      no_out_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
+                                                      explicit_string_cardinality=True,
+                                                      explicit_variable_stream_cardinality=True,
+                                                      explicit_fixed_stream_cardinality=True,
+                                                      explicit_common_cardinality=True,
+                                                      constants_or_symbols='symbols',
+                                                      high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_mqtt_formatted_doc()
-            result_type = packet.get_mqtt_return_type(packet.has_high_level())
+
             if packet.has_high_level():
                 skip = -2
             else:
                 skip = 0
 
             cbs += common.select_lang(cb).format(device=device,
-                                                    callback_name_under=packet.get_mqtt_name(skip=skip),
-                                                    result_type=result_type,
-                                                    desc=desc)
+                                                 callback_name_under=packet.get_mqtt_name(skip=skip),
+                                                 meta_table=meta_table,
+                                                 desc=desc)
         return cbs
     def get_mqtt_api(self):
         c_str = {
@@ -177,7 +205,7 @@ API
 
 All published payloads to and from the MQTT bindings are in JSON format.
 
-If an error occures, the bindings publish a JSON object containing the error message as attribute "_ERROR".
+If an error occures, the bindings publish a JSON object containing the error message as member ``_ERROR``.
 It is published on the corresponding response topic: ``.../response/...`` for ``.../request/...`` and ``.../callback/...`` for ``.../register/...``.
 {1}
 
@@ -191,7 +219,7 @@ API
 
 Alle veröffentlichten Payloads an die und von den MQTT-Bindings sind im JSON Format.
 
-Falls ein Fehler auftritt, veröffentlichen die Bindings ein JSON-Objekt, das die Fehlermeldung als "_ERROR"-Attribut enthält.
+Falls ein Fehler auftritt, veröffentlichen die Bindings ein JSON-Objekt, das die Fehlermeldung als ``_ERROR``-Member enthält.
 Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../response/...`` für ``.../request/...`` und ``.../callback/...`` für ``.../register/...``.
 
 {1}
@@ -236,44 +264,6 @@ Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../respon
         return doc
 
 class MQTTDocPacket(mqtt_common.MQTTPacket):
-    def get_mqtt_elements(self, high_level, direction):
-        # if direction == 'in':
-        #     param_str = ':register' if self.get_type() == 'callback' else ':request'
-        # elif direction == 'out':
-        #     param_str = ':callback' if self.get_type() == 'callback' else ':response'
-
-        if direction == 'in':
-            param_str = ':request'
-        elif direction == 'out':
-            param_str = ':response'
-
-        params = []
-        has_symbols = {
-            'en': ' (has symbols)',
-            'de': ' (hat Symbole)'
-        }
-
-        # The bindings are patched to translate device_identifier constants. Document this behaviour
-        show_symbols = lambda elem: elem.get_constant_group() != None \
-                                    or (self.get_name().under == 'get_identity' and elem.get_name().under == 'device_identifier')
-
-        for element in self.get_elements(direction=direction, high_level=high_level):
-            params.append('{param_str} {name}: {type}{symbols}'.format(
-                    param_str=param_str,
-                    name=element.get_name().under,
-                    type=element.get_mqtt_type(for_doc=True),
-                    symbols=common.select_lang(has_symbols) if show_symbols(element) else ''))
-        if self.get_name().under == 'get_identity' and direction=='out':
-            params.append(':response _display_name: string')
-
-        return '\n '.join(params)
-
-    def get_mqtt_parameters(self, high_level):
-        return self.get_mqtt_elements(high_level, direction='in')
-
-    def get_mqtt_return_type(self, high_level):
-        return self.get_mqtt_elements(high_level, direction='out')
-
     def get_mqtt_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
         text = self.get_device().specialize_mqtt_doc_function_links(text)

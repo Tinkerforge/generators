@@ -3,7 +3,7 @@
 
 """
 LabVIEW Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_labview_doc.py: Generator for LabVIEW documentation
@@ -77,7 +77,7 @@ class LabVIEWDocDevice(common.Device):
                                         display_name_fixer=display_name_fixer)
 
     def get_labview_functions(self, type_):
-        function = '.. labview:function:: {0}.{1}({2}){3}\n{4}{5}{6}\n'
+        function = '.. labview:function:: {0}.{1}({2}){3}\n\n{4}{5}\n'
         functions = []
         cls = self.get_labview_class_name()
 
@@ -87,40 +87,49 @@ class LabVIEWDocDevice(common.Device):
 
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
-            inputs = packet.get_labview_input_list(high_level=True)
-            input_desc = packet.get_labview_input_description(high_level=True)
-            outputs = packet.get_labview_output_list(high_level=True)
-            output_desc = packet.get_labview_output_description(high_level=True)
+            inputs = packet.get_labview_parameter_list('in', high_level=True)
+            outputs = packet.get_labview_parameter_list('out', high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_labview_type(),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     parameter_title_override={'en': 'Input', 'de': 'Eingabe'},
+                                                     return_title_override={'en': 'Output', 'de': 'Ausgabe'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             doc = packet.get_labview_formatted_doc()
 
-            if len(outputs) > 0:
-                outputs = ' -> ' + outputs
-
-            functions.append(function.format(cls, name, inputs, outputs, input_desc, output_desc, doc))
+            functions.append(function.format(cls, name, inputs, common.wrap_non_empty(' ->  ', outputs, ''), meta_table, doc))
 
         return ''.join(functions)
 
     def get_labview_callbacks(self):
         callback = """
-.. labview:function:: event {0}.{1}Callback(sender{2})
+.. labview:function:: event {0}.{1}Callback -> sender{2}
 
- :input sender: .NET Refnum ({0}){3}{4}
+{3}{4}
 """
         callbacks = []
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
-            inputs = packet.get_labview_input_list(high_level=True)
-            input_desc = packet.get_labview_input_description(high_level=True)
+            outputs = packet.get_labview_parameter_list('out', high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_labview_type(),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     prefix_elements=[('sender', '.NET Refnum ({0})'.format(self.get_labview_class_name()), 1, 'out')],
+                                                     callback_parameter_title_override={'en': 'Callback Output', 'de': 'Callback-Ausgabe'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             doc = packet.get_labview_formatted_doc()
-
-            if len(inputs) > 0:
-                inputs = ', ' + inputs
 
             callbacks.append(callback.format(self.get_labview_class_name(),
                                              packet.get_name(skip=skip).camel,
-                                             inputs,
-                                             input_desc,
+                                             common.wrap_non_empty(', ', outputs, ''),
+                                             meta_table,
                                              doc))
 
         return ''.join(callbacks)
@@ -130,9 +139,7 @@ class LabVIEWDocDevice(common.Device):
         'en': """
 .. labview:function:: {1}(uid, ipcon) -> {2}
 
- :input uid: String
- :input ipcon: .NET Refnum (IPConnection)
- :output {2}: .NET Refnum ({1})
+{3}
 
  Creates an object with the unique device ID ``uid``.
  This object can then be used after the IP Connection is connected
@@ -141,9 +148,7 @@ class LabVIEWDocDevice(common.Device):
         'de': """
 .. labview:function:: {1}(uid, ipcon) -> {2}
 
- :input uid: String
- :input ipcon: .NET Refnum (IPConnection)
- :output {2}: .NET Refnum ({1})
+{3}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``.
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
@@ -277,9 +282,17 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', 'String', 1, 'in'),
+                                                         ('ipcon', '.NET Refnum (IPConnection)', 1, 'in'),
+                                                         (self.get_name().headless, '.NET Refnum ({0})'.format(self.get_labview_class_name()), 1, 'out')],
+                                                        parameter_title_override={'en': 'Input', 'de': 'Eingabe'},
+                                                        return_title_override={'en': 'Output', 'de': 'Ausgabe'})
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_labview_class_name(),
-                                                    self.get_name().headless)
+                                                    self.get_name().headless,
+                                                    create_meta_table)
 
         bf = self.get_labview_functions('bf')
         af = self.get_labview_functions('af')
@@ -335,58 +348,13 @@ class LabVIEWDocPacket(common.Packet):
 
         return common.shift_right(text, 1)
 
-    def get_labview_input_list(self, high_level=False):
-        inputs = []
-
-        if self.get_type() == 'callback':
-            direction = 'out'
-        else:
-            direction = 'in'
+    def get_labview_parameter_list(self, direction, high_level=False):
+        parameter = []
 
         for element in self.get_elements(direction=direction, high_level=high_level):
-            inputs.append(element.get_name().headless)
+            parameter.append(element.get_name().headless)
 
-        return ', '.join(inputs)
-
-    def get_labview_input_description(self, high_level=False):
-        descriptions = []
-
-        if self.get_type() == 'callback':
-            direction = 'out'
-        else:
-            direction = 'in'
-
-        for element in self.get_elements(direction=direction, high_level=high_level):
-            name = element.get_name().headless
-            type_ = element.get_labview_type()
-
-            descriptions.append(' :input {0}: {1}\n'.format(name, type_))
-
-        return '\n' + ''.join(descriptions)
-
-    def get_labview_output_list(self, high_level=False):
-        outputs = []
-
-        if self.get_type() == 'function':
-            for element in self.get_elements(direction='out', high_level=high_level):
-                outputs.append(element.get_name().headless)
-
-        return ', '.join(outputs)
-
-    def get_labview_output_description(self, high_level=False):
-        descriptions = []
-
-        if self.get_type() == 'function':
-            for element in self.get_elements(direction='out', high_level=high_level):
-                name = element.get_name().headless
-                type = element.get_labview_type()
-
-                descriptions.append(' :output {0}: {1}\n'.format(name, type))
-
-        if len(descriptions) > 0:
-            return '\n' + ''.join(descriptions)
-        else:
-            return ''
+        return ', '.join(parameter)
 
 class LabVIEWDocElement(common.Element):
     labview_types = {
@@ -403,6 +371,20 @@ class LabVIEWDocElement(common.Element):
         'char':   'Char',
         'string': 'String'
     }
+
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value))[0]
+
+        if type_ in ['char', 'string']:
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
 
     def get_labview_type(self):
         t = LabVIEWDocElement.labview_types[self.get_type()]

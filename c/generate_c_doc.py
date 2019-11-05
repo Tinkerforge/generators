@@ -3,7 +3,7 @@
 
 """
 C/C++ Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_c_doc.py: Generator for C/C++ documentation
@@ -52,7 +52,14 @@ class CDocDevice(common.Device):
 
     def get_c_methods(self, type_):
         methods = ''
-        func_start = '.. c:function:: int '
+
+        def name_func(element):
+            name = element.get_name().under
+
+            if element.get_direction() == 'out' and element.get_packet().get_type() == 'function':
+                name = 'ret_{0}'.format(name)
+
+            return name
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
@@ -62,8 +69,17 @@ class CDocDevice(common.Device):
             name = '{0}_{1}'.format(self.get_name().under, packet.get_name(skip=skip).under)
             plist = common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), '')
             params = '{0} *{1}{2}'.format(self.get_name().camel, self.get_name().under, plist)
+
+            meta = packet.get_formatted_element_meta(lambda element: element.get_c_type('meta'), name_func,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     output_parameter='always',
+                                                     prefix_elements=[(self.get_name().under, self.get_name().camel + ' *', 1, 'in')],
+                                                     suffix_elements=[('error_code', 'int', 1, 'return')],
+                                                     stream_length_suffix='_length',
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_c_formatted_doc()
-            func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
+            func = '.. c:function:: int {0}({1})\n\n{2}{3}'.format(name, params, meta_table, desc)
             methods += func + '\n'
 
         return methods
@@ -83,7 +99,6 @@ class CDocDevice(common.Device):
         }
 
         cbs = ''
-        func_start = '.. c:var:: '
 
         for packet in self.get_packets('callback'):
             plist = packet.get_c_parameters(high_level=True)
@@ -94,13 +109,20 @@ class CDocDevice(common.Device):
                 plist += ', void *user_data'
 
             params = common.select_lang(param_format).format(plist)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_c_type('meta'),
+                                                     lambda element: element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     suffix_elements=[('user_data', 'void *', 1, 'out')],
+                                                     stream_length_suffix='_length',
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_c_formatted_doc()
             skip = -2 if packet.has_high_level() else 0
-            func = '{0}{1}_CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                          self.get_name().upper,
-                                                          packet.get_name(skip=skip).upper,
-                                                          params,
-                                                          desc)
+            func = '.. c:var:: {0}_CALLBACK_{1}\n{2}\n{3}\n{4}'.format(self.get_name().upper,
+                                                                       packet.get_name(skip=skip).upper,
+                                                                       params,
+                                                                       meta_table,
+                                                                       desc)
             cbs += func + '\n'
 
         return cbs
@@ -109,6 +131,8 @@ class CDocDevice(common.Device):
         create_str = {
             'en': """
 .. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
+
+{3}
 
  Creates the device object ``{1}`` with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
@@ -123,6 +147,8 @@ class CDocDevice(common.Device):
 """,
             'de': """
 .. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
+
+{3}
 
  Erzeugt ein Geräteobjekt ``{1}`` mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IP Connection ``ipcon`` hinzu:
@@ -141,11 +167,15 @@ class CDocDevice(common.Device):
             'en': """
 .. c:function:: void {0}_destroy({1} *{0})
 
+{2}
+
  Removes the device object ``{0}`` from its IPConnection and destroys it.
  The device object cannot be used anymore afterwards.
 """,
             'de': """
 .. c:function:: void {0}_destroy({1} *{0})
+
+{2}
 
  Entfernt das Geräteobjekt ``{0}`` von dessen IP Connection und zerstört es.
  Das Geräteobjekt kann hiernach nicht mehr verwendet werden.
@@ -156,6 +186,8 @@ class CDocDevice(common.Device):
             'en': """
 .. c:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void (*function)(void), void *user_data)
 
+{3}
+
  Registers the given ``function`` with the given ``callback_id``. The
  ``user_data`` will be passed as the last parameter to the ``function``.
 
@@ -164,6 +196,8 @@ class CDocDevice(common.Device):
 """,
             'de': """
 .. c:function:: void {1}_register_callback({2} *{1}, int16_t callback_id, void (*function)(void), void *user_data)
+
+{3}
 
  Registriert die ``function`` für die gegebene ``callback_id``. Die ``user_data``
  werden der Funktion als letztes Parameter mit übergeben.
@@ -251,21 +285,21 @@ is handled via output parameters. These parameters are labeled with the
 
 Possible error codes are:
 
-* E_OK = 0
-* E_TIMEOUT = -1
-* E_NO_STREAM_SOCKET = -2
-* E_HOSTNAME_INVALID = -3
-* E_NO_CONNECT = -4
-* E_NO_THREAD = -5
-* E_NOT_ADDED = -6 (unused since bindings version 2.0.0)
-* E_ALREADY_CONNECTED = -7
-* E_NOT_CONNECTED = -8
-* E_INVALID_PARAMETER = -9
-* E_NOT_SUPPORTED = -10
-* E_UNKNOWN_ERROR_CODE = -11
-* E_STREAM_OUT_OF_SYNC = -12
-* E_INVALID_UID = -13
-* E_NON_ASCII_CHAR_IN_SECRET = -14
+* **E**\\ _OK = 0
+* **E**\\ _TIMEOUT = -1
+* **E**\\ _NO_STREAM_SOCKET = -2
+* **E**\\ _HOSTNAME_INVALID = -3
+* **E**\\ _NO_CONNECT = -4
+* **E**\\ _NO_THREAD = -5
+* **E**\\ _NOT_ADDED = -6 (unused since C/C++ bindings version 2.0.0)
+* **E**\\ _ALREADY_CONNECTED = -7
+* **E**\\ _NOT_CONNECTED = -8
+* **E**\\ _INVALID_PARAMETER = -9
+* **E**\\ _NOT_SUPPORTED = -10
+* **E**\\ _UNKNOWN_ERROR_CODE = -11
+* **E**\\ _STREAM_OUT_OF_SYNC = -12
+* **E**\\ _INVALID_UID = -13
+* **E**\\ _NON_ASCII_CHAR_IN_SECRET = -14
 
 as defined in :file:`ip_connection.h`.
 
@@ -288,21 +322,21 @@ sind mit dem ``ret_`` Präfix gekennzeichnet.
 
 Mögliche Fehlercodes sind:
 
-* E_OK = 0
-* E_TIMEOUT = -1
-* E_NO_STREAM_SOCKET = -2
-* E_HOSTNAME_INVALID = -3
-* E_NO_CONNECT = -4
-* E_NO_THREAD = -5
-* E_NOT_ADDED = -6 (wird seit Bindings Version 2.0.0 nicht mehr verwendet)
-* E_ALREADY_CONNECTED = -7
-* E_NOT_CONNECTED = -8
-* E_INVALID_PARAMETER = -9
-* E_NOT_SUPPORTED = -10
-* E_UNKNOWN_ERROR_CODE = -11
-* E_STREAM_OUT_OF_SYNC = -12
-* E_INVALID_UID = -13
-* E_NON_ASCII_CHAR_IN_SECRET = -14
+* **E**\\ _OK = 0
+* **E**\\ _TIMEOUT = -1
+* **E**\\ _NO_STREAM_SOCKET = -2
+* **E**\\ _HOSTNAME_INVALID = -3
+* **E**\\ _NO_CONNECT = -4
+* **E**\\ _NO_THREAD = -5
+* **E**\\ _NOT_ADDED = -6 (wird seit C/C++ Bindings Version 2.0.0 nicht mehr verwendet)
+* **E**\\ _ALREADY_CONNECTED = -7
+* **E**\\ _NOT_CONNECTED = -8
+* **E**\\ _INVALID_PARAMETER = -9
+* **E**\\ _NOT_SUPPORTED = -10
+* **E**\\ _UNKNOWN_ERROR_CODE = -11
+* **E**\\ _STREAM_OUT_OF_SYNC = -12
+* **E**\\ _INVALID_UID = -13
+* **E**\\ _NON_ASCII_CHAR_IN_SECRET = -14
 
 wie in :file:`ip_connection.h` definiert.
 
@@ -353,14 +387,33 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([(self.get_name().under, self.get_name().camel + ' *', 1, 'in'),
+                                                         ('uid', 'const char *', 1, 'in'),
+                                                         ('ipcon', 'IPConnection *', 1, 'in')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_name().under,
-                                                    self.get_name().camel)
+                                                    self.get_name().camel,
+                                                    create_meta_table)
+
+        destroy_meta = common.format_simple_element_meta([(self.get_name().under, self.get_name().camel + ' *', 1, 'in')])
+        destroy_meta_table = common.make_rst_meta_table(destroy_meta)
+
         des = common.select_lang(destroy_str).format(self.get_name().under,
-                                                     self.get_name().camel)
+                                                     self.get_name().camel,
+                                                     destroy_meta_table)
+
+        reg_meta = common.format_simple_element_meta([(self.get_name().under, self.get_name().camel + ' *', 1, 'in'),
+                                                      ('callback_id', 'int16_t', 1, 'in'),
+                                                      ('function', 'void (*)(void)', 1, 'in'),
+                                                      ('user_data', 'void *', 1, 'in')])
+        red_meta_table = common.make_rst_meta_table(reg_meta)
+
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
                                                       self.get_name().under,
-                                                      self.get_name().camel)
+                                                      self.get_name().camel,
+                                                      red_meta_table)
         bf = self.get_c_methods('bf')
         af = self.get_c_methods('af')
         ccf = self.get_c_methods('ccf')

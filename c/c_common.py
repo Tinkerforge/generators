@@ -3,7 +3,7 @@
 
 """
 C/C++ Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 c_common.py: Common Library for generation of C/C++ bindings and documentation
@@ -117,28 +117,48 @@ class CPacket(common.Packet):
         return ', '.join(arguments)
 
 class CElement(common.Element):
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value) + 'f'
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ == 'char':
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        if type_ == 'string':
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
+
     def get_c_type(self, context):
-        assert context in ['default', 'signature', 'struct']
+        assert context in ['default', 'signature', 'struct', 'meta']
 
         type_ = self.get_type()
 
         if type_ == 'string':
-            if self.get_direction() == 'in' and context == 'signature':
-                return 'const char'
+            if self.get_direction() == 'in' and context in ['signature', 'meta']:
+                type_ = 'const char'
+            else:
+                type_ ='char'
+        elif type_ == 'char':
+            if self.get_direction() == 'in' and self.get_role() == 'stream_data' and context in ['signature', 'meta']:
+                type_ = 'const char'
+            else:
+                type_ = 'char'
+        elif type_ in ['int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64']:
+            type_ = type_ + '_t'
+        elif type_ == 'bool' and context == 'struct':
+            type_ = 'uint8_t'
 
-            return 'char'
-
-        if type_ == 'char':
-            if self.get_direction() == 'in' and self.get_role() == 'stream_data' and context == 'signature':
-                return 'const char'
-
-            return 'char'
-
-        if type_ in ['int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64']:
-            return type_ + '_t'
-
-        if type_ == 'bool' and context == 'struct':
-            return 'uint8_t'
+        if context == 'meta':
+            if self.get_cardinality() > 1:
+                type_ += '[{}]'.format(self.get_cardinality())
+            elif self.get_cardinality() < 0:
+                type_ += ' *'
 
         return type_
 

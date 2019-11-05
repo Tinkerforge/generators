@@ -3,7 +3,7 @@
 
 """
 Python Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_doc.py: Generator for Python documentation
@@ -52,7 +52,6 @@ class PythonDocDevice(python_common.PythonDevice):
 
     def get_python_methods(self, type_):
         methods = []
-        func_start = '.. py:function:: '
         cls = self.get_python_class_name()
 
         for packet in self.get_packets('function'):
@@ -62,35 +61,49 @@ class PythonDocDevice(python_common.PythonDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).under
             params = packet.get_python_parameters(high_level=True)
-            pd = packet.get_python_parameter_desc('in', high_level=True)
-            r = packet.get_python_return_desc(high_level=True)
-            d = packet.get_python_formatted_doc()
-            obj_desc = packet.get_python_object_desc(high_level=True)
-            desc = '{0}{1}{2}{3}'.format(pd, r, d, obj_desc)
-            func = '{0}{1}.{2}({3})\n{4}\n'.format(func_start,
-                                                   cls,
-                                                   name,
-                                                   params,
-                                                   desc)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_python_type(),
+                                                     lambda element: element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     return_object='conditional',
+                                                     no_out_value={'en': 'None', 'de': 'None'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
+            desc = packet.get_python_formatted_doc()
+            func = '.. py:function:: {0}.{1}({2})\n\n{3}{4}\n'.format(cls,
+                                                                      name,
+                                                                      params,
+                                                                      meta_table,
+                                                                      desc)
             methods.append(func)
 
         return ''.join(methods)
 
     def get_python_callbacks(self):
         cbs = ''
-        func_start = '.. py:attribute:: '
         cls = self.get_python_class_name()
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
-            param_desc = packet.get_python_parameter_desc('out', high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_python_type(),
+                                                     lambda element: element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     no_out_value={'en': 'no parameters', 'de': 'keine Parameter'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_python_formatted_doc()
 
-            func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                          cls,
-                                                          packet.get_name(skip=skip).upper,
-                                                          param_desc,
-                                                          desc)
+            func = '.. py:attribute:: {0}.CALLBACK_{1}\n\n{2}{3}'.format(cls,
+                                                                         packet.get_name(skip=skip).upper,
+                                                                         meta_table,
+                                                                         desc)
             cbs += func + '\n'
 
         return cbs
@@ -100,8 +113,7 @@ class PythonDocDevice(python_common.PythonDevice):
             'en': """
 .. py:function:: {1}(uid, ipcon)
 
- :param uid: string
- :param ipcon: IPConnection
+{3}
 
  Creates an object with the unique device ID ``uid``:
 
@@ -115,8 +127,7 @@ class PythonDocDevice(python_common.PythonDevice):
             'de': """
 .. py:function:: {1}(uid, ipcon)
 
- :param uid: string
- :param ipcon: IPConnection
+{3}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
@@ -133,9 +144,7 @@ class PythonDocDevice(python_common.PythonDevice):
             'en': """
 .. py:function:: {2}{1}.register_callback(callback_id, function)
 
- :param callback_id: int
- :param function: callable
- :rtype: None
+{3}
 
  Registers the given ``function`` with the given ``callback_id``.
 
@@ -145,9 +154,7 @@ class PythonDocDevice(python_common.PythonDevice):
             'de': """
 .. py:function:: {2}{1}.register_callback(callback_id, function)
 
- :param callback_id: int
- :param function: callable
- :rtype: None
+{3}
 
  Registriert die ``function`` für die gegebene ``callback_id``.
 
@@ -316,12 +323,25 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', 'str', 1, 'in'),
+                                                         ('ipcon', 'IPConnection', 1, 'in'),
+                                                         (self.get_name().under, self.get_python_class_name(), 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_python_class_name(),
-                                                    self.get_name().under)
+                                                    self.get_name().under,
+                                                    create_meta_table)
+
+        reg_meta = common.format_simple_element_meta([('callback_id', 'int', 1, 'in'),
+                                                      ('function', 'callable', 1, 'in')],
+                                                     no_out_value={'en': 'None', 'de': 'None'})
+        reg_meta_table = common.make_rst_meta_table(reg_meta)
+
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
                                                       self.get_name().camel,
-                                                      self.get_category().camel)
+                                                      self.get_category().camel,
+                                                      reg_meta_table)
 
         bf = self.get_python_methods('bf')
         af = self.get_python_methods('af')
@@ -377,60 +397,6 @@ class PythonDocPacket(python_common.PythonPacket):
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)
-
-    def get_python_parameter_desc(self, direction, high_level=False):
-        desc = '\n'
-        param = ' :param {0}: {1}\n'
-
-        for element in self.get_elements(direction=direction, high_level=high_level):
-            t = element.get_python_type()
-            desc += param.format(element.get_name().under, t)
-
-        return desc
-
-    def get_python_return_desc(self, high_level=False):
-        ret = ' :rtype: {0}\n'
-        ret_list = []
-
-        for element in self.get_elements(direction='out', high_level=high_level):
-            ret_list.append(element.get_python_type())
-
-        if len(ret_list) == 0:
-            return ret.format(None)
-        elif len(ret_list) == 1:
-            return ret.format(ret_list[0])
-
-        return ret.format('(' + ', '.join(ret_list) + ')')
-
-    def get_python_object_desc(self, high_level=False):
-        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
-            return ''
-
-        desc = {
-            'en': """
- The returned namedtuple has the variables {0}.
-""",
-            'de': """
- Das zurückgegebene namedtuple enthält die Variablen {0}.
-"""
-        }
-
-        and_ = {
-            'en': ' and ',
-            'de': ' und '
-        }
-
-        var = []
-
-        for element in self.get_elements(direction='out', high_level=high_level):
-            var.append('``{0}``'.format(element.get_name().under))
-
-        if len(var) == 1:
-            return common.select_lang(desc).format(var[0])
-        elif len(var) == 2:
-            return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
-        else:
-            return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class PythonDocGenerator(python_common.PythonGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):

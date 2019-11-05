@@ -3,7 +3,7 @@
 
 """
 Shell Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 shell_common.py: Common Library for generation of Shell bindings and documentation
@@ -113,18 +113,31 @@ class ShellElement(common.Element):
         'string': None
     }
 
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ == 'char':
+            return '{0}'.format(value) # FIXME: how to escape a single quote?
+
+        if type_ == 'string':
+            return '"{0}"'.format(value) # FIXME: how to escape a double quote?
+
+        return str(value)
+
     def get_shell_doc_type(self):
-        shell_type = ShellElement.shell_types[self.get_type()]
+        shell_type = ShellElement.shell_types[self.get_type()].capitalize()
         cardinality = self.get_cardinality()
 
         if cardinality == 1 or self.get_type() == 'string':
             return shell_type
-        elif cardinality < 0:
-            return '{0},{0},...'.format(shell_type)
-        elif cardinality <= 5:
-            return ','.join([shell_type] * cardinality)
-        else:
-            return '{0},{0},..{1}x..,{0}'.format(shell_type, cardinality - 3)
+
+        return '{0} Array'.format(shell_type)
 
     def get_shell_struct_format(self):
         f = ShellElement.shell_struct_formats[self.get_type()]

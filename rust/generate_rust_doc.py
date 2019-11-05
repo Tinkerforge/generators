@@ -4,6 +4,7 @@
 """
 Rust Documentation Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_rust_doc.py: Generator for Rust documentation
 
@@ -70,8 +71,16 @@ class RustDocDevice(rust_common.RustDevice):
                 params = '&mut self{}'.format(plist)
             else:
                 params = '&self{}'.format(plist)
+
+            meta = packet.get_formatted_element_meta(lambda element: element.get_rust_type(for_doc=True),
+                                                     lambda element: element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     return_object='conditional',
+                                                     explicit_string_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_rust_formatted_doc()
-            func = '{start}{struct_name}::{func_name}({params})-> {returns}\n{desc}'.format(start=func_start, struct_name=self.get_rust_name(), func_name=name, params=params, returns = returns, desc=desc)
+            func = '{start}{struct_name}::{func_name}({params})-> {returns}\n\n{meta_table}{desc}'.format(start=func_start, struct_name=self.get_rust_name(), func_name=name, params=params, returns=returns, meta_table=meta_table, desc=desc)
             methods += func + '\n'
 
         return methods
@@ -81,12 +90,16 @@ class RustDocDevice(rust_common.RustDevice):
         'en': """
 .. rust:function:: {device}::get_{callback_name_under}_callback_receiver(&self) -> {receiver_type}<{result_type}>
 
+{meta_table}
+
  Receivers created with this function receive {callback_name_space} events.
 
 {desc}
 """,
             'de': """
 .. rust:function:: {device}::get_{callback_name_under}_callback_receiver(&self) -> {receiver_type}<{result_type}>
+
+{meta_table}
 
  Receiver die mit dieser Funktion erstellt werden, empfangen {callback_name_space}-Events.
 
@@ -96,7 +109,17 @@ class RustDocDevice(rust_common.RustDevice):
 
         cbs = ''
         device = self.get_rust_name()
+
         for packet in self.get_packets('callback'):
+            meta = packet.get_formatted_element_meta(lambda element: element.get_rust_type(for_doc=True),
+                                                     lambda element: element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     callback_object='conditional',
+                                                     callback_parameter_title_override={'en': 'Event', 'de': 'Event'},
+                                                     callback_object_title_override={'en': 'Event Object', 'de': 'Event-Objekt'},
+                                                     explicit_string_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_rust_formatted_doc()
 
             if packet.has_high_level():
@@ -113,6 +136,7 @@ class RustDocDevice(rust_common.RustDevice):
                                                  callback_name_space=packet.get_name(skip=skip).space,
                                                  receiver_type=receiver_type,
                                                  result_type=result_type,
+                                                 meta_table=meta_table,
                                                  desc=desc)
 
         return cbs
@@ -121,6 +145,8 @@ class RustDocDevice(rust_common.RustDevice):
         create_str = {
             'en': """
 .. rust:function:: {device_camel}::new(uid: &str, ip_connection: &IpConnection) -> {device_camel}
+
+{meta_table}
 
  Creates a new ``{device_camel}`` object with the unique device ID ``uid`` and adds
  it to the IPConnection ``ip_connection``:
@@ -134,6 +160,8 @@ class RustDocDevice(rust_common.RustDevice):
 """,
             'de': """
 .. rust:function:: {device_camel}::new(uid: &str, ip_connection: &IpConnection) -> {device_camel}
+
+{meta_table}
 
  Erzeugt ein neues ``{device_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IP-Connection ``ip_connection`` hinzu:
@@ -269,9 +297,15 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', '&str', 1, 'in'),
+                                                         ('ip_connection', '&IPConnection', 1, 'in'),
+                                                         (self.get_name().under, self.get_rust_name(), 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(rst_ref_name=self.get_doc_rst_ref_name(),
                                                     device_camel=self.get_rust_name(),
-                                                    device_under=self.get_name().under)
+                                                    device_under=self.get_name().under,
+                                                    meta_table=create_meta_table)
         bf = self.get_rust_methods('bf')
         af = self.get_rust_methods('af')
         ccf = self.get_rust_methods('ccf')

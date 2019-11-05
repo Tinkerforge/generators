@@ -162,6 +162,23 @@ class CSharpElement(common.Element):
         'string': None
     }
 
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value) + 'f'
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ == 'char':
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        if type_ == 'string':
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
+
     def get_csharp_type(self):
         return get_csharp_type(self.get_type(), self.get_cardinality())
 

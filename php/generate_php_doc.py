@@ -3,7 +3,7 @@
 
 """
 PHP Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_doc.py: Generator for PHP documentation
@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import functools
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -52,26 +53,45 @@ class PHPDocDevice(php_common.PHPDevice):
 
     def get_php_methods(self, typ):
         methods = ''
-        func_start = '.. php:function:: '
         cls = self.get_php_class_name()
+
+        def name_func(out_count, element):
+            name = element.get_name().under
+
+            if element.get_direction() == 'out' and element.get_packet().get_type() == 'function' and out_count > 1:
+                name = "'{0}'".format(name)
+            else:
+                name = '${0}'.format(name)
+
+            return name
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != typ:
                 continue
 
             skip = -2 if packet.has_high_level() else 0
+            out_count = len(packet.get_elements(direction='out', high_level=True))
             ret_type = packet.get_php_return_type(high_level=True)
             name = packet.get_name(skip=skip).headless
             params = packet.get_php_parameters(context='doc', high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_php_type(for_doc=True),
+                                                     functools.partial(name_func, out_count),
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     return_object='conditional',
+                                                     return_object_title_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_php_formatted_doc()
-            obj_desc = packet.get_php_object_desc(high_level=True)
-            func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
-                                                         ret_type,
-                                                         cls,
-                                                         name,
-                                                         params,
-                                                         desc,
-                                                         obj_desc)
+            func = '.. php:function:: {0} {1}::{2}({3})\n\n{4}{5}'.format(ret_type,
+                                                                          cls,
+                                                                          name,
+                                                                          params,
+                                                                          meta_table,
+                                                                          desc)
             methods += func + '\n'
 
         return methods
@@ -91,7 +111,6 @@ class PHPDocDevice(php_common.PHPDevice):
         }
 
         cbs = ''
-        func_start = '.. php:member:: int '
         cls = self.get_php_class_name()
 
         for packet in self.get_packets('callback'):
@@ -103,13 +122,23 @@ class PHPDocDevice(php_common.PHPDevice):
             else:
                 params += "[mixed $user_data]"
 
-            desc = packet.get_php_formatted_doc()
             signature = common.select_lang(signature_str).format(params)
-            func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
-                                                         cls,
-                                                         packet.get_name(skip=skip).upper,
-                                                         signature,
-                                                         desc)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_php_type(for_doc=True),
+                                                     lambda element: '$' + element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     suffix_elements=[('$user_data', 'mixed', 1, 'out')],
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
+            desc = packet.get_php_formatted_doc()
+            func = '.. php:member:: int {0}::CALLBACK_{1}\n\n{2}{3}{4}'.format(cls,
+                                                                               packet.get_name(skip=skip).upper,
+                                                                               signature,
+                                                                               meta_table,
+                                                                               desc)
             cbs += func + '\n'
 
         return cbs
@@ -118,6 +147,8 @@ class PHPDocDevice(php_common.PHPDevice):
         create_str = {
             'en': """
 .. php:function:: class {1}(string $uid, IPConnection $ipcon)
+
+{3}
 
  Creates an object with the unique device ID ``$uid``:
 
@@ -130,6 +161,8 @@ class PHPDocDevice(php_common.PHPDevice):
 """,
             'de': """
 .. php:function:: class {1}(string $uid, IPConnection $ipcon)
+
+{3}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``$uid``:
 
@@ -146,6 +179,8 @@ class PHPDocDevice(php_common.PHPDevice):
             'en': """
 .. php:function:: void {1}::registerCallback(int $callback_id, callable $callback, mixed $user_data = NULL)
 
+{2}
+
  Registers the given ``$function`` with the given ``$callback_id``. The optional
  ``$user_data`` will be passed as the last parameter to the function.
 
@@ -154,6 +189,8 @@ class PHPDocDevice(php_common.PHPDevice):
 """,
             'de': """
 .. php:function:: void {1}::registerCallback(int $callback_id, callable $callback, mixed $user_data = NULL)
+
+{2}
 
  Registriert die ``$function`` für die gegebene ``$callback_id``. Die optionalen
  ``$user_data`` werden der Funktion als letztes Parameter mit übergeben.
@@ -306,11 +343,24 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('$uid', 'string', 1, 'in'),
+                                                         ('$ipcon', 'IPConnection', 1, 'in'),
+                                                         ('$' + self.get_name().under, self.get_php_class_name(), 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_php_class_name(),
-                                                    self.get_name().under)
+                                                    self.get_name().under,
+                                                    create_meta_table)
+
+        reg_meta = common.format_simple_element_meta([('$callback_id', 'int', 1, 'in'),
+                                                      ('$callback', 'callable', 1, 'in'),
+                                                      ('$user_data', 'mixed', 1, 'in')])
+        red_meta_table = common.make_rst_meta_table(reg_meta)
+
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
-                                                      self.get_php_class_name())
+                                                      self.get_php_class_name(),
+                                                      red_meta_table)
 
         bf = self.get_php_methods('bf')
         af = self.get_php_methods('af')
@@ -366,36 +416,6 @@ class PHPDocPacket(php_common.PHPPacket):
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)
-
-    def get_php_object_desc(self, high_level=False):
-        if len(self.get_elements(direction='out', high_level=high_level)) < 2:
-            return ''
-
-        desc = {
-            'en': """
- The returned array has the keys {0}.
-""",
-            'de': """
- Das zurückgegebene Array enthält die Keys {0}.
-"""
-        }
-
-        and_ = {
-            'en': ' and ',
-            'de': ' und '
-        }
-
-        var = []
-
-        for element in self.get_elements(direction='out', high_level=high_level):
-            var.append('``{0}``'.format(element.get_name().under))
-
-        if len(var) == 1:
-            return common.select_lang(desc).format(var[0])
-        elif len(var) == 2:
-            return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
-        else:
-            return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class PHPDocGenerator(php_common.PHPGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):

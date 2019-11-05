@@ -4,7 +4,7 @@
 """
 JavaScript Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 javascript_common.py: Common Library for generation of JavaScript bindings and documentation
 
@@ -74,18 +74,28 @@ class JavaScriptElement(common.Element):
         'string': 's'
     }
 
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ in ['char', 'string']:
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        return str(value)
+
     def get_javascript_type(self):
         javascript_type = JavaScriptElement.javascript_types[self.get_type()]
         cardinality = self.get_cardinality()
 
         if cardinality == 1 or self.get_type() == 'string':
             return javascript_type
-        elif cardinality < 0:
-            return '[{0}, {0}, ...]'.format(javascript_type)
-        elif cardinality <= 5:
-            return '[' + ', '.join([javascript_type] * cardinality) + ']'
-        else:
-            return '[{0}, {0}, ..{1}x.., {0}]'.format(javascript_type, cardinality - 3)
+
+        return '[{0}, ...]'.format(javascript_type)
 
     def get_javascript_struct_format(self):
         f = JavaScriptElement.javascript_struct_formats[self.get_type()]

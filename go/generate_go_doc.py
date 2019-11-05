@@ -4,6 +4,7 @@
 """
 Go Documentation Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_go_doc.py: Generator for Go documentation
 
@@ -61,10 +62,20 @@ class GoDocDevice(go_common.GoDevice):
 
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
-            params = packet.get_go_parameters(high_level=True)
-            returns = packet.get_go_return_type(high_level=True)
+            params = packet.get_go_parameters(high_level=True, ignore_constant_group=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_go_type(ignore_constant_group=True, context='meta'),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().camel,
+                                                     suffix_elements=[('err', 'error', 1, 'out')],
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
+            returns = packet.get_go_return_type(high_level=True, ignore_constant_group=True)
             desc = packet.get_go_formatted_doc()
-            func = '{start}func (*{struct_name}) {func_name}({params}) ({returns})\n{desc}'.format(start=func_start, struct_name=self.get_go_name(), func_name=name, params=params, returns = returns, desc=desc)
+            func = '{start}func (*{struct_name}) {func_name}({params}) ({returns})\n\n{meta_table}\n{desc}' \
+                   .format(start=func_start, struct_name=self.get_go_name(), func_name=name, params=params, returns=returns, meta_table=meta_table, desc=desc)
             methods += func + '\n'
 
         return methods
@@ -74,17 +85,14 @@ class GoDocDevice(go_common.GoDevice):
         'en': """
 .. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationId uint64)
 
- A callback can be registered for this event with the ``Register{callback_name_camel}Callback()`` function. This function returns the ID of the registered callback.
- An added callback can be removed with the ``Deregister{callback_name_camel}Callback(registrationId uint64)`` function.
+{meta}
 
 {desc}
 """,
             'de': """
 .. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationId uint64)
 
- Ein Callback für dieses Event kann mit der Funktion ``Register{callback_name_camel}Callback()`` hinzugefügt werden. Diese gibt die ID des registrierten Callbacks zurück.
- Ein hinzugefügtes Callback kann mit der Funktion ``Deregister{callback_name_camel}Callback(registrationId uint64)`` wieder
- entfernt werden.
+{meta}
 
 {desc}
 """
@@ -93,22 +101,32 @@ class GoDocDevice(go_common.GoDevice):
         cbs = ''
         device = self.get_go_name()
         for packet in self.get_packets('callback'):
+            skip = -2 if packet.has_high_level() else 0
             desc = packet.get_go_formatted_doc()
-            result_type = packet.get_go_return_type(high_level=packet.has_high_level())
-            if packet.has_high_level():
-                skip = -2
-            else:
-                skip = 0
+            result_type = packet.get_go_return_type(high_level=packet.has_high_level(), ignore_constant_group=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_go_type(ignore_constant_group=True, context='meta'),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().camel,
+                                                     suffix_elements=[('registrationId', 'uint64', 1, 'return')],
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
+
             cbs += common.select_lang(cb).format(device=device,
                                                  callback_name_camel=packet.get_name(skip=skip).camel,
                                                  callback_name_space=packet.get_name(skip=skip).space,
                                                  result_type=result_type,
+                                                 meta=meta_table,
                                                  desc=desc)
         return cbs
     def get_go_api(self):
         create_str = {
             'en': """
 .. go:function:: func {device_name_under}.New{device_name_camel}(uid string, ipcon *IPConnection) (device {device_name_camel}, err error)
+
+{meta}
 
  Creates a new ``{device_name_camel}`` object with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
@@ -122,6 +140,8 @@ class GoDocDevice(go_common.GoDevice):
 """,
             'de': """
 .. go:function:: func {device_name_under}.New{device_name_camel}(uid string, ipcon *IPConnection) (device {device_name_camel}, err error)
+
+{meta}
 
  Erzeugt ein neues ``{device_name_camel}``-Objekt mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IPConnection ``ipcon`` hinzu:
@@ -186,12 +206,12 @@ API
 The {device_name_display} API is defined in the package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}``
 
 Nearly every function of the Go bindings can return an
-``DeviceError``, implementing the error interface. The error can have one of the following values:
+``ipconnection.DeviceError``, implementing the error interface. The error can have one of the following values:
 
-* DeviceErrorSuccess = 0
-* DeviceErrorInvalidParameter = 1
-* DeviceErrorFunctionNotSupported = 2
-* DeviceErrorUnknownError = 3
+* ipconnection.\\ **DeviceError**\\ Success = 0
+* ipconnection.\\ **DeviceError**\\ InvalidParameter = 1
+* ipconnection.\\ **DeviceError**\\ FunctionNotSupported = 2
+* ipconnection.\\ **DeviceError**\\ UnknownError = 3
 
 which correspond to the values returned from Bricks and Bricklets.
 
@@ -209,13 +229,13 @@ API
 
 Die API des {device_name_display} ist im Package ``github.com/Tinkerforge/go-api-bindings/{device_name_under}`` definiert.
 
-Fast alle Funktionen der Go Bindings können einen ``DeviceError``, der das error-Interface implementiert,
+Fast alle Funktionen der Go Bindings können einen ``ipconnection.DeviceError``, der das error-Interface implementiert,
 zurückgeben. Dieser kann folgende Werte annehmen:
 
-* DeviceErrorSuccess = 0
-* DeviceErrorInvalidParameter = 1
-* DeviceErrorFunctionNotSupported = 2
-* DeviceErrorUnknownError = 3
+* ipconnection.\\ **DeviceError**\\ Success = 0
+* ipconnection.\\ **DeviceError**\\ InvalidParameter = 1
+* ipconnection.\\ **DeviceError**\\ FunctionNotSupported = 2
+* ipconnection.\\ **DeviceError**\\ UnknownError = 3
 
 welche den Werten entsprechen, die der Brick oder das Bricklet zurückgeben.
 
@@ -268,9 +288,16 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', 'string', 1, 'in'),
+                                                         ('ipcon', '*IPConnection', 1, 'in'),
+                                                         ('device', self.get_go_name(), 1, 'out'),
+                                                         ('err', 'error', 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(rst_ref_name=self.get_doc_rst_ref_name(),
                                                     device_name_under=self.get_go_package(),
-                                                    device_name_camel=self.get_go_name())
+                                                    device_name_camel=self.get_go_name(),
+                                                    meta=create_meta_table)
         bf = self.get_go_methods('bf')
         af = self.get_go_methods('af')
         ccf = self.get_go_methods('ccf')
@@ -338,8 +365,8 @@ class GoDocPacket(go_common.GoPacket):
         prefix = self.get_device().get_go_package() + '.'
 
         def constant_format(prefix, constant_group, constant, value):
-            return '* {0}{1}{2} = {3}\n'.format(prefix, constant_group.get_name().camel,
-                                                constant.get_name().camel_constant_safe, value)
+            return '* {0}\\ **{1}**\\ {2} = {3}\n'.format(prefix, constant_group.get_name().camel,
+                                                          constant.get_name().camel_constant_safe, value)
 
         text += common.format_constants(prefix, self, constant_format_func=constant_format)
         text += common.format_since_firmware(self.get_device(), self)

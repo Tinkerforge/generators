@@ -3,7 +3,7 @@
 
 """
 C# Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_doc.py: Generator for C# documentation
@@ -58,9 +58,19 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
             if packet.get_doc_type() != type_:
                 continue
 
-            signature = packet.get_csharp_method_signature(True, True, high_level=True)
+            signature = packet.get_csharp_method_signature(print_full_name=True, is_doc=True, high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_csharp_type(),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     output_parameter='conditional',
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_csharp_formatted_doc(1)
-            func = '{0}{1}\n{2}'.format(func_start, signature, desc)
+            func = '{0}{1}\n\n{2}{3}'.format(func_start, signature, meta_table, desc)
             methods += func + '\n'
 
         return methods
@@ -70,18 +80,31 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
 .. csharp:function:: event {0}::{1}Callback({0} sender{2})
 
 {3}
+
+{4}
 """
 
         cbs = ''
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
-            desc = packet.get_csharp_formatted_doc(2)
+            desc = packet.get_csharp_formatted_doc(1)
             params = packet.get_csharp_parameters(high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_csharp_type(),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     prefix_elements=[('sender', self.get_csharp_class_name(), 1, 'out')],
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
 
             cbs += cb.format(self.get_csharp_class_name(),
                              packet.get_name(skip=skip).camel,
                              common.wrap_non_empty(', ', params, ''),
+                             meta_table,
                              desc)
 
         return cbs
@@ -90,6 +113,8 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
         create_str = {
             'en': """
 .. csharp:function:: class {1}(String uid, IPConnection ipcon)
+
+{3}
 
  Creates an object with the unique device ID ``uid``:
 
@@ -102,6 +127,8 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
 """,
             'de': """
 .. csharp:function:: class {1}(String uid, IPConnection ipcon)
+
+{3}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
@@ -269,9 +296,15 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', 'String', 1, 'in'),
+                                                         ('ipcon', 'IPConnection', 1, 'in'),
+                                                         (self.get_name().headless, self.get_csharp_class_name(), 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_csharp_class_name(),
-                                                    self.get_name().headless)
+                                                    self.get_name().headless,
+                                                    create_meta_table)
 
         bf = self.get_csharp_methods('bf')
         af = self.get_csharp_methods('af')

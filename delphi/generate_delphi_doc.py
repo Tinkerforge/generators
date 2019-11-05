@@ -3,7 +3,7 @@
 
 """
 Delphi/Lazarus Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_delphi_doc.py: Generator for Delphi/Lazarus documentation
@@ -52,8 +52,8 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
     def get_delphi_methods(self, type_):
         methods = ''
-        function = '.. delphi:function:: function {0}.{1}({2}): {3}\n{4}'
-        procedure = '.. delphi:function:: procedure {0}.{1}({2})\n{3}'
+        function = '.. delphi:function:: function {0}.{1}({2}): {3}\n\n{4}\n{5}'
+        procedure = '.. delphi:function:: procedure {0}.{1}({2})\n\n{3}\n{4}'
         cls = self.get_delphi_class_name()
 
         for packet in self.get_packets('function'):
@@ -64,12 +64,19 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
             params = '; '.join(packet.get_delphi_parameters('doc', high_level=True))
+            meta = packet.get_formatted_element_meta(lambda element: element.get_delphi_type(context='meta'),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     output_parameter='conditional',
+                                                     explicit_string_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_delphi_formatted_doc()
 
             if len(ret_type) > 0:
-                method = function.format(cls, name, params, ret_type, desc)
+                method = function.format(cls, name, params, ret_type, meta_table, desc)
             else:
-                method = procedure.format(cls, name, params, desc)
+                method = procedure.format(cls, name, params, meta_table, desc)
 
             methods += method + '\n'
 
@@ -82,30 +89,40 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
  .. code-block:: delphi
 
-  procedure(sender: {0}{4}{2}) of object;
+  procedure(sender: {0}{2}) of object;
 
 {3}
+
+{4}
 """,
             'de': """.. delphi:function:: property {0}.On{1}
 
  .. code-block:: delphi
 
-  procedure(sender: {0}{4}{2}) of object;
+  procedure(sender: {0}{2}) of object;
 
 {3}
+
+{4}
 """
         }
 
         cls = self.get_delphi_class_name()
+
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
             params = '; '.join(packet.get_delphi_parameters('doc', high_level=True))
+            meta = packet.get_formatted_element_meta(lambda element: element.get_delphi_type(context='meta'),
+                                                     lambda element: element.get_name().headless,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     prefix_elements=[('sender', cls, 1, 'out')],
+                                                     explicit_string_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_delphi_formatted_doc()
-            semi = ''
-            if len(params) > 0:
-                semi = '; '
-            cbs += common.select_lang(cb).format(cls, name, params, desc, semi)
+
+            cbs += common.select_lang(cb).format(cls, name, common.wrap_non_empty('; ', params, ''), meta_table, desc)
 
         return cbs
 
@@ -113,6 +130,8 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
         create_str = {
             'en': """
 .. delphi:function:: constructor {1}.Create(const uid: string; ipcon: TIPConnection)
+
+{3}
 
  Creates an object with the unique device ID ``uid``:
 
@@ -125,6 +144,8 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 """,
             'de': """
 .. delphi:function:: constructor {1}.Create(const uid: string; ipcon: TIPConnection)
+
+{3}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
@@ -272,9 +293,15 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', 'string', 1, 'in'),
+                                                         ('ipcon', 'TIPConnection', 1, 'in'),
+                                                         (self.get_name().headless, self.get_delphi_class_name(), 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_delphi_class_name(),
-                                                    self.get_name().headless)
+                                                    self.get_name().headless,
+                                                    create_meta_table)
 
         bf = self.get_delphi_methods('bf')
         af = self.get_delphi_methods('af')

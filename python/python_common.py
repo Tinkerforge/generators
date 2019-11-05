@@ -3,7 +3,7 @@
 
 """
 Python Generator
-Copyright (C) 2012-2013, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 python_common.py: Common Library for generation of Python bindings and documentation
@@ -107,18 +107,28 @@ class PythonElement(common.Element):
         'string': ('create_string({0})', 'create_string({0})')
     }
 
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value))
+
+        if type_ in ['char', 'string']:
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
+
     def get_python_type(self):
         python_type = PythonElement.python_types[self.get_type()]
         cardinality = self.get_cardinality()
 
         if cardinality == 1 or self.get_type() == 'string':
             return python_type
-        elif cardinality < 0:
-            return '[{0}, {0}, ...]'.format(python_type)
-        elif cardinality <= 5:
-            return '[' + ', '.join([python_type] * cardinality) + ']'
-        else:
-            return '[{0}, {0}, ..{1}x.., {0}]'.format(python_type, cardinality - 3)
+
+        return '[{0}, ...]'.format(python_type)
 
     def get_python_struct_format(self):
         f = PythonElement.python_struct_formats[self.get_type()]

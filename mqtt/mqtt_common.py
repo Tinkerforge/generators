@@ -4,6 +4,7 @@
 """
 MQTT Generator
 Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 mqtt_common.py: Common Library for generation of MQTT bindings and documentation
 
@@ -25,10 +26,10 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import json
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-
 
 class MQTTDevice(common.Device):
     def get_mqtt_device_name(self):
@@ -81,20 +82,20 @@ class MQTTElement(common.Element):
         'string': 's'
     }
 
+    def format_value(self, value):
+        return json.dumps(value, separators=(',', ':'))
+
     def get_mqtt_type(self, for_doc=False):
-        t = MQTTElement.mqtt_types[self.get_type()]
+        mqtt_type = MQTTElement.mqtt_types[self.get_type()]
+        cardinality = self.get_cardinality()
 
-        if self.get_cardinality() == 1 or t == 'string':
-            return t
+        if cardinality == 1 or self.get_type() == 'string':
+            return mqtt_type
 
-        if for_doc and self.get_cardinality() < 0:
-            return '[{0},...]'.format(t)
-        elif for_doc and self.get_cardinality() > 4:
-            return '[{0},... (x{1})]'.format(t, self.get_cardinality())
-        elif for_doc:
-            return '[{0}]'.format(",".join([t] * self.get_cardinality()))
-        else:
-            return (t, self.get_cardinality())
+        if for_doc:
+            return '[{0}, ...]'.format(mqtt_type)
+
+        return (mqtt_type, self.get_cardinality())
 
     def get_mqtt_struct_format(self):
         f = MQTTElement.mqtt_struct_formats[self.get_type()]

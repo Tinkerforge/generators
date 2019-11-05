@@ -69,15 +69,24 @@ class ShellDocDevice(shell_common.ShellDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).dash
             params = packet.get_shell_parameter_list(high_level=True)
-            pd = packet.get_shell_parameter_desc()
-            r = packet.get_shell_return_desc()
-            d = packet.get_shell_formatted_doc()
-            desc = '{0}{1}{2}'.format(pd, r, d)
-            func = '{0}tinkerforge call {1} <uid> {2} {3} \n{4}'.format(func_start,
-                                                                        device_name,
-                                                                        name,
-                                                                        params,
-                                                                        desc)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_shell_doc_type(),
+                                                     lambda element: '<{0}>'.format(element.get_name().dash) if element.get_direction() == 'in' else element.get_name().dash,
+                                                     lambda constant_group: constant_group.get_name().dash,
+                                                     return_title_override={'en': 'Output', 'de': 'Ausgabe'},
+                                                     no_out_value={'en': 'no output', 'de': 'keine Ausgabe'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
+            desc = packet.get_shell_formatted_doc()
+            func = '{0}tinkerforge call {1} <uid> {2} {3}\n\n{4}{5}'.format(func_start,
+                                                                            device_name,
+                                                                            name,
+                                                                            params,
+                                                                            meta_table,
+                                                                            desc)
             methods += func + '\n'
 
         return methods
@@ -91,14 +100,24 @@ class ShellDocDevice(shell_common.ShellDevice):
             if packet.is_virtual():
                 continue
 
-            param_desc = packet.get_shell_return_desc()
+            meta = packet.get_formatted_element_meta(lambda element: element.get_shell_doc_type(),
+                                                     lambda element: element.get_name().dash,
+                                                     lambda constant_group: constant_group.get_name().dash,
+                                                     callback_parameter_title_override={'en': 'Output', 'de': 'Ausgabe'},
+                                                     no_out_value={'en': 'no output', 'de': 'keine Ausgabe'},
+                                                     explicit_string_cardinality=True,
+                                                     explicit_variable_stream_cardinality=True,
+                                                     explicit_fixed_stream_cardinality=True,
+                                                     explicit_common_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_shell_formatted_doc()
             skip = -2 if packet.has_high_level() else 0
 
-            func = '{0} tinkerforge dispatch {1} <uid> {2}\n{3}\n{4}'.format(func_start,
+            func = '{0} tinkerforge dispatch {1} <uid> {2}\n\n{3}{4}'.format(func_start,
                                                                              device_name,
                                                                              packet.get_name(skip).dash,
-                                                                             param_desc,
+                                                                             meta_table,
                                                                              desc)
             cbs += func + '\n'
 
@@ -185,8 +204,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
- :param <uid>: string
- :param <function>: string
+{5}
 
  The ``call`` command is used to call a function of the {4}. It can take several
  options:
@@ -197,8 +215,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
 
 .. sh:callback:: X Stinkerforge Pdispatch N{3} A[<option>..] L<uid> L<callback>
 
- :param <uid>: string
- :param <callback>: string
+{6}
 
  The ``dispatch`` command is used to dispatch a callback of the {4}. It can
  take several options:
@@ -209,8 +226,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
 
 .. sh:function:: X Stinkerforge Scall P{3} L<uid> N<function> A[<option>..] L[<argument>..]
 
- :param <uid>: string
- :param <function>: string
+{5}
 
  The ``<function>`` to be called can take different options depending of its
  kind. All functions can take the following options:
@@ -236,8 +252,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
 
 .. sh:callback:: X Stinkerforge Sdispatch P{3} L<uid> N<callback> A[<option>..]
 
- :param <uid>: string
- :param <callback>: string
+{6}
 
  The ``<callback>`` to be dispatched can take several options:
 
@@ -281,8 +296,7 @@ Befehlsstruktur dargestellt.
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
- :param <uid>: string
- :param <function>: string
+{5}
 
  Der ``call`` Befehl wird verwendet um eine Funktion des {4} aufzurufen. Der
  Befehl kennt mehrere Optionen:
@@ -294,8 +308,7 @@ Befehlsstruktur dargestellt.
 
 .. sh:callback:: X Stinkerforge Pdispatch N{3} A[<option>..] L<uid> L<callback>
 
- :param <uid>: string
- :param <callback>: string
+{6}
 
  Der ``dispatch`` Befehl wird verwendet um eingehende Callbacks des {4}
  abzufertigen. Der Befehl kennt mehrere Optionen:
@@ -308,8 +321,7 @@ Befehlsstruktur dargestellt.
 
 .. sh:function:: X Stinkerforge Scall P{3} L<uid> N<function> A[<option>..] L[<argument>..]
 
- :param <uid>: string
- :param <function>: string
+{5}
 
  Abhängig von der Art der aufzurufenden ``<function>`` kennt diese verschiedene
  Optionen. Alle Funktionen kennen die folgenden Optionen:
@@ -336,8 +348,7 @@ Befehlsstruktur dargestellt.
 
 .. sh:callback:: X Stinkerforge Sdispatch P{3} L<uid> N<callback> A[<option>..]
 
- :param <uid>: string
- :param <callback>: string
+{6}
 
  Der abzufertigende ``<callback>`` kennt mehrere Optionen:
 
@@ -366,11 +377,21 @@ Befehlsstruktur dargestellt.
                                                         self.get_shell_device_name(),
                                                         c)
 
+        call_meta = common.format_simple_element_meta([('<uid>', 'String', 1, 'in'),
+                                                       ('<function>', 'String', 1, 'in')])
+        call_meta_table = common.make_rst_meta_table(call_meta)
+
+        dispatch_meta = common.format_simple_element_meta([('<uid>', 'String', 1, 'in'),
+                                                           ('<callback>', 'String', 1, 'in')])
+        dispatch_meta_table = common.make_rst_meta_table(dispatch_meta)
+
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
                                               self.specialize_shell_doc_function_links(common.select_lang(self.get_doc())),
                                               api_str,
                                               self.get_shell_device_name(),
-                                              self.get_long_display_name())
+                                              self.get_long_display_name(),
+                                              call_meta_table,
+                                              dispatch_meta_table)
 
     def get_shell_doc(self):
         doc  = common.make_rst_header(self, has_device_identifier_constant=False)
@@ -433,53 +454,6 @@ class ShellDocPacket(shell_common.ShellPacket):
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)
-
-    def get_shell_parameter_desc(self):
-        desc = '\n'
-        param = ' :param <{0}>: {1}'
-        has_symbols = {
-            'en': 'has symbols',
-            'de': 'hat Symbole'
-        }
-
-        for element in self.get_elements(direction='in', high_level=True):
-            t = element.get_shell_doc_type()
-            desc += param.format(element.get_name().dash, t)
-
-            if element.get_constant_group() != None:
-                desc += ' ({0})'.format(common.select_lang(has_symbols))
-
-            desc += '\n'
-
-        return desc
-
-    def get_shell_return_desc(self):
-        nothing = {
-            'en': 'no output',
-            'de': 'keine Ausgabe'
-        }
-        has_symbols = {
-            'en': 'has symbols',
-            'de': 'hat Symbole'
-        }
-        elements = self.get_elements(direction='out', high_level=True)
-
-        if len(elements) == 0:
-            return '\n :noreturn: {0}\n'.format(common.select_lang(nothing))
-
-        ret = '\n'
-
-        for element in elements:
-            t = element.get_shell_doc_type()
-            ret += ' :returns {0}: {1}'.format(element.get_name().dash, t)
-
-            if element.get_constant_group() != None or \
-               self.get_function_id() == 255 and element.get_name().under == 'device_identifier':
-                ret += ' ({0})'.format(common.select_lang(has_symbols))
-
-            ret += '\n'
-
-        return ret
 
 class ShellDocGenerator(shell_common.ShellGeneratorTrait, common.DocGenerator):
     def get_bindings_name(self):

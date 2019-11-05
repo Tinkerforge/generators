@@ -3,7 +3,7 @@
 
 """
 TCP/IP Documentation Generator
-Copyright (C) 2012-2014, 2016-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2016-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_tcpip_doc.py: Generator for TCP/IP documentation
@@ -49,7 +49,6 @@ class TCPIPDocDevice(common.Device):
 
     def get_tcpip_methods(self, typ):
         methods = ''
-        func_start = '.. tcpip:function:: '
         cls = self.get_tcpip_name()
 
         for packet in self.get_packets('function'):
@@ -57,12 +56,17 @@ class TCPIPDocDevice(common.Device):
                 continue
 
             name = packet.get_name().under
-            fid = '\n :functionid: {0}'.format(packet.get_function_id())
-            request = packet.get_tcpip_request_desc()
-            response = packet.get_tcpip_response_desc()
-            d = packet.get_tcpip_formatted_doc()
-            desc = '{0}{1}{2}{3}'.format(fid, request, response, d)
-            func = '{0}{1}.{2}\n{3}'.format(func_start, cls, name, desc)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_tcpip_type(),
+                                                     lambda element: element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
+                                                     return_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     no_in_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
+                                                     no_out_value={'en': 'no response', 'de': 'keine Antwort'},
+                                                     include_function_id=True)
+            meta_table = common.make_rst_meta_table(meta)
+            desc = packet.get_tcpip_formatted_doc()
+            func = '.. tcpip:function:: {0}.{1}\n\n{2}{3}'.format(cls, name, meta_table, desc)
             methods += func + '\n'
 
         return methods
@@ -73,16 +77,20 @@ class TCPIPDocDevice(common.Device):
         cls = self.get_tcpip_name()
 
         for packet in self.get_packets('callback'):
-            fid = '\n :functionid: {0}'.format(packet.get_function_id())
-            response = packet.get_tcpip_response_desc()
+            meta = packet.get_formatted_element_meta(lambda element: element.get_tcpip_type(),
+                                                     lambda element: element.get_name().under,
+                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
+                                                     return_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     callback_parameter_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     no_out_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
+                                                     include_function_id=True)
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_tcpip_formatted_doc()
-
-            func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
-                                                               cls,
-                                                               packet.get_name().upper,
-                                                               fid,
-                                                               response,
-                                                               desc)
+            func = '.. tcpip:function:: {0}.CALLBACK_{1}\n\n{2}{3}'.format(cls,
+                                                                           packet.get_name().upper,
+                                                                           meta_table,
+                                                                           desc)
             cbs += func + '\n'
 
         return cbs
@@ -236,46 +244,24 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
 
         return common.shift_right(text, 1)
 
-    def get_tcpip_request_desc(self):
-        empty_payload = {
-        'en': 'empty payload',
-        'de': 'keine Nutzdaten'
-        }
-        desc = '\n'
-        param = ' :request {0}: {1}\n'
-
-        for element in self.get_elements(direction='in'):
-            desc += param.format(element.get_name().under, element.get_tcpip_type())
-
-        if desc == '\n':
-            desc += ' :emptyrequest: {0}\n'.format(common.select_lang(empty_payload))
-
-        return desc
-
-    def get_tcpip_response_desc(self):
-        empty_payload = {
-        'en': 'empty payload',
-        'de': 'keine Nutzdaten'
-        }
-        no_response = {
-        'en': 'no response',
-        'de': 'keine Antwort'
-        }
-        desc = '\n'
-        returns = ' :response {0}: {1}\n'
-
-        for element in self.get_elements(direction='out'):
-            desc += returns.format(element.get_name().under, element.get_tcpip_type())
-
-        if desc == '\n':
-            if self.get_type() == 'callback':
-                desc += ' :emptyresponse: {0}\n'.format(common.select_lang(empty_payload))
-            else:
-                desc += ' :noresponse: {0}\n'.format(common.select_lang(no_response))
-
-        return desc
-
 class TCPIPDocElement(common.Element):
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ == 'char':
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        if type_ == 'string':
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
+
     def get_tcpip_type(self):
         t = self.get_type()
 

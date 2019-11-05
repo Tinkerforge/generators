@@ -3,7 +3,7 @@
 
 """
 Mathematica Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_mathematica_doc.py: Generator for Mathematica documentation
@@ -60,7 +60,7 @@ class MathematicaDocDevice(common.Device):
                                         url_fixer=url_fixer, display_name_fixer=display_name_fixer)
 
     def get_mathematica_functions(self, type_):
-        function = '.. mathematica:function:: {0}@{1}[{2}] -> {3}\n{4}{5}{6}\n'
+        function = '.. mathematica:function:: {0}@{1}[{2}] -> {3}\n\n{4}{5}\n'
         functions = []
         cls = self.get_mathematica_class_name()
 
@@ -71,12 +71,17 @@ class MathematicaDocDevice(common.Device):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
             params = packet.get_mathematica_parameter_list(high_level=True)
-            param_desc = packet.get_mathematica_parameter_description(high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_mathematica_type(),
+                                                     lambda element: element.get_mathematica_description_name(),
+                                                     lambda constant_group: constant_group.get_name().upper.replace('_', 'U'),
+                                                     output_parameter='conditional',
+                                                     explicit_string_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             ret = packet.get_mathematica_return(high_level=True)
-            ret_desc = packet.get_mathematica_return_description(high_level=True)
             doc = packet.get_mathematica_formatted_doc()
 
-            functions.append(function.format(cls, name, params, ret, param_desc, ret_desc, doc))
+            functions.append(function.format(cls, name, params, ret, meta_table, doc))
 
         return ''.join(functions)
 
@@ -84,20 +89,26 @@ class MathematicaDocDevice(common.Device):
         callback = """
 .. mathematica:function:: event {0}@{1}Callback[sender{2}]
 
- :param sender: NETObject[{0}]{3}{4}
+{3}{4}
 """
         callbacks = []
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
             params = packet.get_mathematica_parameter_list(high_level=True)
-            params_desc = packet.get_mathematica_parameter_description(high_level=True)
+            meta = packet.get_formatted_element_meta(lambda element: element.get_mathematica_type(),
+                                                     lambda element: element.get_mathematica_description_name(),
+                                                     lambda constant_group: constant_group.get_name().upper.replace('_', 'U'),
+                                                     prefix_elements=[('sender', 'NETObject[{0}]'.format(self.get_mathematica_class_name()), 1, 'out')],
+                                                     explicit_string_cardinality=True,
+                                                     high_level=True)
+            meta_table = common.make_rst_meta_table(meta)
             doc = packet.get_mathematica_formatted_doc()
 
             callbacks.append(callback.format(self.get_mathematica_class_name(),
                                              packet.get_name(skip=skip).camel,
                                              common.wrap_non_empty(', ', params, ''),
-                                             params_desc,
+                                             meta_table,
                                              doc))
 
         return ''.join(callbacks)
@@ -107,9 +118,7 @@ class MathematicaDocDevice(common.Device):
             'en': """
 .. mathematica:function:: {1}[uid, ipcon] -> {2}
 
- :param uid: String
- :param ipcon: NETObject[IPConnection]
- :ret {2}: NETObject[{1}]
+{3}
 
  Creates an object with the unique device ID ``uid``:
 
@@ -134,9 +143,7 @@ class MathematicaDocDevice(common.Device):
             'de': """
 .. mathematica:function:: {1}[uid, ipcon] -> {2}
 
- :param uid: String
- :param ipcon: NETObject[IPConnection]
- :ret {2}: NETObject[{1}]
+{3}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
@@ -324,9 +331,15 @@ Konstanten
 """
         }
 
+        create_meta = common.format_simple_element_meta([('uid', 'String', 1, 'in'),
+                                                         ('ipcon', 'NETObject[IPConnection]', 1, 'in'),
+                                                         (self.get_name().headless, 'NETObject[{0}]'.format(self.get_mathematica_class_name()), 1, 'out')])
+        create_meta_table = common.make_rst_meta_table(create_meta)
+
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_mathematica_class_name(),
-                                                    self.get_name().headless)
+                                                    self.get_name().headless,
+                                                    create_meta_table)
 
         bf = self.get_mathematica_functions('bf')
         af = self.get_mathematica_functions('af')
@@ -379,8 +392,8 @@ class MathematicaDocPacket(common.Packet):
         prefix = self.get_device().get_mathematica_class_name() + '`'
 
         def constant_format(prefix, constant_group, constant, value):
-            return '* {0}{1}U{2} = {3}\n'.format(prefix, constant_group.get_name().upper.replace('_', 'U'),
-                                                 constant.get_name().upper.replace('_', 'U'), value)
+            return '* {0}\\ **{1}**\\ U{2} = {3}\n'.format(prefix, constant_group.get_name().upper.replace('_', 'U'),
+                                                           constant.get_name().upper.replace('_', 'U'), value)
 
         text += common.format_constants(prefix, self, char_format_func='``ToCharacterCode["{0}"][[0]]``'.format,
                                         constant_format_func=constant_format)
@@ -405,21 +418,6 @@ class MathematicaDocPacket(common.Packet):
 
         return ', '.join(params)
 
-    def get_mathematica_parameter_description(self, high_level=False):
-        descriptions = []
-        normal_return = len(self.get_elements(direction='out', high_level=high_level)) <= 1
-
-        for element in self.get_elements(high_level=high_level):
-            if self.get_type() == 'function' and normal_return and element.get_direction() == 'out':
-                continue
-
-            name = element.get_mathematica_description_name()
-            type_ = element.get_mathematica_type()
-
-            descriptions.append(' :param {0}: {1}\n'.format(name, type_))
-
-        return '\n' + ''.join(descriptions)
-
     def get_mathematica_return(self, high_level=False):
         elements = self.get_elements(direction='out', high_level=high_level)
 
@@ -429,18 +427,6 @@ class MathematicaDocPacket(common.Packet):
             return element.get_mathematica_signature_name()
         else:
             return 'Null'
-
-    def get_mathematica_return_description(self, high_level=False):
-        elements = self.get_elements(direction='out', high_level=high_level)
-
-        if len(elements) == 1 and self.get_type() == 'function':
-            element = elements[0]
-            name = element.get_mathematica_description_name()
-            type_ = element.get_mathematica_type()
-
-            return ' :ret {0}: {1}\n'.format(name, type_)
-        else:
-            return ''
 
 class MathematicaDocElement(common.Element):
     mathematica_types = {
@@ -457,6 +443,20 @@ class MathematicaDocElement(common.Element):
         'char':   'Integer',
         'string': 'String'
     }
+
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value))
+
+        if type_ in ['char', 'string']:
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
 
     def get_mathematica_type(self):
         return MathematicaDocElement.mathematica_types[self.get_type()]

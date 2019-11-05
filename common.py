@@ -31,6 +31,7 @@ import subprocess
 import sys
 import copy
 import math
+import html
 import multiprocessing.dummy
 import functools
 from collections import namedtuple
@@ -470,6 +471,111 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
     return examples
 
+def format_simple_element_meta(simple_elements, no_out_value=None,
+                               parameter_title_override=None,
+                               return_title_override=None):
+    type_title = select_lang({'en': 'Type', 'de': 'Typ'})
+
+    if parameter_title_override != None:
+        parameter_title = select_lang(parameter_title_override)
+    else:
+        parameter_title = select_lang({'en': 'Parameters', 'de': 'Parameter'})
+
+    if return_title_override != None:
+        return_title = select_lang(return_title_override)
+    else:
+        return_title = select_lang({'en': 'Returns', 'de': 'Rückgabe'})
+
+    formatted_meta_in = []
+    formatted_meta_out = []
+
+    for simple_element in simple_elements:
+        assert simple_element[2] in [None, 1] # FIXME: no list support yet
+
+        meta = (simple_element[0], '{0}: {1}'.format(type_title, simple_element[1]))
+
+        if simple_element[3] == 'in':
+            formatted_meta_in.append(meta)
+        elif simple_element[3] == 'out':
+            formatted_meta_out.append(meta)
+        else:
+            assert False, simple_element[3]
+
+    if len(formatted_meta_out) == 0 and no_out_value != None:
+        formatted_meta_out.append(select_lang(no_out_value))
+
+    formatted_meta = []
+
+    if len(formatted_meta_in) > 0:
+        formatted_meta.append((parameter_title, formatted_meta_in))
+
+    if len(formatted_meta_out) > 0:
+        formatted_meta.append((return_title, formatted_meta_out))
+
+    return formatted_meta
+
+def merge_meta_sections(items):
+    merged_items = []
+
+    for title, values in items:
+        merged = False
+
+        for merged_title, merged_values in merged_items:
+            if merged_title == title:
+                merged_values += values
+                merged = True
+                break
+
+        if merged:
+            continue
+
+        merged_items.append((title, values))
+
+    return merged_items
+
+def make_rst_meta_table(items, indent_level=1, index_title_match=None):
+    table_template = '''.. raw:: html
+
+ <table class="docutils field-list" frame="void" rules="none">
+ <col class="field-name" /><col class="field-body" />
+ <tbody valign="top">
+ {rows}
+ </tbody>
+ </table>
+'''
+    row_template = '<tr class="field"><th class="field-name">{title}:</th><td class="field-body"><ul class="simple">{values}</ul></td></tr>'
+    named_value_template = '<li>{index}<strong>{name}</strong> &#8211; {value}</li>'
+    value_template = '<li>{index}{value}</li>'
+
+    if index_title_match != None:
+        index_title_match = select_lang(index_title_match)
+
+    formatted_rows = []
+
+    for title, values in items:
+        if not isinstance(values, list):
+            values = [values]
+
+        formatted_values = []
+
+        for i, value in enumerate(values):
+            if title == index_title_match:
+                index = '{0}: '.format(i)
+            else:
+                index = ''
+
+            if isinstance(value, tuple):
+                formatted_values.append(named_value_template.format(index=index, name=html.escape(value[0]), value=html.escape(value[1])))
+            else:
+                formatted_values.append(value_template.format(index=index, value=html.escape(value)))
+
+        formatted_rows.append(row_template.format(title=title, values='\n  '.join(formatted_values)))
+
+    if len(formatted_rows) == 0:
+        return ''
+
+    return (' ' * indent_level + ('\n' + ' ' * indent_level).join(table_template.format(rows='\n  '.join(formatted_rows)).split('\n'))).replace('[[[', '<').replace(']]]', '>').replace('|||', '"')
+
 def default_example_sort_key(example):
     return example[2], example[0] # lines, filename
 
@@ -545,8 +651,12 @@ def format_since_firmware(device, packet):
     return '\n.. versionadded:: {1}.{2}.{3}$nbsp;({0})\n'.format(suffix, *since)
 
 def default_constant_format(prefix, constant_group, constant, value):
-    return '* {0}{1}_{2} = {3}\n'.format(prefix, constant_group.get_name().upper,
-                                         constant.get_name().upper, value)
+    if prefix.endswith('_'):
+        # sphinx interprets trailing underscores as link markers, escape trailing underscores
+        prefix = prefix[:-1] + '\\_'
+
+    return '* {0}\\ **{1}**\\ _{2} = {3}\n'.format(prefix, constant_group.get_name().upper,
+                                                   constant.get_name().upper, value)
 
 def format_constants(prefix, packet,
                      constants_name=None,
@@ -1028,6 +1138,77 @@ class FlavoredName(object):
 
             return self.cache[key]
 
+class Unit(object):
+    def __init__(self, name, symbol, usage, scale_prefix_allowed=True):
+        self._name = name
+        self.symbol = symbol
+        self._usage = usage
+        self.scale_prefix_allowed = scale_prefix_allowed
+
+    @property
+    def name(self):
+        return select_lang(self._name)
+
+    @property
+    def usage(self):
+        return select_lang(self._usage)
+
+units = {
+    'Ampere':                       Unit({'en': 'Ampere', 'de': 'Ampere'},
+                                         'A',
+                                         {'en': 'Electric Current', 'de': 'Elektrische Stromstärke'}),
+
+    'Degree Celsius':               Unit({'en': 'Degree Celsius', 'de': 'Grad Celsius'},
+                                         '°C',
+                                         {'en': 'Temperature', 'de': 'Temperatur'},
+                                         scale_prefix_allowed=False),
+
+    'Degree':                       Unit({'en': 'Degree', 'de': 'Grad'},
+                                         '°',
+                                         {'en': 'Angle', 'de': 'Winkel'},
+                                         scale_prefix_allowed=False),
+
+    'Degree Per Second':            Unit({'en': 'Degree Per Second', 'de': 'Grad Pro Sekunde'},
+                                         '°/s',
+                                         {'en': 'Anglular Velocity', 'de': 'Winkelgeschwindigkeit'},
+                                         scale_prefix_allowed=False),
+
+    'Gram':                         Unit({'en': 'Gram', 'de': 'Gramm'},
+                                         'g',
+                                         {'en': 'Mass', 'de': 'Masse'}),
+
+    'Lux':                          Unit({'en': 'Lux', 'de': 'Lux'},
+                                         'lx',
+                                         {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
+                                         scale_prefix_allowed=False),
+
+    'Meter Per Second Squared':     Unit({'en': 'Meter Per Second Squared', 'de': 'Meter Pro Sekunde Quadrat'},
+                                         'm/s²',
+                                         {'en': 'Acceleration', 'de': 'Beschleunigung'},
+                                         scale_prefix_allowed=False),
+
+    'Second':                       Unit({'en': 'Second', 'de': 'Sekunde'},
+                                         's',
+                                         {'en': 'Time', 'de': 'Zeit'}),
+
+    'Standard Gravity':             Unit({'en': 'Standard Gravity', 'de': 'Normfallbeschleunigung'},
+                                         'gₙ',
+                                         {'en': 'Gravitational Acceleration', 'de': 'Fallbeschleunigung'},
+                                         scale_prefix_allowed=False),
+
+    'Tesla':                        Unit({'en': 'Tesla', 'de': 'Tesla'},
+                                         'T',
+                                         {'en': 'Magnetic Flux Density', 'de': 'Magnetische Flussdichte'}),
+
+    'Volt':                         Unit({'en': 'Volt', 'de': 'Volt'},
+                                         'V',
+                                         {'en': 'Electric Potential', 'de': 'Elektrische Spannung'}),
+
+    'Watt':                         Unit({'en': 'Watt', 'de': 'Watt'},
+                                         'W',
+                                         {'en': 'Power', 'de': 'Leistung'})
+}
+
 class Constant(object):
     def __init__(self, raw_data, constant_group):
         self.raw_data = raw_data
@@ -1101,10 +1282,12 @@ class ConstantGroup(object):
 class Element(object):
     def __init__(self, raw_data, packet, level, role):
         self.raw_data = raw_data
+        self.raw_data_extra = {}
         self.packet = packet
         self.level = level
         self.role = role
         self.constant_group = None
+        self.unit = None
 
         check_name(raw_data[0])
 
@@ -1114,12 +1297,54 @@ class Element(object):
             raise GeneratorError('Invalid Element: ' + repr(raw_data))
 
         if len(self.raw_data) > 4:
-            assert isinstance(self.raw_data[4], dict), self.raw_data[4]
-            assert len(set(self.raw_data[4].keys()) - set(['constant_group'])) == 0, self.raw_data[4]
+            self.raw_data_extra = self.raw_data[4]
+
+            assert isinstance(self.raw_data_extra, dict), self.raw_data_extra
+            assert len(set(self.raw_data_extra.keys()) - set(['factor', 'divisor', 'unit', 'range', 'default', 'constant_group'])) == 0, self.raw_data_extra
+
+            factor = self.get_factor()
+
+            if factor != None:
+                assert isinstance(factor, int), factor
+                assert factor > 1, factor
+                assert self.get_direction() == 'in'
+                assert self.get_type().startswith('int') or self.get_type().startswith('uint'), self.get_type()
+
+            divisor = self.get_divisor()
+
+            if divisor != None:
+                assert isinstance(divisor, int), divisor
+                assert divisor > 1, divisor
+                assert self.get_direction() == 'out'
+                assert self.get_type().startswith('int') or self.get_type().startswith('uint'), self.get_type()
+
+            unit_name = self.raw_data_extra.get('unit')
+
+            if unit_name != None:
+                assert self.get_type().startswith('int') or self.get_type().startswith('uint'), self.get_type()
+
+                self.unit = units[unit_name]
+
+            range_ = self.get_range()
+
+            if range_ != None:
+                assert isinstance(range_, tuple), range_
+                assert len(range_) == 2, range_
+                assert range_[0] <= range_[1], range_
+                assert self.get_type().startswith('int') or self.get_type().startswith('uint'), self.get_type()
+                # FIXME: assert that range parts have correct type
+
+            default = self.get_default()
+
+            if default != None:
+                pass
+                # FIXME: assert that default has correct type
 
             constant_group_name = self.raw_data[4].get('constant_group')
 
             if constant_group_name != None:
+                assert isinstance(constant_group_name, str), constant_group_name
+
                 self.constant_group = self.get_device().get_constant_group(constant_group_name)
 
                 if self.constant_group.get_type() != self.get_type():
@@ -1155,6 +1380,21 @@ class Element(object):
     def get_constant_group(self):
         return self.constant_group
 
+    def get_factor(self):
+        return self.raw_data_extra.get('factor')
+
+    def get_divisor(self):
+        return self.raw_data_extra.get('divisor')
+
+    def get_unit(self):
+        return self.unit
+
+    def get_range(self):
+        return self.raw_data_extra.get('range')
+
+    def get_default(self):
+        return self.raw_data_extra.get('default')
+
     def get_item_size(self):
         item_sizes = {
             'int8':   1,
@@ -1178,6 +1418,9 @@ class Element(object):
             return int(math.ceil(self.get_cardinality() / 8.0))
 
         return self.get_item_size() * self.get_cardinality()
+
+    def format_value(self, value):
+        raise GeneratorError("format_value() not implemented")
 
 class Stream(object):
     def __init__(self, raw_data, data_element, packet, direction):
@@ -1466,6 +1709,261 @@ class Packet(object):
             elements.append(element)
 
         return elements
+
+    def get_formatted_element_meta(self,
+                                   bindings_type_func,
+                                   name_func,
+                                   constant_group_name_func,
+                                   output_parameter='never',
+                                   return_object='never',
+                                   callback_object='never',
+                                   element_range='conditional', # FIXME
+                                   prefix_elements=None,
+                                   suffix_elements=None,
+                                   stream_length_suffix=None,
+                                   parameter_title_override=None,
+                                   output_parameter_title_override=None,
+                                   return_title_override=None,
+                                   return_object_title_override=None,
+                                   callback_parameter_title_override=None,
+                                   callback_object_title_override=None,
+                                   no_in_value=None,
+                                   no_out_value=None,
+                                   no_return_value=None,
+                                   explicit_string_cardinality=False,
+                                   explicit_variable_stream_cardinality=False,
+                                   explicit_fixed_stream_cardinality=False,
+                                   explicit_common_cardinality=False,
+                                   include_function_id=False,
+                                   constants_or_symbols='constants',
+                                   high_level=False):
+        assert output_parameter in ['never', 'always', 'conditional']
+        assert return_object in ['never', 'always', 'conditional']
+        assert callback_object in ['never', 'always', 'conditional']
+        assert element_range in ['always', 'conditional']
+        assert constants_or_symbols in ['constants', 'symbols']
+
+        type_title = select_lang({'en': 'Type', 'de': 'Typ'})
+        length_title = select_lang({'en': 'Length', 'de': 'Länge'})
+        up_to_hint = select_lang({'en': 'up to', 'de': 'bis zu'})
+        variable_hint = select_lang({'en': 'variable', 'de': 'variabel'})
+        unit_title = select_lang({'en': 'Unit', 'de': 'Einheit'})
+        constant_group_title = select_lang({'en': 'Constants', 'de': 'Konstanten'})
+        symbols_hint = select_lang({'en': 'Symbols: Yes', 'de': 'Symbole: Ja'})
+        range_title = select_lang({'en': 'Range', 'de': 'Wertebereich'})
+        default_title = select_lang({'en': 'Default', 'de': 'Standardwert'})
+        formatted_meta_in = []
+        formatted_meta_out = []
+        formatted_meta_return = []
+
+        if prefix_elements != None:
+            for prefix_element in prefix_elements:
+                assert prefix_element[2] == 1 # FIXME: no list support yet
+
+                meta = (prefix_element[0], '{0}: {1}'.format(type_title, prefix_element[1]))
+
+                if prefix_element[3] == 'in':
+                    formatted_meta_in.append(meta)
+                elif prefix_element[3] == 'out':
+                    formatted_meta_out.append(meta)
+                elif prefix_element[3] == 'return':
+                    formatted_meta_return.append(meta)
+                else:
+                    assert False, prefix_element[3]
+
+        for element in self.get_elements(high_level=high_level):
+            meta = ['{0}: {1}'.format(type_title, bindings_type_func(element))]
+            cardinality = element.get_cardinality()
+
+            if cardinality != 1:
+                if element.get_type() == 'string':
+                    if explicit_string_cardinality:
+                        meta.append('{0}: {1} {2}'.format(length_title, up_to_hint, cardinality))
+                elif cardinality < 0:
+                    if explicit_variable_stream_cardinality:
+                        meta.append('{0}: {1}'.format(length_title, variable_hint))
+                elif element.get_role() == 'stream_data':
+                    if explicit_fixed_stream_cardinality:
+                        meta.append('{0}: {1}'.format(length_title, cardinality))
+                elif explicit_common_cardinality:
+                    meta.append('{0}: {1}'.format(length_title, cardinality))
+
+            scale = element.get_divisor()
+
+            if scale == None:
+                scale = element.get_factor()
+
+            unit = element.get_unit()
+
+            if scale != None and unit == None:
+                meta.append('{0}: 1/{1}'.format(unit_title, scale))
+            elif scale == None and unit != None:
+                meta.append('{0}: 1 [[[abbr title=|||{1} ({2})|||]]]{3}[[[/abbr]]]'.format(unit_title, unit.name, unit.usage, unit.symbol))
+            elif scale != None and unit != None:
+                scale_prefix = ''
+
+                if unit.scale_prefix_allowed:
+                    if scale % 1000000000 == 0:
+                        scale //= 1000000000
+                        scale_prefix = 'n'
+                    elif scale % 1000000 == 0:
+                        scale //= 1000000
+                        scale_prefix = 'µ'
+                    elif scale % 1000 == 0:
+                        scale //= 1000
+                        scale_prefix = 'm'
+
+                if scale > 1:
+                    scale = '1/{0}'.format(scale)
+
+                meta.append('{0}: {1} {2}[[[abbr title=|||{3} ({4})|||]]]{5}[[[/abbr]]]'.format(unit_title, scale, scale_prefix, unit.name, unit.usage, unit.symbol))
+
+            constant_group = element.get_constant_group()
+
+            if constant_group != None:
+                if constants_or_symbols == 'constants':
+                    meta.append('{0}: {1}'.format(constant_group_title, constant_group_name_func(constant_group)))
+                else: # symbols
+                    meta.append(symbols_hint)
+
+            range_ = element.get_range()
+
+            if range_ != None:
+                meta.append('{0}: [{1}..{2}]'.format(range_title, element.format_value(range_[0]), element.format_value(range_[1])))
+
+            default = element.get_default()
+
+            if default != None:
+                meta.append('{0}: {1}'.format(default_title, element.format_value(default)))
+
+            if element.get_direction() == 'in':
+                formatted_meta_in.append((name_func(element), ', '.join(meta)))
+            else:
+                formatted_meta_out.append((name_func(element), ', '.join(meta)))
+
+            if stream_length_suffix != None:
+                length_elements = self.get_elements(role='stream_length')
+                chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
+
+                if element.get_role() == 'stream_data' and (element.get_direction() == 'out' or len(length_elements) > 0):
+                    if len(length_elements) > 0:
+                        length_type = bindings_type_func(length_elements[0])
+                    elif len(chunk_offset_elements) > 0:
+                        length_type = bindings_type_func(chunk_offset_elements[0])
+                    else:
+                        raise common.GeneratorError('Malformed stream config')
+
+                    meta = (name_func(element) + stream_length_suffix, ', '.join(['{0}: {1}'.format(type_title, length_type)]))
+
+                    if element.get_direction() == 'in':
+                        formatted_meta_in.append(meta)
+                    else:
+                        formatted_meta_out.append(meta)
+
+        if suffix_elements != None:
+            for suffix_element in suffix_elements:
+                assert suffix_element[2] == 1 # FIXME: no list support yet
+
+                meta = (suffix_element[0], '{0}: {1}'.format(type_title, suffix_element[1]))
+
+                if suffix_element[3] == 'in':
+                    formatted_meta_in.append(meta)
+                elif suffix_element[3] == 'out':
+                    formatted_meta_out.append(meta)
+                elif suffix_element[3] == 'return':
+                    formatted_meta_return.append(meta)
+                else:
+                    assert False, suffix_element[3]
+
+        if len(formatted_meta_in) == 0 and no_in_value != None:
+            formatted_meta_in.append(select_lang(no_in_value))
+
+        if len(formatted_meta_out) == 0 and no_out_value != None:
+            formatted_meta_out.append(select_lang(no_out_value))
+
+        function_id_title = select_lang({'en': 'Function ID', 'de': 'Funktions-ID'})
+
+        if parameter_title_override != None:
+            parameter_title = select_lang(parameter_title_override)
+        else:
+            parameter_title = select_lang({'en': 'Parameters', 'de': 'Parameter'})
+
+        if output_parameter_title_override != None:
+            output_parameter_title = select_lang(output_parameter_title_override)
+        else:
+            output_parameter_title = select_lang({'en': 'Output Parameters', 'de': 'Ausgabeparameter'})
+
+        if return_title_override != None:
+            return_title = select_lang(return_title_override)
+        else:
+            return_title = select_lang({'en': 'Returns', 'de': 'Rückgabe'})
+
+        if return_object_title_override != None:
+            return_object_title = select_lang(return_object_title_override)
+        else:
+            return_object_title = select_lang({'en': 'Return Object', 'de': 'Rückgabeobjekt'})
+
+        if callback_parameter_title_override != None:
+            callback_parameter_title = select_lang(callback_parameter_title_override)
+        else:
+            callback_parameter_title = select_lang({'en': 'Callback Parameters', 'de': 'Callback-Parameter'})
+
+        if callback_object_title_override != None:
+            callback_object_title = select_lang(callback_object_title_override)
+        else:
+            callback_object_title = select_lang({'en': 'Callback Object', 'de': 'Callback-Objekt'})
+
+        formatted_meta = []
+
+        if include_function_id:
+            formatted_meta.append((function_id_title, str(self.get_function_id())))
+
+        if len(formatted_meta_in) > 0:
+            formatted_meta.append((parameter_title, formatted_meta_in))
+
+        has_return = False
+
+        if len(formatted_meta_out) > 0:
+            if self.get_type() == 'function':
+                if output_parameter == 'never':
+                    if return_object == 'never':
+                        formatted_meta.append((return_title, formatted_meta_out))
+                        has_return = True
+                    elif return_object == 'always':
+                        formatted_meta.append((return_object_title, formatted_meta_out))
+                    else: # conditional
+                        if len(formatted_meta_out) == 1:
+                            formatted_meta.append((return_title, formatted_meta_out))
+                            has_return = True
+                        else:
+                            formatted_meta.append((return_object_title, formatted_meta_out))
+                elif output_parameter == 'always':
+                    formatted_meta.append((output_parameter_title, formatted_meta_out))
+                else: # conditional
+                    if len(formatted_meta_out) == 1:
+                        formatted_meta.append((return_title, formatted_meta_out))
+                        has_return = True
+                    else:
+                        formatted_meta.append((output_parameter_title, formatted_meta_out))
+            else: # callback
+                if callback_object == 'never':
+                    formatted_meta.append((callback_parameter_title, formatted_meta_out))
+                elif callback_object == 'always':
+                    formatted_meta.append((callback_object_title, formatted_meta_out))
+                else: # conditional
+                    if len(formatted_meta_out) == 1:
+                        formatted_meta.append((callback_parameter_title, formatted_meta_out))
+                    else:
+                        formatted_meta.append((callback_object_title, formatted_meta_out))
+
+        if len(formatted_meta_return) > 0:
+            formatted_meta.append((return_title, formatted_meta_return))
+            has_return = True
+
+        if not has_return and no_return_value != None:
+            formatted_meta.append((return_title, select_lang(no_return_value)))
+
+        return formatted_meta
 
     def has_high_level(self):
         return len(self.high_level) > 0

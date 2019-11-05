@@ -3,7 +3,7 @@
 
 """
 PHP Generator
-Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 php_common.py: Common Library for generation of PHP bindings and documentation
@@ -119,8 +119,28 @@ class PHPElement(common.Element):
         'string': None
     }
 
-    def get_php_type(self):
-        return PHPElement.php_type[self.get_type()]
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).upper()
+
+        if type_ in ['char', 'string']:
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        return str(value)
+
+    def get_php_type(self, for_doc=False):
+        php_type = PHPElement.php_type[self.get_type()]
+        cardinality = self.get_cardinality()
+
+        if for_doc and cardinality != 1 and self.get_type() != 'string':
+            return 'array({0}, ...)'.format(php_type)
+
+        return php_type
 
     def get_php_pack_format(self):
         return PHPElement.php_pack_format[self.get_type()]

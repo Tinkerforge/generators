@@ -3,7 +3,7 @@
 
 """
 Ruby Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 ruby_common.py: Common Library for generation of Ruby bindings and documentation
@@ -55,7 +55,7 @@ class RubyElement(common.Element):
         'uint64': 'int',
         'float':  'float',
         'bool':   'bool',
-        'char':   'str',
+        'char':   'chr',
         'string': 'str'
     }
 
@@ -89,18 +89,28 @@ class RubyElement(common.Element):
         'string': None
     }
 
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ in ['char', 'string']:
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        return str(value)
+
     def get_ruby_type(self):
         ruby_type = RubyElement.ruby_types[self.get_type()]
         cardinality = self.get_cardinality()
 
         if cardinality == 1 or self.get_type() == 'string':
             return ruby_type
-        elif cardinality < 0:
-            return '[{0}, {0}, ...]'.format(ruby_type)
-        elif cardinality <= 5:
-            return '[' + ', '.join([ruby_type] * cardinality) + ']'
-        else:
-            return '[{0}, {0}, ..{1}x.., {0}]'.format(ruby_type, cardinality - 3)
+
+        return '[{0}, ...]'.format(ruby_type)
 
     def get_ruby_pack_format(self):
         return RubyElement.ruby_pack_formats[self.get_type()]

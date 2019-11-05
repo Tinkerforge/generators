@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Delphi Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Delphi/Lazarus Generator
+Copyright (C) 2012-2015, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 delphi_common.py: Common Library for generation of Delphi bindings and documentation
@@ -153,8 +153,23 @@ delphi_types = {
     'string': ('string',   'String')
 }
 
-def get_delphi_type(type_):
-    return delphi_types[type_]
+def get_delphi_type(type_, context='default', cardinality=None):
+    assert context in ['default', 'meta'], context
+
+    delphi_type = delphi_types[type_]
+
+    if context == 'default':
+        return delphi_type
+
+    assert isinstance(cardinality, int), cardinality
+
+    if cardinality != 1 and type_ != 'string':
+        if cardinality > 0:
+            return 'array [0..{0}] of {1}'.format(cardinality - 1, delphi_type[0]) # FIXME: this is frond for fixed-length streams, should also be array of XYZ
+        else:
+            return 'array of {0}'.format(delphi_type[0])
+
+    return delphi_type[0]
 
 class DelphiElement(common.Element):
     delphi_le_convert_types = {
@@ -172,8 +187,22 @@ class DelphiElement(common.Element):
         'string': 'String'
     }
 
-    def get_delphi_type(self):
-        return get_delphi_type(self.get_type())
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ in ['char', 'string']:
+            return "'{0}'".format(value.replace("'", "''"))
+
+        return str(value)
+
+    def get_delphi_type(self, context='default'):
+        return get_delphi_type(self.get_type(), context, self.get_cardinality())
 
     def get_delphi_le_convert_type(self):
         return DelphiElement.delphi_le_convert_types[self.get_type()]

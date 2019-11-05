@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-MATLAB Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+MATLAB/Octave Generator
+Copyright (C) 2012-2015, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 matlab_common.py: Common Library for generation of MATLAB bindings and documentation
@@ -226,6 +226,20 @@ class MATLABElement(common.Element):
         'char':   'byte',
         'string': 'byte'
     }
+
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ in ['char', 'string']:
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        return str(value)
 
     def get_matlab_type(self):
         return get_matlab_type(self.get_type(), self.get_cardinality(),

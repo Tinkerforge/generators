@@ -4,6 +4,7 @@
 """
 Rust Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
 
 rust_common.py: Common Library for generation of Rust bindings and documentation
 
@@ -99,7 +100,6 @@ class RustPacket(common.Packet):
                     if len(results) == 1:
                         return template.format(result_type=results[0].get_rust_type())
                     return template.format(result_type=self.get_rust_type_name(skip=-2) + "Result")
-
 
         returns = self.get_elements(direction='out')
         name = self.get_rust_type_name() + ("Event" if self.get_type() == 'callback' else "")
@@ -254,6 +254,23 @@ class RustPacket(common.Packet):
 
 
 class RustElement(common.Element):
+    def format_value(self, value):
+        type_ = self.get_type()
+
+        if type_ == 'float':
+            return common.format_float(value)
+
+        if type_ == 'bool':
+            return str(bool(value)).lower()
+
+        if type_ == 'char':
+            return "'{0}'".format(value.replace("'", "\\'"))
+
+        if type_ == 'string':
+            return '"{0}"'.format(value.replace('"', '\\"'))
+
+        return str(value)
+
     def get_rust_name(self):
         blacklist = ["abstract", "alignof", "as", "become", "box", "break", "const", "continue", "crate", "do", "else", "enum", "extern", "false", "final", "fn", "for", "if", "impl", "in", "let", "loop", "macro", "match", "mod", "move", "mut", "offsetof", "override", "priv", "proc", "pub", "pure", "ref", "return", "Self", "self", "sizeof", "static", "struct", "super", "trait", "true", "type", "typeof", "unsafe", "unsized", "use", "virtual", "where", "while", "yield"]
         name = self.get_name().under
@@ -261,7 +278,7 @@ class RustElement(common.Element):
             return name + "_"
         return name
 
-    def get_rust_type(self, ignore_cardinality=False):
+    def get_rust_type(self, ignore_cardinality=False, for_doc=False):
         if self.get_type() == 'string':
             return 'String'
         elif self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
@@ -272,10 +289,18 @@ class RustElement(common.Element):
             element_type = 'f32'
         else:
             element_type = self.get_type()
-        if self.get_cardinality() > 1 and not ignore_cardinality:
-            return "[{type}; {count}]".format(type=element_type, count=self.get_cardinality())
-        else:
-            return element_type
+
+        if not ignore_cardinality:
+            if self.get_cardinality() > 1:
+                return "[{type}; {count}]".format(type=element_type, count=self.get_cardinality())
+
+            if self.get_cardinality() < 1:
+                if self.get_direction() == 'in':
+                    return "&[{type}]".format(type=element_type)
+                else:
+                    return "Vec<{type}>".format(type=element_type)
+
+        return element_type
 
 class RustConstantGroup(common.ConstantGroup):
     def get_rust_type(self):
