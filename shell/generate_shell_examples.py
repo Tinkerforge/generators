@@ -113,9 +113,9 @@ class ShellExampleArgument(common.ExampleArgument):
             elif type_ == 'bool':
                 return str(bool(value)).lower()
             elif type_ == 'char':
-                return '{0}'.format(value) # FIXME: how to escape a single quote?
+                return '"{0}"'.format(value) # FIXME: how to escape quotes?
             elif type_ == 'string':
-                return '"{0}"'.format(value) # FIXME: how to escape a double quote?
+                return '"{0}"'.format(value) # FIXME: how to escape quotes?
             elif ':bitmask:' in type_:
                 return str(value)
             else:
