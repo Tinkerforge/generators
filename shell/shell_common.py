@@ -173,7 +173,7 @@ class ShellElement(common.Element):
             help_ = "get_array_type_name(ctx, '{0}', {1})".format(t, self.get_cardinality())
 
             if len(symbols_doc) > 0:
-                help_ += "+ '{0}'".format(symbols_doc)
+                help_ += " + '{0}'".format(symbols_doc)
 
         return help_
 
