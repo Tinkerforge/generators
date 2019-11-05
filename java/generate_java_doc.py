@@ -328,7 +328,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 Constants
 ^^^^^^^^^
 
-.. java:member:: static final int {1}::DEVICE_IDENTIFIER
+.. java:member:: int {1}::DEVICE_IDENTIFIER
 
  This constant is used to identify a {3}.
 
@@ -337,7 +337,7 @@ Constants
  listener of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 
-.. java:member:: static final String {1}::DEVICE_DISPLAY_NAME
+.. java:member:: String {1}::DEVICE_DISPLAY_NAME
 
  This constant represents the human readable name of a {3}.
 """,
@@ -347,7 +347,7 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. java:member:: static final int {1}::DEVICE_IDENTIFIER
+.. java:member:: int {1}::DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
@@ -356,7 +356,7 @@ Konstanten
  Listener der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. java:member:: static final String {1}::DEVICE_DISPLAY_NAME
+.. java:member:: String {1}::DEVICE_DISPLAY_NAME
 
  Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """
