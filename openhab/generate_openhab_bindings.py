@@ -311,10 +311,12 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         def find_packet(name):
             if name is None:
                 return None
-            try:
-                return next(p for p in self.get_packets() if p.get_name().space == name or(len(p.name.words) > 2 and p.get_name(skip=-2).space == name))
-            except StopIteration:
-                raise common.GeneratorError('openhab: Device {}: Packet {} not found.'.format(self.get_long_display_name(), name))
+            for p in self.get_packets():
+                if p.get_name().space == name:
+                    return p
+                if p.has_high_level() and p.get_name(skip=-2).space == name:
+                    return p
+            raise common.GeneratorError('openhab: Device {}: Packet {} not found.'.format(self.get_long_display_name(), name))
 
         # Convert from dicts to namedtuples
         for ct_idx, channel_type in enumerate(oh['channel_types']):

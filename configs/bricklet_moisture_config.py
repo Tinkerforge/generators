@@ -356,6 +356,9 @@ com['examples'].append({
               ('callback_threshold', ('Moisture', 'moisture value'), [], '>', [(200, 0)])]
 })
 
+moisture_channel = oh_generic_old_style_channel('Moisture', 'Moisture', 'SmartHomeUnits.ONE')
+moisture_channel['getters'][0]['packet'] = 'Get Moisture Value'
+
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
@@ -372,7 +375,7 @@ com['openhab'] = {
     }],
     'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
     'channels': [
-        oh_generic_old_style_channel('Moisture', 'Moisture', 'SmartHomeUnits.ONE')
+        moisture_channel
     ],
     'channel_types': [
         oh_generic_channel_type('Moisture', 'Number:Dimensionless', 'Moisture',
