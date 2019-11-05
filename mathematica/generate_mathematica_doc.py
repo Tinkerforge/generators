@@ -397,6 +397,7 @@ class MathematicaDocPacket(common.Packet):
 
         text += common.format_constants(prefix, self, char_format_func='``ToCharacterCode["{0}"][[0]]``'.format,
                                         constant_format_func=constant_format)
+
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

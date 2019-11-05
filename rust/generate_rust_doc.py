@@ -359,10 +359,12 @@ class RustDocPacket(rust_common.RustPacket):
             return '``{0}``'.format(name) # FIXME
 
         text = common.handle_rst_param(text, format_parameter)
+
         if self.get_type() == 'callback':
             text = common.handle_rst_word(text, parameter=callback_parameter, parameters=callback_parameters)
         else:
             text = common.handle_rst_word(text)
+
         text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_rust_module_name().upper() + '_'
