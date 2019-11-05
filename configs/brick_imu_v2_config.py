@@ -354,7 +354,7 @@ com['packets'].append({
 Returns the current orientation (w, x, y, z) of the IMU Brick as
 `quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
 
-You have to divide the returns values by 16383 (14 bit) to get
+You have to divide the return values by 16383 (14 bit) to get
 the usual range of -1.0 to +1.0 for quaternions.
 
 If you want to get the quaternions periodically, it is recommended
@@ -366,7 +366,7 @@ to use the :cb:`Quaternion` callback and set the period with
 Gibt die aktuelle Orientierung (w, x, y, z) des IMU Brick als
 `Quaterinonen <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
 
-Die zurückgegebenen Werte müssen mit 16383 (14 Bit) dividiert werden um
+Die Rüxkgabewerte müssen mit 16383 (14 Bit) dividiert werden, um
 in den üblichen Wertebereich für Quaternionen (-1,0 bis +1,0) gebracht zu werden.
 
 Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
