@@ -68,9 +68,8 @@ common_constant_groups.append({
 
 common_packets = []
 
-# is_virtual is set to True for functions without a corresponding TCP/IP packet
 common_packets.append({
-'is_virtual': True,
+'is_virtual': True, # function without a corresponding TCP/IP packet
 'type': 'function',
 'function_id': -1,
 'name': 'Get API Version',
@@ -94,7 +93,7 @@ repräsentierte(n) Brick oder Bricklet.
 })
 
 common_packets.append({
-'is_virtual': True,
+'is_virtual': True, # function without a corresponding TCP/IP packet
 'type': 'function',
 'function_id': -1,
 'name': 'Get Response Expected',
@@ -143,7 +142,7 @@ nicht detektiert werden können.
 })
 
 common_packets.append({
-'is_virtual': True,
+'is_virtual': True, # function without a corresponding TCP/IP packet
 'type': 'function',
 'function_id': -1,
 'name': 'Set Response Expected',
@@ -182,7 +181,7 @@ nicht detektiert werden können.
 })
 
 common_packets.append({
-'is_virtual': True,
+'is_virtual': True, # function without a corresponding TCP/IP packet
 'type': 'function',
 'function_id': -1,
 'name': 'Set Response Expected All',
