@@ -34,18 +34,16 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Beep',
-'elements': [('Duration', 'uint32', 1, 'in')],
+'elements': [('Duration', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Beeps with the duration in ms. For example: If you set a value of 1000,
-the piezo buzzer will beep for one second.
+Beeps for the given duration.
 """,
 'de':
 """
-Erzeugt einen Piepton mit der angegebenen Dauer in ms. Beispiel: Wenn der
-Wert auf 1000 gesetzt wird, erzeugt der Piezosummer einen Piepton für eine Sekunde.
+Erzeugt einen Piepton für die angegebene Dauer.
 """
 }]
 })
@@ -53,7 +51,7 @@ Wert auf 1000 gesetzt wird, erzeugt der Piezosummer einen Piepton für eine Seku
 com['packets'].append({
 'type': 'function',
 'name': 'Morse Code',
-'elements': [('Morse', 'string', 60, 'in')],
+'elements': [('Morse', 'string', 60, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -65,8 +63,6 @@ for *dits*, *dahs* and *pauses*. Every other character is ignored.
 For example: If you set the string "...---...", the piezo buzzer will beep
 nine times with the durations "short short short long long long short
 short short".
-
-The maximum string size is 60.
 """,
 'de':
 """
@@ -77,8 +73,6 @@ werden ignoriert.
 
 Beispiel: Wenn die Zeichenkette "...---..." gesetzt wird, gibt der Piezosummer neun
 Pieptöne aus mit den Dauern "kurz kurz kurz lang lang lang kurz kurz kurz".
-
-Die maximale Zeichenkettenlänge ist 60.
 """
 }]
 })

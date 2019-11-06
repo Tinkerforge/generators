@@ -1179,6 +1179,11 @@ units = {
                                          'g',
                                          {'en': 'Mass', 'de': 'Masse'}),
 
+    'Hertz':                        Unit({'en': 'Hertz', 'de': 'Hertz'},
+                                         'Hz',
+                                         {'en': 'Frequency', 'de': 'Frequenz'},
+                                         scale_prefix_allowed=False),
+
     'Lux':                          Unit({'en': 'Lux', 'de': 'Lux'},
                                          'lx',
                                          {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},

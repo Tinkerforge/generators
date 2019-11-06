@@ -49,45 +49,25 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Beep',
-'elements': [('Frequency', 'uint16', 1, 'in'),
-             ('Volume', 'uint8', 1, 'in'),
-             ('Duration', 'uint32', 1, 'in', {'constant_group': 'Beep Duration'})],
+'elements': [('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (50, 15000)}),
+             ('Volume', 'uint8', 1, 'in', {'range': (0, 10)}),
+             ('Duration', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Beeps with the given frequency and volume for the duration in ms.
-
-For example: If you set a duration of 1000, with a volume of 10 and a frequency
-value of 2000 the piezo buzzer will beep with maximum loudness for one
-second with a frequency of 2 kHz.
+Beeps with the given frequency and volume for the duration.
 
 A duration of 0 stops the current beep if any is ongoing.
 A duration of 4294967295 results in an infinite beep.
-
-The ranges are:
-
-* Frequency: 50Hz - 15000Hz
-* Volume: 0 - 10
-* Duration: 0ms - 4294967295ms
 """,
 'de':
 """
 Erzeugt einen Piepton mit der gegebenen Frequenz und Lautstärke für die
-angegebene Dauer in ms.
-
-Beispiel: Wenn *duration* auf 1000, *volume* auf 10 und *frequency* auf 2000 gesetzt wird,
-erzeugt der Piezosummer einen Piepton mit maximaler Lautstärke für eine Sekunde mit einer
-Frequenz von 2 kHz.
+angegebene Dauer.
 
 Eine *duration* von 0 stoppt den aktuellen Piepton.
 Eine *duration* von 4294967295 führt zu einem unendlich langen Piepton.
-
-Die Wertebereiche sind:
-
-* Frequenz: 50Hz - 15000Hz
-* Lautstärke: 0 - 10
-* Duration: 0ms - 4294967295ms
 """
 }]
 })
@@ -95,16 +75,16 @@ Die Wertebereiche sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Beep',
-'elements': [('Frequency', 'uint16', 1, 'out'),
-             ('Volume', 'uint8', 1, 'out'),
-             ('Duration', 'uint32', 1, 'out', {'constant_group': 'Beep Duration'}),
-             ('Duration Remaining', 'uint32', 1, 'out')],
+'elements': [('Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': (50, 15000)}),
+             ('Volume', 'uint8', 1, 'out', {'range': (0, 10)}),
+             ('Duration', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'}),
+             ('Duration Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the last beep settings as set by :func:`Set Beep`. If a beep is currently
-running it also returns the remaining duration of the beep in ms.
+running it also returns the remaining duration of the beep.
 
 If the frequency or volume is updated during a beep (with :func:`Update Frequency`
 or :func:`Update Volume`) this function returns the updated value.
@@ -129,7 +109,7 @@ com['packets'].append({
              ('Step Size', 'uint16', 1, 'in'),
              ('Step Delay', 'uint16', 1, 'in'),
              ('Volume', 'uint8', 1, 'in'),
-             ('Duration', 'uint32', 1, 'in', {'constant_group': 'Alarm Duration'})],
+             ('Duration', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -232,7 +212,7 @@ com['packets'].append({
              ('Step Size', 'uint16', 1, 'out'),
              ('Step Delay', 'uint16', 1, 'out'),
              ('Volume', 'uint8', 1, 'out'),
-             ('Duration', 'uint32', 1, 'out', {'constant_group': 'Alarm Duration'}),
+             ('Duration', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'}),
              ('Duration Remaining', 'uint32', 1, 'out'),
              ('Current Frequency', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],

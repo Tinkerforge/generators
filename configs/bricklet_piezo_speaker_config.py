@@ -41,39 +41,29 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Beep',
-'elements': [('Duration', 'uint32', 1, 'in', {'constant_group': 'Beep Duration'}),
-             ('Frequency', 'uint16', 1, 'in')],
+'elements': [('Duration', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'}),
+             ('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (585, 7100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Beeps with the given frequency for the duration in ms. For example:
-If you set a duration of 1000, with a frequency value of 2000
-the piezo buzzer will beep for one second with a frequency of
-approximately 2 kHz.
+Beeps with the given frequency for the given duration.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
    A duration of 0 stops the current beep if any, the frequency parameter is
    ignored. A duration of 4294967295 results in an infinite beep.
-
-The *frequency* parameter can be set between 585 and 7100.
 
 The Piezo Speaker Bricklet can only approximate the frequency, it will play
 the best possible match by applying the calibration (see :func:`Calibrate`).
 """,
 'de':
 """
-Erzeugt einen Piepton mit der gegebenen Frequenz für die angegebene Dauer in ms.
-Beispiel: Wenn *duration* auf 1000 und *frequency* auf 2000 gesetzt wird,
-erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz
-von ca. 2 kHz.
+Erzeugt einen Piepton mit der gegebenen Frequenz für die angegebene Dauer.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
    Eine *durarion* von 0 stoppt den aktuellen Piepton, das *frequency* Parameter
    wird ignoriert. Eine *durarion* von 4294967295 führt zu einem unendlich
    langen Piepton.
-
-Das *frequency* Parameter kann Werte von 585 bis 7100 annehmen.
 
 Das Piezo Speaker Bricklet kann die angegebenen Frequenzen nur approximieren,
 es wählt die bestmögliche Zuordnung anhand der Kalibrierung
@@ -85,8 +75,8 @@ es wählt die bestmögliche Zuordnung anhand der Kalibrierung
 com['packets'].append({
 'type': 'function',
 'name': 'Morse Code',
-'elements': [('Morse', 'string', 60, 'in'),
-             ('Frequency', 'uint16', 1, 'in')],
+'elements': [('Morse', 'string', 60, 'in', {}),
+             ('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (585, 7100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -94,13 +84,10 @@ com['packets'].append({
 Sets morse code that will be played by the piezo buzzer. The morse code
 is given as a string consisting of "." (dot), "-" (minus) and " " (space)
 for *dits*, *dahs* and *pauses*. Every other character is ignored.
-The second parameter is the frequency (see :func:`Beep`).
 
 For example: If you set the string "...---...", the piezo buzzer will beep
 nine times with the durations "short short short long long long short
 short short".
-
-The maximum string size is 60.
 """,
 'de':
 """
@@ -108,12 +95,9 @@ Setzt Morsecode welcher vom Piezosummer abgespielt wird. Der Morsecode wird
 als Zeichenkette, mit den Zeichen "." (Punkt), "-" (Minus) und " " (Leerzeichen)
 für *kurzes Signale*, *langes Signale* und *Pausen*. Alle anderen Zeichen
 werden ignoriert.
-Der zweite Parameter ist die Frequenz (siehe :func:`Beep`).
 
 Beispiel: Wenn die Zeichenkette "...---..." gesetzt wird, gibt der Piezosummer neun
 Pieptöne aus mit den Dauern "kurz kurz kurz lang lang lang kurz kurz kurz".
-
-Die maximale Zeichenkettenlänge ist 60.
 """
 }]
 })
@@ -121,7 +105,7 @@ Die maximale Zeichenkettenlänge ist 60.
 com['packets'].append({
 'type': 'function',
 'name': 'Calibrate',
-'elements': [('Calibration', 'bool', 1, 'out')],
+'elements': [('Calibration', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
