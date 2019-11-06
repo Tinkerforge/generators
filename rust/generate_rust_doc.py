@@ -311,21 +311,27 @@ Konstanten
         ccf = self.get_rust_methods('ccf')
         c = self.get_rust_callbacks()
         api_str = ''
+
         if bf:
             api_str += common.select_lang(common.bf_str).format(cre, bf)
+
         if af:
             api_str += common.select_lang(common.af_str).format(af)
+
         if c:
             if len(ccf) > 0:
                 api_str += common.select_lang(common.ccf_str).format("", ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,
                                                         self.get_name().upper,
                                                         c)
 
         article = 'ein'
+
         if self.is_brick():
             article = 'einen'
+
         api_str += common.select_lang(const_str).format(device_name_ref=self.get_doc_rst_ref_name(),
                                                         device_name_camel=self.get_rust_name(),
                                                         article=article,

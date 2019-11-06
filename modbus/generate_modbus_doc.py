@@ -150,12 +150,16 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
         ccf = self.get_modbus_methods('ccf')
         c = self.get_modbus_callbacks()
         api_str = ''
+
         if bf:
             api_str += common.select_lang(common.bf_str).format('', bf)
+
         if af:
             api_str += common.select_lang(common.af_str).format(af)
+
         if ccf:
             api_str += common.select_lang(common.ccf_str).format('', ccf)
+
         if c:
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         c)

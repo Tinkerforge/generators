@@ -139,8 +139,10 @@ API
         bf = self.get_tvpl_methods('bf')
         af = self.get_tvpl_methods('af')
         api_str = ''
+
         if bf:
             api_str += common.select_lang(common.bf_str).format('', bf)
+
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 

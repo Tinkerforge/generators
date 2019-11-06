@@ -445,18 +445,24 @@ Konstanten
         ccf = self.get_matlab_methods('ccf')
         c = self.get_matlab_callbacks()
         api_str = ''
+
         if bf:
             api_str += common.select_lang(common.bf_str).format(cre, bf)
+
         if af:
             api_str += common.select_lang(common.af_str).format(af)
+
         if ccf:
             api_str += common.select_lang(ccf_str).format(ccf)
+
         if c:
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(), c)
 
         article = 'ein'
+
         if self.is_brick():
             article = 'einen'
+
         api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_matlab_class_name(),
                                                         article,

@@ -233,19 +233,24 @@ Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../respon
         ccf = self.get_mqtt_methods('ccf')
         c = self.get_mqtt_callbacks()
         api_str = ''
+
         if bf:
             api_str += common.select_lang(common.bf_str).format("", bf)
+
         if af:
             api_str += common.select_lang(common.af_str).format(af)
+
         if c:
             if len(ccf) > 0:
                 api_str += common.select_lang(common.ccf_str).format("", ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,
                                                         self.get_name().upper,
                                                         c)
 
         article = 'ein'
+
         if self.is_brick():
             article = 'einen'
 
