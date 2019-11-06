@@ -1805,23 +1805,27 @@ class Packet(object):
             elif scale == None and unit != None:
                 meta.append('{0}: 1 [[[abbr title=|||{1} ({2})|||]]]{3}[[[/abbr]]]'.format(unit_title, unit.name, unit.usage, unit.symbol))
             elif scale != None and unit != None:
-                scale_prefix = ''
+                unit_name = unit.name
+                unit_symbol = unit.symbol
 
                 if unit.scale_prefix_allowed:
                     if scale % 1000000000 == 0:
                         scale //= 1000000000
-                        scale_prefix = 'n'
+                        unit_name = 'Nano' + unit_name.lower()
+                        unit_symbol = 'n' + unit_symbol
                     elif scale % 1000000 == 0:
                         scale //= 1000000
-                        scale_prefix = 'µ'
+                        unit_name = select_lang({'en': 'Micro', 'de': 'Mikro'}) + unit_name.lower()
+                        unit_symbol = 'µ' + unit_symbol
                     elif scale % 1000 == 0:
                         scale //= 1000
-                        scale_prefix = 'm'
+                        unit_name = 'Milli' + unit_name.lower()
+                        unit_symbol = 'm' + unit_symbol
 
                 if scale > 1:
                     scale = '1/{0}'.format(scale)
 
-                meta.append('{0}: {1} {2}[[[abbr title=|||{3} ({4})|||]]]{5}[[[/abbr]]]'.format(unit_title, scale, scale_prefix, unit.name, unit.usage, unit.symbol))
+                meta.append('{0}: {1} [[[abbr title=|||{2} ({3})|||]]]{4}[[[/abbr]]]'.format(unit_title, scale, unit_name, unit.usage, unit_symbol))
 
             constant_group = element.get_constant_group()
 
