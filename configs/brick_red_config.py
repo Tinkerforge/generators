@@ -6,6 +6,8 @@
 
 # RED Brick communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -1826,3 +1828,25 @@ com['packets'].append({
 """
 }]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [],
+    'channels': [],
+    'channel_types': [],
+    'actions': [
+        'Create Session', 'Expire Session', 'Expire Session Unchecked', 'Keep Session Alive',
+        'Release Object', 'Release Object Unchecked',
+        'Allocate String', 'Truncate String', 'Get String Length', 'Set String Chunk', 'Get String Chunk',
+        'Allocate List', 'Get List Length', 'Get List Item', 'Append To List', 'Remove From List',
+        'Open File', 'Create Pipe', 'Get File Info', 'Read File', 'Write File', 'Write File Unchecked',
+        'Set File Position', 'Get File Position', 'Set File Events', 'Get File Events',
+        'Open Directory', 'Get Directory Name', 'Get Next Directory Entry', 'Rewind Directory', 'Create Directory',
+        'Get Processes', 'Spawn Process', 'Kill Process', 'Get Process Command', 'Get Process Identity', 'Get Process Stdio', 'Get Process State',
+        'Get Programs', 'Define Program', 'Purge Program', 'Get Program Identifier', 'Get Program Root Directory',
+        'Set Program Command', 'Get Program Command', 'Set Program Stdio Redirection', 'Get Program Stdio Redirection',
+        'Set Program Schedule', 'Get Program Schedule', 'Get Program Scheduler State', 'Continue Program Schedule', 'Start Program', 'Get Last Spawned Program Process',
+        'Get Custom Program Option Names', 'Set Custom Program Option Value', 'Get Custom Program Option Value', 'Remove Custom Program Option'
+    ]
+}

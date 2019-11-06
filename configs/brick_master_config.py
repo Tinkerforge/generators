@@ -8,6 +8,8 @@
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 9],
@@ -3591,3 +3593,85 @@ com['examples'].append({
 'functions': [('getter', ('Get Stack Voltage', 'stack voltage'), [(('Stack Voltage', 'Stack Voltage'), 'uint16', 1, 1000.0, 'V', None)], []),
               ('getter', ('Get Stack Current', 'stack current'), [(('Stack Current', 'Stack Current'), 'uint16', 1, 1000.0, 'A', None)], [])]
 })
+
+voltage_channel = oh_generic_old_style_channel('Stack Voltage', 'Stack Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0)
+voltage_channel['callbacks'][0]['transform'] = 'new QuantityType<>(voltage{divisor}, {unit})'
+current_channel = oh_generic_old_style_channel('Stack Current', 'Stack Current', 'SmartHomeUnits.AMPERE', divisor=1000.0)
+current_channel['callbacks'][0]['transform'] = 'new QuantityType<>(current{divisor}, {unit})'
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [],
+    'channels': [voltage_channel, current_channel],
+    'channel_types': [
+        oh_generic_channel_type('Stack Voltage', 'Number:ElectricPotential', 'Stack Voltage',
+            description='The stack voltage in V. The stack voltage is the voltage that is supplied via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.',
+            read_only=True,
+            pattern='%.3f %unit%'),
+        oh_generic_channel_type('Stack Current', 'Number:ElectricCurrent', 'Stack Current',
+            description='The stack current in A. The stack current is the current that is drawn via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.',
+            read_only=True,
+            pattern='%.3f %unit%'),
+    ],
+    'actions': [
+        'Get Stack Voltage',
+        'Get Stack Current',
+        'Get Extension Type',
+
+        'Is Chibi Present',
+        'Get Chibi Address',
+        'Get Chibi Master Address',
+        'Get Chibi Slave Address',
+        'Get Chibi Signal Strength',
+        'Get Chibi Error Log',
+        'Get Chibi Frequency',
+        'Get Chibi Channel',
+
+        'Is RS485 Present',
+        'Get RS485 Address',
+        'Get RS485 Slave Address',
+        'Get RS485 Error Log',
+        'Get RS485 Configuration',
+
+        'Is Wifi Present',
+        'Get Wifi Configuration',
+        'Get Wifi Encryption',
+        'Get Wifi Status',
+        'Refresh Wifi Status',
+        'Get Wifi Certificate',
+        'Get Wifi Power Mode',
+        'Get Wifi Buffer Info',
+        'Get Wifi Regulatory Domain',
+        'Get Long Wifi Key',
+        'Get Wifi Hostname',
+        'Get Wifi Authentication Secret',
+
+        'Get USB Voltage',
+
+        'Is Ethernet Present',
+        'Get Ethernet Configuration',
+        'Get Ethernet Status',
+        'Get Ethernet Websocket Configuration',
+        'Get Ethernet Authentication Secret',
+
+        'Get Connection Type',
+
+        'Is Wifi2 Present',
+        'Get Wifi2 Authentication Secret',
+        'Get Wifi2 Configuration',
+        'Get Wifi2 Status',
+        'Get Wifi2 Client Configuration',
+        'Get Wifi2 Client Hostname',
+        'Get Wifi2 AP Configuration',
+        'Get Wifi2 Firmware Version',
+        'Enable Wifi2 Status LED',
+        'Disable Wifi2 Status LED',
+        'Is Wifi2 Status LED Enabled',
+        'Get Wifi2 Mesh Configuration',
+        'Get Wifi2 Mesh Router SSID',
+        'Get Wifi2 Mesh Common Status',
+        'Get Wifi2 Mesh Client Status',
+        'Get Wifi2 Mesh AP Status',
+    ]
+}
