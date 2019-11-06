@@ -39,14 +39,12 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance',
-'elements': [('Illuminance', 'uint16', 1, 'out')],
+'elements': [('Illuminance', 'uint16', 1, 'out', {'divisor': 10, 'unit': 'Lux', 'range': (0, 9000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the illuminance of the ambient light sensor. The value
-has a range of 0 to 9000 and is given in lux/10, i.e. a value
-of 4500 means that an illuminance of 450lux is measured.
+Returns the illuminance of the ambient light sensor.
 
 If you want to get the illuminance periodically, it is recommended to use the
 :cb:`Illuminance` callback and set the period with
@@ -54,9 +52,7 @@ If you want to get the illuminance periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück. Der Wertbereich
-ist von 0 bis 9000 und ist in Lux/10 angegeben, d.h. bei einem Wert von
-4500 wurde eine Beleuchtungsstärke von 450Lux gemessen.
+Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück.
 
 Wenn die Beleuchtungsstärke periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Illuminance` Callback zu nutzen und die Periode mit
@@ -68,13 +64,12 @@ den :cb:`Illuminance` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the value as read by a 12-bit analog-to-digital converter.
-The value is between 0 and 4095.
 
 .. note::
  The value returned by :func:`Get Illuminance` is averaged over several samples
@@ -92,8 +87,7 @@ If you want the analog value periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
-Wertebereich ist 0 bis 4095.
+Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück.
 
 .. note::
  Der von :func:`Get Illuminance` zurückgegebene Wert ist über mehrere
@@ -115,28 +109,24 @@ den :cb:`Analog Value` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Illuminance Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Illuminance` callback is triggered
+Sets the period with which the :cb:`Illuminance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Illuminance` callback is only triggered if the illuminance has changed since the
 last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Illuminance` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Illuminance` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Illuminance` Callback wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -144,7 +134,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -161,28 +151,24 @@ Gibt die Periode zurück, wie von :func:`Set Illuminance Callback Period` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Analog Value` callback is triggered
+Sets the period with which the :cb:`Analog Value` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Analog Value` callback is only triggered if the analog value has changed since the
 last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Analog Value` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -190,7 +176,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -208,8 +194,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Illuminance Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'factor': 10, 'unit': 'Lux', 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'factor': 10, 'unit': 'Lux', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -227,8 +213,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the illuminance is *inside* the min and max values"
  "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the illuminance is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -245,8 +229,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Beleuchtungsstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Beleuchtungsstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Beleuchtungsstärke größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -255,8 +237,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'divisor': 10, 'unit': 'Lux', 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'divisor': 10, 'unit': 'Lux', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -274,8 +256,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -293,8 +275,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -311,8 +291,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Analogwert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -321,8 +299,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -393,7 +371,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Illuminance',
-'elements': [('Illuminance', 'uint16', 1, 'out')],
+'elements': [('Illuminance', 'uint16', 1, 'out', {'divisor': 10, 'unit': 'Lux', 'range': (0, 9000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -419,7 +397,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Analog Value',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -445,7 +423,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Illuminance Reached',
-'elements': [('Illuminance', 'uint16', 1, 'out')],
+'elements': [('Illuminance', 'uint16', 1, 'out', {'divisor': 10, 'unit': 'Lux', 'range': (0, 9000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -472,7 +450,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Analog Value Reached',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
