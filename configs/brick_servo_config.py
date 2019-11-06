@@ -6,6 +6,8 @@
 
 # Servo Brick communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 4],
@@ -996,3 +998,67 @@ com['examples'].append({
 'cleanups': [('setter', 'Disable', [('uint8', 0)], None, None)],
 'incomplete': True # because of special ping/pong logic in callback
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Minimum Voltage',
+            'type': 'decimal',
+            'unit': 'V',
+            'label': 'Minimum Voltage',
+            'description': 'The minimum voltage in V, below which the Unter Voltage channel is triggered. The minimum possible value that works with the Servo Brick is 5V. You can use this function to detect the discharge of a battery that is used to drive the stepper motor. If you have a fixed power supply, you likely do not need this functionality. The default value is 5V.',
+            'default': 5,
+        }
+    ],
+
+    'init_code': """this.enableVelocityReachedCallback();
+    this.enablePositionReachedCallback();
+    this.setMinimumVoltage((int)(cfg.minimumVoltage.doubleValue() * 1000.0));""",
+
+    'channels': [{
+            'id': 'Velocity Reached',
+            'type': 'system.trigger',
+            'label': 'Velocity Reached',
+
+            'callbacks': [{
+                'packet': 'Velocity Reached',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        }, {
+            'id': 'Position Reached',
+            'type': 'system.trigger',
+            'label': 'Position Reached',
+
+            'callbacks': [{
+                'packet': 'Position Reached',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        },  {
+            'id': 'Unter Voltage',
+            'type': 'system.trigger',
+            'label': 'Unter Voltage',
+
+            'callbacks': [{
+                'packet': 'Under Voltage',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        }
+    ],
+    'channel_types': [
+    ],
+    'actions': ['Enable', 'Disable', 'Is Enabled',
+        'Set Position', 'Get Position', 'Get Current Position',
+        'Set Velocity', 'Get Velocity', 'Get Current Velocity',
+        'Set Acceleration', 'Get Acceleration',
+        'Set Output Voltage', 'Get Output Voltage',
+        'Set Pulse Width', 'Get Pulse Width',
+        'Set Degree', 'Get Degree',
+        'Set Period', 'Get Period',
+        'Get Servo Current', 'Get Overall Current',
+        'Get Stack Input Voltage', 'Get External Input Voltage', 'Get Minimum Voltage']
+}

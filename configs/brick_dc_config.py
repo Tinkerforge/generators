@@ -6,6 +6,8 @@
 
 # DC Brick communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 3],
@@ -821,3 +823,82 @@ com['examples'].append({
 'cleanups': [('setter', 'Disable', [], None, 'Disable motor power')],
 'incomplete': True # because of special drive logic in callback
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        {
+            'name': 'Minimum Voltage',
+            'type': 'decimal',
+            'unit': 'V',
+            'label': 'Minimum Voltage',
+            'description': 'The minimum voltage in V, below which the Unter Voltage channel is triggered. The minimum possible value that works with the DC Brick is 5V. You can use this function to detect the discharge of a battery that is used to drive the stepper motor. If you have a fixed power supply, you likely do not need this functionality. The default value is 5V.',
+            'default': 5,
+        }
+    ],
+    'init_code': """this.setMinimumVoltage((int)(cfg.minimumVoltage.doubleValue() * 1000.0));""",
+    'channels': [{
+            'id': 'Velocity Reached',
+            'type': 'system.trigger',
+            'label': 'Velocity Reached',
+
+            'callbacks': [{
+                'packet': 'Velocity Reached',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        }, {
+            'id': 'Emergency Shutdown',
+            'type': 'system.trigger',
+            'label': 'Emergency Shutdown',
+
+            'callbacks': [{
+                'packet': 'Emergency Shutdown',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        },  {
+            'id': 'Unter Voltage',
+            'type': 'system.trigger',
+            'label': 'Unter Voltage',
+
+            'callbacks': [{
+                'packet': 'Under Voltage',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True
+        }, {
+            'id': 'Current Velocity',
+            'type': 'Current Velocity',
+            'getters': [{
+                'packet': 'Get Current Velocity',
+                'packet_params': [],
+                'transform': 'new DecimalType(value)'}],
+            'callbacks': [{
+                'packet': 'Current Velocity',
+                'transform': 'new DecimalType(velocity)'}],
+
+            'is_trigger_channel': False,
+            'init_code': """this.setCurrentVelocityPeriod(channelCfg.updateInterval);"""
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Current Velocity', 'Number', 'Current Velocity',
+            description='The current velocity of the motor.',
+            read_only=True,
+            min_=-32767,
+            max_=32767),
+    ],
+    'actions': [
+        'Set Velocity', 'Get Velocity', 'Get Current Velocity',
+        'Set Acceleration', 'Get Acceleration',
+        'Full Brake',
+        'Enable', 'Disable', 'Is Enabled',
+        'Set PWM Frequency', 'Get PWM Frequency',
+        'Get Stack Input Voltage', 'Get External Input Voltage',
+        'Get Current Consumption',
+        'Set Drive Mode', 'Get Drive Mode',
+        'Get Minimum Voltage'
+    ]
+}
