@@ -31,7 +31,6 @@ import subprocess
 import sys
 import copy
 import math
-import html
 import multiprocessing.dummy
 import functools
 from collections import namedtuple
@@ -100,6 +99,17 @@ Konfigurationsfunktionen für Callbacks
 }
 
 lang = 'en'
+
+html_escape_table = {
+    "&": "&amp;",
+    '"': "&quot;",
+    "'": "&apos;",
+    ">": "&gt;",
+    "<": "&lt;"
+}
+
+def html_escape(text):
+    return ''.join(html_escape_table.get(c, c) for c in text)
 
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
@@ -565,9 +575,9 @@ def make_rst_meta_table(items, indent_level=1, index_title_match=None):
                 index = ''
 
             if isinstance(value, tuple):
-                formatted_values.append(named_value_template.format(index=index, name=html.escape(value[0]), value=html.escape(value[1])))
+                formatted_values.append(named_value_template.format(index=index, name=html_escape(value[0]), value=html_escape(value[1])))
             else:
-                formatted_values.append(value_template.format(index=index, value=html.escape(value)))
+                formatted_values.append(value_template.format(index=index, value=html_escape(value)))
 
         formatted_rows.append(row_template.format(title=title, values='\n  '.join(formatted_values)))
 
