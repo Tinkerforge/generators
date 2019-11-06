@@ -6,6 +6,8 @@
 
 # Remote Switch Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -589,3 +591,80 @@ com['examples'].append({
               ],
               None, None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType',
+                                               'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+        'name': 'Remote Type',
+        'type': 'integer',
+        'options': [('A', 0),
+                    ('B', 1),
+                    ('C', 2)],
+        'limitToOptions': 'true',
+        'default': '0',
+
+        'label': 'Remote Type',
+        'description': 'Type A, B or C depending on the type of remote you want to receive.',
+    }, {
+        'name': 'Minimum Repeats',
+        'type': 'integer',
+        'default': '2',
+
+        'label': 'Minimum Repeats',
+        'description': 'The minimum number of repeated data packets until the Remote Status channels trigger.',
+    }],
+    'init_code': """this.setRemoteConfiguration(cfg.remoteType, cfg.minimumRepeats, true);""",
+    'channels': [{
+            'id': 'Switching Done',
+            'label': 'Switching Done',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Switching Done',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered whenever the switching state changes from busy to ready.'
+        }, {
+            'id': 'Remote Status A Available',
+            'label': 'Remote Status A Available',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Remote Status A',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered if at least the configured minimum of repeats of identical data packets for remote type A were received. You can get the house and receiver code, switch state and repeats with the getRemoteStatusA action.'
+        }, {
+            'id': 'Remote Status B Available',
+            'label': 'Remote Status B Available',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Remote Status B',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered if at least the configured minimum of repeats of identical data packets for remote type B were received. You can get the house and receiver code, switch state and repeats with the getRemoteStatusB action.'
+        }, {
+            'id': 'Remote Status C Available',
+            'label': 'Remote Status C Available',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Remote Status C',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered if at least the configured minimum of repeats of identical data packets for remote type C were received. You can get the house and receiver code, switch state and repeats with the getRemoteStatusC action.'
+        }
+    ],
+    'actions': [
+        'Get Switching State', 'Switch Socket A', 'Switch Socket B', 'Dim Socket B', 'Switch Socket C',
+        'Get Remote Configuration', 'Get Remote Status A', 'Get Remote Status B', 'Get Remote Status C',
+        'Set Repeats', 'Get Repeats'
+    ]
+}

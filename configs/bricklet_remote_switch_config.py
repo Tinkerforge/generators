@@ -6,6 +6,8 @@
 
 # Remote Switch Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -294,3 +296,26 @@ com['examples'].append({
 'name': 'Switch Socket',
 'functions': [('setter', 'Switch Socket A', [('uint8', 17), ('uint8', 1), ('uint8:constant', 1)], 'Switch on a type A socket with house code 17 and receiver code 1.\nHouse code 17 is 10001 in binary (least-significant bit first)\nand means that the DIP switches 1 and 5 are on and 2-4 are off.\nReceiver code 1 is 10000 in binary (least-significant bit first)\nand means that the DIP switch A is on and B-E are off.', None)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType',
+                                               'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [{
+            'id': 'Switching Done',
+            'label': 'Switching Done',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Switching Done',
+                'transform': '""'}],
+
+            'is_trigger_channel': True,
+            'description': 'This channel is triggered whenever the switching state changes from busy to ready.'
+        }
+    ],
+    'actions': [
+        'Get Switching State', 'Switch Socket A', 'Switch Socket B', 'Dim Socket B', 'Switch Socket C',
+        'Set Repeats', 'Get Repeats'
+    ]
+}
