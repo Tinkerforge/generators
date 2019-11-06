@@ -350,7 +350,7 @@ Konstanten
 
         create_meta = common.format_simple_element_meta([('$uid', 'string', 1, 'in'),
                                                          ('$ipcon', 'IPConnection', 1, 'in'),
-                                                         ('$' + self.get_name().headless, self.get_perl_class_name(), 1, 'out')])
+                                                         ('$' + self.get_name().under, self.get_perl_class_name(), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
