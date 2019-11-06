@@ -117,16 +117,16 @@ com['packets'].append({
 Sets the period with which the :cb:`Illuminance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-The :cb:`Illuminance` callback is only triggered if the illuminance has changed since the
-last triggering.
+The :cb:`Illuminance` callback is only triggered if the illuminance has changed
+since the last triggering.
 """,
 'de':
 """
 Setzt die Periode mit welcher der :cb:`Illuminance` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Illuminance` Callback wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Illuminance` Callback wird nur ausgelöst, wenn sich die
+Beleuchtungsstärke seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -159,16 +159,16 @@ com['packets'].append({
 Sets the period with which the :cb:`Analog Value` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-The :cb:`Analog Value` callback is only triggered if the analog value has changed since the
-last triggering.
+The :cb:`Analog Value` callback is only triggered if the analog value has
+changed since the last triggering.
 """,
 'de':
 """
 Setzt die Periode mit welcher der :cb:`Analog Value` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert
+seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -380,16 +380,16 @@ This callback is triggered periodically with the period that is set by
 :func:`Set Illuminance Callback Period`. The :word:`parameter` is the illuminance of the
 ambient light sensor.
 
-The :cb:`Illuminance` callback is only triggered if the illuminance has changed since the
-last triggering.
+The :cb:`Illuminance` callback is only triggered if the illuminance has changed
+since the last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Illuminance Callback Period`,
 ausgelöst. Der :word:`parameter` ist die Beleuchtungsstärke des Umgebungslichtsensors.
 
-Der :cb:`Illuminance` Callback wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
-letzten Auslösung geändert hat.
+Der :cb:`Illuminance` Callback wird nur ausgelöst, wenn sich die
+Beleuchtungsstärke seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -406,16 +406,16 @@ This callback is triggered periodically with the period that is set by
 :func:`Set Analog Value Callback Period`. The :word:`parameter` is the analog value of the
 ambient light sensor.
 
-The :cb:`Analog Value` callback is only triggered if the analog value has changed since the
-last triggering.
+The :cb:`Analog Value` callback is only triggered if the analog value has
+changed since the last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Analog Value Callback Period`,
 ausgelöst. Der :word:`parameter` ist der Analogwert des Umgebungslichtsensors.
 
-Der :cb:`Analog Value` Callback wird nur ausgelöst wenn sich der Analogwert seit der
-letzten Auslösung geändert hat.
+Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert seit
+der letzten Auslösung geändert hat.
 """
 }]
 })

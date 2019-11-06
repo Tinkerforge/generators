@@ -152,7 +152,7 @@ to use the :cb:`Magnetic Field` callback and set the period with
 """,
 'de':
 """
-Gibt das kalibrierte magnetische Feld des Magnetometers mit den X-, Y- und
+Gibt das kalibrierte magnetische Feld des Magnetometers für die X-, Y- und
 Z-Komponenten in 1/16 µT zurück (Microtesla).
 
 Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
@@ -364,7 +364,8 @@ to use the :cb:`Quaternion` callback and set the period with
 'de':
 """
 Gibt die aktuelle Orientierung (w, x, y, z) des IMU Brick als
-`Quaterinonen <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
+`Quaterinonen <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__
+zurück.
 
 Die Rüxkgabewerte müssen mit 16383 (14 Bit) dividiert werden, um
 in den üblichen Wertebereich für Quaternionen (-1,0 bis +1,0) gebracht zu werden.
@@ -1144,8 +1145,7 @@ Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
 """,
 'de':
 """
-Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration`
-gesetzt.
+Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration` gesetzt.
 """
 }]
 })
@@ -1153,7 +1153,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Fusion Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Sensor Fusion',})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Sensor Fusion'})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
