@@ -53,14 +53,6 @@ class CDocDevice(common.Device):
     def get_c_methods(self, type_):
         methods = ''
 
-        def name_func(element):
-            name = element.get_name().under
-
-            if element.get_direction() == 'out' and element.get_packet().get_type() == 'function':
-                name = 'ret_{0}'.format(name)
-
-            return name
-
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
                 continue
@@ -70,8 +62,8 @@ class CDocDevice(common.Device):
             plist = common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), '')
             params = '{0} *{1}{2}'.format(self.get_name().camel, self.get_name().under, plist)
 
-            meta = packet.get_formatted_element_meta(lambda element: element.get_c_type('meta'), name_func,
-                                                     lambda constant_group: constant_group.get_name().upper,
+            meta = packet.get_formatted_element_meta(lambda element: element.get_c_type('meta'),
+                                                     lambda element: element.get_c_name(),
                                                      output_parameter='always',
                                                      prefix_elements=[(self.get_name().under, self.get_name().camel + ' *', 1, 'in')],
                                                      suffix_elements=[('error_code', 'int', 1, 'return')],
@@ -110,8 +102,7 @@ class CDocDevice(common.Device):
 
             params = common.select_lang(param_format).format(plist)
             meta = packet.get_formatted_element_meta(lambda element: element.get_c_type('meta'),
-                                                     lambda element: element.get_name().under,
-                                                     lambda constant_group: constant_group.get_name().upper,
+                                                     lambda element: element.get_c_name(),
                                                      suffix_elements=[('user_data', 'void *', 1, 'out')],
                                                      stream_length_suffix='_length',
                                                      high_level=True)
@@ -464,7 +455,7 @@ class CDocPacket(c_common.CPacket):
 
         prefix = self.get_device().get_name().upper + '_'
 
-        text += common.format_constants(prefix, self)
+        text += common.format_constants(prefix, self, lambda element: element.get_c_name())
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

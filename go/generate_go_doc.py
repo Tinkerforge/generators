@@ -65,7 +65,6 @@ class GoDocDevice(go_common.GoDevice):
             params = packet.get_go_parameters(high_level=True, ignore_constant_group=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_go_type(ignore_constant_group=True, context='meta'),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().camel,
                                                      suffix_elements=[('err', 'error', 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -106,7 +105,6 @@ class GoDocDevice(go_common.GoDevice):
             result_type = packet.get_go_return_type(high_level=packet.has_high_level(), ignore_constant_group=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_go_type(ignore_constant_group=True, context='meta'),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().camel,
                                                      suffix_elements=[('registrationId', 'uint64', 1, 'return')],
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -375,7 +373,8 @@ class GoDocPacket(go_common.GoPacket):
             return '* {0}\\ **{1}**\\ {2} = {3}\n'.format(prefix, constant_group.get_name().camel,
                                                           constant.get_name().camel_constant_safe, value)
 
-        text += common.format_constants(prefix, self, constant_format_func=constant_format)
+        text += common.format_constants(prefix, self, lambda element: element.get_name().headless,
+                                        constant_format_func=constant_format)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

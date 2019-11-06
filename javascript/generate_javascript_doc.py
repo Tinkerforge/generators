@@ -95,7 +95,6 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
             meta = packet.get_formatted_element_meta(lambda element: element.get_javascript_type(),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      output_parameter='never' if packet.is_virtual() else 'always',
                                                      output_parameter_title_override={'en': 'Callback Parameters', 'de': 'Callback-Parameter'},
                                                      no_out_value={'en': 'undefined', 'de': 'undefined'},
@@ -128,7 +127,6 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             skip = -2 if packet.has_high_level() else 0
             meta = packet.get_formatted_element_meta(lambda element: element.get_javascript_type(),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      no_out_value={'en': 'undefined', 'de': 'undefined'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -445,7 +443,7 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
 
         prefix = self.get_device().get_javascript_class_name() + '.'
 
-        text += common.format_constants(prefix, self)
+        text += common.format_constants(prefix, self, lambda element: element.get_name().under)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

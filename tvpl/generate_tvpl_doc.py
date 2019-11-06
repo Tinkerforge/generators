@@ -172,7 +172,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        text += common.format_constants('', self, constants_name=constants)
+        text += common.format_constants('', self, lambda element: element.get_name().space, constants_name=constants)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

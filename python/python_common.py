@@ -121,6 +121,9 @@ class PythonElement(common.Element):
 
         return str(value)
 
+    def get_python_name(self):
+        return self.get_name().under
+
     def get_python_type(self):
         python_type = PythonElement.python_types[self.get_type()]
         cardinality = self.get_cardinality()

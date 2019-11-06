@@ -79,7 +79,6 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
             params = packet.get_matlab_parameter_list(high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_matlab_type(),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      return_object='conditional',
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -140,7 +139,6 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
             desc = packet.get_matlab_formatted_doc(1)
             meta = packet.get_formatted_element_meta(lambda element: element.get_matlab_type(),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      callback_object='always',
                                                      callback_object_title_override={'en': 'Event Object', 'de': 'Event-Objekt'},
                                                      no_out_value={'en': 'empty object', 'de': 'leeres Objekt'},
@@ -494,7 +492,7 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
 
         prefix = self.get_device().get_matlab_class_name() + '.'
 
-        text += common.format_constants(prefix, self)
+        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, shift_right)

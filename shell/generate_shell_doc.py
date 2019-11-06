@@ -71,14 +71,13 @@ class ShellDocDevice(shell_common.ShellDevice):
             params = packet.get_shell_parameter_list(high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_shell_doc_type(),
                                                      lambda element: '<{0}>'.format(element.get_name().dash) if element.get_direction() == 'in' else element.get_name().dash,
-                                                     lambda constant_group: constant_group.get_name().dash,
                                                      return_title_override={'en': 'Output', 'de': 'Ausgabe'},
+                                                     constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
                                                      no_out_value={'en': 'no output', 'de': 'keine Ausgabe'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
-                                                     include_constants=False,
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_shell_formatted_doc()
@@ -103,14 +102,13 @@ class ShellDocDevice(shell_common.ShellDevice):
 
             meta = packet.get_formatted_element_meta(lambda element: element.get_shell_doc_type(),
                                                      lambda element: element.get_name().dash,
-                                                     lambda constant_group: constant_group.get_name().dash,
                                                      callback_parameter_title_override={'en': 'Output', 'de': 'Ausgabe'},
+                                                     constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
                                                      no_out_value={'en': 'no output', 'de': 'keine Ausgabe'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
-                                                     include_constants=False,
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_shell_formatted_doc()
@@ -424,7 +422,7 @@ class ShellDocPacket(shell_common.ShellPacket):
         def constant_format(prefix, constant_group, constant, value):
             return '* **{0}**-{1} = {2}\n'.format(constant_group.get_name().dash, constant.get_name().dash, value)
 
-        text += common.format_constants('', self,
+        text += common.format_constants('', self, lambda element: '<{0}>'.format(element.get_name().dash) if element.get_direction() == 'in' else element.get_name().dash,
                                         constants_name=constants,
                                         constant_format_func=constant_format)
 

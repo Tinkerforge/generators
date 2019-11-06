@@ -134,6 +134,14 @@ class CElement(common.Element):
 
         return str(value)
 
+    def get_c_name(self):
+        name = self.get_name().under
+
+        if self.get_direction() == 'out' and self.get_packet().get_type() == 'function':
+            name = 'ret_' + name
+
+        return name
+
     def get_c_type(self, context):
         assert context in ['default', 'signature', 'struct', 'meta']
 

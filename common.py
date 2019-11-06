@@ -668,10 +668,9 @@ def default_constant_format(prefix, constant_group, constant, value):
     return '* {0}\\ **{1}**\\ _{2} = {3}\n'.format(prefix, constant_group.get_name().upper,
                                                    constant.get_name().upper, value)
 
-def format_constants(prefix, packet,
+def format_constants(prefix, packet, element_name_func,
                      constants_intro=None,
                      constants_name=None,
-                     element_format_func=None,
                      constant_format_func=default_constant_format):
     if constants_intro == None:
         constants_intro = {
@@ -696,8 +695,7 @@ Die folgenden {0} sind für diese Funktion verfügbar:
         if constant_group == None:
             continue
 
-        if element_format_func != None:
-            constants.append(element_format_func(element))
+        constants.append(select_lang({'en': '\nFor **{0}**:\n\n', 'de': '\nFür **{0}**:\n\n'}).format(element_name_func(element)))
 
         for constant in constant_group.get_constants():
             value = element.format_value(constant.get_value())
@@ -1142,6 +1140,9 @@ class FlavoredName(object):
 
 class Unit(object):
     def __init__(self, name, symbol, usage, scale_prefix_allowed=True):
+        if scale_prefix_allowed:
+            assert ' ' not in name, name
+
         self._name = name
         self.symbol = symbol
         self._usage = usage
@@ -1295,6 +1296,7 @@ class Element(object):
         self.role = role
         self.constant_group = None
         self.unit = None
+        self.range_ = None
 
         check_name(raw_data[0])
 
@@ -1306,56 +1308,81 @@ class Element(object):
         if len(self.raw_data) > 4:
             self.raw_data_extra = self.raw_data[4]
 
-            assert isinstance(self.raw_data_extra, dict), self.raw_data_extra
-            assert len(set(self.raw_data_extra.keys()) - set(['factor', 'divisor', 'unit', 'range', 'default', 'constant_group'])) == 0, self.raw_data_extra
+        assert isinstance(self.raw_data_extra, dict), self.raw_data_extra
+        assert len(set(self.raw_data_extra.keys()) - set(['factor', 'divisor', 'unit', 'range', 'constant_group', 'default'])) == 0, self.raw_data_extra
 
-            factor = self.get_factor()
+        factor = self.get_factor()
 
-            if factor != None:
-                assert isinstance(factor, int), factor
-                assert factor > 1, factor
-                assert self.get_direction() == 'in'
-                assert self.get_type().startswith('int') or self.get_type().startswith('uint'), self.get_type()
+        if factor != None:
+            assert isinstance(factor, int), factor
+            assert factor > 1, factor
+            assert self.get_direction() == 'in'
+            assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
-            divisor = self.get_divisor()
+        divisor = self.get_divisor()
 
-            if divisor != None:
-                assert isinstance(divisor, int), divisor
-                assert divisor > 1, divisor
-                assert self.get_direction() == 'out'
-                assert self.get_type().startswith('int') or self.get_type().startswith('uint'), self.get_type()
+        if divisor != None:
+            assert isinstance(divisor, int), divisor
+            assert divisor > 1, divisor
+            assert self.get_direction() == 'out'
+            assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
-            unit_name = self.raw_data_extra.get('unit')
+        unit_name = self.raw_data_extra.get('unit')
 
-            if unit_name != None:
-                assert self.get_type().startswith('int') or self.get_type().startswith('uint'), self.get_type()
+        if unit_name != None:
+            assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
-                self.unit = units[unit_name]
+            self.unit = units[unit_name]
 
-            range_ = self.get_range()
+        if 'constant_group' in self.raw_data_extra:
+            range_default = 'constants'
+        elif self.get_type() not in ['float', 'bool', 'char', 'string']:
+            range_default = 'type'
+        else:
+            range_default = None
 
-            if range_ != None:
-                assert isinstance(range_, tuple), range_
-                assert len(range_) == 2, range_
-                assert range_[0] <= range_[1], range_
-                assert self.get_type().startswith('int') or self.get_type().startswith('uint'), self.get_type()
-                # FIXME: assert that range parts have correct type
+        range_ = self.raw_data_extra.get('range', range_default)
 
-            default = self.get_default()
+        if range_ == 'type':
+            assert self.get_type() not in ['float', 'string'], raw_data
 
-            if default != None:
-                pass
-                # FIXME: assert that default has correct type
+            range_ = self.get_type_range()
+        elif range_ != None and range_ != 'constants':
+            assert self.get_type() not in ['float', 'string'], raw_data
+            assert isinstance(range_, tuple), raw_data
+            assert len(range_) == 2, raw_data
+            assert range_ != (None, None), raw_data
 
-            constant_group_name = self.raw_data[4].get('constant_group')
+            if range_[0] == None:
+                range_ = (self.get_type_range()[0], range_[1])
 
-            if constant_group_name != None:
-                assert isinstance(constant_group_name, str), constant_group_name
+            if range_[1] == None:
+                range_ = (range_[0], self.get_type_range()[1])
 
-                self.constant_group = self.get_device().get_constant_group(constant_group_name)
+            assert range_[0] <= range_[1], raw_data
+            assert isinstance(range_[0], int), raw_data
+            assert isinstance(range_[1], int), raw_data
+        else:
+            assert range_ == range_default, (raw_data, range_default)
 
-                if self.constant_group.get_type() != self.get_type():
-                    raise GeneratorError("Element '{0}' Constant Group '{1}' type mismatch".format(self.get_name().space, constant_group_name))
+        self.range_ = range_
+
+        constant_group_name = self.raw_data_extra.get('constant_group')
+
+        if constant_group_name != None:
+            assert range_ != None, raw_data
+            assert self.get_type() not in ['float', 'string'], raw_data
+            assert isinstance(constant_group_name, str), raw_data
+
+            self.constant_group = self.get_device().get_constant_group(constant_group_name)
+
+            assert self.constant_group.get_type() == self.get_type(), raw_data
+
+        default = self.get_default()
+
+        if default != None:
+            pass
+            # FIXME: assert that default has correct type
 
     def get_packet(self): # parent
         return self.packet
@@ -1371,6 +1398,28 @@ class Element(object):
 
     def get_type(self):
         return self.raw_data[1]
+
+    def get_type_range(self):
+        type_ = self.get_type()
+
+        assert type_ not in ['float', 'string'], self.raw_data
+
+        if type_ == 'bool':
+            minimum = False
+            maximum = True
+        elif type_ == 'char':
+            minimum = chr(0)
+            maximum = chr(255)
+        else:
+            bits = int(type_.replace('uint', '').replace('int', ''), base=10)
+            minimum = 0
+            maximum = (2 ** bits) - 1
+
+            if not type_.startswith('u'):
+                minimum = -maximum / 2
+                maximum = maximum / 2
+
+        return (minimum, maximum)
 
     def get_cardinality(self):
         return self.raw_data[2]
@@ -1397,7 +1446,7 @@ class Element(object):
         return self.unit
 
     def get_range(self):
-        return self.raw_data_extra.get('range')
+        return self.range_
 
     def get_default(self):
         return self.raw_data_extra.get('default')
@@ -1720,11 +1769,9 @@ class Packet(object):
     def get_formatted_element_meta(self,
                                    bindings_type_func,
                                    name_func,
-                                   constant_group_name_func,
                                    output_parameter='never',
                                    return_object='never',
                                    callback_object='never',
-                                   element_range='conditional', # FIXME
                                    prefix_elements=None,
                                    suffix_elements=None,
                                    stream_length_suffix=None,
@@ -1734,6 +1781,7 @@ class Packet(object):
                                    return_object_title_override=None,
                                    callback_parameter_title_override=None,
                                    callback_object_title_override=None,
+                                   constants_hint_override=None,
                                    no_in_value=None,
                                    no_out_value=None,
                                    no_return_value=None,
@@ -1742,19 +1790,16 @@ class Packet(object):
                                    explicit_fixed_stream_cardinality=False,
                                    explicit_common_cardinality=False,
                                    include_function_id=False,
-                                   include_constants=True,
                                    high_level=False):
         assert output_parameter in ['never', 'always', 'conditional']
         assert return_object in ['never', 'always', 'conditional']
         assert callback_object in ['never', 'always', 'conditional']
-        assert element_range in ['always', 'conditional']
 
         type_title = select_lang({'en': 'Type', 'de': 'Typ'})
         length_title = select_lang({'en': 'Length', 'de': 'Länge'})
         up_to_hint = select_lang({'en': 'up to', 'de': 'bis zu'})
         variable_hint = select_lang({'en': 'variable', 'de': 'variabel'})
         unit_title = select_lang({'en': 'Unit', 'de': 'Einheit'})
-        constant_group_title = select_lang({'en': 'Constants', 'de': 'Konstanten'})
         range_title = select_lang({'en': 'Range', 'de': 'Wertebereich'})
         default_title = select_lang({'en': 'Default', 'de': 'Standardwert'})
         formatted_meta_in = []
@@ -1827,15 +1872,21 @@ class Packet(object):
 
                 meta.append('{0}: {1} [[[abbr title=|||{2} ({3})|||]]]{4}[[[/abbr]]]'.format(unit_title, scale, unit_name, unit.usage, unit_symbol))
 
-            constant_group = element.get_constant_group()
+            if element.get_type() not in ['bool', 'string']:
+                range_ = element.get_range()
 
-            if constant_group != None and include_constants:
-                meta.append('{0}: {1}'.format(constant_group_title, constant_group_name_func(constant_group)))
+                if constants_hint_override != None:
+                    constants_hint = select_lang(constants_hint_override)
+                else:
+                    constants_hint = select_lang({'en': ('See constants', 'with constants'), 'de': ('Siehe Konstanten', 'mit Konstanten')})
 
-            range_ = element.get_range()
-
-            if range_ != None:
-                meta.append('{0}: [{1}..{2}]'.format(range_title, element.format_value(range_[0]), element.format_value(range_[1])))
+                if range_ == 'constants':
+                    meta.append('{0}: {1}'.format(range_title, constants_hint[0]))
+                elif range_ != None:
+                    if element.get_constant_group() != None:
+                        meta.append('{0}: [{1}..{2}] {3}'.format(range_title, element.format_value(range_[0]), element.format_value(range_[1]), constants_hint[1]))
+                    else:
+                        meta.append('{0}: [{1}..{2}]'.format(range_title, element.format_value(range_[0]), element.format_value(range_[1])))
 
             default = element.get_default()
 

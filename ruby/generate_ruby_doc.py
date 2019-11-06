@@ -69,7 +69,6 @@ class RubyDocDevice(ruby_common.RubyDevice):
             ret_desc = packet.get_ruby_return_desc(high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_ruby_type(),
                                                      lambda element: element.get_name().under,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      return_object='conditional',
                                                      return_object_title_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
                                                      explicit_string_cardinality=True,
@@ -98,7 +97,6 @@ class RubyDocDevice(ruby_common.RubyDevice):
             skip = -2 if packet.has_high_level() else 0
             meta = packet.get_formatted_element_meta(lambda element: element.get_ruby_type(),
                                                      lambda element: element.get_name().under,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      no_out_value={'en': 'no parameters', 'de': 'keine Parameter'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -371,7 +369,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
 
         prefix = self.get_device().get_ruby_class_name() + '::'
 
-        text += common.format_constants(prefix, self)
+        text += common.format_constants(prefix, self, lambda element: element.get_name().under)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

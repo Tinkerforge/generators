@@ -65,16 +65,15 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
             name = packet.get_mqtt_name(skip=skip)
             meta = packet.get_formatted_element_meta(lambda element: element.get_mqtt_type(for_doc=True),
                                                      lambda element: element.get_name().under,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
                                                      return_title_override={'en': 'Response', 'de': 'Antwort'},
                                                      no_in_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                      no_out_value={'en': 'no response', 'de': 'keine Antwort'},
+                                                     constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
-                                                     include_constants=False,
                                                      high_level=True)
 
             if packet.get_name().space == 'Get Identity':
@@ -133,14 +132,13 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
                                                       parameter_title_override={'en': 'Register Request', 'de': 'Registrierungsanfrage'})
             meta += packet.get_formatted_element_meta(lambda element: element.get_mqtt_type(for_doc=True),
                                                       lambda element: element.get_name().under,
-                                                      lambda constant_group: constant_group.get_name().upper,
                                                       callback_parameter_title_override={'en': 'Callback Response', 'de': 'Callback-Antwort'},
+                                                     constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
                                                       no_out_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                       explicit_string_cardinality=True,
                                                       explicit_variable_stream_cardinality=True,
                                                       explicit_fixed_stream_cardinality=True,
                                                       explicit_common_cardinality=True,
-                                                      include_constants=False,
                                                       high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_mqtt_formatted_doc()
@@ -290,15 +288,11 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
 
         text = common.handle_rst_substitutions(text, self)
 
-        def element_format(element):
-            return common.select_lang({'en': '\nFor **{0}** field:\n\n', 'de': '\nFür **{0}** Feld:\n\n'}).format(element.get_name().under)
-
         def constant_format(prefix, constant_group, constant, value):
             return '* "{0}" = {1}\n'.format(constant.get_name().camel, value)
 
-        text += common.format_constants('', self,
+        text += common.format_constants('', self, lambda element: element.get_name().under,
                                         constants_name=constants,
-                                        element_format_func=element_format,
                                         constant_format_func=constant_format)
 
         text += common.format_since_firmware(self.get_device(), self)

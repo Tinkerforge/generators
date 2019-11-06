@@ -74,7 +74,6 @@ class RustDocDevice(rust_common.RustDevice):
 
             meta = packet.get_formatted_element_meta(lambda element: element.get_rust_type(for_doc=True),
                                                      lambda element: element.get_name().under,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      return_object='conditional',
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
@@ -113,7 +112,6 @@ class RustDocDevice(rust_common.RustDevice):
         for packet in self.get_packets('callback'):
             meta = packet.get_formatted_element_meta(lambda element: element.get_rust_type(for_doc=True),
                                                      lambda element: element.get_name().under,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      callback_object='conditional',
                                                      callback_parameter_title_override={'en': 'Event', 'de': 'Event'},
                                                      callback_object_title_override={'en': 'Event Object', 'de': 'Event-Objekt'},
@@ -375,7 +373,7 @@ class RustDocPacket(rust_common.RustPacket):
 
         prefix = self.get_device().get_rust_module_name().upper() + '_'
 
-        text += common.format_constants(prefix, self)
+        text += common.format_constants(prefix, self, lambda element: element.get_name().under)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

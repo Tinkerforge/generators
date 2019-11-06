@@ -58,13 +58,12 @@ class TCPIPDocDevice(common.Device):
             name = packet.get_name().under
             meta = packet.get_formatted_element_meta(lambda element: element.get_tcpip_type(),
                                                      lambda element: element.get_name().under,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
                                                      return_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     constants_hint_override={'en': ('See meanings', 'with meanings'), 'de': ('Siehe Bedeutungen', 'mit Bedeutungen')},
                                                      no_in_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                      no_out_value={'en': 'no response', 'de': 'keine Antwort'},
-                                                     include_function_id=True,
-                                                     include_constants=False)
+                                                     include_function_id=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_tcpip_formatted_doc()
             func = '.. tcpip:function:: {0}.{1}\n\n{2}{3}'.format(cls, name, meta_table, desc)
@@ -80,13 +79,12 @@ class TCPIPDocDevice(common.Device):
         for packet in self.get_packets('callback'):
             meta = packet.get_formatted_element_meta(lambda element: element.get_tcpip_type(),
                                                      lambda element: element.get_name().under,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
                                                      return_title_override={'en': 'Response', 'de': 'Antwort'},
                                                      callback_parameter_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     constants_hint_override={'en': ('See meanings', 'with meanings'), 'de': ('Siehe Bedeutungen', 'mit Bedeutungen')},
                                                      no_out_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
-                                                     include_function_id=True,
-                                                     include_constants=False)
+                                                     include_function_id=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_tcpip_formatted_doc()
             func = '.. tcpip:function:: {0}.CALLBACK_{1}\n\n{2}{3}'.format(cls,
@@ -229,10 +227,9 @@ Die folgenden {0} sind für die Elemente dieser Funktion definiert:
 
             return '* {0} = {1}\n'.format(value, text)
 
-        text += common.format_constants('', self,
+        text += common.format_constants('', self, lambda element: element.get_name().under,
                                         constants_intro=constants_intro,
                                         constants_name=constants,
-                                        element_format_func=element_format,
                                         constant_format_func=constant_format)
 
         text += common.format_since_firmware(self.get_device(), self)

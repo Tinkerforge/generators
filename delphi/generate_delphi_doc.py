@@ -66,7 +66,6 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             params = '; '.join(packet.get_delphi_parameters('doc', high_level=True))
             meta = packet.get_formatted_element_meta(lambda element: element.get_delphi_type(context='meta'),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      output_parameter='conditional',
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
@@ -115,7 +114,6 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             params = '; '.join(packet.get_delphi_parameters('doc', high_level=True))
             meta = packet.get_formatted_element_meta(lambda element: element.get_delphi_type(context='meta'),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      prefix_elements=[('sender', cls, 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
@@ -363,7 +361,7 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         prefix = '{0}_{1}_'.format(self.get_device().get_category().upper,
                                    self.get_device().get_name().upper)
 
-        text += common.format_constants(prefix, self)
+        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

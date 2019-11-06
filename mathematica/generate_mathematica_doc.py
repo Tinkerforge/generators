@@ -73,7 +73,6 @@ class MathematicaDocDevice(common.Device):
             params = packet.get_mathematica_parameter_list(high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_mathematica_type(),
                                                      lambda element: element.get_mathematica_description_name(),
-                                                     lambda constant_group: constant_group.get_name().upper.replace('_', 'U'),
                                                      output_parameter='conditional',
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
@@ -98,7 +97,6 @@ class MathematicaDocDevice(common.Device):
             params = packet.get_mathematica_parameter_list(high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_mathematica_type(),
                                                      lambda element: element.get_mathematica_description_name(),
-                                                     lambda constant_group: constant_group.get_name().upper.replace('_', 'U'),
                                                      prefix_elements=[('sender', 'NETObject[{0}]'.format(self.get_mathematica_class_name()), 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
@@ -401,7 +399,7 @@ class MathematicaDocPacket(common.Packet):
             return '* {0}\\ **{1}**\\ U{2} = {3}\n'.format(prefix, constant_group.get_name().upper.replace('_', 'U'),
                                                            constant.get_name().upper.replace('_', 'U'), value)
 
-        text += common.format_constants(prefix, self, constant_format_func=constant_format)
+        text += common.format_constants(prefix, self, lambda element: element.get_name().headless, constant_format_func=constant_format)
 
         text += common.format_since_firmware(self.get_device(), self)
 

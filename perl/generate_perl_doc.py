@@ -64,7 +64,6 @@ class PerlDocDevice(perl_common.PerlDevice):
             params = packet.get_perl_parameters(high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_perl_type(),
                                                      lambda element: element.get_perl_doc_name(),
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      return_object='conditional',
                                                      return_object_title_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
                                                      no_out_value={'en': 'undef', 'de': 'undef'},
@@ -92,7 +91,6 @@ class PerlDocDevice(perl_common.PerlDevice):
             skip = -2 if packet.has_high_level() else 0
             meta = packet.get_formatted_element_meta(lambda element: element.get_perl_type(),
                                                      lambda element: element.get_perl_doc_name(),
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      no_out_value={'en': 'no parameters', 'de': 'keine Parameter'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -430,7 +428,7 @@ class PerlDocPacket(common.Packet):
 
         prefix = self.get_device().get_perl_class_name() + '->'
 
-        text += common.format_constants(prefix, self)
+        text += common.format_constants(prefix, self, lambda element: element.get_perl_doc_name())
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

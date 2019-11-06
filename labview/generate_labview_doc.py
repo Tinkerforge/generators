@@ -91,7 +91,6 @@ class LabVIEWDocDevice(common.Device):
             outputs = packet.get_labview_parameter_list('out', high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_labview_type(),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      parameter_title_override={'en': 'Input', 'de': 'Eingabe'},
                                                      return_title_override={'en': 'Output', 'de': 'Ausgabe'},
                                                      explicit_string_cardinality=True,
@@ -117,7 +116,6 @@ class LabVIEWDocDevice(common.Device):
             outputs = packet.get_labview_parameter_list('out', high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_labview_type(),
                                                      lambda element: element.get_name().headless,
-                                                     lambda constant_group: constant_group.get_name().upper,
                                                      prefix_elements=[('sender', '.NET Refnum ({0})'.format(self.get_labview_class_name()), 1, 'out')],
                                                      callback_parameter_title_override={'en': 'Callback Output', 'de': 'Callback-Ausgabe'},
                                                      explicit_string_cardinality=True,
@@ -349,7 +347,7 @@ class LabVIEWDocPacket(common.Packet):
 
         prefix = self.get_device().get_labview_class_name() + '.'
 
-        text += common.format_constants(prefix, self)
+        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)
