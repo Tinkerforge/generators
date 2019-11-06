@@ -94,29 +94,25 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Period',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Period', 'uint32', 1, 'in')],
+             ('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Voltage` callback is triggered
+Sets the period with which the :cb:`Voltage` callback is triggered
 periodically for the given channel. A value of 0 turns the callback off.
 
 The :cb:`Voltage` callback is only triggered if the voltage has changed since the
 last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Voltage` Callback für den
+Setzt die Periode mit welcher der :cb:`Voltage` Callback für den
 übergebenen Kanal ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Voltage` Callback wird nur ausgelöst, wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -125,7 +121,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Period',
 'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Period', 'uint32', 1, 'out')],
+             ('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

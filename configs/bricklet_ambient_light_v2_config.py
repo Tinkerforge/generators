@@ -104,28 +104,24 @@ den :cb:`Illuminance` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Illuminance Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Illuminance` callback is triggered
+Sets the period with which the :cb:`Illuminance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Illuminance` callback is only triggered if the illuminance has changed
 since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Illuminance` Callback ausgelöst
+Setzt die Periode mit welcher der :cb:`Illuminance` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Illuminance` Callback wird nur ausgelöst, wenn sich die
 Beleuchtungsstärke seit der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -133,7 +129,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

@@ -1540,28 +1540,24 @@ genutzt wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Stack Current Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Stack Current` callback is triggered
+Sets the period with which the :cb:`Stack Current` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Stack Current` callback is only triggered if the current has changed
 since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Stack Current` Callback ausgelöst
+Setzt die Periode mit welcher der :cb:`Stack Current` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Stack Current` Callback wird nur ausgelöst, wenn sich die Stromstärke
 seit der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -1569,7 +1565,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Current Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1586,28 +1582,24 @@ Gibt die Periode zurück, wie von :func:`Set Stack Current Callback Period` gese
 com['packets'].append({
 'type': 'function',
 'name': 'Set Stack Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Stack Voltage` callback is triggered
+Sets the period with which the :cb:`Stack Voltage` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Stack Voltage` callback is only triggered if the voltage has changed
 since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Stack Voltage` Callback ausgelöst
+Setzt die Periode mit welcher der :cb:`Stack Voltage` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Stack Voltage` Callback wird nur ausgelöst, wenn sich die Spannung seit
 der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -1615,7 +1607,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1632,28 +1624,24 @@ Gibt die Periode zurück, wie von :func:`Set Stack Voltage Callback Period` gese
 com['packets'].append({
 'type': 'function',
 'name': 'Set USB Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`USB Voltage` callback is triggered
+Sets the period with which the :cb:`USB Voltage` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`USB Voltage` callback is only triggered if the voltage has changed
 since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`USB Voltage` Callback ausgelöst
+Setzt die Periode mit welcher der :cb:`USB Voltage` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`USB Voltage` Callback wird nur ausgelöst, wenn sich die Spannung seit
 der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -1661,7 +1649,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get USB Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':

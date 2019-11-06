@@ -107,29 +107,24 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Period',
 'elements': [('Sensor', 'uint8', 1, 'in'),
-             ('Period', 'uint32', 1, 'in')],
+             ('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Current` callback is triggered
+Sets the period with which the :cb:`Current` callback is triggered
 periodically for the given sensor. A value of 0 turns the callback off.
 
 The :cb:`Current` callback is only triggered if the current has changed since the
 last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Current` Callback für den
-übergebenen Sensor ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
+Setzt die Periode mit welcher der :cb:`Current` Callback für den
+übergebenen Sensor ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Current` Callback wird nur ausgelöst, wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -138,7 +133,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Period',
 'elements': [('Sensor', 'uint8', 1, 'in'),
-             ('Period', 'uint32', 1, 'out')],
+             ('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

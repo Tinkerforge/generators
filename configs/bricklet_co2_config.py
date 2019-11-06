@@ -67,28 +67,24 @@ den :cb:`CO2 Concentration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set CO2 Concentration Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`CO2 Concentration` callback is
+Sets the period with which the :cb:`CO2 Concentration` callback is
 triggered periodically. A value of 0 turns the callback off.
 
 The :cb:`CO2 Concentration` callback is only triggered if the CO2 concentration
 has changed since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`CO2 Concentration` Callback
+Setzt die Periode mit welcher der :cb:`CO2 Concentration` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`CO2 Concentration` Callback wird nur ausgelöst, wenn sich die
 CO2-Konzentration seit der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -96,7 +92,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get CO2 Concentration Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

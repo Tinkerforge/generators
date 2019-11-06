@@ -250,28 +250,24 @@ Gibt den Versatz zurück, wie von :func:`Set Offset` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Date Time Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Date Time` callback is triggered
+Sets the period with which the :cb:`Date Time` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Date Time` Callback is only triggered if the date or time changed
 since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Date Time` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Date Time` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Date Time` Callback wird nur ausgelöst, wenn sich das Datum oder die
 Zeit seit der letzten Auslösung geändert haben.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -279,7 +275,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Date Time Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':

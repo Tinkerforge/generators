@@ -146,28 +146,24 @@ werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Spectrum Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-The period in ms is the period with which the :cb:`Spectrum` callback is
+The period is the period with which the :cb:`Spectrum` callback is
 triggered periodically. A value of 0 turns the callback off.
 
 Every new measured spectrum will be send at most once. Set the period to 1 to
 make sure that you get every spectrum.
-
-The default value is 0.
 """,
 'de':
 """
-Die Periode in ms ist die Periode mit der der :cb:`Spectrum` Callback ausgelöst
+Die Periode ist die Periode mit der der :cb:`Spectrum` Callback ausgelöst
 wird. Ein Wert von 0 schaltet den Callback ab.
 
 Jedes gemessene Spektrum wird maximal einmal gesendet. Setze die Periode auf 1
 um sicher zu stellen das jedes Spektrum gesendet wird.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -175,7 +171,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Spectrum Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

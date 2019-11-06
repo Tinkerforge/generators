@@ -205,13 +205,13 @@ Es gibt drei mögliche Kombinationen:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltages Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in'),
-             ('Value Has To Change', 'bool', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+             ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
 """
-The period in ms is the period with which the :cb:`Voltages`
+The period is the period with which the :cb:`Voltages`
 callback is triggered periodically. A value of 0 turns the callback off.
 
 If the `value has to change`-parameter is set to true, the callback is only
@@ -220,12 +220,10 @@ period, the callback is triggered immediately on change.
 
 If it is set to false, the callback is continuously triggered with the period,
 independent of the value.
-
-The default value is (0, false).
 """,
 'de':
 """
-Die Periode in ms ist die Periode mit der der :cb:`Voltages`
+Die Periode ist die Periode mit der der :cb:`Voltages`
 Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
 
 Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
@@ -235,8 +233,6 @@ sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
 
 Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
 festen Periode ausgelöst unabhängig von den Änderungen des Werts.
-
-Der Standardwert ist (0, false).
 """
 }]
 })
@@ -244,8 +240,8 @@ Der Standardwert ist (0, false).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltages Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out'),
-             ('Value Has To Change', 'bool', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+             ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':

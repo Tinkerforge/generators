@@ -92,28 +92,24 @@ den :cb:`Analog Value` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Ozone Concentration Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Ozone Concentration` callback is
+Sets the period with which the :cb:`Ozone Concentration` callback is
 triggered periodically. A value of 0 turns the callback off.
 
 The :cb:`Ozone Concentration` callback is only triggered if the
 ozone concentration has changed since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Ozone Concentration` Callback
+Setzt die Periode mit welcher der :cb:`Ozone Concentration` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Ozone Concentration` Callback wird nur ausgelöst, wenn sich die
 Ozon-Konzentration seit der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -121,7 +117,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Ozone Concentration Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -138,28 +134,24 @@ Gibt die Periode zurück, wie von :func:`Set Ozone Concentration Callback Period
 com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Analog Value` callback is triggered
+Sets the period with which the :cb:`Analog Value` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Analog Value` callback is only triggered if the analog value has
 changed since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Analog Value` Callback ausgelöst
+Setzt die Periode mit welcher der :cb:`Analog Value` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Analog Value` Callback wird nur ausgelöst, wenn sich der Analogwert
 seit der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -167,7 +159,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

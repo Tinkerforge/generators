@@ -68,28 +68,24 @@ mit :func:`Set Heart Rate Callback Period` vorzugeben.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Heart Rate Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Heart Rate` callback is triggered
+Sets the period with which the :cb:`Heart Rate` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Heart Rate` callback is only triggered if the heart rate has changed
 since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Heart Rate` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Heart Rate` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Heart Rate` Callback wird nur ausgelöst, wenn sich die
 Herzschlagfrequenz seit der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -97,7 +93,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Heart Rate Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

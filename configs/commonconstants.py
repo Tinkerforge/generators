@@ -68,15 +68,15 @@ verwendet werden. Der Callback wird mit der Funktion
         'type': 'function',
         'name': (name_set + ' Callback Configuration'),
         'corresponding_getter': name_get,
-        'elements': [('Period', 'uint32', 1, 'in'),
-                     ('Value Has To Change', 'bool', 1, 'in'),
-                     ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option'}),
+        'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+                     ('Value Has To Change', 'bool', 1, 'in', {'default': False}),
+                     ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
                      ('Min', data_type, 1, 'in'),
                      ('Max', data_type, 1, 'in')],
         'since_firmware': callback_config_setter_since_firmware,
         'doc': ['ccf', {
         'en': """
-The period in ms is the period with which the :cb:`{0}` callback is triggered
+The period is the period with which the :cb:`{0}` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 If the `value has to change`-parameter is set to true, the callback is only
@@ -107,7 +107,7 @@ If the option is set to 'x' (threshold turned off) the callback is triggered wit
 The default value is (0, false, 'x', 0, 0).
 """.format(name),
         'de': """
-Die Periode in ms ist die Periode mit der der :cb:`{0}` Callback ausgelöst wird. Ein Wert von 0
+Die Periode ist die Periode mit der der :cb:`{0}` Callback ausgelöst wird. Ein Wert von 0
 schaltet den Callback ab.
 
 Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der Callback nur ausgelöst,
@@ -148,9 +148,9 @@ Der Standardwert ist (0, false, 'x', 0, 0).
         'type': 'function',
         'name': (name_get + ' Callback Configuration'),
         'corresponding_getter': name_get,
-        'elements': [('Period', 'uint32', 1, 'out'),
-                     ('Value Has To Change', 'bool', 1, 'out'),
-                     ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option'}),
+        'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+                     ('Value Has To Change', 'bool', 1, 'out', {'default': False}),
+                     ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
                      ('Min', data_type, 1, 'out'),
                      ('Max', data_type, 1, 'out')],
         'since_firmware': callback_config_getter_since_firmware,

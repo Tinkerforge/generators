@@ -397,28 +397,24 @@ Gibt die Konfiguration zurück, wie von :func:`Set Fix LED Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Coordinates Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Coordinates` callback is triggered
+Sets the period with which the :cb:`Coordinates` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Coordinates` callback is only triggered if the coordinates changed
 since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Coordinates` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Coordinates` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Coordinates` Callback wird nur ausgelöst, wenn sich die Koordinaten seit der
 letzten Auslösung geändert haben.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -426,7 +422,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Coordinates Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -443,28 +439,24 @@ Gibt die Periode zurück, wie von :func:`Set Coordinates Callback Period` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Status Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Status` callback is triggered
+Sets the period with which the :cb:`Status` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Status` callback is only triggered if the status changed since the
 last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Status` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Status` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Status` Callback wird nur ausgelöst, wenn sich der Status seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -472,7 +464,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Status Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -489,28 +481,24 @@ Gibt die Periode zurück, wie von :func:`Set Status Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Altitude Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Altitude` callback is triggered
+Sets the period with which the :cb:`Altitude` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Altitude` callback is only triggered if the altitude changed since the
 last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Altitude` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Altitude` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Altitude` Callback wird nur ausgelöst, wenn sich die Höhe seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -518,7 +506,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -535,28 +523,24 @@ Gibt die Periode zurück, wie von :func:`Set Altitude Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Motion Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Motion` callback is triggered
+Sets the period with which the :cb:`Motion` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Motion` callback is only triggered if the motion changed since the
 last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Motion` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Motion` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Motion` Callback wird nur ausgelöst, wenn sich die Bewegung seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -564,7 +548,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -581,28 +565,24 @@ Gibt die Periode zurück, wie von :func:`Set Motion Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Date Time Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Date Time` callback is triggered
+Sets the period with which the :cb:`Date Time` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Date Time` callback is only triggered if the date or time changed
 since the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Date Time` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Date Time` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Date Time` Callback wird nur ausgelöst, wenn sich das Datum oder die
 Zeit seit der letzten Auslösung geändert haben.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -610,7 +590,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Date Time Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

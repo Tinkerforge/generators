@@ -289,28 +289,24 @@ Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Current` callback is triggered
+Sets the period with which the :cb:`Current` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Current` callback is only triggered if the current has changed since
 the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Current` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Current` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Current` Callback wird nur ausgelöst, wenn sich die Stromstärke seit
 der letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -318,7 +314,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -335,28 +331,24 @@ Gibt die Periode zurück, wie von :func:`Set Current Callback Period` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Voltage` callback is triggered
+Sets the period with which the :cb:`Voltage` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Voltage` callback is only triggered if the voltage has changed since
 the last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Voltage` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Voltage` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Voltage` Callback wird nur ausgelöst, wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -364,7 +356,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -381,28 +373,24 @@ Gibt die Periode zurück, wie von :func:`Set Voltage Callback Period` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Power Callback Period',
-'elements': [('Period', 'uint32', 1, 'in')],
+'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :cb:`Power` callback is triggered
+Sets the period with which the :cb:`Power` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The :cb:`Power` callback is only triggered if the power has changed since the
 last triggering.
-
-The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Power` Callback ausgelöst wird.
+Setzt die Periode mit welcher der :cb:`Power` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
 Der :cb:`Power` Callback wird nur ausgelöst, wenn sich die Leistung seit der
 letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -410,7 +398,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Power Callback Period',
-'elements': [('Period', 'uint32', 1, 'out')],
+'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
