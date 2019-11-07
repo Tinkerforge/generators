@@ -1416,8 +1416,8 @@ class Element(object):
             maximum = (2 ** bits) - 1
 
             if not type_.startswith('u'):
-                minimum = -maximum / 2
-                maximum = maximum / 2
+                minimum = -maximum // 2
+                maximum = maximum // 2
 
         return (minimum, maximum)
 
