@@ -584,7 +584,7 @@ def make_rst_meta_table(items, indent_level=1, index_title_match=None):
     if len(formatted_rows) == 0:
         return ''
 
-    return (' ' * indent_level + ('\n' + ' ' * indent_level).join(table_template.format(rows='\n  '.join(formatted_rows)).split('\n'))).replace('[[[', '<').replace(']]]', '>').replace('|||', '"')
+    return (' ' * indent_level + ('\n' + ' ' * indent_level).join(table_template.format(rows='\n  '.join(formatted_rows)).split('\n'))).replace('⟨', '<').replace('⟩', '>').replace('«', '"').replace('»', '"')
 
 def default_example_sort_key(example):
     return example[2], example[0] # lines, filename
@@ -1848,7 +1848,7 @@ class Packet(object):
             if scale != None and unit == None:
                 meta.append('{0}: 1/{1}'.format(unit_title, scale))
             elif scale == None and unit != None:
-                meta.append('{0}: 1 [[[abbr title=|||{1} ({2})|||]]]{3}[[[/abbr]]]'.format(unit_title, unit.name, unit.usage, unit.symbol))
+                meta.append('{0}: 1 ⟨abbr title=«{1} ({2})»⟩{3}⟨/abbr⟩'.format(unit_title, unit.name, unit.usage, unit.symbol))
             elif scale != None and unit != None:
                 unit_name = unit.name
                 unit_symbol = unit.symbol
@@ -1870,7 +1870,7 @@ class Packet(object):
                 if scale > 1:
                     scale = '1/{0}'.format(scale)
 
-                meta.append('{0}: {1} [[[abbr title=|||{2} ({3})|||]]]{4}[[[/abbr]]]'.format(unit_title, scale, unit_name, unit.usage, unit_symbol))
+                meta.append('{0}: {1} ⟨abbr title=«{2} ({3})»⟩{4}⟨/abbr⟩'.format(unit_title, scale, unit_name, unit.usage, unit_symbol))
 
             if element.get_type() not in ['bool', 'string']:
                 range_ = element.get_range()
