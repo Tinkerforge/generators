@@ -1314,17 +1314,17 @@ class Element(object):
         factor = self.get_factor()
 
         if factor != None:
-            assert isinstance(factor, int), factor
-            assert factor > 1, factor
-            assert self.get_direction() == 'in'
+            assert isinstance(factor, int), raw_data
+            assert factor > 1, raw_data
+            assert self.get_direction() == 'in', raw_data
             assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
         divisor = self.get_divisor()
 
         if divisor != None:
-            assert isinstance(divisor, int), divisor
-            assert divisor > 1, divisor
-            assert self.get_direction() == 'out'
+            assert isinstance(divisor, int), raw_data
+            assert divisor > 1, raw_data
+            assert self.get_direction() == 'out', raw_data
             assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
         unit_name = self.raw_data_extra.get('unit')
