@@ -675,11 +675,11 @@ def format_constants(prefix, packet, element_name_func,
     if constants_intro == None:
         constants_intro = {
             'en': """
-The following {0} are available for this function:
+The following **{0}** are available for this function:
 
 """,
             'de': """
-Die folgenden {0} sind für diese Funktion verfügbar:
+Die folgenden **{0}** sind für diese Funktion verfügbar:
 
 """
         }

@@ -183,11 +183,11 @@ class ModbusDocPacket(common.Packet):
         constants = {'en': 'meanings', 'de': 'Bedeutungen'}
         constants_intro = {
         'en': """
-The following {0} are defined for the elements of this function:
+The following **{0}** are defined for the elements of this function:
 
 """,
         'de': """
-Die folgenden {0} sind für die Elemente dieser Funktion definiert:
+Die folgenden **{0}** sind für die Elemente dieser Funktion definiert:
 
 """
         }
