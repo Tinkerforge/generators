@@ -1800,6 +1800,7 @@ class Packet(object):
         up_to_hint = select_lang({'en': 'up to', 'de': 'bis zu'})
         variable_hint = select_lang({'en': 'variable', 'de': 'variabel'})
         unit_title = select_lang({'en': 'Unit', 'de': 'Einheit'})
+        to_hint = select_lang({'en': 'to', 'de': 'bis'})
         range_title = select_lang({'en': 'Range', 'de': 'Wertebereich'})
         default_title = select_lang({'en': 'Default', 'de': 'Standardwert'})
         formatted_meta_in = []
@@ -1883,10 +1884,31 @@ class Packet(object):
                 if range_ == 'constants':
                     meta.append('{0}: {1}'.format(range_title, constants_hint[0]))
                 elif range_ != None:
-                    if element.get_constant_group() != None:
-                        meta.append('{0}: [{1}..{2}] {3}'.format(range_title, element.format_value(range_[0]), element.format_value(range_[1]), constants_hint[1]))
+                    formatted_range = [None, None]
+
+                    if element.get_type().startswith('int') or element.get_type().startswith('uint'):
+                        for i, value in enumerate(range_):
+                            for exponent, code, code_minus_one in [(16, '¹⁶', '¹⁵'), (32, '³²', '³¹'), (64, '⁶⁴', '⁶³')]:
+                                if value == -2 ** (exponent - 1):
+                                    formatted_range[i] = '⟨abbr title=«{0} (Int{1} Min)»⟩-2{2}⟨/abbr⟩'.format(value, exponent, code_minus_one)
+                                    break
+                                elif value == 2 ** (exponent - 1) - 1:
+                                    formatted_range[i] = '⟨abbr title=«{0} (Int{1} Max)»⟩2{2} - 1⟨/abbr⟩'.format(value, exponent, code_minus_one)
+                                    break
+                                elif value == 2 ** exponent - 1:
+                                    formatted_range[i] = '⟨abbr title=«{0} (UInt{1} Max)»⟩2{2} - 1⟨/abbr⟩'.format(value, exponent, code)
+                                    break
+
+                            if formatted_range[i] == None:
+                                formatted_range[i] = element.format_value(value)
                     else:
-                        meta.append('{0}: [{1}..{2}]'.format(range_title, element.format_value(range_[0]), element.format_value(range_[1])))
+                        for i, value in enumerate(range_):
+                            formatted_range[i] = element.format_value(value)
+
+                    if element.get_constant_group() != None:
+                        meta.append('{0}: [{1} {2} {3}] {4}'.format(range_title, formatted_range[0], formatted_range[1], to_hint, constants_hint[1]))
+                    else:
+                        meta.append('{0}: [{1} {2} {3}]'.format(range_title, formatted_range[0], to_hint, formatted_range[1]))
 
             default = element.get_default()
 
