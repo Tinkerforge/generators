@@ -73,15 +73,15 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
+             ('Y', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
+             ('Z', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the acceleration in x, y and z direction. The values
-are given in g/1000 (1g = 9.80665m/s²), not to be confused with grams.
+are given in gₙ/1000 (1gₙ = 9.80665m/s²).
 
 If you want to get the acceleration periodically, it is recommended
 to use the :cb:`Acceleration` callback and set the period with
@@ -90,7 +90,7 @@ to use the :cb:`Acceleration` callback and set the period with
 'de':
 """
 Gibt die Beschleunigung in X-, Y- und Z-Richtung zurück. Die Werte
-haben die Einheit g/1000 (1g = 9,80665m/s²), nicht zu verwechseln mit Gramm.
+haben die Einheit gₙ/1000 (1gₙ = 9,80665m/s²).
 
 Wenn die Beschleunigungswerte periodisch abgefragt werden sollen, wird empfohlen
 den :cb:`Acceleration` Callback zu nutzen und die Periode mit
@@ -145,12 +145,12 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min X', 'int16', 1, 'in'),
-             ('Max X', 'int16', 1, 'in'),
-             ('Min Y', 'int16', 1, 'in'),
-             ('Max Y', 'int16', 1, 'in'),
-             ('Min Z', 'int16', 1, 'in'),
-             ('Max Z', 'int16', 1, 'in')],
+             ('Min X', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Max X', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Min Y', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Max Y', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Min Z', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Max Z', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Standard Gravity', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -168,8 +168,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the acceleration is *inside* the min and max values"
  "'<'",    "Callback is triggered when the acceleration is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the acceleration is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0, 0, 0, 0, 0).
 """,
 'de':
 """
@@ -186,8 +184,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Beschleunigung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Beschleunigung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Beschleunigung größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """
 }]
 })
@@ -196,12 +192,12 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min X', 'int16', 1, 'out'),
-             ('Max X', 'int16', 1, 'out'),
-             ('Min Y', 'int16', 1, 'out'),
-             ('Max Y', 'int16', 1, 'out'),
-             ('Min Z', 'int16', 1, 'out'),
-             ('Max Z', 'int16', 1, 'out')],
+             ('Min X', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Max X', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Min Y', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Max Y', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Min Z', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'default': 0}),
+             ('Max Z', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -268,16 +264,16 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'unit': 'Degree Celsius', 'range': (-103, 152)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the temperature of the accelerometer in °C.
+Returns the temperature of the accelerometer.
 """,
 'de':
 """
-Gibt die Temperatur des Beschleunigungssensors in °C zurück.
+Gibt die Temperatur des Beschleunigungssensors zurück.
 """
 }]
 })
@@ -285,9 +281,9 @@ Gibt die Temperatur des Beschleunigungssensors in °C zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate'}),
-             ('Full Scale', 'uint8', 1, 'in', {'constant_group': 'Full Scale'}),
-             ('Filter Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Filter Bandwidth'})],
+'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate', 'default': 6}),
+             ('Full Scale', 'uint8', 1, 'in', {'constant_group': 'Full Scale', 'default': 1}),
+             ('Filter Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Filter Bandwidth', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -296,14 +292,11 @@ Configures the data rate, full scale range and filter bandwidth.
 Possible values are:
 
 * Data rate of 0Hz to 1600Hz.
-* Full scale range of ±2g up to ±16g.
+* Full scale range of ±2gₙ up to ±16gₙ.
 * Filter bandwidth between 50Hz and 800Hz.
 
 Decreasing data rate or full scale range will also decrease the noise on
 the data.
-
-The default values are 100Hz data rate, ±4g range and 200Hz
-filter bandwidth.
 """,
 'de':
 """
@@ -311,14 +304,11 @@ Konfiguriert die Datenrate, den Wertebereich und die Filterbandbreite.
 Mögliche Konfigurationswerte sind:
 
 * Datenrate zwischen 0Hz und 1600Hz.
-* Wertebereich von ±2g bis zu ±16g.
+* Wertebereich von ±2gₙ bis zu ±16gₙ.
 * Filterbandbreite zwischen 50Hz und 800Hz.
 
 Eine Verringerung der Datenrate oder des Wertebereichs verringert auch
 automatisch das Rauschen auf den Daten.
-
-Die Standardwerte sind 100Hz Datenrate, ±4g Wertebereich und 200Hz
-Filterbandbreite.
 """
 }]
 })
@@ -326,9 +316,9 @@ Filterbandbreite.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate'}),
-             ('Full Scale', 'uint8', 1, 'out', {'constant_group': 'Full Scale'}),
-             ('Filter Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Filter Bandwidth'})],
+'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate', 'default': 6}),
+             ('Full Scale', 'uint8', 1, 'out', {'constant_group': 'Full Scale', 'default': 1}),
+             ('Filter Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Filter Bandwidth', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -379,7 +369,7 @@ Deaktiviert die LED auf dem Bricklet.
 com['packets'].append({
 'type': 'function',
 'name': 'Is LED On',
-'elements': [('On', 'bool', 1, 'out')],
+'elements': [('On', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -396,9 +386,9 @@ Gibt *true* zurück wenn die LED aktiviert ist, *false* sonst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
+             ('Y', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
+             ('Z', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -425,9 +415,9 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration Reached',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
+             ('Y', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
+             ('Z', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Standard Gravity', 'range': (-16000, 16000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

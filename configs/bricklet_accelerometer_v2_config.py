@@ -93,15 +93,15 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int32', 1, 'out'),
-             ('Y', 'int32', 1, 'out'),
-             ('Z', 'int32', 1, 'out')],
+'elements': [('X', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
+             ('Y', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
+             ('Z', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the acceleration in x, y and z direction. The values
-are given in g/10000 (1g = 9.80665m/s²), not to be confused with grams.
+are given in gₙ/10000 (1gₙ = 9.80665m/s²).
 
 If you want to get the acceleration periodically, it is recommended
 to use the :cb:`Acceleration` callback and set the period with
@@ -110,7 +110,7 @@ to use the :cb:`Acceleration` callback and set the period with
 'de':
 """
 Gibt die Beschleunigung in X-, Y- und Z-Richtung zurück. Die Werte
-haben die Einheit g/10000 (1g = 9,80665m/s²), nicht zu verwechseln mit Gramm.
+haben die Einheit gₙ/10000 (1gₙ = 9,80665m/s²).
 
 Wenn die Beschleunigungswerte periodisch abgefragt werden sollen, wird empfohlen
 den :cb:`Acceleration` Callback zu nutzen und die Periode mit
@@ -122,8 +122,8 @@ den :cb:`Acceleration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate'}),
-             ('Full Scale', 'uint8', 1, 'in', {'constant_group': 'Full Scale'})],
+'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate', 'default': 7}),
+             ('Full Scale', 'uint8', 1, 'in', {'constant_group': 'Full Scale', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -136,8 +136,6 @@ Possible values are:
 
 Decreasing data rate or full scale range will also decrease the noise on
 the data.
-
-The default values are 100Hz data rate and ±2g range.
 """,
 'de':
 """
@@ -149,8 +147,6 @@ Mögliche Konfigurationswerte sind:
 
 Eine Verringerung der Datenrate oder des Wertebereichs verringert auch
 automatisch das Rauschen auf den Daten.
-
-Die Standardwerte sind 100Hz Datenrate und ±2g Wertebereich.
 """
 }]
 })
@@ -158,8 +154,8 @@ Die Standardwerte sind 100Hz Datenrate und ±2g Wertebereich.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate'}),
-             ('Full Scale', 'uint8', 1, 'out', {'constant_group': 'Full Scale'})],
+'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate', 'default': 7}),
+             ('Full Scale', 'uint8', 1, 'out', {'constant_group': 'Full Scale', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -238,7 +234,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set Info LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Info LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Info LED Config', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -257,7 +253,7 @@ Die LED kann ausgeschaltet, eingeschaltet oder im Herzschlagmodus betrieben werd
 com['packets'].append({
 'type': 'function',
 'name': 'Get Info LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Info LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Info LED Config', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -274,9 +270,9 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int32', 1, 'out'),
-             ('Y', 'int32', 1, 'out'),
-             ('Z', 'int32', 1, 'out')],
+'elements': [('X', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
+             ('Y', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
+             ('Z', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -299,10 +295,10 @@ Die :word:`parameters` sind der gleiche wie :func:`Get Acceleration`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Continuous Acceleration Configuration',
-'elements': [('Enable X', 'bool', 1, 'in'),
-             ('Enable Y', 'bool', 1, 'in'),
-             ('Enable Z', 'bool', 1, 'in'),
-             ('Resolution', 'uint8', 1, 'in', {'constant_group': 'Resolution'})],
+'elements': [('Enable X', 'bool', 1, 'in', {'default': False}),
+             ('Enable Y', 'bool', 1, 'in', {'default': False}),
+             ('Enable Z', 'bool', 1, 'in', {'default': False}),
+             ('Resolution', 'uint8', 1, 'in', {'constant_group': 'Resolution', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -411,10 +407,10 @@ Der maximale Durchsatz hängt von der Konfiguration ab:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Continuous Acceleration Configuration',
-'elements': [('Enable X', 'bool', 1, 'out'),
-             ('Enable Y', 'bool', 1, 'out'),
-             ('Enable Z', 'bool', 1, 'out'),
-             ('Resolution', 'uint8', 1, 'out', {'constant_group': 'Resolution'})],
+'elements': [('Enable X', 'bool', 1, 'out', {'default': False}),
+             ('Enable Y', 'bool', 1, 'out', {'default': False}),
+             ('Enable Z', 'bool', 1, 'out', {'default': False}),
+             ('Resolution', 'uint8', 1, 'out', {'constant_group': 'Resolution', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -433,7 +429,7 @@ Gibt die Konfiguration für kontinuierliche Beschleunigungswerte zurück, wie mi
 com['packets'].append({
 'type': 'callback',
 'name': 'Continuous Acceleration 16 Bit',
-'elements': [('Acceleration', 'int16', 30, 'out')],
+'elements': [('Acceleration', 'int16', 30, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -500,7 +496,7 @@ von den aktivierten Achsen. Beispiele:
 com['packets'].append({
 'type': 'callback',
 'name': 'Continuous Acceleration 8 Bit',
-'elements': [('Acceleration', 'int8', 60, 'out')],
+'elements': [('Acceleration', 'int8', 60, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -567,8 +563,8 @@ von den aktivierten Achsen. Beispiele:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Filter Configuration',
-'elements': [('IIR Bypass', 'uint8', 1, 'in', {'constant_group': 'IIR Bypass'}),
-             ('Low Pass Filter', 'uint8', 1, 'in', {'constant_group': 'Low Pass Filter'})],
+'elements': [('IIR Bypass', 'uint8', 1, 'in', {'constant_group': 'IIR Bypass', 'default': 0}),
+             ('Low Pass Filter', 'uint8', 1, 'in', {'constant_group': 'Low Pass Filter', 'default': 0})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -583,8 +579,6 @@ half or a ninth of the output data rate.
    :alt: Accelerometer filter
    :align: center
    :target: ../../_images/Bricklets/bricklet_accelerometer_v2_filter.png
-
-By default filtering is applied and the filter corner frequency is a ninth of the output data rate.
 """,
 'de':
 """
@@ -598,8 +592,6 @@ der Ausgabe-Datenrate sein.
    :alt: Accelerometer filter
    :align: center
    :target: ../../_images/Bricklets/bricklet_accelerometer_v2_filter.png
-
-Standardmäßig wird der Filter angewendet und die Frequenz ist ein Neuntel der Ausgabe-Datenrate.
 """
 }]
 })
@@ -607,8 +599,8 @@ Standardmäßig wird der Filter angewendet und die Frequenz ist ein Neuntel der 
 com['packets'].append({
 'type': 'function',
 'name': 'Get Filter Configuration',
-'elements': [('IIR Bypass', 'uint8', 1, 'out', {'constant_group': 'IIR Bypass'}),
-             ('Low Pass Filter', 'uint8', 1, 'out', {'constant_group': 'Low Pass Filter'})],
+'elements': [('IIR Bypass', 'uint8', 1, 'out', {'constant_group': 'IIR Bypass', 'default': 0}),
+             ('Low Pass Filter', 'uint8', 1, 'out', {'constant_group': 'Low Pass Filter', 'default': 0})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':

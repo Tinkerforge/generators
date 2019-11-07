@@ -15,11 +15,14 @@ THRESHOLD_OPTION_CONSTANT_GROUP = {
 }
 
 def add_callback_value_function(packets, name, data_name, data_type, doc,
-                                has_channels=False, since_firmware=None,
+                                channel_count=1, since_firmware=None,
                                 getter_since_firmware=None,
                                 callback_since_firmware=None,
                                 callback_config_getter_since_firmware=None,
-                                callback_config_setter_since_firmware=None):
+                                callback_config_setter_since_firmware=None,
+                                divisor=None,
+                                unit=None,
+                                range_=None):
     name_get = name
     name_set = name.replace('Get ', 'Set ')
     name = name.replace('Get ', '')
@@ -39,16 +42,20 @@ def add_callback_value_function(packets, name, data_name, data_type, doc,
     if callback_config_setter_since_firmware == None:
         callback_config_setter_since_firmware = callback_since_firmware[:]
 
+    getter_element_info = {'divisor': divisor, 'unit': unit}
+    if range_ is not None:
+        getter_element_info['range'] = range_
+
     getter = {
         'type': 'function',
         'name': name_get,
-        'elements': [(data_name, data_type, 1, 'out')],
+        'elements': [(data_name, data_type, 1, 'out', getter_element_info)],
         'since_firmware': getter_since_firmware,
         'doc': ['bf', doc]
     }
 
-    if has_channels:
-        getter['elements'].insert(0, ('Channel', 'uint8', 1, 'in'))
+    if channel_count > 1:
+        getter['elements'].insert(0, ('Channel', 'uint8', 1, 'in', {'range': (0, channel_count - 1)}))
 
     getter['doc'][1]['en'] += """
 
@@ -71,8 +78,8 @@ verwendet werden. Der Callback wird mit der Funktion
         'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
                      ('Value Has To Change', 'bool', 1, 'in', {'default': False}),
                      ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-                     ('Min', data_type, 1, 'in'),
-                     ('Max', data_type, 1, 'in')],
+                     ('Min', data_type, 1, 'in', {'factor': divisor, 'unit': unit, 'default': 0}),
+                     ('Max', data_type, 1, 'in', {'factor': divisor, 'unit': unit, 'default': 0})],
         'since_firmware': callback_config_setter_since_firmware,
         'doc': ['ccf', {
         'en': """
@@ -103,8 +110,6 @@ The following options are possible:
  "'>'",    "Threshold is triggered when the value is greater than the min value (max is ignored)"
 
 If the option is set to 'x' (threshold turned off) the callback is triggered with the fixed period.
-
-The default value is (0, false, 'x', 0, 0).
 """.format(name),
         'de': """
 Die Periode ist die Periode mit der der :cb:`{0}` Callback ausgelöst wird. Ein Wert von 0
@@ -135,14 +140,12 @@ Die folgenden Optionen sind möglich:
 
 Wird die Option auf 'x' gesetzt (Threshold abgeschaltet), so wird der Callback mit der festen Periode
 ausgelöst.
-
-Der Standardwert ist (0, false, 'x', 0, 0).
 """.format(name)
         }]
     }
 
-    if has_channels:
-        callback_config_setter['elements'].insert(0, ('Channel', 'uint8', 1, 'in'))
+    if channel_count > 1:
+        callback_config_setter['elements'].insert(0, ('Channel', 'uint8', 1, 'in', {'range': (0, channel_count - 1)}))
 
     callback_config_getter = {
         'type': 'function',
@@ -151,8 +154,8 @@ Der Standardwert ist (0, false, 'x', 0, 0).
         'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
                      ('Value Has To Change', 'bool', 1, 'out', {'default': False}),
                      ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-                     ('Min', data_type, 1, 'out'),
-                     ('Max', data_type, 1, 'out')],
+                     ('Min', data_type, 1, 'out', {'divisor': divisor, 'unit': unit, 'default': 0}),
+                     ('Max', data_type, 1, 'out', {'divisor': divisor, 'unit': unit, 'default': 0})],
         'since_firmware': callback_config_getter_since_firmware,
         'doc': ['ccf', {
         'en': """
@@ -164,14 +167,14 @@ Gibt die Callback-Konfiguration zurück, wie mittels :func:`{0} Callback Configu
         }]
     }
 
-    if has_channels:
-        callback_config_getter['elements'].insert(0, ('Channel', 'uint8', 1, 'in'))
+    if channel_count > 1:
+        callback_config_getter['elements'].insert(0, ('Channel', 'uint8', 1, 'in', {'range': (0, channel_count - 1)}))
 
     callback = {
         'type': 'callback',
         'name': name,
         'corresponding_getter': name_get,
-        'elements': [(data_name, data_type, 1, 'out')],
+        'elements': [(data_name, data_type, 1, 'out', getter_element_info)],
         'since_firmware': callback_since_firmware,
         'doc': ['c', {
         'en': """
@@ -189,8 +192,8 @@ Der :word:`parameter` ist der gleiche wie :func:`{1}`.
         }]
     }
 
-    if has_channels:
-        callback['elements'].insert(0, ('Channel', 'uint8', 1, 'out'))
+    if channel_count > 1:
+        callback['elements'].insert(0, ('Channel', 'uint8', 1, 'out', {'range': (0, channel_count - 1)}))
 
     packets.append(getter)
     packets.append(callback_config_setter)

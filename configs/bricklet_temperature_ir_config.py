@@ -38,15 +38,12 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Ambient Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the ambient temperature of the sensor. The value
-has a range of -400 to 1250 and is given in °C/10,
-e.g. a value of 423 means that an ambient temperature of 42.3 °C is
-measured.
+Returns the ambient temperature of the sensor.
 
 If you want to get the ambient temperature periodically, it is recommended
 to use the :cb:`Ambient Temperature` callback and set the period with
@@ -54,9 +51,7 @@ to use the :cb:`Ambient Temperature` callback and set the period with
 """,
 'de':
 """
-Gibt die Umgebungstemperatur des Sensors zurück. Der Wertebereich ist von
--400 bis 1250 und wird in °C/10 angegeben, z.B. bedeutet
-ein Wert von 423 eine gemessene Umgebungstemperatur von 42,3 °C.
+Gibt die Umgebungstemperatur des Sensors zurück.
 
 Wenn die Umgebungstemperatur periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Ambient Temperature` Callback zu nutzen und die Periode mit
@@ -68,16 +63,13 @@ den :cb:`Ambient Temperature` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Object Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the object temperature of the sensor, i.e. the temperature
-of the surface of the object the sensor is aimed at. The value
-has a range of -700 to 3800 and is given in °C/10,
-e.g. a value of 3001 means that a temperature of 300.1 °C is measured
-on the surface of the object.
+of the surface of the object the sensor is aimed at.
 
 The temperature of different materials is dependent on their `emissivity
 <https://en.wikipedia.org/wiki/Emissivity>`__. The emissivity of the material
@@ -90,10 +82,7 @@ to use the :cb:`Object Temperature` callback and set the period with
 'de':
 """
 Gibt die Objekttemperatur des Sensors zurück, z.B. die Temperatur
-der Oberfläche auf welche der Sensor zielt. Der Wertebereich ist von
--700 bis 3800 und wird in °C/10 angegeben, z.B. bedeutet
-ein Wert von 3001 eine gemessene Temperatur von 300,1 °C auf der Oberfläche
-des Objektes.
+der Oberfläche auf welche der Sensor zielt.
 
 Die Temperatur von unterschiedlichen Materialien ist abhängig von ihrem
 `Emissionsgrad <https://de.wikipedia.org/wiki/Emissionsgrad>`__. Der
@@ -109,7 +98,7 @@ den :cb:`Object Temperature` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Emissivity',
-'elements': [('Emissivity', 'uint16', 1, 'in')],
+'elements': [('Emissivity', 'uint16', 1, 'in', {'factor': 65535, 'default': 65535, 'range': (6553, None)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -129,9 +118,6 @@ value 6553, an emissivity of 0.5 with the value 32767 and so on.
 .. note::
  If you need a precise measurement for the object temperature, it is
  absolutely crucial that you also provide a precise emissivity.
-
-The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
-sensor can handle is 0.1 (value of 6553).
 
 The emissivity is stored in non-volatile memory and will still be used after a restart or power cycle of the Bricklet.
 """,
@@ -153,9 +139,6 @@ vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert
  Wenn eine exakte Messung der Objekttemperatur notwendig ist, ist es entscheidend
  eine exakten Emissionsgrad anzugeben.
 
-Der Standard Emissionsgrad ist 1,0 (Wert von 65535) und der minimale
-Emissionsgrad welcher der Sensor verarbeiten kann ist 0,1 (Wert von 6553).
-
 Der Emissionsgrad wird in nicht-flüchtigem Speicher gespeichert und wird auch noch einem Neustart weiter genutzt.
 """
 }]
@@ -164,7 +147,7 @@ Der Emissionsgrad wird in nicht-flüchtigem Speicher gespeichert und wird auch n
 com['packets'].append({
 'type': 'function',
 'name': 'Get Emissivity',
-'elements': [('Emissivity', 'uint16', 1, 'out')],
+'elements': [('Emissivity', 'uint16', 1, 'out', {'divisor': 65535, 'default': 65535, 'range': (6553, None)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -266,8 +249,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Ambient Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in'),
-             ('Max', 'int16', 1, 'in')],
+             ('Min', 'int16', 1, 'in', {'factor': 10, 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'factor': 10, 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -285,8 +268,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the ambient temperature is *inside* the min and max values"
  "'<'",    "Callback is triggered when the ambient temperature is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the ambient temperature is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -303,8 +284,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Umgebungstemperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Umgebungstemperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Umgebungstemperatur größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -313,8 +292,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Ambient Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out'),
-             ('Max', 'int16', 1, 'out')],
+             ('Min', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -332,8 +311,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Object Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in'),
-             ('Max', 'int16', 1, 'in')],
+             ('Min', 'int16', 1, 'in', {'factor': 10, 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'factor': 10, 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -351,8 +330,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the object temperature is *inside* the min and max values"
  "'<'",    "Callback is triggered when the object temperature is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the object temperature is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -369,8 +346,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Objekttemperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Objekttemperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Objekttemperatur größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -379,8 +354,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Object Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out'),
-             ('Max', 'int16', 1, 'out')],
+             ('Min', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -451,7 +426,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Ambient Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -477,7 +452,7 @@ Temperatur seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Object Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -504,7 +479,7 @@ Objekttemperatur seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Ambient Temperature Reached',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -531,7 +506,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Object Temperature Reached',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -45,14 +45,12 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the temperature of the sensor. The value
-has a range of -2500 to 8500 and is given in °C/100,
-e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
+Returns the temperature of the sensor.
 
 If you want to get the temperature periodically, it is recommended
 to use the :cb:`Temperature` callback and set the period with
@@ -60,9 +58,7 @@ to use the :cb:`Temperature` callback and set the period with
 """,
 'de':
 """
-Gibt die Temperatur des Sensors zurück. Der Wertebereich ist von
--2500 bis 8500 und wird in °C/100 angegeben, z.B. bedeutet
-ein Wert von 4223 eine gemessene Temperatur von 42,23 °C.
+Gibt die Temperatur des Sensors zurück.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Temperature` Callback zu nutzen und die Periode mit
@@ -117,8 +113,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in'),
-             ('Max', 'int16', 1, 'in')],
+             ('Min', 'int16', 1, 'in', {'factor': 100, 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'factor': 100, 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -136,8 +132,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
  "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -154,8 +148,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -164,8 +156,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out'),
-             ('Max', 'int16', 1, 'out')],
+             ('Min', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -232,7 +224,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -258,7 +250,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature Reached',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -285,14 +277,14 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set I2C Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'I2C Mode'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'I2C Mode', 'default': 0})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
 """
 Sets the I2C mode. Possible modes are:
 
-* 0: Fast (400kHz, default)
+* 0: Fast (400kHz)
 * 1: Slow (100kHz)
 
 If you have problems with obvious outliers in the
@@ -306,7 +298,7 @@ a high throughput needs to be achieved.
 """
 Setzt den I2C Modus. Mögliche Modi sind:
 
-* 0: Fast (400kHz, Standard)
+* 0: Fast (400kHz)
 * 1: Slow (100kHz)
 
 Wenn Probleme mit offensichtlichen Ausreißern in den
@@ -323,7 +315,7 @@ sollte die I2C Geschwindigkeit allerdings nicht verringert werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get I2C Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'I2C Mode'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'I2C Mode', 'default': 0})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

@@ -47,15 +47,11 @@ com['constant_groups'].append({
 temperature_doc = {
 'en':
 """
-Returns the temperature measured by the sensor. The value
-has a range of -4500 to 13000 and is given in °C/100,
-i.e. a value of 3200 means that a temperature of 32.00 °C is measured.
+Returns the temperature measured by the sensor.
 """,
 'de':
 """
-Gibt die gemessene Temperatur des Sensors zurück. Der Wertebereich ist von
--4500 bis 13000 und wird in °C/100 angegeben, z.B. bedeutet
-ein Wert von 3200 eine gemessene Temperatur von 32,00 °C.
+Gibt die gemessene Temperatur des Sensors zurück.
 """
 }
 
@@ -64,7 +60,10 @@ add_callback_value_function(
     name      = 'Get Temperature',
     data_name = 'Temperature',
     data_type = 'int16',
-    doc       = temperature_doc
+    doc       = temperature_doc,
+    divisor   = 100,
+    unit      = 'Degree Celsius',
+    range_    = (-4500, 13000)
 )
 
 com['packets'].append({

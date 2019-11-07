@@ -59,7 +59,10 @@ add_callback_value_function(
     name      = 'Get Ambient Temperature',
     data_name = 'Temperature',
     data_type = 'int16',
-    doc       = ambient_temperature_doc
+    doc       = ambient_temperature_doc,
+    divisor   = 10,
+    unit      = 'Degree Celsius',
+    range_    = (-400, 1250)
 )
 
 object_temperature_doc = {
@@ -94,13 +97,16 @@ add_callback_value_function(
     name      = 'Get Object Temperature',
     data_name = 'Temperature',
     data_type = 'int16',
-    doc       = object_temperature_doc
+    doc       = object_temperature_doc,
+    divisor   = 10,
+    unit      = 'Degree Celsius',
+    range_    = (-700, 3800)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Emissivity',
-'elements': [('Emissivity', 'uint16', 1, 'in')],
+'elements': [('Emissivity', 'uint16', 1, 'in', {'factor': 65535, 'default': 65535, 'range': (6553, None)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -120,9 +126,6 @@ value 6553, an emissivity of 0.5 with the value 32767 and so on.
 .. note::
  If you need a precise measurement for the object temperature, it is
  absolutely crucial that you also provide a precise emissivity.
-
-The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
-sensor can handle is 0.1 (value of 6553).
 
 The emissivity is stored in non-volatile memory and will still be
 used after a restart or power cycle of the Bricklet.
@@ -145,9 +148,6 @@ vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert
  Wenn eine exakte Messung der Objekttemperatur notwendig ist, ist es entscheidend
  eine exakten Emissionsgrad anzugeben.
 
-Der Standard Emissionsgrad ist 1,0 (Wert von 65535) und der minimale
-Emissionsgrad welcher der Sensor verarbeiten kann ist 0,1 (Wert von 6553).
-
 Der Emissionsgrad wird in nicht-flüchtigem Speicher gespeichert und wird
 auch noch einem Neustart weiter genutzt.
 """
@@ -157,7 +157,7 @@ auch noch einem Neustart weiter genutzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Emissivity',
-'elements': [('Emissivity', 'uint16', 1, 'out')],
+'elements': [('Emissivity', 'uint16', 1, 'out', {'divisor': 65535, 'default': 65535, 'range': (6553, None)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

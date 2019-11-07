@@ -74,8 +74,7 @@ com['constant_groups'].append({
 current_doc = {
 'en':
 """
-Returns the current of the specified channel. The value is in nA and between
-0nA and 22505322nA (22.5mA).
+Returns the current of the specified channel.
 
 It is possible to detect if an IEC 60381-1 compatible sensor is connected
 and if it works probably.
@@ -86,8 +85,7 @@ there might be a short circuit or the sensor is defective.
 """,
 'de':
 """
-Gibt die gemessenen Stromstärke des spezifizierten Kanals zurück. Der Wert
-ist in nA und im Bereich von 0nA bis 22505322nA (22,5mA).
+Gibt die gemessenen Stromstärke des spezifizierten Kanals zurück.
 
 Es ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen
 ist und ob er funktionsfähig ist.
@@ -101,18 +99,21 @@ ist.
 }
 
 add_callback_value_function(
-    packets      = com['packets'],
-    name         = 'Get Current',
-    data_name    = 'Current',
-    data_type    = 'int32',
-    has_channels = True,
-    doc          = current_doc
+    packets       = com['packets'],
+    name          = 'Get Current',
+    data_name     = 'Current',
+    data_type     = 'int32',
+    channel_count = 2,
+    doc           = current_doc,
+    divisor       = 1000*1000*1000,
+    unit          = 'Ampere',
+    range_        = (0, 22505322)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate'})],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -128,8 +129,6 @@ The resolution for the rates is 12, 14, 16 and 18 bit respectively.
  "1",    "60 samples per second, 14 bit resolution"
  "2",    "15 samples per second, 16 bit resolution"
  "3",    "4 samples per second, 18 bit resolution"
-
-The default value is 3 (4 samples per second with 18 bit resolution).
 """,
 'de':
 """
@@ -144,8 +143,6 @@ Die Auflösung für die Raten sind 12, 14, 16 und 18 Bit respektive.
  "1",    "60 Samples pro Sekunde, 14 Bit Auflösung"
  "2",    "15 Samples pro Sekunde, 16 Bit Auflösung"
  "3",    "4 Samples pro Sekunde, 18 Bit Auflösung"
-
-Der Standardwert ist 3 (4 Samples pro Sekunde mit 18 Bit Auflösung).
 """
 }]
 })
@@ -153,7 +150,7 @@ Der Standardwert ist 3 (4 Samples pro Sekunde mit 18 Bit Auflösung).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate'})],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -170,7 +167,7 @@ Gibt die Verstärkung zurück, wie von :func:`Set Sample Rate` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Gain',
-'elements': [('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain'})],
+'elements': [('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -180,8 +177,6 @@ you can increase the gain to get some more resolution.
 
 Example: If you measure 0.5mA with a gain of 8x the return value will be
 4mA.
-
-The default gain is 1x.
 """,
 'de':
 """
@@ -190,8 +185,6 @@ soll, dann kann der Gain hochgesetzt werden, um die Auflösung zu verbessern.
 
 Beispiel: Wenn 0,5mA gememsen werden mit einem Gain von 8x dann wird 4mA
 zurückgegeben.
-
-Der Standardwert ist 1x.
 """
 }]
 })
@@ -199,7 +192,7 @@ Der Standardwert ist 1x.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Gain',
-'elements': [('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain'})],
+'elements': [('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -216,8 +209,8 @@ Gibt die Verstärkung zurück, wie von :func:`Set Gain` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -228,8 +221,6 @@ LED can either be turned on with a pre-defined threshold or the intensity
 of the LED can change with the measured value.
 
 You can configure the channel status behavior with :func:`Set Channel LED Status Config`.
-
-By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
@@ -241,8 +232,6 @@ gemessenen Wertes skaliert werden.
 
 Das Verhalten des Kanalstatus kann mittels :func:`Set Channel LED Status Config`
 eingestellt werden.
-
-Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -250,8 +239,8 @@ Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -286,10 +275,10 @@ is scaled the other way around."""
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Min', 'int32', 1, 'in', {'factor': 1000*1000*1000, 'unit': 'Ampere', 'default': 4*1000*1000}),
+             ('Max', 'int32', 1, 'in', {'factor': 1000*1000*1000, 'unit': 'Ampere', 'default': 20*1000*1000}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -298,9 +287,6 @@ Sets the channel LED status config. This config is used if the channel LED is
 configured as "Channel Status", see :func:`Set Channel LED Config`.
 
 {}
-
-By default the channel LED status config is set to intensity with min=4mA and
-max=20mA.
 """.format(led_status_config_description),
 'de':
 """
@@ -326,8 +312,6 @@ der LED skaliert wird. Beispiel mit min=4mA und max=20mA: Die LED ist bei 4mA un
 darunter aus, bei 20mA und darüber an und zwischen 4mA und 20mA wird die Helligkeit
 linear skaliert. Wenn der min Wert größer als der max Wert ist, dann wird die
 Helligkeit andersherum skaliert.
-
-Standardwerte: Intensitätsmodus mit min=4mA und max=20mA.
 """
 }]
 })
@@ -335,10 +319,10 @@ Standardwerte: Intensitätsmodus mit min=4mA und max=20mA.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out'),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Status Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Min', 'int32', 1, 'out', {'divisor': 1000*1000*1000, 'unit': 'Ampere', 'default': 4*1000*1000}),
+             ('Max', 'int32', 1, 'out', {'divisor': 1000*1000*1000, 'unit': 'Ampere', 'default': 20*1000*1000}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Status Config', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

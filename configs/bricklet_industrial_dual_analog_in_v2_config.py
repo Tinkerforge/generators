@@ -85,27 +85,30 @@ und 1.
 voltage_doc = {
 'en':
 """
-Returns the voltage for the given channel in mV.
+Returns the voltage for the given channel.
 """,
 'de':
 """
-Gibt die Spannung für den übergebenen Kanal in mV zurück.
+Gibt die Spannung für den übergebenen Kanal zurück.
 """
 }
 
 add_callback_value_function(
-    packets      = com['packets'],
-    name         = 'Get Voltage',
-    data_name    = 'Voltage',
-    data_type    = 'int32',
-    has_channels = True,
-    doc          = voltage_doc
+    packets       = com['packets'],
+    name          = 'Get Voltage',
+    data_name     = 'Voltage',
+    data_type     = 'int32',
+    channel_count = 2,
+    doc           = voltage_doc,
+    divisor       = 1000,
+    unit          = 'Volt',
+    range_        = (-35000, 35000)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate'})],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate', 'default': 6})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -113,16 +116,12 @@ com['packets'].append({
 Sets the sample rate. The sample rate can be between 1 sample per second
 and 976 samples per second. Decreasing the sample rate will also decrease the
 noise on the data.
-
-The default value is 6 (2 samples per second).
 """,
 'de':
 """
 Setzt die Abtastrate. Der Wertebereich der verfügbare Abtastraten
 liegt zwischen 1 Wert pro Sekunde und 976 Werte pro Sekunde. Ein
 Verringern der Abtastrate wird auch das Rauschen auf den Daten verringern.
-
-Der Standardwert ist 6 (2 Werte pro Sekunde).
 """
 }]
 })
@@ -130,7 +129,7 @@ Der Standardwert ist 6 (2 Werte pro Sekunde).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate'})],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate', 'default': 6})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -147,8 +146,8 @@ Gibt die Abtastrate zurück, wie von :func:`Set Sample Rate` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Offset', 'int32', 2, 'in'),
-             ('Gain', 'int32', 2, 'in')],
+'elements': [('Offset', 'int32', 2, 'in', {'range': (-2**23, 2**23-1)}),
+             ('Gain', 'int32', 2, 'in', {'range': (-2**23, 2**23-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -173,8 +172,8 @@ nicht notwendig sein.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Offset', 'int32', 2, 'out'),
-             ('Gain', 'int32', 2, 'out')],
+'elements': [('Offset', 'int32', 2, 'out', {'range': (-2**23, 2**23-1)}),
+             ('Gain', 'int32', 2, 'out', {'range': (-2**23, 2**23-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -191,7 +190,7 @@ Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get ADC Values',
-'elements': [('Value', 'int32', 2, 'out')],
+'elements': [('Value', 'int32', 2, 'out', {'range': (-2**23, 2**23-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -215,8 +214,8 @@ of the LED can change with the measured value."""
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -246,8 +245,8 @@ Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -282,10 +281,10 @@ way around."""
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Min', 'int32', 1, 'in', {'factor': 1000, 'unit' : 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'factor': 1000, 'unit' : 'Volt', 'default': 10000}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -294,9 +293,6 @@ Sets the channel LED status config. This config is used if the channel LED is
 configured as "Channel Status", see :func:`Set Channel LED Config`.
 
 {}
-
-By default the channel LED status config is set to intensity with min=0V and
-max=10V.
 """.format(led_status_config_description),
 'de':
 """
@@ -322,8 +318,6 @@ der LED skaliert wird. Beispiel mit min=4V und max=20V: Die LED ist bei 4V und
 darunter aus, bei 20V und darüber an und zwischen 4V und 20V wird die Helligkeit
 linear skaliert. Wenn der min Wert größer als der max Wert ist, dann wird die
 Helligkeit andersherum skaliert.
-
-Standardwerte: Intensitätsmodus mit min=0V und max=10V.
 """
 }]
 })
@@ -331,10 +325,10 @@ Standardwerte: Intensitätsmodus mit min=0V und max=10V.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out'),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Status Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Min', 'int32', 1, 'out', {'divisor': 1000, 'unit' : 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'divisor': 1000, 'unit' : 'Volt', 'default': 10000}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Status Config', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
