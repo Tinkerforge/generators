@@ -1888,15 +1888,15 @@ class Packet(object):
 
                     if element.get_type().startswith('int') or element.get_type().startswith('uint'):
                         for i, value in enumerate(range_):
-                            for exponent, code, code_minus_one in [(16, '¹⁶', '¹⁵'), (32, '³²', '³¹'), (64, '⁶⁴', '⁶³')]:
+                            for exponent in [16, 32, 64]:
                                 if value == -2 ** (exponent - 1):
-                                    formatted_range[i] = '⟨abbr title=«{0} (Int{1} Min)»⟩-2{2}⟨/abbr⟩'.format(value, exponent, code_minus_one)
+                                    formatted_range[i] = '⟨abbr title=«{0} (Int{1} Min)»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(value, exponent, exponent - 1)
                                     break
                                 elif value == 2 ** (exponent - 1) - 1:
-                                    formatted_range[i] = '⟨abbr title=«{0} (Int{1} Max)»⟩2{2} - 1⟨/abbr⟩'.format(value, exponent, code_minus_one)
+                                    formatted_range[i] = '⟨abbr title=«{0} (Int{1} Max)»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(value, exponent, exponent - 1)
                                     break
                                 elif value == 2 ** exponent - 1:
-                                    formatted_range[i] = '⟨abbr title=«{0} (UInt{1} Max)»⟩2{2} - 1⟨/abbr⟩'.format(value, exponent, code)
+                                    formatted_range[i] = '⟨abbr title=«{0} (UInt{1} Max)»⟩2⟨sup⟩{1}⟨/sup⟩ - 1⟨/abbr⟩'.format(value, exponent)
                                     break
 
                             if formatted_range[i] == None:
