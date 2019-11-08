@@ -41,16 +41,11 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 ambient_temperature_doc = {
 'en':
 """
-Returns the ambient temperature of the sensor. The value
-has a range of -400 to 1250 and is given in °C/10,
-e.g. a value of 423 means that an ambient temperature of 42.3 °C is
-measured.
+Returns the ambient temperature of the sensor.
 """,
 'de':
 """
-Gibt die Umgebungstemperatur des Sensors zurück. Der Wertebereich ist von
--400 bis 1250 und wird in °C/10 angegeben, z.B. bedeutet
-ein Wert von 423 eine gemessene Umgebungstemperatur von 42,3 °C.
+Gibt die Umgebungstemperatur des Sensors zurück.
 """
 }
 
@@ -69,10 +64,7 @@ object_temperature_doc = {
 'en':
 """
 Returns the object temperature of the sensor, i.e. the temperature
-of the surface of the object the sensor is aimed at. The value
-has a range of -700 to 3800 and is given in °C/10,
-e.g. a value of 3001 means that a temperature of 300.1 °C is measured
-on the surface of the object.
+of the surface of the object the sensor is aimed at.
 
 The temperature of different materials is dependent on their `emissivity
 <https://en.wikipedia.org/wiki/Emissivity>`__. The emissivity of the material
@@ -81,10 +73,7 @@ can be set with :func:`Set Emissivity`.
 'de':
 """
 Gibt die Objekttemperatur des Sensors zurück, z.B. die Temperatur
-der Oberfläche auf welche der Sensor zielt. Der Wertebereich ist von
--700 bis 3800 und wird in °C/10 angegeben, z.B. bedeutet
-ein Wert von 3001 eine gemessene Temperatur von 300,1 °C auf der Oberfläche
-des Objektes.
+der Oberfläche auf welche der Sensor zielt.
 
 Die Temperatur von unterschiedlichen Materialien ist abhängig von ihrem
 `Emissionsgrad <https://de.wikipedia.org/wiki/Emissionsgrad>`__. Der
