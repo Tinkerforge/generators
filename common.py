@@ -1139,14 +1139,19 @@ class FlavoredName(object):
             return self.cache[key]
 
 class Unit(object):
-    def __init__(self, name, symbol, usage, scale_prefix_allowed=True):
+    def __init__(self, name, symbol, usage, scale_prefix_allowed=True, format_string={'en': '{value} {unit}', 'de': '{value} {unit}'}):
         if scale_prefix_allowed:
             assert ' ' not in name, name
+
+        if format_string:
+            assert '{value}' in format_string, format_string
+            assert '{unit}' in format_string, format_string
 
         self._name = name
         self.symbol = symbol
         self._usage = usage
         self.scale_prefix_allowed = scale_prefix_allowed
+        self.format_string = format_string
 
     @property
     def name(self):
