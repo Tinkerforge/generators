@@ -1164,9 +1164,9 @@ class Unit(object):
 units = {
     'Ampere':                       Unit({'en': 'Ampere', 'de': 'Ampere'},
                                          'A',
-                                         {'en': 'Electric Current', 'de': 'Elektrische Stromstärke'}),
+                                         {'en': 'Electric current', 'de': 'Elektrische Stromstärke'}),
 
-    'Bit Per Second':               Unit({'en': 'Bit Per Second', 'de': 'Bit Pro Sekunde'},
+    'Bit Per Second':               Unit({'en': 'Bit per second', 'de': 'Bit pro Sekunde'},
                                          'bit/s',
                                          {'en': 'Data Rate', 'de': 'Datenrate'}),
 
@@ -1180,9 +1180,9 @@ units = {
                                          {'en': 'Angle', 'de': 'Winkel'},
                                          scale_prefix_allowed=False),
 
-    'Degree Per Second':            Unit({'en': 'Degree Per Second', 'de': 'Grad Pro Sekunde'},
+    'Degree Per Second':            Unit({'en': 'Degree per second', 'de': 'Grad pro Sekunde'},
                                          '°/s',
-                                         {'en': 'Anglular Velocity', 'de': 'Winkelgeschwindigkeit'},
+                                         {'en': 'Anglular velocity', 'de': 'Winkelgeschwindigkeit'},
                                          scale_prefix_allowed=False),
 
     'Gram':                         Unit({'en': 'Gram', 'de': 'Gramm'},
@@ -1208,7 +1208,7 @@ units = {
                                          'm',
                                          {'en': 'Length', 'de': 'Länge'}),
 
-    'Meter Per Second Squared':     Unit({'en': 'Meter Per Second Squared', 'de': 'Meter Pro Sekunde Quadrat'},
+    'Meter Per Second Squared':     Unit({'en': 'Meter per second squared', 'de': 'Meter pro Sekunde Quadrat'},
                                          'm/s²',
                                          {'en': 'Acceleration', 'de': 'Beschleunigung'},
                                          scale_prefix_allowed=False),
@@ -1229,18 +1229,18 @@ units = {
                                          's',
                                          {'en': 'Time', 'de': 'Zeit'}),
 
-    'Standard Gravity':             Unit({'en': 'Standard Gravity', 'de': 'Normfallbeschleunigung'},
+    'Standard Gravity':             Unit({'en': 'Standard gravity', 'de': 'Normfallbeschleunigung'},
                                          'gₙ',
-                                         {'en': 'Gravitational Acceleration', 'de': 'Fallbeschleunigung'},
+                                         {'en': 'Gravitational acceleration', 'de': 'Fallbeschleunigung'},
                                          scale_prefix_allowed=False),
 
     'Tesla':                        Unit({'en': 'Tesla', 'de': 'Tesla'},
                                          'T',
-                                         {'en': 'Magnetic Flux Density', 'de': 'Magnetische Flussdichte'}),
+                                         {'en': 'Magnetic flux density', 'de': 'Magnetische Flussdichte'}),
 
     'Volt':                         Unit({'en': 'Volt', 'de': 'Volt'},
                                          'V',
-                                         {'en': 'Electric Potential', 'de': 'Elektrische Spannung'}),
+                                         {'en': 'Electric potential', 'de': 'Elektrische Spannung'}),
 
     'Watt':                         Unit({'en': 'Watt', 'de': 'Watt'},
                                          'W',
