@@ -60,7 +60,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set DMX Mode',
-'elements': [('DMX Mode', 'uint8', 1, 'in', {'constant_group': 'DMX Mode'})],
+'elements': [('DMX Mode', 'uint8', 1, 'in', {'constant_group': 'DMX Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -68,16 +68,12 @@ com['packets'].append({
 Sets the DMX mode to either master or slave.
 
 Calling this function sets frame number to 0.
-
-The default value is 0 (master).
 """,
 'de':
 """
 Setzt den DMX Modus entweder auf Master oder Slave.
 
 Ein Aufruf dieser Funktion setzt die Frame-Nummer auf 0.
-
-Der Standardwert ist 0 (Master).
 """
 }]
 })
@@ -85,7 +81,7 @@ Der Standardwert ist 0 (Master).
 com['packets'].append({
 'type': 'function',
 'name': 'Get DMX Mode',
-'elements': [('DMX Mode', 'uint8', 1, 'out', {'constant_group': 'DMX Mode'})],
+'elements': [('DMX Mode', 'uint8', 1, 'out', {'constant_group': 'DMX Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -102,9 +98,9 @@ Gibt den DMX Modus zurück, wie von :func:`Set DMX Mode` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Write Frame Low Level',
-'elements': [('Frame Length', 'uint16', 1, 'in'),
-             ('Frame Chunk Offset', 'uint16', 1, 'in'),
-             ('Frame Chunk Data', 'uint8', 60, 'in')],
+'elements': [('Frame Length', 'uint16', 1, 'in', {'range': (0, 512)}),
+             ('Frame Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Frame Chunk Data', 'uint8', 60, 'in', {})],
 'high_level': {'stream_in': {'name': 'Frame'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -133,7 +129,7 @@ This function can only be called in master mode.
 """,
 'de':
 """
-Schreibt ein DMX Frame. Die maximale Framegröße ist 512 Byte. Jedes Byte stellt
+Schreibt einen DMX Frame. Die maximale Framegröße ist 512 Byte. Jedes Byte stellt
 dabei einen Kanal dar.
 
 Das nächste Frame kann geschrieben werden nachdem der :cb:`Frame Started` Callback aufgerufen wurde.
@@ -163,10 +159,10 @@ Diese Funktion kann nur im Master Modus aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Read Frame Low Level',
-'elements': [('Frame Length', 'uint16', 1, 'out'),
-             ('Frame Chunk Offset', 'uint16', 1, 'out'),
-             ('Frame Chunk Data', 'uint8', 56, 'out'),
-             ('Frame Number', 'uint32', 1, 'out')],
+'elements': [('Frame Length', 'uint16', 1, 'out', {'range': (0, 512)}),
+             ('Frame Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Frame Chunk Data', 'uint8', 56, 'out', {}),
+             ('Frame Number', 'uint32', 1, 'out', {})],
 'high_level': {'stream_out': {'name': 'Frame'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -222,12 +218,12 @@ Diese Funktion kann nur im Slave Modus aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Duration',
-'elements': [('Frame Duration', 'uint16', 1, 'in')],
+'elements': [('Frame Duration', 'uint16', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the duration of a frame in ms.
+Sets the duration of a frame.
 
 Example: If you want to achieve 20 frames per second, you should
 set the frame duration to 50ms (50ms * 20 = 1 second).
@@ -236,8 +232,6 @@ If you always want to send a frame as fast as possible you can set
 this value to 0.
 
 This setting is only used in master mode.
-
-Default value: 100ms (10 frames per second).
 """,
 'de':
 """
@@ -250,8 +244,6 @@ Soll jeweils ein Frame so schnell wie möglich gesendet werden, so sollte
 die *frame duration* auf 0 gesetzt werden.
 
 Diese Einstellung wird nur im Master Modus genutzt.
-
-Standardwert: 100ms (10 Frames pro Sekunde)
 """
 }]
 })
@@ -259,7 +251,7 @@ Standardwert: 100ms (10 Frames pro Sekunde)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Duration',
-'elements': [('Frame Duration', 'uint16', 1, 'out')],
+'elements': [('Frame Duration', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -276,8 +268,8 @@ Gibt die Frame duration zurück die mittels :func:`Set Frame Duration` gesetzt w
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Error Count',
-'elements': [('Overrun Error Count', 'uint32', 1, 'out'),
-             ('Framing Error Count', 'uint32', 1, 'out')],
+'elements': [('Overrun Error Count', 'uint32', 1, 'out', {}),
+             ('Framing Error Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -294,7 +286,7 @@ Gibt die aktuelle Anzahl an Overrun und Framing Fehlern zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -322,7 +314,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -339,7 +331,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Error LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -373,7 +365,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -390,10 +382,10 @@ Gibt die Konfiguration zurück, wie von :func:`Set Error LED Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Callback Config',
-'elements': [('Frame Started Callback Enabled', 'bool', 1, 'in'),
-             ('Frame Available Callback Enabled', 'bool', 1, 'in'),
-             ('Frame Callback Enabled', 'bool', 1, 'in'),
-             ('Frame Error Count Callback Enabled', 'bool', 1, 'in')],
+'elements': [('Frame Started Callback Enabled', 'bool', 1, 'in', {'default': True}),
+             ('Frame Available Callback Enabled', 'bool', 1, 'in', {'default': True}),
+             ('Frame Callback Enabled', 'bool', 1, 'in', {'default': False}),
+             ('Frame Error Count Callback Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -422,10 +414,10 @@ Callback deaktiviert werden, da dieser dann redundant ist.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Callback Config',
-'elements': [('Frame Started Callback Enabled', 'bool', 1, 'out'),
-             ('Frame Available Callback Enabled', 'bool', 1, 'out'),
-             ('Frame Callback Enabled', 'bool', 1, 'out'),
-             ('Frame Error Count Callback Enabled', 'bool', 1, 'out')],
+'elements': [('Frame Started Callback Enabled', 'bool', 1, 'out', {'default': True}),
+             ('Frame Available Callback Enabled', 'bool', 1, 'out', {'default': True}),
+             ('Frame Callback Enabled', 'bool', 1, 'out', {'default': False}),
+             ('Frame Error Count Callback Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -475,7 +467,7 @@ Dieser Callback wird nur im Master Modus ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Frame Available',
-'elements': [('Frame Number', 'uint32', 1, 'out')],
+'elements': [('Frame Number', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -509,10 +501,10 @@ Dieser Callback kann nur im Slave Modus ausgelöst werden.
 com['packets'].append({
 'type': 'callback',
 'name': 'Frame Low Level',
-'elements': [('Frame Length', 'uint16', 1, 'out'),
-             ('Frame Chunk Offset', 'uint16', 1, 'out'),
-             ('Frame Chunk Data', 'uint8', 56, 'out'),
-             ('Frame Number', 'uint32', 1, 'out')],
+'elements': [('Frame Length', 'uint16', 1, 'out', {'range': (0, 512)}),
+             ('Frame Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Frame Chunk Data', 'uint8', 56, 'out', {}),
+             ('Frame Number', 'uint32', 1, 'out', {})],
 'high_level': {'stream_out': {'name': 'Frame'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -546,8 +538,8 @@ Dieser Callback kann nur im Slave Modus ausgelöst werden.
 com['packets'].append({
 'type': 'callback',
 'name': 'Frame Error Count',
-'elements': [('Overrun Error Count', 'uint32', 1, 'out'),
-             ('Framing Error Count', 'uint32', 1, 'out')],
+'elements': [('Overrun Error Count', 'uint32', 1, 'out', {}),
+             ('Framing Error Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

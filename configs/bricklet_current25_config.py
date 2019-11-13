@@ -38,13 +38,12 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current',
-'elements': [('Current', 'int16', 1, 'out')],
+'elements': [('Current', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'range': (-25000, 25000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current of the sensor. The value is in mA
-and between -25000mA and 25000mA.
+Returns the current of the sensor.
 
 If you want to get the current periodically, it is recommended to use the
 :cb:`Current` callback and set the period with
@@ -52,8 +51,7 @@ If you want to get the current periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die gemessene Stromstärke des Sensors zurück. Der Wert ist in mA und im
-Bereich von -25000mA bis 25000mA.
+Gibt die gemessene Stromstärke des Sensors zurück.
 
 Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Current` Callback zu nutzen und die Periode mit
@@ -100,7 +98,7 @@ Die resultierende Kalibrierung wird in den EEPROM des Current Bricklet gespeiche
 com['packets'].append({
 'type': 'function',
 'name': 'Is Over Current',
-'elements': [('Over', 'bool', 1, 'out')],
+'elements': [('Over', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -124,13 +122,12 @@ Gibt *true* zurück wenn mehr als 25A gemessen wurden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the value as read by a 12-bit analog-to-digital converter.
-The value is between 0 and 4095.
 
 .. note::
  The value returned by :func:`Get Current` is averaged over several samples
@@ -144,8 +141,7 @@ If you want the analog value periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
-Wertebereich ist 0 bis 4095.
+Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück.
 
 .. note::
  Der von :func:`Get Current` zurückgegebene Wert ist über mehrere
@@ -248,8 +244,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in'),
-             ('Max', 'int16', 1, 'in')],
+             ('Min', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -267,8 +263,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the current is *inside* the min and max values"
  "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -285,8 +279,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Stromstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -295,8 +287,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out'),
-             ('Max', 'int16', 1, 'out')],
+             ('Min', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -314,8 +306,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'range': (0, 4095), 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'range': (0, 4095), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -333,8 +325,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -351,8 +341,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Analogwert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -361,8 +349,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'range': (0, 4095), 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'range': (0, 4095), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -433,7 +421,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current',
-'elements': [('Current', 'int16', 1, 'out')],
+'elements': [('Current', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'range': (-25000, 25000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -459,7 +447,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Analog Value',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -485,7 +473,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current Reached',
-'elements': [('Current', 'int16', 1, 'out')],
+'elements': [('Current', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'range': (-25000, 25000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -512,7 +500,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Analog Value Reached',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

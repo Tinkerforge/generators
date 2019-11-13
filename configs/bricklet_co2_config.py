@@ -38,14 +38,12 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get CO2 Concentration',
-'elements': [('CO2 Concentration', 'uint16', 1, 'out')],
+'elements': [('CO2 Concentration', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the measured CO2 concentration. The value is in
-`ppm (parts per million) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
-and between 0 to 10000.
+Returns the measured CO2 concentration.
 
 If you want to get the CO2 concentration periodically, it is recommended to use
 the :cb:`CO2 Concentration` callback and set the period with
@@ -53,9 +51,7 @@ the :cb:`CO2 Concentration` callback and set the period with
 """,
 'de':
 """
-Gibt die gemessene CO2-Konzentration zurück. Der Wert ist in
-`ppm (Teile pro Million) <https://de.wikipedia.org/wiki/Parts_per_million>`__
-und im Bereich von 0 bis 10000.
+Gibt die gemessene CO2-Konzentration zurück.
 
 Wenn die CO2-Konzentration periodisch abgefragt werden soll, wird empfohlen
 den :cb:`CO2 Concentration` Callback zu nutzen und die Periode mit
@@ -110,8 +106,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set CO2 Concentration Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'unit': 'Parts Per Million', 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'unit': 'Parts Per Million', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -129,8 +125,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the CO2 concentration is *inside* the min and max values"
  "'<'",    "Callback is triggered when the CO2 concentration is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the CO2 concentration is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -147,8 +141,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die CO2-Konzentration *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die CO2-Konzentration kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die CO2-Konzentration größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -157,8 +149,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get CO2 Concentration Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -225,7 +217,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'CO2 Concentration',
-'elements': [('CO2 Concentration', 'uint16', 1, 'out')],
+'elements': [('CO2 Concentration', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -252,7 +244,7 @@ CO2-Konzentration seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'CO2 Concentration Reached',
-'elements': [('CO2 Concentration', 'uint16', 1, 'out')],
+'elements': [('CO2 Concentration', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

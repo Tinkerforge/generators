@@ -58,13 +58,13 @@ com['constant_groups'].append({
 distance_doc = {
 'en':
 """
-Returns the distance measured by the sensor. The value is in mm and possible
+Returns the distance measured by the sensor. Possible
 distance ranges are 40 to 300, 100 to 800 and 200 to 1500, depending on the
 selected IR sensor.
 """,
 'de':
 """
-Gibt die gemessene Entfernung des Sensors zurück. Der Wert ist in mm und die möglichen
+Gibt die gemessene Entfernung des Sensors zurück. Die möglichen
 Entfernungsbereiche sind 40 bis 300, 100 bis 800 und 200 bis 1500, in Abhängigkeit vom
 gewählten IR Sensor.
 """
@@ -75,14 +75,15 @@ add_callback_value_function(
     name      = 'Get Distance',
     data_name = 'Distance',
     data_type = 'uint16',
-    doc       = distance_doc
+    doc       = distance_doc,
+    divisor   = 1000,
+    unit      = 'Meter',
 )
 
 analog_value_doc = {
 'en':
 """
 Returns the analog value as read by a analog-to-digital converter.
-The value has 21 bit with a range of 0 to 2097151.
 
 This is unfiltered raw data. We made sure that the integration time
 of the ADC is shorter then the measurement interval of the sensor
@@ -94,7 +95,6 @@ you can use this value.
 'de':
 """
 Gibt den Analogwert des Analog/Digital-Wandler zurück.
-Der Wert hat 21 Bit und einen Wertebereich von 0 bis 2097151.
 
 Dieser Wert ist ein unverarbeiteter Rohwert. Wir haben sichergestellt,
 dass die Integrationszeit des ADCs kleiner ist als das Messintervall des
@@ -111,13 +111,14 @@ add_callback_value_function(
     name      = 'Get Analog Value',
     data_name = 'Analog Value',
     data_type = 'uint32',
-    doc       = analog_value_doc
+    doc       = analog_value_doc,
+    range_    = (0, 2097151)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average Configuration',
-'elements': [('Moving Average Length', 'uint16', 1, 'in')],
+'elements': [('Moving Average Length', 'uint16', 1, 'in', {'range': (1, 1000), 'default': 25})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -128,13 +129,9 @@ for the distance.
 Setting the length to 1 will turn the averaging off. With less averaging, there
 is more noise on the data.
 
-The range for the averaging is 1-1000.
-
 New data is gathered every ~10ms. With a moving average of length 1000 the
 resulting averaging window has a length of approximately 10s. If you want to do
 long term measurements the longest moving average will give the cleanest results.
-
-The default value is 25.
 """,
 'de':
 """
@@ -144,13 +141,9 @@ für die Distanz.
 Wenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert.
 Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
-Der Wertebereich liegt bei 1-1000.
-
 Einer neue Wert wird alle ~10ms gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
 resultierende gleitende Fenster eine Zeitspanne von ca. 10s. Bei Langzeitmessungen gibt
 ein langer Mittelwert die saubersten Resultate.
-
-Der Standardwert ist 25.
 """
 }]
 })
@@ -158,7 +151,7 @@ Der Standardwert ist 25.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average Configuration',
-'elements': [('Moving Average Length', 'uint16', 1, 'out')],
+'elements': [('Moving Average Length', 'uint16', 1, 'out', {'range': (1, 1000), 'default': 25})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -175,15 +168,13 @@ Gibt die Moving Average-Konfiguration zurück, wie von :func:`Set Moving Average
 com['packets'].append({
 'type': 'function',
 'name': 'Set Distance LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Distance LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Distance LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Configures the distance LED to be either turned off, turned on, blink in
 heartbeat mode or show the distance (brighter = object is nearer).
-
-The default value is 3 (show distance).
 """,
 'de':
 """
@@ -191,7 +182,6 @@ Konfiguriert die Distanz-LED. Die LED kann ausgeschaltet, eingeschaltet,
 im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
 mit der LED die Distanz anzuzeigen (heller = Objekt näher).
 
-Der Standardwert ist 3 (Distanzanzeige).
 """
 }]
 })
@@ -199,7 +189,7 @@ Der Standardwert ist 3 (Distanzanzeige).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Distance LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Distance LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

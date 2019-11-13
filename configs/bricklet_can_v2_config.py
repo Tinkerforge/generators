@@ -87,9 +87,9 @@ com['packets'].append({
 'type': 'function',
 'name': 'Write Frame Low Level',
 'elements': [('Frame Type', 'uint8', 1, 'in', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'in'),
-             ('Data Length', 'uint8', 1, 'in'),
-             ('Data Data', 'uint8', 15, 'in'),
+             ('Identifier', 'uint32', 1, 'in', {'range': (0, 2**30-1)}),
+             ('Data Length', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Data Data', 'uint8', 15, 'in', {}),
              ('Success', 'bool', 1, 'out')],
 'high_level': {'stream_in': {'name': 'Data', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
@@ -166,9 +166,9 @@ com['packets'].append({
 'name': 'Read Frame Low Level',
 'elements': [('Success', 'bool', 1, 'out'),
              ('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'out'),
-             ('Data Length', 'uint8', 1, 'out'),
-             ('Data Data', 'uint8', 15, 'out')],
+             ('Identifier', 'uint32', 1, 'out', {'range': (0, 2**30-1)}),
+             ('Data Length', 'uint8', 1, 'out', {'range': (0, 15)}),
+             ('Data Data', 'uint8', 15, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -230,7 +230,7 @@ Siehe die :func:`Set Frame Read Callback Configuration` Funktion und den
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Read Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'in')],
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -251,7 +251,7 @@ Standardmäßig ist der Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Read Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -269,17 +269,14 @@ sonst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Transceiver Configuration',
-'elements': [('Baud Rate', 'uint32', 1, 'in'),
-             ('Sample Point', 'uint16', 1, 'in'),
-             ('Transceiver Mode', 'uint8', 1, 'in', {'constant_group': 'Transceiver Mode'})],
+'elements': [('Baud Rate', 'uint32', 1, 'in', {'unit': 'Bit Per Second', 'range': (10000, 1000000), 'default': 125000}),
+             ('Sample Point', 'uint16', 1, 'in', {'factor': 10, 'unit': 'Percent', 'range': (500, 900), 'default': 625}),
+             ('Transceiver Mode', 'uint8', 1, 'in', {'constant_group': 'Transceiver Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Sets the transceiver configuration for the CAN bus communication.
-
-The baud rate can be configured in bit/s between 10 and 1000 kbit/s and the
-sample point can be configured in 1/10 % between 50 and 90 %.
 
 The CAN transceiver has three different modes:
 
@@ -290,15 +287,10 @@ The CAN transceiver has three different modes:
 * Read-Only: Only reads from the CAN bus, but does neither active bus error
   detection nor acknowledgement. Only the receiving part of the transceiver
   is connected to the CAN bus.
-
-The default is: 125 kbit/s, 62.5 % and normal transceiver mode.
 """,
 'de':
 """
 Setzt die Transceiver-Konfiguration für die CAN-Bus-Kommunikation.
-
-Die Baudrate kann in Bit/s zwischen 10 und 1000 kBit/s eingestellt werden und
-der Abtastpunkt kann in 1/10 % zwischen 50 und 90 % eingestellt werden.
 
 Der CAN-Transceiver hat drei verschiedene Modi:
 
@@ -309,8 +301,6 @@ Der CAN-Transceiver hat drei verschiedene Modi:
 * Read-Only: Es wird nur vom CAN-Bus gelesen, allerdings ohne aktiv an der
   Bus-Fehlererkennung oder dem Acknowledgement mitzuwirken. Nur der empfangende
   Teil des Transceivers ist mit dem CAN-Bus verbunden.
-
-Der Standard ist: 125 kBit/s, 62,5 % und normaler Transceiver-Modus.
 """
 }]
 })
@@ -318,9 +308,9 @@ Der Standard ist: 125 kBit/s, 62,5 % und normaler Transceiver-Modus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Transceiver Configuration',
-'elements': [('Baud Rate', 'uint32', 1, 'out'),
-             ('Sample Point', 'uint16', 1, 'out'),
-             ('Transceiver Mode', 'uint8', 1, 'out', {'constant_group': 'Transceiver Mode'})],
+'elements': [('Baud Rate', 'uint32', 1, 'out', {'unit': 'Bit Per Second', 'range': (10000, 1000000), 'default': 125000}),
+             ('Sample Point', 'uint16', 1, 'out', {'divisor': 10, 'unit': 'Percent', 'range': (500, 900), 'default': 625}),
+             ('Transceiver Mode', 'uint8', 1, 'out', {'constant_group': 'Transceiver Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -337,12 +327,12 @@ Gibt die Konfiguration zurück, wie von :func:`Set Transceiver Configuration` ge
 com['packets'].append({
 'type': 'function',
 'name': 'Set Queue Configuration Low Level',
-'elements': [('Write Buffer Size', 'uint8', 1, 'in'),
-             ('Write Buffer Timeout', 'int32', 1, 'in'),
-             ('Write Backlog Size', 'uint16', 1, 'in'),
-             ('Read Buffer Sizes Length', 'uint8', 1, 'in'),
-             ('Read Buffer Sizes Data', 'int8', 32, 'in'),
-             ('Read Backlog Size', 'uint16', 1, 'in')],
+'elements': [('Write Buffer Size', 'uint8', 1, 'in', {'range': (0, 32), 'default': 8}),
+             ('Write Buffer Timeout', 'int32', 1, 'in', {'range': (-1, None), 'default': 0}),
+             ('Write Backlog Size', 'uint16', 1, 'in', {'range': (0, 768), 'default': 383}),
+             ('Read Buffer Sizes Length', 'uint8', 1, 'in', {'range': (0, 32), 'default': 2}),
+             ('Read Buffer Sizes Data', 'int8', 32, 'in', {'range': [(-32, -1), (1, 32)], 'default': [16, -8]}),
+             ('Read Backlog Size', 'uint16', 1, 'in', {'range': (0, 768), 'default': 383})],
 'high_level': {'stream_in': {'name': 'Read Buffer Sizes', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -380,7 +370,7 @@ filter configuration (see :func:`Set Read Filter Configuration`).
 
 A valid queue configuration fulfills these conditions::
 
- write_buffer_size + read_buffer_size_0 + read_buffer_size_1 + ... + read_buffer_size_31 <= 32
+ write_buffer_size + abs(read_buffer_size_0) + abs(read_buffer_size_1) + ... + abs(read_buffer_size_31) <= 32
  write_backlog_size + read_backlog_size <= 768
 
 The write buffer timeout has three different modes that define how a failed
@@ -395,15 +385,6 @@ frame transmission should be handled:
   number of milliseconds then the frame is discarded.
 
 The current content of the queues is lost when this function is called.
-
-The default is:
-
-* 8 write buffers,
-* infinite write timeout,
-* 383 write backlog frames,
-* 16 read buffers for data frames,
-* 8 read buffers for remote frames and
-* 383 read backlog frames.
 """,
 'de':
 """
@@ -441,13 +422,13 @@ hat seine eigene Filter-Konfiguration (siehe
 
 Eine gültige Queue-Konfiguration erfüllt diese Bedingungen::
 
- write_buffer_size + read_buffer_size_0 + read_buffer_size_1 + ... + read_buffer_size_31 <= 32
+ write_buffer_size + abs(read_buffer_size_0) + abs(read_buffer_size_1) + ... + abs(read_buffer_size_31) <= 32
  write_backlog_size + read_backlog_size <= 768
 
 Der Schreib-Timeout hat drei verschiedene Modi, die festlegen wie mit einer
 fehlgeschlagen Frame-Übertragung umgegangen werden soll:
 
-* Single-Shot (< 0): Es wird nur ein Übertragungsversuch durchgeführt. Falls die
+* Single-Shot (= -1): Es wird nur ein Übertragungsversuch durchgeführt. Falls die
   Übertragung fehlschlägt wird der Frame verworfen.
 * Infinite (= 0): Es werden unendlich viele Übertragungsversuche durchgeführt.
   Der Frame wird niemals verworfen.
@@ -456,15 +437,6 @@ fehlgeschlagen Frame-Übertragung umgegangen werden soll:
   noch nicht erfolgreich übertragen wurde, dann wird er verworfen.
 
 Der aktuelle Inhalt der Queues geht bei einem Aufruf dieser Funktion verloren.
-
-Der Standard ist:
-
-* 8 Schreib-Buffer,
-* unendlicher Schreib-Timeout,
-* 383 Schreib-Backlog-Frames,
-* 16 Lese-Buffer für Data-Frames,
-* 8 Lese-Buffer für Remote-Frames und
-* 383 Lese-Backlog-Frames.
 """
 }]
 })
@@ -472,12 +444,12 @@ Der Standard ist:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Queue Configuration Low Level',
-'elements': [('Write Buffer Size', 'uint8', 1, 'out'),
-             ('Write Buffer Timeout', 'int32', 1, 'out'),
-             ('Write Backlog Size', 'uint16', 1, 'out'),
-             ('Read Buffer Sizes Length', 'uint8', 1, 'out'),
-             ('Read Buffer Sizes Data', 'int8', 32, 'out'),
-             ('Read Backlog Size', 'uint16', 1, 'out')],
+'elements': [('Write Buffer Size', 'uint8', 1, 'out', {'range': (0, 32), 'default': 8}),
+             ('Write Buffer Timeout', 'int32', 1, 'out', {'range': (-1, None), 'default': 0}),
+             ('Write Backlog Size', 'uint16', 1, 'out', {'range': (0, 768), 'default': 383}),
+             ('Read Buffer Sizes Length', 'uint8', 1, 'out', {'range': (0, 32), 'default': 2}),
+             ('Read Buffer Sizes Data', 'int8', 32, 'out', {'range': [(-32, -1), (1, 32)], 'default': [16, -8]}),
+             ('Read Backlog Size', 'uint16', 1, 'out', {'range': (0, 768), 'default': 383})],
 'high_level': {'stream_out': {'name': 'Read Buffer Sizes', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -495,10 +467,10 @@ Gibt die Queue-Konfiguration zurück, wie von :func:`Set Queue Configuration` ge
 com['packets'].append({
 'type': 'function',
 'name': 'Set Read Filter Configuration',
-'elements': [('Buffer Index', 'uint8', 1, 'in'),
-             ('Filter Mode', 'uint8', 1, 'in', {'constant_group': 'Filter Mode'}),
-             ('Filter Mask', 'uint32', 1, 'in'),
-             ('Filter Identifier', 'uint32', 1, 'in')],
+'elements': [('Buffer Index', 'uint8', 1, 'in', {'range': (0, 31)}),
+             ('Filter Mode', 'uint8', 1, 'in', {'constant_group': 'Filter Mode', 'default': 0}),
+             ('Filter Mask', 'uint32', 1, 'in', {'range': (0, 2**30-1)}),
+             ('Filter Identifier', 'uint32', 1, 'in', {'range': (0, 2**30-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -592,7 +564,7 @@ Verwendung hängt vom Filter-Modus ab:
 * Match-Standard-And-Extended: Bit 18 bis 28 (11 Bits) der Filter-Maske und des
   Filter-Identifiers werden zum Abgleich mit dem 11-Bit Identifier von
   Standard-Frames verwendet, Bit 0 bis 17 (18 Bits) werden in diesem Fall
-  ignoriert. Bit 0 bis 28 (18 Bits) der Filter-Maske und des Filter-Identifiers
+  ignoriert. Bit 0 bis 28 (29 Bits) der Filter-Maske und des Filter-Identifiers
   werden zum Abgleich mit dem 29-Bit Identifier von Extended-Frames verwendet.
 
 Filter-Maske und Filter-Identifier werden auf diese Weise angewendet: Mit der
@@ -631,10 +603,10 @@ Der Standardmodus ist Accept-All für alle Lese-Buffer.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Read Filter Configuration',
-'elements': [('Buffer Index', 'uint8', 1, 'in'),
-             ('Filter Mode', 'uint8', 1, 'out', {'constant_group': 'Filter Mode'}),
-             ('Filter Mask', 'uint32', 1, 'out'),
-             ('Filter Identifier', 'uint32', 1, 'out')],
+'elements': [('Buffer Index', 'uint8', 1, 'in', {'range': (0, 31)}),
+             ('Filter Mode', 'uint8', 1, 'out', {'constant_group': 'Filter Mode', 'default': 0}),
+             ('Filter Mask', 'uint32', 1, 'out', {'range': (0, 2**30-1)}),
+             ('Filter Identifier', 'uint32', 1, 'out', {'range': (0, 2**30-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -652,19 +624,19 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Error Log Low Level',
 'elements': [('Transceiver State', 'uint8', 1, 'out', {'constant_group': 'Transceiver State'}),
-             ('Transceiver Write Error Level', 'uint8', 1, 'out'),
-             ('Transceiver Read Error Level', 'uint8', 1, 'out'),
-             ('Transceiver Stuffing Error Count', 'uint32', 1, 'out'),
-             ('Transceiver Format Error Count', 'uint32', 1, 'out'),
-             ('Transceiver ACK Error Count', 'uint32', 1, 'out'),
-             ('Transceiver Bit1 Error Count', 'uint32', 1, 'out'),
-             ('Transceiver Bit0 Error Count', 'uint32', 1, 'out'),
-             ('Transceiver CRC Error Count', 'uint32', 1, 'out'),
-             ('Write Buffer Timeout Error Count', 'uint32', 1, 'out'),
-             ('Read Buffer Overflow Error Count', 'uint32', 1, 'out'),
-             ('Read Buffer Overflow Error Occurred Length', 'uint8', 1, 'out'),
-             ('Read Buffer Overflow Error Occurred Data', 'bool', 32, 'out'),
-             ('Read Backlog Overflow Error Count', 'uint32', 1, 'out')],
+             ('Transceiver Write Error Level', 'uint8', 1, 'out', {}),
+             ('Transceiver Read Error Level', 'uint8', 1, 'out', {}),
+             ('Transceiver Stuffing Error Count', 'uint32', 1, 'out', {}),
+             ('Transceiver Format Error Count', 'uint32', 1, 'out', {}),
+             ('Transceiver ACK Error Count', 'uint32', 1, 'out', {}),
+             ('Transceiver Bit1 Error Count', 'uint32', 1, 'out', {}),
+             ('Transceiver Bit0 Error Count', 'uint32', 1, 'out', {}),
+             ('Transceiver CRC Error Count', 'uint32', 1, 'out', {}),
+             ('Write Buffer Timeout Error Count', 'uint32', 1, 'out', {}),
+             ('Read Buffer Overflow Error Count', 'uint32', 1, 'out', {}),
+             ('Read Buffer Overflow Error Occurred Length', 'uint8', 1, 'out', {'range': (0, 32)}),
+             ('Read Buffer Overflow Error Occurred Data', 'bool', 32, 'out', {}),
+             ('Read Backlog Overflow Error Count', 'uint32', 1, 'out', {})],
 'high_level': {'stream_out': {'name': 'Read Buffer Overflow Error Occurred', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -754,7 +726,7 @@ Lese-Buffer. In welchem Lese-Buffer seit dem letzten Aufruf dieser Funktion ein
 com['packets'].append({
 'type': 'function',
 'name': 'Set Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -782,7 +754,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -799,7 +771,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Error LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -841,7 +813,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -859,9 +831,9 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Frame Read Low Level',
 'elements': [('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'out'),
-             ('Data Length', 'uint8', 1, 'out'),
-             ('Data Data', 'uint8', 15, 'out')],
+             ('Identifier', 'uint32', 1, 'out', {'range': (0, 2**30-1)}),
+             ('Data Length', 'uint8', 1, 'out', {'range': (0, 15)}),
+             ('Data Data', 'uint8', 15, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

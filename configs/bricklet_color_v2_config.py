@@ -59,10 +59,10 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Color',
-'elements': [('R', 'uint16', 1, 'out'),
-             ('G', 'uint16', 1, 'out'),
-             ('B', 'uint16', 1, 'out'),
-             ('C', 'uint16', 1, 'out')],
+'elements': [('R', 'uint16', 1, 'out', {}),
+             ('G', 'uint16', 1, 'out', {}),
+             ('B', 'uint16', 1, 'out', {}),
+             ('C', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -164,10 +164,10 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Color',
-'elements': [('R', 'uint16', 1, 'out'),
-             ('G', 'uint16', 1, 'out'),
-             ('B', 'uint16', 1, 'out'),
-             ('C', 'uint16', 1, 'out')],
+'elements': [('R', 'uint16', 1, 'out', {}),
+             ('G', 'uint16', 1, 'out', {}),
+             ('B', 'uint16', 1, 'out', {}),
+             ('C', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -224,7 +224,8 @@ add_callback_value_function(
     name      = 'Get Illuminance',
     data_name = 'Illuminance',
     data_type = 'uint32',
-    doc       = illuminance_doc
+    doc       = illuminance_doc,
+    range_    = (0, 103438)
 )
 
 color_temperature_doc = {
@@ -253,13 +254,14 @@ add_callback_value_function(
     name      = 'Get Color Temperature',
     data_name = 'Color Temperature',
     data_type = 'uint16',
-    doc       = color_temperature_doc
+    doc       = color_temperature_doc,
+    unit      = 'Kelvin'
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Light',
-'elements': [('Enable', 'bool', 1, 'in')],
+'elements': [('Enable', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -276,7 +278,7 @@ Aktiviert/deaktiviert die weiße LED auf dem Bricklet.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Light',
-'elements': [('Enable', 'bool', 1, 'out')],
+'elements': [('Enable', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -293,8 +295,8 @@ Gibt den Wert zurück, wie von :func:`Set Light` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain'}),
-             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time'})],
+'elements': [('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain', 'default': 3}),
+             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -324,8 +326,6 @@ The integration time provides a trade-off between conversion time
 and accuracy. With a longer integration time the values read will
 be more accurate but it will take longer to get the conversion
 results.
-
-The default values are 60x gain and 154ms integration time.
 """,
 'de':
 """
@@ -353,8 +353,6 @@ Entfernungen zu erkennen.
 Die Integrationszeit ist ein Trade-off zwischen Konvertierungszeit und
 Genauigkeit. Mit einer höheren Integrationszeit werden die Werte genauer,
 es dauert allerdings länger, bis ein Resultat bereitsteht.
-
-Die Standardwerte sind 60x Verstärkung und 154ms Integrationszeit.
 """
 }]
 })
@@ -362,8 +360,8 @@ Die Standardwerte sind 60x Verstärkung und 154ms Integrationszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain'}),
-             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time'})],
+'elements': [('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain', 'default': 3}),
+             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

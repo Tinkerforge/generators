@@ -39,13 +39,13 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance Value',
-'elements': [('Distance', 'uint16', 1, 'out')],
+'elements': [('Distance', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current distance value measured by the sensor. The value has a
-range of 0 to 4095. A small value corresponds to a small distance, a big
+Returns the current distance value measured by the sensor.
+A small value corresponds to a small distance, a big
 value corresponds to a big distance. The relation between the measured distance
 value and the actual distance is affected by the 5V supply voltage (deviations
 in the supply voltage result in deviations in the distance values) and is
@@ -57,8 +57,8 @@ use the :cb:`Distance` callback and set the period with
 """,
 'de':
 """
-Gibt den aktuellen Entfernungswert zurück. Der Wert hat einen
-Wertebereich von 0 bis 4095. Ein kleiner Wert entspricht einer kleinen
+Gibt den aktuellen Entfernungswert zurück.
+Ein kleiner Wert entspricht einer kleinen
 Entfernung, ein großer Wert entspricht einer großen Entfernung. Das Verhältnis
 zwischen gemessenem Entfernungswert und wirklicher Entfernung wird durch die
 5V Versorgungsspannung beeinflusst (Abweichungen der Versorgungsspannung führen
@@ -118,8 +118,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Distance Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'range': (0, 4095)}),
+             ('Max', 'uint16', 1, 'in', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -137,8 +137,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the distance value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the distance value is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the distance value is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -155,8 +153,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Entfernungswert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Entfernungswert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Entfernungswert größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -165,8 +161,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Distance Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'range': (0, 4095)}),
+             ('Max', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -233,7 +229,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Distance',
-'elements': [('Distance', 'uint16', 1, 'out')],
+'elements': [('Distance', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -259,7 +255,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Distance Reached',
-'elements': [('Distance', 'uint16', 1, 'out')],
+'elements': [('Distance', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -286,7 +282,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average',
-'elements': [('Average', 'uint8', 1, 'in')],
+'elements': [('Average', 'uint8', 1, 'in', {'range': (0, 100), 'default': 20})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -296,10 +292,6 @@ for the distance value.
 
 Setting the length to 0 will turn the averaging completely off. With less
 averaging, there is more noise on the data.
-
-The range for the averaging is 0-100.
-
-The default value is 20.
 """,
 'de':
 """
@@ -308,10 +300,6 @@ für den Entfernungswert.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 0-100.
-
-Der Standardwert ist 20.
 """
 }]
 })
@@ -319,7 +307,7 @@ Der Standardwert ist 20.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average',
-'elements': [('Average', 'uint8', 1, 'out')],
+'elements': [('Average', 'uint8', 1, 'out', {'range': (0, 100), 'default': 20})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

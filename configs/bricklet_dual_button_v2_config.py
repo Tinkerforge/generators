@@ -58,8 +58,8 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set LED State',
-'elements': [('LED L', 'uint8', 1, 'in', {'constant_group': 'LED State'}),
-             ('LED R', 'uint8', 1, 'in', {'constant_group': 'LED State'})],
+'elements': [('LED L', 'uint8', 1, 'in', {'constant_group': 'LED State', 'default': 1}),
+             ('LED R', 'uint8', 1, 'in', {'constant_group': 'LED State', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -76,8 +76,6 @@ In auto toggle mode the LED is toggled automatically at each press of a button.
 If you just want to set one of the LEDs and don't know the current state
 of the other LED, you can get the state with :func:`Get LED State` or you
 can use :func:`Set Selected LED State`.
-
-The default value is (1, 1).
 """,
 'de':
 """
@@ -94,8 +92,6 @@ Tasterdruck.
 Wenn nur eine der LEDs gesetzt werden soll und der aktuelle Zustand der anderen LED
 nicht bekannt ist, dann kann der Zustand mit :func:`Get LED State` ausgelesen werden oder
 es kann :func:`Set Selected LED State` genutzt werden.
-
-Der Standardwert ist (1, 1).
 """
 }]
 })
@@ -103,8 +99,8 @@ Der Standardwert ist (1, 1).
 com['packets'].append({
 'type': 'function',
 'name': 'Get LED State',
-'elements': [('LED L', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
-             ('LED R', 'uint8', 1, 'out', {'constant_group': 'LED State'})],
+'elements': [('LED L', 'uint8', 1, 'out', {'constant_group': 'LED State', 'default': 1}),
+             ('LED R', 'uint8', 1, 'out', {'constant_group': 'LED State', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -217,22 +213,18 @@ Die andere LED bleibt unangetastet.
 com['packets'].append({
 'type': 'function',
 'name': 'Set State Changed Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'in')],
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
 If you enable this callback, the :cb:`State Changed` callback is triggered
 every time a button is pressed/released
-
-By default this callback is disabled.
 """,
 'de':
 """
 Wenn dieser Callback aktiviert ist, wird der :cb:`State Changed` Callback
 jedes mal ausgelöst, wenn ein Taster gedrückt/losgelassen wird.
-
-Standardmäßig ist dieser Callback deaktiviert.
 """
 }]
 })
@@ -240,7 +232,7 @@ Standardmäßig ist dieser Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get State Changed Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

@@ -64,16 +64,15 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Color',
-'elements': [('R', 'uint16', 1, 'out'),
-             ('G', 'uint16', 1, 'out'),
-             ('B', 'uint16', 1, 'out'),
-             ('C', 'uint16', 1, 'out')],
+'elements': [('R', 'uint16', 1, 'out', {}),
+             ('G', 'uint16', 1, 'out', {}),
+             ('B', 'uint16', 1, 'out', {}),
+             ('C', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the measured color of the sensor. The values
-have a range of 0 to 65535.
+Returns the measured color of the sensor.
 
 The red (r), green (g), blue (b) and clear (c) colors are measured
 with four different photodiodes that are responsive at different
@@ -91,8 +90,7 @@ to use the :cb:`Color` callback and set the period with
 """,
 'de':
 """
-Gibt die gemessene Farbe des Sensors zurück. Der Wertebereich ist von
-0 bis 65535.
+Gibt die gemessene Farbe des Sensors zurück.
 
 Die rot (r), grün (g), blau (b) und clear (c) werden mit vier
 unterschiedlichen Fotodioden gemessen. Diese sind Empfindlich
@@ -157,14 +155,14 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Color Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min R', 'uint16', 1, 'in'),
-             ('Max R', 'uint16', 1, 'in'),
-             ('Min G', 'uint16', 1, 'in'),
-             ('Max G', 'uint16', 1, 'in'),
-             ('Min B', 'uint16', 1, 'in'),
-             ('Max B', 'uint16', 1, 'in'),
-             ('Min C', 'uint16', 1, 'in'),
-             ('Max C', 'uint16', 1, 'in')],
+             ('Min R', 'uint16', 1, 'in', {'default': 0}),
+             ('Max R', 'uint16', 1, 'in', {'default': 0}),
+             ('Min G', 'uint16', 1, 'in', {'default': 0}),
+             ('Max G', 'uint16', 1, 'in', {'default': 0}),
+             ('Min B', 'uint16', 1, 'in', {'default': 0}),
+             ('Max B', 'uint16', 1, 'in', {'default': 0}),
+             ('Min C', 'uint16', 1, 'in', {'default': 0}),
+             ('Max C', 'uint16', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -182,8 +180,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
  "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """,
 'de':
 """
@@ -200,8 +196,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """
 }]
 })
@@ -210,14 +204,14 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Color Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min R', 'uint16', 1, 'out'),
-             ('Max R', 'uint16', 1, 'out'),
-             ('Min G', 'uint16', 1, 'out'),
-             ('Max G', 'uint16', 1, 'out'),
-             ('Min B', 'uint16', 1, 'out'),
-             ('Max B', 'uint16', 1, 'out'),
-             ('Min C', 'uint16', 1, 'out'),
-             ('Max C', 'uint16', 1, 'out')],
+             ('Min R', 'uint16', 1, 'out', {'default': 0}),
+             ('Max R', 'uint16', 1, 'out', {'default': 0}),
+             ('Min G', 'uint16', 1, 'out', {'default': 0}),
+             ('Max G', 'uint16', 1, 'out', {'default': 0}),
+             ('Min B', 'uint16', 1, 'out', {'default': 0}),
+             ('Max B', 'uint16', 1, 'out', {'default': 0}),
+             ('Min C', 'uint16', 1, 'out', {'default': 0}),
+             ('Max C', 'uint16', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -284,10 +278,10 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Color',
-'elements': [('R', 'uint16', 1, 'out'),
-             ('G', 'uint16', 1, 'out'),
-             ('B', 'uint16', 1, 'out'),
-             ('C', 'uint16', 1, 'out')],
+'elements': [('R', 'uint16', 1, 'out', {}),
+             ('G', 'uint16', 1, 'out', {}),
+             ('B', 'uint16', 1, 'out', {}),
+             ('C', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -313,10 +307,10 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Color Reached',
-'elements': [('R', 'uint16', 1, 'out'),
-             ('G', 'uint16', 1, 'out'),
-             ('B', 'uint16', 1, 'out'),
-             ('C', 'uint16', 1, 'out')],
+'elements': [('R', 'uint16', 1, 'out', {}),
+             ('G', 'uint16', 1, 'out', {}),
+             ('B', 'uint16', 1, 'out', {}),
+             ('C', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -379,7 +373,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Is Light On',
 # FIXME: should return bool, but cannot be fixed because the Bricklet returns 0 for "On"
-'elements': [('Light', 'uint8', 1, 'out', {'constant_group': 'Light'})],
+'elements': [('Light', 'uint8', 1, 'out', {'constant_group': 'Light', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -402,8 +396,8 @@ Gibt den Zustand der LED zurück. Mögliche Werte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Config',
-'elements': [('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain'}),
-             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time'})],
+'elements': [('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain', 'default': 3}),
+             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -433,8 +427,6 @@ The integration time provides a trade-off between conversion time
 and accuracy. With a longer integration time the values read will
 be more accurate but it will take longer time to get the conversion
 results.
-
-The default values are 60x gain and 154ms integration time.
 """,
 'de':
 """
@@ -462,8 +454,6 @@ Entfernungen zu erkennen.
 Die Integrationszeit ist ein Trade-off zwischen Konvertierungszeit und
 Genauigkeit. Mit einer höheren Integrationszeit werden die Werte genauer,
 es dauert allerdings länger bis ein Resultat bereitsteht.
-
-Die Standardwerte sind 60x Verstärkung und 154ms Integrationszeit.
 """
 }]
 })
@@ -471,8 +461,8 @@ Die Standardwerte sind 60x Verstärkung und 154ms Integrationszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Config',
-'elements': [('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain'}),
-             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time'})],
+'elements': [('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain', 'default': 3}),
+             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -489,7 +479,7 @@ Gibt die Einstellungen zurück, wie von :func:`Set Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance',
-'elements': [('Illuminance', 'uint32', 1, 'out')],
+'elements': [('Illuminance', 'uint32', 1, 'out', {'range': (0, 103438)})], # range end as by the firmware implementation
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -524,7 +514,7 @@ kann die Verstärkung per :func:`Set Config` reduziert werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Color Temperature',
-'elements': [('Color Temperature', 'uint16', 1, 'out')],
+'elements': [('Color Temperature', 'uint16', 1, 'out', {'unit': 'Kelvin'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -635,7 +625,7 @@ Gibt die Periode zurück, wie von :func:`Set Color Temperature Callback Period` 
 com['packets'].append({
 'type': 'callback',
 'name': 'Illuminance',
-'elements': [('Illuminance', 'uint32', 1, 'out')],
+'elements': [('Illuminance', 'uint32', 1, 'out', {'range': (0, 103438)})], # range end as by the firmware implementation
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -662,7 +652,7 @@ Beleuchtungsstärke seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Color Temperature',
-'elements': [('Color Temperature', 'uint16', 1, 'out')],
+'elements': [('Color Temperature', 'uint16', 1, 'out', {'unit': 'Kelvin'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

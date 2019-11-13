@@ -73,10 +73,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Write Frame',
 'elements': [('Frame Type', 'uint8', 1, 'in', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'in'),
-             ('Data', 'uint8', 8, 'in'),
-             ('Length', 'uint8', 1, 'in'),
-             ('Success', 'bool', 1, 'out')],
+             ('Identifier', 'uint32', 1, 'in', {'range': (0, 2**30-1)}),
+             ('Data', 'uint8', 8, 'in', {}),
+             ('Length', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Success', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -137,9 +137,9 @@ com['packets'].append({
 'name': 'Read Frame',
 'elements': [('Success', 'bool', 1, 'out'),
              ('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'out'),
-             ('Data', 'uint8', 8, 'out'),
-             ('Length', 'uint8', 1, 'out')],
+             ('Identifier', 'uint32', 1, 'out', {'range': (0, 2**30-1)}),
+             ('Data', 'uint8', 8, 'out', {}),
+             ('Length', 'uint8', 1, 'out', {'range': (0, 15)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -232,7 +232,7 @@ Standardmäßig ist der Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Frame Read Callback Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -250,9 +250,9 @@ sonst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Baud Rate', 'uint8', 1, 'in', {'constant_group': 'Baud Rate'}),
-             ('Transceiver Mode', 'uint8', 1, 'in', {'constant_group': 'Transceiver Mode'}),
-             ('Write Timeout', 'int32', 1, 'in')],
+'elements': [('Baud Rate', 'uint8', 1, 'in', {'constant_group': 'Baud Rate', 'default': 3}),
+             ('Transceiver Mode', 'uint8', 1, 'in', {'constant_group': 'Transceiver Mode', 'default': 0}),
+             ('Write Timeout', 'int32', 1, 'in', {'default': 0, 'range': (-1, None)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -274,15 +274,13 @@ The CAN transceiver has three different modes:
 The write timeout has three different modes that define how a failed frame
 transmission should be handled:
 
-* One-Shot (< 0): Only one transmission attempt will be made. If the
+* One-Shot (= -1): Only one transmission attempt will be made. If the
   transmission fails then the frame is discarded.
 * Infinite (= 0): Infinite transmission attempts will be made. The frame will
   never be discarded.
 * Milliseconds (> 0): A limited number of transmission attempts will be made.
   If the frame could not be transmitted successfully after the configured
   number of milliseconds then the frame is discarded.
-
-The default is: 125 kbit/s, normal transceiver mode and infinite write timeout.
 """,
 'de':
 """
@@ -303,16 +301,13 @@ Der CAN-Transceiver hat drei verschiedene Modi:
 Der Schreib-Timeout hat drei verschiedene Modi, die festlegen wie mit einer
 fehlgeschlagen Frame-Übertragung umgegangen werden soll:
 
-* One-Shot (< 0): Es wird nur ein Übertragungsversuch durchgeführt. Falls die
+* One-Shot (= -1): Es wird nur ein Übertragungsversuch durchgeführt. Falls die
   Übertragung fehlschlägt wird der Frame verworfen.
 * Infinite (= 0): Es werden unendlich viele Übertragungsversuche durchgeführt.
   Der Frame wird niemals verworfen.
 * Milliseconds (> 0): Es wird eine beschränkte Anzahl Übertragungsversuche
   durchgeführt. Falls der Frame nach der eingestellten Anzahl Millisekunden
   noch nicht erfolgreich übertragen wurde, dann wird er verworfen.
-
-Der Standard ist: 125 kBit/s, Normaler Transceiver-Modus und unendlicher
-Schreib-Timeout.
 """
 }]
 })
@@ -320,9 +315,9 @@ Schreib-Timeout.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Baud Rate', 'uint8', 1, 'out', {'constant_group': 'Baud Rate'}),
-             ('Transceiver Mode', 'uint8', 1, 'out', {'constant_group': 'Transceiver Mode'}),
-             ('Write Timeout', 'int32', 1, 'out')],
+'elements': [('Baud Rate', 'uint8', 1, 'out', {'constant_group': 'Baud Rate', 'default': 3}),
+             ('Transceiver Mode', 'uint8', 1, 'out', {'constant_group': 'Transceiver Mode', 'default': 0}),
+             ('Write Timeout', 'int32', 1, 'out', {'default': 0, 'range': (-1, None)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -339,10 +334,10 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Read Filter',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Filter Mode'}),
-             ('Mask', 'uint32', 1, 'in'),
-             ('Filter1', 'uint32', 1, 'in'),
-             ('Filter2', 'uint32', 1, 'in')],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Filter Mode', 'default': 1}),
+             ('Mask', 'uint32', 1, 'in', {'range': (0, 2**30-1)}),
+             ('Filter1', 'uint32', 1, 'in', {'range': (0, 2**30-1)}),
+             ('Filter2', 'uint32', 1, 'in', {'range': (0, 2**30-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -399,8 +394,6 @@ identifier has to be exactly 0x123 to be accepted.
 
 To accept identifier 0x123 and identifier 0x456 at the same time, just set
 filter 2 to 0x456 and keep mask and filter 1 unchanged.
-
-The default mode is accept-all.
 """,
 'de':
 """
@@ -465,8 +458,6 @@ zu werden.
 
 Um Identifier 0x123 und 0x456 gleichzeitig zu akzeptieren kann Filter 2 auf
 0x456 gesetzt und die Maske und Filter 1 beibehalten werden.
-
-Der Standardmodus ist Accept-All.
 """
 }]
 })
@@ -474,10 +465,10 @@ Der Standardmodus ist Accept-All.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Read Filter',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Filter Mode'}),
-             ('Mask', 'uint32', 1, 'out'),
-             ('Filter1', 'uint32', 1, 'out'),
-             ('Filter2', 'uint32', 1, 'out')],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Filter Mode', 'default': 1}),
+             ('Mask', 'uint32', 1, 'out', {'range': (0, 2**30-1)}),
+             ('Filter1', 'uint32', 1, 'out', {'range': (0, 2**30-1)}),
+             ('Filter2', 'uint32', 1, 'out', {'range': (0, 2**30-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -494,12 +485,12 @@ Gibt die Lesefilter zurück, wie von :func:`Set Read Filter` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error Log',
-'elements': [('Write Error Level', 'uint8', 1, 'out'),
-             ('Read Error Level', 'uint8', 1, 'out'),
-             ('Transceiver Disabled', 'bool', 1, 'out'),
-             ('Write Timeout Count', 'uint32', 1, 'out'),
-             ('Read Register Overflow Count', 'uint32', 1, 'out'),
-             ('Read Buffer Overflow Count', 'uint32', 1, 'out')],
+'elements': [('Write Error Level', 'uint8', 1, 'out', {}),
+             ('Read Error Level', 'uint8', 1, 'out', {}),
+             ('Transceiver Disabled', 'bool', 1, 'out', {}),
+             ('Write Timeout Count', 'uint32', 1, 'out', {}),
+             ('Read Register Overflow Count', 'uint32', 1, 'out', {}),
+             ('Read Buffer Overflow Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -586,9 +577,9 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Frame Read',
 'elements': [('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'out'),
-             ('Data', 'uint8', 8, 'out'),
-             ('Length', 'uint8', 1, 'out')],
+             ('Identifier', 'uint32', 1, 'out', {'range': (0, 2**30-1)}),
+             ('Data', 'uint8', 8, 'out', {}),
+             ('Length', 'uint8', 1, 'out', {'range': (0, 15)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

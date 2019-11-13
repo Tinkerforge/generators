@@ -38,14 +38,12 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out')],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the air pressure of the air pressure sensor. The value
-has a range of 10000 to 1200000 and is given in mbar/1000, i.e. a value
-of 1001092 means that an air pressure of 1001.092 mbar is measured.
+Returns the air pressure of the air pressure sensor.
 
 If you want to get the air pressure periodically, it is recommended to use the
 :cb:`Air Pressure` callback and set the period with
@@ -53,9 +51,7 @@ If you want to get the air pressure periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt den Luftdruck des Luftdrucksensors zurück. Der Wertbereich
-geht von 10000 bis 1200000 und ist in mbar/1000 angegeben, d.h. bei einem Wert
-von 1001092 wurde ein Luftdruck von 1001,092 mbar gemessen.
+Gibt den Luftdruck des Luftdrucksensors zurück.
 
 Wenn der Luftdruck periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Air Pressure` Callback zu nutzen und die Periode mit
@@ -67,13 +63,13 @@ den :cb:`Air Pressure` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude',
-'elements': [('Altitude', 'int32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the relative altitude of the air pressure sensor. The value is given in
-cm and is calculated based on the difference between the current air pressure
+Returns the relative altitude of the air pressure sensor. The value is
+calculated based on the difference between the current air pressure
 and the reference air pressure that can be set with :func:`Set Reference Air Pressure`.
 
 If you want to get the altitude periodically, it is recommended to use the
@@ -82,8 +78,8 @@ If you want to get the altitude periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert ist in cm angegeben
-und wird auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem
+Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert wird
+auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem
 Referenzluftdruck berechnet, welcher mit :func:`Set Reference Air Pressure`
 gesetzt werden kann.
 
@@ -182,8 +178,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Air Pressure Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'factor': 10, 'unit': 'Pascal', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'factor': 10, 'unit': 'Pascal', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -201,8 +197,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the air pressure is *inside* the min and max values"
  "'<'",    "Callback is triggered when the air pressure is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the air pressure is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -219,8 +213,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Luftdruck *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Luftdruck kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Luftdruck größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -229,8 +221,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -248,8 +240,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Altitude Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'factor': 100, 'unit': 'Meter', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'factor': 100, 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -267,8 +259,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the altitude is *inside* the min and max values"
  "'<'",    "Callback is triggered when the altitude is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the altitude is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -285,8 +275,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Höhe *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Höhe kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Höhe größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -295,8 +283,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -367,13 +355,12 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'in')],
+'elements': [('Air Pressure', 'int32', 1, 'in', {'factor': 10, 'unit': 'Pascal', 'range': [(0, 0), (10000, 1200000)], 'default': 101325})],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the reference air pressure in mbar/1000 for the altitude calculation.
-Valid values are between 10000 and 1200000.
+Sets the reference air pressure for the altitude calculation.
 Setting the reference to the current air pressure results in a calculated
 altitude of 0cm. Passing 0 is a shortcut for passing the current air pressure as
 reference.
@@ -382,13 +369,10 @@ Well known reference values are the Q codes
 `QNH <https://en.wikipedia.org/wiki/QNH>`__ and
 `QFE <https://en.wikipedia.org/wiki/Mean_sea_level_pressure#Mean_sea_level_pressure>`__
 used in aviation.
-
-The default value is 1013.25mbar.
 """,
 'de':
 """
-Setzt den Referenzluftdruck in mbar/1000 für die Höhenberechnung.
-Gültige Werte liegen zwischen 10000 und 1200000. Wenn der
+Setzt den Referenzluftdruck für die Höhenberechnung. Wenn der
 aktuelle Luftdruckwert als Referenz übergeben wird dann gibt die Höhenberechnung
 0cm aus. Als Abkürzung kann auch 0 übergeben werden, dadurch wird der
 Referenzluftdruck intern auf den aktuellen Luftdruckwert gesetzt.
@@ -397,8 +381,6 @@ Wohl bekannte Referenzluftdruckwerte, die in der Luftfahrt verwendet werden, sin
 `QNH <https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QNH>`__ und
 `QFE <https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QFE>`__
 aus dem Q-Schlüssel.
-
-Der Standardwert ist 1013,25mbar.
 """
 }]
 })
@@ -406,14 +388,12 @@ Der Standardwert ist 1013,25mbar.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Chip Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-4000, 8500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the temperature of the air pressure sensor. The value
-has a range of -4000 to 8500 and is given in °C/100, i.e. a value
-of 2007 means that a temperature of 20.07 °C is measured.
+Returns the temperature of the air pressure sensor.
 
 This temperature is used internally for temperature compensation of the air
 pressure measurement. It is not as accurate as the temperature measured by the
@@ -421,9 +401,7 @@ pressure measurement. It is not as accurate as the temperature measured by the
 """,
 'de':
 """
-Gibt die Temperatur des Luftdrucksensors zurück. Der Wertbereich
-ist von -4000 bis 8500 und ist in °C/100 angegeben, d.h. bei einem Wert von
-2007 wurde eine Temperatur von 20,07 °C gemessen.
+Gibt die Temperatur des Luftdrucksensors zurück.
 
 Diese Temperatur wird intern zur Temperaturkompensation der Luftdruckmessung
 verwendet. Sie ist nicht so genau wie die Temperatur die vom
@@ -436,7 +414,7 @@ wird.
 com['packets'].append({
 'type': 'callback',
 'name': 'Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out')],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -463,7 +441,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Altitude',
-'elements': [('Altitude', 'int32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -490,7 +468,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Air Pressure Reached',
-'elements': [('Air Pressure', 'int32', 1, 'out')],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -517,7 +495,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Altitude Reached',
-'elements': [('Altitude', 'int32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -544,7 +522,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out')],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000), 'default': 101325})],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
@@ -561,9 +539,9 @@ Gibt den Referenzluftdruckwert zurück, wie von :func:`Set Reference Air Pressur
 com['packets'].append({
 'type': 'function',
 'name': 'Set Averaging',
-'elements': [('Moving Average Pressure', 'uint8', 1, 'in'),
-             ('Average Pressure', 'uint8', 1, 'in'),
-             ('Average Temperature', 'uint8', 1, 'in')],
+'elements': [('Moving Average Pressure', 'uint8', 1, 'in', {'range': (0, 25), 'default': 25}),
+             ('Average Pressure', 'uint8', 1, 'in', {'range': (0, 10), 'default': 10}),
+             ('Average Temperature', 'uint8', 1, 'in', {'range': (0, 255), 'default': 10})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -575,17 +553,11 @@ as well as an additional length of a
 for the pressure. The moving average is calculated from the normal
 averages.  There is no moving average for the temperature.
 
-The maximum length for the pressure average is 10, for the
-temperature average is 255 and for the moving average is 25.
-
 Setting the all three parameters to 0 will turn the averaging
 completely off. If the averaging is off, there is lots of noise
 on the data, but the data is without delay. Thus we recommend
 to turn the averaging off if the Barometer Bricklet data is
 to be used for sensor fusion with other sensors.
-
-The default values are 10 for the normal averages and 25 for the
-moving average.
 """,
 'de':
 """
@@ -598,17 +570,11 @@ für den Luftdruck angegeben werden. Der gleitende Mittelwert wird
 mit den Werten des normalen Mittelwerts berechnet. Es gibt keinen
 gleitenden Mittelwert für die Temperatur.
 
-Die maximale Länge des Luftdruckmittelwerts ist 10, des
-Temperaturmittelwerts 255 und des gleitenden Mittelwertes 25.
-
 Wenn alle drei Parameter auf 0 gesetzt werden, ist das Averaging
 komplett aus. In diesem Fall gibt es viel Rauschen auf den Daten,
 allerdings sind die Daten dann ohne Verzögerung. Wir empfehlen
 das Averaging auszustellen wenn die Daten des Barometer Bricklets
 zusammen mit anderen Sensordaten fusioniert werden sollen.
-
-Der Standardwert ist 10 für die normalen Mittelwerte und 25 für
-den gleitenden Mittelwert
 """
 }]
 })
@@ -616,9 +582,9 @@ den gleitenden Mittelwert
 com['packets'].append({
 'type': 'function',
 'name': 'Get Averaging',
-'elements': [('Moving Average Pressure', 'uint8', 1, 'out'),
-             ('Average Pressure', 'uint8', 1, 'out'),
-             ('Average Temperature', 'uint8', 1, 'out')],
+'elements': [('Moving Average Pressure', 'uint8', 1, 'out', {'range': (0, 25), 'default': 25}),
+             ('Average Pressure', 'uint8', 1, 'out', {'range': (0, 10), 'default': 10}),
+             ('Average Temperature', 'uint8', 1, 'out', {'range': (0, 255), 'default': 10})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

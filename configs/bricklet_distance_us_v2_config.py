@@ -56,11 +56,11 @@ com['constant_groups'].append({
 distance_doc = {
 'en':
 """
-Returns the distance in mm.
+Returns the distance.
 """,
 'de':
 """
-Gibt die Distanz in mm zurück.
+Gibt die Distanz zurück.
 """
 }
 
@@ -69,13 +69,16 @@ add_callback_value_function(
     name      = 'Get Distance',
     data_name = 'Distance',
     data_type = 'uint16',
-    doc       = distance_doc
+    doc       = distance_doc,
+    divisor   = 1000,
+    unit      = 'Meter',
+    range_    = (300, 5000)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Update Rate',
-'elements': [('Update Rate', 'uint8', 1, 'in', {'constant_group': 'Update Rate'})],
+'elements': [('Update Rate', 'uint8', 1, 'in', {'constant_group': 'Update Rate', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -84,8 +87,6 @@ Sets the update rate to 2 Hz or 10 Hz.
 
 With 2 Hz update rate the noise is about ±1mm, while with 10 Hz update rate the noise
 increases to about ±5mm.
-
-The default update rate is 2 Hz.
 """,
 'de':
 """
@@ -93,8 +94,6 @@ Setzt die Aktualisierungsrate auf 2 Hz oder 10 Hz.
 
 Mit 2 Hz Aktualisierungsrate beträgt das Rauschen ungefähr ±1mm. Bei 10 Hz
 erhöht sich das das Rauschen auf ungefähr ±5mm.
-
-Der Standardwert beträgt 2 Hz.
 """
 }]
 })
@@ -102,7 +101,7 @@ Der Standardwert beträgt 2 Hz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Update Rate',
-'elements': [('Update Rate', 'uint8', 1, 'out', {'constant_group': 'Update Rate'})],
+'elements': [('Update Rate', 'uint8', 1, 'out', {'constant_group': 'Update Rate', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -119,23 +118,19 @@ Gibt die Aktualisierungsrate zurück, wie von :func:`Set Update Rate` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Distance LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Distance LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Distance LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Configures the distance LED to be either turned off, turned on, blink in
 heartbeat mode or show the distance (brighter = object is nearer).
-
-The default value is 3 (show distance).
 """,
 'de':
 """
 Konfiguriert die Distanz-LED. Die LED kann ausgeschaltet, eingeschaltet,
 im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
 mit der LED die Distanz anzuzeigen (heller = Objekt näher).
-
-Der Standardwert ist 3 (Distanzanzeige).
 """
 }]
 })
@@ -143,7 +138,7 @@ Der Standardwert ist 3 (Distanzanzeige).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Distance LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Distance LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

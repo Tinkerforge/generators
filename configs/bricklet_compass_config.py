@@ -49,14 +49,14 @@ com['constant_groups'].append({
 heading_doc = {
 'en':
 """
-Returns the heading in 1/10 degree (north = 0 degree, east = 90 degree).
+Returns the heading (north = 0 degree, east = 90 degree).
 
 Alternatively you can use :func:`Get Magnetic Flux Density` and calculate the
 heading with ``heading = atan2(y, x) * 180 / PI``.
 """,
 'de':
 """
-Gibt die Richtung in 1/10 Grad zurück (Norden = 0 Grad, Osten = 90 Grad).
+Gibt die Richtung zurück (Norden = 0 Grad, Osten = 90 Grad).
 
 Alternativ kann die Funktion :func:`Get Magnetic Flux Density` genutzt werden um
 die Richtung per ``heading = atan2(y, x) * 180 / PI`` zu bestimmen.
@@ -68,21 +68,24 @@ add_callback_value_function(
     name      = 'Get Heading',
     data_name = 'Heading',
     data_type = 'int16',
-    doc       = heading_doc
+    doc       = heading_doc,
+    divisor   = 10,
+    unit      = 'Degree',
+    range_    = (0, 3600)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetic Flux Density',
-'elements': [('X', 'int32', 1, 'out'),
-             ('Y', 'int32', 1, 'out'),
-             ('Z', 'int32', 1, 'out')],
+'elements': [('X', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
+             ('Y', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
+             ('Z', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
-for all three axis in 1/10 `mG (milli Gauss) <https://en.wikipedia.org/wiki/Gauss_(unit)>`__.
+for all three axis.
 
 If you want to get the value periodically, it is recommended to use the
 :cb:`Magnetic Flux Density` callback. You can set the callback configuration
@@ -91,7 +94,7 @@ with :func:`Set Magnetic Flux Density Callback Configuration`.
 'de':
 """
 Gibt die `magnetische Flussdichte (magnetische Induktion) <https://de.wikipedia.org/wiki/Magnetische_Flussdichte>`__
-für alle drei Achsen in 1/10 `mG (Milligauß) <https://de.wikipedia.org/wiki/Gau%C3%9F_(Einheit)>`__ zurück.
+für alle drei Achsen zurück.
 
 Wenn der Wert periodisch benötigt wird, kann auch der :cb:`Magnetic Flux Density` Callback
 verwendet werden. Der Callback wird mit der Funktion
@@ -158,9 +161,9 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Magnetic Flux Density',
-'elements': [('X', 'int32', 1, 'out'),
-             ('Y', 'int32', 1, 'out'),
-             ('Z', 'int32', 1, 'out')],
+'elements': [('X', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
+             ('Y', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
+             ('Z', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -183,8 +186,8 @@ Die :word:`parameters` sind der gleichen wie :func:`Get Magnetic Flux Density`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate'}),
-             ('Background Calibration', 'bool', 1, 'in')],
+'elements': [('Data Rate', 'uint8', 1, 'in', {'constant_group': 'Data Rate', 'default': 0}),
+             ('Background Calibration', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -201,8 +204,6 @@ Configures the data rate and background calibration.
   you will not get new data for a period of 20ms. We highly recommend that
   you keep the background calibration enabled and only disable it if the 20ms
   off-time is a problem in your application.
-
-Default values: Data rate of 100Hz and background calibration enabled.
 """,
 'de':
 """
@@ -217,8 +218,6 @@ Konfiguriert die Datenrate und Hintergrundkalibrierung:
   20ms. Daher werden einmal pro Sekunde für 20ms keine neuen Daten generiert, wenn
   die Kalibrierung aktiviert ist. Wir empfehlen die Kalibrierung nur zu deaktivieren,
   falls diese 20ms Auszeit ein großes Problem in der Anwendung des Bricklets darstellen.
-
-Standardwerte: Datenrate 100Hz und Hintergrundkalibrierung aktiviert.
 """
 }]
 })
@@ -226,8 +225,8 @@ Standardwerte: Datenrate 100Hz und Hintergrundkalibrierung aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate',}),
-             ('Background Calibration', 'bool', 1, 'out')],
+'elements': [('Data Rate', 'uint8', 1, 'out', {'constant_group': 'Data Rate', 'default': 0}),
+             ('Background Calibration', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -244,8 +243,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Offset', 'int16', 3, 'in'),
-             ('Gain', 'int16', 3, 'in')],
+'elements': [('Offset', 'int16', 3, 'in', {'factor': 10**8, 'unit': 'Tesla'}),
+             ('Gain', 'int16', 3, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -274,8 +273,8 @@ nur einmal durchgeführt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Offset', 'int16', 3, 'out'),
-             ('Gain', 'int16', 3, 'out')],
+'elements': [('Offset', 'int16', 3, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
+             ('Gain', 'int16', 3, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

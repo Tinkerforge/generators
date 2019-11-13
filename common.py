@@ -1161,6 +1161,10 @@ units = {
                                          'A',
                                          {'en': 'Electric Current', 'de': 'Elektrische Stromstärke'}),
 
+    'Bit Per Second':               Unit({'en': 'Bit Per Second', 'de': 'Bit Pro Sekunde'},
+                                         'bit/s',
+                                         {'en': 'Data Rate', 'de': 'Datenrate'}),
+
     'Degree Celsius':               Unit({'en': 'Degree Celsius', 'de': 'Grad Celsius'},
                                          '°C',
                                          {'en': 'Temperature', 'de': 'Temperatur'},
@@ -1185,15 +1189,36 @@ units = {
                                          {'en': 'Frequency', 'de': 'Frequenz'},
                                          scale_prefix_allowed=False),
 
+    'Kelvin':                       Unit({'en': 'Kelvin', 'de': 'Kelvin'},
+                                         'K',
+                                         {'en': 'Temperature', 'de': 'Temperatur'},
+                                         scale_prefix_allowed=False),
+
     'Lux':                          Unit({'en': 'Lux', 'de': 'Lux'},
                                          'lx',
                                          {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
                                          scale_prefix_allowed=False),
 
+    'Meter':                        Unit({'en': 'Meter', 'de': 'Meter'},
+                                         'm',
+                                         {'en': 'Length', 'de': 'Länge'}),
+
     'Meter Per Second Squared':     Unit({'en': 'Meter Per Second Squared', 'de': 'Meter Pro Sekunde Quadrat'},
                                          'm/s²',
                                          {'en': 'Acceleration', 'de': 'Beschleunigung'},
                                          scale_prefix_allowed=False),
+
+    'Pascal':                       Unit({'en': 'Pascal', 'de': 'Pascal'},
+                                         'Pa',
+                                         {'en': 'Pressure', 'de': 'Druck'}),
+
+    'Percent':                      Unit({'en': 'Percent', 'de': 'Prozent'},
+                                         '%',
+                                         {'en': 'Fraction', 'de': 'Anteil'}),
+
+    'Parts Per Million':            Unit({'en': 'parts per million', 'de': 'parts per million'},
+                                         '%',
+                                         {'en': 'Fraction', 'de': 'Anteil'}),
 
     'Second':                       Unit({'en': 'Second', 'de': 'Sekunde'},
                                          's',

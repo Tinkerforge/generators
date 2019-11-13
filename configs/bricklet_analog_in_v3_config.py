@@ -55,14 +55,12 @@ com['constant_groups'].append({
 voltage_doc = {
 'en':
 """
-Returns the measured voltage. The value is in mV and
-between 0V and 42V. The resolution is approximately 10mV to 1mV
+Returns the measured voltage. The resolution is approximately 10mV to 1mV
 depending on the oversampling configuration (:func:`Set Oversampling`).
 """,
 'de':
 """
-Gibt die gemessene Spannung zurück. Der Wert ist in mV und im
-Bereich von 0 bis 42V. Die Auflösung ca. 10mV bis 1mV abhängig von der
+Gibt die gemessene Spannung zurück. Die Auflösung ca. 10mV bis 1mV abhängig von der
 Überabtastungs-Konfiguration (:func:`Set Oversampling`).
 """
 }
@@ -72,13 +70,16 @@ add_callback_value_function(
     name      = 'Get Voltage',
     data_name = 'Voltage',
     data_type = 'uint16',
-    doc       = voltage_doc
+    doc       = voltage_doc,
+    divisor   = 1000,
+    unit      = 'Volt',
+    range_    = (0, 42000)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Oversampling',
-'elements': [('Oversampling', 'uint8', 1, 'in', {'constant_group': 'Oversampling'})],
+'elements': [('Oversampling', 'uint8', 1, 'in', {'constant_group': 'Oversampling', 'default': 7})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -95,8 +96,6 @@ new value is always calculated once per millisecond.
 With increased oversampling the noise decreases. With decreased
 oversampling the reaction time increases (changes in voltage will be
 measured faster).
-
-The default value is 4096x.
 """,
 'de':
 """
@@ -111,8 +110,6 @@ wird jede Millisekunden bestimmt.
 Je höher die Überabtastung desto geringer das Rauschen. Je geringer die
 Überabtastung steigt die Reaktionszeit (Änderugen der Eingangsspannung werden
 schneller erkannt).
-
-Der Standardwert ist 4096x.
 """
 }]
 })
@@ -120,7 +117,7 @@ Der Standardwert ist 4096x.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Oversampling',
-'elements': [('Oversampling', 'uint8', 1, 'out', {'constant_group': 'Oversampling'})],
+'elements': [('Oversampling', 'uint8', 1, 'out', {'constant_group': 'Oversampling', 'default': 7})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -137,9 +134,9 @@ Gibt den Überabtastungsfaktor zurück, wie von :func:`Set Oversampling` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Offset', 'int16', 1, 'in'),
-             ('Multiplier', 'uint16', 1, 'in'),
-             ('Divisor', 'uint16', 1, 'in')],
+'elements': [('Offset', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Volt'}),
+             ('Multiplier', 'uint16', 1, 'in', {}),
+             ('Divisor', 'uint16', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -169,9 +166,9 @@ werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Offset', 'int16', 1, 'out'),
-             ('Multiplier', 'uint16', 1, 'out'),
-             ('Divisor', 'uint16', 1, 'out')],
+'elements': [('Offset', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Volt'}),
+             ('Multiplier', 'uint16', 1, 'out', {}),
+             ('Divisor', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

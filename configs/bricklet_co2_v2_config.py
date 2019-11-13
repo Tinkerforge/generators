@@ -40,30 +40,34 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Values',
-'elements': [('CO2 Concentration', 'uint16', 1, 'out'),
-             ('Temperature', 'int16', 1, 'out'),
-             ('Humidity', 'uint16', 1, 'out')],
+'elements': [('CO2 Concentration', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'range': (0, 40000)}),
+             ('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-4000, 12000)}),
+             ('Humidity', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Percent Relative Humidity', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns all values measured by the CO2 Bricklet 2.0. The values are
-CO2 concentration (in ppm), temperature (in 0.01 °C)
-and humidity (in 0.01 %RH).
+Returns all values measured by the CO2 Bricklet 2.0.
 
 If you want to get the values periodically, it is recommended to use the
 :cb:`All Values` callback. You can set the callback configuration
 with :func:`Set All Values Callback Configuration`.
+
+.. note::
+ The sensor is able to messure up to 120 °C. However it is only specified up to 70 °C.
+ Exposing the Bricklet to higher temperatures might result in permanent damage.
 """,
 'de':
 """
-Gibt alle Werte zurück, die das CO2 Bricklet 2.0 misst. Diese Werte umfassen:
-CO2-Konzentration (in ppm), Temperatur (in 0,01 °C) und
-Luftfeuchte (in 0,01 %RH).
+Gibt alle Werte zurück, die das CO2 Bricklet 2.0 misst.
 
 Wenn der Wert periodisch benötigt wird, kann auch der :cb:`All Values` Callback
 verwendet werden. Der Callback wird mit der Funktion
 :func:`Set All Values Callback Configuration` konfiguriert.
+
+.. note::
+ Der Sensor kann bis zu 120 °C messen, ist aber nur bis 70 °C spezifiziert.
+ Das Bricklet kann permanent beschädigt werden, falls es höheren Temperaturen ausgesetzt wird.
 """
 }]
 })
@@ -71,7 +75,7 @@ verwendet werden. Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Set Air Pressure',
-'elements': [('Air Pressure', 'uint16', 1, 'in')],
+'elements': [('Air Pressure', 'uint16', 1, 'in', {'factor': (1, 100), 'unit': 'Pascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -81,8 +85,6 @@ The CO2 concentration (among other things) depends on the ambient air pressure.
 To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure.
 You use the :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>` or the
 :ref:`Air Quality Bricklet <air_quality_bricklet>` to get the current air pressure.
-
-The expected unit of the ambient air pressure value is mbar.
 
 By default air pressure compensation is disabled. Once you set a value it
 will be used for compensation. You can turn the compensation off again by
@@ -98,8 +100,6 @@ Um die Genauigkeit des CO2 Bricklet 2.0 zu verbessern ist es möglich den aktuel
 Luftdruck zu setzen. Dazu kann das :ref:`Barometer Bricklet 2.0 <barometer_v2_bricklet>`
 oder auch das :ref:`Air Quality Bricklet <air_quality_bricklet>` genutzt werden.
 
-Die erwartete Einheit des Umgebungs-Luftdrucks ist mbar.
-
 Standardmäßig ist die Luftdruck-Kompensation deaktiviert. Sobald ein Wert gesetzt
 wird, wird dieser zur Kompensation verwendet. Die Kompensation kann wieder
 ausgestellt werden in dem der Wert zurück auf 0 gesetzt wird.
@@ -112,7 +112,7 @@ Es ist hinreichend den Wert alle paar Minuten zu aktualisieren.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure',
-'elements': [('Air Pressure', 'uint16', 1, 'out')],
+'elements': [('Air Pressure', 'uint16', 1, 'out', {'divisor': (1, 100), 'unit': 'Pascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -129,12 +129,12 @@ Gibt den Umgebungs-Luftdruch zurück, wie von :func:`Set Air Pressure` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Offset',
-'elements': [('Offset', 'uint16', 1, 'in')],
+'elements': [('Offset', 'uint16', 1, 'in', {'factor': 100, 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets a temperature offset with resolution 1/100°C. A offset of 10 will decrease
+Sets a temperature offset. A offset of 10 will decrease
 the measured temperature by 0.1°C.
 
 If you install this Bricklet into an enclosure and you want to measure the ambient
@@ -155,7 +155,7 @@ non-volatile memory and is applied again after a power loss.
 """,
 'de':
 """
-Setzt ein Temperatur-Offset mit Auflösung 1/100°C. Ein Offset von 10 verringert
+Setzt ein Temperatur-Offset. Ein Offset von 10 verringert
 die gemessene Temperatur um 0,1°C.
 
 Wenn das Bricklet in einem Gehäuse verbaut wird, aber die Umgebungstemperatur
@@ -183,7 +183,7 @@ Neustart wieder angewendet.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Offset',
-'elements': [('Offset', 'uint16', 1, 'out')],
+'elements': [('Offset', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -257,9 +257,9 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'All Values',
-'elements': [('CO2 Concentration', 'uint16', 1, 'out'),
-             ('Temperature', 'int16', 1, 'out'),
-             ('Humidity', 'uint16', 1, 'out')],
+'elements': [('CO2 Concentration', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'range': (0, 40000)}),
+             ('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-4000, 12000)}),
+             ('Humidity', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Percent Relative Humidity', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -268,6 +268,10 @@ This callback is triggered periodically according to the configuration set by
 :func:`Set All Values Callback Configuration`.
 
 The :word:`parameters` are the same as :func:`Get All Values`.
+
+.. note::
+ The sensor is able to messure up to 120 °C. However it is only specified up to 70 °C.
+ Exposing the Bricklet to higher temperatures might result in permanent damage.
 """,
 'de':
 """
@@ -275,6 +279,10 @@ Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set All Values Callback Configuration` gesetzten Konfiguration
 
 Die :word:`parameters` sind die gleichen wie :func:`Get All Values`.
+
+.. note::
+ Der Sensor kann bis zu 120 °C messen, ist aber nur bis 70 °C spezifiziert.
+ Das Bricklet kann permanent beschädigt werden, falls es höheren Temperaturen ausgesetzt wird.
 """
 }]
 })
@@ -282,11 +290,11 @@ Die :word:`parameters` sind die gleichen wie :func:`Get All Values`.
 co2_concentration_doc = {
 'en':
 """
-Returns CO2 concentration in ppm.
+Returns CO2 concentration.
 """,
 'de':
 """
-Gibt die CO2-Konzentration in ppm zurück.
+Gibt die CO2-Konzentration zurück.
 """
 }
 
@@ -295,17 +303,27 @@ add_callback_value_function(
     name      = 'Get CO2 Concentration',
     data_name = 'CO2 Concentration',
     data_type = 'uint16',
-    doc       = co2_concentration_doc
+    doc       = co2_concentration_doc,
+    unit      = 'Parts Per Million',
+    range_    = (0, 40000)
 )
 
 temperature_doc = {
 'en':
 """
-Returns temperature in steps of 0.01 °C.
+Returns temperature.
+
+.. note::
+ The sensor is able to messure up to 120 °C. However it is only specified up to 70 °C.
+ Exposing the Bricklet to higher temperatures might result in permanent damage.
 """,
 'de':
 """
-Gibt die Temperatur in 0,01 °C Schritten zurück.
+Gibt die Temperatur zurück.
+
+.. note::
+ Der Sensor kann bis zu 120 °C messen, ist aber nur bis 70 °C spezifiziert.
+ Das Bricklet kann permanent beschädigt werden, falls es höheren Temperaturen ausgesetzt wird.
 """
 }
 
@@ -314,17 +332,20 @@ add_callback_value_function(
     name      = 'Get Temperature',
     data_name = 'Temperature',
     data_type = 'int16',
-    doc       = temperature_doc
+    doc       = temperature_doc,
+    divisor   = 100,
+    unit      = 'Degree Celsius',
+    range_    = (-4000, 12000)
 )
 
 humidity_doc = {
 'en':
 """
-Returns relative humidity in steps of 0.01 %RH.
+Returns relative humidity.
 """,
 'de':
 """
-Gibt die relative Luftfeuchtigkeit in 0,01 %RH Schritten zurück.
+Gibt die relative Luftfeuchtigkeit zurück.
 """
 }
 
@@ -333,7 +354,10 @@ add_callback_value_function(
     name      = 'Get Humidity',
     data_name = 'Humidity',
     data_type = 'uint16',
-    doc       = humidity_doc
+    doc       = humidity_doc,
+    divisor   = 100,
+    unit      = 'Percent Relative Humidity',
+    range_    = (0, 10000)
 )
 
 com['examples'].append({
