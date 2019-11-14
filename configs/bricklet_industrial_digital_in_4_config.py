@@ -42,7 +42,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Value Mask', 'uint16', 1, 'out')],
+'elements': [('Value Mask', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -81,7 +81,7 @@ Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Group',
-'elements': [('Group', 'char', 4, 'in')],
+'elements': [('Group', 'char', 4, 'in', {'range': [('a', 'd'), ('n', 'n')]})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -139,7 +139,7 @@ aller Flankenzähler zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Group',
-'elements': [('Group', 'char', 4, 'out')],
+'elements': [('Group', 'char', 4, 'out', {'range': [('a', 'd'), ('n', 'n')]})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -156,7 +156,7 @@ Gibt die Gruppierung zurück, wie von :func:`Set Group` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Available For Group',
-'elements': [('Available', 'uint8', 1, 'out')],
+'elements': [('Available', 'uint8', 1, 'out', {'range': (0, 15)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -219,7 +219,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Interrupt',
-'elements': [('Interrupt Mask', 'uint16', 1, 'in')],
+'elements': [('Interrupt Mask', 'uint16', 1, 'in', {'range': (0, 15)})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -254,7 +254,7 @@ Der Interrupt wird mit dem :cb:`Interrupt` Callback zugestellt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Interrupt',
-'elements': [('Interrupt Mask', 'uint16', 1, 'out')],
+'elements': [('Interrupt Mask', 'uint16', 1, 'out', {'range': (0, 15)})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -271,8 +271,8 @@ Gibt die Interrupt Bitmaske zurück, wie von :func:`Set Interrupt` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Interrupt',
-'elements': [('Interrupt Mask', 'uint16', 1, 'out'),
-             ('Value Mask', 'uint16', 1, 'out')],
+'elements': [('Interrupt Mask', 'uint16', 1, 'out', {'range': (0, 15)}),
+             ('Value Mask', 'uint16', 1, 'out', {'range': (0, 15)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -312,9 +312,9 @@ Beispiele:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count',
-'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Reset Counter', 'bool', 1, 'in'),
-             ('Count', 'uint32', 1, 'out')],
+'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Reset Counter', 'bool', 1, 'in', {}),
+             ('Count', 'uint32', 1, 'out', {})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -339,9 +339,9 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Config',
-'elements': [('Selection Mask', 'uint16', 1, 'in'),
-             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'in')],
+'elements': [('Selection Mask', 'uint16', 1, 'in', {'range': (0, 15)}),
+             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -352,18 +352,14 @@ enable the edge counter for pins 0 and 3.
 The edge type parameter configures if rising edges, falling edges or
 both are counted if the pin is configured for input. Possible edge types are:
 
-* 0 = rising (default)
+* 0 = rising
 * 1 = falling
 * 2 = both
-
-The debounce time is given in ms.
 
 Configuring an edge counter resets its value to 0.
 
 If you don't know what any of this means, just leave it at default. The
 default configuration is very likely OK for you.
-
-Default values: 0 (edge type) and 100ms (debounce time)
 """,
 'de':
 """
@@ -378,14 +374,10 @@ konfiguriert sind. Mögliche Flankentypen sind:
 * 1 = fallend
 * 2 = beide
 
-Die Entprellzeit (debounce) wird in ms angegeben.
-
 Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 
 Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
 ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
-
-Standardwerte: 0 (edge type) und 100ms (debounce).
 """
 }]
 })
@@ -393,9 +385,9 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Config',
-'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'out')],
+'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

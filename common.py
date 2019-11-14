@@ -1175,6 +1175,11 @@ units = {
                                          {'en': 'Temperature', 'de': 'Temperatur'},
                                          scale_prefix_allowed=False),
 
+    'Decibel':                      Unit({'en': 'Decibel', 'de': 'Dezibel'},
+                                         'dB',
+                                         {'en': 'Level', 'de': 'Pegel'},
+                                         scale_prefix_allowed=False),
+
     'Degree':                       Unit({'en': 'Degree', 'de': 'Grad'},
                                          '°',
                                          {'en': 'Angle', 'de': 'Winkel'},
@@ -1189,6 +1194,10 @@ units = {
                                          'g',
                                          {'en': 'Mass', 'de': 'Masse'}),
 
+    'Gram Per Cubic Meter':         Unit({'en': 'Gram per cubic meter', 'de': 'Gram per cubic meter'},
+                                         'g/m³',
+                                         {'en': 'Density', 'de': 'Dichte'}),
+
     'Hertz':                        Unit({'en': 'Hertz', 'de': 'Hertz'},
                                          'Hz',
                                          {'en': 'Frequency', 'de': 'Frequenz'},
@@ -1198,6 +1207,10 @@ units = {
                                          'K',
                                          {'en': 'Temperature', 'de': 'Temperatur'},
                                          scale_prefix_allowed=False),
+
+    'Meter Pro Second':            Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
+                                         'm/s',
+                                         {'en': 'Speed', 'de': 'Geschwindigkeit'}),
 
     'Lux':                          Unit({'en': 'Lux', 'de': 'Lux'},
                                          'lx',
@@ -1242,9 +1255,21 @@ units = {
                                          'V',
                                          {'en': 'Electric potential', 'de': 'Elektrische Spannung'}),
 
+    'Volt Ampere':                  Unit({'en': 'Volt-Ampere', 'de': 'Voltampere'},
+                                         'VA',
+                                         {'en': 'Apparent Power', 'de': 'Scheinleistung'}),
+
+    'Volt Ampere Reactive':         Unit({'en': 'Volt-Ampere reactive', 'de': 'Voltampere reaktiv'},
+                                         'var',
+                                         {'en': 'Reactive Power', 'de': 'Blindleistung'}),
+
     'Watt':                         Unit({'en': 'Watt', 'de': 'Watt'},
                                          'W',
-                                         {'en': 'Power', 'de': 'Leistung'})
+                                         {'en': 'Power', 'de': 'Leistung'}),
+
+    'Watt Hour':                     Unit({'en': 'Watt Hour', 'de': 'Wattstunde'},
+                                         'Wh',
+                                         {'en': 'Energy', 'de': 'Energie'})
 }
 
 class Constant(object):

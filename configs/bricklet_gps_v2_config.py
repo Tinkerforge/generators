@@ -77,10 +77,10 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Coordinates',
-'elements': [('Latitude', 'uint32', 1, 'out'),
-             ('NS', 'char', 1, 'out'),
-             ('Longitude', 'uint32', 1, 'out'),
-             ('EW', 'char', 1, 'out')],
+'elements': [('Latitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 90*10**6)}),
+             ('NS', 'char', 1, 'out', {'range': [('N', 'N'), ('S', 'S')]}),
+             ('Longitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 180*10**6)}),
+             ('EW', 'char', 1, 'out', {'range': [('E', 'E'), ('W', 'W')]})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -110,8 +110,8 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Status',
-'elements': [('Has Fix', 'bool', 1, 'out'),
-             ('Satellites View', 'uint8', 1, 'out')],
+'elements': [('Has Fix', 'bool', 1, 'out', {}),
+             ('Satellites View', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -135,15 +135,13 @@ Fix-Status anzeigt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude',
-'elements': [('Altitude', 'int32', 1, 'out'),
-             ('Geoidal Separation', 'int32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'}),
+             ('Geoidal Separation', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the current altitude and corresponding geoidal separation.
-
-Both values are given in cm.
 
 This data is only valid if there is currently a fix as indicated by
 :func:`Get Status`.
@@ -151,8 +149,6 @@ This data is only valid if there is currently a fix as indicated by
 'de':
 """
 Gibt die aktuelle Höhe und die dazu gehörige Geoidal Separation zurück.
-
-Beide Werte werden in cm angegeben.
 
 Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status`).
 """
@@ -162,14 +158,13 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion',
-'elements': [('Course', 'uint32', 1, 'out'),
-             ('Speed', 'uint32', 1, 'out')],
+'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (0, 36000)}),
+             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Pro Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current course and speed. Course is given in hundredths degree
-and speed is given in hundredths km/h. A course of 0° means the Bricklet is
+Returns the current course and speed. A course of 0° means the Bricklet is
 traveling north bound and 90° means it is traveling east bound.
 
 Please note that this only returns useful values if an actual movement
@@ -180,8 +175,7 @@ This data is only valid if there is currently a fix as indicated by
 """,
 'de':
 """
-Gibt die aktuelle Richtung und Geschwindigkeit zurück. Die Richtung wird
-in hundertstel Grad und die Geschwindigkeit in hundertstel km/h angegeben. Eine
+Gibt die aktuelle Richtung und Geschwindigkeit zurück. Eine
 Richtung von 0° bedeutet eine Bewegung des Bricklets nach Norden und 90°
 einer Bewegung nach Osten.
 
@@ -196,8 +190,8 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Date Time',
-'elements': [('Date', 'uint32', 1, 'out'),
-             ('Time', 'uint32', 1, 'out')],
+'elements': [('Date', 'uint32', 1, 'out', {'range': (10100, 311299)}),
+             ('Time', 'uint32', 1, 'out', {'range': (0, 235959999)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -257,12 +251,12 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Satellite System Status Low Level',
 'elements': [('Satellite System', 'uint8', 1, 'in', {'constant_group': 'Satellite System'}),
-             ('Satellite Numbers Length', 'uint8', 1, 'out'),
+             ('Satellite Numbers Length', 'uint8', 1, 'out', {'range': (0, 12)}),
              ('Satellite Numbers Data', 'uint8', 12, 'out'),
              ('Fix', 'uint8', 1, 'out', {'constant_group': 'Fix'}),
-             ('PDOP', 'uint16', 1, 'out'),
-             ('HDOP', 'uint16', 1, 'out'),
-             ('VDOP', 'uint16', 1, 'out')],
+             ('PDOP', 'uint16', 1, 'out', {'divisor': 100}),
+             ('HDOP', 'uint16', 1, 'out', {'divisor': 100}),
+             ('VDOP', 'uint16', 1, 'out', {'divisor': 100})],
 'high_level': {'stream_out': {'name': 'Satellite Numbers', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -307,20 +301,15 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Satellite Status',
 'elements': [('Satellite System', 'uint8', 1, 'in', {'constant_group': 'Satellite System'}),
-             ('Satellite Number', 'uint8', 1, 'in'), # 1-32, for GLONASS 1-32 correspond to satellite 65-96
-             ('Elevation', 'int16', 1, 'out'),       # 0-90°
-             ('Azimuth', 'int16', 1, 'out'),         # 0-359°
-             ('SNR', 'int16', 1, 'out')],            # 0-99dB
+             ('Satellite Number', 'uint8', 1, 'in', {'range': (1, 32)}),
+             ('Elevation', 'int16', 1, 'out', {'unit': 'Degree', 'range': (0, 90)}),
+             ('Azimuth', 'int16', 1, 'out', {'unit': 'Degree', 'range': (0, 359)}),
+             ('SNR', 'int16', 1, 'out', {'unit': 'Decibel', 'range': (0, 99)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current
-
-* elevation (0° - 90°),
-* azimuth (0° - 359°) and
-* SNR (0dB - 99dB)
-
+Returns the current elevation, azimuth and SNR
 for a given satellite and satellite system.
 
 The satellite number here always goes from 1 to 32. For GLONASS it corresponds to
@@ -330,12 +319,7 @@ Galileo is not yet supported.
 """,
 'de':
 """
-Gibt die aktuellen Werte von
-
-* Elevation (0° - 90°),
-* Azimutwinkel (0° - 359°) und
-* SNR (0dB - 99dB)
-
+Gibt die aktuellen Werte von Elevation, Azimutwinkel und SNR
 für einen gegebenen Satelliten und ein gegebenes Satellitensystem zurück.
 
 Die Satellitennummer hat hier immer einen Bereich von 1 bis 32. Bei GLONASS
@@ -349,7 +333,7 @@ Galileo wird noch nicht unterstützt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Fix LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Fix LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Fix LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -380,7 +364,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Fix LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Fix LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Fix LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -637,10 +621,10 @@ eine Stund dauern.
 com['packets'].append({
 'type': 'callback',
 'name': 'Coordinates',
-'elements': [('Latitude', 'uint32', 1, 'out'),
-             ('NS', 'char', 1, 'out'),
-             ('Longitude', 'uint32', 1, 'out'),
-             ('EW', 'char', 1, 'out')],
+'elements': [('Latitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 90*10**6)}),
+             ('NS', 'char', 1, 'out', {'range': [('N', 'N'), ('S', 'S')]}),
+             ('Longitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 180*10**6)}),
+             ('EW', 'char', 1, 'out', {'range': [('E', 'E'), ('W', 'W')]})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -669,8 +653,8 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Status',
-'elements': [('Has Fix', 'bool', 1, 'out'),
-             ('Satellites View', 'uint8', 1, 'out')],
+'elements': [('Has Fix', 'bool', 1, 'out', {}),
+             ('Satellites View', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -697,8 +681,8 @@ Status seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Altitude',
-'elements': [('Altitude', 'int32', 1, 'out'),
-             ('Geoidal Separation', 'int32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'}),
+             ('Geoidal Separation', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -727,8 +711,8 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Motion',
-'elements': [('Course', 'uint32', 1, 'out'),
-             ('Speed', 'uint32', 1, 'out')],
+'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (0, 36000)}),
+             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Pro Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -757,8 +741,8 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Date Time',
-'elements': [('Date', 'uint32', 1, 'out'),
-             ('Time', 'uint32', 1, 'out')],
+'elements': [('Date', 'uint32', 1, 'out', {'range': (10100, 311299)}),
+             ('Time', 'uint32', 1, 'out', {'range': (0, 235959999)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -785,7 +769,7 @@ Zeit seit der letzten Auslösung geändert haben.
 com['packets'].append({
 'type': 'function',
 'name': 'Set SBAS Config',
-'elements': [('SBAS Config', 'uint8', 1, 'in', {'constant_group': 'SBAS'})],
+'elements': [('SBAS Config', 'uint8', 1, 'in', {'constant_group': 'SBAS', 'default': 0})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -810,7 +794,7 @@ Standardmäßig ist SBAS aktiviert und die Aktualisierungsrate 5Hz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get SBAS Config',
-'elements': [('SBAS Config', 'uint8', 1, 'out', {'constant_group': 'SBAS'})],
+'elements': [('SBAS Config', 'uint8', 1, 'out', {'constant_group': 'SBAS', 'default': 0})],
 
 'since_firmware': [2, 0, 2],
 'doc': ['af', {

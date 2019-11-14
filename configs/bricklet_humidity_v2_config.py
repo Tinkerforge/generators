@@ -59,15 +59,11 @@ com['constant_groups'].append({
 humidity_doc = {
 'en':
 """
-Returns the humidity measured by the sensor. The value
-has a range of 0 to 10000 and is given in %RH/100 (Relative Humidity),
-i.e. a value of 4223 means that a humidity of 42.23 %RH is measured.
+Returns the humidity measured by the sensor.
 """,
 'de':
 """
-Gibt die gemessene Luftfeuchtigkeit des Sensors zurück. Der Wertebereich ist von
-0 bis 10000 und wird in %RH/100 angegeben (relative Luftfeuchtigkeit), z.B. bedeutet
-ein Wert von 4223 eine gemessene Luftfeuchtigkeit von 42,23 %RH.
+Gibt die gemessene Luftfeuchtigkeit des Sensors zurück.
 """
 }
 
@@ -76,21 +72,20 @@ add_callback_value_function(
     name      = 'Get Humidity',
     data_name = 'Humidity',
     data_type = 'uint16',
-    doc       = humidity_doc
+    doc       = humidity_doc,
+    divisor   = 100,
+    unit      = 'Percent Relative Humidity',
+    range_    = (0, 10000)
 )
 
 temperature_doc = {
 'en':
 """
-Returns the temperature measured by the sensor. The value
-has a range of -4000 to 16500 and is given in °C/100,
-i.e. a value of 3200 means that a temperature of 32.00 °C is measured.
+Returns the temperature measured by the sensor.
 """,
 'de':
 """
-Gibt die gemessene Temperatur des Sensors zurück. Der Wertebereich ist von
--4000 bis 16500 und wird in °C/100 angegeben, z.B. bedeutet
-ein Wert von 3200 eine gemessene Temperatur von 32,00 °C.
+Gibt die gemessene Temperatur des Sensors zurück.
 """
 }
 
@@ -99,28 +94,27 @@ add_callback_value_function(
     name      = 'Get Temperature',
     data_name = 'Temperature',
     data_type = 'int16',
-    doc       = temperature_doc
+    doc       = temperature_doc,
+    divisor   = 100,
+    unit      = 'Degree Celsius',
+    range_    = (-4000, 16500)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Heater Configuration',
-'elements': [('Heater Config', 'uint8', 1, 'in', {'constant_group': 'Heater Config'})],
+'elements': [('Heater Config', 'uint8', 1, 'in', {'constant_group': 'Heater Config', 'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Enables/disables the heater. The heater can be used to dry the sensor in
 extremely wet conditions.
-
-By default the heater is disabled.
 """,
 'de':
 """
 Aktiviert/deaktiviert das Heizelement. Das Heizelement kann genutzt werden
 um den Sensor bei extremer Feuchtigkeit zu trocknen.
-
-Standardmäßig ist das Heizelement deaktiviert.
 """
 }]
 })
@@ -128,7 +122,7 @@ Standardmäßig ist das Heizelement deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Heater Configuration',
-'elements': [('Heater Config', 'uint8', 1, 'out', {'constant_group': 'Heater Config'})],
+'elements': [('Heater Config', 'uint8', 1, 'out', {'constant_group': 'Heater Config', 'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -145,8 +139,8 @@ Gibt die Heizelement-Konfiguration zurück, wie von :func:`Set Heater Configurat
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average Configuration',
-'elements': [('Moving Average Length Humidity', 'uint16', 1, 'in'),
-             ('Moving Average Length Temperature', 'uint16', 1, 'in')],
+'elements': [('Moving Average Length Humidity', 'uint16', 1, 'in', {'range': (1, 1000), 'default': 5}),
+             ('Moving Average Length Temperature', 'uint16', 1, 'in', {'range': (1, 1000), 'default': 5})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -157,13 +151,9 @@ for the humidity and temperature.
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
 
-The range for the averaging is 1-1000.
-
 New data is gathered every 50ms*. With a moving average of length 1000 the resulting
 averaging window has a length of 50s. If you want to do long term measurements the longest
 moving average will give the cleanest results.
-
-The default value is 5.
 
 \* In firmware version 2.0.3 we added the :func:`Set Samples Per Second` function. It
 configures the measurement frequency. Since high frequencies can result in self-heating
@@ -178,13 +168,9 @@ für die Luftfeuchtigkeit und Temperatur.
 Wenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert.
 Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
-Der Wertebereich liegt bei 1-1000.
-
 Einer neue Wert wird alle 50ms* gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
 resultierende gleitende Fenster eine Zeitspanne von 50s. Bei Langzeitmessungen gibt
 ein langer Mittelwert die saubersten Resultate.
-
-Der Standardwert ist 5.
 
 \* In Firmware Version 2.0.3 haben wir die Funktion :func:`Set Samples Per Second`
 hinzugefügt. Diese konfiguriert die Messfrequenz. Da eine hohe Messfrequenz zu
@@ -198,8 +184,8 @@ einem Zeitfenster von 1000 Sekunden!
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average Configuration',
-'elements': [('Moving Average Length Humidity', 'uint16', 1, 'out'),
-             ('Moving Average Length Temperature', 'uint16', 1, 'out')],
+'elements': [('Moving Average Length Humidity', 'uint16', 1, 'out', {'range': (1, 1000), 'default': 5}),
+             ('Moving Average Length Temperature', 'uint16', 1, 'out', {'range': (1, 1000), 'default': 5})],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -217,7 +203,7 @@ Gibt die Moving Average-Konfiguration zurück, wie von :func:`Set Moving Average
 com['packets'].append({
 'type': 'function',
 'name': 'Set Samples Per Second',
-'elements': [('SPS', 'uint8', 1, 'in', {'constant_group': 'SPS'})],
+'elements': [('SPS', 'uint8', 1, 'in', {'constant_group': 'SPS', 'default': 3})],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':
@@ -244,7 +230,7 @@ Wenn wenig Messwerte benötigt werden kann die Frequenz auf bis zu 0,1 Messungen
 Sekunde verringert werden um einen Fehler durch Selbsterhitzung möglichst weit zu
 minimieren.
 
-Vor Version 2.0.3 wurden 30 Messungen pro Sekunde gemacht. Der neue Standardwert seit
+Vor Version 2.0.3 wurden 20 Messungen pro Sekunde gemacht. Der neue Standardwert seit
 2.0.3 ist 1 Messung pro Sekunde.
 """
 }]
@@ -253,7 +239,7 @@ Vor Version 2.0.3 wurden 30 Messungen pro Sekunde gemacht. Der neue Standardwert
 com['packets'].append({
 'type': 'function',
 'name': 'Get Samples Per Second',
-'elements': [('SPS', 'uint8', 1, 'out', {'constant_group': 'SPS'})],
+'elements': [('SPS', 'uint8', 1, 'out', {'constant_group': 'SPS', 'default': 3})],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':

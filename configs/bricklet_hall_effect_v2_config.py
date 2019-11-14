@@ -55,14 +55,17 @@ add_callback_value_function(
     name      = 'Get Magnetic Flux Density',
     data_name = 'Magnetic Flux Density',
     data_type = 'int16',
-    doc       = magnetic_flux_density_doc
+    doc       = magnetic_flux_density_doc,
+    divisor   = 10**6,
+    unit      = 'Tesla',
+    range_    = (-7000, 7000)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter',
-'elements': [('Reset Counter', 'bool', 1, 'in'),
-             ('Count', 'uint32', 1, 'out')],
+'elements': [('Reset Counter', 'bool', 1, 'in', {}),
+             ('Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -99,9 +102,9 @@ verwendet werden. Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Config',
-'elements': [('High Threshold', 'int16', 1, 'in'),
-             ('Low Threshold', 'int16', 1, 'in'),
-             ('Debounce', 'uint32', 1, 'in')],
+'elements': [('High Threshold', 'int16', 1, 'in', {'factor': 10**6, 'unit': 'Tesla', 'default': 2000}),
+             ('Low Threshold', 'int16', 1, 'in', {'factor': 10**6, 'unit': 'Tesla', 'default': -2000}),
+             ('Debounce', 'uint32', 1, 'in', {'factor': 10**6, 'unit': 'Second', 'range': (0, 10**6), 'default': 10**5})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -112,12 +115,6 @@ If the measured magnetic flux density goes above the high threshold or
 below the low threshold, the count of the counter is increased by 1.
 
 The debounce time is the minimum time between two count increments.
-
-The default values are
-
-* High Threshold: 2000µT
-* Low Threshold: -2000µT
-* Debounce: 100000µs (100ms)
 """,
 'de':
 """
@@ -129,12 +126,6 @@ oder unter den unteren Schwellwert wandert, wird der Zählerstand des Zählers
 (siehe :func:`Get Counter`) um 1 erhöht.
 
 Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.
-
-Die Standardwerte sind
-
-* Oberer Schwellwert: 2000µT
-* Unterer Schwellwert: -2000µT
-* Entprellzeit: 100000µs (100ms)
 """
 }]
 })
@@ -142,9 +133,9 @@ Die Standardwerte sind
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Config',
-'elements': [('High Threshold', 'int16', 1, 'out'),
-             ('Low Threshold', 'int16', 1, 'out'),
-             ('Debounce', 'uint32', 1, 'out')],
+'elements': [('High Threshold', 'int16', 1, 'out', {'divisor': 10**6, 'unit': 'Tesla', 'default': 2000}),
+             ('Low Threshold', 'int16', 1, 'out', {'divisor': 10**6, 'unit': 'Tesla', 'default': -2000}),
+             ('Debounce', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Second', 'range': (0, 10**6), 'default': 10**5})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -216,7 +207,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Counter',
-'elements': [('Count', 'uint32', 1, 'out')],
+'elements': [('Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

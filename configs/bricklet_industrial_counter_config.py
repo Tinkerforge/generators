@@ -106,7 +106,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Counter',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Counter', 'int64', 1, 'out')],
+             ('Counter', 'int64', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -123,7 +123,7 @@ Gibt den aktuellen Zählerstand für den gegebenen Kanal zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Counter',
-'elements': [('Counter', 'int64', 4, 'out')],
+'elements': [('Counter', 'int64', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -184,35 +184,21 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Signal Data',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Duty Cycle', 'uint16', 1, 'out'),
-             ('Period', 'uint64', 1, 'out'),
-             ('Frequency', 'uint32', 1, 'out'),
-             ('Value', 'bool', 1, 'out')],
+             ('Duty Cycle', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Percent', 'range': (0, 10000)}),
+             ('Period', 'uint64', 1, 'out', {'divisor': 10**9, 'unit': 'Second'}),
+             ('Frequency', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Hertz'}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the signal data (duty cycle, period, frequency and value) for the
 given channel.
-
-The units are:
-
-* Duty Cycle: 1/100 %
-* Period: ns
-* Frequency: mHz (1/1000 Hz)
-* Value: true = high, false = low
 """,
 'de':
 """
 Gibt die Signaldaten (Tastverhältnis, Periode, Frequenz und Status) für den
 gegebenen Kanal.
-
-Die Einheiten sind:
-
-* Tastverhältnis: 1/100 %
-* Periode: ns
-* Frequenz: mHz (1/1000 Hz)
-* Wert: true = high, false = low
 """
 }]
 })
@@ -220,35 +206,21 @@ Die Einheiten sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Signal Data',
-'elements': [('Duty Cycle', 'uint16', 4, 'out'),
-             ('Period', 'uint64', 4, 'out'),
-             ('Frequency', 'uint32', 4, 'out'),
-             ('Value', 'bool', 4, 'out')],
+'elements': [('Duty Cycle', 'uint16', 4, 'out', {'divisor': 100, 'unit': 'Percent', 'range': (0, 10000)}),
+             ('Period', 'uint64', 4, 'out', {'divisor': 10**9, 'unit': 'Second'}),
+             ('Frequency', 'uint32', 4, 'out', {'divisor': 1000, 'unit': 'Hertz'}),
+             ('Value', 'bool', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the signal data (duty cycle, period, frequency and value) for all four
 channels.
-
-The units are:
-
-* Duty Cycle: 1/100 %
-* Period: ns
-* Frequency: mHz (1/1000 Hz)
-* Value: true = high, false = low
 """,
 'de':
 """
 Gibt die Signaldaten (Tastverhältnis, Periode, Frequenz und Status) für alle
 vier Kanäle zurück.
-
-Die Einheiten sind:
-
-* Tastverhältnis: 1/100 %
-* Periode: ns
-* Frequenz: mHz (1/1000 Hz)
-* Wert: true = high, false = low
 """
 }]
 })
@@ -257,7 +229,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Active',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Active', 'bool', 1, 'in')],
+             ('Active', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -282,7 +254,7 @@ Standardmäßig sind alle Kanäle aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Counter Active',
-'elements': [('Active', 'bool', 4, 'in')],
+'elements': [('Active', 'bool', 4, 'in', {'default': [True] * 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -308,7 +280,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Active',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Active', 'bool', 1, 'out')],
+             ('Active', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -329,7 +301,7 @@ true = aktiviert, false = deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Counter Active',
-'elements': [('Active', 'bool', 4, 'out')],
+'elements': [('Active', 'bool', 4, 'out', {'default': [True] * 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -351,44 +323,44 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Count Edge', 'uint8', 1, 'in', {'constant_group': 'Count Edge'}),
-             ('Count Direction', 'uint8', 1, 'in', {'constant_group': 'Count Direction'}),
-             ('Duty Cycle Prescaler', 'uint8', 1, 'in', {'constant_group': 'Duty Cycle Prescaler'}),
-             ('Frequency Integration Time', 'uint8', 1, 'in', {'constant_group': 'Frequency Integration Time'})],
+             ('Count Edge', 'uint8', 1, 'in', {'constant_group': 'Count Edge', 'default': 0}),
+             ('Count Direction', 'uint8', 1, 'in', {'constant_group': 'Count Direction', 'default': 0}),
+             ('Duty Cycle Prescaler', 'uint8', 1, 'in', {'constant_group': 'Duty Cycle Prescaler', 'default': 0}),
+             ('Frequency Integration Time', 'uint8', 1, 'in', {'constant_group': 'Frequency Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Sets the counter configuration for the given channel.
 
-* Count Edge: Counter can count on rising, falling or both edges. Default is rising.
+* Count Edge: Counter can count on rising, falling or both edges.
 * Count Direction: Counter can count up or down. You can also use
   another channel as direction input, see
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
-  for details. Default is up.
+  for details.
 * Duty Cycle Prescaler: Sets a divider for the internal clock. See
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
-  for details. Default is 1.
+  for details.
 * Frequency Integration Time: Sets the integration time for the
   frequency measurement. See
   `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__
-  for details. Default is 1024ms.
+  for details.
 """,
 'de':
 """
 Setzt die Zähler-Konfiguration für den gegebenen Kanal.
 
-* Zählflanke: Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen. Standardwert ist steigend.
+* Zählflanke: Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen.
 * Zählrichtung: Der Zähler kann hoch- oder runterzählen. Es kann auch ein weiterer
   Kanal als Richtungseingang genutzt werden. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#external-count-direction>`__
-  für weitere Details. Standardwert ist hochzählend.
+  für weitere Details.
 * Tastverhältnis Prescaler: Setzt einen Teiler für die interne Clock. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__
-  für weitere Details. Standardwert ist 1.
+  für weitere Details.
 * Frequenz-Integration: Setzt die Integrationszeit für die Frequenzmessung. Siehe
   `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__
-  für weitere Details. Standardwert ist 1024ms.
+  für weitere Details.
 """
 }]
 })
@@ -397,10 +369,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Count Edge', 'uint8', 1, 'out', {'constant_group': 'Count Edge'}),
-             ('Count Direction', 'uint8', 1, 'out', {'constant_group': 'Count Direction'}),
-             ('Duty Cycle Prescaler', 'uint8', 1, 'out', {'constant_group': 'Duty Cycle Prescaler'}),
-             ('Frequency Integration Time', 'uint8', 1, 'out', {'constant_group': 'Frequency Integration Time'})],
+             ('Count Edge', 'uint8', 1, 'out', {'constant_group': 'Count Edge', 'default': 0}),
+             ('Count Direction', 'uint8', 1, 'out', {'constant_group': 'Count Direction', 'default': 0}),
+             ('Duty Cycle Prescaler', 'uint8', 1, 'out', {'constant_group': 'Duty Cycle Prescaler', 'default': 0}),
+             ('Frequency Integration Time', 'uint8', 1, 'out', {'constant_group': 'Frequency Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -529,7 +501,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -556,7 +528,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -573,7 +545,7 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 com['packets'].append({
 'type': 'callback',
 'name': 'All Counter',
-'elements': [('Counter', 'int64', 4, 'out')],
+'elements': [('Counter', 'int64', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -596,10 +568,10 @@ Die :word:`parameters` sind der gleiche wie :func:`Get All Counter`.
 com['packets'].append({
 'type': 'callback',
 'name': 'All Signal Data',
-'elements': [('Duty Cycle', 'uint16', 4, 'out'),
-             ('Period', 'uint64', 4, 'out'),
-             ('Frequency', 'uint32', 4, 'out'),
-             ('Value', 'bool', 4, 'out')],
+'elements': [('Duty Cycle', 'uint16', 4, 'out', {'divisor': 100, 'unit': 'Percent', 'range': (0, 10000)}),
+             ('Period', 'uint64', 4, 'out', {'divisor': 10**9, 'unit': 'Second'}),
+             ('Frequency', 'uint32', 4, 'out', {'divisor': 1000, 'unit': 'Hertz'}),
+             ('Value', 'bool', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

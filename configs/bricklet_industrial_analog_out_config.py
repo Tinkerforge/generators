@@ -91,7 +91,7 @@ Der Standardwert ist deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -109,19 +109,19 @@ Gibt *true* zurück falls die Ausgabe von Spannung und Strom aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage',
-'elements': [('Voltage', 'uint16', 1, 'in')],
+'elements': [('Voltage', 'uint16', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the output voltage in mV.
+Sets the output voltage.
 
 The output voltage and output current are linked. Changing the output voltage
 also changes the output current.
 """,
 'de':
 """
-Setzt die Ausgangsspannung in mV.
+Setzt die Ausgangsspannung.
 
 Die Ausgangsspannung und der Ausgangsstrom sind gekoppelt. Eine Änderung der
 Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.
@@ -132,7 +132,7 @@ Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -149,19 +149,19 @@ Gibt die Spannung zurück, wie von :func:`Set Voltage` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current',
-'elements': [('Current', 'uint16', 1, 'in')],
+'elements': [('Current', 'uint16', 1, 'in', {'factor': 10**6, 'unit': 'Ampere', 'range': (0, 24000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the output current in µA.
+Sets the output current.
 
 The output current and output voltage are linked. Changing the output current
 also changes the output voltage.
 """,
 'de':
 """
-Setzt den Ausgangsstrom in µA.
+Setzt den Ausgangsstrom.
 
 Der Ausgangsstrom und die Ausgangsspannung sind gekoppelt. Eine Änderung des
 Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.
@@ -172,7 +172,7 @@ Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current',
-'elements': [('Current', 'uint16', 1, 'out')],
+'elements': [('Current', 'uint16', 1, 'out', {'divisor': 10**6, 'unit': 'Ampere', 'range': (0, 24000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -189,8 +189,8 @@ Gibt die Spannung zurück, wie von :func:`Set Current` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Voltage Range', 'uint8', 1, 'in', {'constant_group': 'Voltage Range'}),
-             ('Current Range', 'uint8', 1, 'in', {'constant_group': 'Current Range'})],
+'elements': [('Voltage Range', 'uint8', 1, 'in', {'constant_group': 'Voltage Range', 'default': 1}),
+             ('Current Range', 'uint8', 1, 'in', {'constant_group': 'Current Range', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -200,11 +200,11 @@ Configures the voltage and current range.
 Possible voltage ranges are:
 
 * 0V to 5V
-* 0V to 10V (default)
+* 0V to 10V
 
 Possible current ranges are:
 
-* 4mA to 20mA (default)
+* 4mA to 20mA
 * 0mA to 20mA
 * 0mA to 24mA
 
@@ -218,11 +218,11 @@ Konfiguriert die Spannungs- und Stromwertebereiche.
 Einstellbare Spannungswertebereiche sind:
 
 * 0V bis 5V
-* 0V bis 10V (Standard)
+* 0V bis 10V
 
 Einstellbare Stromwertebereiche sind:
 
-* 4mA bis 20mA (Standard)
+* 4mA bis 20mA
 * 0mA bis 20mA
 * 0mA bis 24mA
 
@@ -235,8 +235,8 @@ sich bei kleineren Wertebereichen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Voltage Range', 'uint8', 1, 'out', {'constant_group': 'Voltage Range'}),
-             ('Current Range', 'uint8', 1, 'out', {'constant_group': 'Current Range'})],
+'elements': [('Voltage Range', 'uint8', 1, 'out', {'constant_group': 'Voltage Range', 'default': 1}),
+             ('Current Range', 'uint8', 1, 'out', {'constant_group': 'Current Range', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

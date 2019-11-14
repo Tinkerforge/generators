@@ -35,28 +35,28 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Data',
-'elements': [('Voltage', 'int32', 1, 'out'),        # 10mV RMS
-             ('Current', 'int32', 1, 'out'),        # 10mA RMS
-             ('Energy', 'int32', 1, 'out'),         # 10mWh
-             ('Real Power', 'int32', 1, 'out'),     # 10mW
-             ('Apparent Power', 'int32', 1, 'out'), # 10mVA
-             ('Reactive Power', 'int32', 1, 'out'), # 10mVAR
-             ('Power Factor', 'uint16', 1, 'out'),  # 1/1000
-             ('Frequency', 'uint16', 1, 'out')],    # 1/100Hz
+'elements': [('Voltage', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Volt'}),
+             ('Current', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Ampere'}),
+             ('Energy', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Watt Hour'}),
+             ('Real Power', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Watt'}),
+             ('Apparent Power', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Volt Ampere'}),
+             ('Reactive Power', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Volt Ampere Reactive'}),
+             ('Power Factor', 'uint16', 1, 'out', {'divisor': 1000}),
+             ('Frequency', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Hertz'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns all of the measurements that are done by the Energy Monitor Bricklet.
 
-* Voltage (V): Voltage RMS with a resolution of 10mV (example: 230.05V = 23005)
-* Current (A): Current RMS with a resolution of 10mA (example: 1.42A = 142)
-* Energy (Wh): Energy (integrated over time) with a resolution of 10mWh (example: 1.1kWh = 110000)
-* Real Power (W): Real Power with a resolution of 10mW (example: 1234.56W = 123456)
-* Apparent Power (VA): Apparent Power with a resolution of 10mVA (example: 1234.56VA = 123456)
-* Reactive Power (VAR): Reactive Power with a resolution of 10mVAR (example: 1234.56VAR = 123456)
-* Power Factor: Power Factor with a resolution of 1/1000 (example: PF 0.995 = 995)
-* Frequency (Hz): AC Frequency of the mains voltage with a resolution of 1/100 Hz (example: 50Hz = 5000)
+* Voltage RMS
+* Current RMS
+* Energy (integrated over time)
+* Real Power
+* Apparent Power
+* Reactive Power
+* Power Factor
+* Frequency (AC Frequency of the mains voltage)
 
 The frequency is recalculated every 6 seconds.
 
@@ -72,14 +72,14 @@ to calculate the frequency and it will use an integration time of
 """
 Gibt alle Messdaten des Energy Monitor Bricklets zurück.
 
-* Voltage (V): RMS-Spannung (Effektivwert) mit einer Auflösung von 10mV (Beispiel: 230,05V = 23005)
-* Current (A): RMS-Strom (Effektivwert) mit einer Auflösung von 10mA (Beispiel: 1,42A = 142)
-* Energy (Wh): Energie (integriert über Zeit) mit einer Auflösung von 10mWh (Beispiel: 1,1kWh = 110000)
-* Real Power (W): Wirkleistung mit einer Auflösung von 10mW (Beispiel: 1234,56W = 123456)
-* Apparent Power (VA): Scheinleistung mit einer Auflösung von 10mVA (Beispiel: 1234,56VA = 123456)
-* Reactive Power (VAR): Blindleistung mit einer Auflösung von 10mVAR (Beispiel: 1234,56VAR = 123456)
-* Power Factor: Leistungsfaktor mit einer Auflösung von 1/1000 (Beispiel: PF 0,995 = 995)
-* Frequency (Hz): AC-Frequenz der Netzspannung mit einer Auflösung von 1/100 Hz (Beispiel: 50Hz = 5000)
+* Voltage: RMS-Spannung (Effektivwert)
+* Current: RMS-Strom (Effektivwert)
+* Energy: Energie (integriert über Zeit)
+* Real Power: Wirkleistung
+* Apparent Power: Scheinleistung
+* Reactive Power: Blindleistung
+* Power Factor: Leistungsfaktor
+* Frequency: AC-Frequenz der Netzspannung
 
 Die Frequenz wird alle 6 Sekunden neu berechnet.
 
@@ -114,8 +114,8 @@ Setzt den Energiewert (siehe :func:`Get Energy Data`) zurück auf 0Wh
 com['packets'].append({
 'type': 'function',
 'name': 'Get Waveform Low Level',
-'elements': [('Waveform Chunk Offset', 'uint16', 1, 'out'),
-             ('Waveform Chunk Data', 'int16', 30, 'out')],
+'elements': [('Waveform Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Waveform Chunk Data', 'int16', 30, 'out', {})],
 'high_level': {'stream_out': {'name': 'Waveform', 'fixed_length': (1024-256)*2}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -151,8 +151,8 @@ Kurvenverläufe genutzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Transformer Status',
-'elements': [('Voltage Transformer Connected', 'bool', 1, 'out'),
-             ('Current Transformer Connected', 'bool', 1, 'out')],
+'elements': [('Voltage Transformer Connected', 'bool', 1, 'out', {}),
+             ('Current Transformer Connected', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -169,9 +169,9 @@ Gibt *true* zurück wenn ein Spannungs-/Stromtransformator mit dem Bricklet verb
 com['packets'].append({
 'type': 'function',
 'name': 'Set Transformer Calibration',
-'elements': [('Voltage Ratio', 'uint16', 1, 'in'),
-             ('Current Ratio', 'uint16', 1, 'in'),
-             ('Phase Shift', 'int16', 1, 'in')],
+'elements': [('Voltage Ratio', 'uint16', 1, 'in', {'default': 1923}),
+             ('Current Ratio', 'uint16', 1, 'in', {'default': 3000}),
+             ('Phase Shift', 'int16', 1, 'in', {'range': (0, 0), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -186,8 +186,6 @@ In this case you have to set the values 2556 and 3000 for voltage ratio and curr
 ratio.
 
 The calibration is saved in non-volatile memory, you only have to set it once.
-
-By default the voltage ratio is set to 1923 and the current ratio is set to 3000.
 
 Set the phase shift to 0. It is for future use and currently not supported by the Bricklet.
 """,
@@ -204,9 +202,6 @@ In diesem Fall müssten also die Werte 2556 und 3000 gesetzt werden.
 Die Kalibrierung wird in nicht-flüchtigem Speicher gespeichert und muss nur einmal
 gesetzt werden.
 
-Im Auslieferungszustand ist das Spannungsverhältnis auf 1923 und das
-Stromverhältnis auf 3000 gesetzt.
-
 Der Parameter *Phase Shift* muss auf 0 gesetzt werden. Dieser Parameter wird
 aktuell von der Firmware nicht genutzt.
 """
@@ -216,9 +211,9 @@ aktuell von der Firmware nicht genutzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Transformer Calibration',
-'elements': [('Voltage Ratio', 'uint16', 1, 'out'),
-             ('Current Ratio', 'uint16', 1, 'out'),
-             ('Phase Shift', 'int16', 1, 'out')],
+'elements': [('Voltage Ratio', 'uint16', 1, 'out', {'default': 1923}),
+             ('Current Ratio', 'uint16', 1, 'out', {'default': 3000}),
+             ('Phase Shift', 'int16', 1, 'out', {'range': (0, 0), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -330,14 +325,14 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Energy Data',
-'elements': [('Voltage', 'int32', 1, 'out'),
-             ('Current', 'int32', 1, 'out'),
-             ('Energy', 'int32', 1, 'out'),
-             ('Real Power', 'int32', 1, 'out'),
-             ('Apparent Power', 'int32', 1, 'out'),
-             ('Reactive Power', 'int32', 1, 'out'),
-             ('Power Factor', 'uint16', 1, 'out'),
-             ('Frequency', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Volt'}),
+             ('Current', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Ampere'}),
+             ('Energy', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Watt Hour'}),
+             ('Real Power', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Watt'}),
+             ('Apparent Power', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Volt Ampere'}),
+             ('Reactive Power', 'int32', 1, 'out', {'divisor': '100', 'unit': 'Volt Ampere Reactive'}),
+             ('Power Factor', 'uint16', 1, 'out', {'divisor': 1000}),
+             ('Frequency', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Hertz'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

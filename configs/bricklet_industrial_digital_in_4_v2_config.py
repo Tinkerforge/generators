@@ -61,7 +61,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Value', 'bool', 4, 'out')],
+'elements': [('Value', 'bool', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -195,8 +195,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Reset Counter', 'bool', 1, 'in'),
-             ('Count', 'uint32', 1, 'out')],
+             ('Reset Counter', 'bool', 1, 'in', {}),
+             ('Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -223,8 +223,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'in')],
+             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -234,18 +234,14 @@ Configures the edge counter for a specific channel.
 The edge type parameter configures if rising edges, falling edges or both are
 counted. Possible edge types are:
 
-* 0 = rising (default)
+* 0 = rising
 * 1 = falling
 * 2 = both
-
-The debounce time is given in ms.
 
 Configuring an edge counter resets its value to 0.
 
 If you don't know what any of this means, just leave it at default. The
 default configuration is very likely OK for you.
-
-Default values: 0 (edge type) and 100ms (debounce time)
 """,
 'de':
 """
@@ -259,14 +255,10 @@ sind:
 * 1 = fallend
 * 2 = beide
 
-Die Entprellzeit (debounce) wird in ms angegeben.
-
 Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 
 Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
 ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
-
-Standardwerte: 0 (edge type) und 100ms (debounce).
 """
 }]
 })
@@ -275,8 +267,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'out')],
+             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -296,7 +288,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -323,7 +315,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -341,8 +333,8 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Value',
 'elements': [('Channel', 'uint8', 1, 'out', {'constant_group': 'Channel'}),
-             ('Changed', 'bool', 1, 'out'),
-             ('Value', 'bool', 1, 'out')],
+             ('Changed', 'bool', 1, 'out', {}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -368,8 +360,8 @@ ist True wenn sich der Wert seit dem letzten Callback geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'All Value',
-'elements': [('Changed', 'bool', 4, 'out'),
-             ('Value', 'bool', 4, 'out')],
+'elements': [('Changed', 'bool', 4, 'out', {}),
+             ('Value', 'bool', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -38,12 +38,12 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Dust Density',
-'elements': [('Dust Density', 'uint16', 1, 'out')],
+'elements': [('Dust Density', 'uint16', 1, 'out', {'divisor': 10**6, 'unit': 'Gram Per Cubic Meter', 'range': (0, 500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the dust density in µg/m³.
+Returns the dust density.
 
 If you want to get the dust density periodically, it is recommended
 to use the :cb:`Dust Density` callback and set the period with
@@ -51,7 +51,7 @@ to use the :cb:`Dust Density` callback and set the period with
 """,
 'de':
 """
-Gibt die Staubdichte in µg/m³ zurück.
+Gibt die Staubdichte zurück.
 
 Wenn die Staubdichte periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Dust Density` Callback zu nutzen und die Periode mit
@@ -106,8 +106,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Dust Density Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'factor': 10**6, 'unit': 'Gram Per Cubic Meter', 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'factor': 10**6, 'unit': 'Gram Per Cubic Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -125,8 +125,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the dust density value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the dust density value is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the dust density value is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -143,8 +141,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Staubdichte *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Staubdichte kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Staubdichte größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -153,8 +149,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Dust Density Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'divisor': 10**6, 'unit': 'Gram Per Cubic Meter', 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'divisor': 10**6, 'unit': 'Gram Per Cubic Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -221,7 +217,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Dust Density',
-'elements': [('Dust Density', 'uint16', 1, 'out')],
+'elements': [('Dust Density', 'uint16', 1, 'out', {'divisor': 10**6, 'unit': 'Gram Per Cubic Meter', 'range': (0, 500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -247,7 +243,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Dust Density Reached',
-'elements': [('Dust Density', 'uint16', 1, 'out')],
+'elements': [('Dust Density', 'uint16', 1, 'out', {'divisor': 10**6, 'unit': 'Gram Per Cubic Meter', 'range': (0, 500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -274,7 +270,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average',
-'elements': [('Average', 'uint8', 1, 'in')],
+'elements': [('Average', 'uint8', 1, 'in', {'range': (0, 100), 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -284,10 +280,6 @@ for the dust density.
 
 Setting the length to 0 will turn the averaging completely off. With less
 averaging, there is more noise on the data.
-
-The range for the averaging is 0-100.
-
-The default value is 100.
 """,
 'de':
 """
@@ -295,10 +287,6 @@ Setzt die Länge eines gleitenden Mittelwerts für die Staubdichte.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 0-100.
-
-Der Standardwert ist 100.
 """
 }]
 })
@@ -306,7 +294,7 @@ Der Standardwert ist 100.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average',
-'elements': [('Average', 'uint8', 1, 'out')],
+'elements': [('Average', 'uint8', 1, 'out', {'range': (0, 100), 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

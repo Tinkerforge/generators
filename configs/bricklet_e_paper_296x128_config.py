@@ -146,13 +146,13 @@ er *kopiert* wird. Es findet kein Double-Buffering statt.
 com['packets'].append({
 'type': 'function',
 'name': 'Write Black White Low Level',
-'elements': [('X Start', 'uint16', 1, 'in'),
-             ('Y Start', 'uint8', 1, 'in'),
-             ('X End', 'uint16', 1, 'in'),
-             ('Y End', 'uint8', 1, 'in'),
-             ('Pixels Length', 'uint16', 1, 'in'),
-             ('Pixels Chunk Offset', 'uint16', 1, 'in'),
-             ('Pixels Chunk Data', 'bool', 54*8, 'in')],
+'elements': [('X Start', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Y Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('X End', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Pixels Length', 'uint16', 1, 'in', {'range': (0, 296*128)}),
+             ('Pixels Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Pixels Chunk Data', 'bool', 54*8, 'in', {})],
 'high_level': {'stream_in': {'name': 'Pixels'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -160,9 +160,8 @@ com['packets'].append({
 """
 Writes black/white pixels to the specified window into the buffer.
 
-The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-into the window line by line top to bottom and each line is written from left to
-right.
+The pixels are written into the window line by line top to bottom
+and each line is written from left to right.
 
 The value 0 (false) corresponds to a black pixel and the value 1 (true) to a
 white pixel.
@@ -176,9 +175,8 @@ Use :func:`Write Color` to write red or gray pixels.
 """
 Schreibt schwarze/weiße Pixel in das angegebene Fenster in den Buffer.
 
-Die X-Achse läuft von 0 bis 295 und die Y-Achse von 0 bis 127. Die Pixel werden
-zeilenweise von oben nach unten geschrieben und die Zeilen werden jeweils von
-links nach rechts geschrieben.
+Die Pixel werden zeilenweise von oben nach unten geschrieben und die
+Zeilen werden jeweils von links nach rechts geschrieben.
 
 Der Wert 0 (false) entspricht einem schwarzen Pixel und der Wert 1 (true) einem
 weißen Pixel.
@@ -195,11 +193,11 @@ schreiben.
 com['packets'].append({
 'type': 'function',
 'name': 'Read Black White Low Level',
-'elements': [('X Start', 'uint16', 1, 'in'),
-             ('Y Start', 'uint8', 1, 'in'),
-             ('X End', 'uint16', 1, 'in'),
-             ('Y End', 'uint8', 1, 'in'),
-             ('Pixels Length', 'uint16', 1, 'out'),
+'elements': [('X Start', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Y Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('X End', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Pixels Length', 'uint16', 1, 'out', {'range': (0, 296*128)}),
              ('Pixels Chunk Offset', 'uint16', 1, 'out'),
              ('Pixels Chunk Data', 'bool', 58*8, 'out')],
 'high_level': {'stream_out': {'name': 'Pixels'}},
@@ -209,9 +207,8 @@ com['packets'].append({
 """
 Returns the current content of the black/white pixel buffer for the specified window.
 
-The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-into the window line by line top to bottom and each line is written from left to
-right.
+The pixels are read into the window line by line top to bottom and
+each line is read from left to right.
 
 The current content of the buffer does not have to be the current content of the display.
 It is possible that the data was not drawn to the display yet and after a restart of
@@ -222,9 +219,8 @@ the Bricklet the buffer will be reset to black, while the display retains its co
 Gibt den aktuellen Inhalt des Schwarz-/Weiß-Buffers für das spezifizierte Fenster
 zurück.
 
-Die X-Achse läuft von 0 bis 295 und die Y-Achse von 0 bis 127. Die Pixel werden
-zeilenweise von oben nach unten geschrieben und die Zeilen werden jeweils von
-links nach rechts geschrieben.
+Die Pixel werden zeilenweise von oben nach unten gelesen und die Zeilen
+werden jeweils von links nach rechts gelesen.
 
 Der aktuelle Inhalt des Buffers muss nicht dem aktuellen Inhalt des Displays entsprechen.
 Es ist möglich das der Buffer noch nicht auf das Display übertragen wurde und nach einem
@@ -237,11 +233,11 @@ den Inhalt beibehält.
 com['packets'].append({
 'type': 'function',
 'name': 'Write Color Low Level',
-'elements': [('X Start', 'uint16', 1, 'in'),
-             ('Y Start', 'uint8', 1, 'in'),
-             ('X End', 'uint16', 1, 'in'),
-             ('Y End', 'uint8', 1, 'in'),
-             ('Pixels Length', 'uint16', 1, 'in'),
+'elements': [('X Start', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Y Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('X End', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Pixels Length', 'uint16', 1, 'in', {'range': (0, 296*128)}),
              ('Pixels Chunk Offset', 'uint16', 1, 'in'),
              ('Pixels Chunk Data', 'bool', 54*8, 'in')],
 'high_level': {'stream_in': {'name': 'Pixels'}},
@@ -253,9 +249,8 @@ The E-Paper 296x128 Bricklet is available with the colors black/white/red and
 black/white/gray. Depending on the model this function writes either red or
 gray pixels to the specified window into the buffer.
 
-The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-into the window line by line top to bottom and each line is written from left to
-right.
+The pixels are written into the window line by line top to bottom
+and each line is written from left to right.
 
 The value 0 (false) means that this pixel does not have color. It will be either black
 or white (see :func:`Write Black White`). The value 1 (true) corresponds to a red or gray
@@ -272,9 +267,8 @@ Das E-Paper 296x128 Bricklet ist in den Farben schwarz/weiß/rot sowie schwarz/w
 verfügbar. Abhängig vom verwendeten Modell schreibt diese Funktion entweder rote oder
 graue Pixel in das spezifizierte Fenster des Buffers.
 
-Die X-Achse läuft von 0 bis 295 und die Y-Achse von 0 bis 127. Die Pixel werden
-zeilenweise von oben nach unten geschrieben und die Zeilen werden jeweils von
-links nach rechts geschrieben.
+Die Pixel werden zeilenweise von oben nach unten geschrieben
+und die Zeilen werden jeweils von links nach rechts geschrieben.
 
 Der Wert 0 (false) bedeutet dass das Pixel keine Farbe hat. Es ist in diesem Fall entweder
 schwarz oder weiß (siehe :func:`Write Black White`). Der Wert 1 (true) entspricht einem
@@ -292,11 +286,11 @@ schreiben.
 com['packets'].append({
 'type': 'function',
 'name': 'Read Color Low Level',
-'elements': [('X Start', 'uint16', 1, 'in'),
-             ('Y Start', 'uint8', 1, 'in'),
-             ('X End', 'uint16', 1, 'in'),
-             ('Y End', 'uint8', 1, 'in'),
-             ('Pixels Length', 'uint16', 1, 'out'),
+'elements': [('X Start', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Y Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('X End', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Pixels Length', 'uint16', 1, 'out', {'range': (0, 296*128)}),
              ('Pixels Chunk Offset', 'uint16', 1, 'out'),
              ('Pixels Chunk Data', 'bool', 58*8, 'out')],
 'high_level': {'stream_out': {'name': 'Pixels'}},
@@ -306,9 +300,8 @@ com['packets'].append({
 """
 Returns the current content of the red or gray pixel buffer for the specified window.
 
-The x-axis goes from 0 to 295 and the y-axis from 0 to 127. The pixels are written
-into the window line by line top to bottom and each line is written from left to
-right.
+The pixels are written into the window line by line top to bottom
+and each line is written from left to right.
 
 The current content of the buffer does not have to be the current content of the display.
 It is possible that the data was not drawn to the display yet and after a restart of
@@ -319,9 +312,8 @@ the Bricklet the buffer will be reset to black, while the display retains its co
 Gibt den aktuellen Inhalt des Rot- oder Grau-Buffers für das spezifizierte Fenster
 zurück.
 
-Die X-Achse läuft von 0 bis 295 und die Y-Achse von 0 bis 127. Die Pixel werden
-zeilenweise von oben nach unten geschrieben und die Zeilen werden jeweils von
-links nach rechts geschrieben.
+Die Pixel werden zeilenweise von oben nach unten gelesen
+und die Zeilen werden jeweils von links nach rechts gelesen.
 
 Der aktuelle Inhalt des Buffers muss nicht dem aktuellen Inhalt des Displays entsprechen.
 Es ist möglich das der Buffer noch nicht auf das Display übertragen wurde und nach einem
@@ -351,20 +343,17 @@ Füllt den kompletten Inhalt des Displays mit der gegebenen Farbe.
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Text',
-'elements': [('Position X', 'uint16', 1, 'in'),
-             ('Position Y', 'uint8', 1, 'in'),
+'elements': [('Position X', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Position Y', 'uint8', 1, 'in', {'range': (0, 127)}),
              ('Font', 'uint8', 1, 'in', {'constant_group': 'Font'}),
              ('Color', 'uint8', 1, 'in', {'constant_group': 'Color'}),
              ('Orientation', 'uint8', 1, 'in', {'constant_group': 'Orientation'}),
-             ('Text', 'string', 50, 'in')],
+             ('Text', 'string', 50, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Draws a text with up to 50 characters at the pixel position (x, y).
-
-The x values have to be within the range of 0 to 295 and the y
-values have to be within the range of 0 to 127.
 
 You can use one of 9 different font sizes and draw the text in
 black/white/red|gray. The text can be drawn horizontal or vertical.
@@ -372,9 +361,6 @@ black/white/red|gray. The text can be drawn horizontal or vertical.
 'de':
 """
 Zeichnet einen Text mit bis zu 50 Buchstaben an die Pixelposition (x, y).
-
-Die Wertebereich für die x-Werte ist 0 bis 295 und
-der Wertebereich für die y-Werte ist 0 bis 127.
 
 Es können 9 unterschiedliche Font-Größen genutzt werden und der Text
 kann in schwarz/weiß/rot|grau gezeichnet werden. Der Text kann horizontal
@@ -386,24 +372,20 @@ oder vertikal gezeichnet werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Line',
-'elements': [('Position X Start', 'uint16', 1, 'in'),
-             ('Position Y Start', 'uint8', 1, 'in'),
-             ('Position X End', 'uint16', 1, 'in'),
-             ('Position Y End', 'uint8', 1, 'in'),
+'elements': [('Position X Start', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Position Y Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position X End', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Position Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
              ('Color', 'uint8', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Draws a line from (x, y)-start to (x, y)-end in the given color.
-The x values have to be within the range of 0 to 295 and the y
-values have t be within the range of 0 to 127.
 """,
 'de':
 """
 Zeichnet eine Linie von (x, y)-Start nach (x, y)-Ende in der eingestellten Farbe.
-Der Wertebereich für die x-Werte ist 0 bis 295 und
-der Wertebereich für die y-Werte ist 0 bis 127.
 """
 }]
 })
@@ -411,19 +393,17 @@ der Wertebereich für die y-Werte ist 0 bis 127.
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Box',
-'elements': [('Position X Start', 'uint16', 1, 'in'),
-             ('Position Y Start', 'uint8', 1, 'in'),
-             ('Position X End', 'uint16', 1, 'in'),
-             ('Position Y End', 'uint8', 1, 'in'),
-             ('Fill', 'bool', 1, 'in'),
+'elements': [('Position X Start', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Position Y Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position X End', 'uint16', 1, 'in', {'range': (0, 295)}),
+             ('Position Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Fill', 'bool', 1, 'in', {}),
              ('Color', 'uint8', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Draws a box from (x, y)-start to (x, y)-end in the given color.
-The x values have to be within the range of 0 to 295 and the y
-values have to be within the range of 0 to 127.
 
 If you set fill to true, the box will be filled with the
 color. Otherwise only the outline will be drawn.
@@ -431,8 +411,6 @@ color. Otherwise only the outline will be drawn.
 'de':
 """
 Zeichnet ein Rechteck von (x, y)-Start nach (x, y)-Ende in der eingestellten Farbe.
-Der Wertebereich für die x-Werte ist 0 bis 295 und
-der Wertebereich für die y-Werte ist 0 bis 127.
 
 Wenn fill auf true gesetzt wird, wird das Rechteck mit
 der angegebenen Farbe ausgefüllt. Ansonsten wird nur der Umriss
@@ -463,7 +441,7 @@ ausgelöst, wenn sich der Draw Status ändert (siehe :func:`Get Draw Status`).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Update Mode',
-'elements': [('Update Mode', 'uint8', 1, 'in', {'constant_group': 'Update Mode'})],
+'elements': [('Update Mode', 'uint8', 1, 'in', {'constant_group': 'Update Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -548,7 +526,7 @@ flackerfreie Aktualisierungen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Update Mode',
-'elements': [('Update Mode', 'uint8', 1, 'out', {'constant_group': 'Update Mode'})],
+'elements': [('Update Mode', 'uint8', 1, 'out', {'constant_group': 'Update Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

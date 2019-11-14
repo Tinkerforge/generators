@@ -66,20 +66,16 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Enabled',
-'elements': [('Enabled', 'bool', 1, 'in')],
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Enables/disables the output of voltage and current.
-
-The default is disabled.
 """,
 'de':
 """
 Aktiviert/deaktiviert die Ausgabe von Spannung und Strom.
-
-Der Standardwert ist deaktiviert.
 """
 }]
 })
@@ -87,7 +83,7 @@ Der Standardwert ist deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -105,19 +101,19 @@ Gibt *true* zurück falls die Ausgabe von Spannung und Strom aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage',
-'elements': [('Voltage', 'uint16', 1, 'in')],
+'elements': [('Voltage', 'uint16', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the output voltage in mV.
+Sets the output voltage.
 
 The output voltage and output current are linked. Changing the output voltage
 also changes the output current.
 """,
 'de':
 """
-Setzt die Ausgangsspannung in mV.
+Setzt die Ausgangsspannung.
 
 Die Ausgangsspannung und der Ausgangsstrom sind gekoppelt. Eine Änderung der
 Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.
@@ -128,7 +124,7 @@ Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -145,19 +141,19 @@ Gibt die Spannung zurück, wie von :func:`Set Voltage` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current',
-'elements': [('Current', 'uint16', 1, 'in')],
+'elements': [('Current', 'uint16', 1, 'in', {'factor': 10**6, 'unit': 'Ampere', 'range': (0, 24000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the output current in µA.
+Sets the output current.
 
 The output current and output voltage are linked. Changing the output current
 also changes the output voltage.
 """,
 'de':
 """
-Setzt den Ausgangsstrom in µA.
+Setzt den Ausgangsstrom.
 
 Der Ausgangsstrom und die Ausgangsspannung sind gekoppelt. Eine Änderung des
 Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.
@@ -168,7 +164,7 @@ Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current',
-'elements': [('Current', 'uint16', 1, 'out')],
+'elements': [('Current', 'uint16', 1, 'out', {'divisor': 10**6, 'unit': 'Ampere', 'range': (0, 24000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -185,8 +181,8 @@ Gibt die Spannung zurück, wie von :func:`Set Current` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Voltage Range', 'uint8', 1, 'in', {'constant_group': 'Voltage Range'}),
-             ('Current Range', 'uint8', 1, 'in', {'constant_group': 'Current Range'})],
+'elements': [('Voltage Range', 'uint8', 1, 'in', {'constant_group': 'Voltage Range', 'default': 1}),
+             ('Current Range', 'uint8', 1, 'in', {'constant_group': 'Current Range', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -196,11 +192,11 @@ Configures the voltage and current range.
 Possible voltage ranges are:
 
 * 0V to 5V
-* 0V to 10V (default)
+* 0V to 10V
 
 Possible current ranges are:
 
-* 4mA to 20mA (default)
+* 4mA to 20mA
 * 0mA to 20mA
 * 0mA to 24mA
 
@@ -214,11 +210,11 @@ Konfiguriert die Spannungs- und Stromwertebereiche.
 Einstellbare Spannungswertebereiche sind:
 
 * 0V bis 5V
-* 0V bis 10V (Standard)
+* 0V bis 10V
 
 Einstellbare Stromwertebereiche sind:
 
-* 4mA bis 20mA (Standard)
+* 4mA bis 20mA
 * 0mA bis 20mA
 * 0mA bis 24mA
 
@@ -231,8 +227,8 @@ sich bei kleineren Wertebereichen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Voltage Range', 'uint8', 1, 'out', {'constant_group': 'Voltage Range'}),
-             ('Current Range', 'uint8', 1, 'out', {'constant_group': 'Current Range'})],
+'elements': [('Voltage Range', 'uint8', 1, 'out', {'constant_group': 'Voltage Range', 'default': 1}),
+             ('Current Range', 'uint8', 1, 'out', {'constant_group': 'Current Range', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -249,7 +245,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Out LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -260,8 +256,6 @@ LED can either be turned on with a pre-defined threshold or the intensity
 of the LED can change with the output value (voltage or current).
 
 You can configure the channel status behavior with :func:`Set Out LED Status Config`.
-
-By default the LED is configured as "Out Status"
 """,
 'de':
 """
@@ -273,8 +267,6 @@ Ausgabewertes (Spannung oder Strom) skaliert werden.
 
 Das Verhalten des Out-Status kann mittels :func:`Set Out LED Status Config`
 eingestellt werden.
-
-Standardmäßig ist die LED auf Out-Status konfiguriert.
 """
 }]
 })
@@ -282,7 +274,7 @@ Standardmäßig ist die LED auf Out-Status konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Out LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Out LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Out LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -318,9 +310,9 @@ other way around."""
 com['packets'].append({
 'type': 'function',
 'name': 'Set Out LED Status Config',
-'elements': [('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Status Config'})],
+'elements': [('Min', 'uint16', 1, 'in', {'range': (0, 24000), 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'range': (0, 24000), 'default': 10000}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Status Config', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -329,9 +321,6 @@ Sets the Out LED status config. This config is used if the Out LED is
 configured as "Out Status", see :func:`Set Out LED Config`.
 
 {}
-
-By default the channel LED status config is set to intensity with min=0V and
-max=10V.
 """.format(out_led_status_description),
 'de':
 """
@@ -357,8 +346,6 @@ Helligkeit der LED skaliert wird. Beispiel mit min=2V und max=8V: Die LED ist
 bei 2V und darunter aus, bei 8V und darüber an und zwischen 2V und 8V wird die
 Helligkeit linear skaliert. Wenn der min Wert größer als der max Wert ist, dann
 wird die Helligkeit andersherum skaliert.
-
-Standardwerte: Intensitätsmodus mit min=0V und max=10V.
 """
 }]
 })
@@ -366,9 +353,9 @@ Standardwerte: Intensitätsmodus mit min=0V und max=10V.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Out LED Status Config',
-'elements': [('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out'),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Out LED Status Config'})],
+'elements': [('Min', 'uint16', 1, 'out', {'range': (0, 24000), 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'range': (0, 24000), 'default': 10000}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Out LED Status Config', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

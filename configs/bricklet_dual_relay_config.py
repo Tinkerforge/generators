@@ -34,8 +34,8 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set State',
-'elements': [('Relay1', 'bool', 1, 'in'),
-             ('Relay2', 'bool', 1, 'in')],
+'elements': [('Relay1', 'bool', 1, 'in', {'default': False}),
+             ('Relay2', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -48,8 +48,6 @@ of the other relay, you can get the state with :func:`Get State` or you
 can use :func:`Set Selected State`.
 
 All running monoflop timers will be aborted if this function is called.
-
-The default value is (*false*, *false*).
 """,
 'de':
 """
@@ -61,8 +59,6 @@ nicht bekannt ist, dann kann der Zustand mit :func:`Get State` ausgelesen werden
 es kann :func:`Set Selected State` genutzt werden.
 
 Alle laufenden Monoflop Timer werden abgebrochen, wenn diese Funktion aufgerufen wird.
-
-Der Standardwert ist (*false*, *false*).
 """
 }]
 })
@@ -70,8 +66,8 @@ Der Standardwert ist (*false*, *false*).
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
-'elements': [('Relay1', 'bool', 1, 'out'),
-             ('Relay2', 'bool', 1, 'out')],
+'elements': [('Relay1', 'bool', 1, 'out', {'default': False}),
+             ('Relay2', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -88,16 +84,16 @@ Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Monoflop',
-'elements': [('Relay', 'uint8', 1, 'in'),
-             ('State', 'bool', 1, 'in'),
-             ('Time', 'uint32', 1, 'in')],
+'elements': [('Relay', 'uint8', 1, 'in', {'range': (1, 2)}),
+             ('State', 'bool', 1, 'in', {}),
+             ('Time', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
 """
 The first parameter can be 1 or 2 (relay 1 or relay 2). The second parameter
 is the desired state of the relay (*true* means on and *false* means off).
-The third parameter indicates the time (in ms) that the relay should hold
+The third parameter indicates the time that the relay should hold
 the state.
 
 If this function is called with the parameters (1, true, 1500):
@@ -113,7 +109,7 @@ connection is lost, the relay will turn off in at most two seconds.
 """
 Der erste Parameter kann 1 oder 2 sein (Relais 1 oder Relais 2). Der zweite
 Parameter ist der gewünschte Zustand des Relais (*true* bedeutet ein und *false* aus).
-Der dritte Parameter stellt die Zeit (in ms) dar, welche das Relais den Zustand halten soll.
+Der dritte Parameter stellt die Zeit dar, welche das Relais den Zustand halten soll.
 
 Wenn diese Funktion mit den Parametern (1, true, 1500) aufgerufen wird:
 Relais 1 wird angeschaltet und nach 1,5s wieder ausgeschaltet.
@@ -130,10 +126,10 @@ wird das Relais nach spätestens zwei Sekunden ausschalten.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Monoflop',
-'elements': [('Relay', 'uint8', 1, 'in'),
-             ('State', 'bool', 1, 'out'),
-             ('Time', 'uint32', 1, 'out'),
-             ('Time Remaining', 'uint32', 1, 'out')],
+'elements': [('Relay', 'uint8', 1, 'in', {'range': (1, 2)}),
+             ('State', 'bool', 1, 'out', {}),
+             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -157,8 +153,8 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Relay', 'uint8', 1, 'out'),
-             ('State', 'bool', 1, 'out')],
+'elements': [('Relay', 'uint8', 1, 'out', {'range': (1, 2)}),
+             ('State', 'bool', 1, 'out', {})],
 'since_firmware': [1, 1, 1],
 'doc': ['c', {
 'en':
@@ -179,8 +175,8 @@ des Relais (der Zustand nach dem Monoflop).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected State',
-'elements': [('Relay', 'uint8', 1, 'in'),
-             ('State', 'bool', 1, 'in')],
+'elements': [('Relay', 'uint8', 1, 'in', {'range': (1, 2)}),
+             ('State', 'bool', 1, 'in', {})],
 'since_firmware': [2, 0, 0],
 'doc': ['af', {
 'en':

@@ -52,14 +52,14 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Coordinates',
-'elements': [('Latitude', 'uint32', 1, 'out'),
-             ('NS', 'char', 1, 'out'),
-             ('Longitude', 'uint32', 1, 'out'),
-             ('EW', 'char', 1, 'out'),
-             ('PDOP', 'uint16', 1, 'out'),
-             ('HDOP', 'uint16', 1, 'out'),
-             ('VDOP', 'uint16', 1, 'out'),
-             ('EPE', 'uint16', 1, 'out')],
+'elements': [('Latitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 90*10**6)}),
+             ('NS', 'char', 1, 'out', {'range': [('N', 'N'), ('S', 'S')]}),
+             ('Longitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 180*10**6)}),
+             ('EW', 'char', 1, 'out', {'range': [('E', 'E'), ('W', 'W')]}),
+             ('PDOP', 'uint16', 1, 'out', {'divisor': 100}),
+             ('HDOP', 'uint16', 1, 'out', {'divisor': 100}),
+             ('VDOP', 'uint16', 1, 'out', {'divisor': 100}),
+             ('EPE', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -74,7 +74,7 @@ PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
 the additional multiplicative effect of GPS satellite geometry on GPS
 precision. See
 `here <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
-for more information. The values are give in hundredths.
+for more information.
 
 EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
 absolute maximum error, it is the error with a specific confidence. See
@@ -111,8 +111,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Status',
 'elements': [('Fix', 'uint8', 1, 'out', {'constant_group': 'Fix'}),
-             ('Satellites View', 'uint8', 1, 'out'),
-             ('Satellites Used', 'uint8', 1, 'out')],
+             ('Satellites View', 'uint8', 1, 'out', {}),
+             ('Satellites Used', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -157,15 +157,13 @@ Fix-Status anzeigt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude',
-'elements': [('Altitude', 'int32', 1, 'out'),
-             ('Geoidal Separation', 'int32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'}),
+             ('Geoidal Separation', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the current altitude and corresponding geoidal separation.
-
-Both values are given in cm.
 
 This data is only valid if there is currently a fix as indicated by
 :func:`Get Status`.
@@ -175,8 +173,6 @@ This data is only valid if there is currently a fix as indicated by
 Gibt die aktuelle Höhe und die dazu gehörige "Geoidal Separation"
 zurück.
 
-Beide Werte werden in cm angegeben.
-
 Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status`).
 """
 }]
@@ -185,14 +181,13 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion',
-'elements': [('Course', 'uint32', 1, 'out'),
-             ('Speed', 'uint32', 1, 'out')],
+'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (0, 36000)}),
+             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Pro Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current course and speed. Course is given in hundredths degree
-and speed is given in hundredths km/h. A course of 0° means the Bricklet is
+Returns the current course and speed. A course of 0° means the Bricklet is
 traveling north bound and 90° means it is traveling east bound.
 
 Please note that this only returns useful values if an actual movement
@@ -203,8 +198,7 @@ This data is only valid if there is currently a fix as indicated by
 """,
 'de':
 """
-Gibt die aktuelle Richtung und Geschwindigkeit zurück. Die Richtung wird
-in hundertstel Grad und die Geschwindigkeit in hundertstel km/h angegeben. Eine
+Gibt die aktuelle Richtung und Geschwindigkeit zurück. Eine
 Richtung von 0° bedeutet eine Bewegung des Bricklets nach Norden und 90°
 einer Bewegung nach Osten.
 
@@ -219,8 +213,8 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Date Time',
-'elements': [('Date', 'uint32', 1, 'out'),
-             ('Time', 'uint32', 1, 'out')],
+'elements': [('Date', 'uint32', 1, 'out', {'range': (10100, 311299)}),
+             ('Time', 'uint32', 1, 'out', {'range': (0, 235959999)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -489,14 +483,14 @@ Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Coordinates',
-'elements': [('Latitude', 'uint32', 1, 'out'),
-             ('NS', 'char', 1, 'out'),
-             ('Longitude', 'uint32', 1, 'out'),
-             ('EW', 'char', 1, 'out'),
-             ('PDOP', 'uint16', 1, 'out'),
-             ('HDOP', 'uint16', 1, 'out'),
-             ('VDOP', 'uint16', 1, 'out'),
-             ('EPE', 'uint16', 1, 'out')],
+'elements': [('Latitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 90*10**6)}),
+             ('NS', 'char', 1, 'out', {'range': [('N', 'N'), ('S', 'S')]}),
+             ('Longitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 180*10**6)}),
+             ('EW', 'char', 1, 'out', {'range': [('E', 'E'), ('W', 'W')]}),
+             ('PDOP', 'uint16', 1, 'out', {'divisor': 100}),
+             ('HDOP', 'uint16', 1, 'out', {'divisor': 100}),
+             ('VDOP', 'uint16', 1, 'out', {'divisor': 100}),
+             ('EPE', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -526,8 +520,8 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Status',
 'elements': [('Fix', 'uint8', 1, 'out', {'constant_group': 'Fix'}),
-             ('Satellites View', 'uint8', 1, 'out'),
-             ('Satellites Used', 'uint8', 1, 'out')],
+             ('Satellites View', 'uint8', 1, 'out', {}),
+             ('Satellites Used', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -554,8 +548,8 @@ Status seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Altitude',
-'elements': [('Altitude', 'int32', 1, 'out'),
-             ('Geoidal Separation', 'int32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'}),
+             ('Geoidal Separation', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -584,8 +578,8 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Motion',
-'elements': [('Course', 'uint32', 1, 'out'),
-             ('Speed', 'uint32', 1, 'out')],
+'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (0, 36000)}),
+             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Pro Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -614,8 +608,8 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Date Time',
-'elements': [('Date', 'uint32', 1, 'out'),
-             ('Time', 'uint32', 1, 'out')],
+'elements': [('Date', 'uint32', 1, 'out', {'range': (10100, 311299)}),
+             ('Time', 'uint32', 1, 'out', {'range': (0, 235959999)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

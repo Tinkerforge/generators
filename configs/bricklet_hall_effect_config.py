@@ -42,7 +42,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Value', 'bool', 1, 'out')],
+'elements': [('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -60,8 +60,8 @@ detektiert wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count',
-'elements': [('Reset Counter', 'bool', 1, 'in'),
-             ('Count', 'uint32', 1, 'out')],
+'elements': [('Reset Counter', 'bool', 1, 'in', {}),
+             ('Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -88,8 +88,8 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Config',
-'elements': [('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'in')],
+'elements': [('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -113,8 +113,6 @@ Configuring an edge counter resets its value to 0.
 
 If you don't know what any of this means, just leave it at default. The
 default configuration is very likely OK for you.
-
-Default values: 0 (edge type) and 100ms (debounce time)
 """,
 'de':
 """
@@ -136,8 +134,6 @@ Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 
 Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
 ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
-
-Standardwerte: 0 (edge type) und 100ms (debounce).
 """
 }]
 })
@@ -145,8 +141,8 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Config',
-'elements': [('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'out')],
+'elements': [('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -164,7 +160,7 @@ Gibt den Flankentyp sowie die Entprellzeit zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Interrupt',
-'elements': [('Edges', 'uint32', 1, 'in')],
+'elements': [('Edges', 'uint32', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -195,7 +191,7 @@ Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Interrupt',
-'elements': [('Edges', 'uint32', 1, 'out')],
+'elements': [('Edges', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -254,8 +250,8 @@ Gibt die Periode zurück, wie von :func:`Set Edge Count Callback Period` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Edge Interrupt',
-'elements': [('Count', 'uint32', 1, 'out'),
-             ('Value', 'bool', 1, 'out')],
+'elements': [('Count', 'uint32', 1, 'out', {}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -278,8 +274,8 @@ sind der aktuelle Zählerstand und der aktuelle Wert (siehe
 com['packets'].append({
 'type': 'callback',
 'name': 'Edge Count',
-'elements': [('Count', 'uint32', 1, 'out'),
-             ('Value', 'bool', 1, 'out')],
+'elements': [('Count', 'uint32', 1, 'out', {}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
