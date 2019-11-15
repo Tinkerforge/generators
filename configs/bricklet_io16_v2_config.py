@@ -65,7 +65,7 @@ bis 7 und B0 bis B7 für die Kanäle 8 bis 15 benannt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value',
-'elements': [('Value', 'bool', 16, 'in')],
+'elements': [('Value', 'bool', 16, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -108,7 +108,7 @@ aufgerufen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Value', 'bool', 16, 'out')],
+'elements': [('Value', 'bool', 16, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -129,8 +129,8 @@ sind.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Value',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Value', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -163,9 +163,9 @@ wenn diese Funktion aufgerufen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Direction', 'char', 1, 'in', {'constant_group': 'Direction'}),
-             ('Value', 'bool', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Direction', 'char', 1, 'in', {'constant_group': 'Direction', 'default': 'i'}),
+             ('Value', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -188,8 +188,6 @@ For example:
 
 A running monoflop timer for the specific channel will be aborted if this
 function is called.
-
-The default configuration is input with pull-up.
 """,
 'de':
 """
@@ -211,8 +209,6 @@ Beispiele:
 
 Ein laufender Monoflop Timer für den angegebenen Kanal wird abgebrochen,
 wenn diese Funktion aufgerufen wird.
-
-Die Standardkonfiguration ist Eingang mit Pull-Up.
 """
 }]
 })
@@ -220,9 +216,9 @@ Die Standardkonfiguration ist Eingang mit Pull-Up.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Direction', 'char', 1, 'out', {'constant_group': 'Direction'}),
-             ('Value', 'bool', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Direction', 'char', 1, 'out', {'constant_group': 'Direction', 'default': 'i'}),
+             ('Value', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -239,7 +235,7 @@ Gibt die Kanal-Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Input Value Callback Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
@@ -257,8 +253,6 @@ period, the callback is triggered immediately on change.
 
 If it is set to false, the callback is continuously triggered with the period,
 independent of the value.
-
-The default value is (0, false).
 """,
 'de':
 """
@@ -274,8 +268,6 @@ sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
 
 Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
 festen Periode ausgelöst unabhängig von den Änderungen des Werts.
-
-Der Standardwert ist (0, false).
 """
 }]
 })
@@ -283,7 +275,7 @@ Der Standardwert ist (0, false).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Input Value Callback Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
@@ -359,9 +351,9 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set Monoflop',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'in'),
-             ('Time', 'uint32', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Value', 'bool', 1, 'in', {}),
+             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -371,7 +363,7 @@ Configures a monoflop of the specified channel.
 The second parameter is the desired value of the specified
 channel. A *true* means relay closed and a *false* means relay open.
 
-The third parameter indicates the time (in ms) that the channels should hold
+The third parameter indicates the time that the channels should hold
 the value.
 
 If this function is called with the parameters (0, 1, 1500) channel 0 will
@@ -392,7 +384,7 @@ Der zweite Parameter ist eine der gewünschten Zustände des
 festgelegten Kanals. Eine *true bedeutet Relais geschlossen und
 ein *false* bedeutet Relais offen.
 
-Der dritte Parameter ist die Zeit (in ms) die der Kanal den Zustand
+Der dritte Parameter ist die Zeit die der Kanal den Zustand
 halten sollen.
 
 Wenn diese Funktion mit den Parametern (0, 1, 1500) aufgerufen wird,
@@ -412,10 +404,10 @@ zwei Sekunden in den Zustand geöffnet wechseln.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Monoflop',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'out'),
-             ('Time', 'uint32', 1, 'out'),
-             ('Time Remaining', 'uint32', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Value', 'bool', 1, 'out', {}),
+             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -440,9 +432,9 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Reset Counter', 'bool', 1, 'in'),
-             ('Count', 'uint32', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Reset Counter', 'bool', 1, 'in', {}),
+             ('Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -467,9 +459,9 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -479,18 +471,14 @@ Configures the edge counter for a specific channel.
 The edge type parameter configures if rising edges, falling edges or
 both are counted if the channel is configured for input. Possible edge types are:
 
-* 0 = rising (default)
+* 0 = rising
 * 1 = falling
 * 2 = both
-
-The debounce time is given in ms.
 
 Configuring an edge counter resets its value to 0.
 
 If you don't know what any of this means, just leave it at default. The
 default configuration is very likely OK for you.
-
-Default values: 0 (edge type) and 100ms (debounce time)
 """,
 'de':
 """
@@ -500,18 +488,14 @@ Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
 steigende, fallende oder beide Flanken gezählt werden für Kanäle die als Eingang
 konfiguriert sind. Mögliche Flankentypen sind:
 
-* 0 = steigend (Standard)
+* 0 = steigend
 * 1 = fallend
 * 2 = beide
-
-Die Entprellzeit (debounce) wird in ms angegeben.
 
 Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 
 Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
 ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
-
-Standardwerte: 0 (edge type) und 100ms (debounce).
 """
 }]
 })
@@ -519,9 +503,9 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -540,9 +524,9 @@ wie von :func:`Set Edge Count Configuration` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Input Value',
-'elements': [('Channel', 'uint8', 1, 'out'),
-             ('Changed', 'bool', 1, 'out'),
-             ('Value', 'bool', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 15)}),
+             ('Changed', 'bool', 1, 'out', {}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -568,8 +552,8 @@ ist True wenn sich der Wert seit dem letzten Callback geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'All Input Value',
-'elements': [('Changed', 'bool', 16, 'out'),
-             ('Value', 'bool', 16, 'out')],
+'elements': [('Changed', 'bool', 16, 'out', {}),
+             ('Value', 'bool', 16, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -596,8 +580,8 @@ Die :word:`parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist d
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Channel', 'uint8', 1, 'out'),
-             ('Value', 'bool', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 15)}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

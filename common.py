@@ -1166,6 +1166,10 @@ units = {
                                          'A',
                                          {'en': 'Electric current', 'de': 'Elektrische Stromstärke'}),
 
+    'Baud':                         Unit({'en': 'Baud', 'de': 'Baud'},
+                                         'bd',
+                                         {'en': 'Symbol Rate', 'de': 'Symbolrate'}),
+
     'Bit Per Second':               Unit({'en': 'Bit per second', 'de': 'Bit pro Sekunde'},
                                          'bit/s',
                                          {'en': 'Data Rate', 'de': 'Datenrate'}),
@@ -1233,6 +1237,10 @@ units = {
     'Percent':                      Unit({'en': 'Percent', 'de': 'Prozent'},
                                          '%',
                                          {'en': 'Fraction', 'de': 'Anteil'}),
+
+    'Percent Relative Humidity':    Unit({'en': 'Percent relative humidity', 'de': 'Prozent relative Luftfeuchtigkeit'},
+                                         '%',
+                                         {'en': 'Relative Humidity', 'de': 'Relative Luftfeuchtigkeit'}),
 
     'Parts Per Million':            Unit({'en': 'Parts per million', 'de': 'Parts per million'},
                                          'ppm',

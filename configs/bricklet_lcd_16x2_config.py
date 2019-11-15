@@ -34,15 +34,15 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Write Line',
-'elements': [('Line', 'uint8', 1, 'in'),
-             ('Position', 'uint8', 1, 'in'),
+'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Position', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Text', 'string', 16, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Writes text to a specific line (0 to 1) with a specific position
-(0 to 15). The text can have a maximum of 16 characters.
+Writes text to a specific line with a specific position.
+The text can have a maximum of 16 characters.
 
 For example: (0, 5, "Hello") will write *Hello* in the middle of the
 first line of the display.
@@ -55,8 +55,8 @@ and how to translate from Unicode to the LCD charset.
 """,
 'de':
 """
-Schreibt einen Text in die angegebene Zeile (0 bis 1) mit einer vorgegebenen
-Position (0 bis 15). Der Text kann maximal 16 Zeichen lang sein.
+Schreibt einen Text in die angegebene Zeile mit einer vorgegebenen Position.
+Der Text kann maximal 16 Zeichen lang sein.
 
 Beispiel: (0, 5, "Hallo") schreibt *Hallo* in die Mitte der ersten Zeile
 des Display.
@@ -124,7 +124,7 @@ Deaktiviert die Hintergrundbeleuchtung.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Backlight On',
-'elements': [('Backlight', 'bool', 1, 'out')],
+'elements': [('Backlight', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -141,8 +141,8 @@ Gibt *true* zurück wenn die Hintergrundbeleuchtung aktiv ist, sonst *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Config',
-'elements': [('Cursor', 'bool', 1, 'in'),
-             ('Blinking', 'bool', 1, 'in')],
+'elements': [('Cursor', 'bool', 1, 'in', {'default': False}),
+             ('Blinking', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -151,16 +151,12 @@ Configures if the cursor (shown as "_") should be visible and if it
 should be blinking (shown as a blinking block). The cursor position
 is one character behind the the last text written with
 :func:`Write Line`.
-
-The default is (false, false).
 """,
 'de':
 """
 Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist und ob er
 blinkt (angezeigt als blinkender Block). Die Cursor Position ist ein
 Zeichen hinter dem zuletzt mit :func:`Write Line` geschriebenen Text.
-
-Der Standardwert ist (false, false).
 """
 }]
 })
@@ -168,8 +164,8 @@ Der Standardwert ist (false, false).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Config',
-'elements': [('Cursor', 'bool', 1, 'out'),
-             ('Blinking', 'bool', 1, 'out')],
+'elements': [('Cursor', 'bool', 1, 'out', {'default': False}),
+             ('Blinking', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -186,20 +182,20 @@ Gibt die Konfiguration zurück, wie von :func:`Set Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Button Pressed',
-'elements': [('Button', 'uint8', 1, 'in'),
-             ('Pressed', 'bool', 1, 'out')],
+'elements': [('Button', 'uint8', 1, 'in', {'range': (0, 2)}),
+             ('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns *true* if the button (0 to 2) is pressed.
+Returns *true* if the button is pressed.
 
 If you want to react on button presses and releases it is recommended to use the
 :cb:`Button Pressed` and :cb:`Button Released` callbacks.
 """,
 'de':
 """
-Gibt *true* zurück wenn die Taste (0 bis 2) gedrückt ist.
+Gibt *true* zurück wenn die Taste gedrückt ist.
 
 Wenn auf Tastendrücken und -loslassen reagiert werden soll, wird empfohlen die
 :cb:`Button Pressed` und :cb:`Button Released` Callbacks zu nutzen.
@@ -210,18 +206,18 @@ Wenn auf Tastendrücken und -loslassen reagiert werden soll, wird empfohlen die
 com['packets'].append({
 'type': 'callback',
 'name': 'Button Pressed',
-'elements': [('Button', 'uint8', 1, 'out')],
+'elements': [('Button', 'uint8', 1, 'out', {'range': (0, 2)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered when a button is pressed. The :word:`parameter` is
-the number of the button (0 to 2).
+the number of the button.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst, wenn eine Taste gedrückt wird. Der :word:`parameter`
-ist die Nummer der Taste (0 bis 2).
+ist die Nummer der Taste.
 """
 }]
 })
@@ -229,18 +225,18 @@ ist die Nummer der Taste (0 bis 2).
 com['packets'].append({
 'type': 'callback',
 'name': 'Button Released',
-'elements': [('Button', 'uint8', 1, 'out')],
+'elements': [('Button', 'uint8', 1, 'out', {'range': (0, 2)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered when a button is released. The :word:`parameter` is
-the number of the button (0 to 2).
+the number of the button.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst, wenn eine Taste losgelassen wird. Der :word:`parameter`
-ist die Nummer der Taste (0 bis 2).
+ist die Nummer der Taste.
 """
 }]
 })
@@ -248,8 +244,8 @@ ist die Nummer der Taste (0 bis 2).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Custom Character',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Character', 'uint8', 8, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Character', 'uint8', 8, 'in', {'range': (0, 31)})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -309,8 +305,8 @@ müssen sie nach jedem Start des LCD 16x2 Bricklets gesetzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Custom Character',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Character', 'uint8', 8, 'out')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Character', 'uint8', 8, 'out', {'range': (0, 31)})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

@@ -35,10 +35,10 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Get Statistics',
-'elements': [('Messages From Brick', 'uint32', 1, 'out'),
-             ('Messages From Bricklet', 'uint32', 1, 'out'),
-             ('Connected Bricklet Device Identifier', 'uint16', 1, 'out'),
-             ('Connected Bricklet UID', 'string', 8, 'out')],
+'elements': [('Messages From Brick', 'uint32', 1, 'out', {}),
+             ('Messages From Bricklet', 'uint32', 1, 'out', {}),
+             ('Connected Bricklet Device Identifier', 'uint16', 1, 'out', {}),
+             ('Connected Bricklet UID', 'string', 8, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -55,8 +55,8 @@ Gibt Statistken des Isolator Bricklets zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set SPITFP Baudrate Config',
-'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'in'),
-             ('Minimum Dynamic Baudrate', 'uint32', 1, 'in')],
+'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'in', {'default': True}),
+             ('Minimum Dynamic Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (400000, 2000000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -82,10 +82,6 @@ the dynamic baudrate off to get the highest possible performance.
 The maximum value of the baudrate can be set per port with the function
 :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
 as set by :func:`Set SPITFP Baudrate` will be used statically.
-
-The minimum dynamic baudrate has a value range of 400000 to 2000000 baud.
-
-By default dynamic baudrate is enabled and the minimum dynamic baudrate is 400000.
 """,
 'de':
 """
@@ -111,10 +107,6 @@ dynamische Baudrate zum maximieren der Performance ausgestellt werden.
 Die maximale Baudrate kann pro Port mit der Funktion :func:`Set SPITFP Baudrate`.
 gesetzt werden. Falls die dynamische Baudrate nicht aktiviert ist, wird die Baudrate
 wie von :func:`Set SPITFP Baudrate` gesetzt statisch verwendet.
-
-Die minimale dynamische Baudrate hat einen Wertebereich von 400000 bis 2000000 Baud.
-
-Standardmäßig ist die dynamische Baudrate aktiviert und die minimale dynamische Baudrate ist 400000.
 """
 }]
 })
@@ -122,8 +114,8 @@ Standardmäßig ist die dynamische Baudrate aktiviert und die minimale dynamisch
 com['packets'].append({
 'type': 'function',
 'name': 'Get SPITFP Baudrate Config',
-'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'out'),
-             ('Minimum Dynamic Baudrate', 'uint32', 1, 'out')],
+'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'out', {'default': True}),
+             ('Minimum Dynamic Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -140,7 +132,7 @@ Gibt die Baudratenkonfiguration zurück, siehe :func:`Set SPITFP Baudrate Config
 com['packets'].append({
 'type': 'function',
 'name': 'Set SPITFP Baudrate',
-'elements': [('Baudrate', 'uint32', 1, 'in')],
+'elements': [('Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -148,8 +140,6 @@ com['packets'].append({
 Sets the baudrate for a the communication between Isolator Bricklet
 and the connected Bricklet. The baudrate for communication between
 Brick and Isolator Bricklet can be set through the API of the Brick.
-
-The baudrate can be in the range 400000 to 2000000.
 
 If you want to increase the throughput of Bricklets you can increase
 the baudrate. If you get a high error count because of high
@@ -162,16 +152,12 @@ function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Con
 Regulatory testing is done with the default baudrate. If CE compatibility
 or similar is necessary in you applications we recommend to not change
 the baudrate.
-
-The default baudrate for all ports is 1400000.
 """,
 'de':
 """
 Setzt die Baudrate für die Kommunikation zwischen Isolator Bricklet
 und angeschlossenem Bricklet. Die Baudrate für die Kommunikation zwischen
 Brick und Isolator Bricklet kann in der API des Bricks eingestellt werden.
-
-Die Baudrate hat einen möglichen Wertebereich von 400000 bis 2000000.
 
 Für einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden.
 Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist
@@ -183,8 +169,6 @@ die maximale Baudrate (siehe :func:`Set SPITFP Baudrate Config`).
 EMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine
 CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die
 Baudrate nicht zu ändern.
-
-Die Standardbaudrate für alle Ports ist 1400000.
 """
 }]
 })
@@ -192,7 +176,7 @@ Die Standardbaudrate für alle Ports ist 1400000.
 com['packets'].append({
 'type': 'function',
 'name': 'Get SPITFP Baudrate',
-'elements': [('Baudrate', 'uint32', 1, 'out')],
+'elements': [('Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -209,10 +193,10 @@ Gibt die Baudrate zurück, siehe :func:`Set SPITFP Baudrate`.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Isolator SPITFP Error Count',
-'elements': [('Error Count ACK Checksum', 'uint32', 1, 'out'),
-             ('Error Count Message Checksum', 'uint32', 1, 'out'),
-             ('Error Count Frame', 'uint32', 1, 'out'),
-             ('Error Count Overflow', 'uint32', 1, 'out')],
+'elements': [('Error Count ACK Checksum', 'uint32', 1, 'out', {}),
+             ('Error Count Message Checksum', 'uint32', 1, 'out', {}),
+             ('Error Count Frame', 'uint32', 1, 'out', {}),
+             ('Error Count Overflow', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -302,10 +286,10 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Statistics',
-'elements': [('Messages From Brick', 'uint32', 1, 'out'),
-             ('Messages From Bricklet', 'uint32', 1, 'out'),
-             ('Connected Bricklet Device Identifier', 'uint16', 1, 'out'),
-             ('Connected Bricklet UID', 'string', 8, 'out')],
+'elements': [('Messages From Brick', 'uint32', 1, 'out', {}),
+             ('Messages From Bricklet', 'uint32', 1, 'out', {}),
+             ('Connected Bricklet Device Identifier', 'uint16', 1, 'out', {}),
+             ('Connected Bricklet UID', 'string', 8, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['c', {
 'en':

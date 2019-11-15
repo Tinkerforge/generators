@@ -35,15 +35,14 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Get Position',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'range': (-100, 100)}),
+             ('Y', 'int16', 1, 'out', {'range': (-100, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the position of the joystick. The value ranges between -100 and
-100 for both axis. The middle position of the joystick is x=0, y=0. The
-returned values are averaged and calibrated (see :func:`Calibrate`).
+Returns the position of the joystick. The middle position of the joystick is x=0, y=0.
+The returned values are averaged and calibrated (see :func:`Calibrate`).
 
 If you want to get the position periodically, it is recommended to use the
 :cb:`Position` callback and set the period with
@@ -51,8 +50,7 @@ If you want to get the position periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die Position des Joystick zurück. Der Wertebereich ist von -100 bis
-100 für beide Achsen. Die Mittelposition des Joysticks ist x=0, y=0.
+Gibt die Position des Joystick zurück. Die Mittelposition des Joysticks ist x=0, y=0.
 Die zurückgegebenen Werte sind gemittelt und kalibriert (siehe :func:`Calibrate`).
 
 Wenn die Position periodisch abgefragt werden sollen, wird empfohlen
@@ -65,7 +63,7 @@ den :cb:`Position` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Is Pressed',
-'elements': [('Pressed', 'bool', 1, 'out')],
+'elements': [('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -172,8 +170,8 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Position',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'range': (-100, 100)}),
+             ('Y', 'int16', 1, 'out', {'range': (-100, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -252,7 +250,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Pressed',
-'elements': [('Pressed', 'bool', 1, 'out')],
+'elements': [('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -35,8 +35,8 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value',
-'elements': [('Channel0', 'bool', 1, 'in'),
-             ('Channel1', 'bool', 1, 'in')],
+'elements': [('Channel0', 'bool', 1, 'in', {'default': False}),
+             ('Channel1', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -49,8 +49,6 @@ of the other relay, you can get the state with :func:`Get Value` or you
 can use :func:`Set Selected Value`.
 
 All running monoflop timers will be aborted if this function is called.
-
-The default value is (*false*, *false*).
 """,
 'de':
 """
@@ -63,8 +61,6 @@ ausgelesen werden oder es kann :func:`Set Selected Value` genutzt werden.
 
 Alle laufenden Monoflop Timer werden abgebrochen, wenn diese Funktion aufgerufen
 wird.
-
-Der Standardwert ist (*false*, *false*).
 """
 }]
 })
@@ -72,8 +68,8 @@ Der Standardwert ist (*false*, *false*).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Channel0', 'bool', 1, 'out'),
-             ('Channel1', 'bool', 1, 'out')],
+'elements': [('Channel0', 'bool', 1, 'out', {'default': False}),
+             ('Channel1', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -90,16 +86,16 @@ Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Monoflop',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'in'),
-             ('Time', 'uint32', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Value', 'bool', 1, 'in', {}),
+             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 The first parameter can be 0 or 1 (relay 0 or relay 1). The second parameter
 is the desired state of the relay (*true* means on and *false* means off).
-The third parameter indicates the time (in ms) that the relay should hold
+The third parameter indicates the time that the relay should hold
 the state.
 
 If this function is called with the parameters (1, true, 1500):
@@ -115,7 +111,7 @@ connection is lost, the relay will turn off in at most two seconds.
 """
 Der erste Parameter kann 0 oder 1 sein (Relais 0 oder Relais 1). Der zweite
 Parameter ist der gewünschte Zustand des Relais (*true* bedeutet ein und
-*false* aus). Der dritte Parameter stellt die Zeit (in ms) dar, welche das
+*false* aus). Der dritte Parameter stellt die Zeit dar, welche das
 Relais den Zustand halten soll.
 
 Wenn diese Funktion mit den Parametern (1, true, 1500) aufgerufen wird:
@@ -134,10 +130,10 @@ zwei Sekunden ausschalten.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Monoflop',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'out'),
-             ('Time', 'uint32', 1, 'out'),
-             ('Time Remaining', 'uint32', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Value', 'bool', 1, 'out', {}),
+             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -162,20 +158,20 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Channel', 'uint8', 1, 'out'),
-             ('Value', 'bool', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 1)}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered whenever a monoflop timer reaches 0. The
-parameter contain the relay (0 or 1) and the current state of the relay
+parameters contain the relay and the current state of the relay
 (the state after the monoflop).
 """,
 'de':
 """
 Dieser Callback wird ausgelöst, wenn ein Monoflop Timer abläuft (0 erreicht).
-Die Parameter enthalten das auslösende Relais (0 oder 1) und den aktuellen
+Die Parameter enthalten das auslösende Relais und den aktuellen
 Zustand des Relais (der Zustand nach dem Monoflop).
 """
 }]
@@ -184,13 +180,13 @@ Zustand des Relais (der Zustand nach dem Monoflop).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Value',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Value', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Sets the state of the selected relay (0 or 1), *true* means on and *false*
+Sets the state of the selected relay, *true* means on and *false*
 means off.
 
 A running monoflop timer for the selected relay will be aborted if this function
@@ -200,7 +196,7 @@ The other relay remains untouched.
 """,
 'de':
 """
-Setzt den Zustand des ausgewählten Relais (0 oder 1), *true* bedeutet ein und
+Setzt den Zustand des ausgewählten Relais, *true* bedeutet ein und
 *false* aus.
 
 Ein laufender Monoflop Timer für das ausgewählte Relais wird abgebrochen, wenn

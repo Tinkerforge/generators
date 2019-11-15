@@ -49,15 +49,13 @@ com['constant_groups'].append({
 distance_doc = {
 'en':
 """
-Returns the measured distance. The value has a range of 0 to 4000
-and is given in cm.
+Returns the measured distance.
 
 The laser has to be enabled, see :func:`Set Enable`.
 """,
 'de':
 """
-Gibt die gemessene Distanz zurück. Der Wertebereich ist 0 bis 4000
-und die Werte haben die Einheit cm.
+Gibt die gemessene Distanz zurück.
 
 Der Laser muss aktiviert werden, siehe :func:`Set Enable`.
 """
@@ -68,7 +66,10 @@ add_callback_value_function(
     name      = 'Get Distance',
     data_name = 'Distance',
     data_type = 'int16',
-    doc       = distance_doc
+    doc       = distance_doc,
+    divisor   = 100,
+    unit      = 'Meter',
+    range_    = (0, 4000)
 )
 
 velocity_doc = {
@@ -83,8 +84,7 @@ has to be enabled, see :func:`Set Enable`.
 """,
 'de':
 """
-Gibt die gemessene Geschwindigkeit zurück. Der Wertebereich ist -12800 bis 12700
-und die Werte haben die Einheit 1/100 m/s.
+Gibt die gemessene Geschwindigkeit zurück.
 
 Die Geschwindigkeitsmessung liefert nur dann stabile Werte,
 wenn eine feste Messfrequenz (siehe :func:`Set Configuration`) eingestellt ist.
@@ -97,13 +97,16 @@ add_callback_value_function(
     name      = 'Get Velocity',
     data_name = 'Velocity',
     data_type = 'int16',
-    doc       = velocity_doc
+    doc       = velocity_doc,
+    divisor   = 100,
+    unit      = 'Meter Per Second',
+    range_    = (-12800, 12700)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Enable',
-'elements': [('Enable', 'bool', 1, 'in')],
+'elements': [('Enable', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -126,7 +129,7 @@ ersten Aufruf von :func:`Get Distance` um stabile Messwerte zu garantieren.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Enable',
-'elements': [('Enable', 'bool', 1, 'out')],
+'elements': [('Enable', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -143,10 +146,10 @@ Gibt den Wert zurück wie von :func:`Set Enable` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Acquisition Count', 'uint8', 1, 'in'),
-             ('Enable Quick Termination', 'bool', 1, 'in'),
-             ('Threshold Value', 'uint8', 1, 'in'),
-             ('Measurement Frequency', 'uint16', 1, 'in')],
+'elements': [('Acquisition Count', 'uint8', 1, 'in', {'range': (1, 255), 'default': 128}),
+             ('Enable Quick Termination', 'bool', 1, 'in', {'default': False}),
+             ('Threshold Value', 'uint8', 1, 'in', {'default': 0}),
+             ('Measurement Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': [(0, 0), (10, 500)], 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -215,10 +218,10 @@ Measurement Frequency sind 128, false, 0 und 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Acquisition Count', 'uint8', 1, 'out'),
-             ('Enable Quick Termination', 'bool', 1, 'out'),
-             ('Threshold Value', 'uint8', 1, 'out'),
-             ('Measurement Frequency', 'uint16', 1, 'out')],
+'elements': [('Acquisition Count', 'uint8', 1, 'out', {'range': (1, 255), 'default': 128}),
+             ('Enable Quick Termination', 'bool', 1, 'out', {'default': False}),
+             ('Threshold Value', 'uint8', 1, 'out', {'default': 0}),
+             ('Measurement Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': [(0, 0), (10, 500)], 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -235,8 +238,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average',
-'elements': [('Distance Average Length', 'uint8', 1, 'in'),
-             ('Velocity Average Length', 'uint8', 1, 'in')],
+'elements': [('Distance Average Length', 'uint8', 1, 'in', {'range': (0, 255), 'default': 10}),
+             ('Velocity Average Length', 'uint8', 1, 'in', {'range': (0, 255), 'default': 10})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -246,10 +249,6 @@ for the distance and velocity.
 
 Setting the length to 0 will turn the averaging completely off. With less
 averaging, there is more noise on the data.
-
-The range for the averaging is 0-255.
-
-The default value is 10.
 """,
 'de':
 """
@@ -258,10 +257,6 @@ für die Entfernung und Geschwindigkeit.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 0-255.
-
-Der Standardwert ist 10.
 """
 }]
 })
@@ -269,8 +264,8 @@ Der Standardwert ist 10.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average',
-'elements': [('Distance Average Length', 'uint8', 1, 'out'),
-             ('Velocity Average Length', 'uint8', 1, 'out')],
+'elements': [('Distance Average Length', 'uint8', 1, 'out', {'range': (0, 255), 'default': 10}),
+             ('Velocity Average Length', 'uint8', 1, 'out', {'range': (0, 255), 'default': 10})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -288,12 +283,12 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Offset Calibration',
-'elements': [('Offset', 'int16', 1, 'in')],
+'elements': [('Offset', 'int16', 1, 'in', {'divisor': 100, 'unit': 'Meter', 'range': (None, 2**15-1-4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-The offset is given in cm and added to the measured distance.
+The offset is added to the measured distance.
 It is saved in non-volatile memory, you only have to set it once.
 
 The Bricklet comes with a per-sensor factory-calibrated offset value,
@@ -305,7 +300,7 @@ and set it again.
 """,
 'de':
 """
-Der Offset wird in cm gegeben auf die Distanz addiert. Es wird in
+Der Offset wird auf die Distanz addiert. Es wird in
 nicht-flüchtigen Speicher gespeichert und muss nur einmal gesetzt werden.
 
 Der Offset wird für das Bricklet pro Sensor von Tinkerforge werkskalibriert.
@@ -321,7 +316,7 @@ bekannte Distanz gemessen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Offset Calibration',
-'elements': [('Offset', 'int16', 1, 'out')],
+'elements': [('Offset', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'range': (None, 2**15-1-4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -338,23 +333,19 @@ Gibt den Offset-Wert zurück, wie von :func:`Set Offset Calibration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Distance LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Distance LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Distance LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Configures the distance LED to be either turned off, turned on, blink in
 heartbeat mode or show the distance (brighter = object is nearer).
-
-The default value is 3 (show distance).
 """,
 'de':
 """
 Konfiguriert die Distanz-LED. Die LED kann ausgeschaltet, eingeschaltet,
 im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
 mit der LED die Distanz anzuzeigen (heller = Objekt näher).
-
-Der Standardwert ist 3 (Distanzanzeige).
 """
 }]
 })
@@ -362,7 +353,7 @@ Der Standardwert ist 3 (Distanzanzeige).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Distance LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Distance LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

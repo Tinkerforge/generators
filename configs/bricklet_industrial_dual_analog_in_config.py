@@ -48,32 +48,16 @@ com['constant_groups'].append({
               ('1 SPS', 7)]
 })
 
-com['doc'] = {
-'en':
-"""
-The Bricklet has two input channel. Functions that are related
-directly to a channel have a ``channel`` parameter to specify one of the two
-channels. Valid values for the ``channel`` parameter are 0 and 1.
-""",
-'de':
-"""
-Das Bricklet hat zwei Eingangskanäle. Funktionen die
-sich direkt auf einen der Kanäle beziehen haben einen ``channel`` Parameter,
-um den Kanal anzugeben. Gültige Werte für das ``channel`` Parameter sind 0
-und 1.
-"""
-}
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Voltage', 'int32', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Voltage', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (-35000, 35000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the voltage for the given channel in mV.
+Returns the voltage for the given channel.
 
 If you want to get the voltage periodically, it is recommended to use the
 :cb:`Voltage` callback and set the period with
@@ -81,7 +65,7 @@ If you want to get the voltage periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die Spannung für den übergebenen Kanal in mV zurück.
+Gibt die Spannung für den übergebenen Kanal zurück.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Voltage` Callback zu nutzen und die Periode mit
@@ -93,7 +77,7 @@ den :cb:`Voltage` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Period',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -120,7 +104,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Period',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -138,10 +122,10 @@ Gibt die Periode zurück, wie von :func:`Set Voltage Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Threshold',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'divisor': 1000, 'unit': 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'divisor': 1000, 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -160,8 +144,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
  "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -179,8 +161,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Spannung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -188,10 +168,10 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Threshold',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -258,7 +238,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate'})],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate', 'default': 6})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -266,16 +246,12 @@ com['packets'].append({
 Sets the sample rate. The sample rate can be between 1 sample per second
 and 976 samples per second. Decreasing the sample rate will also decrease the
 noise on the data.
-
-The default value is 6 (2 samples per second).
 """,
 'de':
 """
 Setzt die Abtastrate. Der Wertebereich der verfügbare Abtastraten
 liegt zwischen 1 Wert pro Sekunde und 976 Werte pro Sekunde. Ein
 Verringern der Abtastrate wird auch das Rauschen auf den Daten verringern.
-
-Der Standardwert ist 6 (2 Werte pro Sekunde).
 """
 }]
 })
@@ -283,7 +259,7 @@ Der Standardwert ist 6 (2 Werte pro Sekunde).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate'})],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate', 'default': 6})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -300,8 +276,8 @@ Gibt die Abtastrate zurück, wie von :func:`Set Sample Rate` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Offset', 'int32', 2, 'in'),
-             ('Gain', 'int32', 2, 'in')],
+'elements': [('Offset', 'int32', 2, 'in', {'range': (-2**23, 2**23-1)}),
+             ('Gain', 'int32', 2, 'in', {'range': (-2**23, 2**23-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -326,8 +302,8 @@ nicht notwendig sein.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Offset', 'int32', 2, 'out'),
-             ('Gain', 'int32', 2, 'out')],
+'elements': [('Offset', 'int32', 2, 'out', {'range': (-2**23, 2**23-1)}),
+             ('Gain', 'int32', 2, 'out', {'range': (-2**23, 2**23-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -344,7 +320,7 @@ Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get ADC Values',
-'elements': [('Value', 'int32', 2, 'out')],
+'elements': [('Value', 'int32', 2, 'out', {'range': (-2**23, 2**23-1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -363,8 +339,8 @@ wird für die Kalibrierung benötigt, siehe :func:`Set Calibration`.
 com['packets'].append({
 'type': 'callback',
 'name': 'Voltage',
-'elements': [('Channel', 'uint8', 1, 'out'),
-             ('Voltage', 'int32', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 1)}),
+             ('Voltage', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (-35000, 35000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -390,8 +366,8 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Voltage Reached',
-'elements': [('Channel', 'uint8', 1, 'out'),
-             ('Voltage', 'int32', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 1)}),
+             ('Voltage', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (-35000, 35000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

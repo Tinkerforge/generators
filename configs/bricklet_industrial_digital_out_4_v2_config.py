@@ -44,7 +44,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value',
-'elements': [('Value', 'bool', 4, 'in')],
+'elements': [('Value', 'bool', 4, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -78,7 +78,7 @@ Kanäle 2-3 auf logisch 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Value', 'bool', 4, 'out')],
+'elements': [('Value', 'bool', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -95,7 +95,7 @@ Gibt die aktuellen Zustände der Kanäle zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Value',
-'elements': [('Channel', 'uint8', 1, 'in'),
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
              ('Value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -120,15 +120,15 @@ abgebrochen, wenn diese Funktion aufgerufen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Monoflop',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'in'),
-             ('Time', 'uint32', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Value', 'bool', 1, 'in', {}),
+             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 The first parameter is the desired state of the channel (*true* means output *high*
-and *false* means output *low*). The second parameter indicates the time (in ms) that
+and *false* means output *low*). The second parameter indicates the time that
 the channel should hold the state.
 
 If this function is called with the parameters (true, 1500):
@@ -146,7 +146,7 @@ connection is lost, the channel will turn *low* in at most two seconds.
 """
 Der erste Parameter ist der gewünschte Zustand des Kanals
 (*true* bedeutet *high* und *false* *low*). Der zweite Parameter stellt die Zeit
-(in ms) dar, in welcher der Kanal den Zustand halten soll.
+dar, in welcher der Kanal den Zustand halten soll.
 
 Wenn diese Funktion mit den Parametern (true, 1500) aufgerufen wird:
 Der Kanal wird angeschaltet und nach 1,5s wieder ausgeschaltet.
@@ -167,10 +167,10 @@ getrennt wird, wird der Kanal nach spätestens zwei Sekunden ausschalten.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Monoflop',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'out'),
-             ('Time', 'uint32', 1, 'out'),
-             ('Time Remaining', 'uint32', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Value', 'bool', 1, 'out', {}),
+             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -195,7 +195,7 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Channel', 'uint8', 1, 'out'),
+'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 3)}),
              ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -217,8 +217,8 @@ Dieser Callback wird ausgelöst, wenn ein Monoflop Timer abläuft (0 erreicht).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -244,8 +244,8 @@ Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -262,46 +262,40 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 com['packets'].append({
 'type': 'function',
 'name': 'Set PWM Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'in'),
-             ('Duty Cycle', 'uint16', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Frequency', 'uint32', 1, 'in', {'divisor': 10, 'unit': 'Hertz', 'default': 0}),
+             ('Duty Cycle', 'uint16', 1, 'in', {'divisor': 100, 'unit': 'Percent', 'default': 0, 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Activates a PWM for the given channel with the frequency given in 1/10Hz and the duty
-cycle given in 1/100%.
+Activates a PWM for the given channel.
 
 To turn the PWM off again, you can set the frequency to 0 or any other
 function that changes a value of the channel (e.g. :func:`Set Selected Value`).
 
-The maximum duty cycle value is 10000 (100%). The optocoupler of the Industrial Digital
+The optocoupler of the Industrial Digital
 Out 4 Bricklet 2.0 has a rise time and fall time of 11.5us (each) at 24V. So the maximum
 useful frequency value is about 400000 (40kHz).
 
 A running monoflop timer for the given channel will be aborted if this function
 is called.
-
-The default values are 0, 0.
 """,
 'de':
 """
-Aktiviert ein PWM auf dem angegebenen Kanal. Die Frequenz wird in 1/10Hz angegeben und
-die Duty Cycle in 1/100%.
+Aktiviert ein PWM auf dem angegebenen Kanal.
 
 Um die PWM wieder auszustellen, kann die Frequenz auf
 0 gesetzt werden oder eine andere Funktion aufgerufen werden die Einstellungen am
 Kanal verändert (z.B. :func:`Set Selected Value`).
 
-Der Maximale Duty Cycle-Wert beträgt 10000 (100%). Der auf dem Industrial Digital
+Der auf dem Industrial Digital
 Out 4 Bricklet 2.0 verwendete Optokoppler hat eine Anstiegszeit und Abfallzeit von
 jeweils 11.5us bei einer Spannung von 24V. Dadurch ist ergibt sich ein maximaler Frequenzwert
 von ca. 400000 (40kHz).
 
 Ein laufender Monoflop Timer für den angegebenen Kanal wird abgebrochen, wenn
 diese Funktion aufgerufen wird.
-
-Die Standardwerte sind 0, 0.
 """
 }]
 })
@@ -309,9 +303,9 @@ Die Standardwerte sind 0, 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get PWM Configuration',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Frequency', 'uint32', 1, 'out'),
-             ('Duty Cycle', 'uint16', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Frequency', 'uint32', 1, 'out', {'divisor': 10, 'unit': 'Hertz', 'default': 0}),
+             ('Duty Cycle', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Percent', 'default': 0, 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

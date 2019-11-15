@@ -34,15 +34,15 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Write Line',
-'elements': [('Line', 'uint8', 1, 'in'),
-             ('Position', 'uint8', 1, 'in'),
-             ('Text', 'string', 20, 'in')],
+'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Position', 'uint8', 1, 'in', {'range': (0, 19)}),
+             ('Text', 'string', 20, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Writes text to a specific line (0 to 3) with a specific position
-(0 to 19). The text can have a maximum of 20 characters.
+Writes text to a specific line with a specific position.
+The text can have a maximum of 20 characters.
 
 For example: (0, 7, "Hello") will write *Hello* in the middle of the
 first line of the display.
@@ -55,8 +55,8 @@ and how to translate from Unicode to the LCD charset.
 """,
 'de':
 """
-Schreibt einen Text in die angegebene Zeile (0 bis 3) mit einer vorgegebenen
-Position (0 bis 19). Der Text kann maximal 20 Zeichen lang sein.
+Schreibt einen Text in die angegebene Zeile mit einer vorgegebenen Position.
+Der Text kann maximal 20 Zeichen lang sein.
 
 Beispiel: (0, 7, "Hallo") schreibt *Hallo* in die Mitte der ersten Zeile
 des Display.
@@ -124,7 +124,7 @@ Deaktiviert die Hintergrundbeleuchtung.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Backlight On',
-'elements': [('Backlight', 'bool', 1, 'out')],
+'elements': [('Backlight', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -141,8 +141,8 @@ Gibt *true* zurück wenn die Hintergrundbeleuchtung aktiv ist, sonst *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Config',
-'elements': [('Cursor', 'bool', 1, 'in'),
-             ('Blinking', 'bool', 1, 'in')],
+'elements': [('Cursor', 'bool', 1, 'in', {'default': False}),
+             ('Blinking', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -151,16 +151,12 @@ Configures if the cursor (shown as "_") should be visible and if it
 should be blinking (shown as a blinking block). The cursor position
 is one character behind the the last text written with
 :func:`Write Line`.
-
-The default is (*false*, *false*).
 """,
 'de':
 """
 Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist und ob er
 blinkt (angezeigt als blinkender Block). Die Cursor Position ist ein
 Zeichen hinter dem zuletzt mit :func:`Write Line` geschriebenen Text.
-
-Der Standardwert ist (*false*, *false*).
 """
 }]
 })
@@ -168,8 +164,8 @@ Der Standardwert ist (*false*, *false*).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Config',
-'elements': [('Cursor', 'bool', 1, 'out'),
-             ('Blinking', 'bool', 1, 'out')],
+'elements': [('Cursor', 'bool', 1, 'out', {'default': False}),
+             ('Blinking', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -186,8 +182,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Button Pressed',
-'elements': [('Button', 'uint8', 1, 'in'),
-             ('Pressed', 'bool', 1, 'out')],
+'elements': [('Button', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -212,7 +208,7 @@ Wenn auf Tastendrücken und -loslassen reagiert werden soll, wird empfohlen die
 com['packets'].append({
 'type': 'callback',
 'name': 'Button Pressed',
-'elements': [('Button', 'uint8', 1, 'out')],
+'elements': [('Button', 'uint8', 1, 'out', {'range': (0, 3)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -231,7 +227,7 @@ ist die Nummer der Taste (0 bis 2 oder 0 bis 3 seit Hardware Version 1.2).
 com['packets'].append({
 'type': 'callback',
 'name': 'Button Released',
-'elements': [('Button', 'uint8', 1, 'out')],
+'elements': [('Button', 'uint8', 1, 'out', {'range': (0, 3)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -250,8 +246,8 @@ ist die Nummer der Taste (0 bis 2 oder 0 bis 3 seit Hardware Version 1.2).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Custom Character',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Character', 'uint8', 8, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Character', 'uint8', 8, 'in', {'range': (0, 31)})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -311,8 +307,8 @@ müssen sie nach jedem Start des LCD 20x4 Bricklets gesetzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Custom Character',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Character', 'uint8', 8, 'out')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Character', 'uint8', 8, 'out', {'range': (0, 31)})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -331,8 +327,8 @@ Index zurück, wie von :func:`Set Custom Character` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Default Text',
-'elements': [('Line', 'uint8', 1, 'in'),
-             ('Text', 'string', 20, 'in')],
+'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Text', 'string', 20, 'in', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -357,8 +353,8 @@ ausläuft, siehe :func:`Set Default Text Counter`.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Default Text',
-'elements': [('Line', 'uint8', 1, 'in'),
-             ('Text', 'string', 20, 'out')],
+'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Text', 'string', 20, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -377,7 +373,7 @@ Gibt den Standard-Text für die Zeilen 0-3 zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Default Text Counter',
-'elements': [('Counter', 'int32', 1, 'in')],
+'elements': [('Counter', 'int32', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': -1})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -395,8 +391,6 @@ default text will be shown no later than 2 minutes after the
 controlling program crashes.
 
 A negative counter turns the default text functionality off.
-
-The default is -1.
 """,
 'de':
 """
@@ -414,8 +408,6 @@ In diesem Fall wird dann der Standard-Text nach spätestens zwei Minuten
 angezeigt wenn das kontrollierende Programm abstürzt.
 
 Ein negativer Zählerwert stellt die Standard-Text Funktionalität aus.
-
-Der Standardwert ist -1.
 """
 }]
 })
@@ -423,7 +415,7 @@ Der Standardwert ist -1.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Default Text Counter',
-'elements': [('Counter', 'int32', 1, 'out')],
+'elements': [('Counter', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': -1})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':

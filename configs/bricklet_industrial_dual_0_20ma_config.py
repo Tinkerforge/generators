@@ -43,36 +43,19 @@ com['constant_groups'].append({
               ('4 SPS', 3)]
 })
 
-com['doc'] = {
-'en':
-"""
-Two sensors can be connected to the Bricklet. Functions that are related
-directly to a sensor have a ``sensor`` parameter to specify one of the two
-sensors. Valid values for the ``sensor`` parameter are 0 and 1.
-""",
-'de':
-"""
-Es können zwei Sensoren an das Bricklet angeschlossen werden. Funktionen die
-sich direkt auf einen der Sensoren beziehen haben einen ``sensor`` Parameter,
-um den Sensor anzugeben. Gültige Werte für den ``sensor`` Parameter sind 0
-und 1.
-"""
-}
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current',
-'elements': [('Sensor', 'uint8', 1, 'in'),
-             ('Current', 'int32', 1, 'out')],
+'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Current', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'range': (0, 22505322)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current of the specified sensor (0 or 1). The value is in nA
-and between 0nA and 22505322nA (22.5mA).
+Returns the current of the specified sensor.
 
 It is possible to detect if an IEC 60381-1 compatible sensor is connected
-and if it works probably.
+and if it works properly.
 
 If the returned current is below 4mA, there is likely no sensor connected
 or the sensor may be defect. If the returned current is over 20mA, there might
@@ -84,8 +67,7 @@ If you want to get the current periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die gemessenen Stromstärke des angegebenen Sensors (0 oder 1) zurück. Der
-Wert ist in nA und im Bereich von 0nA bis 22505322nA (22,5mA).
+Gibt die gemessenen Stromstärke des angegebenen Sensors zurück.
 
 Es ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen
 ist und ob er funktionsfähig ist.
@@ -106,7 +88,7 @@ den :cb:`Current` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Period',
-'elements': [('Sensor', 'uint8', 1, 'in'),
+'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -132,7 +114,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Period',
-'elements': [('Sensor', 'uint8', 1, 'in'),
+'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -150,10 +132,10 @@ Gibt die Periode zurück, wie von :func:`Set Current Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Threshold',
-'elements': [('Sensor', 'uint8', 1, 'in'),
+'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'divisor': 10**9, 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'divisor': 10**9, 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -172,8 +154,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the current is *inside* the min and max values"
  "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -191,8 +171,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Stromstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -200,10 +178,10 @@ Der Standardwert ist ('x', 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Threshold',
-'elements': [('Sensor', 'uint8', 1, 'in'),
+'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -270,7 +248,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate'})],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Sample Rate', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -286,8 +264,6 @@ The resolution for the rates is 12, 14, 16 and 18 bit respectively.
  "1",    "60 samples per second, 14 bit resolution"
  "2",    "15 samples per second, 16 bit resolution"
  "3",    "4 samples per second, 18 bit resolution"
-
-The default value is 3 (4 samples per second with 18 bit resolution).
 """,
 'de':
 """
@@ -302,8 +278,6 @@ Die Auflösung für die Raten sind 12, 14, 16 und 18 Bit respektive.
  "1",    "60 Samples pro Sekunde, 14 Bit Auflösung"
  "2",    "15 Samples pro Sekunde, 16 Bit Auflösung"
  "3",    "4 Samples pro Sekunde, 18 Bit Auflösung"
-
-Der Standardwert ist 3 (4 Samples pro Sekunde mit 18 Bit Auflösung).
 """
 }]
 })
@@ -311,7 +285,7 @@ Der Standardwert ist 3 (4 Samples pro Sekunde mit 18 Bit Auflösung).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sample Rate',
-'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate'})],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Sample Rate', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -328,8 +302,8 @@ Gibt die Abtastrate zurück, wie von :func:`Set Sample Rate` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current',
-'elements': [('Sensor', 'uint8', 1, 'out'),
-             ('Current', 'int32', 1, 'out')],
+'elements': [('Sensor', 'uint8', 1, 'out', {'range': (0, 1)}),
+             ('Current', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'range': (0, 22505322)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -355,8 +329,8 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current Reached',
-'elements': [('Sensor', 'uint8', 1, 'out'),
-             ('Current', 'int32', 1, 'out')],
+'elements': [('Sensor', 'uint8', 1, 'out', {'range': (0, 1)}),
+             ('Current', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'range': (0, 22505322)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

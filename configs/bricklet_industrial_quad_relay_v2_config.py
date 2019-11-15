@@ -44,7 +44,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value',
-'elements': [('Value', 'bool', 4, 'in')],
+'elements': [('Value', 'bool', 4, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -72,7 +72,7 @@ wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Value', 'bool', 4, 'out')],
+'elements': [('Value', 'bool', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -89,9 +89,9 @@ Gibt die Werte zurück, wie von :func:`Set Value` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Monoflop',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'in'),
-             ('Time', 'uint32', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Value', 'bool', 1, 'in', {}),
+             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -101,7 +101,7 @@ Configures a monoflop of the specified channel.
 The second parameter is the desired value of the specified
 channel. A *true* means relay closed and a *false* means relay open.
 
-The third parameter indicates the time (in ms) that the channels should hold
+The third parameter indicates the time that the channels should hold
 the value.
 
 If this function is called with the parameters (0, 1, 1500) channel 0 will
@@ -122,7 +122,7 @@ Der zweite Parameter ist eine der gewünschten Zustände des
 festgelegten Kanals. Eine *true bedeutet Relais geschlossen und
 ein *false* bedeutet Relais offen.
 
-Der dritte Parameter ist die Zeit (in ms) die der Kanal den Zustand
+Der dritte Parameter ist die Zeit die der Kanal den Zustand
 halten sollen.
 
 Wenn diese Funktion mit den Parametern (0, 1, 1500) aufgerufen wird,
@@ -142,10 +142,10 @@ zwei Sekunden in den Zustand geöffnet wechseln.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Monoflop',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'out'),
-             ('Time', 'uint32', 1, 'out'),
-             ('Time Remaining', 'uint32', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Value', 'bool', 1, 'out', {}),
+             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -170,8 +170,8 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Value',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Value', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -196,8 +196,8 @@ diese Funktion aufgerufen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -205,8 +205,6 @@ com['packets'].append({
 Each channel has a corresponding LED. You can turn the LED off, on or show a
 heartbeat. You can also set the LED to "Channel Status". In this mode the
 LED is on if the channel is high and off otherwise.
-
-By default all channel LEDs are configured as "Channel Status".
 """,
 'de':
 """
@@ -214,8 +212,6 @@ Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
 ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
 angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
-
-Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })
@@ -223,8 +219,8 @@ Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config'})],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -241,8 +237,8 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Channel', 'uint8', 1, 'out'),
-             ('Value', 'bool', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 3)}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -34,7 +34,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value',
-'elements': [('Value Mask', 'uint16', 1, 'in')],
+'elements': [('Value Mask', 'uint16', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -78,7 +78,7 @@ wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Value',
-'elements': [('Value Mask', 'uint16', 1, 'out')],
+'elements': [('Value Mask', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -95,9 +95,9 @@ Gibt die Bitmaske zurück, wie von :func:`Set Value` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Monoflop',
-'elements': [('Selection Mask', 'uint16', 1, 'in'),
-             ('Value Mask', 'uint16', 1, 'in'),
-             ('Time', 'uint32', 1, 'in')],
+'elements': [('Selection Mask', 'uint16', 1, 'in', {}),
+             ('Value Mask', 'uint16', 1, 'in', {}),
+             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -108,7 +108,7 @@ bitmask.
 The second parameter is a bitmask with the desired value of the specified
 pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
 
-The third parameter indicates the time (in ms) that the pins should hold
+The third parameter indicates the time that the pins should hold
 the value.
 
 If this function is called with the parameters (9, 1, 1500) or
@@ -130,7 +130,7 @@ Der zweite Parameter ist eine Bitmaske mit den gewünschten Zuständen der
 festgelegten Pins. Eine 1 in der Bitmaske bedeutet logisch 1 und
 eine 0 in der Bitmaske bedeutet logisch 0.
 
-Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
+Der dritte Parameter stellt die Zeit dar, welche die Pins den Zustand
 halten sollen.
 
 Wenn diese Funktion mit den Parametern (9, 1, 1500) bzw. (0b1001, 0b0001, 1500)
@@ -151,10 +151,10 @@ zwei Sekunden in den Zustand logisch 0 wechseln.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Monoflop',
-'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Value', 'uint16', 1, 'out'),
-             ('Time', 'uint32', 1, 'out'),
-             ('Time Remaining', 'uint32', 1, 'out')],
+'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 15)}),
+             ('Value', 'uint16', 1, 'out', {'range': (0, 1)}),
+             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -179,7 +179,7 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Group',
-'elements': [('Group', 'char', 4, 'in')],
+'elements': [('Group', 'char', 4, 'in', {'range': [('a', 'd'), ('n', 'n')]})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -231,7 +231,7 @@ die Pins von Port B den Werten 4-7. Es ist jetzt möglich mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Get Group',
-'elements': [('Group', 'char', 4, 'out')],
+'elements': [('Group', 'char', 4, 'out', {'range': [('a', 'd'), ('n', 'n')]})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -248,7 +248,7 @@ Gibt die Gruppierung zurück, wie von :func:`Set Group` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Available For Group',
-'elements': [('Available', 'uint8', 1, 'out')],
+'elements': [('Available', 'uint8', 1, 'out', {'range': (0, 15)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -269,8 +269,8 @@ mit Bricklets verbunden die zusammen gruppiert werden können.
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Selection Mask', 'uint16', 1, 'out'),
-             ('Value Mask', 'uint16', 1, 'out')],
+'elements': [('Selection Mask', 'uint16', 1, 'out', {}),
+             ('Value Mask', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -291,8 +291,8 @@ Zustand als Bitmaske (der Zustand nach dem Monoflop).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Values',
-'elements': [('Selection Mask', 'uint16', 1, 'in'),
-             ('Value Mask', 'uint16', 1, 'in')],
+'elements': [('Selection Mask', 'uint16', 1, 'in', {}),
+             ('Value Mask', 'uint16', 1, 'in', {})],
 'since_firmware': [2, 0, 0],
 'doc': ['bf', {
 'en':

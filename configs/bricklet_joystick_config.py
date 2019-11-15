@@ -37,15 +37,14 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Position',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'range': (-100, 100)}),
+             ('Y', 'int16', 1, 'out', {'range': (-100, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the position of the joystick. The value ranges between -100 and
-100 for both axis. The middle position of the joystick is x=0, y=0. The
-returned values are averaged and calibrated (see :func:`Calibrate`).
+Returns the position of the joystick. The middle position of the joystick is x=0, y=0.
+The returned values are averaged and calibrated (see :func:`Calibrate`).
 
 If you want to get the position periodically, it is recommended to use the
 :cb:`Position` callback and set the period with
@@ -53,8 +52,7 @@ If you want to get the position periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die Position des Joystick zurück. Der Wertebereich ist von -100 bis
-100 für beide Achsen. Die Mittelposition des Joysticks ist x=0, y=0.
+Gibt die Position des Joystick zurück. Die Mittelposition des Joysticks ist x=0, y=0.
 Die zurückgegebenen Werte sind gemittelt und kalibriert (siehe :func:`Calibrate`).
 
 Wenn die Position periodisch abgefragt werden sollen, wird empfohlen
@@ -67,7 +65,7 @@ den :cb:`Position` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Is Pressed',
-'elements': [('Pressed', 'bool', 1, 'out')],
+'elements': [('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -90,14 +88,13 @@ zu nutzen, um die Taste programmatisch zu behandeln.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value',
-'elements': [('X', 'uint16', 1, 'out'),
-             ('Y', 'uint16', 1, 'out')],
+'elements': [('X', 'uint16', 1, 'out', {'range': (0, 4095)}),
+             ('Y', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the values as read by a 12-bit analog-to-digital converter.
-The values are between 0 and 4095 for both axis.
 
 .. note::
  The values returned by :func:`Get Position` are averaged over several samples
@@ -111,8 +108,7 @@ If you want the analog values periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
-Wertebereich ist 0 bis 4095.
+Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück.
 
 .. note::
  Der von :func:`Get Position` zurückgegebene Wert ist über mehrere
@@ -242,10 +238,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Position Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min X', 'int16', 1, 'in'),
-             ('Max X', 'int16', 1, 'in'),
-             ('Min Y', 'int16', 1, 'in'),
-             ('Max Y', 'int16', 1, 'in')],
+             ('Min X', 'int16', 1, 'in', {'default': 0}),
+             ('Max X', 'int16', 1, 'in', {'default': 0}),
+             ('Min Y', 'int16', 1, 'in', {'default': 0}),
+             ('Max Y', 'int16', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -263,8 +259,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the position is *inside* the min and max values"
  "'<'",    "Callback is triggered when the position is smaller than the min values (max is ignored)"
  "'>'",    "Callback is triggered when the position is greater than the min values (max is ignored)"
-
-The default value is ('x', 0, 0, 0, 0).
 """,
 'de':
 """
@@ -281,8 +275,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Position *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst, wenn die Position kleiner als die min Werte ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Position größer als die min Werte ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0, 0, 0).
 """
 }]
 })
@@ -291,10 +283,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Position Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min X', 'int16', 1, 'out'),
-             ('Max X', 'int16', 1, 'out'),
-             ('Min Y', 'int16', 1, 'out'),
-             ('Max Y', 'int16', 1, 'out')],
+             ('Min X', 'int16', 1, 'out', {'default': 0}),
+             ('Max X', 'int16', 1, 'out', {'default': 0}),
+             ('Min Y', 'int16', 1, 'out', {'default': 0}),
+             ('Max Y', 'int16', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -312,10 +304,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min X', 'uint16', 1, 'in'),
-             ('Max X', 'uint16', 1, 'in'),
-             ('Min Y', 'uint16', 1, 'in'),
-             ('Max Y', 'uint16', 1, 'in')],
+             ('Min X', 'uint16', 1, 'in', {'default': 0}),
+             ('Max X', 'uint16', 1, 'in', {'default': 0}),
+             ('Min Y', 'uint16', 1, 'in', {'default': 0}),
+             ('Max Y', 'uint16', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -333,8 +325,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the analog values are *inside* the min and max values"
  "'<'",    "Callback is triggered when the analog values are smaller than the min values (max is ignored)"
  "'>'",    "Callback is triggered when the analog values are greater than the min values (max is ignored)"
-
-The default value is ('x', 0, 0, 0, 0).
 """,
 'de':
 """
@@ -351,8 +341,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Analogwerte *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst, wenn die Analogwerte kleiner als die min Werte ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Analogwerte größer als die min Werte ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0, 0, 0).
 """
 }]
 })
@@ -361,10 +349,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min X', 'uint16', 1, 'out'),
-             ('Max X', 'uint16', 1, 'out'),
-             ('Min Y', 'uint16', 1, 'out'),
-             ('Max Y', 'uint16', 1, 'out')],
+             ('Min X', 'uint16', 1, 'out', {'default': 0}),
+             ('Max X', 'uint16', 1, 'out', {'default': 0}),
+             ('Min Y', 'uint16', 1, 'out', {'default': 0}),
+             ('Max Y', 'uint16', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -435,8 +423,8 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Position',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'range': (-100, 100)}),
+             ('Y', 'int16', 1, 'out', {'range': (-100, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -462,8 +450,8 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Analog Value',
-'elements': [('X', 'uint16', 1, 'out'),
-             ('Y', 'uint16', 1, 'out')],
+'elements': [('X', 'uint16', 1, 'out', {'range': (0, 4095)}),
+             ('Y', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -489,8 +477,8 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Position Reached',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'range': (-100, 100)}),
+             ('Y', 'int16', 1, 'out', {'range': (-100, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -517,8 +505,8 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Analog Value Reached',
-'elements': [('X', 'uint16', 1, 'out'),
-             ('Y', 'uint16', 1, 'out')],
+'elements': [('X', 'uint16', 1, 'out', {'range': (0, 4095)}),
+             ('Y', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

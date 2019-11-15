@@ -55,13 +55,12 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance',
-'elements': [('Distance', 'uint16', 1, 'out')],
+'elements': [('Distance', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'range': (0, 4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the measured distance. The value has a range of 0 to 4000
-and is given in cm.
+Returns the measured distance.
 
 Sensor hardware version 1 (see :func:`Get Sensor Hardware Version`) cannot
 measure distance and velocity at the same time. Therefore, the distance mode
@@ -75,8 +74,7 @@ use the :cb:`Distance` callback and set the period with
 """,
 'de':
 """
-Gibt die gemessene Distanz zurück. Der Wertebereich ist 0 bis 4000
-und die Werte haben die Einheit cm.
+Gibt die gemessene Distanz zurück.
 
 Sensor Hardware Version 1 (siehe :func:`Get Sensor Hardware Version`) kann nicht
 gleichzeitig Distanz und Geschwindigkeit messen. Daher muss mittels
@@ -94,13 +92,12 @@ den :cb:`Distance` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Velocity',
-'elements': [('Velocity', 'int16', 1, 'out')],
+'elements': [('Velocity', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the measured velocity. The value has a range of -12800 to 12700
-and is given in 1/100 m/s.
+Returns the measured velocity.
 
 Sensor hardware version 1 (see :func:`Get Sensor Hardware Version`) cannot
 measure distance and velocity at the same time. Therefore, the velocity mode
@@ -116,8 +113,7 @@ use the :cb:`Velocity` callback and set the period with
 """,
 'de':
 """
-Gibt die gemessene Geschwindigkeit zurück. Der Wertebereich ist -12800 bis 12700
-und die Werte haben die Einheit 1/100 m/s.
+Gibt die gemessene Geschwindigkeit zurück.
 
 Sensor Hardware Version 1 (siehe :func:`Get Sensor Hardware Version`) kann nicht
 gleichzeitig Distanz und Geschwindigkeit messen. Daher muss mittels
@@ -222,8 +218,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Distance Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'divisor': 100, 'unit': 'Meter', 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'divisor': 100, 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -241,8 +237,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the distance value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the distance value is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the distance value is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -259,8 +253,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Entfernungswert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Entfernungswert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Entfernungswert größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -269,8 +261,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Distance Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -288,8 +280,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Velocity Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in'),
-             ('Max', 'int16', 1, 'in')],
+             ('Min', 'int16', 1, 'in', {'divisor': 100, 'unit': 'Meter Per Second', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'divisor': 100, 'unit': 'Meter Per Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -307,8 +299,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the velocity is *inside* the min and max values"
  "'<'",    "Callback is triggered when the velocity is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the velocity is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -325,8 +315,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Geschwindigkeitswert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Geschwindigkeitswert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Geschwindigkeitswert größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -335,8 +323,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Velocity Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out'),
-             ('Max', 'int16', 1, 'out')],
+             ('Min', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -407,8 +395,8 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average',
-'elements': [('Distance Average Length', 'uint8', 1, 'in'),
-             ('Velocity Average Length', 'uint8', 1, 'in')],
+'elements': [('Distance Average Length', 'uint8', 1, 'in', {'range': (0, 30), 'default': 10}),
+             ('Velocity Average Length', 'uint8', 1, 'in', {'range': (0, 30), 'default': 10})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -418,10 +406,6 @@ for the distance and velocity.
 
 Setting the length to 0 will turn the averaging completely off. With less
 averaging, there is more noise on the data.
-
-The range for the averaging is 0-30.
-
-The default value is 10.
 """,
 'de':
 """
@@ -430,10 +414,6 @@ für die Entfernung und Geschwindigkeit.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 0-30.
-
-Der Standardwert ist 10.
 """
 }]
 })
@@ -441,8 +421,8 @@ Der Standardwert ist 10.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average',
-'elements': [('Distance Average Length', 'uint8', 1, 'out'),
-             ('Velocity Average Length', 'uint8', 1, 'out')],
+'elements': [('Distance Average Length', 'uint8', 1, 'out', {'range': (0, 30), 'default': 10}),
+             ('Velocity Average Length', 'uint8', 1, 'out', {'range': (0, 30), 'default': 10})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -460,7 +440,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -481,8 +461,6 @@ The following modes are available:
 * 2: Velocity is measured with resolution 0.25 m/s and range is 0-31.75 m/s
 * 3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s
 * 4: Velocity is measured with resolution 1.0 m/s and range is 0-127 m/s
-
-The default mode is 0 (distance is measured).
 """,
 'de':
 """
@@ -503,8 +481,6 @@ Die folgenden Modi können genutzt werden:
 * 2: Geschwindigkeit wird gemessen mit Auflösung 0,25 m/s und Wertebereich 0-31,75 m/s
 * 3: Geschwindigkeit wird gemessen mit Auflösung 0,5 m/s und Wertebereich 0-63,5 m/s
 * 4: Geschwindigkeit wird gemessen mit Auflösung 1,0 m/s und Wertebereich 0-127 m/s
-
-Der Standardmodus ist 0 (Distanzmessung).
 """
 }]
 })
@@ -512,7 +488,7 @@ Der Standardmodus ist 0 (Distanzmessung).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -569,7 +545,7 @@ Deaktiviert den Laser des LIDAR.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Laser Enabled',
-'elements': [('Laser Enabled', 'bool', 1, 'out')],
+'elements': [('Laser Enabled', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -586,7 +562,7 @@ Gibt *true* zurück wenn der Laser aktiviert ist, *false* sonst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Distance',
-'elements': [('Distance', 'uint16', 1, 'out')],
+'elements': [('Distance', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'range': (0, 4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -612,7 +588,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Velocity',
-'elements': [('Velocity', 'int16', 1, 'out')],
+'elements': [('Velocity', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -638,7 +614,7 @@ Geschwindigkeitswert seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Distance Reached',
-'elements': [('Distance', 'uint16', 1, 'out')],
+'elements': [('Distance', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'range': (0, 4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -665,7 +641,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Velocity Reached',
-'elements': [('Velocity', 'int16', 1, 'out')],
+'elements': [('Velocity', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -709,10 +685,10 @@ Gibt die LIDAR-Lite Hardware version zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Acquisition Count', 'uint8', 1, 'in'),
-             ('Enable Quick Termination', 'bool', 1, 'in'),
-             ('Threshold Value', 'uint8', 1, 'in'),
-             ('Measurement Frequency', 'uint16', 1, 'in')],
+'elements': [('Acquisition Count', 'uint8', 1, 'in', {'range': (1, 255), 'default': 128}),
+             ('Enable Quick Termination', 'bool', 1, 'in', {'default': False}),
+             ('Threshold Value', 'uint8', 1, 'in', {'default': 0}),
+             ('Measurement Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': [(0, 0), (10, 500)], 'default': 0})],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':
@@ -746,9 +722,6 @@ the velocity measurement is not stable. For a stable velocity measurement you sh
 set a fixed measurement frequency. The lower the frequency, the higher is the resolution
 of the calculated velocity. The allowed values are 10Hz-500Hz (and 0 to turn the fixed
 frequency off).
-
-The default values for Acquisition Count, Enable Quick Termination, Threshold Value and
-Measurement Frequency are 128, false, 0 and 0.
 """,
 'de':
 """
@@ -792,10 +765,10 @@ Measurement Frequency sind 128, false, 0 und 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Acquisition Count', 'uint8', 1, 'out'),
-             ('Enable Quick Termination', 'bool', 1, 'out'),
-             ('Threshold Value', 'uint8', 1, 'out'),
-             ('Measurement Frequency', 'uint16', 1, 'out')],
+'elements': [('Acquisition Count', 'uint8', 1, 'out', {'range': (1, 255), 'default': 128}),
+             ('Enable Quick Termination', 'bool', 1, 'out', {'default': False}),
+             ('Threshold Value', 'uint8', 1, 'out', {'default': 0}),
+             ('Measurement Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': [(0, 0), (10, 500)], 'default': 0})],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':

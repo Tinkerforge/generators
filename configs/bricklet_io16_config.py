@@ -49,8 +49,8 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Port',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Value Mask', 'uint8', 1, 'in')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Value Mask', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -90,8 +90,8 @@ diese Funktion aufgerufen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Port',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Value Mask', 'uint8', 1, 'out')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Value Mask', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -112,10 +112,10 @@ Ein- oder Ausgang konfiguriert sind.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Port Configuration',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Selection Mask', 'uint8', 1, 'in'),
-             ('Direction', 'char', 1, 'in', {'constant_group': 'Direction'}),
-             ('Value', 'bool', 1, 'in')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Selection Mask', 'uint8', 1, 'in', {}),
+             ('Direction', 'char', 1, 'in', {'constant_group': 'Direction', 'default': 'i'}),
+             ('Value', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -138,8 +138,6 @@ For example:
 
 Running monoflop timers for the selected pins will be aborted if this
 function is called.
-
-The default configuration is input with pull-up.
 """,
 'de':
 """
@@ -161,8 +159,6 @@ Beispiele:
 
 Laufende Monoflop Timer für die ausgewählten Pins werden abgebrochen, wenn
 diese Funktion aufgerufen wird.
-
-Die Standardkonfiguration ist Eingang mit Pull-Up.
 """
 }]
 })
@@ -170,9 +166,9 @@ Die Standardkonfiguration ist Eingang mit Pull-Up.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Port Configuration',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Direction Mask', 'uint8', 1, 'out'),
-             ('Value Mask', 'uint8', 1, 'out')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Direction Mask', 'uint8', 1, 'out', {}),
+             ('Value Mask', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -250,8 +246,8 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Port Interrupt',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Interrupt Mask', 'uint8', 1, 'in')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Interrupt Mask', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -282,8 +278,8 @@ Der Interrupt wird mit dem :cb:`Interrupt` Callback zugestellt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Port Interrupt',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Interrupt Mask', 'uint8', 1, 'out')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Interrupt Mask', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -302,9 +298,9 @@ Gibt die Interrupt Bitmaske für den angegebenen Port zurück, wie von
 com['packets'].append({
 'type': 'callback',
 'name': 'Interrupt',
-'elements': [('Port', 'char', 1, 'out'),
-             ('Interrupt Mask', 'uint8', 1, 'out'),
-             ('Value Mask', 'uint8', 1, 'out')],
+'elements': [('Port', 'char', 1, 'out', {'range': ('a', 'b')}),
+             ('Interrupt Mask', 'uint8', 1, 'out', {}),
+             ('Value Mask', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -347,10 +343,10 @@ Beispiele:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Port Monoflop',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Selection Mask', 'uint8', 1, 'in'),
-             ('Value Mask', 'uint8', 1, 'in'),
-             ('Time', 'uint32', 1, 'in')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Selection Mask', 'uint8', 1, 'in', {}),
+             ('Value Mask', 'uint8', 1, 'in', {}),
+             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 1, 2],
 'doc': ['af', {
 'en':
@@ -362,7 +358,7 @@ pins will be ignored.
 The third parameter is a bitmask with the desired value of the specified
 output pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
 
-The forth parameter indicates the time (in ms) that the pins should hold
+The forth parameter indicates the time that the pins should hold
 the value.
 
 If this function is called with the parameters ('a', 9, 1, 1500) or
@@ -385,7 +381,7 @@ Der dritte Parameter ist eine Bitmaske mit den gewünschten Zuständen der
 festgelegten Ausgangspins. Eine 1 in der Bitmaske bedeutet logisch 1 und
 eine 0 in der Bitmaske bedeutet logisch 0.
 
-Der vierte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
+Der vierte Parameter stellt die Zeit dar, welche die Pins den Zustand
 halten sollen.
 
 Wenn diese Funktion mit den Parametern ('a', 9, 1, 1500) bzw.
@@ -406,11 +402,11 @@ Sekunden in den Zustand logisch 0 wechseln.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Port Monoflop',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Pin', 'uint8', 1, 'in'),
-             ('Value', 'uint8', 1, 'out'),
-             ('Time', 'uint32', 1, 'out'),
-             ('Time Remaining', 'uint32', 1, 'out')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Pin', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Value', 'uint8', 1, 'out', {}),
+             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 1, 2],
 'doc': ['af', {
 'en':
@@ -435,9 +431,9 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Port', 'char', 1, 'out'),
-             ('Selection Mask', 'uint8', 1, 'out'),
-             ('Value Mask', 'uint8', 1, 'out')],
+'elements': [('Port', 'char', 1, 'out', {'range': ('a', 'b')}),
+             ('Selection Mask', 'uint8', 1, 'out', {}),
+             ('Value Mask', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 1, 2],
 'doc': ['c', {
 'en':
@@ -458,9 +454,9 @@ den aktuellen Zustand als Bitmaske (der Zustand nach dem Monoflop).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Values',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Selection Mask', 'uint8', 1, 'in'),
-             ('Value Mask', 'uint8', 1, 'in')],
+'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
+             ('Selection Mask', 'uint8', 1, 'in', {}),
+             ('Value Mask', 'uint8', 1, 'in', {})],
 'since_firmware': [2, 0, 0],
 'doc': ['af', {
 'en':
@@ -503,9 +499,9 @@ diese Funktion aufgerufen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count',
-'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Reset Counter', 'bool', 1, 'in'),
-             ('Count', 'uint32', 1, 'out')],
+'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Reset Counter', 'bool', 1, 'in', {}),
+             ('Count', 'uint32', 1, 'out', {})],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':
@@ -531,9 +527,9 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Config',
-'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'in')],
+'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':
@@ -544,18 +540,14 @@ are available for edge counting.
 The edge type parameter configures if rising edges, falling edges or
 both are counted if the pin is configured for input. Possible edge types are:
 
-* 0 = rising (default)
+* 0 = rising
 * 1 = falling
 * 2 = both
-
-The debounce time is given in ms.
 
 Configuring an edge counter resets its value to 0.
 
 If you don't know what any of this means, just leave it at default. The
 default configuration is very likely OK for you.
-
-Default values: 0 (edge type) and 100ms (debounce time)
 """,
 'de':
 """
@@ -566,18 +558,14 @@ Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
 steigende, fallende oder beide Flanken gezählt werden für Pins die als Eingang
 konfiguriert sind. Mögliche Flankentypen sind:
 
-* 0 = steigend (Standard)
+* 0 = steigend
 * 1 = fallend
 * 2 = beide
-
-Die Entprellzeit (debounce) wird in ms angegeben.
 
 Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 
 Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
 ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
-
-Standardwerte: 0 (edge type) und 100ms (debounce).
 """
 }]
 })
@@ -585,9 +573,9 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Config',
-'elements': [('Pin', 'uint8', 1, 'in'),
-             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type'}),
-             ('Debounce', 'uint8', 1, 'out')],
+'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
+             ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':
