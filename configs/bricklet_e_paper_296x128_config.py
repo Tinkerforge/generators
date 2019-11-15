@@ -181,8 +181,8 @@ Zeilen werden jeweils von links nach rechts geschrieben.
 Der Wert 0 (false) entspricht einem schwarzen Pixel und der Wert 1 (true) einem
 weißen Pixel.
 
-Diese Funktion schreibt Pixel in den Schwarz-/Weiß-Buffer. Der Buffer kann auf
-das Display mit der Funktion :func:`Draw` übertragen werden.
+Diese Funktion schreibt Pixel in den Schwarz-/Weiß-Buffer. Der Buffer kann mit der Funktion :func:`Draw`
+auf das Display übertragen werden.
 
 Die Funktion :func:`Write Color` kann genutzt werden um rote oder graue Pixel zu
 schreiben.
@@ -274,8 +274,8 @@ Der Wert 0 (false) bedeutet dass das Pixel keine Farbe hat. Es ist in diesem Fal
 schwarz oder weiß (siehe :func:`Write Black White`). Der Wert 1 (true) entspricht einem
 roten oder grauen Pixel, abhängig vom Modell des Bricklets.
 
-Diese Funktion schreibt Pixel in den Rot- oder Grau-Buffer. Der Buffer kann auf
-das Display mit der Funktion :func:`Draw` übertragen werden.
+Diese Funktion schreibt Pixel in den Rot- oder Grau-Buffer. Der Buffer kann mit der Funktion :func:`Draw`
+auf das Display übertragen werden.
 
 Die Funktion :func:`Write Black White` kann genutzt werden um schwarze/weiße Pixel zu
 schreiben.
@@ -332,10 +332,16 @@ com['packets'].append({
 'en':
 """
 Fills the complete content of the display with the given color.
+
+This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
+to the display use :func:`Draw`.
 """,
 'de':
 """
 Füllt den kompletten Inhalt des Displays mit der gegebenen Farbe.
+
+Diese Funktion schreibt Pixel in den Schwarz-/Weiß-/Grau|Rot-Buffer. Der Buffer kann mit der Funktion :func:`Draw`
+auf das Display übertragen werden.
 """
 }]
 })
@@ -357,6 +363,9 @@ Draws a text with up to 50 characters at the pixel position (x, y).
 
 You can use one of 9 different font sizes and draw the text in
 black/white/red|gray. The text can be drawn horizontal or vertical.
+
+This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
+to the display use :func:`Draw`.
 """,
 'de':
 """
@@ -365,6 +374,9 @@ Zeichnet einen Text mit bis zu 50 Buchstaben an die Pixelposition (x, y).
 Es können 9 unterschiedliche Font-Größen genutzt werden und der Text
 kann in schwarz/weiß/rot|grau gezeichnet werden. Der Text kann horizontal
 oder vertikal gezeichnet werden.
+
+Diese Funktion schreibt Pixel in den Schwarz-/Weiß-/Grau|Rot-Buffer. Der Buffer kann mit der Funktion :func:`Draw`
+auf das Display übertragen werden.
 """
 }]
 })
@@ -382,10 +394,16 @@ com['packets'].append({
 'en':
 """
 Draws a line from (x, y)-start to (x, y)-end in the given color.
+
+This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
+to the display use :func:`Draw`.
 """,
 'de':
 """
 Zeichnet eine Linie von (x, y)-Start nach (x, y)-Ende in der eingestellten Farbe.
+
+Diese Funktion schreibt Pixel in den Schwarz-/Weiß-/Grau|Rot-Buffer. Der Buffer kann mit der Funktion :func:`Draw`
+auf das Display übertragen werden.
 """
 }]
 })
@@ -407,6 +425,9 @@ Draws a box from (x, y)-start to (x, y)-end in the given color.
 
 If you set fill to true, the box will be filled with the
 color. Otherwise only the outline will be drawn.
+
+This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
+to the display use :func:`Draw`.
 """,
 'de':
 """
@@ -415,6 +436,9 @@ Zeichnet ein Rechteck von (x, y)-Start nach (x, y)-Ende in der eingestellten Far
 Wenn fill auf true gesetzt wird, wird das Rechteck mit
 der angegebenen Farbe ausgefüllt. Ansonsten wird nur der Umriss
 gezeichnet.
+
+Diese Funktion schreibt Pixel in den Schwarz-/Weiß-/Grau|Rot-Buffer. Der Buffer kann mit der Funktion :func:`Draw`
+auf das Display übertragen werden.
 """
 }]
 })
