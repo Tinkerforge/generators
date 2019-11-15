@@ -1194,7 +1194,7 @@ units = {
                                          'g',
                                          {'en': 'Mass', 'de': 'Masse'}),
 
-    'Gram Per Cubic Meter':         Unit({'en': 'Gram per cubic meter', 'de': 'Gram per cubic meter'},
+    'Gram Per Cubic Meter':         Unit({'en': 'Gram per cubic meter', 'de': 'Gramm pro Kubikmeter'},
                                          'g/m³',
                                          {'en': 'Density', 'de': 'Dichte'}),
 
@@ -1208,7 +1208,7 @@ units = {
                                          {'en': 'Temperature', 'de': 'Temperatur'},
                                          scale_prefix_allowed=False),
 
-    'Meter Pro Second':            Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
+    'Meter Pro Second':             Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
                                          'm/s',
                                          {'en': 'Speed', 'de': 'Geschwindigkeit'}),
 
@@ -1234,8 +1234,8 @@ units = {
                                          '%',
                                          {'en': 'Fraction', 'de': 'Anteil'}),
 
-    'Parts Per Million':            Unit({'en': 'parts per million', 'de': 'parts per million'},
-                                         '%',
+    'Parts Per Million':            Unit({'en': 'Parts per million', 'de': 'Parts per million'},
+                                         'ppm',
                                          {'en': 'Fraction', 'de': 'Anteil'}),
 
     'Second':                       Unit({'en': 'Second', 'de': 'Sekunde'},
@@ -1255,19 +1255,19 @@ units = {
                                          'V',
                                          {'en': 'Electric potential', 'de': 'Elektrische Spannung'}),
 
-    'Volt Ampere':                  Unit({'en': 'Volt-Ampere', 'de': 'Voltampere'},
+    'Volt Ampere':                  Unit({'en': 'Volt-ampere', 'de': 'Voltampere'},
                                          'VA',
-                                         {'en': 'Apparent Power', 'de': 'Scheinleistung'}),
+                                         {'en': 'Apparent power', 'de': 'Scheinleistung'}),
 
-    'Volt Ampere Reactive':         Unit({'en': 'Volt-Ampere reactive', 'de': 'Voltampere reaktiv'},
+    'Volt Ampere Reactive':         Unit({'en': 'Volt-ampere reactive', 'de': 'Voltampere reaktiv'},
                                          'var',
-                                         {'en': 'Reactive Power', 'de': 'Blindleistung'}),
+                                         {'en': 'Reactive power', 'de': 'Blindleistung'}),
 
     'Watt':                         Unit({'en': 'Watt', 'de': 'Watt'},
                                          'W',
                                          {'en': 'Power', 'de': 'Leistung'}),
 
-    'Watt Hour':                     Unit({'en': 'Watt Hour', 'de': 'Wattstunde'},
+    'Watt Hour':                     Unit({'en': 'Watt-hour', 'de': 'Wattstunde'},
                                          'Wh',
                                          {'en': 'Energy', 'de': 'Energie'})
 }
