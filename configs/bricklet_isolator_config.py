@@ -56,7 +56,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set SPITFP Baudrate Config',
 'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'in', {'default': True}),
-             ('Minimum Dynamic Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (400000, 2000000)})],
+             ('Minimum Dynamic Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 400000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -115,7 +115,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get SPITFP Baudrate Config',
 'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'out', {'default': True}),
-             ('Minimum Dynamic Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000)})],
+             ('Minimum Dynamic Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 400000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

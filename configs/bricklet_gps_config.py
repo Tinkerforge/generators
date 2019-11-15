@@ -76,7 +76,7 @@ precision. See
 `here <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
 for more information.
 
-EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
+EPE is the "Estimated Position Error". This is not the
 absolute maximum error, it is the error with a specific confidence. See
 `here <https://www.nps.gov/gis/gps/WhatisEPE.html>`__ for more information.
 
@@ -97,7 +97,7 @@ Satellitengeometrie auf die GPS-Präzision.
 `hier <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__ gibt
 es mehr Informationen dazu. Die Werte werden in Hundertstel gegeben.
 
-EPE ist der "Estimated Position Error". Der EPE wird in cm gegeben.
+EPE ist der "Estimated Position Error".
 Dies ist nicht der absolut maximale Fehler, es ist der Fehler mit einer
 spezifischen Konfidenz. Siehe
 `hier <https://www.nps.gov/gis/gps/WhatisEPE.html>`__ für mehr Informationen.
@@ -181,8 +181,8 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion',
-'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (0, 36000)}),
-             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Pro Second'})],
+'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree', 'range': (0, 36000)}),
+             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -578,8 +578,8 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Motion',
-'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (0, 36000)}),
-             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Pro Second'})],
+'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree', 'range': (0, 36000)}),
+             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

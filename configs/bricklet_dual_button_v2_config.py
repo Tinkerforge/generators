@@ -197,13 +197,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the state of the selected LED (0 or 1).
+Sets the state of the selected LED.
 
 The other LED remains untouched.
 """,
 'de':
 """
-Setzt den Zustand der selektierten LED (0 oder 1).
+Setzt den Zustand der selektierten LED.
 
 Die andere LED bleibt unangetastet.
 """

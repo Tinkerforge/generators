@@ -456,7 +456,7 @@ different ranges.
 
 The following modes are available:
 
-* 0: Distance is measured with resolution 1.0 cm and range 0-400 cm
+* 0: Distance is measured with resolution 1.0 cm and range 0-4000 cm
 * 1: Velocity is measured with resolution 0.1 m/s and range is 0-12.7 m/s
 * 2: Velocity is measured with resolution 0.25 m/s and range is 0-31.75 m/s
 * 3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s
@@ -476,7 +476,7 @@ mit unterschiedlichen Wertebereichen.
 
 Die folgenden Modi können genutzt werden:
 
-* 0: Distanz wird gemessen mit Auflösung 1,0 cm und Wertebereich 0-400 cm
+* 0: Distanz wird gemessen mit Auflösung 1,0 cm und Wertebereich 0-4000 cm
 * 1: Geschwindigkeit wird gemessen mit Auflösung 0,1 m/s und Wertebereich 0-12,7 m/s
 * 2: Geschwindigkeit wird gemessen mit Auflösung 0,25 m/s und Wertebereich 0-31,75 m/s
 * 3: Geschwindigkeit wird gemessen mit Auflösung 0,5 m/s und Wertebereich 0-63,5 m/s

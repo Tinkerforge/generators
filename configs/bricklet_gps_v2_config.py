@@ -158,7 +158,7 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion',
-'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (0, 36000)}),
+'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree', 'range': (0, 36000)}),
              ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Pro Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -711,7 +711,7 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Motion',
-'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (0, 36000)}),
+'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree', 'range': (0, 36000)}),
              ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Pro Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

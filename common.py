@@ -1168,7 +1168,7 @@ units = {
 
     'Baud':                         Unit({'en': 'Baud', 'de': 'Baud'},
                                          'bd',
-                                         {'en': 'Symbol Rate', 'de': 'Symbolrate'}),
+                                         {'en': 'Symbol rate', 'de': 'Symbolrate'}),
 
     'Bit Per Second':               Unit({'en': 'Bit per second', 'de': 'Bit pro Sekunde'},
                                          'bit/s',

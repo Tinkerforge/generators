@@ -135,7 +135,7 @@ com['packets'].append({
 'en':
 """
 Sets a temperature offset. A offset of 10 will decrease
-the measured temperature by 0.1°C.
+the measured temperature by 0.1 °C.
 
 If you install this Bricklet into an enclosure and you want to measure the ambient
 temperature, you may have to decrease the measured temperature by some value to
@@ -156,7 +156,7 @@ non-volatile memory and is applied again after a power loss.
 'de':
 """
 Setzt ein Temperatur-Offset. Ein Offset von 10 verringert
-die gemessene Temperatur um 0,1°C.
+die gemessene Temperatur um 0,1 °C.
 
 Wenn das Bricklet in einem Gehäuse verbaut wird, aber die Umgebungstemperatur
 außerhalb des Gehäuses gemessen werden soll, dann muss vom gemessenen Temperatur

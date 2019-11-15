@@ -91,7 +91,7 @@ Sets the mode of the analog value. Possible modes:
 * 2: 100k Ohm resistor to ground
 * 3: 500k Ohm resistor to ground
 
-Setting the mode to 0 will result in an output voltage of 0. You can jump
+Setting the mode to 0 will result in an output voltage of 0 V. You can jump
 to a higher output voltage directly by calling :func:`Set Voltage`.
 """,
 'de':
@@ -103,7 +103,7 @@ Setzt den Modus des Analogwertes. Mögliche Modi:
 * 2: 100k Ohm Widerstand gegen Masse
 * 3: 500k Ohm Widerstand gegen Masse
 
-Setzten des Modus auf 0 resultiert in einer Ausgabespannung von 0. Es kann
+Setzten des Modus auf 0 resultiert in einer Ausgabespannung von 0 V. Es kann
 über einen Aufruf von :func:`Set Voltage` direkt auf eine
 höhere Ausgabespannung gewechselt werden .
 """
