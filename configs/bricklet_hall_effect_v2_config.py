@@ -40,13 +40,11 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 magnetic_flux_density_doc = {
 'en':
 """
-Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__
-in `µT (micro Tesla) <https://en.wikipedia.org/wiki/Tesla_(unit)>`__.
+Returns the `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__.
 """,
 'de':
 """
-Gibt die `magnetische Flussdichte (magnetische Induktion) <https://de.wikipedia.org/wiki/Magnetische_Flussdichte>`__
-in `µT (Microtesla) <https://de.wikipedia.org/wiki/Tesla_(Einheit)>`__ zurück.
+Gibt die `magnetische Flussdichte (magnetische Induktion) <https://de.wikipedia.org/wiki/Magnetische_Flussdichte>`__ zurück.
 """
 }
 
@@ -72,8 +70,8 @@ com['packets'].append({
 """
 Returns the current value of the counter.
 
-You can configure the low/high thresholds in µT and the debounce time
-in us with :func:`Set Counter Config`.
+You can configure the low/high thresholds and the debounce time
+with :func:`Set Counter Config`.
 
 If you set reset counter to *true*, the count is set back to 0
 directly after it is read.
@@ -86,7 +84,7 @@ with :func:`Set Counter Callback Configuration`.
 """
 Gibt den aktuellen Wert des Zählers zurück.
 
-Die Schwellwerte (low/high) in µT und Entprellzeit in µs können per
+Die Schwellwerte (low/high) und Entprellzeit können per
 :func:`Set Counter Config` eingestellt werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
@@ -109,7 +107,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets a high and a low threshold in µT as well as a debounce time in µs.
+Sets a high and a low threshold as well as a debounce time.
 
 If the measured magnetic flux density goes above the high threshold or
 below the low threshold, the count of the counter is increased by 1.
@@ -118,8 +116,8 @@ The debounce time is the minimum time between two count increments.
 """,
 'de':
 """
-Setzt einen unteren und einen oberen Schwellwert (threshold) in µT sowie
-eine Entprellzeit (debounce) in µs.
+Setzt einen unteren und einen oberen Schwellwert (threshold) sowie
+eine Entprellzeit (debounce).
 
 Wenn die gemessene magnetische Flussdichte über den oberen Schwellwert
 oder unter den unteren Schwellwert wandert, wird der Zählerstand des Zählers

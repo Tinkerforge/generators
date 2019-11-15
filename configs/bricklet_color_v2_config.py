@@ -67,8 +67,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the measured color of the sensor. The values
-have a range of 0 to 65535.
+Returns the measured color of the sensor.
 
 The red (r), green (g), blue (b) and clear (c) colors are measured
 with four different photodiodes that are responsive at different
@@ -86,8 +85,7 @@ to use the :cb:`Color` callback and set the period with
 """,
 'de':
 """
-Gibt die gemessene Farbe des Sensors zurück. Der Wertebereich ist von
-0 bis 65535.
+Gibt die gemessene Farbe des Sensors zurück.
 
 Die rot (r), grün (g), blau (b) und clear (c) Farbanteile werden mit vier
 unterschiedlichen Fotodioden gemessen. Diese sind Empfindlich
@@ -231,7 +229,7 @@ add_callback_value_function(
 color_temperature_doc = {
 'en':
 """
-Returns the color temperature in Kelvin.
+Returns the color temperature.
 
 To get a correct color temperature measurement make sure that the color
 values themselves are not saturated. The color value (R, G or B)
@@ -240,7 +238,7 @@ In that case you have to reduce the gain, see :func:`Set Configuration`.
 """,
 'de':
 """
-Gibt die Farbtemperatur in Kelvin zurück.
+Gibt die Farbtemperatur zurück.
 
 Für eine korrekte Messung der Farbtemperatur muss sichergestellt
 sein, dass die Farbwerte (R, G oder B) nicht saturiert sind. Ein

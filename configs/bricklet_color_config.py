@@ -519,7 +519,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the color temperature in Kelvin.
+Returns the color temperature.
 
 To get a correct color temperature measurement make sure that the color
 values themselves are not saturated. The color value (R, G or B)
@@ -528,7 +528,7 @@ In that case you have to reduce the gain, see :func:`Set Config`.
 """,
 'de':
 """
-Gibt die Farbtemperatur in Kelvin zurück.
+Gibt die Farbtemperatur zurück.
 
 Für eine korrekte Messung der Farbtemperatur muss sichergestellt
 sein das die Farbwerte (R, G oder B) nicht saturiert sind. Ein
@@ -659,7 +659,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`Set Color Temperature Callback Period`. The :word:`parameter` is the
-color temperature in Kelvin.
+color temperature.
 
 The :cb:`Color Temperature` callback is only triggered if the color temperature
 has changed since the last triggering.
@@ -668,7 +668,7 @@ has changed since the last triggering.
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Color Temperature Callback Period`, ausgelöst. Der :word:`parameter`
-ist die Farbtemperatur des Sensors in Kelvin.
+ist die Farbtemperatur des Sensors.
 
 Der :cb:`Color Temperature` Callback wird nur ausgelöst, wenn sich die
 Farbtemperatur seit der letzten Auslösung geändert hat.

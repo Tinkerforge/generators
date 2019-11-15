@@ -90,7 +90,7 @@ com['packets'].append({
              ('Identifier', 'uint32', 1, 'in', {'range': (0, 2**30-1)}),
              ('Data Length', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Data Data', 'uint8', 15, 'in', {}),
-             ('Success', 'bool', 1, 'out')],
+             ('Success', 'bool', 1, 'out', {})],
 'high_level': {'stream_in': {'name': 'Data', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

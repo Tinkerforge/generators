@@ -355,7 +355,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'in', {'factor': 10, 'unit': 'Pascal', 'range': [(0, 0), (10000, 1200000)], 'default': 101325})],
+'elements': [('Air Pressure', 'int32', 1, 'in', {'factor': 10, 'unit': 'Pascal', 'range': [(0, 0), (10000, 1200000)], 'default': 1013250})],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
@@ -522,7 +522,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000), 'default': 101325})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000), 'default': 1013250})],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':

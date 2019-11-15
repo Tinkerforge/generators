@@ -102,7 +102,7 @@ add_callback_value_function(
     data_type = 'int32',
     doc       = altitude_doc,
     unit      = 'Meter',
-    divisor   = 100,
+    divisor   = 1000,
 )
 
 temperature_doc = {
@@ -191,7 +191,7 @@ Gibt die Moving Average-Konfiguration zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'in', {'factor' : '10', 'unit' : 'Pascal', 'range' : [(0, 0), (260000, 1260000)], 'default': 101325})],
+'elements': [('Air Pressure', 'int32', 1, 'in', {'factor' : '10', 'unit' : 'Pascal', 'range' : [(0, 0), (260000, 1260000)], 'default': 1013250})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -225,7 +225,7 @@ aus dem Q-Schlüssel.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor' : '10', 'unit' : 'Pascal', 'range' : [(0, 0), (260000, 1260000)], 'default': 101325})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor' : '10', 'unit' : 'Pascal', 'range' : [(0, 0), (260000, 1260000)], 'default': 1013250})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
