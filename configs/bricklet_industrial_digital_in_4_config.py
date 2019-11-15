@@ -219,7 +219,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Interrupt',
-'elements': [('Interrupt Mask', 'uint16', 1, 'in', {'range': (0, 15)})],
+'elements': [('Interrupt Mask', 'uint16', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -254,7 +254,7 @@ Der Interrupt wird mit dem :cb:`Interrupt` Callback zugestellt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Interrupt',
-'elements': [('Interrupt Mask', 'uint16', 1, 'out', {'range': (0, 15)})],
+'elements': [('Interrupt Mask', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -271,8 +271,8 @@ Gibt die Interrupt Bitmaske zurück, wie von :func:`Set Interrupt` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Interrupt',
-'elements': [('Interrupt Mask', 'uint16', 1, 'out', {'range': (0, 15)}),
-             ('Value Mask', 'uint16', 1, 'out', {'range': (0, 15)})],
+'elements': [('Interrupt Mask', 'uint16', 1, 'out', {}),
+             ('Value Mask', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -289,6 +289,8 @@ For example:
   currently pin 0 is high and pins 1-3 are low.
 * (9, 14) or (0b1001, 0b1110) means that interrupts on pins 0 and 3
   occurred and currently pin 0 is low and pins 1-3 are high.
+
+The interrupts use the grouping as set by :func:`Set Group`.
 """,
 'de':
 """
@@ -305,6 +307,8 @@ Beispiele:
   ist und aktuell Pin 0 logisch 1 ist und die Pins 1-3 logisch 0 sind.
 * (9, 14) bzw. (0b1001, 0b1110) bedeutet, dass Interrupts an den Pins 0 und 3
   aufgetreten sind und aktuell Pin 0 logisch 0 ist und die Pins 1-3 logisch 1 sind.
+
+Die Interrupts benutzen die Gruppierung, wie von :func:`Set Group` gesetzt.
 """
 }]
 })
@@ -324,6 +328,8 @@ configure the edges that are counted with :func:`Set Edge Count Config`.
 
 If you set the reset counter to *true*, the count is set back to 0
 directly after it is read.
+
+The edge counters use the grouping as set by :func:`Set Group`.
 """,
 'de':
 """
@@ -332,6 +338,8 @@ zu zählenden Flanken können mit :func:`Set Edge Count Config` konfiguriert wer
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
 nach dem auslesen auf 0 zurückgesetzt.
+
+Die Flankenzähler benutzen die Gruppierung, wie von :func:`Set Group` gesetzt.
 """
 }]
 })
@@ -339,7 +347,7 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Config',
-'elements': [('Selection Mask', 'uint16', 1, 'in', {'range': (0, 15)}),
+'elements': [('Selection Mask', 'uint16', 1, 'in', {}),
              ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
              ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 1],
@@ -360,6 +368,8 @@ Configuring an edge counter resets its value to 0.
 
 If you don't know what any of this means, just leave it at default. The
 default configuration is very likely OK for you.
+
+The edge counters use the grouping as set by :func:`Set Group`.
 """,
 'de':
 """
@@ -378,6 +388,8 @@ Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 
 Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
 ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
+
+Die Flankenzähler benutzen die Gruppierung, wie von :func:`Set Group` gesetzt.
 """
 }]
 })
@@ -385,7 +397,7 @@ ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Config',
-'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 15)}),
+'elements': [('Pin', 'uint8', 1, 'in', {}),
              ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
              ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 1],
