@@ -1143,9 +1143,8 @@ class Unit(object):
         if scale_prefix_allowed:
             assert ' ' not in name, name
 
-        if format_string:
-            assert '{value}' in format_string, format_string
-            assert '{unit}' in format_string, format_string
+        assert '{value}' in format_string['en'] and '{value}' in format_string['de'], format_string
+        assert '{unit}' in format_string['en'] and '{unit}' in format_string['de'], format_string
 
         self._name = name
         self.symbol = symbol
