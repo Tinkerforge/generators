@@ -707,6 +707,20 @@ Die folgenden **{0}** sind für diese Funktion verfügbar:
 
     return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
 
+def format_fraction(numerator, denominator):
+    assert isinstance(numerator, int), numerator
+    assert isinstance(denominator, int), denominator
+    assert numerator >= 1, numerator
+    assert denominator >= 1, denominator
+
+    if numerator > 1 and denominator > 1:
+        return '{0}/{1}'.format(numerator, denominator)
+
+    if denominator > 1:
+        return '1/{0}'.format(denominator)
+
+    return str(numerator)
+
 def handle_rst_word(text, parameter=None, parameters=None, constants=None):
     if parameter == None:
         parameter = {'en': 'parameter', 'de': 'Parameter'}
@@ -1101,6 +1115,12 @@ def check_output_and_error(*popenargs, **kwargs):
 
     return exit_code, (output + error).decode('utf-8')
 
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+
+    return a
+
 class GeneratorError(Exception):
     pass
 
@@ -1356,9 +1376,11 @@ class Element(object):
         self.packet = packet
         self.level = level
         self.role = role
-        self.constant_group = None
+        self.factor = None
+        self.divisor = None
         self.unit = None
         self.range_ = None
+        self.constant_group = None
 
         check_name(raw_data[0])
 
@@ -1373,21 +1395,39 @@ class Element(object):
         assert isinstance(self.raw_data_extra, dict), self.raw_data_extra
         assert len(set(self.raw_data_extra.keys()) - set(['factor', 'divisor', 'unit', 'range', 'constant_group', 'default'])) == 0, self.raw_data_extra
 
-        factor = self.get_factor()
+        factor = self.raw_data_extra.get('factor')
 
         if factor != None:
-            assert isinstance(factor, int), raw_data
-            assert factor > 1, raw_data
+            if isinstance(factor, int):
+                factor = (factor, 1)
+
+            assert isinstance(factor, tuple), raw_data
+            assert isinstance(factor[0], int), raw_data
+            assert isinstance(factor[1], int), raw_data
+            assert gcd(*factor) == 1, raw_data
+            assert factor[0] >= 1, raw_data
+            assert factor[1] >= 1, raw_data
             assert self.get_direction() == 'in', raw_data
             assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
-        divisor = self.get_divisor()
+        self.factor = factor
+
+        divisor = self.raw_data_extra.get('divisor')
 
         if divisor != None:
-            assert isinstance(divisor, int), raw_data
-            assert divisor > 1, raw_data
+            if isinstance(divisor, int):
+                divisor = (divisor, 1)
+
+            assert isinstance(divisor, tuple), raw_data
+            assert isinstance(divisor[0], int), raw_data
+            assert isinstance(divisor[1], int), raw_data
+            assert gcd(*divisor) == 1, raw_data
+            assert divisor[0] >= 1, raw_data
+            assert divisor[1] >= 1, raw_data
             assert self.get_direction() == 'out', raw_data
             assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+
+        self.divisor = divisor
 
         unit_name = self.raw_data_extra.get('unit')
 
@@ -1517,10 +1557,10 @@ class Element(object):
         return self.constant_group
 
     def get_factor(self):
-        return self.raw_data_extra.get('factor')
+        return self.factor
 
     def get_divisor(self):
-        return self.raw_data_extra.get('divisor')
+        return self.divisor
 
     def get_unit(self):
         return self.unit
@@ -1927,29 +1967,31 @@ class Packet(object):
             unit = element.get_unit()
 
             if scale != None and unit == None:
-                meta.append('{0}: 1/{1}'.format(unit_title, scale))
+                scale = format_fraction(scale[1], scale[0])
+
+                meta.append('{0}: {1}'.format(unit_title, scale))
             elif scale == None and unit != None:
                 meta.append('{0}: 1 ⟨abbr title=«{1} ({2})»⟩{3}⟨/abbr⟩'.format(unit_title, unit.name, unit.usage, unit.symbol))
             elif scale != None and unit != None:
+                scale = list(scale)
                 unit_name = unit.name
                 unit_symbol = unit.symbol
 
                 if unit.scale_prefix_allowed:
-                    if scale % 1000000000 == 0:
-                        scale //= 1000000000
+                    if scale[0] % 1000000000 == 0:
+                        scale[0] //= 1000000000
                         unit_name = 'Nano' + unit_name.lower()
                         unit_symbol = 'n' + unit_symbol
-                    elif scale % 1000000 == 0:
-                        scale //= 1000000
+                    elif scale[0] % 1000000 == 0:
+                        scale[0] //= 1000000
                         unit_name = select_lang({'en': 'Micro', 'de': 'Mikro'}) + unit_name.lower()
                         unit_symbol = 'µ' + unit_symbol
-                    elif scale % 1000 == 0:
-                        scale //= 1000
+                    elif scale[0] % 1000 == 0:
+                        scale[0] //= 1000
                         unit_name = 'Milli' + unit_name.lower()
                         unit_symbol = 'm' + unit_symbol
 
-                if scale > 1:
-                    scale = '1/{0}'.format(scale)
+                scale = format_fraction(scale[1], scale[0])
 
                 meta.append('{0}: {1} ⟨abbr title=«{2} ({3})»⟩{4}⟨/abbr⟩'.format(unit_title, scale, unit_name, unit.usage, unit_symbol))
 
