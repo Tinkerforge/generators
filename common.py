@@ -1408,22 +1408,40 @@ class Element(object):
         if range_ == 'type':
             assert self.get_type() not in ['float', 'string'], raw_data
 
-            range_ = self.get_type_range()
+            range_ = [self.get_type_range()]
         elif range_ != None and range_ != 'constants':
+            if isinstance(range_, tuple):
+                range_ = [range_]
+
             assert self.get_type() not in ['float', 'string'], raw_data
-            assert isinstance(range_, tuple), raw_data
-            assert len(range_) == 2, raw_data
-            assert range_ != (None, None), raw_data
+            assert isinstance(range_, list), raw_data
+            assert len(range_) > 0, raw_data
 
-            if range_[0] == None:
-                range_ = (self.get_type_range()[0], range_[1])
+            for i, subrange in enumerate(list(range_)):
+                assert isinstance(subrange, tuple), raw_data
+                assert len(subrange) == 2, raw_data
+                assert subrange != (None, None), raw_data
 
-            if range_[1] == None:
-                range_ = (range_[0], self.get_type_range()[1])
+                if subrange[0] == None:
+                    subrange = (self.get_type_range()[0], subrange[1])
 
-            assert range_[0] <= range_[1], raw_data
-            assert isinstance(range_[0], int), raw_data
-            assert isinstance(range_[1], int), raw_data
+                if subrange[1] == None:
+                    subrange = (subrange[0], self.get_type_range()[1])
+
+                assert subrange[0] <= subrange[1], raw_data
+
+                if self.get_type() == 'char':
+                    assert isinstance(subrange[0], str), raw_data
+                    assert isinstance(subrange[1], str), raw_data
+                    assert len(subrange[0]) == 1, raw_data
+                    assert len(subrange[1]) == 1, raw_data
+                    assert ord(subrange[0]) <= 255, raw_data
+                    assert ord(subrange[1]) <= 255, raw_data
+                else:
+                    assert isinstance(subrange[0], int), raw_data
+                    assert isinstance(subrange[1], int), raw_data
+
+                range_[i] = subrange
         else:
             assert range_ == range_default, (raw_data, range_default)
 
@@ -1946,31 +1964,41 @@ class Packet(object):
                 if range_ == 'constants':
                     meta.append('{0}: {1}'.format(range_title, constants_hint[0]))
                 elif range_ != None:
-                    formatted_range = [None, None]
+                    formatted_range = []
 
-                    if element.get_type().startswith('int') or element.get_type().startswith('uint'):
-                        for i, value in enumerate(range_):
-                            for exponent in [16, 32, 64]:
-                                if value == -2 ** (exponent - 1):
-                                    formatted_range[i] = '⟨abbr title=«{0} (Int{1} Min)»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(value, exponent, exponent - 1)
-                                    break
-                                elif value == 2 ** (exponent - 1) - 1:
-                                    formatted_range[i] = '⟨abbr title=«{0} (Int{1} Max)»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(value, exponent, exponent - 1)
-                                    break
-                                elif value == 2 ** exponent - 1:
-                                    formatted_range[i] = '⟨abbr title=«{0} (UInt{1} Max)»⟩2⟨sup⟩{1}⟨/sup⟩ - 1⟨/abbr⟩'.format(value, exponent)
-                                    break
+                    for subrange in range_:
+                        assert isinstance(subrange, tuple), self.get_name().space
 
-                            if formatted_range[i] == None:
-                                formatted_range[i] = element.format_value(value)
-                    else:
-                        for i, value in enumerate(range_):
-                            formatted_range[i] = element.format_value(value)
+                        formatted_subrange = [None, None]
+
+                        if element.get_type().startswith('int') or element.get_type().startswith('uint'):
+                            for i, value in enumerate(subrange):
+                                for exponent in [16, 32, 64]:
+                                    if value == -2 ** (exponent - 1):
+                                        formatted_subrange[i] = '⟨abbr title=«{0} (Int{1} Min)»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(value, exponent, exponent - 1)
+                                        break
+                                    elif value == 2 ** (exponent - 1) - 1:
+                                        formatted_subrange[i] = '⟨abbr title=«{0} (Int{1} Max)»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(value, exponent, exponent - 1)
+                                        break
+                                    elif value == 2 ** exponent - 1:
+                                        formatted_subrange[i] = '⟨abbr title=«{0} (UInt{1} Max)»⟩2⟨sup⟩{1}⟨/sup⟩ - 1⟨/abbr⟩'.format(value, exponent)
+                                        break
+
+                                if formatted_subrange[i] == None:
+                                    formatted_subrange[i] = element.format_value(value)
+                        else:
+                            for i, value in enumerate(subrange):
+                                formatted_subrange[i] = element.format_value(value)
+
+                        if subrange[0] == subrange[1]:
+                            formatted_range.append(formatted_subrange[0])
+                        else:
+                            formatted_range.append('{0} {1} {2}'.format(formatted_subrange[0], to_hint, formatted_subrange[1]))
 
                     if element.get_constant_group() != None:
-                        meta.append('{0}: [{1} {2} {3}] {4}'.format(range_title, formatted_range[0], formatted_range[1], to_hint, constants_hint[1]))
+                        meta.append('{0}: [{1}] {2}'.format(range_title, ', '.join(formatted_range), constants_hint[1]))
                     else:
-                        meta.append('{0}: [{1} {2} {3}]'.format(range_title, formatted_range[0], to_hint, formatted_range[1]))
+                        meta.append('{0}: [{1}]'.format(range_title, ', '.join(formatted_range)))
 
             default = element.get_default()
 
