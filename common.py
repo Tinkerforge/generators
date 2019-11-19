@@ -1211,7 +1211,7 @@ units = {
                                          {'en': 'Temperature', 'de': 'Temperatur'},
                                          scale_prefix_allowed=False),
 
-    'Meter Pro Second':             Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
+    'Meter Per Second':             Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
                                          'm/s',
                                          {'en': 'Speed', 'de': 'Geschwindigkeit'}),
 
