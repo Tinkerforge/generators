@@ -1159,18 +1159,18 @@ class FlavoredName(object):
             return self.cache[key]
 
 class Unit(object):
-    def __init__(self, name, symbol, usage, scale_prefix_allowed=True, format_string={'en': '{value} {unit}', 'de': '{value} {unit}'}):
+    def __init__(self, name, symbol, usage, scale_prefix_allowed=True, sequence={'en': '{value} {unit}', 'de': '{value} {unit}'}):
         if scale_prefix_allowed:
             assert ' ' not in name, name
 
-        assert '{value}' in format_string['en'] and '{value}' in format_string['de'], format_string
-        assert '{unit}' in format_string['en'] and '{unit}' in format_string['de'], format_string
+        assert '{value}' in sequence['en'] and '{value}' in sequence['de'], sequence
+        assert '{unit}' in sequence['en'] and '{unit}' in sequence['de'], sequence
 
         self._name = name
         self.symbol = symbol
         self._usage = usage
         self.scale_prefix_allowed = scale_prefix_allowed
-        self.format_string = format_string
+        self._sequence = sequence
 
     @property
     def name(self):
@@ -1179,6 +1179,10 @@ class Unit(object):
     @property
     def usage(self):
         return select_lang(self._usage)
+
+    @property
+    def sequence(self):
+        return select_lang(self._sequence)
 
 units = {
     'Ampere':                       Unit({'en': 'Ampere', 'de': 'Ampere'},
@@ -1294,7 +1298,7 @@ units = {
                                          'W',
                                          {'en': 'Power', 'de': 'Leistung'}),
 
-    'Watt Hour':                     Unit({'en': 'Watt-hour', 'de': 'Wattstunde'},
+    'Watt Hour':                    Unit({'en': 'Watt-hour', 'de': 'Wattstunde'},
                                          'Wh',
                                          {'en': 'Energy', 'de': 'Energie'})
 }
@@ -1991,9 +1995,10 @@ class Packet(object):
                         unit_name = 'Milli' + unit_name.lower()
                         unit_symbol = 'm' + unit_symbol
 
-                scale = format_fraction(scale[1], scale[0])
+                formatted_scale = format_fraction(scale[1], scale[0])
+                formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_name, unit.usage, unit_symbol)
 
-                meta.append('{0}: {1} ⟨abbr title=«{2} ({3})»⟩{4}⟨/abbr⟩'.format(unit_title, scale, unit_name, unit.usage, unit_symbol))
+                meta.append('{0}: {1}'.format(unit_title, unit.sequence.format(value=formatted_scale, unit=formatted_unit)))
 
             if element.get_type() not in ['bool', 'string']:
                 range_ = element.get_range()
