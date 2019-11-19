@@ -124,8 +124,8 @@ com['packets'].append({
 'name': 'Set Voltage Callback Threshold',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in', {'divisor': 1000, 'unit': 'Volt', 'default': 0}),
-             ('Max', 'int32', 1, 'in', {'divisor': 1000, 'unit': 'Volt', 'default': 0})],
+             ('Min', 'int32', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

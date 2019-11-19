@@ -373,7 +373,7 @@ Gibt den Standard-Text für die Zeilen 0-3 zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Default Text Counter',
-'elements': [('Counter', 'int32', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': -1})],
+'elements': [('Counter', 'int32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': -1})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':

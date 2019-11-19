@@ -97,7 +97,7 @@ com['packets'].append({
 'name': 'Set Monoflop',
 'elements': [('Selection Mask', 'uint16', 1, 'in', {}),
              ('Value Mask', 'uint16', 1, 'in', {}),
-             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

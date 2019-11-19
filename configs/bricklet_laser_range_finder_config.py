@@ -218,8 +218,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Distance Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in', {'divisor': 100, 'unit': 'Meter', 'default': 0}),
-             ('Max', 'uint16', 1, 'in', {'divisor': 100, 'unit': 'Meter', 'default': 0})],
+             ('Min', 'uint16', 1, 'in', {'factor': 100, 'unit': 'Meter', 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'factor': 100, 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -280,8 +280,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Velocity Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in', {'divisor': 100, 'unit': 'Meter Per Second', 'default': 0}),
-             ('Max', 'int16', 1, 'in', {'divisor': 100, 'unit': 'Meter Per Second', 'default': 0})],
+             ('Min', 'int16', 1, 'in', {'factor': 100, 'unit': 'Meter Per Second', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'factor': 100, 'unit': 'Meter Per Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

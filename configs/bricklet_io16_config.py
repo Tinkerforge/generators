@@ -346,7 +346,7 @@ com['packets'].append({
 'elements': [('Port', 'char', 1, 'in', {'range': ('a', 'b')}),
              ('Selection Mask', 'uint8', 1, 'in', {}),
              ('Value Mask', 'uint8', 1, 'in', {}),
-             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 1, 2],
 'doc': ['af', {
 'en':
@@ -529,7 +529,7 @@ com['packets'].append({
 'name': 'Set Edge Count Config',
 'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':

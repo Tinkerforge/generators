@@ -339,7 +339,7 @@ com['packets'].append({
 'name': 'Set Monoflop',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
              ('Value', 'bool', 1, 'in', {}),
-             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -448,7 +448,7 @@ com['packets'].append({
 'name': 'Set Edge Count Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
              ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -524,8 +524,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set PWM Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
-             ('Frequency', 'uint32', 1, 'in', {'divisor': 10, 'unit': 'Hertz', 'range': (0, 320000000), 'default': 0}),
-             ('Duty Cycle', 'uint16', 1, 'in', {'divisor': 100, 'unit': 'Percent', 'range': (0, 10000), 'default': 0})],
+             ('Frequency', 'uint32', 1, 'in', {'factor': 10, 'unit': 'Hertz', 'range': (0, 320000000), 'default': 0}),
+             ('Duty Cycle', 'uint16', 1, 'in', {'factor': 100, 'unit': 'Percent', 'range': (0, 10000), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

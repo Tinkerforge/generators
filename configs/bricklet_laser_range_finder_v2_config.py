@@ -283,7 +283,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Offset Calibration',
-'elements': [('Offset', 'int16', 1, 'in', {'divisor': 100, 'unit': 'Meter', 'range': (None, 2**15-1-4000)})],
+'elements': [('Offset', 'int16', 1, 'in', {'factor': 100, 'unit': 'Meter', 'range': (None, 2**15-1-4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

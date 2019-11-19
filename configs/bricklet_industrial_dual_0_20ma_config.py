@@ -134,8 +134,8 @@ com['packets'].append({
 'name': 'Set Current Callback Threshold',
 'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in', {'divisor': 10**9, 'unit': 'Ampere', 'default': 0}),
-             ('Max', 'int32', 1, 'in', {'divisor': 10**9, 'unit': 'Ampere', 'default': 0})],
+             ('Min', 'int32', 1, 'in', {'factor': 10**9, 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'factor': 10**9, 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

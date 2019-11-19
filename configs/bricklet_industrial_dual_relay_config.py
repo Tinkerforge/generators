@@ -88,7 +88,7 @@ com['packets'].append({
 'name': 'Set Monoflop',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Value', 'bool', 1, 'in', {}),
-             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

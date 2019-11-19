@@ -332,7 +332,7 @@ com['packets'].append({
 'name': 'Set Monoflop',
 'elements': [('Selection Mask', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Value Mask', 'uint8', 1, 'in', {'range': (0, 15)}),
-             ('Time', 'uint32', 1, 'in', {'divisor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -509,7 +509,7 @@ com['packets'].append({
 'name': 'Set Edge Count Config',
 'elements': [('Selection Mask', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
