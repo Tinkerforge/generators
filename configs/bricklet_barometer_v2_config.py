@@ -225,7 +225,7 @@ aus dem Q-Schlüssel.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor' : 10, 'unit' : 'Pascal', 'range' : [(0, 0), (260000, 1260000)], 'default': 1013250})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor' : 10, 'unit' : 'Pascal', 'range' : [(260000, 1260000)], 'default': 1013250})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
