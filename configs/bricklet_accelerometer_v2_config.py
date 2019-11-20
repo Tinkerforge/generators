@@ -93,9 +93,9 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
-             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
-             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -270,9 +270,9 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
-             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
-             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
