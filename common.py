@@ -1189,7 +1189,7 @@ units = {
                                          {'en': 'Electric current', 'de': 'Elektrische Stromstärke'}),
 
     'Baud':                         Unit({'en': 'Baud', 'de': 'Baud'},
-                                         'bd',
+                                         'Bd',
                                          {'en': 'Symbol rate', 'de': 'Symbolrate'}),
 
     'Bit Per Second':               Unit({'en': 'Bit per second', 'de': 'Bit pro Sekunde'},
