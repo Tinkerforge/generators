@@ -79,24 +79,20 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set RGB Values',
-'elements': [('Index', 'uint16', 1, 'in'),
-             ('Length', 'uint8', 1, 'in'),
-             ('R', 'uint8', 16, 'in'),
-             ('G', 'uint8', 16, 'in'),
-             ('B', 'uint8', 16, 'in')],
+'elements': [('Index', 'uint16', 1, 'in', {'range': (0, 319)}),
+             ('Length', 'uint8', 1, 'in', {'range': (0, 16)}),
+             ('R', 'uint8', 16, 'in', {}),
+             ('G', 'uint8', 16, 'in', {}),
+             ('B', 'uint8', 16, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the RGB values for the LEDs with the given *length* starting
-from *index*.
+Sets *length* RGB values for the LEDs starting from *index*.
 
 To make the colors show correctly you need to configure the chip type
 (:func:`Set Chip Type`) and a 3-channel channel mapping (:func:`Set Channel Mapping`)
 according to the connected LEDs.
-
-The maximum length is 16, the index goes from 0 to 319 and the rgb values
-have 8 bits each.
 
 Example: If you set
 
@@ -133,15 +129,11 @@ bounds is ignored completely.
 """,
 'de':
 """
-Setzt die RGB Werte für die LEDs mit der angegebenen *length*,
-beginnend vom angegebenen *index*.
+Setzt *length* RGB Werte für die LEDs, beginnend vom angegebenen *index*.
 
 Damit die Farben richtig angezeigt werden muss den LEDs entsprechend der
 richtig Chip Type (:func:`Set Chip Type`) und das richtige 3-Kanal Channel Mapping
 (:func:`Set Channel Mapping`) eingestellt werden.
-
-Die maximale Länge ist 16. Der Index geht von 0 bis 319 und die
-rgb Werte haben jeweils 8 Bit.
 
 Beispiel: Wenn
 
@@ -194,24 +186,24 @@ Begrenzung werden komplett ingnoriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get RGB Values',
-'elements': [('Index', 'uint16', 1, 'in'),
-             ('Length', 'uint8', 1, 'in'),
-             ('R', 'uint8', 16, 'out'),
-             ('G', 'uint8', 16, 'out'),
-             ('B', 'uint8', 16, 'out')],
+'elements': [('Index', 'uint16', 1, 'in', {'range': (0, 319)}),
+             ('Length', 'uint8', 1, 'in', {'range': (0, 16)}),
+             ('R', 'uint8', 16, 'out', {}),
+             ('G', 'uint8', 16, 'out', {}),
+             ('B', 'uint8', 16, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns RGB value with the given *length* starting from the
-given *index*.
+Returns *length* R, G and B values starting from the
+given LED *index*.
 
 The values are the last values that were set by :func:`Set RGB Values`.
 """,
 'de':
 """
-Gibt RGB Werte mit der übergebenen *length* zurück, beginnend vom
-übergebenen *index*.
+Gibt *length* R, G und B Werte zurück, beginnend vom
+übergebenen LED *index*.
 
 Die Werte sind die letzten von :func:`Set RGB Values` gesetzten Werte.
 """
@@ -221,30 +213,26 @@ Die Werte sind die letzten von :func:`Set RGB Values` gesetzten Werte.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Duration',
-'elements': [('Duration', 'uint16', 1, 'in')],
+'elements': [('Duration', 'uint16', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the frame duration in ms.
+Sets the frame duration.
 
 Example: If you want to achieve 20 frames per second, you should
 set the frame duration to 50ms (50ms * 20 = 1 second).
 
 For an explanation of the general approach see :func:`Set RGB Values`.
-
-Default value: 100ms (10 frames per second).
 """,
 'de':
 """
-Setzt die *frame duration* (Länge des Frames) in ms.
+Setzt die *frame duration* (Länge des Frames).
 
 Beispiel: Wenn 20 Frames pro Sekunde erreicht werden sollen, muss
 die Länge des Frames auf 50ms gesetzt werden (50ms * 20 = 1 Sekunde).
 
 Für eine Erklärung des generellen Ansatzes siehe :func:`Set RGB Values`.
-
-Standardwert: 100ms (10 Frames pro Sekunde).
 """
 }]
 })
@@ -252,16 +240,16 @@ Standardwert: 100ms (10 Frames pro Sekunde).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Duration',
-'elements': [('Duration', 'uint16', 1, 'out')],
+'elements': [('Duration', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the frame duration in ms as set by :func:`Set Frame Duration`.
+Returns the frame duration as set by :func:`Set Frame Duration`.
 """,
 'de':
 """
-Gibt die *frame duration* (Länge des Frames) in ms zurück, wie von
+Gibt die *frame duration* (Länge des Frames) zurück, wie von
 :func:`Set Frame Duration` gesetzt.
 """
 }]
@@ -270,17 +258,16 @@ Gibt die *frame duration* (Länge des Frames) in ms zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get Supply Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current supply voltage of the LEDs. The voltage is given in mV.
+Returns the current supply voltage of the LEDs.
 """,
 'de':
 """
-Gibt die aktuelle Versorgungsspannung der LEDs zurück. Die Spannung ist
-in mV angegeben.
+Gibt die aktuelle Versorgungsspannung der LEDs zurück.
 """
 }]
 })
@@ -288,13 +275,13 @@ in mV angegeben.
 com['packets'].append({
 'type': 'callback',
 'name': 'Frame Rendered',
-'elements': [('Length', 'uint16', 1, 'out')],
+'elements': [('Length', 'uint16', 1, 'out', {'range': (0, 320)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered directly after a new frame is rendered. The
-:word:`parameter` is the number of LEDs in that frame.
+:word:`parameter` is the number of RGB or RGBW LEDs in that frame.
 
 You should send the data for the next frame directly after this callback
 was triggered.
@@ -304,9 +291,9 @@ For an explanation of the general approach see :func:`Set RGB Values`.
 'de':
 """
 Dieser Callback wird direkt direkt nachdem ein Frame gerendert wurde ausgelöst.
-Der :word:`parameter` ist die Anzahl der LEDs in diesem Frame.
+Der :word:`parameter` ist die Anzahl der RGB oder RGBW LEDs in diesem Frame.
 
-Die Daten für das nächste Frame sollten direkt nach dem auslösen dieses
+Die Daten für das nächste Frame sollten direkt nach dem Auslösen dieses
 Callbacks übertragen werden.
 
 Für eine Erklärung des generellen Ansatzes siehe :func:`Set RGB Values`.
@@ -317,13 +304,12 @@ Für eine Erklärung des generellen Ansatzes siehe :func:`Set RGB Values`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Clock Frequency',
-'elements': [('Frequency', 'uint32', 1, 'in')],
+'elements': [('Frequency', 'uint32', 1, 'in', {'unit': 'Hertz', 'range': (10000, 2000000), 'default': 1666666})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
 """
-Sets the frequency of the clock in Hz. The range is 10000Hz (10kHz) up to
-2000000Hz (2MHz).
+Sets the frequency of the clock.
 
 The Bricklet will choose the nearest achievable frequency, which may
 be off by a few Hz. You can get the exact frequency that is used by
@@ -335,8 +321,6 @@ Bricklet shorter or by reducing the frequency.
 
 With a decreasing frequency your maximum frames per second will decrease
 too.
-
-The default value is 1.66MHz.
 
 .. note::
  The frequency in firmware version 2.0.0 is fixed at 2MHz.
@@ -357,8 +341,6 @@ Frequenz reduziert.
 
 Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerate ab.
 
-Der Standardwert ist 1,66MHz
-
 .. note::
  Die Frequenz in Firmware Version 2.0.0 ist fest auf 2MHz gesetzt.
 """
@@ -368,7 +350,7 @@ Der Standardwert ist 1,66MHz
 com['packets'].append({
 'type': 'function',
 'name': 'Get Clock Frequency',
-'elements': [('Frequency', 'uint32', 1, 'out')],
+'elements': [('Frequency', 'uint32', 1, 'out', {'unit': 'Hertz', 'range': (10000, 2000000), 'default': 1666666})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -386,7 +368,7 @@ Gibt die aktuell genutzte Clock-Frequenz zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Chip Type',
-'elements': [('Chip', 'uint16', 1, 'in', {'constant_group': 'Chip Type'})],
+'elements': [('Chip', 'uint16', 1, 'in', {'constant_group': 'Chip Type', 'default': 2801})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -399,8 +381,6 @@ Sets the type of the LED driver chip. We currently support the chips
 * SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812),
 * LPD8806 and
 * APA102 / DotStar.
-
-The default value is WS2801 (2801).
 """,
 'de':
 """
@@ -413,8 +393,6 @@ wir die folgenden Chips
 * SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812),
 * LPD8806 and
 * APA102 / DotStar.
-
-Der Standardwert ist WS2801 (2801).
 """
 }]
 })
@@ -422,7 +400,7 @@ Der Standardwert ist WS2801 (2801).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Chip Type',
-'elements': [('Chip', 'uint16', 1, 'out', {'constant_group': 'Chip Type'})],
+'elements': [('Chip', 'uint16', 1, 'out', {'constant_group': 'Chip Type', 'default': 2801})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -440,18 +418,17 @@ Gibt den aktuell genutzten Typ des Chips zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set RGBW Values',
-'elements': [('Index', 'uint16', 1, 'in'),
-             ('Length', 'uint8', 1, 'in'),
-             ('R', 'uint8', 12, 'in'),
-             ('G', 'uint8', 12, 'in'),
-             ('B', 'uint8', 12, 'in'),
-             ('W', 'uint8', 12, 'in')],
+'elements': [('Index', 'uint16', 1, 'in', {'range': (0, 239)}),
+             ('Length', 'uint8', 1, 'in', {'range': (0, 12)}),
+             ('R', 'uint8', 12, 'in', {}),
+             ('G', 'uint8', 12, 'in', {}),
+             ('B', 'uint8', 12, 'in', {}),
+             ('W', 'uint8', 12, 'in', {})],
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
-Sets the RGBW values for the LEDs with the given *length* starting
-from *index*.
+Sets *length* RGBW values for the LEDs starting from *index*.
 
 To make the colors show correctly you need to configure the chip type
 (:func:`Set Chip Type`) and a 4-channel channel mapping (:func:`Set Channel Mapping`)
@@ -506,15 +483,11 @@ the brightness channel of APA102 LEDs.
 """,
 'de':
 """
-Setzt die RGBW Werte für die LEDs mit der angegebenen *length*,
-beginnend vom angegebenen *index*.
+Setzt *length* RGBW Werte für die LEDs beginnend vom angegebenen *index*.
 
-Damit die Farben richtig angezeigt werden muss den LEDs entsptechend der
-richtig Chip Type (:func:`Set Chip Type`) und das richtige 4-Kanal Channel Mapping
+Damit die Farben richtig angezeigt werden muss den LEDs der
+entsprechende Chip Type (:func:`Set Chip Type`) und das richtige 4-Kanal Channel Mapping
 (:func:`Set Channel Mapping`) eingestellt werden.
-
-Die maximale Länge ist 12. Der Index geht von 0 bis 239 und die
-rgbw Werte haben jeweils 8 Bit.
 
 Beispiel: Wenn
 
@@ -580,25 +553,23 @@ durch 8, um daraus 5-Bit Werte zu machen. Daher kann der normale Wertebereich
 com['packets'].append({
 'type': 'function',
 'name': 'Get RGBW Values',
-'elements': [('Index', 'uint16', 1, 'in'),
-             ('Length', 'uint8', 1, 'in'),
-             ('R', 'uint8', 12, 'out'),
-             ('G', 'uint8', 12, 'out'),
-             ('B', 'uint8', 12, 'out'),
-             ('W', 'uint8', 12, 'out')],
+'elements': [('Index', 'uint16', 1, 'in', {'range': (0, 239)}),
+             ('Length', 'uint8', 1, 'in', {'range': (0, 12)}),
+             ('R', 'uint8', 12, 'out', {}),
+             ('G', 'uint8', 12, 'out', {}),
+             ('B', 'uint8', 12, 'out', {}),
+             ('W', 'uint8', 12, 'out', {})],
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
-Returns RGBW values with the given *length* starting from the
-given *index*.
+Returns *length* RGBW values starting from the given *index*.
 
 The values are the last values that were set by :func:`Set RGBW Values`.
 """,
 'de':
 """
-Gibt RGBW Werte mit der übergebenen *length* zurück, beginnend vom
-übergebenen *index*.
+Gibt *length* RGBW Werte zurück, beginnend vom übergebenen *index*.
 
 Die Werte sind die letzten von :func:`Set RGBW Values` gesetzten Werte.
 """
@@ -608,7 +579,7 @@ Die Werte sind die letzten von :func:`Set RGBW Values` gesetzten Werte.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel Mapping',
-'elements': [('Mapping', 'uint8', 1, 'in', {'constant_group': 'Channel Mapping'})],
+'elements': [('Mapping', 'uint8', 1, 'in', {'constant_group': 'Channel Mapping', 'default': 36})],
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
@@ -632,8 +603,6 @@ Calling :func:`Set RGBW Values` with a 3-channel mapping will produce incorrect
 results. Vice-versa if a 4-channel mapping is selected then
 :func:`Set RGBW Values` has to be used. Calling :func:`Set RGB Values` with a
 4-channel mapping will produce incorrect results.
-
-The default value is BGR (36).
 """,
 'de':
 """
@@ -658,8 +627,6 @@ mit einem 3-Kanal Mapping führt zu falscher Darstellung der Farben. Im Gegenzug
 muss bei einem 4-Kanal Mapping :func:`Set RGBW Values` für das setzen der Farben
 verwendet werden. :func:`Set RGB Values` zusammen mit einem 4-Kanal Mapping führt
 zu falscher Darstellung der Farben.
-
-Der Standardwert ist BGR (36).
 """
 }]
 })
@@ -667,7 +634,7 @@ Der Standardwert ist BGR (36).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel Mapping',
-'elements': [('Mapping', 'uint8', 1, 'out', {'constant_group': 'Channel Mapping'})],
+'elements': [('Mapping', 'uint8', 1, 'out', {'constant_group': 'Channel Mapping', 'default': 36})],
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
@@ -727,7 +694,7 @@ Standardmäßig ist der Callback aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Frame Rendered Callback Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [2, 0, 6],
 'doc': ['ccf', {
 'en':

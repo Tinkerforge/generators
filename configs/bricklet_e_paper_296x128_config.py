@@ -175,8 +175,8 @@ Use :func:`Write Color` to write red or gray pixels.
 """
 Schreibt schwarze/weiße Pixel in das angegebene Fenster in den Buffer.
 
-Die Pixel werden zeilenweise von oben nach unten geschrieben und die
-Zeilen werden jeweils von links nach rechts geschrieben.
+Die Pixel werden zeilenweise von oben nach unten geschrieben
+und die Zeilen werden jeweils von links nach rechts geschrieben.
 
 Der Wert 0 (false) entspricht einem schwarzen Pixel und der Wert 1 (true) einem
 weißen Pixel.

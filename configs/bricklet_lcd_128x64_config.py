@@ -98,13 +98,13 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Write Pixels Low Level',
-'elements': [('X Start', 'uint8', 1, 'in'),
-             ('Y Start', 'uint8', 1, 'in'),
-             ('X End', 'uint8', 1, 'in'),
-             ('Y End', 'uint8', 1, 'in'),
-             ('Pixels Length', 'uint16', 1, 'in'),
-             ('Pixels Chunk Offset', 'uint16', 1, 'in'),
-             ('Pixels Chunk Data', 'bool', 56*8, 'in')],
+'elements': [('X Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Y Start', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('X End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Y End', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Pixels Length', 'uint16', 1, 'in', {'range': (0, 128*64)}),
+             ('Pixels Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Pixels Chunk Data', 'bool', 56*8, 'in', {})],
 'high_level': {'stream_in': {'name': 'Pixels'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -112,9 +112,8 @@ com['packets'].append({
 """
 Writes pixels to the specified window.
 
-The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
-into the window line by line top to bottom and each line is written from left to
-right.
+The pixels are written into the window line by line top to bottom
+and each line is written from left to right.
 
 If automatic draw is enabled (default) the pixels are directly written to
 the screen. Only pixels that have actually changed are updated on the screen,
@@ -132,9 +131,8 @@ function.
 """
 Schreibt Pixel in das angegebene Fenster.
 
-Die X-Achse läuft von 0 bis 127 und die Y-Achse von 0 bis 63. Die Pixel werden
-zeilenweise von oben nach unten geschrieben und die Zeilen werden jeweils von
-links nach rechts geschrieben.
+Die Pixel werden zeilenweise von oben nach unten geschrieben
+und die Zeilen werden jeweils von links nach rechts geschrieben.
 
 Wenn Automatic Draw aktiviert ist (Standard), dann werden die Pixel direkt auf
 den Display geschrieben. Nur Pixel die sich wirklich verändert haben werden
@@ -154,13 +152,13 @@ eingestellt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Read Pixels Low Level',
-'elements': [('X Start', 'uint8', 1, 'in'),
-             ('Y Start', 'uint8', 1, 'in'),
-             ('X End', 'uint8', 1, 'in'),
-             ('Y End', 'uint8', 1, 'in'),
-             ('Pixels Length', 'uint16', 1, 'out'),
-             ('Pixels Chunk Offset', 'uint16', 1, 'out'),
-             ('Pixels Chunk Data', 'bool', 60*8, 'out')],
+'elements': [('X Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Y Start', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('X End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Y End', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Pixels Length', 'uint16', 1, 'out', {'range': (0, 128*64)}),
+             ('Pixels Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Pixels Chunk Data', 'bool', 60*8, 'out', {})],
 'high_level': {'stream_out': {'name': 'Pixels'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -168,9 +166,8 @@ com['packets'].append({
 """
 Reads pixels from the specified window.
 
-The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
-from the window line by line top to bottom and each line is read from left to
-right.
+The pixels are read from the window line by line top to bottom
+and each line is read from left to right.
 
 If automatic draw is enabled (default) the pixels that are read are always the
 same that are shown on the display.
@@ -185,9 +182,8 @@ function.
 """
 Liest Pixel aus dem angegebenen Fenster.
 
-Die X-Achse läuft von 0 bis 127 und die Y-Achse von 0 bis 63. Die Pixel werden
-zeilenweise von oben nach unten und die Zeilen werden jeweils von links nach
-rechts gelesen.
+Die Pixel werden zeilenweise von oben nach unten
+und die Zeilen werden jeweils von links nach rechts gelesen.
 
 Wenn Automatic Draw aktiviert ist (Standard), dann werden die Pixel direkt vom
 Display gelesen.
@@ -242,42 +238,30 @@ eingestellt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Display Configuration',
-'elements': [('Contrast', 'uint8', 1, 'in'),
-             ('Backlight', 'uint8', 1, 'in'),
-             ('Invert', 'bool', 1, 'in'),
-             ('Automatic Draw', 'bool', 1, 'in')],
+'elements': [('Contrast', 'uint8', 1, 'in', {'range': (0, 63), 'default': 14}),
+             ('Backlight', 'uint8', 1, 'in', {'range': (0, 100), 'default': 100}),
+             ('Invert', 'bool', 1, 'in', {'default': False}),
+             ('Automatic Draw', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets the configuration of the display.
 
-You can set a contrast value from 0 to 63, a backlight intensity value
-from 0 to 100 and you can invert the color (white/black) of the display.
-
 If automatic draw is set to *true*, the display is automatically updated with every
 call of :func:`Write Pixels` and :func:`Write Line`. If it is set to false, the
 changes are written into an internal buffer and only shown on the display after
 a call of :func:`Draw Buffered Frame`.
-
-The default values are contrast 14, backlight intensity 100, inverting off
-and automatic draw on.
 """,
 'de':
 """
 Setzt die Konfiguration des Displays.
-
-Der Kontrast kann zwischen 0 und 63, die Backlight-Intensität zwischen 0 und 100
-und das Farbschema invertiert (weiß/schwarz) eingestellt werden.
 
 Wenn Automatic Draw aktiviert (*true*) ist dann wird das Display bei jedem
 Aufruf von :func:`Write Pixels` und :func:`Write Line` aktualisiert. Wenn
 Automatic Draw deaktiviert (*false*) ist, dann werden Änderungen in einen
 internen Buffer geschrieben, der dann bei bei einem Aufruf von
 :func:`Draw Buffered Frame` auf dem Display angezeigt wird.
-
-Standardwerte: Kontrast 14, Backlight-Intensität 100, Invertierung aus und
-Automatic Draw aktiviert.
 """
 }]
 })
@@ -285,10 +269,10 @@ Automatic Draw aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Display Configuration',
-'elements': [('Contrast', 'uint8', 1, 'out'),
-             ('Backlight', 'uint8', 1, 'out'),
-             ('Invert', 'bool', 1, 'out'),
-             ('Automatic Draw', 'bool', 1, 'out')],
+'elements': [('Contrast', 'uint8', 1, 'out', {'range': (0, 63), 'default': 14}),
+             ('Backlight', 'uint8', 1, 'out', {'range': (0, 100), 'default': 100}),
+             ('Invert', 'bool', 1, 'out', {'default': False}),
+             ('Automatic Draw', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -305,15 +289,14 @@ Gibt die Konfiguration zurück, wie von :func:`Set Display Configuration` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Write Line',
-'elements': [('Line', 'uint8', 1, 'in'),
-             ('Position', 'uint8', 1, 'in'),
-             ('Text', 'string', 22, 'in')],
+'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Position', 'uint8', 1, 'in', {'range': (0, 21)}),
+             ('Text', 'string', 22, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Writes text to a specific line (0 to 7) with a specific position
-(0 to 21). The text can have a maximum of 22 characters.
+Writes text to a specific line with a specific position.
 
 For example: (1, 10, "Hello") will write *Hello* in the middle of the
 second line of the display.
@@ -339,8 +322,7 @@ and with different font sizes with the :func:`Draw Text` function.
 """,
 'de':
 """
-Schreibt einen Text in die angegebene Zeile (0 bis 7) mit einer vorgegebenen
-Position (0 bis 21). Der Text kann maximal 22 Zeichen lang sein.
+Schreibt einen Text in die angegebene Zeile mit einer vorgegebenen Position.
 
 Beispiel: (1, 10, "Hallo") schreibt *Hallo* in die Mitte der zweiten Zeile
 des Displays.
@@ -370,7 +352,7 @@ und mit unterschiedlichen Font-Größen gezeichnet werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Buffered Frame',
-'elements': [('Force Complete Redraw', 'bool', 1, 'in')],
+'elements': [('Force Complete Redraw', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -405,28 +387,28 @@ sollte dies nicht notwendig sein, außer bei hängenden Pixeln bedingt durch Feh
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch Position',
-'elements': [('Pressure', 'uint16', 1, 'out'),
-             ('X', 'uint16', 1, 'out'),
-             ('Y', 'uint16', 1, 'out'),
-             ('Age', 'uint32', 1, 'out')],
+'elements': [('Pressure', 'uint16', 1, 'out', {'range': (0, 300)}),
+             ('X', 'uint16', 1, 'out', {'range': (0, 127)}),
+             ('Y', 'uint16', 1, 'out', {'range': (0, 63)}),
+             ('Age', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the last valid touch position:
 
-* Pressure: Amount of pressure applied by the user (0-300)
-* X: Touch position on x-axis (0-127)
-* Y: Touch position on y-axis (0-63)
+* Pressure: Amount of pressure applied by the user
+* X: Touch position on x-axis
+* Y: Touch position on y-axis
 * Age: Age of touch press in ms (how long ago it was)
 """,
 'de':
 """
 Gibt die letzte gültige Touch-Position zurück:
 
-* Pressure: Anpressdruck des Touches (0-300)
-* X: Touch-Position auf der X-Achse (0-127)
-* Y: Touch-Position auf der Y-Achse (0-63)
+* Pressure: Anpressdruck des Touches
+* X: Touch-Position auf der X-Achse
+* Y: Touch-Position auf der Y-Achse
 * Age: Alter des Touches in ms (wie lange ist die Erkennung des Touches her)
 """
 }]
@@ -490,10 +472,10 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Touch Position',
-'elements': [('Pressure', 'uint16', 1, 'out'),
-             ('X', 'uint16', 1, 'out'),
-             ('Y', 'uint16', 1, 'out'),
-             ('Age', 'uint32', 1, 'out')],
+'elements': [('Pressure', 'uint16', 1, 'out', {'range': (0, 300)}),
+             ('X', 'uint16', 1, 'out', {'range': (0, 127)}),
+             ('Y', 'uint16', 1, 'out', {'range': (0, 63)}),
+             ('Age', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -515,13 +497,13 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Touch Gesture',
 'elements': [('Gesture', 'uint8', 1, 'out', {'constant_group': 'Gesture'}),
-             ('Duration', 'uint32', 1, 'out'),
-             ('Pressure Max', 'uint16', 1, 'out'),
-             ('X Start', 'uint16', 1, 'out'),
-             ('Y Start', 'uint16', 1, 'out'),
-             ('X End', 'uint16', 1, 'out'),
-             ('Y End', 'uint16', 1, 'out'),
-             ('Age', 'uint32', 1, 'out')],
+             ('Duration', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Pressure Max', 'uint16', 1, 'out', {'range': (0, 300)}),
+             ('X Start', 'uint16', 1, 'out', {'range': (0, 127)}),
+             ('Y Start', 'uint16', 1, 'out', {'range': (0, 63)}),
+             ('X End', 'uint16', 1, 'out', {'range': (0, 127)}),
+             ('Y End', 'uint16', 1, 'out', {'range': (0, 63)}),
+             ('Age', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -534,7 +516,7 @@ Additionally to the gestures a vector with a start and end position of the gestu
 provided. You can use this vector do determine a more exact location of the gesture (e.g.
 the swipe from top to bottom was on the left or right part of the screen).
 
-The age parameter corresponds to the age of gesture in ms (how long ago it was).
+The age parameter corresponds to the age of gesture (how long ago it was).
 """,
 'de':
 """
@@ -548,7 +530,7 @@ angegeben. Dieser kann genutzt werden um die genaue Position der Geste zu
 ermitteln (z.B. ob ein Wischen von oben nach unten auf der linken oder rechten
 des Bildschirms erkannt wurde).
 
-Das Age Parameter gibt das Alter der Geste in ms an (wie lange ist die Erkennung
+Das Age Parameter gibt das Alter der Geste an (wie lange ist die Erkennung
 der Geste her).
 """
 }]
@@ -613,13 +595,13 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Touch Gesture',
 'elements': [('Gesture', 'uint8', 1, 'out', {'constant_group': 'Gesture'}),
-             ('Duration', 'uint32', 1, 'out'),
-             ('Pressure Max', 'uint16', 1, 'out'),
-             ('X Start', 'uint16', 1, 'out'),
-             ('Y Start', 'uint16', 1, 'out'),
-             ('X End', 'uint16', 1, 'out'),
-             ('Y End', 'uint16', 1, 'out'),
-             ('Age', 'uint32', 1, 'out')],
+             ('Duration', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Pressure Max', 'uint16', 1, 'out', {'range': (0, 300)}),
+             ('X Start', 'uint16', 1, 'out', {'range': (0, 127)}),
+             ('Y Start', 'uint16', 1, 'out', {'range': (0, 63)}),
+             ('X End', 'uint16', 1, 'out', {'range': (0, 127)}),
+             ('Y End', 'uint16', 1, 'out', {'range': (0, 63)}),
+             ('Age', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -640,24 +622,21 @@ die gleichen wie die von :func:`Get Touch Gesture`.
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Line',
-'elements': [('Position X Start', 'uint8', 1, 'in'),
-             ('Position Y Start', 'uint8', 1, 'in'),
-             ('Position X End', 'uint8', 1, 'in'),
-             ('Position Y End', 'uint8', 1, 'in'),
+'elements': [('Position X Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position Y Start', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Position X End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position Y End', 'uint8', 1, 'in', {'range': (0, 63)}),
              ('Color', 'bool', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
 Draws a white or black line from (x, y)-start to (x, y)-end.
-The x values have to be within the range of 0 to 127 and the y
-values have t be within the range of 0 to 63.
 """,
 'de':
 """
 Zeichnet eine weiße oder schwarze Linie von (x, y)-start nach
-(x, y)-end. Der Wertebereich für die x-Werte ist 0 bis 127 und
-der Wertebereich für die y-Werte ist 0-63.
+(x, y)-end.
 """
 }]
 })
@@ -665,19 +644,17 @@ der Wertebereich für die y-Werte ist 0-63.
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Box',
-'elements': [('Position X Start', 'uint8', 1, 'in'),
-             ('Position Y Start', 'uint8', 1, 'in'),
-             ('Position X End', 'uint8', 1, 'in'),
-             ('Position Y End', 'uint8', 1, 'in'),
-             ('Fill', 'bool', 1, 'in'),
+'elements': [('Position X Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position Y Start', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Position X End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position Y End', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Fill', 'bool', 1, 'in', {}),
              ('Color', 'bool', 1, 'in', {'constant_group': 'Color'})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
 Draws a white or black box from (x, y)-start to (x, y)-end.
-The x values have to be within the range of 0 to 127 and the y
-values have to be within the range of 0 to 63.
 
 If you set fill to true, the box will be filled with the
 color. Otherwise only the outline will be drawn.
@@ -685,8 +662,7 @@ color. Otherwise only the outline will be drawn.
 'de':
 """
 Zeichnet ein weißes oder schwarzes Rechteck von (x, y)-start nach
-(x, y)-end. Der Wertebereich für die x-Werte ist 0 bis 127 und
-der Wertebereich für die y-Werte ist 0-63.
+(x, y)-end.
 
 Wenn fill auf true gesetzt wird, wird das Rechteck mit
 der angegebenen Farbe ausgefüllt. Ansonsten wird nur der Umriss
@@ -698,28 +674,22 @@ gezeichnet.
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Text',
-'elements': [('Position X', 'uint8', 1, 'in'),
-             ('Position Y', 'uint8', 1, 'in'),
+'elements': [('Position X', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position Y', 'uint8', 1, 'in', {'range': (0, 63)}),
              ('Font', 'uint8', 1, 'in', {'constant_group': 'Font'}),
              ('Color', 'bool', 1, 'in', {'constant_group': 'Color'}),
-             ('Text', 'string', 22, 'in')],
+             ('Text', 'string', 22, 'in', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
-Draws a text with up to 22 characters at the pixel position (x, y).
-
-The x values have to be within the range of 0 to 127 and the y
-values have to be within the range of 0 to 63.
+Draws a text at the pixel position (x, y).
 
 You can use one of 9 different font sizes and draw the text in white or black.
 """,
 'de':
 """
-Zeichnet einen Text mit bis zu 22 Buchstaben an die Pixelposition (x, y).
-
-Die Wertebereich für die x-Werte ist 0 bis 127 und
-der Wertebereich für die y-Werte ist 0-63.
+Zeichnet einen Text an die Pixelposition (x, y).
 
 Es können 9 unterschiedliche Font-Größen genutzt werden und der Text
 kann in weiß oder schwarz gezeichnet werden.
@@ -730,20 +700,19 @@ kann in weiß oder schwarz gezeichnet werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Button',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Position X', 'uint8', 1, 'in'),
-             ('Position Y', 'uint8', 1, 'in'),
-             ('Width', 'uint8', 1, 'in'),
-             ('Height', 'uint8', 1, 'in'),
-             ('Text', 'string', 16, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 11)}),
+             ('Position X', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position Y', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Width', 'uint8', 1, 'in', {'range': (1, 128)}),
+             ('Height', 'uint8', 1, 'in', {'range': (1, 64)}),
+             ('Text', 'string', 16, 'in', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
-Draws a clickable button at position (x, y) with the given text
-of up to 16 characters.
+Draws a clickable button at position (x, y) with the given text.
 
-You can use up to 12 buttons (index 0-11).
+You can use up to 12 buttons.
 
 The x position + width has to be within the range of 1 to 128 and the y
 position + height has to be within the range of 1 to 64.
@@ -763,10 +732,9 @@ button with :func:`Write Pixels`.
 """,
 'de':
 """
-Zeichnet einen klickbaren Button an Position (x, y) mit dem gegebenem
-Text von bis zu 16 Zeichen.
+Zeichnet einen klickbaren Button an Position (x, y) mit dem gegebenem Text.
 
-Es können bis zu 12 Buttons genutzt werden (Index 0-11).
+Es können bis zu 12 Buttons genutzt werden.
 
 Die x-Position + Width muss im Wertebereich von 1 bis 128 liegen und die
 y-Position+Height muss im Wertebereich von 1 bis 64 liegen.
@@ -791,13 +759,13 @@ des Buttons mit per :func:`Write Pixels` gezeichnet werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Button',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Active', 'bool', 1, 'out'),
-             ('Position X', 'uint8', 1, 'out'),
-             ('Position Y', 'uint8', 1, 'out'),
-             ('Width', 'uint8', 1, 'out'),
-             ('Height', 'uint8', 1, 'out'),
-             ('Text', 'string', 16, 'out')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 11)}),
+             ('Active', 'bool', 1, 'out', {}),
+             ('Position X', 'uint8', 1, 'out', {'range': (0, 127)}),
+             ('Position Y', 'uint8', 1, 'out', {'range': (0, 63)}),
+             ('Width', 'uint8', 1, 'out', {'range': (1, 128)}),
+             ('Height', 'uint8', 1, 'out', {'range': (1, 64)}),
+             ('Text', 'string', 16, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -821,7 +789,7 @@ oder nicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Remove GUI Button',
-'elements': [('Index', 'uint8', 1, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': [(0, 11), (255, 255)]})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -897,8 +865,8 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Button Pressed',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Pressed', 'bool', 1, 'out')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 11)}),
+             ('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -919,8 +887,8 @@ Der Zustand kann entweder gedrückt (true) oder losgelassen (false) sein.
 com['packets'].append({
 'type': 'callback',
 'name': 'GUI Button Pressed',
-'elements': [('Index', 'uint8', 1, 'out'),
-             ('Pressed', 'bool', 1, 'out')],
+'elements': [('Index', 'uint8', 1, 'out', {'range': (0, 11)}),
+             ('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['c', {
 'en':
@@ -941,19 +909,19 @@ die gleichen wie die von :func:`Get GUI Button Pressed`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Slider',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Position X', 'uint8', 1, 'in'),
-             ('Position Y', 'uint8', 1, 'in'),
-             ('Length', 'uint8', 1, 'in'),
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 5)}),
+             ('Position X', 'uint8', 1, 'in', {'range': (0, 128)}),
+             ('Position Y', 'uint8', 1, 'in', {'range': (0, 64)}),
+             ('Length', 'uint8', 1, 'in', {'range': (8, 128)}),
              ('Direction', 'uint8', 1, 'in', {'constant_group': 'Direction'}),
-             ('Value', 'uint8', 1, 'in')],
+             ('Value', 'uint8', 1, 'in', {'range': (0, 120)})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
 Draws a slider at position (x, y) with the given length.
 
-You can use up to 6 sliders (index 0-5).
+You can use up to 6 sliders.
 
 If you use the horizontal direction, the x position + length has to be
 within the range of 1 to 128 and the y position has to be within
@@ -1008,13 +976,13 @@ gezeichnet werden. Um einen Button zu entfernen kann die Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Slider',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Active', 'bool', 1, 'out'),
-             ('Position X', 'uint8', 1, 'out'),
-             ('Position Y', 'uint8', 1, 'out'),
-             ('Length', 'uint8', 1, 'out'),
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 5)}),
+             ('Active', 'bool', 1, 'out', {}),
+             ('Position X', 'uint8', 1, 'out', {'range': (0, 128)}),
+             ('Position Y', 'uint8', 1, 'out', {'range': (0, 64)}),
+             ('Length', 'uint8', 1, 'out', {'range': (8, 128)}),
              ('Direction', 'uint8', 1, 'out', {'constant_group': 'Direction'}),
-             ('Value', 'uint8', 1, 'out')],
+             ('Value', 'uint8', 1, 'out', {'range': (0, 120)})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1038,7 +1006,7 @@ oder nicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Remove GUI Slider',
-'elements': [('Index', 'uint8', 1, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': [(0, 5), (255, 255)]})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1114,8 +1082,8 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Slider Value',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Value', 'uint8', 1, 'out')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 5)}),
+             ('Value', 'uint8', 1, 'out', {'range': (0, 120)})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1132,8 +1100,8 @@ Gibt den aktuellen Wert des Slider mit dem gegebenen Index zurück.
 com['packets'].append({
 'type': 'callback',
 'name': 'GUI Slider Value',
-'elements': [('Index', 'uint8', 1, 'out'),
-             ('Value', 'uint8', 1, 'out')],
+'elements': [('Index', 'uint8', 1, 'out', {'range': (0, 5)}),
+             ('Value', 'uint8', 1, 'out', {'range': (0, 120)})],
 'since_firmware': [2, 0, 2],
 'doc': ['c', {
 'en':
@@ -1154,8 +1122,8 @@ die gleichen wie die von :func:`Get GUI Slider Value`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Tab Configuration',
-'elements': [('Change Tab Config', 'uint8', 1, 'in', {'constant_group': 'Change Tab On'}),
-             ('Clear GUI', 'bool', 1, 'in')],
+'elements': [('Change Tab Config', 'uint8', 1, 'in', {'constant_group': 'Change Tab On', 'default': 3}),
+             ('Clear GUI', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1165,8 +1133,6 @@ accept clicks or only swipes (gesture left/right and right/left) or both.
 
 Additionally, if you set `Clear GUI` to true, all of the GUI elements (buttons,
 slider, graphs) will automatically be removed on every tab change.
-
-By default click and swipe as well as automatic GUI clear is enabled.
 """,
 'de':
 """
@@ -1176,9 +1142,6 @@ Setzt die generelle Konfiguration für Tabs. Tabs können auf klicken, wischen
 Zusätzlich kann `Clear GUI` auf true gesetzt werden. In diesem Fall werden
 bei einem wechsel der Tabs automatisch alle GUI Elemente (Buttons, Slider,
 Graphen) gelöscht.
-
-Standardmäßig ist klicken und wischen sowie das automatische löschen der GUI
-aktiviert.
 """
 }]
 })
@@ -1186,8 +1149,8 @@ aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Tab Configuration',
-'elements': [('Change Tab Config', 'uint8', 1, 'out', {'constant_group': 'Change Tab On'}),
-             ('Clear GUI', 'bool', 1, 'out')],
+'elements': [('Change Tab Config', 'uint8', 1, 'out', {'constant_group': 'Change Tab On', 'default': 3}),
+             ('Clear GUI', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1204,24 +1167,23 @@ Gibt die Tab-Konfiguration zurück, wie von :func:`Set GUI Tab Configuration` ge
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Tab Text',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Text', 'string', 5, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 9)}),
+             ('Text', 'string', 5, 'in', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
-Adds a text-tab with the given index. The text can have a length of up to 5 characters.
+Adds a text-tab with the given index.
 
-You can use up to 10 tabs (index 0-9).
+You can use up to 10 tabs.
 
 A text-tab with the same index as a icon-tab will overwrite the icon-tab.
 """,
 'de':
 """
-Fügt einen Text-Tab mit dem gegebenen Index hinzu. Der Text kann eine Länge von
-bis zu 5 Buchstaben haben.
+Fügt einen Text-Tab mit dem gegebenen Index hinzu.
 
-Es können bis zu 10 Tabs verwendet werden (Index 0-9).
+Es können bis zu 10 Tabs verwendet werden.
 
 Ein Text-Tab mit dem gleichen Index wie ein Icon-Tab überschreibt diesen.
 """
@@ -1231,9 +1193,9 @@ Ein Text-Tab mit dem gleichen Index wie ein Icon-Tab überschreibt diesen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Tab Text',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Active', 'bool', 1, 'out'),
-             ('Text', 'string', 5, 'out')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 9)}),
+             ('Active', 'bool', 1, 'out', {}),
+             ('Text', 'string', 5, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1257,8 +1219,8 @@ oder nicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Tab Icon',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Icon', 'bool', 6*28, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 9)}),
+             ('Icon', 'bool', 6*28, 'in', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1266,7 +1228,7 @@ com['packets'].append({
 Adds a icon-tab with the given index. The icon can have a width of 28 pixels
 with a height of 6 pixels. It is drawn line-by-line from left to right.
 
-You can use up to 10 tabs (index 0-9).
+You can use up to 10 tabs.
 
 A icon-tab with the same index as a text-tab will overwrite the text-tab.
 """,
@@ -1276,7 +1238,7 @@ Fügt einen Icon-Tab mit dem gegebenen Index hinzu. Das Icon kann eine Breite vo
 28 Pixel bei einer Höhe von 6 Pixel haben. Es wird Zeile für Zeile von links
 nach rechts gezeichnet.
 
-Es können bis zu 10 Tabs verwendet werden (Index 0-9).
+Es können bis zu 10 Tabs verwendet werden.
 
 Ein Icon-Tab mit dem gleichen Index wie ein Text-Tab überschreibt diesen.
 """
@@ -1286,9 +1248,9 @@ Ein Icon-Tab mit dem gleichen Index wie ein Text-Tab überschreibt diesen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Tab Icon',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Active', 'bool', 1, 'out'),
-             ('Icon', 'bool', 6*28, 'out')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 9)}),
+             ('Active', 'bool', 1, 'out', {}),
+             ('Icon', 'bool', 6*28, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1312,7 +1274,7 @@ oder nicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Remove GUI Tab',
-'elements': [('Index', 'uint8', 1, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': [(0, 9), (255, 255)]})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1333,7 +1295,7 @@ Index 255 kann genutzt werden um alle Tabs zu entfernen.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Tab Selected',
-'elements': [('Index', 'uint8', 1, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 9)})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1406,7 +1368,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Tab Selected',
-'elements': [('Index', 'int8', 1, 'out')],
+'elements': [('Index', 'int8', 1, 'out', {'range': (-1, 9)})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1425,7 +1387,7 @@ Wenn es keine Tabs gibt, wird -1 als Index zurückgegeben.
 com['packets'].append({
 'type': 'callback',
 'name': 'GUI Tab Selected',
-'elements': [('Index', 'int8', 1, 'out')],
+'elements': [('Index', 'int8', 1, 'out', {'range': (0, 9)})],
 'since_firmware': [2, 0, 2],
 'doc': ['c', {
 'en':
@@ -1446,27 +1408,25 @@ die gleichen wie die von :func:`Get GUI Tab Selected`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Graph Configuration',
-'elements': [('Index', 'uint8', 1, 'in'),
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 3)}),
              ('Graph Type', 'uint8', 1, 'in', {'constant_group': 'Graph Type'}),
-             ('Position X', 'uint8', 1, 'in'),
-             ('Position Y', 'uint8', 1, 'in'),
-             ('Width', 'uint8', 1, 'in'),
-             ('Height', 'uint8', 1, 'in'),
-             ('Text X', 'string', 4, 'in'),
-             ('Text Y', 'string', 4, 'in')],
+             ('Position X', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Position Y', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Width', 'uint8', 1, 'in', {'range': (0, 118)}),
+             ('Height', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Text X', 'string', 4, 'in', {}),
+             ('Text Y', 'string', 4, 'in', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
-Sets the configuration for up to four graphs (index 0-3).
+Sets the configuration for up to four graphs.
 
 The graph type can be dot-, line- or bar-graph.
 
-The x and y position are pixel positions. They have to be within
-the range of (0, 0) to (127, 63). The maximum width is 118 and the
-maximum height is 63.
+The x and y position are pixel positions.
 
-You can add a text for the x and y axis with at most 4 characters each.
+You can add a text for the x and y axis.
 The text is drawn at the inside of the graph and it can overwrite some
 of the graph data. If you need the text outside of the graph you can
 leave this text here empty and use :func:`Draw Text` to draw the caption
@@ -1480,13 +1440,11 @@ remove the graph use :func:`Remove GUI Graph`.
 """,
 'de':
 """
-Setzt die Konfiguration für bis zu vier Graphen (Index 0-3).
+Setzt die Konfiguration für bis zu vier Graphen.
 
 Der Graph kann vom Typ Dot-, Line- oder Bar-Graph sein.
 
-Die x- und y-Positionen sind Pixel-Positionen. Diese sind im Wertebereich
-von (0, 0) bis (127, 63). Die Maximale Breite (width) ist 118 und die maximale
-Höhe (height) ist 63.
+Die x- und y-Positionen sind Pixel-Positionen.
 
 Es können bis zu 4 Buchstaben Text zur Beschreibung der x- und y-Achse
 genutzt werden. Der Text wird auf die Innenseite des Graphen gezeichnet und
@@ -1508,15 +1466,15 @@ Funktion :func:`Remove GUI Graph` genutzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Graph Configuration',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Active', 'bool', 1, 'out'),
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Active', 'bool', 1, 'out', {}),
              ('Graph Type', 'uint8', 1, 'out', {'constant_group': 'Graph Type'}),
-             ('Position X', 'uint8', 1, 'out'),
-             ('Position Y', 'uint8', 1, 'out'),
-             ('Width', 'uint8', 1, 'out'),
-             ('Height', 'uint8', 1, 'out'),
-             ('Text X', 'string', 4, 'out'),
-             ('Text Y', 'string', 4, 'out')],
+             ('Position X', 'uint8', 1, 'out', {'range': (0, 127)}),
+             ('Position Y', 'uint8', 1, 'out', {'range': (0, 63)}),
+             ('Width', 'uint8', 1, 'out', {'range': (0, 118)}),
+             ('Height', 'uint8', 1, 'out', {'range': (0, 63)}),
+             ('Text X', 'string', 4, 'out', {}),
+             ('Text Y', 'string', 4, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1540,10 +1498,10 @@ oder nicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Graph Data Low Level',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Data Length', 'uint16', 1, 'in'),
-             ('Data Chunk Offset', 'uint16', 1, 'in'),
-             ('Data Chunk Data', 'uint8', 59, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Data Length', 'uint16', 1, 'in', {'range': (0, 118)}),
+             ('Data Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Data Chunk Data', 'uint8', 59, 'in', {})],
 'high_level': {'stream_in': {'name': 'Data'}},
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -1584,10 +1542,10 @@ Die gesetzten Werte müssen zwischen 0 und 255 skaliert werden. 0 wird unten und
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Graph Data Low Level',
-'elements': [('Index', 'uint8', 1, 'in'),
-             ('Data Length', 'uint16', 1, 'out'),
-             ('Data Chunk Offset', 'uint16', 1, 'out'),
-             ('Data Chunk Data', 'uint8', 59, 'out')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 3)}),
+             ('Data Length', 'uint16', 1, 'out', {'range': (0, 118)}),
+             ('Data Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Data Chunk Data', 'uint8', 59, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data'}},
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
@@ -1606,7 +1564,7 @@ Gibt die Datenpunkte des Graphen mit dem gegebenen Index zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Remove GUI Graph',
-'elements': [('Index', 'uint8', 1, 'in')],
+'elements': [('Index', 'uint8', 1, 'in', {'range': [(0, 3), (255, 255)]})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -1644,7 +1602,7 @@ Entfernt alle GUI-Elemente (Buttons, Slider, Graphen, Tabs).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Touch LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Touch LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Touch LED Config', 'default': 3})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -1671,7 +1629,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Touch LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Touch LED Config', 'default': 3})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
