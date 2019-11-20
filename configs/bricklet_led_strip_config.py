@@ -202,8 +202,7 @@ The values are the last values that were set by :func:`Set RGB Values`.
 """,
 'de':
 """
-Gibt *length* R, G und B Werte zurück, beginnend vom
-übergebenen LED *index*.
+Gibt *length* R, G und B Werte zurück, beginnend von der übergebenen LED *index*.
 
 Die Werte sind die letzten von :func:`Set RGB Values` gesetzten Werte.
 """

@@ -161,11 +161,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the RGB(W) values as set by :func:`Set LED Values`.
+Returns *length* RGB(W) values starting from the
+given *index*.
+
+If the channel mapping has 3 colors, you will get the data in the sequence
+RGBRGBRGB... if the channel mapping has 4 colors you will get the data in the
+sequence RGBWRGBWRGBW... (assuming you start at an index divisible by 3 for RGB or 4 for RGBW).
 """,
 'de':
 """
-Gibt die RGB(W) Werte zurück, wie von :func:`Set LED Values` gesetzt.
+Gibt *length* RGB(W) Werte zurück, beginnend vom
+übergebenen *index*.
+
+Wenn das Channel Mapping 3 Farben hat, werden die Werte in der Sequenz
+RGBRGBRGB... zurückgegeben, hat das Mapping 4 Farben, werden die Werte in
+der Sequenz RGBWRGBWRGBW... zurückgegeben (unter der Annahme, dass ein
+durch 3 (RGB) oder 4 (RGBW) teilbarer Index übergeben wird).
 """
 }]
 })
