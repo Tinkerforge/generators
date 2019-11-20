@@ -42,6 +42,7 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -80,24 +81,25 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
         if (thingTypeUID.equals(THING_TYPE_BRICK_DAEMON)) {
             assert (thing instanceof Bridge);
-            BrickDaemonHandler handler = new BrickDaemonHandler((Bridge) thing, this::registerBrickDaemonDiscoveryService, this::deregisterBrickDaemonDiscoveryService);
-            //registerBrickDaemonDiscoveryService(handler);
-            return handler;
+            return new BrickDaemonHandler((Bridge) thing, this::registerBrickDaemonDiscoveryService, this::deregisterBrickDaemonDiscoveryService);
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER)) {
             assert (thing instanceof Bridge);
-            BrickletOutdoorWeatherHandler handler = new BrickletOutdoorWeatherHandler((Bridge) thing, (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon), this::registerBrickDaemonDiscoveryService, this::deregisterBrickDaemonDiscoveryService);
-            //registerBrickDaemonDiscoveryService(handler);
-            return handler;
+            return new BrickletOutdoorWeatherHandler((Bridge) thing,
+                                                     (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
+                                                     this::registerBrickDaemonDiscoveryService,
+                                                     this::deregisterBrickDaemonDiscoveryService,
+                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)));
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_STATION)) {
-            BrickletOutdoorWeatherStationHandler handler = new BrickletOutdoorWeatherStationHandler(thing);
-            return handler;
+            return new BrickletOutdoorWeatherStationHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_SENSOR)) {
-            BrickletOutdoorWeatherSensorHandler handler = new BrickletOutdoorWeatherSensorHandler(thing);
-            return handler;
+            return new BrickletOutdoorWeatherSensorHandler(thing);
         }
 
         String thingName = thingTypeUID.getId();
-        return new DeviceHandler(thing, (String uid, IPConnection ipcon) -> createDevice(thingName, uid, ipcon), DeviceFactory.getDeviceInfo(thingName).deviceActionsClass);
+        return new DeviceHandler(thing,
+                                (String uid, IPConnection ipcon) -> createDevice(thingName, uid, ipcon),
+                                DeviceFactory.getDeviceInfo(thingName).deviceActionsClass,
+                                () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)));
     }
 
     private synchronized void registerBrickDaemonDiscoveryService(TinkerforgeDiscoveryService service) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.tinkerforge.BrickletOutdoorWeather;
 import com.tinkerforge.DefaultActions;
@@ -18,6 +19,7 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.builder.BridgeBuilder;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 
 public class BrickletOutdoorWeatherHandler extends DeviceHandler implements BridgeHandler {
     private Consumer<OutdoorWeatherDiscoveryService> registerFn;
@@ -30,8 +32,9 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
         Bridge bridge,
         BiFunction<String, IPConnection, Device> deviceSupplier,
         Consumer<OutdoorWeatherDiscoveryService> registerFn,
-        Consumer<OutdoorWeatherDiscoveryService> deregisterFn) {
-        super(bridge, deviceSupplier, DefaultActions.class);
+        Consumer<OutdoorWeatherDiscoveryService> deregisterFn,
+        Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier) {
+        super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier);
         this.registerFn = registerFn;
         this.deregisterFn = deregisterFn;
     }

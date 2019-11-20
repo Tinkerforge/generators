@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.tinkerforge.Device;
@@ -72,11 +73,16 @@ public class DeviceHandler extends BaseThingHandler {
 
     private Class<? extends ThingHandlerService> actionsClass;
 
-    public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier, Class<? extends ThingHandlerService> actionsClass) {
+    private Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier;
+
+    public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier,
+            Class<? extends ThingHandlerService> actionsClass,
+            Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier) {
         super(thing);
 
         this.deviceSupplier = deviceSupplier;
         this.actionsClass = actionsClass;
+        this.channelTypeRegistrySupplier = channelTypeRegistrySupplier;
     }
 
 	public @Nullable Device getDevice() {
@@ -232,7 +238,7 @@ public class DeviceHandler extends BaseThingHandler {
     private Channel buildChannel(ThingType tt, ChannelDefinition def){
         ChannelType ct = TinkerforgeChannelTypeProvider.getChannelTypeStatic(def.getChannelTypeUID(), null);
         if(ct == null) {
-            ChannelTypeRegistry reg = this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class));
+            ChannelTypeRegistry reg = channelTypeRegistrySupplier.get();
             if(reg == null) {
                 logger.warn("Could not get build channel {}: ChannelTypeRegistry not found.", def.getId());
                 return null;
