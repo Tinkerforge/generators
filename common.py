@@ -1162,9 +1162,6 @@ class FlavoredName(object):
 
 class Unit(object):
     def __init__(self, name, symbol, usage, scale_prefix_allowed=True, sequence={'en': '{value} {unit}', 'de': '{value} {unit}'}):
-        if scale_prefix_allowed:
-            assert ' ' not in name, name
-
         assert '{value}' in sequence['en'] and '{value}' in sequence['de'], sequence
         assert '{unit}' in sequence['en'] and '{unit}' in sequence['de'], sequence
 
@@ -1252,8 +1249,7 @@ units = {
 
     'Meter Per Second Squared':     Unit({'en': 'Meter per second squared', 'de': 'Meter pro Sekunde Quadrat'},
                                          'm/s²',
-                                         {'en': 'Acceleration', 'de': 'Beschleunigung'},
-                                         scale_prefix_allowed=False),
+                                         {'en': 'Acceleration', 'de': 'Beschleunigung'}),
 
     'Pascal':                       Unit({'en': 'Pascal', 'de': 'Pascal'},
                                          'Pa',
@@ -1265,11 +1261,13 @@ units = {
 
     'Percent Relative Humidity':    Unit({'en': 'Percent relative humidity', 'de': 'Prozent relative Luftfeuchtigkeit'},
                                          '%',
-                                         {'en': 'Relative Humidity', 'de': 'Relative Luftfeuchtigkeit'}),
+                                         {'en': 'Relative Humidity', 'de': 'Relative Luftfeuchtigkeit'},
+                                         scale_prefix_allowed=False),
 
     'Parts Per Million':            Unit({'en': 'Parts per million', 'de': 'Parts per million'},
                                          'ppm',
-                                         {'en': 'Fraction', 'de': 'Anteil'}),
+                                         {'en': 'Fraction', 'de': 'Anteil'},
+                                         scale_prefix_allowed=False),
 
     'Second':                       Unit({'en': 'Second', 'de': 'Sekunde'},
                                          's',
