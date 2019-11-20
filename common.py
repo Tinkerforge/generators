@@ -1424,13 +1424,15 @@ class Element(object):
         else:
             range_default = None
 
-        range_ = self.raw_data_extra.get('range', range_default)
+        range_ = self.raw_data_extra.get('range')
 
-        if range_ == 'type':
-            assert self.get_type() not in ['float', 'string'], raw_data
+        if range_ == None:
+            if 'constant_group' in self.raw_data_extra:
+                range_ = 'constants'
+            elif self.get_type() not in ['float', 'bool', 'char', 'string']:
+                range_ = 'type'
 
-            range_ = [self.get_type_range()]
-        elif range_ != None and range_ != 'constants':
+        if range_ not in [None, 'type', 'constants']:
             if isinstance(range_, tuple):
                 range_ = [range_]
 
@@ -1463,8 +1465,6 @@ class Element(object):
                     assert isinstance(subrange[1], int), raw_data
 
                 range_[i] = subrange
-        else:
-            assert range_ == range_default, (raw_data, range_default)
 
         self.range_ = range_
 
@@ -1971,16 +1971,20 @@ class Packet(object):
                 meta.append('{0}: {1}'.format(unit_title, unit.sequence.format(value=formatted_scale, unit=formatted_unit)))
 
             if element.get_type() not in ['bool', 'string']:
-                range_ = element.get_range()
 
                 if constants_hint_override != None:
                     constants_hint = select_lang(constants_hint_override)
                 else:
                     constants_hint = select_lang({'en': ('See constants', 'with constants'), 'de': ('Siehe Konstanten', 'mit Konstanten')})
 
+                range_ = element.get_range()
+
                 if range_ == 'constants':
                     meta.append('{0}: {1}'.format(range_title, constants_hint[0]))
                 elif range_ != None:
+                    if range_ == 'type':
+                        range_ = [element.get_type_range()]
+
                     formatted_range = []
 
                     for subrange in range_:

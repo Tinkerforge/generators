@@ -42,10 +42,11 @@ def add_callback_value_function(packets, name, data_name, data_type, doc,
     if callback_config_setter_since_firmware == None:
         callback_config_setter_since_firmware = callback_since_firmware[:]
 
-    getter_element_info = {'scale': scale, 'unit': unit}
-
-    if range_ is not None:
-        getter_element_info['range'] = range_
+    getter_element_info = {
+        'scale': scale,
+        'unit': unit,
+        'range': range_
+    }
 
     getter = {
         'type': 'function',
