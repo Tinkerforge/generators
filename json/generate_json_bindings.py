@@ -82,10 +82,46 @@ class JSONBindingsElement(common.Element):
         members['cardinality'] = self.get_cardinality()
         members['direction'] = self.get_direction()
 
+        scale = self.get_scale()
+
+        if scale == None:
+            members['scale'] = None
+        else:
+            members['scale'] = OrderedDict()
+
+            members['scale']['numerator'] = scale[0]
+            members['scale']['denominator'] = scale[1]
+
+        unit = self.get_unit()
+
+        if unit == None:
+            members['unit'] = None
+        else:
+            members['unit'] = OrderedDict()
+
+            members['unit']['name'] = unit._name
+            members['unit']['symbol'] = unit.symbol
+            members['unit']['usage'] = unit._usage
+            members['unit']['sequence'] = unit._sequence
+
+        range_ = self.get_range()
+
+        if not isinstance(range_, list):
+            members['range'] = range_
+        else:
+            members['range'] = []
+
+            for subrange in range_:
+                members['range'].append(OrderedDict([('minimum', subrange[0]), ('maximum', subrange[1])]))
+
+        members['default'] = self.get_default()
+
         constant_group = self.get_constant_group()
 
-        if constant_group != None:
-            members['constant_group'] = {}
+        if constant_group == None:
+            members['constant_group'] = None
+        else:
+            members['constant_group'] = OrderedDict()
 
             members['constant_group']['name'] = constant_group.get_name().space
             members['constant_group']['constants'] = []
@@ -95,9 +131,6 @@ class JSONBindingsElement(common.Element):
                     ('name', constant.get_name().space),
                     ('value', constant.get_value())
                 ]))
-
-        else:
-            members['constant_group'] = None
 
         return members
 
