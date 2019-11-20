@@ -67,7 +67,7 @@ add_callback_value_function(
     data_name = 'Distance',
     data_type = 'int16',
     doc       = distance_doc,
-    divisor   = 100,
+    scale     = (1, 100),
     unit      = 'Meter',
     range_    = (0, 4000)
 )
@@ -98,7 +98,7 @@ add_callback_value_function(
     data_name = 'Velocity',
     data_type = 'int16',
     doc       = velocity_doc,
-    divisor   = 100,
+    scale     = (1, 100),
     unit      = 'Meter Per Second',
     range_    = (-12800, 12700)
 )
@@ -283,7 +283,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Offset Calibration',
-'elements': [('Offset', 'int16', 1, 'in', {'factor': 100, 'unit': 'Meter', 'range': (None, 2**15-1-4000)})],
+'elements': [('Offset', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Meter', 'range': (None, 2**15 - 1 - 4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -316,7 +316,7 @@ bekannte Distanz gemessen wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Offset Calibration',
-'elements': [('Offset', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'range': (None, 2**15-1-4000)})],
+'elements': [('Offset', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter', 'range': (None, 2**15-1-4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

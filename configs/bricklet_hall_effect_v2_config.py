@@ -54,7 +54,7 @@ add_callback_value_function(
     data_name = 'Magnetic Flux Density',
     data_type = 'int16',
     doc       = magnetic_flux_density_doc,
-    divisor   = 10**6,
+    scale     = (1, 10**6),
     unit      = 'Tesla',
     range_    = (-7000, 7000)
 )
@@ -100,9 +100,9 @@ verwendet werden. Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Config',
-'elements': [('High Threshold', 'int16', 1, 'in', {'factor': 10**6, 'unit': 'Tesla', 'default': 2000}),
-             ('Low Threshold', 'int16', 1, 'in', {'factor': 10**6, 'unit': 'Tesla', 'default': -2000}),
-             ('Debounce', 'uint32', 1, 'in', {'factor': 10**6, 'unit': 'Second', 'range': (0, 10**6), 'default': 10**5})],
+'elements': [('High Threshold', 'int16', 1, 'in', {'scale': (1, 10**6), 'unit': 'Tesla', 'default': 2000}),
+             ('Low Threshold', 'int16', 1, 'in', {'scale': (1, 10**6), 'unit': 'Tesla', 'default': -2000}),
+             ('Debounce', 'uint32', 1, 'in', {'scale': (1, 10**6), 'unit': 'Second', 'range': (0, 10**6), 'default': 10**5})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -131,9 +131,9 @@ Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Config',
-'elements': [('High Threshold', 'int16', 1, 'out', {'divisor': 10**6, 'unit': 'Tesla', 'default': 2000}),
-             ('Low Threshold', 'int16', 1, 'out', {'divisor': 10**6, 'unit': 'Tesla', 'default': -2000}),
-             ('Debounce', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Second', 'range': (0, 10**6), 'default': 10**5})],
+'elements': [('High Threshold', 'int16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Tesla', 'default': 2000}),
+             ('Low Threshold', 'int16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Tesla', 'default': -2000}),
+             ('Debounce', 'uint32', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second', 'range': (0, 10**6), 'default': 10**5})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -150,7 +150,7 @@ Gibt die Zähler-Konfiguration zurück, wie von :func:`Set Counter Config` geset
 com['packets'].append({
 'type': 'function',
 'name': 'Set Counter Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -185,7 +185,7 @@ festen Periode ausgelöst unabhängig von den Änderungen der Werte.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {

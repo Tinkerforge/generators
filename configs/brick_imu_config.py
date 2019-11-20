@@ -629,7 +629,7 @@ Gibt die Kalibrierung für den ausgewählten Typ zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -648,7 +648,7 @@ wird. Ein Wert von 0 deaktiviert den Callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -665,7 +665,7 @@ Gibt die Periode zurück, wie von :func:`Set Acceleration Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Magnetic Field Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -684,7 +684,7 @@ ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetic Field Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -701,7 +701,7 @@ Gibt die Periode zurück, wie von :func:`Set Magnetic Field Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Angular Velocity Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -720,7 +720,7 @@ ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Angular Velocity Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -737,7 +737,7 @@ Gibt die Periode zurück, wie von :func:`Set Angular Velocity Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Data Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -756,7 +756,7 @@ Ein Wert von 0 deaktiviert den Callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -773,7 +773,7 @@ Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Orientation Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -792,7 +792,7 @@ wird. Ein Wert von 0 deaktiviert den Callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Orientation Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -809,7 +809,7 @@ Gibt die Periode zurück, wie von :func:`Set Orientation Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Quaternion Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -828,7 +828,7 @@ wird. Ein Wert von 0 deaktiviert den Callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Quaternion Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

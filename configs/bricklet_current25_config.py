@@ -38,7 +38,7 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current',
-'elements': [('Current', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'range': (-25000, 25000)})],
+'elements': [('Current', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (-25000, 25000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -159,7 +159,7 @@ den :cb:`Analog Value` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -184,7 +184,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -201,7 +201,7 @@ Gibt die Periode zurück, wie von :func:`Set Current Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -226,7 +226,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -244,8 +244,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Ampere', 'default': 0}),
-             ('Max', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Ampere', 'default': 0})],
+             ('Min', 'int16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -287,8 +287,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'default': 0}),
-             ('Max', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'default': 0})],
+             ('Min', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -367,7 +367,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set Analog Value Callback Threshold
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -404,7 +404,7 @@ weiterhin erreicht bleiben.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -421,7 +421,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current',
-'elements': [('Current', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'range': (-25000, 25000)})],
+'elements': [('Current', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (-25000, 25000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -473,7 +473,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current Reached',
-'elements': [('Current', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Ampere', 'range': (-25000, 25000)})],
+'elements': [('Current', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (-25000, 25000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

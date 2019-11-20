@@ -218,7 +218,7 @@ Diese Funktion kann nur im Slave Modus aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Duration',
-'elements': [('Frame Duration', 'uint16', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Frame Duration', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -251,7 +251,7 @@ Diese Einstellung wird nur im Master Modus genutzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Duration',
-'elements': [('Frame Duration', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Frame Duration', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

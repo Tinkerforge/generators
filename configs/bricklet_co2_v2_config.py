@@ -41,8 +41,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get All Values',
 'elements': [('CO2 Concentration', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'range': (0, 40000)}),
-             ('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-4000, 12000)}),
-             ('Humidity', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Percent Relative Humidity', 'range': (0, 10000)})],
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-4000, 12000)}),
+             ('Humidity', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Percent Relative Humidity', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -75,7 +75,7 @@ verwendet werden. Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Set Air Pressure',
-'elements': [('Air Pressure', 'uint16', 1, 'in', {'factor': (1, 100), 'unit': 'Pascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
+'elements': [('Air Pressure', 'uint16', 1, 'in', {'scale': (100, 1), 'unit': 'Pascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -112,7 +112,7 @@ Es ist hinreichend den Wert alle paar Minuten zu aktualisieren.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure',
-'elements': [('Air Pressure', 'uint16', 1, 'out', {'divisor': (1, 100), 'unit': 'Pascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
+'elements': [('Air Pressure', 'uint16', 1, 'out', {'scale': (100, 1), 'unit': 'Pascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -129,7 +129,7 @@ Gibt den Umgebungs-Luftdruch zurück, wie von :func:`Set Air Pressure` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Offset',
-'elements': [('Offset', 'uint16', 1, 'in', {'factor': 100, 'unit': 'Degree Celsius'})],
+'elements': [('Offset', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -183,7 +183,7 @@ Neustart wieder angewendet.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Offset',
-'elements': [('Offset', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius'})],
+'elements': [('Offset', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -202,7 +202,7 @@ Gibt das Temperatur-Offset zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Values Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -237,7 +237,7 @@ festen Periode ausgelöst unabhängig von den Änderungen der Werte.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Values Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -258,8 +258,8 @@ com['packets'].append({
 'type': 'callback',
 'name': 'All Values',
 'elements': [('CO2 Concentration', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'range': (0, 40000)}),
-             ('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-4000, 12000)}),
-             ('Humidity', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Percent Relative Humidity', 'range': (0, 10000)})],
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-4000, 12000)}),
+             ('Humidity', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Percent Relative Humidity', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -333,7 +333,7 @@ add_callback_value_function(
     data_name = 'Temperature',
     data_type = 'int16',
     doc       = temperature_doc,
-    divisor   = 100,
+    scale     = (1, 100),
     unit      = 'Degree Celsius',
     range_    = (-4000, 12000)
 )
@@ -355,7 +355,7 @@ add_callback_value_function(
     data_name = 'Humidity',
     data_type = 'uint16',
     doc       = humidity_doc,
-    divisor   = 100,
+    scale     = (1, 100),
     unit      = 'Percent Relative Humidity',
     range_    = (0, 10000)
 )

@@ -993,7 +993,7 @@ Es existiert auch ein Callback für diese Funktion, siehe :cb:`All Data` Callbac
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Data Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 1, 6],
 'doc': ['ccf', {
 'en':
@@ -1012,7 +1012,7 @@ Ein Wert von 0 deaktiviert den Callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 1, 6],
 'doc': ['ccf', {
 'en':

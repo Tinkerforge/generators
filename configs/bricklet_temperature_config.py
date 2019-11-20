@@ -45,7 +45,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -70,7 +70,7 @@ den :cb:`Temperature` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -95,7 +95,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -113,8 +113,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in', {'factor': 100, 'unit': 'Degree Celsius', 'default': 0}),
-             ('Max', 'int16', 1, 'in', {'factor': 100, 'unit': 'Degree Celsius', 'default': 0})],
+             ('Min', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -156,8 +156,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'default': 0}),
-             ('Max', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'default': 0})],
+             ('Min', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -174,7 +174,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set Temperature Callback Threshold`
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -207,7 +207,7 @@ weiterhin erreicht bleibt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -224,7 +224,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -250,7 +250,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature Reached',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-2500, 8500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

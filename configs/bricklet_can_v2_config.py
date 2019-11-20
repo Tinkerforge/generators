@@ -270,7 +270,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Transceiver Configuration',
 'elements': [('Baud Rate', 'uint32', 1, 'in', {'unit': 'Bit Per Second', 'range': (10000, 1000000), 'default': 125000}),
-             ('Sample Point', 'uint16', 1, 'in', {'factor': 10, 'unit': 'Percent', 'range': (500, 900), 'default': 625}),
+             ('Sample Point', 'uint16', 1, 'in', {'scale': (1, 10), 'unit': 'Percent', 'range': (500, 900), 'default': 625}),
              ('Transceiver Mode', 'uint8', 1, 'in', {'constant_group': 'Transceiver Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -309,7 +309,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Transceiver Configuration',
 'elements': [('Baud Rate', 'uint32', 1, 'out', {'unit': 'Bit Per Second', 'range': (10000, 1000000), 'default': 125000}),
-             ('Sample Point', 'uint16', 1, 'out', {'divisor': 10, 'unit': 'Percent', 'range': (500, 900), 'default': 625}),
+             ('Sample Point', 'uint16', 1, 'out', {'scale': (1, 10), 'unit': 'Percent', 'range': (500, 900), 'default': 625}),
              ('Transceiver Mode', 'uint8', 1, 'out', {'constant_group': 'Transceiver Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

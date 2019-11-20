@@ -640,6 +640,8 @@ def camel_to_space(name):
     return re_camel_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
 def format_float(value):
+    assert isinstance(value, float), value
+
     string = '{0:.20f}'.format(value).rstrip('0')
 
     if string.endswith('.'):
@@ -1380,8 +1382,6 @@ class Element(object):
         self.packet = packet
         self.level = level
         self.role = role
-        self.factor = None
-        self.divisor = None
         self.unit = None
         self.range_ = None
         self.constant_group = None
@@ -1397,41 +1397,20 @@ class Element(object):
             self.raw_data_extra = self.raw_data[4]
 
         assert isinstance(self.raw_data_extra, dict), self.raw_data_extra
-        assert len(set(self.raw_data_extra.keys()) - set(['factor', 'divisor', 'unit', 'range', 'constant_group', 'default'])) == 0, self.raw_data_extra
+        assert len(set(self.raw_data_extra.keys()) - set(['scale', 'unit', 'range', 'constant_group', 'default'])) == 0, self.raw_data_extra
 
-        factor = self.raw_data_extra.get('factor')
+        scale = self.get_scale()
 
-        if factor != None:
-            if isinstance(factor, int):
-                factor = (factor, 1)
-
-            assert isinstance(factor, tuple), raw_data
-            assert isinstance(factor[0], int), raw_data
-            assert isinstance(factor[1], int), raw_data
-            assert gcd(*factor) == 1, raw_data
-            assert factor[0] >= 1, raw_data
-            assert factor[1] >= 1, raw_data
-            assert self.get_direction() == 'in', raw_data
+        if scale != None:
+            assert isinstance(scale, tuple), raw_data
+            assert len(scale) == 2, raw_data
+            assert isinstance(scale[0], int), raw_data
+            assert isinstance(scale[1], int), raw_data
+            assert scale[0] >= 1, raw_data
+            assert scale[1] >= 1, raw_data
+            assert scale[0] != scale[1], raw_data
+            assert gcd(*scale) == 1, raw_data
             assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
-
-        self.factor = factor
-
-        divisor = self.raw_data_extra.get('divisor')
-
-        if divisor != None:
-            if isinstance(divisor, int):
-                divisor = (divisor, 1)
-
-            assert isinstance(divisor, tuple), raw_data
-            assert isinstance(divisor[0], int), raw_data
-            assert isinstance(divisor[1], int), raw_data
-            assert gcd(*divisor) == 1, raw_data
-            assert divisor[0] >= 1, raw_data
-            assert divisor[1] >= 1, raw_data
-            assert self.get_direction() == 'out', raw_data
-            assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
-
-        self.divisor = divisor
 
         unit_name = self.raw_data_extra.get('unit')
 
@@ -1560,11 +1539,8 @@ class Element(object):
     def get_constant_group(self):
         return self.constant_group
 
-    def get_factor(self):
-        return self.factor
-
-    def get_divisor(self):
-        return self.divisor
+    def get_scale(self):
+        return self.raw_data_extra.get('scale')
 
     def get_unit(self):
         return self.unit
@@ -1963,17 +1939,13 @@ class Packet(object):
                 elif explicit_common_cardinality:
                     meta.append('{0}: {1}'.format(length_title, cardinality))
 
-            scale = element.get_divisor()
-
-            if scale == None:
-                scale = element.get_factor()
-
+            scale = element.get_scale()
             unit = element.get_unit()
 
             if scale != None and unit == None:
-                scale = format_fraction(scale[1], scale[0])
+                formatted_scale = format_fraction(*scale)
 
-                meta.append('{0}: {1}'.format(unit_title, scale))
+                meta.append('{0}: {1}'.format(unit_title, formatted_scale))
             elif scale == None and unit != None:
                 meta.append('{0}: 1 ⟨abbr title=«{1} ({2})»⟩{3}⟨/abbr⟩'.format(unit_title, unit.name, unit.usage, unit.symbol))
             elif scale != None and unit != None:
@@ -1982,20 +1954,20 @@ class Packet(object):
                 unit_symbol = unit.symbol
 
                 if unit.scale_prefix_allowed:
-                    if scale[0] % 1000000000 == 0:
-                        scale[0] //= 1000000000
+                    if scale[1] % 1000000000 == 0:
+                        scale[1] //= 1000000000
                         unit_name = 'Nano' + unit_name.lower()
                         unit_symbol = 'n' + unit_symbol
-                    elif scale[0] % 1000000 == 0:
-                        scale[0] //= 1000000
+                    elif scale[1] % 1000000 == 0:
+                        scale[1] //= 1000000
                         unit_name = select_lang({'en': 'Micro', 'de': 'Mikro'}) + unit_name.lower()
                         unit_symbol = 'µ' + unit_symbol
-                    elif scale[0] % 1000 == 0:
-                        scale[0] //= 1000
+                    elif scale[1] % 1000 == 0:
+                        scale[1] //= 1000
                         unit_name = 'Milli' + unit_name.lower()
                         unit_symbol = 'm' + unit_symbol
 
-                formatted_scale = format_fraction(scale[1], scale[0])
+                formatted_scale = format_fraction(*scale)
                 formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_name, unit.usage, unit_symbol)
 
                 meta.append('{0}: {1}'.format(unit_title, unit.sequence.format(value=formatted_scale, unit=formatted_unit)))
@@ -2014,7 +1986,7 @@ class Packet(object):
                     formatted_range = []
 
                     for subrange in range_:
-                        assert isinstance(subrange, tuple), self.get_name().space
+                        assert isinstance(subrange, tuple), range_
 
                         formatted_subrange = [None, None]
 

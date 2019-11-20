@@ -47,7 +47,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Current',
 'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Current', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'range': (0, 22505322)})],
+             ('Current', 'int32', 1, 'out', {'scale': (1, 10**9), 'unit': 'Ampere', 'range': (0, 22505322)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -89,7 +89,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Period',
 'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+             ('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -115,7 +115,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Period',
 'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+             ('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -134,8 +134,8 @@ com['packets'].append({
 'name': 'Set Current Callback Threshold',
 'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in', {'factor': 10**9, 'unit': 'Ampere', 'default': 0}),
-             ('Max', 'int32', 1, 'in', {'factor': 10**9, 'unit': 'Ampere', 'default': 0})],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 10**9), 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 10**9), 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -180,8 +180,8 @@ com['packets'].append({
 'name': 'Get Current Callback Threshold',
 'elements': [('Sensor', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'default': 0}),
-             ('Max', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'default': 0})],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 10**9), 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 10**9), 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -198,7 +198,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set Current Callback Threshold` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -231,7 +231,7 @@ weiterhin erreicht bleibt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -303,7 +303,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Current',
 'elements': [('Sensor', 'uint8', 1, 'out', {'range': (0, 1)}),
-             ('Current', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'range': (0, 22505322)})],
+             ('Current', 'int32', 1, 'out', {'scale': (1, 10**9), 'unit': 'Ampere', 'range': (0, 22505322)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -330,7 +330,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Current Reached',
 'elements': [('Sensor', 'uint8', 1, 'out', {'range': (0, 1)}),
-             ('Current', 'int32', 1, 'out', {'divisor': 10**9, 'unit': 'Ampere', 'range': (0, 22505322)})],
+             ('Current', 'int32', 1, 'out', {'scale': (1, 10**9), 'unit': 'Ampere', 'range': (0, 22505322)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

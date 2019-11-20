@@ -93,9 +93,9 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
-             ('Y', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
-             ('Z', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -172,7 +172,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -214,7 +214,7 @@ Wenn dieser Callback aktiviert ist, werden der
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -270,9 +270,9 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
-             ('Y', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
-             ('Z', 'int32', 1, 'out', {'divisor': 10000, 'unit': 'Standard Gravity', 'range': (-8000, 8000)})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-8000, 8000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

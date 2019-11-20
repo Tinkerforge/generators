@@ -207,7 +207,7 @@ Siehe :func:`Set ADC Values Callback Configuration` und :cb:`ADC Values` Callbac
 com['packets'].append({
 'type': 'function',
 'name': 'Set ADC Values Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -242,7 +242,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get ADC Values Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {

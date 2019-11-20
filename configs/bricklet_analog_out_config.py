@@ -43,7 +43,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage',
-'elements': [('Voltage', 'uint16', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'range': (0, 5000), 'default': 0})],
+'elements': [('Voltage', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 5000), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -62,7 +62,7 @@ den Modus auf 0 (siehe :func:`Set Mode`).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (0, 5000), 'default': 0})],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 5000), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

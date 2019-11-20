@@ -52,7 +52,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Voltage', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (-35000, 35000)})],
+             ('Voltage', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (-35000, 35000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -78,7 +78,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Period',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+             ('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -105,7 +105,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Period',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+             ('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -124,8 +124,8 @@ com['packets'].append({
 'name': 'Set Voltage Callback Threshold',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'default': 0}),
-             ('Max', 'int32', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'default': 0})],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -170,8 +170,8 @@ com['packets'].append({
 'name': 'Get Voltage Callback Threshold',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'default': 0}),
-             ('Max', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'default': 0})],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -188,7 +188,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set Voltage Callback Threshold` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -221,7 +221,7 @@ weiterhin erreicht bleibt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -340,7 +340,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Voltage',
 'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 1)}),
-             ('Voltage', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (-35000, 35000)})],
+             ('Voltage', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (-35000, 35000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -367,7 +367,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Voltage Reached',
 'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 1)}),
-             ('Voltage', 'int32', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (-35000, 35000)})],
+             ('Voltage', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (-35000, 35000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

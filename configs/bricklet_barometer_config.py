@@ -38,7 +38,7 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000)})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -63,7 +63,7 @@ den :cb:`Air Pressure` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude',
-'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
+'elements': [('Altitude', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -93,7 +93,7 @@ Wenn die Höhe periodisch abgefragt werden soll, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Set Air Pressure Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -118,7 +118,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -135,7 +135,7 @@ Gibt die Periode zurück, wie von :func:`Set Air Pressure Callback Period` geset
 com['packets'].append({
 'type': 'function',
 'name': 'Set Altitude Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -160,7 +160,7 @@ Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -178,8 +178,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Air Pressure Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in', {'factor': 10, 'unit': 'Pascal', 'default': 0}),
-             ('Max', 'int32', 1, 'in', {'factor': 10, 'unit': 'Pascal', 'default': 0})],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -221,8 +221,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'default': 0}),
-             ('Max', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'default': 0})],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -240,8 +240,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Altitude Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in', {'factor': 100, 'unit': 'Meter', 'default': 0}),
-             ('Max', 'int32', 1, 'in', {'factor': 100, 'unit': 'Meter', 'default': 0})],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 100), 'unit': 'Meter', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 100), 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -283,8 +283,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'default': 0}),
-             ('Max', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'default': 0})],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -301,7 +301,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set Altitude Callback Threshold` ge
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -338,7 +338,7 @@ weiterhin erreicht bleiben.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -355,7 +355,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'in', {'factor': 10, 'unit': 'Pascal', 'range': [(0, 0), (10000, 1200000)], 'default': 1013250})],
+'elements': [('Air Pressure', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'range': [(0, 0), (10000, 1200000)], 'default': 1013250})],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
@@ -388,7 +388,7 @@ aus dem Q-Schlüssel.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Chip Temperature',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Degree Celsius', 'range': (-4000, 8500)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-4000, 8500)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -414,7 +414,7 @@ wird.
 com['packets'].append({
 'type': 'callback',
 'name': 'Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000)})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -441,7 +441,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Altitude',
-'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
+'elements': [('Altitude', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -468,7 +468,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Air Pressure Reached',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000)})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -495,7 +495,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Altitude Reached',
-'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
+'elements': [('Altitude', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -522,7 +522,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'divisor': 10, 'unit': 'Pascal', 'range': (10000, 1200000), 'default': 1013250})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': (10000, 1200000), 'default': 1013250})],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':

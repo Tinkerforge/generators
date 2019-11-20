@@ -55,7 +55,7 @@ add_callback_value_function(
     data_name = 'Temperature',
     data_type = 'int16',
     doc       = ambient_temperature_doc,
-    divisor   = 10,
+    scale     = (1, 10),
     unit      = 'Degree Celsius',
     range_    = (-400, 1250)
 )
@@ -87,7 +87,7 @@ add_callback_value_function(
     data_name = 'Temperature',
     data_type = 'int16',
     doc       = object_temperature_doc,
-    divisor   = 10,
+    scale     = (1, 10),
     unit      = 'Degree Celsius',
     range_    = (-700, 3800)
 )
@@ -95,7 +95,7 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Emissivity',
-'elements': [('Emissivity', 'uint16', 1, 'in', {'factor': 65535, 'default': 65535, 'range': (6553, None)})],
+'elements': [('Emissivity', 'uint16', 1, 'in', {'scale': (1, 65535), 'range': (6553, None), 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -146,7 +146,7 @@ auch noch einem Neustart weiter genutzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Emissivity',
-'elements': [('Emissivity', 'uint16', 1, 'out', {'divisor': 65535, 'default': 65535, 'range': (6553, None)})],
+'elements': [('Emissivity', 'uint16', 1, 'out', {'scale': (1, 65535), 'range': (6553, None), 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

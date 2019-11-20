@@ -212,7 +212,7 @@ Die Werte sind die letzten von :func:`Set RGB Values` gesetzten Werte.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Duration',
-'elements': [('Duration', 'uint16', 1, 'in', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Duration', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -239,7 +239,7 @@ Für eine Erklärung des generellen Ansatzes siehe :func:`Set RGB Values`.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Duration',
-'elements': [('Duration', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Duration', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -257,7 +257,7 @@ Gibt die *frame duration* (Länge des Frames) zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get Supply Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Volt'})],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

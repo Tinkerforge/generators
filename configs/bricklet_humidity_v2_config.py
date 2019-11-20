@@ -73,7 +73,7 @@ add_callback_value_function(
     data_name = 'Humidity',
     data_type = 'uint16',
     doc       = humidity_doc,
-    divisor   = 100,
+    scale     = (1, 100),
     unit      = 'Percent Relative Humidity',
     range_    = (0, 10000)
 )
@@ -95,7 +95,7 @@ add_callback_value_function(
     data_name = 'Temperature',
     data_type = 'int16',
     doc       = temperature_doc,
-    divisor   = 100,
+    scale     = (1, 100),
     unit      = 'Degree Celsius',
     range_    = (-4000, 16500)
 )

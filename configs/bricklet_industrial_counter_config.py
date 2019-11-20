@@ -184,9 +184,9 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Signal Data',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Duty Cycle', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Percent', 'range': (0, 10000)}),
-             ('Period', 'uint64', 1, 'out', {'divisor': 10**9, 'unit': 'Second'}),
-             ('Frequency', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Hertz'}),
+             ('Duty Cycle', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Percent', 'range': (0, 10000)}),
+             ('Period', 'uint64', 1, 'out', {'scale': (1, 10**9), 'unit': 'Second'}),
+             ('Frequency', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hertz'}),
              ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -206,9 +206,9 @@ gegebenen Kanal.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Signal Data',
-'elements': [('Duty Cycle', 'uint16', 4, 'out', {'divisor': 100, 'unit': 'Percent', 'range': (0, 10000)}),
-             ('Period', 'uint64', 4, 'out', {'divisor': 10**9, 'unit': 'Second'}),
-             ('Frequency', 'uint32', 4, 'out', {'divisor': 1000, 'unit': 'Hertz'}),
+'elements': [('Duty Cycle', 'uint16', 4, 'out', {'scale': (1, 100), 'unit': 'Percent', 'range': (0, 10000)}),
+             ('Period', 'uint64', 4, 'out', {'scale': (1, 10**9), 'unit': 'Second'}),
+             ('Frequency', 'uint32', 4, 'out', {'scale': (1, 1000), 'unit': 'Hertz'}),
              ('Value', 'bool', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -390,7 +390,7 @@ Gibt die Zähler-Konfiguration zurück, wie Sie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Counter Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -425,7 +425,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Counter Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -445,7 +445,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Signal Data Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -480,7 +480,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Signal Data Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -568,9 +568,9 @@ Die :word:`parameters` sind der gleiche wie :func:`Get All Counter`.
 com['packets'].append({
 'type': 'callback',
 'name': 'All Signal Data',
-'elements': [('Duty Cycle', 'uint16', 4, 'out', {'divisor': 100, 'unit': 'Percent', 'range': (0, 10000)}),
-             ('Period', 'uint64', 4, 'out', {'divisor': 10**9, 'unit': 'Second'}),
-             ('Frequency', 'uint32', 4, 'out', {'divisor': 1000, 'unit': 'Hertz'}),
+'elements': [('Duty Cycle', 'uint16', 4, 'out', {'scale': (1, 100), 'unit': 'Percent', 'range': (0, 10000)}),
+             ('Period', 'uint64', 4, 'out', {'scale': (1, 10**9), 'unit': 'Second'}),
+             ('Frequency', 'uint32', 4, 'out', {'scale': (1, 1000), 'unit': 'Hertz'}),
              ('Value', 'bool', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

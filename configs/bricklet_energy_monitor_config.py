@@ -35,14 +35,14 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Data',
-'elements': [('Voltage', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Volt'}),
-             ('Current', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Ampere'}),
-             ('Energy', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Watt Hour'}),
-             ('Real Power', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Watt'}),
-             ('Apparent Power', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Volt Ampere'}),
-             ('Reactive Power', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Volt Ampere Reactive'}),
-             ('Power Factor', 'uint16', 1, 'out', {'divisor': 1000}),
-             ('Frequency', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Hertz'})],
+'elements': [('Voltage', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Volt'}),
+             ('Current', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Ampere'}),
+             ('Energy', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Watt Hour'}),
+             ('Real Power', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Watt'}),
+             ('Apparent Power', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Volt Ampere'}),
+             ('Reactive Power', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Volt Ampere Reactive'}),
+             ('Power Factor', 'uint16', 1, 'out', {'scale': (1, 1000)}),
+             ('Frequency', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Hertz'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -270,7 +270,7 @@ gesetzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Energy Data Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -305,7 +305,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Data Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -325,14 +325,14 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Energy Data',
-'elements': [('Voltage', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Volt'}),
-             ('Current', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Ampere'}),
-             ('Energy', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Watt Hour'}),
-             ('Real Power', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Watt'}),
-             ('Apparent Power', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Volt Ampere'}),
-             ('Reactive Power', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Volt Ampere Reactive'}),
-             ('Power Factor', 'uint16', 1, 'out', {'divisor': 1000}),
-             ('Frequency', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Hertz'})],
+'elements': [('Voltage', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Volt'}),
+             ('Current', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Ampere'}),
+             ('Energy', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Watt Hour'}),
+             ('Real Power', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Watt'}),
+             ('Apparent Power', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Volt Ampere'}),
+             ('Reactive Power', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Volt Ampere Reactive'}),
+             ('Power Factor', 'uint16', 1, 'out', {'scale': (1, 1000)}),
+             ('Frequency', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Hertz'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

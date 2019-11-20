@@ -61,7 +61,7 @@ add_callback_value_function(
     data_name = 'Temperature',
     data_type = 'int16',
     doc       = temperature_doc,
-    divisor   = 100,
+    scale     = (1, 100),
     unit      = 'Degree Celsius',
     range_    = (-4500, 13000)
 )

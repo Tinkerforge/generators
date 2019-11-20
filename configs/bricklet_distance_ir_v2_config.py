@@ -76,7 +76,7 @@ add_callback_value_function(
     data_name = 'Distance',
     data_type = 'uint16',
     doc       = distance_doc,
-    divisor   = 1000,
+    scale     = (1, 1000),
     unit      = 'Meter',
 )
 

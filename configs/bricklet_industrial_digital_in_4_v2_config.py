@@ -79,7 +79,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Value Callback Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+             ('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -119,7 +119,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Value Callback Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+             ('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -139,7 +139,7 @@ Gibt die Callback-Konfiguration für den gegebenen Kanal zurück, wie mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Value Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -174,7 +174,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Value Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -224,7 +224,7 @@ com['packets'].append({
 'name': 'Set Edge Count Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -268,7 +268,7 @@ com['packets'].append({
 'name': 'Get Edge Count Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
              ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

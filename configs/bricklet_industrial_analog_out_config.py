@@ -109,7 +109,7 @@ Gibt *true* zurück falls die Ausgabe von Spannung und Strom aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage',
-'elements': [('Voltage', 'uint16', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'range': (0, 10000)})],
+'elements': [('Voltage', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -132,7 +132,7 @@ Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (0, 10000)})],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 10000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -149,7 +149,7 @@ Gibt die Spannung zurück, wie von :func:`Set Voltage` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current',
-'elements': [('Current', 'uint16', 1, 'in', {'factor': 10**6, 'unit': 'Ampere', 'range': (0, 24000)})],
+'elements': [('Current', 'uint16', 1, 'in', {'scale': (1, 10**6), 'unit': 'Ampere', 'range': (0, 24000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -172,7 +172,7 @@ Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current',
-'elements': [('Current', 'uint16', 1, 'out', {'divisor': 10**6, 'unit': 'Ampere', 'range': (0, 24000)})],
+'elements': [('Current', 'uint16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Ampere', 'range': (0, 24000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

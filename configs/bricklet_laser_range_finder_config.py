@@ -55,7 +55,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance',
-'elements': [('Distance', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'range': (0, 4000)})],
+'elements': [('Distance', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter', 'range': (0, 4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -92,7 +92,7 @@ den :cb:`Distance` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Velocity',
-'elements': [('Velocity', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -133,7 +133,7 @@ den :cb:`Velocity` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Distance Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -158,7 +158,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Distance Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -175,7 +175,7 @@ Gibt die Periode zurück, wie von :func:`Set Distance Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Velocity Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -200,7 +200,7 @@ Geschwindigkeitswert seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Velocity Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -218,8 +218,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Distance Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in', {'factor': 100, 'unit': 'Meter', 'default': 0}),
-             ('Max', 'uint16', 1, 'in', {'factor': 100, 'unit': 'Meter', 'default': 0})],
+             ('Min', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Meter', 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -261,8 +261,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Distance Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'default': 0}),
-             ('Max', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'default': 0})],
+             ('Min', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter', 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -280,8 +280,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Velocity Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in', {'factor': 100, 'unit': 'Meter Per Second', 'default': 0}),
-             ('Max', 'int16', 1, 'in', {'factor': 100, 'unit': 'Meter Per Second', 'default': 0})],
+             ('Min', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Meter Per Second', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Meter Per Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -323,8 +323,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Velocity Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'default': 0}),
-             ('Max', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'default': 0})],
+             ('Min', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -341,7 +341,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set Velocity Callback Threshold` ge
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -378,7 +378,7 @@ weiterhin erreicht bleiben.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -562,7 +562,7 @@ Gibt *true* zurück wenn der Laser aktiviert ist, *false* sonst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Distance',
-'elements': [('Distance', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'range': (0, 4000)})],
+'elements': [('Distance', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter', 'range': (0, 4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -588,7 +588,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Velocity',
-'elements': [('Velocity', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -614,7 +614,7 @@ Geschwindigkeitswert seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Distance Reached',
-'elements': [('Distance', 'uint16', 1, 'out', {'divisor': 100, 'unit': 'Meter', 'range': (0, 4000)})],
+'elements': [('Distance', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter', 'range': (0, 4000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -641,7 +641,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Velocity Reached',
-'elements': [('Velocity', 'int16', 1, 'out', {'divisor': 100, 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-12800, 12700)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -199,7 +199,7 @@ Zustand bedeutet:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -224,7 +224,7 @@ das IO-4 Bricklet angeschlossen ist, wie z.B. eine Taste.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -332,7 +332,7 @@ com['packets'].append({
 'name': 'Set Monoflop',
 'elements': [('Selection Mask', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Value Mask', 'uint8', 1, 'in', {'range': (0, 15)}),
-             ('Time', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -389,8 +389,8 @@ com['packets'].append({
 'name': 'Get Monoflop',
 'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 3)}),
              ('Value', 'uint8', 1, 'out', {'range': (0, 1)}),
-             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
-             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -509,7 +509,7 @@ com['packets'].append({
 'name': 'Set Edge Count Config',
 'elements': [('Selection Mask', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -557,7 +557,7 @@ com['packets'].append({
 'name': 'Get Edge Count Config',
 'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 3)}),
              ('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

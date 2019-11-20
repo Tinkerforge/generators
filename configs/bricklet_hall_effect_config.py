@@ -89,7 +89,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Config',
 'elements': [('Edge Type', 'uint8', 1, 'in', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -142,7 +142,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Config',
 'elements': [('Edge Type', 'uint8', 1, 'out', {'constant_group': 'Edge Type', 'default': 0}),
-             ('Debounce', 'uint8', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+             ('Debounce', 'uint8', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -208,7 +208,7 @@ Gibt *edges* zurück, wie von :func:`Set Edge Interrupt` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Count Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -233,7 +233,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Count Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

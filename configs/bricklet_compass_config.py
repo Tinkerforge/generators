@@ -69,7 +69,7 @@ add_callback_value_function(
     data_name = 'Heading',
     data_type = 'int16',
     doc       = heading_doc,
-    divisor   = 10,
+    scale     = (1, 10),
     unit      = 'Degree',
     range_    = (0, 3600)
 )
@@ -77,9 +77,9 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetic Flux Density',
-'elements': [('X', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
-             ('Y', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
-             ('Z', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -106,7 +106,7 @@ verwendet werden. Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Set Magnetic Flux Density Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -141,7 +141,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetic Flux Density Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -161,9 +161,9 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Magnetic Flux Density',
-'elements': [('X', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
-             ('Y', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
-             ('Z', 'int32', 1, 'out', {'divisor': 10**8, 'unit': 'Tesla'})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -243,7 +243,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Offset', 'int16', 3, 'in', {'factor': 10**8, 'unit': 'Tesla'}),
+'elements': [('Offset', 'int16', 3, 'in', {'scale': (1, 10**8), 'unit': 'Tesla'}),
              ('Gain', 'int16', 3, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -273,7 +273,7 @@ nur einmal durchgeführt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Offset', 'int16', 3, 'out', {'divisor': 10**8, 'unit': 'Tesla'}),
+'elements': [('Offset', 'int16', 3, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
              ('Gain', 'int16', 3, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {

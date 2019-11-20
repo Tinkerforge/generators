@@ -1542,7 +1542,7 @@ genutzt wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Stack Current Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1567,7 +1567,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Current Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1584,7 +1584,7 @@ Gibt die Periode zurück, wie von :func:`Set Stack Current Callback Period` gese
 com['packets'].append({
 'type': 'function',
 'name': 'Set Stack Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1609,7 +1609,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1626,7 +1626,7 @@ Gibt die Periode zurück, wie von :func:`Set Stack Voltage Callback Period` gese
 com['packets'].append({
 'type': 'function',
 'name': 'Set USB Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1651,7 +1651,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get USB Voltage Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1866,7 +1866,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set USB Voltage Callback Threshold`
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
@@ -1907,7 +1907,7 @@ weiterhin erreicht bleiben.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':

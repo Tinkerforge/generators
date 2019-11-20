@@ -20,7 +20,7 @@ def add_callback_value_function(packets, name, data_name, data_type, doc,
                                 callback_since_firmware=None,
                                 callback_config_getter_since_firmware=None,
                                 callback_config_setter_since_firmware=None,
-                                divisor=None,
+                                scale=None,
                                 unit=None,
                                 range_=None):
     name_get = name
@@ -42,7 +42,8 @@ def add_callback_value_function(packets, name, data_name, data_type, doc,
     if callback_config_setter_since_firmware == None:
         callback_config_setter_since_firmware = callback_since_firmware[:]
 
-    getter_element_info = {'divisor': divisor, 'unit': unit}
+    getter_element_info = {'scale': scale, 'unit': unit}
+
     if range_ is not None:
         getter_element_info['range'] = range_
 
@@ -75,11 +76,11 @@ verwendet werden. Der Callback wird mit der Funktion
         'type': 'function',
         'name': (name_set + ' Callback Configuration'),
         'corresponding_getter': name_get,
-        'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+        'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
                      ('Value Has To Change', 'bool', 1, 'in', {'default': False}),
                      ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-                     ('Min', data_type, 1, 'in', {'factor': divisor, 'unit': unit, 'default': 0}),
-                     ('Max', data_type, 1, 'in', {'factor': divisor, 'unit': unit, 'default': 0})],
+                     ('Min', data_type, 1, 'in', {'scale': scale, 'unit': unit, 'default': 0}),
+                     ('Max', data_type, 1, 'in', {'scale': scale, 'unit': unit, 'default': 0})],
         'since_firmware': callback_config_setter_since_firmware,
         'doc': ['ccf', {
         'en': """
@@ -151,11 +152,11 @@ ausgelöst.
         'type': 'function',
         'name': (name_get + ' Callback Configuration'),
         'corresponding_getter': name_get,
-        'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+        'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
                      ('Value Has To Change', 'bool', 1, 'out', {'default': False}),
                      ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-                     ('Min', data_type, 1, 'out', {'divisor': divisor, 'unit': unit, 'default': 0}),
-                     ('Max', data_type, 1, 'out', {'divisor': divisor, 'unit': unit, 'default': 0})],
+                     ('Min', data_type, 1, 'out', {'scale': scale, 'unit': unit, 'default': 0}),
+                     ('Max', data_type, 1, 'out', {'scale': scale, 'unit': unit, 'default': 0})],
         'since_firmware': callback_config_getter_since_firmware,
         'doc': ['ccf', {
         'en': """

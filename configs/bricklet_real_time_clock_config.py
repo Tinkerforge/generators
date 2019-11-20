@@ -250,7 +250,7 @@ Gibt den Versatz zurück, wie von :func:`Set Offset` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Date Time Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
@@ -275,7 +275,7 @@ Zeit seit der letzten Auslösung geändert haben.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Date Time Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':

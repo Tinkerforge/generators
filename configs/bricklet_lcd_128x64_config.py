@@ -390,7 +390,7 @@ com['packets'].append({
 'elements': [('Pressure', 'uint16', 1, 'out', {'range': (0, 300)}),
              ('X', 'uint16', 1, 'out', {'range': (0, 127)}),
              ('Y', 'uint16', 1, 'out', {'range': (0, 63)}),
-             ('Age', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
+             ('Age', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -417,7 +417,7 @@ Gibt die letzte gültige Touch-Position zurück:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Touch Position Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -452,7 +452,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch Position Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -475,7 +475,7 @@ com['packets'].append({
 'elements': [('Pressure', 'uint16', 1, 'out', {'range': (0, 300)}),
              ('X', 'uint16', 1, 'out', {'range': (0, 127)}),
              ('Y', 'uint16', 1, 'out', {'range': (0, 63)}),
-             ('Age', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
+             ('Age', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -497,13 +497,13 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Touch Gesture',
 'elements': [('Gesture', 'uint8', 1, 'out', {'constant_group': 'Gesture'}),
-             ('Duration', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Duration', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Pressure Max', 'uint16', 1, 'out', {'range': (0, 300)}),
              ('X Start', 'uint16', 1, 'out', {'range': (0, 127)}),
              ('Y Start', 'uint16', 1, 'out', {'range': (0, 63)}),
              ('X End', 'uint16', 1, 'out', {'range': (0, 127)}),
              ('Y End', 'uint16', 1, 'out', {'range': (0, 63)}),
-             ('Age', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
+             ('Age', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -539,7 +539,7 @@ der Geste her).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Touch Gesture Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -574,7 +574,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch Gesture Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -595,13 +595,13 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Touch Gesture',
 'elements': [('Gesture', 'uint8', 1, 'out', {'constant_group': 'Gesture'}),
-             ('Duration', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
+             ('Duration', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Pressure Max', 'uint16', 1, 'out', {'range': (0, 300)}),
              ('X Start', 'uint16', 1, 'out', {'range': (0, 127)}),
              ('Y Start', 'uint16', 1, 'out', {'range': (0, 63)}),
              ('X End', 'uint16', 1, 'out', {'range': (0, 127)}),
              ('Y End', 'uint16', 1, 'out', {'range': (0, 63)}),
-             ('Age', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
+             ('Age', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -810,7 +810,7 @@ Index 255 kann genutzt werden um alle Buttons zu entfernen.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Button Pressed Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
@@ -845,7 +845,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Button Pressed Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
@@ -1027,7 +1027,7 @@ Index 255 kann genutzt werden um alle Slider zu entfernen.
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Slider Value Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
@@ -1062,7 +1062,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Slider Value Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
@@ -1313,7 +1313,7 @@ ausgewählt gezeichnet)
 com['packets'].append({
 'type': 'function',
 'name': 'Set GUI Tab Selected Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
@@ -1348,7 +1348,7 @@ festen Periode ausgelöst unabhängig von den Änderungen des Werts.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GUI Tab Selected Callback Configuration',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0}),
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {

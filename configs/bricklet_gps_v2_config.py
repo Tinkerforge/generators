@@ -77,9 +77,9 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Coordinates',
-'elements': [('Latitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 90*10**6)}),
+'elements': [('Latitude', 'uint32', 1, 'out', {'scale': (1, 10**6), 'unit': 'Degree', 'range': (0, 90*10**6)}),
              ('NS', 'char', 1, 'out', {'range': [('N', 'N'), ('S', 'S')]}),
-             ('Longitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 180*10**6)}),
+             ('Longitude', 'uint32', 1, 'out', {'scale': (1, 10**6), 'unit': 'Degree', 'range': (0, 180*10**6)}),
              ('EW', 'char', 1, 'out', {'range': [('E', 'E'), ('W', 'W')]})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -135,8 +135,8 @@ Fix-Status anzeigt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude',
-'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'}),
-             ('Geoidal Separation', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
+'elements': [('Altitude', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter'}),
+             ('Geoidal Separation', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -158,8 +158,8 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion',
-'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree', 'range': (0, 36000)}),
-             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Per Second'})],
+'elements': [('Course', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (0, 36000)}),
+             ('Speed', 'uint32', 1, 'out', {'scale': (1, 360), 'unit': 'Meter Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -254,9 +254,9 @@ com['packets'].append({
              ('Satellite Numbers Length', 'uint8', 1, 'out', {'range': (0, 12)}),
              ('Satellite Numbers Data', 'uint8', 12, 'out'),
              ('Fix', 'uint8', 1, 'out', {'constant_group': 'Fix'}),
-             ('PDOP', 'uint16', 1, 'out', {'divisor': 100}),
-             ('HDOP', 'uint16', 1, 'out', {'divisor': 100}),
-             ('VDOP', 'uint16', 1, 'out', {'divisor': 100})],
+             ('PDOP', 'uint16', 1, 'out', {'scale': (1, 100)}),
+             ('HDOP', 'uint16', 1, 'out', {'scale': (1, 100)}),
+             ('VDOP', 'uint16', 1, 'out', {'scale': (1, 100)})],
 'high_level': {'stream_out': {'name': 'Satellite Numbers', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -381,7 +381,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Fix LED Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Coordinates Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -406,7 +406,7 @@ letzten Auslösung geändert haben.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Coordinates Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -423,7 +423,7 @@ Gibt die Periode zurück, wie von :func:`Set Coordinates Callback Period` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Status Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -448,7 +448,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Status Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -465,7 +465,7 @@ Gibt die Periode zurück, wie von :func:`Set Status Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Altitude Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -490,7 +490,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -507,7 +507,7 @@ Gibt die Periode zurück, wie von :func:`Set Altitude Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Motion Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -532,7 +532,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motion Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -549,7 +549,7 @@ Gibt die Periode zurück, wie von :func:`Set Motion Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Date Time Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -574,7 +574,7 @@ Zeit seit der letzten Auslösung geändert haben.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Date Time Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -621,9 +621,9 @@ eine Stund dauern.
 com['packets'].append({
 'type': 'callback',
 'name': 'Coordinates',
-'elements': [('Latitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 90*10**6)}),
+'elements': [('Latitude', 'uint32', 1, 'out', {'scale': (1, 10**6), 'unit': 'Degree', 'range': (0, 90*10**6)}),
              ('NS', 'char', 1, 'out', {'range': [('N', 'N'), ('S', 'S')]}),
-             ('Longitude', 'uint32', 1, 'out', {'divisor': 10**6, 'unit': 'Degree', 'range': (0, 180*10**6)}),
+             ('Longitude', 'uint32', 1, 'out', {'scale': (1, 10**6), 'unit': 'Degree', 'range': (0, 180*10**6)}),
              ('EW', 'char', 1, 'out', {'range': [('E', 'E'), ('W', 'W')]})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -681,8 +681,8 @@ Status seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Altitude',
-'elements': [('Altitude', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'}),
-             ('Geoidal Separation', 'int32', 1, 'out', {'divisor': 100, 'unit': 'Meter'})],
+'elements': [('Altitude', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter'}),
+             ('Geoidal Separation', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -711,8 +711,8 @@ ist (siehe :func:`Get Status`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Motion',
-'elements': [('Course', 'uint32', 1, 'out', {'divisor': 100, 'unit': 'Degree', 'range': (0, 36000)}),
-             ('Speed', 'uint32', 1, 'out', {'divisor': 360, 'unit': 'Meter Per Second'})],
+'elements': [('Course', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (0, 36000)}),
+             ('Speed', 'uint32', 1, 'out', {'scale': (1, 360), 'unit': 'Meter Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

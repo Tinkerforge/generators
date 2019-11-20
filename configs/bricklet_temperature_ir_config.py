@@ -38,7 +38,7 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Ambient Temperature',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -63,7 +63,7 @@ den :cb:`Ambient Temperature` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Object Temperature',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -98,7 +98,7 @@ den :cb:`Object Temperature` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Emissivity',
-'elements': [('Emissivity', 'uint16', 1, 'in', {'factor': 65535, 'default': 65535, 'range': (6553, None)})],
+'elements': [('Emissivity', 'uint16', 1, 'in', {'scale': (1, 65535), 'range': (6553, None), 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -147,7 +147,7 @@ Der Emissionsgrad wird in nicht-flüchtigem Speicher gespeichert und wird auch n
 com['packets'].append({
 'type': 'function',
 'name': 'Get Emissivity',
-'elements': [('Emissivity', 'uint16', 1, 'out', {'divisor': 65535, 'default': 65535, 'range': (6553, None)})],
+'elements': [('Emissivity', 'uint16', 1, 'out', {'scale': (1, 65535), 'range': (6553, None), 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -164,7 +164,7 @@ Gibt den Emissionsgrad zurück, wie von :func:`Set Emissivity` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Ambient Temperature Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -189,7 +189,7 @@ Temperatur seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Ambient Temperature Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -206,7 +206,7 @@ Gibt die Periode zurück, wie von :func:`Set Ambient Temperature Callback Period
 com['packets'].append({
 'type': 'function',
 'name': 'Set Object Temperature Callback Period',
-'elements': [('Period', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -231,7 +231,7 @@ Temperatur seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Object Temperature Callback Period',
-'elements': [('Period', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 0})],
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -249,8 +249,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Ambient Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in', {'factor': 10, 'unit': 'Degree Celsius', 'default': 0}),
-             ('Max', 'int16', 1, 'in', {'factor': 10, 'unit': 'Degree Celsius', 'default': 0})],
+             ('Min', 'int16', 1, 'in', {'scale': (1, 10), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'scale': (1, 10), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -292,8 +292,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Ambient Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'default': 0}),
-             ('Max', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'default': 0})],
+             ('Min', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -311,8 +311,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Object Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'in', {'factor': 10, 'unit': 'Degree Celsius', 'default': 0}),
-             ('Max', 'int16', 1, 'in', {'factor': 10, 'unit': 'Degree Celsius', 'default': 0})],
+             ('Min', 'int16', 1, 'in', {'scale': (1, 10), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'in', {'scale': (1, 10), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -354,8 +354,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Object Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'default': 0}),
-             ('Max', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'default': 0})],
+             ('Min', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -372,7 +372,7 @@ Gibt den Schwellwert zurück, wie von :func:`Set Object Temperature Callback Thr
 com['packets'].append({
 'type': 'function',
 'name': 'Set Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -409,7 +409,7 @@ weiterhin erreicht bleiben.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Debounce Period',
-'elements': [('Debounce', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'default': 100})],
+'elements': [('Debounce', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -426,7 +426,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Ambient Temperature',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -452,7 +452,7 @@ Temperatur seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Object Temperature',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -479,7 +479,7 @@ Objekttemperatur seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Ambient Temperature Reached',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'range': (-400, 1250)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -506,7 +506,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Object Temperature Reached',
-'elements': [('Temperature', 'int16', 1, 'out', {'divisor': 10, 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'range': (-700, 3800)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

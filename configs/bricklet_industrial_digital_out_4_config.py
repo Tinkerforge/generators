@@ -97,7 +97,7 @@ com['packets'].append({
 'name': 'Set Monoflop',
 'elements': [('Selection Mask', 'uint16', 1, 'in', {}),
              ('Value Mask', 'uint16', 1, 'in', {}),
-             ('Time', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -153,8 +153,8 @@ com['packets'].append({
 'name': 'Get Monoflop',
 'elements': [('Pin', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Value', 'uint16', 1, 'out', {'range': (0, 1)}),
-             ('Time', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'}),
-             ('Time Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
+             ('Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

@@ -105,7 +105,7 @@ add_callback_value_function(
     data_type     = 'int32',
     channel_count = 2,
     doc           = current_doc,
-    divisor       = 1000*1000*1000,
+    scale         = (1, 1000*1000*1000),
     unit          = 'Ampere',
     range_        = (0, 22505322)
 )
@@ -276,8 +276,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Status Config',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Min', 'int32', 1, 'in', {'factor': 1000*1000*1000, 'unit': 'Ampere', 'default': 4*1000*1000}),
-             ('Max', 'int32', 1, 'in', {'factor': 1000*1000*1000, 'unit': 'Ampere', 'default': 20*1000*1000}),
+             ('Min', 'int32', 1, 'in', {'scale': (1, 1000*1000*1000), 'unit': 'Ampere', 'default': 4*1000*1000}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 1000*1000*1000), 'unit': 'Ampere', 'default': 20*1000*1000}),
              ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -320,8 +320,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Channel LED Status Config',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Min', 'int32', 1, 'out', {'divisor': 1000*1000*1000, 'unit': 'Ampere', 'default': 4*1000*1000}),
-             ('Max', 'int32', 1, 'out', {'divisor': 1000*1000*1000, 'unit': 'Ampere', 'default': 20*1000*1000}),
+             ('Min', 'int32', 1, 'out', {'scale': (1, 1000*1000*1000), 'unit': 'Ampere', 'default': 4*1000*1000}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 1000*1000*1000), 'unit': 'Ampere', 'default': 20*1000*1000}),
              ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Status Config', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

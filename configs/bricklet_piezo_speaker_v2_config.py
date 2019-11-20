@@ -51,7 +51,7 @@ com['packets'].append({
 'name': 'Set Beep',
 'elements': [('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (50, 15000)}),
              ('Volume', 'uint8', 1, 'in', {'range': (0, 10)}),
-             ('Duration', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'})],
+             ('Duration', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -77,8 +77,8 @@ com['packets'].append({
 'name': 'Get Beep',
 'elements': [('Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': (50, 15000)}),
              ('Volume', 'uint8', 1, 'out', {'range': (0, 10)}),
-             ('Duration', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'}),
-             ('Duration Remaining', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second'})],
+             ('Duration', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'}),
+             ('Duration Remaining', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -109,7 +109,7 @@ com['packets'].append({
              ('Step Size', 'uint16', 1, 'in'),
              ('Step Delay', 'uint16', 1, 'in'),
              ('Volume', 'uint8', 1, 'in'),
-             ('Duration', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'})],
+             ('Duration', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -212,7 +212,7 @@ com['packets'].append({
              ('Step Size', 'uint16', 1, 'out'),
              ('Step Delay', 'uint16', 1, 'out'),
              ('Volume', 'uint8', 1, 'out'),
-             ('Duration', 'uint32', 1, 'out', {'divisor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'}),
+             ('Duration', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'}),
              ('Duration Remaining', 'uint32', 1, 'out'),
              ('Current Frequency', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],

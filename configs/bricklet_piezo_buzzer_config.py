@@ -34,7 +34,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Beep',
-'elements': [('Duration', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second'})],
+'elements': [('Duration', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

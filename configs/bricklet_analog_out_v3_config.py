@@ -35,7 +35,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set Output Voltage',
-'elements': [('Voltage', 'uint16', 1, 'in', {'factor': 1000, 'unit': 'Volt', 'range': (0, 12000), 'default': 0})],
+'elements': [('Voltage', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 12000), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -52,7 +52,7 @@ Setzt die Spannung.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Output Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (0, 12000), 'default': 0})],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 12000), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -69,7 +69,7 @@ Gibt die Spannung zurück, wie von :func:`Set Output Voltage` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Input Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out', {'divisor': 1000, 'unit': 'Volt', 'range': (0, 15000)})],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 15000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

@@ -71,7 +71,7 @@ add_callback_value_function(
     data_name = 'Voltage',
     data_type = 'uint16',
     doc       = voltage_doc,
-    divisor   = 1000,
+    scale     = (1, 1000),
     unit      = 'Volt',
     range_    = (0, 42000)
 )
@@ -134,7 +134,7 @@ Gibt den Überabtastungsfaktor zurück, wie von :func:`Set Oversampling` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Offset', 'int16', 1, 'in', {'factor': 1000, 'unit': 'Volt'}),
+'elements': [('Offset', 'int16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt'}),
              ('Multiplier', 'uint16', 1, 'in', {}),
              ('Divisor', 'uint16', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
@@ -166,7 +166,7 @@ werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Offset', 'int16', 1, 'out', {'divisor': 1000, 'unit': 'Volt'}),
+'elements': [('Offset', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
              ('Multiplier', 'uint16', 1, 'out', {}),
              ('Divisor', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],

@@ -41,7 +41,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Beep',
-'elements': [('Duration', 'uint32', 1, 'in', {'factor': 1000, 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'}),
+'elements': [('Duration', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Beep Duration'}),
              ('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (585, 7100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
