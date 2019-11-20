@@ -166,7 +166,8 @@ given *index*.
 
 If the channel mapping has 3 colors, you will get the data in the sequence
 RGBRGBRGB... if the channel mapping has 4 colors you will get the data in the
-sequence RGBWRGBWRGBW... (assuming you start at an index divisible by 3 for RGB or 4 for RGBW).
+sequence RGBWRGBWRGBW...
+(assuming you start at an index divisible by 3 (RGB) or 4 (RGBW)).
 """,
 'de':
 """
