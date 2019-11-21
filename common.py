@@ -1482,8 +1482,27 @@ class Element(object):
         default = self.get_default()
 
         if default != None:
-            pass
-            # FIXME: assert that default has correct type
+            if not isinstance(default, list):
+                default = [default]
+
+            for subdefault in default:
+                if self.get_type().startswith('int') or self.get_type().startswith('int'):
+                    if sys.hexversion < 0x03000000:
+                        assert isinstance(subdefault, (int, long)), raw_data
+                    else:
+                        assert isinstance(subdefault, int), raw_data
+                elif self.get_type() == 'float':
+                    assert isinstance(subdefault, float), raw_data
+                elif self.get_type() == 'bool':
+                    assert isinstance(subdefault, bool), raw_data
+                elif self.get_type() == 'char':
+                    assert isinstance(subdefault, str), raw_data
+                    assert len(subdefault) == 1, raw_data
+                    assert ord(subdefault) <= 255, raw_data
+                elif self.get_type() == 'string':
+                    assert isinstance(subdefault, str), raw_data
+
+            # FIXME: check if default value is in range
 
     def get_packet(self): # parent
         return self.packet
