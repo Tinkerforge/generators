@@ -649,6 +649,139 @@ def format_float(value):
 
     return string
 
+unit_prefixes = [
+    # denominator prefixes must come first, ordered from biggest to smallest denominator
+    ('n', {'en': 'Nano',  'de': 'Nano'},  1, 1000000000),
+    ('µ', {'en': 'Micro', 'de': 'Mikro'}, 1, 1000000),
+    ('m', {'en': 'Milli', 'de': 'Milli'}, 1, 1000),
+    ('c', {'en': 'Centi', 'de': 'Zenti'}, 1, 100),
+
+    # numerator prefixes must come second, ordered from biggest to smallest numerator
+    ('k', {'en': 'Kilo',  'de': 'Kilo'},  0, 1000),
+    ('h', {'en': 'Hecto', 'de': 'Hekto'}, 0, 100)
+]
+
+def format_value_hint(value, scale, unit):
+    if sys.hexversion < 0x03000000:
+        assert isinstance(value, (int, long)), value
+    else:
+        assert isinstance(value, int), value
+
+    if scale == None and unit == None:
+        return ''
+
+    if scale == None:
+        scale = (1, 1)
+
+    assert isinstance(scale, tuple), scale
+    assert isinstance(scale[0], int), scale
+    assert isinstance(scale[1], int), scale
+
+    if unit != None:
+        assert isinstance(unit, Unit), unit
+
+    if unit == None:
+        scaled_value = float(value) * scale[0] / scale[1]
+        modified_scale = scale
+        unit_symbol = None
+    elif value == 0:
+        scaled_value = 0
+        modified_scale = scale
+        unit_symbol = unit.symbol
+    else:
+        # find the scale that results in a scaled value with the minimum number of "Vorkommastellen"
+        candidate = {unit.symbol: (float(value) * scale[0] / scale[1], scale)}
+
+        for prefix, name, index, divisor, in unit_prefixes:
+            if prefix not in unit.allowed_prefixes:
+                continue
+
+            divided_scale = list(scale)
+            divided_scale[index] /= float(divisor)
+            candidate[prefix + unit.symbol] = (float(value) * divided_scale[0] / divided_scale[1], divided_scale)
+
+        scaled_value = None
+        modified_scale = None
+        unit_symbol = None
+
+        for unit_symbol_candidate in candidate:
+            scaled_value_candidate, modified_scale_candidate = candidate[unit_symbol_candidate]
+
+            if abs(scaled_value_candidate) >= 1 and (scaled_value == None or abs(scaled_value_candidate) < abs(scaled_value)):
+                scaled_value = scaled_value_candidate
+                modified_scale = modified_scale_candidate
+                unit_symbol = unit_symbol_candidate
+
+        if scaled_value == None: # no abs(scaled_value) >= 1 exists
+            for unit_symbol_candidate in candidate:
+                scaled_value_candidate, modified_scale_candidate = candidate[unit_symbol_candidate]
+
+                if scaled_value == None or abs(scaled_value_candidate) > abs(scaled_value):
+                    scaled_value = scaled_value_candidate
+                    modified_scale = modified_scale_candidate
+                    unit_symbol = unit_symbol_candidate
+
+    digits = int(math.ceil(math.log10(modified_scale[1]) - math.log10(modified_scale[0])))
+
+    if digits >= 1:
+        formatted_value = '{{0:.{0}f}}'.format(digits).format(round(scaled_value, digits))
+    else:
+        formatted_value = str(int(scaled_value))
+
+    if lang == 'de':
+        formatted_value = formatted_value.replace('.', ',')
+
+    if unit != None:
+        formatted_value = unit.sequence.format(value=formatted_value, unit=unit_symbol)
+
+    return formatted_value
+
+def format_value_with_tooltip(element, value, scale, unit):
+    formatted_value = element.format_value(value)
+
+    if scale != None or unit != None:
+        formatted_value_hint = format_value_hint(value, scale, unit)
+    else:
+        formatted_value_hint = ''
+
+    result = None
+
+    for exponent in [16, 32, 64]:
+        if value == -2 ** (exponent - 1):
+            result = '⟨abbr title=«{0}{1} (Int{2} Min)»⟩-2⟨sup⟩{3}⟨/sup⟩⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent, exponent - 1)
+            break
+        elif value == 2 ** (exponent - 1) - 1:
+            result = '⟨abbr title=«{0}{1} (Int{2} Max)»⟩2⟨sup⟩{3}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent, exponent - 1)
+            break
+        elif value == 2 ** exponent - 1:
+            result = '⟨abbr title=«{0}{1} (UInt{2} Max)»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
+            break
+
+    if result == None:
+        if len(formatted_value_hint) > 0:
+            result = '⟨abbr title=«{0}»⟩{1}⟨/abbr⟩'.format(formatted_value_hint, formatted_value)
+        else:
+            result = formatted_value
+
+    return result
+
+def normalize_scale(scale, unit):
+    scale = list(scale)
+    unit_name = unit.name
+    unit_symbol = unit.symbol
+
+    for prefix, name, index, divisor, in unit_prefixes:
+        if prefix not in unit.allowed_prefixes:
+            continue
+
+        if scale[index] % divisor == 0:
+            scale[index] //= divisor
+            unit_name = select_lang(name) + unit_name.lower()
+            unit_symbol = prefix + unit_symbol
+            break
+
+    return tuple(scale), unit_name, unit_symbol
+
 def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
 
@@ -1161,14 +1294,14 @@ class FlavoredName(object):
             return self.cache[key]
 
 class Unit(object):
-    def __init__(self, name, symbol, usage, scale_prefix_allowed=True, sequence={'en': '{value} {unit}', 'de': '{value} {unit}'}):
+    def __init__(self, name, symbol, usage, allowed_prefixes, sequence={'en': '{value} {unit}', 'de': '{value} {unit}'}):
         assert '{value}' in sequence['en'] and '{value}' in sequence['de'], sequence
         assert '{unit}' in sequence['en'] and '{unit}' in sequence['de'], sequence
 
         self._name = name
         self.symbol = symbol
         self._usage = usage
-        self.scale_prefix_allowed = scale_prefix_allowed
+        self.allowed_prefixes = allowed_prefixes
         self._sequence = sequence
 
     @property
@@ -1186,121 +1319,138 @@ class Unit(object):
 units = {
     'Ampere':                       Unit({'en': 'Ampere', 'de': 'Ampere'},
                                          'A',
-                                         {'en': 'Electric current', 'de': 'Elektrische Stromstärke'}),
+                                         {'en': 'Electric current', 'de': 'Elektrische Stromstärke'},
+                                         ['n', 'µ', 'm', 'k']),
 
     'Baud':                         Unit({'en': 'Baud', 'de': 'Baud'},
                                          'Bd',
-                                         {'en': 'Symbol rate', 'de': 'Symbolrate'}),
+                                         {'en': 'Symbol rate', 'de': 'Symbolrate'},
+                                         ['k']),
 
     'Bit Per Second':               Unit({'en': 'Bit per second', 'de': 'Bit pro Sekunde'},
                                          'bit/s',
-                                         {'en': 'Data Rate', 'de': 'Datenrate'}),
+                                         {'en': 'Data Rate', 'de': 'Datenrate'},
+                                         ['k']),
 
     'Degree Celsius':               Unit({'en': 'Degree Celsius', 'de': 'Grad Celsius'},
                                          '°C',
                                          {'en': 'Temperature', 'de': 'Temperatur'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Decibel':                      Unit({'en': 'Decibel', 'de': 'Dezibel'},
                                          'dB',
                                          {'en': 'Level', 'de': 'Pegel'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Degree':                       Unit({'en': 'Degree', 'de': 'Grad'},
                                          '°',
                                          {'en': 'Angle', 'de': 'Winkel'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Degree Per Second':            Unit({'en': 'Degree per second', 'de': 'Grad pro Sekunde'},
                                          '°/s',
                                          {'en': 'Anglular velocity', 'de': 'Winkelgeschwindigkeit'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Gram':                         Unit({'en': 'Gram', 'de': 'Gramm'},
                                          'g',
-                                         {'en': 'Mass', 'de': 'Masse'}),
+                                         {'en': 'Mass', 'de': 'Masse'},
+                                         ['n', 'µ', 'm', 'k']),
 
     'Gram Per Cubic Meter':         Unit({'en': 'Gram per cubic meter', 'de': 'Gramm pro Kubikmeter'},
                                          'g/m³',
-                                         {'en': 'Density', 'de': 'Dichte'}),
+                                         {'en': 'Density', 'de': 'Dichte'},
+                                         ['n', 'µ', 'm', 'k']),
 
     'Hertz':                        Unit({'en': 'Hertz', 'de': 'Hertz'},
                                          'Hz',
                                          {'en': 'Frequency', 'de': 'Frequenz'},
-                                         scale_prefix_allowed=False),
+                                         ['k']),
 
     'Kelvin':                       Unit({'en': 'Kelvin', 'de': 'Kelvin'},
                                          'K',
                                          {'en': 'Temperature', 'de': 'Temperatur'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Meter Per Second':             Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
                                          'm/s',
-                                         {'en': 'Speed', 'de': 'Geschwindigkeit'}),
+                                         {'en': 'Speed', 'de': 'Geschwindigkeit'},
+                                         ['n', 'µ', 'm', 'c', 'k']),
 
     'Lux':                          Unit({'en': 'Lux', 'de': 'Lux'},
                                          'lx',
                                          {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Meter':                        Unit({'en': 'Meter', 'de': 'Meter'},
                                          'm',
-                                         {'en': 'Length', 'de': 'Länge'}),
+                                         {'en': 'Length', 'de': 'Länge'},
+                                         ['n', 'µ', 'm', 'c', 'k']),
 
     'Meter Per Second Squared':     Unit({'en': 'Meter per second squared', 'de': 'Meter pro Sekunde Quadrat'},
                                          'm/s²',
-                                         {'en': 'Acceleration', 'de': 'Beschleunigung'}),
+                                         {'en': 'Acceleration', 'de': 'Beschleunigung'},
+                                         ['n', 'µ', 'm', 'c', 'k']),
 
     'Pascal':                       Unit({'en': 'Pascal', 'de': 'Pascal'},
                                          'Pa',
-                                         {'en': 'Pressure', 'de': 'Druck'}),
+                                         {'en': 'Pressure', 'de': 'Druck'},
+                                         ['n', 'µ', 'm', 'h', 'k']),
 
     'Percent':                      Unit({'en': 'Percent', 'de': 'Prozent'},
                                          '%',
-                                         {'en': 'Fraction', 'de': 'Anteil'}),
+                                         {'en': 'Fraction', 'de': 'Anteil'},
+                                         []),
 
     'Percent Relative Humidity':    Unit({'en': 'Percent relative humidity', 'de': 'Prozent relative Luftfeuchtigkeit'},
                                          '%',
                                          {'en': 'Relative Humidity', 'de': 'Relative Luftfeuchtigkeit'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Parts Per Million':            Unit({'en': 'Parts per million', 'de': 'Parts per million'},
                                          'ppm',
                                          {'en': 'Fraction', 'de': 'Anteil'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Second':                       Unit({'en': 'Second', 'de': 'Sekunde'},
                                          's',
-                                         {'en': 'Time', 'de': 'Zeit'}),
+                                         {'en': 'Time', 'de': 'Zeit'},
+                                         ['n', 'µ', 'm']),
 
     'Standard Gravity':             Unit({'en': 'Standard gravity', 'de': 'Normfallbeschleunigung'},
                                          'gₙ',
                                          {'en': 'Gravitational acceleration', 'de': 'Fallbeschleunigung'},
-                                         scale_prefix_allowed=False),
+                                         []),
 
     'Tesla':                        Unit({'en': 'Tesla', 'de': 'Tesla'},
                                          'T',
-                                         {'en': 'Magnetic flux density', 'de': 'Magnetische Flussdichte'}),
+                                         {'en': 'Magnetic flux density', 'de': 'Magnetische Flussdichte'},
+                                         ['n', 'µ', 'm', 'k']),
 
     'Volt':                         Unit({'en': 'Volt', 'de': 'Volt'},
                                          'V',
-                                         {'en': 'Electric potential', 'de': 'Elektrische Spannung'}),
+                                         {'en': 'Electric potential', 'de': 'Elektrische Spannung'},
+                                         ['n', 'µ', 'm', 'k']),
 
     'Volt Ampere':                  Unit({'en': 'Volt-ampere', 'de': 'Voltampere'},
                                          'VA',
-                                         {'en': 'Apparent power', 'de': 'Scheinleistung'}),
+                                         {'en': 'Apparent power', 'de': 'Scheinleistung'},
+                                         ['n', 'µ', 'm', 'k']),
 
     'Volt Ampere Reactive':         Unit({'en': 'Volt-ampere reactive', 'de': 'Voltampere reaktiv'},
                                          'var',
-                                         {'en': 'Reactive power', 'de': 'Blindleistung'}),
+                                         {'en': 'Reactive power', 'de': 'Blindleistung'},
+                                         []),
 
     'Watt':                         Unit({'en': 'Watt', 'de': 'Watt'},
                                          'W',
-                                         {'en': 'Power', 'de': 'Leistung'}),
+                                         {'en': 'Power', 'de': 'Leistung'},
+                                         ['n', 'µ', 'm', 'k']),
 
     'Watt Hour':                    Unit({'en': 'Watt-hour', 'de': 'Wattstunde'},
                                          'Wh',
-                                         {'en': 'Energy', 'de': 'Energie'})
+                                         {'en': 'Energy', 'de': 'Energie'},
+                                         ['n', 'µ', 'm', 'k'])
 }
 
 class Constant(object):
@@ -1964,33 +2114,16 @@ class Packet(object):
 
                 meta.append('{0}: {1}'.format(unit_title, formatted_scale))
             elif scale == None and unit != None:
-                meta.append('{0}: 1 ⟨abbr title=«{1} ({2})»⟩{3}⟨/abbr⟩'.format(unit_title, unit.name, unit.usage, unit.symbol))
+                formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.name, unit.usage, unit.symbol)
+
+                meta.append('{0}: {1}'.format(unit_title, unit.sequence.format(value='1', unit=formatted_unit)))
             elif scale != None and unit != None:
-                scale = list(scale)
-                unit_name = unit.name
-                unit_symbol = unit.symbol
-
-                if unit.scale_prefix_allowed:
-                    if scale[1] % 1000000000 == 0:
-                        scale[1] //= 1000000000
-                        unit_name = 'Nano' + unit_name.lower()
-                        unit_symbol = 'n' + unit_symbol
-                    elif scale[1] % 1000000 == 0:
-                        scale[1] //= 1000000
-                        unit_name = select_lang({'en': 'Micro', 'de': 'Mikro'}) + unit_name.lower()
-                        unit_symbol = 'µ' + unit_symbol
-                    elif scale[1] % 1000 == 0:
-                        scale[1] //= 1000
-                        unit_name = 'Milli' + unit_name.lower()
-                        unit_symbol = 'm' + unit_symbol
-
-                formatted_scale = format_fraction(*scale)
+                normalized_scale, unit_name, unit_symbol = normalize_scale(scale, unit)
                 formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_name, unit.usage, unit_symbol)
 
-                meta.append('{0}: {1}'.format(unit_title, unit.sequence.format(value=formatted_scale, unit=formatted_unit)))
+                meta.append('{0}: {1}'.format(unit_title, unit.sequence.format(value=format_fraction(*normalized_scale), unit=formatted_unit)))
 
             if element.get_type() not in ['bool', 'string']:
-
                 if constants_hint_override != None:
                     constants_hint = select_lang(constants_hint_override)
                 else:
@@ -2013,19 +2146,7 @@ class Packet(object):
 
                         if element.get_type().startswith('int') or element.get_type().startswith('uint'):
                             for i, value in enumerate(subrange):
-                                for exponent in [16, 32, 64]:
-                                    if value == -2 ** (exponent - 1):
-                                        formatted_subrange[i] = '⟨abbr title=«{0} (Int{1} Min)»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(value, exponent, exponent - 1)
-                                        break
-                                    elif value == 2 ** (exponent - 1) - 1:
-                                        formatted_subrange[i] = '⟨abbr title=«{0} (Int{1} Max)»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(value, exponent, exponent - 1)
-                                        break
-                                    elif value == 2 ** exponent - 1:
-                                        formatted_subrange[i] = '⟨abbr title=«{0} (UInt{1} Max)»⟩2⟨sup⟩{1}⟨/sup⟩ - 1⟨/abbr⟩'.format(value, exponent)
-                                        break
-
-                                if formatted_subrange[i] == None:
-                                    formatted_subrange[i] = element.format_value(value)
+                                formatted_subrange[i] = format_value_with_tooltip(element, value, scale, unit)
                         else:
                             for i, value in enumerate(subrange):
                                 formatted_subrange[i] = element.format_value(value)
@@ -2043,7 +2164,12 @@ class Packet(object):
             default = element.get_default()
 
             if default != None:
-                meta.append('{0}: {1}'.format(default_title, element.format_value(default)))
+                if element.get_type().startswith('int') or element.get_type().startswith('uint'):
+                    formatted_default = format_value_with_tooltip(element, default, scale, unit)
+                else:
+                    formatted_default = element.format_value(default)
+
+                meta.append('{0}: {1}'.format(default_title, formatted_default))
 
             if element.get_direction() == 'in':
                 formatted_meta_in.append((name_func(element), ', '.join(meta)))
