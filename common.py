@@ -1332,11 +1332,6 @@ units = {
                                          {'en': 'Data Rate', 'de': 'Datenrate'},
                                          ['k']),
 
-    'Degree Celsius':               Unit({'en': 'Degree Celsius', 'de': 'Grad Celsius'},
-                                         '°C',
-                                         {'en': 'Temperature', 'de': 'Temperatur'},
-                                         []),
-
     'Decibel':                      Unit({'en': 'Decibel', 'de': 'Dezibel'},
                                          'dB',
                                          {'en': 'Level', 'de': 'Pegel'},
@@ -1345,6 +1340,11 @@ units = {
     'Degree':                       Unit({'en': 'Degree', 'de': 'Grad'},
                                          '°',
                                          {'en': 'Angle', 'de': 'Winkel'},
+                                         []),
+
+    'Degree Celsius':               Unit({'en': 'Degree Celsius', 'de': 'Grad Celsius'},
+                                         '°C',
+                                         {'en': 'Temperature', 'de': 'Temperatur'},
                                          []),
 
     'Degree Per Second':            Unit({'en': 'Degree per second', 'de': 'Grad pro Sekunde'},
@@ -1372,11 +1372,6 @@ units = {
                                          {'en': 'Temperature', 'de': 'Temperatur'},
                                          []),
 
-    'Meter Per Second':             Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
-                                         'm/s',
-                                         {'en': 'Speed', 'de': 'Geschwindigkeit'},
-                                         ['n', 'µ', 'm', 'c', 'k']),
-
     'Lux':                          Unit({'en': 'Lux', 'de': 'Lux'},
                                          'lx',
                                          {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
@@ -1387,10 +1382,20 @@ units = {
                                          {'en': 'Length', 'de': 'Länge'},
                                          ['n', 'µ', 'm', 'c', 'k']),
 
+    'Meter Per Second':             Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
+                                         'm/s',
+                                         {'en': 'Speed', 'de': 'Geschwindigkeit'},
+                                         ['n', 'µ', 'm', 'c', 'k']),
+
     'Meter Per Second Squared':     Unit({'en': 'Meter per second squared', 'de': 'Meter pro Sekunde Quadrat'},
                                          'm/s²',
                                          {'en': 'Acceleration', 'de': 'Beschleunigung'},
                                          ['n', 'µ', 'm', 'c', 'k']),
+
+    'Parts Per Million':            Unit({'en': 'Parts per million', 'de': 'Parts per million'},
+                                         'ppm',
+                                         {'en': 'Fraction', 'de': 'Anteil'},
+                                         []),
 
     'Pascal':                       Unit({'en': 'Pascal', 'de': 'Pascal'},
                                          'Pa',
@@ -1405,11 +1410,6 @@ units = {
     'Percent Relative Humidity':    Unit({'en': 'Percent relative humidity', 'de': 'Prozent relative Luftfeuchtigkeit'},
                                          '%',
                                          {'en': 'Relative Humidity', 'de': 'Relative Luftfeuchtigkeit'},
-                                         []),
-
-    'Parts Per Million':            Unit({'en': 'Parts per million', 'de': 'Parts per million'},
-                                         'ppm',
-                                         {'en': 'Fraction', 'de': 'Anteil'},
                                          []),
 
     'Second':                       Unit({'en': 'Second', 'de': 'Sekunde'},
