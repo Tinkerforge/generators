@@ -873,146 +873,146 @@ aktiviert werden.
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Timestamped Frame Configuration',
-'elements': [('Enabled', 'bool', 1, 'in'),
-             ('Write Backlog Size', 'uint16', 1, 'in'),
-             ('Read Backlog Size', 'uint16', 1, 'in')],
-'since_firmware': [2, 0, 3],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
+#com['packets'].append({
+#'type': 'function',
+#'name': 'Set Timestamped Frame Configuration',
+#'elements': [('Enabled', 'bool', 1, 'in'),
+#             ('Write Backlog Size', 'uint16', 1, 'in'),
+#             ('Read Backlog Size', 'uint16', 1, 'in')],
+#'since_firmware': [2, 0, 3],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Timestamped Frame Configuration',
-'elements': [('Enabled', 'bool', 1, 'out'),
-             ('Write Backlog Size', 'uint16', 1, 'out'),
-             ('Read Backlog Size', 'uint16', 1, 'out')],
-'since_firmware': [2, 0, 3],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
+#com['packets'].append({
+#'type': 'function',
+#'name': 'Get Timestamped Frame Configuration',
+#'elements': [('Enabled', 'bool', 1, 'out'),
+#             ('Write Backlog Size', 'uint16', 1, 'out'),
+#             ('Read Backlog Size', 'uint16', 1, 'out')],
+#'since_firmware': [2, 0, 3],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
 
-com['packets'].append({
-'type': 'function',
-'name': 'Write Timestamped Frame Low Level',
-'elements': [('Frame Type', 'uint8', 1, 'in', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'in'),
-             ('Data Length', 'uint8', 1, 'in'),
-             ('Data Data', 'uint8', 15, 'in'),
-             ('Timestamp', 'uint64', 1, 'in'),
-             ('Success', 'bool', 1, 'out')],
-'high_level': {'stream_in': {'name': 'Data', 'single_chunk': True}},
-'since_firmware': [2, 0, 3],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
+#com['packets'].append({
+#'type': 'function',
+#'name': 'Write Timestamped Frame Low Level',
+#'elements': [('Frame Type', 'uint8', 1, 'in', {'constant_group': 'Frame Type'}),
+#             ('Identifier', 'uint32', 1, 'in'),
+#             ('Data Length', 'uint8', 1, 'in'),
+#             ('Data Data', 'uint8', 15, 'in'),
+#             ('Timestamp', 'uint64', 1, 'in'),
+#             ('Success', 'bool', 1, 'out')],
+#'high_level': {'stream_in': {'name': 'Data', 'single_chunk': True}},
+#'since_firmware': [2, 0, 3],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
 
-com['packets'].append({
-'type': 'function',
-'name': 'Read Timestamped Frame Low Level',
-'elements': [('Success', 'bool', 1, 'out'),
-             ('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'out'),
-             ('Data Length', 'uint8', 1, 'out'),
-             ('Data Data', 'uint8', 15, 'out'),
-             ('Timestamp', 'uint64', 1, 'out')],
-'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
-'since_firmware': [2, 0, 3],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
+#com['packets'].append({
+#'type': 'function',
+#'name': 'Read Timestamped Frame Low Level',
+#'elements': [('Success', 'bool', 1, 'out'),
+#             ('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
+#             ('Identifier', 'uint32', 1, 'out'),
+#             ('Data Length', 'uint8', 1, 'out'),
+#             ('Data Data', 'uint8', 15, 'out'),
+#             ('Timestamp', 'uint64', 1, 'out')],
+#'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
+#'since_firmware': [2, 0, 3],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Timestamp',
-'elements': [('Timestamp', 'uint64', 1, 'out')],
-'since_firmware': [2, 0, 3],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
+#com['packets'].append({
+#'type': 'function',
+#'name': 'Get Timestamp',
+#'elements': [('Timestamp', 'uint64', 1, 'out')],
+#'since_firmware': [2, 0, 3],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Timestamped Frame Read Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'in')],
-'since_firmware': [2, 0, 3],
-'doc': ['ccf', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
+#com['packets'].append({
+#'type': 'function',
+#'name': 'Set Timestamped Frame Read Callback Configuration',
+#'elements': [('Enabled', 'bool', 1, 'in')],
+#'since_firmware': [2, 0, 3],
+#'doc': ['ccf', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Timestamped Frame Read Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'out')],
-'since_firmware': [2, 0, 3],
-'doc': ['ccf', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
+#com['packets'].append({
+#'type': 'function',
+#'name': 'Get Timestamped Frame Read Callback Configuration',
+#'elements': [('Enabled', 'bool', 1, 'out')],
+#'since_firmware': [2, 0, 3],
+#'doc': ['ccf', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
 
-com['packets'].append({
-'type': 'callback',
-'name': 'Timestamped Frame Read Low Level',
-'elements': [('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
-             ('Identifier', 'uint32', 1, 'out'),
-             ('Data Length', 'uint8', 1, 'out'),
-             ('Data Data', 'uint8', 15, 'out'),
-             ('Timestamp', 'uint64', 1, 'out')],
-'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
-'since_firmware': [2, 0, 3],
-'doc': ['c', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
+#com['packets'].append({
+#'type': 'callback',
+#'name': 'Timestamped Frame Read Low Level',
+#'elements': [('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
+#             ('Identifier', 'uint32', 1, 'out'),
+#             ('Data Length', 'uint8', 1, 'out'),
+#             ('Data Data', 'uint8', 15, 'out'),
+#             ('Timestamp', 'uint64', 1, 'out')],
+#'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
+#'since_firmware': [2, 0, 3],
+#'doc': ['c', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
 
 com['examples'].append({
 'name': 'Loopback',
