@@ -92,8 +92,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Identifiers Low Level',
 'elements': [('Identifiers Length', 'uint16', 1, 'out', {'range': (0, 256)}),
-             ('Identifiers Chunk Offset', 'uint16', 1, 'out'),
-             ('Identifiers Chunk Data', 'uint8', 60, 'out')],
+             ('Identifiers Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Identifiers Chunk Data', 'uint8', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Identifiers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
