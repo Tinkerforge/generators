@@ -54,9 +54,9 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Search Bus Low Level',
-'elements': [('Identifier Length', 'uint16', 1, 'out'),
-             ('Identifier Chunk Offset', 'uint16', 1, 'out'),
-             ('Identifier Chunk Data', 'uint64', 7, 'out'),
+'elements': [('Identifier Length', 'uint16', 1, 'out', {'range': (0, 64)}),
+             ('Identifier Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Identifier Chunk Data', 'uint64', 7, 'out', {}),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'high_level': {'stream_out': {'name': 'Identifier'}},
 'since_firmware': [1, 0, 0],
@@ -104,7 +104,7 @@ Setzt den Bus mit einer 1-Wire Reset Operation zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Write',
-'elements': [('Data', 'uint8', 1, 'in'),
+'elements': [('Data', 'uint8', 1, 'in', {}),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -122,7 +122,7 @@ Schreibt ein Byte an Daten auf den 1-Wire Bus.
 com['packets'].append({
 'type': 'function',
 'name': 'Read',
-'elements': [('Data', 'uint8', 1, 'out'),
+'elements': [('Data', 'uint8', 1, 'out', {}),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -140,8 +140,8 @@ Liest ein Byte an Daten vom 1-Wire Bus.
 com['packets'].append({
 'type': 'function',
 'name': 'Write Command',
-'elements': [('Identifier', 'uint64', 1, 'in'),
-             ('Command', 'uint8', 1, 'in'),
+'elements': [('Identifier', 'uint64', 1, 'in', {}),
+             ('Command', 'uint8', 1, 'in', {}),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -171,7 +171,7 @@ Operation verwendet, um den Befehl zu übertragen.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -198,7 +198,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

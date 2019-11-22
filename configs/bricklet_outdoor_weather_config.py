@@ -57,9 +57,9 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Station Identifiers Low Level',
-'elements': [('Identifiers Length', 'uint16', 1, 'out'),
-             ('Identifiers Chunk Offset', 'uint16', 1, 'out'),
-             ('Identifiers Chunk Data', 'uint8', 60, 'out')],
+'elements': [('Identifiers Length', 'uint16', 1, 'out', {'range': (0, 256)}),
+             ('Identifiers Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Identifiers Chunk Data', 'uint8', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Identifiers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -91,7 +91,7 @@ Stunden am Stück keine Daten empfangen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Identifiers Low Level',
-'elements': [('Identifiers Length', 'uint16', 1, 'out'),
+'elements': [('Identifiers Length', 'uint16', 1, 'out', {'range': (0, 256)}),
              ('Identifiers Chunk Offset', 'uint16', 1, 'out'),
              ('Identifiers Chunk Data', 'uint8', 60, 'out')],
 'high_level': {'stream_out': {'name': 'Identifiers'}},
@@ -125,15 +125,15 @@ Stunden am Stück keine Daten empfangen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Station Data',
-'elements': [('Identifier', 'uint8', 1, 'in'),
-             ('Temperature', 'int16', 1, 'out'),   # in °C/10
-             ('Humidity', 'uint8', 1, 'out'),      # in %RH
-             ('Wind Speed', 'uint32', 1, 'out'),   # in m/10s
-             ('Gust Speed', 'uint32', 1, 'out'),   # in m/10s
-             ('Rain', 'uint32', 1, 'out'),         # in mm/10
+'elements': [('Identifier', 'uint8', 1, 'in', {}),
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'range': (-400, 650)}),
+             ('Humidity', 'uint8', 1, 'out', {'unit': 'Percent Relative Humidity', 'range': (10, 99)}),
+             ('Wind Speed', 'uint32', 1, 'out', {'scale': (1, 10), 'unit': 'Meter Per Second'}),
+             ('Gust Speed', 'uint32', 1, 'out', {'scale': (1, 10), 'unit': 'Meter Per Second'}),
+             ('Rain', 'uint32', 1, 'out', {'scale': (1, 10), 'unit': 'Millimeter'}),
              ('Wind Direction', 'uint8', 1, 'out', {'constant_group': 'Wind Direction'}),
-             ('Battery Low', 'bool', 1, 'out'),    # true = battery low
-             ('Last Change', 'uint16', 1, 'out')], # in seconds
+             ('Battery Low', 'bool', 1, 'out', {}),
+             ('Last Change', 'uint16', 1, 'out', {'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -143,14 +143,14 @@ Call :func:`Get Station Identifiers` for a list of all available identifiers.
 
 The return values are:
 
-* Temperature in °C/10,
-* Humidity in %RH,
-* Wind Speed in m/10s,
-* Gust Speed in m/10s,
-* Rain Fall in mm/10,
-* Wind Direction (N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW),
-* Battery Low (true or false) and
-* Last Change (time in seconds since the reception of this data).
+* Temperature,
+* Humidity,
+* Wind Speed,
+* Gust Speed,
+* Rain Fall,
+* Wind Direction,
+* Battery Low (true if battery is low) and
+* Last Change (time since the reception of this data).
 """,
 'de':
 """
@@ -159,14 +159,14 @@ Identifier zurück.
 
 Die Rückgabewerte sind:
 
-* Temperatur in °C/10,
-* Luftfeuchte in %RH,
-* Windgeschwindigkeit in m/10s,
-* Windböengeschwindigkeit in m/10s,
-* Niederschlag in mm/10,
-* Windrichtung (N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW),
-* Batteriewarnung (true oder false) und
-* Letzte Änderung (Zeit in Sekunden seitdem diese Daten empfangen wurden).
+* Temperatur,
+* Luftfeuchte,
+* Windgeschwindigkeit,
+* Windböengeschwindigkeit,
+* Niederschlag,
+* Windrichtung,
+* Batteriewarnung (true wenn der Batteriestand niedrig) und
+* Letzte Änderung (Zeit seitdem diese Daten empfangen wurden).
 """
 }]
 })
@@ -174,10 +174,10 @@ Die Rückgabewerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Data',
-'elements': [('Identifier', 'uint8', 1, 'in'),
-             ('Temperature', 'int16', 1, 'out'),   # in °C/10
-             ('Humidity', 'uint8', 1, 'out'),      # in %RH
-             ('Last Change', 'uint16', 1, 'out')], # in seconds
+'elements': [('Identifier', 'uint8', 1, 'in', {}),
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius'}),
+             ('Humidity', 'uint8', 1, 'out', {'unit': 'Percent Relative Humidity'}),
+             ('Last Change', 'uint16', 1, 'out', {'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -187,9 +187,9 @@ Call :func:`Get Sensor Identifiers` for a list of all available identifiers.
 
 The return values are:
 
-* Temperature in °C/10,
-* Humidity in %RH and
-* Last Change (time in seconds since the last reception of data).
+* Temperature,
+* Humidity and
+* Last Change (time since the last reception of data).
 """,
 'de':
 """
@@ -198,9 +198,9 @@ Identifier zurück.
 
 Die Rückgabewerte sind:
 
-* Temperatur in °C/10,
-* Luftfeuchte in %RH und
-* Letzte Änderung (Zeit in Sekunden seitdem diese Daten empfangen wurden).
+* Temperatur,
+* Luftfeuchte und
+* Letzte Änderung (Zeit seitdem diese Daten empfangen wurden).
 """
 }]
 })
@@ -208,17 +208,16 @@ Die Rückgabewerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Station Callback Configuration',
-'elements': [('Enable Callback', 'bool', 1, 'in')],
+'elements': [('Enable Callback', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Turns callback for station data on or off. Default is off.
+Turns callback for station data on or off.
 """,
 'de':
 """
-Aktiviert/Deaktiviert den Callback für Stationsdaten. Standardmäßig ist der
-Callback deaktiviert.
+Aktiviert/Deaktiviert den Callback für Stationsdaten.
 """
 }]
 })
@@ -226,7 +225,7 @@ Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Station Callback Configuration',
-'elements': [('Enable Callback', 'bool', 1, 'out')],
+'elements': [('Enable Callback', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -243,17 +242,16 @@ Gibt die Konfiguration zurück wie von :func:`Set Station Callback Configuration
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Callback Configuration',
-'elements': [('Enable Callback', 'bool', 1, 'in')],
+'elements': [('Enable Callback', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Turns callback for sensor data on or off. Default is off.
+Turns callback for sensor data on or off.
 """,
 'de':
 """
-Aktiviert/Deaktiviert den Callback für Sensordaten. Standardmäßig ist der
-Callback deaktiviert.
+Aktiviert/Deaktiviert den Callback für Sensordaten.
 """
 }]
 })
@@ -261,7 +259,7 @@ Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Callback Configuration',
-'elements': [('Enable Callback', 'bool', 1, 'out')],
+'elements': [('Enable Callback', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -278,14 +276,14 @@ Gibt die Konfiguration zurück wie von :func:`Set Sensor Callback Configuration`
 com['packets'].append({
 'type': 'callback',
 'name': 'Station Data',
-'elements': [('Identifier', 'uint8', 1, 'out'),
-             ('Temperature', 'int16', 1, 'out'),   # in °C/10
-             ('Humidity', 'uint8', 1, 'out'),      # in %RH
-             ('Wind Speed', 'uint32', 1, 'out'),   # in m/10s
-             ('Gust Speed', 'uint32', 1, 'out'),   # in m/10s
-             ('Rain', 'uint32', 1, 'out'),         # in mm/10
+'elements': [('Identifier', 'uint8', 1, 'out', {}),
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius', 'range': (-400, 650)}),
+             ('Humidity', 'uint8', 1, 'out', {'unit': 'Percent Relative Humidity', 'range': (10, 99)}),
+             ('Wind Speed', 'uint32', 1, 'out', {'scale': (1, 10), 'unit': 'Meter Per Second'}),
+             ('Gust Speed', 'uint32', 1, 'out', {'scale': (1, 10), 'unit': 'Meter Per Second'}),
+             ('Rain', 'uint32', 1, 'out', {'scale': (1, 10), 'unit': 'Millimeter'}),
              ('Wind Direction', 'uint8', 1, 'out', {'constant_group': 'Wind Direction'}),
-             ('Battery Low', 'bool', 1, 'out')],   # true = battery low
+             ('Battery Low', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -314,9 +312,9 @@ aktiviert/deaktiviert werden (standardmäßig ist der Callback deaktiviert).
 com['packets'].append({
 'type': 'callback',
 'name': 'Sensor Data',
-'elements': [('Identifier', 'uint8', 1, 'out'),
-             ('Temperature', 'int16', 1, 'out'),   # in °C/10
-             ('Humidity', 'uint8', 1, 'out')],     # in %RH
+'elements': [('Identifier', 'uint8', 1, 'out', {}),
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius'}),
+             ('Humidity', 'uint8', 1, 'out', {'unit': 'Percent Relative Humidity'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

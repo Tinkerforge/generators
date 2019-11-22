@@ -161,8 +161,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Tag ID',
 'elements': [('Tag Type', 'uint8', 1, 'out', {'constant_group': 'Tag Type'}),
-             ('TID Length', 'uint8', 1, 'out'),
-             ('TID', 'uint8', 7, 'out')],
+             ('TID Length', 'uint8', 1, 'out', {'range': [(4, 4), (7, 7)]}),
+             ('TID', 'uint8', 7, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -201,7 +201,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get State',
 'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'State'}),
-             ('Idle', 'bool', 1, 'out')],
+             ('Idle', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -247,9 +247,9 @@ Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Authenticate Mifare Classic Page',
-'elements': [('Page', 'uint16', 1, 'in'),
+'elements': [('Page', 'uint16', 1, 'in', {}),
              ('Key Number', 'uint8', 1, 'in', {'constant_group': 'Key'}),
-             ('Key', 'uint8', 6, 'in')],
+             ('Key', 'uint8', 6, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -305,8 +305,8 @@ folgt aus:
 com['packets'].append({
 'type': 'function',
 'name': 'Write Page',
-'elements': [('Page', 'uint16', 1, 'in'),
-             ('Data', 'uint8', 16, 'in')],
+'elements': [('Page', 'uint16', 1, 'in', {}),
+             ('Data', 'uint8', 16, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -364,7 +364,7 @@ werden bevor sie geschrieben werden kann. Siehe
 com['packets'].append({
 'type': 'function',
 'name': 'Request Page',
-'elements': [('Page', 'uint16', 1, 'in')],
+'elements': [('Page', 'uint16', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -426,7 +426,7 @@ werden bevor sie gelesen werden kann. Siehe :func:`Authenticate Mifare Classic P
 com['packets'].append({
 'type': 'function',
 'name': 'Get Page',
-'elements': [('Data', 'uint8', 16, 'out')],
+'elements': [('Data', 'uint8', 16, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -447,7 +447,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'State Changed',
 'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'State'}),
-             ('Idle', 'bool', 1, 'out')],
+             ('Idle', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

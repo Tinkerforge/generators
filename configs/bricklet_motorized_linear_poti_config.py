@@ -62,15 +62,16 @@ add_callback_value_function(
     name      = 'Get Position',
     data_name = 'Position',
     data_type = 'uint16',
-    doc       = position_doc
+    doc       = position_doc,
+    range_    = (0, 100)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Motor Position',
-'elements': [('Position', 'uint16', 1, 'in'),
+'elements': [('Position', 'uint16', 1, 'in', {'range': (0, 100)}),
              ('Drive Mode', 'uint8', 1, 'in', {'constant_group': 'Drive Mode'}),
-             ('Hold Position', 'bool', 1, 'in')],
+             ('Hold Position', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -92,7 +93,7 @@ again by the user as soon as the set point was reached once.
 'de':
 """
 Setzt die Position des Potentiometers. Nach Aufruf der Funktion wird das Potentiometer
-sofort diese Position anfahren. Abhängig von dem gewählten *Driver Mode* wird die Position
+sofort diese Position anfahren. Abhängig von dem gewählten *Drive Mode* wird die Position
 entweder so schnell wie möglich angefahren oder langsam dafür aber gleichmäßig (smooth).
 
 Die Position kann zwischen 0 (Regler unten) und 100 (Regler oben) festgelegt werden.
@@ -110,10 +111,10 @@ geändert werden, nachdem die Sollposition erreicht wurde.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motor Position',
-'elements': [('Position', 'uint16', 1, 'out'),
+'elements': [('Position', 'uint16', 1, 'out', {'range': (0, 100)}),
              ('Drive Mode', 'uint8', 1, 'out', {'constant_group': 'Drive Mode'}),
-             ('Hold Position', 'bool', 1, 'out'),
-             ('Position Reached', 'bool', 1, 'out')],
+             ('Hold Position', 'bool', 1, 'out', {}),
+             ('Position Reached', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -169,20 +170,16 @@ kalibriert.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Position Reached Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'in')],
+'elements': [('Enabled', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
 Enables/Disables :cb:`Position Reached` callback.
-
-By default the callback is enabled.
 """,
 'de':
 """
 Aktiviert/Deaktiviert den :cb:`Position Reached` Callback.
-
-Standardmäßig ist der Callback aktiviert.
 """
 }]
 })
@@ -190,7 +187,7 @@ Standardmäßig ist der Callback aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Position Reached Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -209,7 +206,7 @@ Gibt die :cb:`Position Reached` Callback Konfiguration zurück, wie von
 com['packets'].append({
 'type': 'callback',
 'name': 'Position Reached',
-'elements': [('Position', 'uint16', 1, 'out')],
+'elements': [('Position', 'uint16', 1, 'out', {'range': (0, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

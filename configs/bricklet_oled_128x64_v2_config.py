@@ -35,13 +35,13 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Write Pixels Low Level',
-'elements': [('X Start', 'uint8', 1, 'in'),
-             ('Y Start', 'uint8', 1, 'in'),
-             ('X End', 'uint8', 1, 'in'),
-             ('Y End', 'uint8', 1, 'in'),
-             ('Pixels Length', 'uint16', 1, 'in'),
-             ('Pixels Chunk Offset', 'uint16', 1, 'in'),
-             ('Pixels Chunk Data', 'bool', 56*8, 'in')],
+'elements': [('X Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Y Start', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('X End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Y End', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Pixels Length', 'uint16', 1, 'in', {'range': (0, 128 * 64)}),
+             ('Pixels Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Pixels Chunk Data', 'bool', 56*8, 'in', {})],
 'high_level': {'stream_in': {'name': 'Pixels'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -49,9 +49,8 @@ com['packets'].append({
 """
 Writes pixels to the specified window.
 
-The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are written
-into the window line by line top to bottom and each line is written from left to
-right.
+The pixels are written into the window line by line top to bottom
+and each line is written from left to right.
 
 If automatic draw is enabled (default) the pixels are directly written to
 the screen. Only pixels that have actually changed are updated on the screen,
@@ -69,9 +68,8 @@ function.
 """
 Schreibt Pixel in das angegebene Fenster.
 
-Die X-Achse läuft von 0 bis 127 und die Y-Achse von 0 bis 63. Die Pixel werden
-zeilenweise von oben nach unten und die Zeilen werden jeweils von links nach
-rechts geschrieben.
+Die Pixel werden zeilenweise von oben nach unten
+die Zeilen werden jeweils von links nach rechts geschrieben.
 
 Wenn Automatic Draw aktiviert ist (Standard), dann werden die Pixel direkt auf
 den Display geschrieben. Nur Pixel die sich wirklich verändert haben werden
@@ -91,13 +89,13 @@ eingestellt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Read Pixels Low Level',
-'elements': [('X Start', 'uint8', 1, 'in'),
-             ('Y Start', 'uint8', 1, 'in'),
-             ('X End', 'uint8', 1, 'in'),
-             ('Y End', 'uint8', 1, 'in'),
-             ('Pixels Length', 'uint16', 1, 'out'),
-             ('Pixels Chunk Offset', 'uint16', 1, 'out'),
-             ('Pixels Chunk Data', 'bool', 60*8, 'out')],
+'elements': [('X Start', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Y Start', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('X End', 'uint8', 1, 'in', {'range': (0, 127)}),
+             ('Y End', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Pixels Length', 'uint16', 1, 'out', {'range': (0, 128 * 64)}),
+             ('Pixels Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Pixels Chunk Data', 'bool', 60*8, 'out', {})],
 'high_level': {'stream_out': {'name': 'Pixels'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -105,9 +103,8 @@ com['packets'].append({
 """
 Reads pixels from the specified window.
 
-The x-axis goes from 0 to 127 and the y-axis from 0 to 63. The pixels are read
-from the window line by line top to bottom and each line is read from left to
-right.
+The pixels are read from the window line by line top to bottom
+and each line is read from left to right.
 
 If automatic draw is enabled (default) the pixels that are read are always the
 same that are shown on the display.
@@ -179,9 +176,9 @@ eingestellt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Display Configuration',
-'elements': [('Contrast', 'uint8', 1, 'in'),
-             ('Invert', 'bool', 1, 'in'),
-             ('Automatic Draw', 'bool', 1, 'in')],
+'elements': [('Contrast', 'uint8', 1, 'in', {'default': 143}),
+             ('Invert', 'bool', 1, 'in', {'default': False}),
+             ('Automatic Draw', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -195,8 +192,6 @@ If automatic draw is set to *true*, the display is automatically updated with ev
 call of :func:`Write Pixels` or :func:`Write Line`. If it is set to false, the
 changes are written into an internal buffer and only shown on the display after
 a call of :func:`Draw Buffered Frame`.
-
-The default values are contrast 143, inverting off and automatic draw on.
 """,
 'de':
 """
@@ -210,8 +205,6 @@ Aufruf von :func:`Write Pixels` und :func:`Write Line` aktualisiert. Wenn
 Automatic Draw deaktiviert (*false*) ist, dann werden Änderungen in einen
 internen Buffer geschrieben, der dann bei bei einem Aufruf von
 :func:`Draw Buffered Frame` auf dem Display angezeigt wird.
-
-Standardwerte: Kontrast 143, Invertierung aus und Automatic Draw aktiviert.
 """
 }]
 })
@@ -219,9 +212,9 @@ Standardwerte: Kontrast 143, Invertierung aus und Automatic Draw aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Display Configuration',
-'elements': [('Contrast', 'uint8', 1, 'out'),
-             ('Invert', 'bool', 1, 'out'),
-             ('Automatic Draw', 'bool', 1, 'out')],
+'elements': [('Contrast', 'uint8', 1, 'out', {'default': 143}),
+             ('Invert', 'bool', 1, 'out', {'default': False}),
+             ('Automatic Draw', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -238,15 +231,15 @@ Gibt die Konfiguration zurück, wie von :func:`Set Display Configuration` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Write Line',
-'elements': [('Line', 'uint8', 1, 'in'),
-             ('Position', 'uint8', 1, 'in'),
-             ('Text', 'string', 22, 'in')],
+'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Position', 'uint8', 1, 'in', {'range': (0, 21)}),
+             ('Text', 'string', 22, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Writes text to a specific line (0 to 7) with a specific position
-(0 to 21). The text can have a maximum of 22 characters.
+Writes text to a specific line with a specific position.
+The text can have a maximum of 22 characters.
 
 For example: (1, 10, "Hello") will write *Hello* in the middle of the
 second line of the display.
@@ -268,8 +261,8 @@ function.
 """,
 'de':
 """
-Schreibt einen Text in die angegebene Zeile (0 bis 7) mit einer vorgegebenen
-Position (0 bis 21). Der Text kann maximal 22 Zeichen lang sein.
+Schreibt einen Text in die angegebene Zeile mit einer vorgegebenen Position.
+Der Text kann maximal 22 Zeichen lang sein.
 
 Beispiel: (1, 10, "Hallo") schreibt *Hallo* in die Mitte der zweiten Zeile
 des Displays.
@@ -295,7 +288,7 @@ eingestellt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Draw Buffered Frame',
-'elements': [('Force Complete Redraw', 'bool', 1, 'in')],
+'elements': [('Force Complete Redraw', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

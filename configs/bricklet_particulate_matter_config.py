@@ -35,14 +35,14 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Get PM Concentration',
-'elements': [('PM10', 'uint16', 1, 'out'),
-             ('PM25', 'uint16', 1, 'out'),
-             ('PM100', 'uint16', 1, 'out')],
+'elements': [('PM10', 'uint16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Gram Per Cubic Meter'}),
+             ('PM25', 'uint16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Gram Per Cubic Meter'}),
+             ('PM100', 'uint16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Gram Per Cubic Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the particulate matter concentration in µg/m³, broken down as:
+Returns the particulate matter concentration, broken down as:
 
 * PM\ :sub:`1.0`\ ,
 * PM\ :sub:`2.5`\  and
@@ -57,7 +57,7 @@ with :func:`Set PM Concentration Callback Configuration`.
 """,
 'de':
 """
-Gibt die Feinstaub-Konzentration in µg/m³ zurück, aufgeschlüsselt nach:
+Gibt die Feinstaub-Konzentration zurück, aufgeschlüsselt nach:
 
 * PM\ :sub:`1.0`\ ,
 * PM\ :sub:`2.5`\  und
@@ -76,12 +76,12 @@ verwendet werden. Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Get PM Count',
-'elements': [('Greater03um', 'uint16', 1, 'out'),
-             ('Greater05um', 'uint16', 1, 'out'),
-             ('Greater10um', 'uint16', 1, 'out'),
-             ('Greater25um', 'uint16', 1, 'out'),
-             ('Greater50um', 'uint16', 1, 'out'),
-             ('Greater100um', 'uint16', 1, 'out')],
+'elements': [('Greater03um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater05um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater10um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater25um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater50um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater100um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -128,7 +128,7 @@ verwendet werden. Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Set Enable',
-'elements': [('Enable', 'bool', 1, 'in')],
+'elements': [('Enable', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -161,7 +161,7 @@ Laserdiode zwischen den Messungen auszumachen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Enable',
-'elements': [('Enable', 'bool', 1, 'out')],
+'elements': [('Enable', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -178,10 +178,10 @@ Gibt den Zustand des Sensors zurück, wie von :func:`Set Enable` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Info',
-'elements': [('Sensor Version', 'uint8', 1, 'out'),
-             ('Last Error Code', 'uint8', 1, 'out'),
-             ('Framing Error Count', 'uint8', 1, 'out'),
-             ('Checksum Error Count', 'uint8', 1, 'out')],
+'elements': [('Sensor Version', 'uint8', 1, 'out', {}),
+             ('Last Error Code', 'uint8', 1, 'out', {}),
+             ('Framing Error Count', 'uint8', 1, 'out', {}),
+             ('Checksum Error Count', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -318,9 +318,9 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'PM Concentration',
-'elements': [('PM10', 'uint16', 1, 'out'),
-             ('PM25', 'uint16', 1, 'out'),
-             ('PM100', 'uint16', 1, 'out')],
+'elements': [('PM10', 'uint16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Gram Per Cubic Meter'}),
+             ('PM25', 'uint16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Gram Per Cubic Meter'}),
+             ('PM100', 'uint16', 1, 'out', {'scale': (1, 10**6), 'unit': 'Gram Per Cubic Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -343,12 +343,12 @@ Die :word:`parameters` sind der gleiche wie :func:`Get PM Concentration`.
 com['packets'].append({
 'type': 'callback',
 'name': 'PM Count',
-'elements': [('Greater03um', 'uint16', 1, 'out'),
-             ('Greater05um', 'uint16', 1, 'out'),
-             ('Greater10um', 'uint16', 1, 'out'),
-             ('Greater25um', 'uint16', 1, 'out'),
-             ('Greater50um', 'uint16', 1, 'out'),
-             ('Greater100um', 'uint16', 1, 'out')],
+'elements': [('Greater03um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater05um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater10um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater25um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater50um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'}),
+             ('Greater100um', 'uint16', 1, 'out', {'scale': (10000, 1), 'unit': 'Particles Per Cubic Meter'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

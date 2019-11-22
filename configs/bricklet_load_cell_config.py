@@ -53,12 +53,12 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Weight',
-'elements': [('Weight', 'int32', 1, 'out')],
+'elements': [('Weight', 'int32', 1, 'out', {'unit': 'Gram'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the currently measured weight in grams.
+Returns the currently measured weight.
 
 If you want to get the weight periodically, it is recommended
 to use the :cb:`Weight` callback and set the period with
@@ -66,7 +66,7 @@ to use the :cb:`Weight` callback and set the period with
 """,
 'de':
 """
-Gibt das aktuell gemessene Gewicht in Gramm zurück.
+Gibt das aktuell gemessene Gewicht zurück.
 
 Wenn das Gewicht periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Weight` Callback zu nutzen und die Periode mit
@@ -121,8 +121,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Weight Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'unit': 'Gram', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'unit': 'Gram', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -140,8 +140,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the weight is *inside* the min and max values"
  "'<'",    "Callback is triggered when the weight is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the weight is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -158,8 +156,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn das Gewicht *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn das Gewicht kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn das Gewicht größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -168,8 +164,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Weight Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'unit': 'Gram', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'unit': 'Gram', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -236,7 +232,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average',
-'elements': [('Average', 'uint8', 1, 'in')],
+'elements': [('Average', 'uint8', 1, 'in', {'range': (1, 40), 'default': 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -246,10 +242,6 @@ for the weight value.
 
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
-
-The range for the averaging is 1-40.
-
-The default value is 4.
 """,
 'de':
 """
@@ -258,10 +250,6 @@ für den Gewichtswert.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 1-40.
-
-Der Standardwert ist 4.
 """
 }]
 })
@@ -269,7 +257,7 @@ Der Standardwert ist 4.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average',
-'elements': [('Average', 'uint8', 1, 'out')],
+'elements': [('Average', 'uint8', 1, 'out', {'range': (1, 40), 'default': 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -321,7 +309,7 @@ Deaktiviert die LED.
 com['packets'].append({
 'type': 'function',
 'name': 'Is LED On',
-'elements': [('On', 'bool', 1, 'out')],
+'elements': [('On', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -338,7 +326,7 @@ Gibt *true* zurück wenn die LED aktiviert ist, *false* sonst.
 com['packets'].append({
 'type': 'function',
 'name': 'Calibrate',
-'elements': [('Weight', 'uint32', 1, 'in')],
+'elements': [('Weight', 'uint32', 1, 'in', {'unit': 'Gram'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -346,8 +334,7 @@ com['packets'].append({
 To calibrate your Load Cell Bricklet you have to
 
 * empty the scale and call this function with 0 and
-* add a known weight to the scale and call this function with the weight in
-  grams.
+* add a known weight to the scale and call this function with the weight.
 
 The calibration is saved in the EEPROM of the Bricklet and only
 needs to be done once.
@@ -362,7 +349,7 @@ Schritte durchgeführt werden:
 
 * Die Waage leeren und die Funktion mit 0 aufrufen.
 * Eine bekanntes Gewicht auf die Waage legen und die Funktion mit dem
-  Gewicht in Gramm aufrufen.
+  Gewicht aufrufen.
 
 Die Kalibrierung wird auf dem EEPROM des Bricklets gespeichert und muss
 nur einmal gesetzt werden.
@@ -393,8 +380,8 @@ Setzt das aktuell gemessene Gewicht als Leergewicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Rate'}),
-             ('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain'})],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Rate', 'default': 0}),
+             ('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -417,8 +404,6 @@ needs to be done once.
 
 We recommend to use the Brick Viewer for configuration, you don't need
 to call this function in your source code.
-
-The default rate is 10Hz and the default gain is 128x.
 """,
 'de':
 """
@@ -442,8 +427,6 @@ nur einmal gesetzt werden.
 
 Wir empfehlen die Konfiguration über den Brick Viewer zu setzen, diese
 Funktion muss nicht im Quelltext genutzt werden.
-
-Die Standardwerte sind 10Hz für die Rate und 128x für den Gain.
 """
 }]
 })
@@ -451,8 +434,8 @@ Die Standardwerte sind 10Hz für die Rate und 128x für den Gain.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Rate'}),
-             ('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain'})],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Rate', 'default': 0}),
+             ('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -469,7 +452,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Weight',
-'elements': [('Weight', 'int32', 1, 'out')],
+'elements': [('Weight', 'int32', 1, 'out', {'unit': 'Gram'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -495,7 +478,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Weight Reached',
-'elements': [('Weight', 'int32', 1, 'out')],
+'elements': [('Weight', 'int32', 1, 'out', {'unit': 'Gram'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

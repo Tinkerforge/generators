@@ -55,7 +55,8 @@ add_callback_value_function(
     name      = 'Get Position',
     data_name = 'Position',
     data_type = 'uint8',
-    doc       = position_doc
+    doc       = position_doc,
+    range_    = (0, 100)
 )
 
 com['examples'].append({

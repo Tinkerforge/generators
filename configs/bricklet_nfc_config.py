@@ -191,7 +191,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -206,8 +206,6 @@ Sets the mode. The NFC Bricklet supports four modes:
 If you change a mode, the Bricklet will reconfigure the hardware for this mode.
 Therefore, you can only use functions corresponding to the current mode. For
 example, in Reader mode you can only use Reader functions.
-
-The default mode is "off".
 """,
 'de':
 """
@@ -216,14 +214,12 @@ Setzt den Modus. Das NFC Bricklet unterstützt vier Modi:
 * Off (Aus)
 * Card Emulation (Cardemu): Emuliert einen Tag für andere Reader
 * Peer to Peer (P2P): Datenaustausch mit anderen Readern
-* Reader: Ließt und schreibt Tags
+* Reader: Liest und schreibt Tags
 
 Wenn der Modus geändert wird, dann rekonfiguriert das Bricklet die Hardware für
 den gewählten Modus. Daher können immer nur die dem Modus zugehörigen Funktionen
 verwendet werden. Es können also im Reader Modus nur die Reader Funktionen
 verwendet werden.
-
-Der Standardwert ist "Off".
 """
 }]
 })
@@ -231,7 +227,7 @@ Der Standardwert ist "Off".
 com['packets'].append({
 'type': 'function',
 'name': 'Get Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -327,8 +323,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Reader Get Tag ID Low Level',
 'elements': [('Tag Type', 'uint8', 1, 'out', {'constant_group': 'Tag Type'}),
-             ('Tag ID Length', 'uint8', 1, 'out'),
-             ('Tag ID Data', 'uint8', 32, 'out')],
+             ('Tag ID Length', 'uint8', 1, 'out', {'range': (0, 32)}),
+             ('Tag ID Data', 'uint8', 32, 'out', {})],
 'high_level': {'stream_out': {'name': 'Tag ID', 'single_chunk': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -366,7 +362,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Reader Get State',
 'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Reader State'}),
-             ('Idle', 'bool', 1, 'out')],
+             ('Idle', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -414,22 +410,18 @@ Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
 }]
 })
 
-# NOTE: Even though a single NDEF record can contain a payload of 2^32 - 1 bytes
-#       and streaming APIs support data length of 2^16 - 1 bytes, because of limitations
-#       of the NFC API used in the firmware only short NDEF records with maximum
-#       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Write NDEF Low Level',
-'elements': [('NDEF Length', 'uint16', 1, 'in'),
-             ('NDEF Chunk Offset', 'uint16', 1, 'in'),
-             ('NDEF Chunk Data', 'uint8', 60, 'in')],
+'elements': [('NDEF Length', 'uint16', 1, 'in', {'range': (0, 8192)}),
+             ('NDEF Chunk Offset', 'uint16', 1, 'in', {}),
+             ('NDEF Chunk Data', 'uint8', 60, 'in', {})],
 'high_level': {'stream_in': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Writes NDEF formated data with a maximum of 255 bytes.
+Writes NDEF formated data.
 
 This function currently supports NFC Forum Type 2 and 4.
 
@@ -446,7 +438,7 @@ The general approach for writing a NDEF message is as follows:
 """,
 'de':
 """
-Schreibt bis zu 255 Bytes and NDEF formatierten Daten.
+Schreibt NDEF formatierte Daten.
 
 Diese Funktion unterstützt aktuell NFC Forum Type 2 und 4.
 
@@ -491,7 +483,7 @@ The general approach for reading a NDEF message is as follows:
 """,
 'de':
 """
-Ließt NDEF formatierten Daten von einem Tag.
+Liest NDEF formatierten Daten von einem Tag.
 
 Diese Funktion unterstützt aktuell NFC Forum Type 1, 2, 3 und 4.
 
@@ -511,16 +503,12 @@ Der Ansatz um eine NDEF Nachricht zu lesen sieht wie folgt aus:
 }]
 })
 
-# NOTE: Even though a single NDEF record can contain a payload of 2^32 - 1 bytes
-#       and streaming APIs support data length of 2^16 - 1 bytes, because of limitations
-#       of the NFC API used in the firmware only short NDEF records with maximum
-#       payload size of 255 bytes work.
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Read NDEF Low Level',
-'elements': [('NDEF Length', 'uint16', 1, 'out'),
-             ('NDEF Chunk Offset', 'uint16', 1, 'out'),
-             ('NDEF Chunk Data', 'uint8', 60, 'out')],
+'elements': [('NDEF Length', 'uint16', 1, 'out', {'range': (0, 8192)}),
+             ('NDEF Chunk Offset', 'uint16', 1, 'out', {}),
+             ('NDEF Chunk Data', 'uint8', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -528,16 +516,12 @@ com['packets'].append({
 """
 Returns the NDEF data from an internal buffer. To fill the buffer
 with a NDEF message you have to call :func:`Reader Request NDEF` beforehand.
-
-The buffer can have a size of up to 8192 bytes.
 """,
 'de':
 """
 Gibt NDEF Daten aus einem internen Buffer zurück. Der Buffer
 kann zuvor mit einer NDEF Nachricht über einen Aufruf von
 :func:`Reader Request NDEF` gefüllt werden.
-
-Der Buffer kann eine Größe von bis zu 8192 Bytes haben.
 """
 }]
 })
@@ -545,9 +529,9 @@ Der Buffer kann eine Größe von bis zu 8192 Bytes haben.
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Authenticate Mifare Classic Page',
-'elements': [('Page', 'uint16', 1, 'in'),
+'elements': [('Page', 'uint16', 1, 'in', {}),
              ('Key Number', 'uint8', 1, 'in', {'constant_group': 'Key'}),
-             ('Key', 'uint8', 6, 'in')],
+             ('Key', 'uint8', 6, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -608,9 +592,9 @@ com['packets'].append({
 'type': 'function',
 'name': 'Reader Write Page Low Level',
 'elements': [('Page', 'uint16', 1, 'in', {'constant_group': 'Reader Write'}),
-             ('Data Length', 'uint16', 1, 'in'),
-             ('Data Chunk Offset', 'uint16', 1, 'in'),
-             ('Data Chunk Data', 'uint8', 58, 'in')],
+             ('Data Length', 'uint16', 1, 'in', {'range': (0, 8192)}),
+             ('Data Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Data Chunk Data', 'uint8', 58, 'in', {})],
 'high_level': {'stream_in': {'name': 'Data'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -684,7 +668,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Reader Request Page',
 'elements': [('Page', 'uint16', 1, 'in', {'constant_group': 'Reader Request'}),
-             ('Length', 'uint16', 1, 'in')],
+             ('Length', 'uint16', 1, 'in', {'range': (0, 8192)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -760,7 +744,7 @@ Setze Page auf 3 um CC zu wählen und auf 4 um NDEF zu wählen.
 com['packets'].append({
 'type': 'function',
 'name': 'Reader Read Page Low Level',
-'elements': [('Data Length', 'uint16', 1, 'out'),
+'elements': [('Data Length', 'uint16', 1, 'out', {'range': (0, 8192)}),
              ('Data Chunk Offset', 'uint16', 1, 'out'),
              ('Data Chunk Data', 'uint8', 60, 'out')],
 'high_level': {'stream_out': {'name': 'Data'}},
@@ -770,16 +754,12 @@ com['packets'].append({
 """
 Returns the page data from an internal buffer. To fill the buffer
 with specific pages you have to call :func:`Reader Request Page` beforehand.
-
-The buffer can have a size of up to 8192 bytes.
 """,
 'de':
 """
 Gibt Daten aus einem internen Buffer zurück. Der Buffer
 kann zuvor mit spezifischen Pages über einen Aufruf von
 :func:`Reader Request Page` gefüllt werden.
-
-Der Buffer kann eine Größe von bis zu 8192 Bytes haben.
 """
 }]
 })
@@ -788,7 +768,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Reader State Changed',
 'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Reader State'}),
-             ('Idle', 'bool', 1, 'out')],
+             ('Idle', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -809,7 +789,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Cardemu Get State',
 'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Cardemu State'}),
-             ('Idle', 'bool', 1, 'out')],
+             ('Idle', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -897,7 +877,7 @@ mittels :func:`Cardemu Write NDEF` und :func:`Cardemu Start Transfer` übertrage
 com['packets'].append({
 'type': 'function',
 'name': 'Cardemu Write NDEF Low Level',
-'elements': [('NDEF Length', 'uint16', 1, 'in'),
+'elements': [('NDEF Length', 'uint16', 1, 'in', {'range': (0, 255)}),
              ('NDEF Chunk Offset', 'uint16', 1, 'in'),
              ('NDEF Chunk Data', 'uint8', 60, 'in')],
 'high_level': {'stream_in': {'name': 'NDEF'}},
@@ -983,7 +963,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'P2P Get State',
 'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'P2P State'}),
-             ('Idle', 'bool', 1, 'out')],
+             ('Idle', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1071,9 +1051,9 @@ mittels :func:`P2P Write NDEF` und :func:`P2P Start Transfer` übertragen werden
 com['packets'].append({
 'type': 'function',
 'name': 'P2P Write NDEF Low Level',
-'elements': [('NDEF Length', 'uint16', 1, 'in'),
-             ('NDEF Chunk Offset', 'uint16', 1, 'in'),
-             ('NDEF Chunk Data', 'uint8', 60, 'in')],
+'elements': [('NDEF Length', 'uint16', 1, 'in', {'range': (0, 255)}),
+             ('NDEF Chunk Offset', 'uint16', 1, 'in', {}),
+             ('NDEF Chunk Data', 'uint8', 60, 'in', {})],
 'high_level': {'stream_in': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1091,7 +1071,7 @@ mode or use P2P to read an NDEF messages.
 """
 Schreibt eine NDEF Nachricht die an einen NFC Peer übertragen werden soll.
 
-Die maximale NDEF Nachrichtngröße für P2P Übertragungen beträgt 255 Byte.
+Die maximale NDEF Nachrichtengröße für P2P Übertragungen beträgt 255 Byte.
 
 Diese Funktion kann im P2P-Modus jederzeit aufgerufen werden. Der interne
 Buffer wird nicht überschrieben solange diese Funktion nicht erneut aufgerufen,
@@ -1143,16 +1123,15 @@ ausgelesen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'P2P Read NDEF Low Level',
-'elements': [('NDEF Length', 'uint16', 1, 'out'),
-             ('NDEF Chunk Offset', 'uint16', 1, 'out'),
-             ('NDEF Chunk Data', 'uint8', 60, 'out')],
+'elements': [('NDEF Length', 'uint16', 1, 'out', {'range': (0, 8192)}),
+             ('NDEF Chunk Offset', 'uint16', 1, 'out', {}),
+             ('NDEF Chunk Data', 'uint8', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the NDEF message that was written by a NFC peer in NFC P2P mode.
-The maximum NDEF length is 8192 byte.
 
 The NDEF message is ready if you called :func:`P2P Start Transfer` with a
 read transfer and the P2P state changed to *P2PTransferNDEFReady*.
@@ -1160,7 +1139,7 @@ read transfer and the P2P state changed to *P2PTransferNDEFReady*.
 'de':
 """
 Gibt die NDEF Nachricht zurück, die von einem NFC Peer im P2P Modus geschrieben
-wurde. Der maximale NDEF Länge beträgt 8192 Bytes.
+wurde.
 
 Die NDEF Nachricht ist bereit sobald sich nach einem :func:`P2P Start Transfer`
 Aufruf mit einem Lese-Transfer der P2P Zustand zu *P2PTransferNDEFReady* ändert.
@@ -1172,7 +1151,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'P2P State Changed',
 'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'P2P State'}),
-             ('Idle', 'bool', 1, 'out')],
+             ('Idle', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1192,7 +1171,7 @@ sich verändert. Siehe :func:`P2P Get State` für mehr Informationen
 com['packets'].append({
 'type': 'function',
 'name': 'Set Detection LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Detection LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Detection LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1219,7 +1198,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Detection LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Detection LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Detection LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1236,12 +1215,12 @@ Gibt die Konfiguration zurück, wie von :func:`Set Detection LED Config` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Maximum Timeout',
-'elements': [('Timeout', 'uint16', 1, 'in')],
+'elements': [('Timeout', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 2000})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
 """
-Sets the maximum timeout in ms.
+Sets the maximum timeout.
 
 This is a global maximum used for all internal state timeouts. The timeouts depend heavily
 on the used tags etc. For example: If you use a Type 2 tag and you want to detect if
@@ -1256,16 +1235,14 @@ up to 500ms in our tests.
 If you need a fast response time to discover if a tag is present or not you can find
 a good timeout value by trial and error for your specific tag.
 
-By default we use a very conservative timeout, to be sure that any Tag can always
+By default we use a very conservative timeout, to be sure that any tag can always
 answer in time.
-
-Default timeout: 2000ms.
 """,
 'de':
 """
-Setzt das maximale Timeout in ms.
+Setzt den maximalen Timeout.
 
-Dies ist das globale Maximum für die internenn State-Timeouts. Der korrekte Timeout hängt
+Dies ist das globale Maximum für die internen State-Timeouts. Der korrekte Timeout hängt
 vom verwendeten Tag Typ ab. Zum Beispiel: Wenn ein Typ 2 Tag verwendet wird und herausgefunden
 werden soll ob der Tag in Reichweite des Bricklets ist, muss :func:`Reader Request Tag ID`
 aufgerufen werden. Der State wechselt dann entweder auf Ready oder Error (Tag gefunden/nicht
@@ -1281,8 +1258,6 @@ einen guten Wert kann man per Trial-and-Error für einen spezfiischen Tag-Typ er
 
 Standardmäßig nutzen wir einen sehr konservativen Timeout um sicher zu stellen das alle
 Tags definitiv funktionieren.
-
-Standardwert: 2000ms.
 """
 }]
 })
@@ -1290,7 +1265,7 @@ Standardwert: 2000ms.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Maximum Timeout',
-'elements': [('Timeout', 'uint16', 1, 'out')],
+'elements': [('Timeout', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 2000})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

@@ -404,7 +404,7 @@ Frame übertragen werden und :func:`Write Frame` gibt immer *false* zurück.
 
 Der CAN-Transceiver empfängt einen Frame vom CAN-Bus und speichert ihn in einem
 freien Lese-Buffer. Das Bricklet übertragt den Frame vom Lese-Buffer in das
-Lese-Backlog. :func:`Read Frame` ließt den Frame aus dem Lese-Backlog und gibt
+Lese-Backlog. :func:`Read Frame` liest den Frame aus dem Lese-Backlog und gibt
 ihn zurück. Falls keine Lese-Buffer (``read_buffer_sizes`` ist leer) oder kein
 Lese-Backlog (``read_backlog_size`` ist Null) vorhanden ist dann kann kein
 Frame empfangen werden und :func:`Read Frame` gibt immer *false* zurück.

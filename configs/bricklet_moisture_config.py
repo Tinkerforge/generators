@@ -38,13 +38,13 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moisture Value',
-'elements': [('Moisture', 'uint16', 1, 'out')],
+'elements': [('Moisture', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current moisture value. The value has a range of
-0 to 4095. A small value corresponds to little moisture, a big
+Returns the current moisture value.
+A small value corresponds to little moisture, a big
 value corresponds to much moisture.
 
 If you want to get the moisture value periodically, it is recommended
@@ -53,8 +53,7 @@ to use the :cb:`Moisture` callback and set the period with
 """,
 'de':
 """
-Gibt den aktuellen Feuchtigkeitswert zurück. Der Wert hat einen
-Wertebereich von 0 bis 4095. Ein kleiner Wert entspricht einer
+Gibt den aktuellen Feuchtigkeitswert zurück. Ein kleiner Wert entspricht einer
 geringen Feuchtigkeit, ein großer Wert entspricht einer hohen
 Feuchtigkeit.
 
@@ -111,8 +110,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Moisture Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -130,8 +129,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the moisture value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the moisture value is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the moisture value is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -148,8 +145,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Feuchtigkeitswert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Feuchtigkeitswert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Feuchtigkeitswert größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -158,8 +153,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Moisture Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -226,7 +221,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Moisture',
-'elements': [('Moisture', 'uint16', 1, 'out')],
+'elements': [('Moisture', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -252,7 +247,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Moisture Reached',
-'elements': [('Moisture', 'uint16', 1, 'out')],
+'elements': [('Moisture', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -279,7 +274,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average',
-'elements': [('Average', 'uint8', 1, 'in')],
+'elements': [('Average', 'uint8', 1, 'in', {'range': (0, 100), 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -289,10 +284,6 @@ for the moisture value.
 
 Setting the length to 0 will turn the averaging completely off. With less
 averaging, there is more noise on the data.
-
-The range for the averaging is 0-100.
-
-The default value is 100.
 """,
 'de':
 """
@@ -300,11 +291,7 @@ Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gl
 für den Feuchtigkeitswert.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
-die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 0-100.
-
-Der Standardwert ist 100.
+die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten..
 """
 }]
 })
@@ -312,7 +299,7 @@ Der Standardwert ist 100.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average',
-'elements': [('Average', 'uint8', 1, 'out')],
+'elements': [('Average', 'uint8', 1, 'out', {'range': (0, 100), 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

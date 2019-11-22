@@ -67,12 +67,12 @@ im "Bewegung detektiert" Zustand ist.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensitivity',
-'elements': [('Sensitivity', 'uint8', 1, 'in')],
+'elements': [('Sensitivity', 'uint8', 1, 'in', {'range': (0, 100), 'default': 50})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the sensitivity of the PIR sensor. The range is 0-100. At full
+Sets the sensitivity of the PIR sensor. At full
 sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.
 
 The actual range depends on many things in the environment (e.g. reflections) and the
@@ -80,12 +80,10 @@ size of the object to be detected. While a big person might be detected in a ran
 of 10m a cat may only be detected at 2m distance with the same setting.
 
 So you will have to find a good sensitivity for your application by trial and error.
-
-The default value is 50.
 """,
 'de':
 """
-Setzt die Empfindlichkeit des PIR Sensors. Der Wertebereich ist 0-100. Bei
+Setzt die Empfindlichkeit des PIR Sensors. Bei
 maximaler Empfindlichkeit (100) kann das Bricklet Bewegung bin in ca. 12m
 Entfernung erkennen.
 
@@ -95,9 +93,7 @@ Person bei 10m erkannt werden kann, wird eine Katze vielleicht erst an 2m erkann
 mit den gleichen Einstellungen.
 
 Daher muss die passenden Empfindlichkeit je nach Anwendung experimentell
-bestimmt werden
-
-Der Standardwert ist 50.
+bestimmt werden.
 """
 }]
 })
@@ -105,7 +101,7 @@ Der Standardwert ist 50.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensitivity',
-'elements': [('Sensitivity', 'uint8', 1, 'out')],
+'elements': [('Sensitivity', 'uint8', 1, 'out', {'range': (0, 100), 'default': 50})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -122,9 +118,9 @@ Gibt die Empfindlichkeit zurück, wie von :func:`Set Sensitivity` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Indicator',
-'elements': [('Top Left', 'uint8', 1, 'in'),
-             ('Top Right', 'uint8', 1, 'in'),
-             ('Bottom', 'uint8', 1, 'in')],
+'elements': [('Top Left', 'uint8', 1, 'in', {'default': 0}),
+             ('Top Right', 'uint8', 1, 'in', {'default': 0}),
+             ('Bottom', 'uint8', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -133,8 +129,6 @@ Sets the blue backlight of the fresnel lens. The backlight consists of
 three LEDs. The brightness of each LED can be controlled with a 8-bit value
 (0-255). A value of 0 turns the LED off and a value of 255 turns the LED
 to full brightness.
-
-The default value is 0, 0, 0.
 """,
 'de':
 """
@@ -142,8 +136,6 @@ Stellt die blaue Beleuchtung der Fresnel-Linse ein. Die Beleuchtung besteht aus
 drei LEDs. Die Helligkeit jeder LED kann einzeln mit einem 8-Bit Wert (0-255)
 eingestellt werden. Ein Wert von 0 deaktiviert die LED und ein Wert von 255
 aktiviert die LED mit voller Helligkeit.
-
-Der Standardwert ist 0, 0, 0.
 """
 }]
 })
@@ -151,9 +143,9 @@ Der Standardwert ist 0, 0, 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Indicator',
-'elements': [('Top Left', 'uint8', 1, 'out'),
-             ('Top Right', 'uint8', 1, 'out'),
-             ('Bottom', 'uint8', 1, 'out')],
+'elements': [('Top Left', 'uint8', 1, 'out', {'default': 0}),
+             ('Top Right', 'uint8', 1, 'out', {'default': 0}),
+             ('Bottom', 'uint8', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

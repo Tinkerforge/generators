@@ -44,7 +44,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch State',
-'elements': [('State', 'bool', 13, 'out')],
+'elements': [('State', 'bool', 13, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -152,7 +152,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Touch State',
-'elements': [('State', 'bool', 13, 'out')],
+'elements': [('State', 'bool', 13, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -196,7 +196,7 @@ Elektroden verändert oder bewegt wurden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Electrode Config',
-'elements': [('Enabled Electrodes', 'bool', 13, 'in')],
+'elements': [('Enabled Electrodes', 'bool', 13, 'in', {'default': [True]*13})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -213,8 +213,6 @@ the proximity feature is not needed. This will reduce the amount of
 traffic that is produced by the :cb:`Touch State` callback.
 
 Disabling electrodes will also reduce power consumption.
-
-Default: All electrodes enabled.
 """,
 'de':
 """
@@ -229,8 +227,6 @@ das Proximity-Feature nicht benötigt wird. Das verringert den Datenverkehr
 der durch den :cb:`Touch State` Callback ausgelöst wird.
 
 Eine deaktivierte Elektrode verringert zusätzlich den Stromverbrauch.
-
-Standardwert: Alle Elektroden aktiviert.
 """
 }]
 })
@@ -238,7 +234,7 @@ Standardwert: Alle Elektroden aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Electrode Config',
-'elements': [('Enabled Electrodes', 'bool', 13, 'out')],
+'elements': [('Enabled Electrodes', 'bool', 13, 'out', {'default': [True]*13})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -256,7 +252,7 @@ Gibt die Elektrodenkonfiguration zurück, wie von :func:`Set Electrode Config` g
 com['packets'].append({
 'type': 'function',
 'name': 'Set Electrode Sensitivity',
-'elements': [('Sensitivity', 'uint8', 1, 'in')],
+'elements': [('Sensitivity', 'uint8', 1, 'in', {'range': (5, 201), 'default': 181})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -270,10 +266,6 @@ activate an electrode from further away you need to increase the sensitivity.
 
 After a new sensitivity is set, you likely want to call :func:`Recalibrate`
 to calibrate the electrodes with the newly defined sensitivity.
-
-The valid sensitivity value range is 5-201.
-
-The default sensitivity value is 181.
 """,
 'de':
 """
@@ -289,10 +281,6 @@ vergrößert werden.
 Nachdem eine neue Empfindlichkeit gesetzt wurde, macht es Sinn
 :func:`Recalibrate` aufzurufen damit die Elektroden mit der neu
 definierten Empfindlichkeit kalibriert werden.
-
-Der zulässige Wertebereich für den Empfindlichkeitswert ist 5-201.
-
-Der voreingestellte Empfindlichkeitswert ist 181.
 """
 }]
 })
@@ -300,7 +288,7 @@ Der voreingestellte Empfindlichkeitswert ist 181.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Electrode Sensitivity',
-'elements': [('Sensitivity', 'uint8', 1, 'out')],
+'elements': [('Sensitivity', 'uint8', 1, 'out', {'range': (5, 201), 'default': 181})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -318,23 +306,19 @@ Gibt die aktuelle Empfindlichkeit zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Touch LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Touch LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Touch LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Configures the touch LED to be either turned off, turned on, blink in
 heartbeat mode or show the touch state (electrode touched = LED on).
-
-The default value is 3 (show touch state).
 """,
 'de':
 """
 Konfiguriert die Touch-LED. Die LED kann ausgeschaltet, eingeschaltet,
 im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
 mit der LED den Touch-Zustand anzuzeigen (Elektrode berührt = LED an).
-
-Der Standardwert ist 3 (Touch-Zustand).
 """
 }]
 })
@@ -342,7 +326,7 @@ Der Standardwert ist 3 (Touch-Zustand).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Touch LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Touch LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

@@ -76,13 +76,14 @@ add_callback_value_function(
     name      = 'Get Weight',
     data_name = 'Weight',
     data_type = 'int32',
-    doc       = weight_doc
+    doc       = weight_doc,
+    unit      = 'Gram'
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average',
-'elements': [('Average', 'uint16', 1, 'in')],
+'elements': [('Average', 'uint16', 1, 'in', {'range': (1, 100), 'default': 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -92,10 +93,6 @@ for the weight value.
 
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
-
-The range for the averaging is 1-100.
-
-The default value is 4.
 """,
 'de':
 """
@@ -104,10 +101,6 @@ für den Gewichtswert.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 1-100.
-
-Der Standardwert ist 4.
 """
 }]
 })
@@ -115,7 +108,7 @@ Der Standardwert ist 4.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average',
-'elements': [('Average', 'uint16', 1, 'out')],
+'elements': [('Average', 'uint16', 1, 'out', {'range': (1, 100), 'default': 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -133,7 +126,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Info LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Info LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Info LED Config', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -152,7 +145,7 @@ im Herzschlagmodus betrieben werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Info LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Info LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Info LED Config', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -169,7 +162,7 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Calibrate',
-'elements': [('Weight', 'uint32', 1, 'in')],
+'elements': [('Weight', 'uint32', 1, 'in', {'unit': 'Gram'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -177,8 +170,7 @@ com['packets'].append({
 To calibrate your Load Cell Bricklet 2.0 you have to
 
 * empty the scale and call this function with 0 and
-* add a known weight to the scale and call this function with the weight in
-  grams.
+* add a known weight to the scale and call this function with the weight.
 
 The calibration is saved in the flash of the Bricklet and only
 needs to be done once.
@@ -193,7 +185,7 @@ Schritte durchgeführt werden:
 
 * Die Waage leeren und die Funktion mit 0 aufrufen.
 * Eine bekanntes Gewicht auf die Waage legen und die Funktion mit dem
-  Gewicht in Gramm aufrufen.
+  Gewicht aufrufen.
 
 Die Kalibrierung wird auf dem Flash des Bricklets gespeichert und muss
 nur einmal gesetzt werden.
@@ -224,8 +216,8 @@ Setzt das aktuell gemessene Gewicht als Leergewicht.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Rate'}),
-             ('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain'})],
+'elements': [('Rate', 'uint8', 1, 'in', {'constant_group': 'Rate', 'default': 0}),
+             ('Gain', 'uint8', 1, 'in', {'constant_group': 'Gain', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -242,8 +234,6 @@ excitation voltage of 5V and most load cells use an output of 2mV/V. That
 means the voltage range is ±15mV for most load cells (i.e. gain of 128x
 is best). If you don't know what all of this means you should keep it at
 128x, it will most likely be correct.
-
-The default rate is 10Hz and the default gain is 128x.
 """,
 'de':
 """
@@ -261,8 +251,6 @@ haben eine Ausgabe von 2mV/V. Dies bedeutet, der Spannungsbereich ist
 ±15mV für die meisten Wägezellen (d.h. ein Gain von 128x ist am
 geeignetsten). Falls nicht klar ist was dies alles bedeutet, ein
 Gain von 128x ist höchstwahrscheinlich korrekt.
-
-Die Standardwerte sind 10Hz für die Rate und 128x für den Gain.
 """
 }]
 })
@@ -270,8 +258,8 @@ Die Standardwerte sind 10Hz für die Rate und 128x für den Gain.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Rate'}),
-             ('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain'})],
+'elements': [('Rate', 'uint8', 1, 'out', {'constant_group': 'Rate', 'default': 0}),
+             ('Gain', 'uint8', 1, 'out', {'constant_group': 'Gain', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

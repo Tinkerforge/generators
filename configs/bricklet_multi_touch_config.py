@@ -34,7 +34,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Get Touch State',
-'elements': [('State', 'uint16', 1, 'out')],
+'elements': [('State', 'uint16', 1, 'out', {'range': (0, 0x1FFF)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -105,7 +105,7 @@ Elektroden verändert oder bewegt wurden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Electrode Config',
-'elements': [('Enabled Electrodes', 'uint16', 1, 'in')],
+'elements': [('Enabled Electrodes', 'uint16', 1, 'in', {'range': (0, 0x1FFF), 'default': 0x1FFF})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -147,7 +147,7 @@ Standardwert: 8191 = 0x1FFF = 0b1111111111111 (alle Elektroden aktiviert)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Electrode Config',
-'elements': [('Enabled Electrodes', 'uint16', 1, 'out')],
+'elements': [('Enabled Electrodes', 'uint16', 1, 'out', {'range': (0, 0x1FFF), 'default': 0x1FFF})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -164,7 +164,7 @@ Gibt die Elektrodenkonfiguration zurück, wie von :func:`Set Electrode Config` g
 com['packets'].append({
 'type': 'callback',
 'name': 'Touch State',
-'elements': [('State', 'uint16', 1, 'out')],
+'elements': [('State', 'uint16', 1, 'out', {'range': (0, 0x1FFF)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -187,7 +187,7 @@ Dieser Callback wird ausgelöst, wenn sich ein Tastzustand ändert.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Electrode Sensitivity',
-'elements': [('Sensitivity', 'uint8', 1, 'in')],
+'elements': [('Sensitivity', 'uint8', 1, 'in', {'range': (5, 201), 'default': 181})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -201,10 +201,6 @@ activate an electrode from further away you need to increase the sensitivity.
 
 After a new sensitivity is set, you likely want to call :func:`Recalibrate`
 to calibrate the electrodes with the newly defined sensitivity.
-
-The valid sensitivity value range is 5-201.
-
-The default sensitivity value is 181.
 """,
 'de':
 """
@@ -220,10 +216,6 @@ vergrößert werden.
 Nachdem eine neue Empfindlichkeit gesetzt wurde, macht es Sinn
 :func:`Recalibrate` aufzurufen damit die Elektroden mit der neu
 definierten Empfindlichkeit kalibriert werden.
-
-Der zulässige Wertebereich für den Empfindlichkeitswert ist 5-201.
-
-Der voreingestellte Empfindlichkeitswert ist 181.
 """
 }]
 })
@@ -231,7 +223,7 @@ Der voreingestellte Empfindlichkeitswert ist 181.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Electrode Sensitivity',
-'elements': [('Sensitivity', 'uint8', 1, 'out')],
+'elements': [('Sensitivity', 'uint8', 1, 'out', {'range': (5, 201), 'default': 181})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

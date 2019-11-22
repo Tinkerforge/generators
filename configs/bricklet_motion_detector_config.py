@@ -116,7 +116,7 @@ eine weitere Bewegung erkannt werden nach ungefähr 2 Sekunden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Status LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Status LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Status LED Config', 'default': 2})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -143,7 +143,7 @@ Die LED kann auch permanent an/aus gestellt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Status LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Status LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Status LED Config', 'default': 2})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

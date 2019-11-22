@@ -38,7 +38,7 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reflectivity',
-'elements': [('Reflectivity', 'uint16', 1, 'out')],
+'elements': [('Reflectivity', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -114,8 +114,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Reflectivity Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -133,8 +133,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the reflectivity is *inside* the min and max values"
  "'<'",    "Callback is triggered when the reflectivity is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the reflectivity is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -151,8 +149,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Reflektivität *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Reflektivität kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Reflektivität größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -161,8 +157,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Reflectivity Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -229,7 +225,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Reflectivity',
-'elements': [('Reflectivity', 'uint16', 1, 'out')],
+'elements': [('Reflectivity', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -255,7 +251,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Reflectivity Reached',
-'elements': [('Reflectivity', 'uint16', 1, 'out')],
+'elements': [('Reflectivity', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

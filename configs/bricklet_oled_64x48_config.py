@@ -34,7 +34,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Write',
-'elements': [('Data', 'uint8', 64, 'in')],
+'elements': [('Data', 'uint8', 64, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -88,26 +88,21 @@ aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'New Window',
-'elements': [('Column From', 'uint8', 1, 'in'),
-             ('Column To', 'uint8', 1, 'in'),
-             ('Row From', 'uint8', 1, 'in'),
-             ('Row To', 'uint8', 1, 'in')],
+'elements': [('Column From', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Column To', 'uint8', 1, 'in', {'range': (0, 63)}),
+             ('Row From', 'uint8', 1, 'in', {'range': (0, 5)}),
+             ('Row To', 'uint8', 1, 'in', {'range': (0, 5)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Sets the window in which you can write with :func:`Write`. One row
 has a height of 8 pixels.
-
-The columns have a range of 0 to 63 and the rows have a range of 0 to 5.
 """,
 'de':
 """
 Setzt das Fenster in welches mit :func:`Write` geschrieben
 werden kann. Eine Zeile (Row) hat eine Höhe von 8 Pixel.
-
-Die Spalten haben einen Wertebereich von 0 bis 63 und die Zeilen haben
-einen Wertebereich von 0 bis 5.
 """
 }]
 })
@@ -132,8 +127,8 @@ Löscht den aktuellen Inhalt des mit :func:`New Window` gesetztem Fensters.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Display Configuration',
-'elements': [('Contrast', 'uint8', 1, 'in'),
-             ('Invert', 'bool', 1, 'in')],
+'elements': [('Contrast', 'uint8', 1, 'in', {'default': 143}),
+             ('Invert', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -142,8 +137,6 @@ Sets the configuration of the display.
 
 You can set a contrast value from 0 to 255 and you can invert the color
 (black/white) of the display.
-
-The default values are contrast 143 and inverting off.
 """,
 'de':
 """
@@ -151,8 +144,6 @@ Setzt die Konfiguration des Displays
 
 Es können der Kontrast mit einem Wertebereich von 0 bis 255 gesetzt, sowie die
 Farben (schwarz/weiß) des Displays invertiert werden.
-
-Die Standardwerte sind ein Kontrast von 143 und die Invertierung ist aus.
 """
 }]
 })
@@ -160,8 +151,8 @@ Die Standardwerte sind ein Kontrast von 143 und die Invertierung ist aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Display Configuration',
-'elements': [('Contrast', 'uint8', 1, 'out'),
-             ('Invert', 'bool', 1, 'out')],
+'elements': [('Contrast', 'uint8', 1, 'out', {'default': 143}),
+             ('Invert', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -178,15 +169,15 @@ Gibt die Konfiguration zurück, wie von :func:`Set Display Configuration` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Write Line',
-'elements': [('Line', 'uint8', 1, 'in'),
-             ('Position', 'uint8', 1, 'in'),
-             ('Text', 'string', 13, 'in')],
+'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 5)}),
+             ('Position', 'uint8', 1, 'in', {'range': (0, 12)}),
+             ('Text', 'string', 13, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Writes text to a specific line (0 to 5) with a specific position
-(0 to 12). The text can have a maximum of 13 characters.
+Writes text to a specific line with a specific position.
+The text can have a maximum of 13 characters.
 
 For example: (1, 4, "Hello") will write *Hello* in the middle of the
 second line of the display.
