@@ -89,7 +89,7 @@
 - Add Barometer Bricklet examples
 - Handle difference between currentThread and current_thread to support
   Python 2.5
-- Changed callback_queue from class variable to instance variable
+- Changed callback queue from class variable to instance variable
 
 2012-12-20: 1.0.25 (2b39606)
 - Add API for Voltage/Current Bricklet
@@ -158,8 +158,8 @@
 - Add get/set_clock_frequency function to LED Strip Bricklet API
 - Fix mixup of get/set_date_time_callback_period and
   get/set_motion_callback_period in GPS Bricklet API
-- Support addressing types of Intertechno and ELRO Home Easy devices in Remote
-  Switch Bricklet API
+- Support addressing types of Intertechno and ELRO Home Easy devices in
+  Remote Switch Bricklet API
 
 2014-04-08: 2.1.0 (9124f8e)
 - Add authentication support to IPConnection and Master Brick API
@@ -242,8 +242,8 @@
 - Increase minimum Python version to 2.6
 
 2017-11-20: 2.1.15 (f235e3f)
-- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
-  LED Matrix and Thermal Imaging Bricklet
+- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button,
+  RGB LED Matrix and Thermal Imaging Bricklet
 - Add get/set_sbas_config functions to GPS Bricklet 2.0 API
 - Accept wider range of types for char (str, unicode, bytes, bytearray with
   length 1 and int) and list of char / string (str, unicode, bytes, bytearray

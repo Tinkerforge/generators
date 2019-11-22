@@ -76,8 +76,8 @@
 - Add workaround for the listener problem in Octave >= 3.8
 
 2017-11-20: 2.0.15 (f235e3f)
-- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
-  LED Matrix and Thermal Imaging Bricklet
+- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button,
+  RGB LED Matrix and Thermal Imaging Bricklet
 - Add get/setSBASConfig methods to GPS Bricklet 2.0 API
 
 2017-11-24: 2.0.16 (4317433)

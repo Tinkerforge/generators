@@ -47,8 +47,7 @@
 - Add monoflop functionality to Dual Relay Bricklet API
 
 2012-07-03: 1.0.14 (afb45cf)
-- Add time base, all-data method/listener and state listener to Stepper
-  Brick API
+- Add time base, all-data method/listener and state listener to Stepper Brick API
 
 2012-07-13: 1.0.15 (6ac52d1)
 - Fix direction of getAllDataPeriod method in Stepper Brick API
@@ -106,8 +105,8 @@
 - Split IPConnection.addListener into per-Listener add methods
 - Reduce scope of request and socket mutex to improve concurrency
 - Improve and unify code for response expected flag handling
-- Add get/setWifiHostname methods and callbacks for stack/USB voltage and
-  stack current to Master Brick API
+- Add get/setWifiHostname methods and callbacks for stack/USB voltage and stack
+  current to Master Brick API
 
 2013-02-22: 2.0.5 (9d5de14)
 - Add get/setRange methods to Analog In Bricklet API
@@ -115,16 +114,15 @@
 - Add TinkerforgeException as basis for all other exceptions
 
 2013-04-02: 2.0.6 (eeb1f67)
-- Add enable/disable methods for PositionReached and VelocityReached
-  callbacks to Servo Brick API
+- Add enable/disable methods for PositionReached and VelocityReached callbacks
+  to Servo Brick API
 - Add get/setI2CMode (100kHz/400kHz) methods to Temperature Bricklet API
 - Add default text methods to LCD 20x4 Bricklet API
 - Don't dispatch callbacks after disconnect
-- Fix race condition in callback handling that could result in closing the
-  wrong socket
+- Fix race condition in callback handling that could result in closing the wrong
+  socket
 - Don't ignore socket errors when sending request packets
-- Send a request packet at least every 10sec to improve WIFI disconnect
-  detection
+- Send a request packet at least every 10sec to improve WIFI disconnect detection
 
 2013-05-14: 2.0.7 (b847401)
 - Add Ethernet Extension support to Master Brick API
@@ -160,13 +158,12 @@
 - Add get/setClockFrequency method to LED Strip Bricklet API
 - Fix mixup of get/setDateTimeCallbackPeriod and get/setMotionCallbackPeriod in
   GPS Bricklet API
-- Support addressing types of Intertechno and ELRO Home Easy devices in Remote
-  Switch Bricklet API
+- Support addressing types of Intertechno and ELRO Home Easy devices in
+  Remote Switch Bricklet API
 
 2014-04-09: 2.1.0 (9aad727)
 - Add authentication support to IPConnection and Master Brick API
-- Add TinkerforgeListener and DeviceListener as base interfaces for all
-  listeners
+- Add TinkerforgeListener and DeviceListener as base interfaces for all listeners
 - Escape special HTML characters in JavaDoc
 
 2014-07-03: 2.1.1 (cdb00f1)
@@ -247,8 +244,8 @@
 - Remove unused getCurrentConsumption method from Silent Stepper Brick API
 
 2017-11-20: 2.1.15 (f235e3f)
-- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
-  LED Matrix and Thermal Imaging Bricklet
+- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button,
+  RGB LED Matrix and Thermal Imaging Bricklet
 - Add get/setSBASConfig methods to GPS Bricklet 2.0 API
 
 2017-11-24: 2.1.16 (6812559)

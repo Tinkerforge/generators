@@ -10,10 +10,10 @@
 - Log broker connections
 
 2019-03-05: 2.0.3 (167be49)
-- Fix crash on start without init-file.
-- Remove unnecessary callback error message.
-- Fix handling of timeouts.
-- Translate symbols in callback responses.
+- Fix crash on start without init-file
+- Remove unnecessary callback error message
+- Fix handling of timeouts
+- Translate symbols in callback responses
 
 2019-03-11: 2.0.4 (b6f211c)
 - Don't try to translate lists
@@ -39,10 +39,10 @@
 - Fix init file loading
 
 2019-11-22: 2.0.8 (<unknown>)
-- Log Brick Daemon disconnects under --debug
+- Log Brick Daemon (dis)connects under --debug
 - Fix symbol translation of IP Connection callbacks
-- Report all errors when reading init file
-- Add "pre/post_connect" init file format
+- Report all errors when reading init-file
+- Add pre/post_connect init-file format
 - Add get_connection_state to IP Connection
 - Add last will (sent if the bindings crash) and shutdown messages
 - Handle SIGTERM/SIGQUIT

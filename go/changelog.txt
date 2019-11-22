@@ -15,7 +15,7 @@
   Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
 - Fix IP Connection auto-reconnect setting
-- Properly strip trailing NUL-bytes from UIDs in enumerate callback
+- Properly strip trailing NUL-bytes from UIDs in Enumerate callback
 
 2019-08-23: 2.0.4 (59d9363)
 - Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
@@ -23,5 +23,5 @@
 - Add Get/SetFilterConfiguration functions to Accelerometer Bricklet 2.0 API
 - Add ConversionTime constants to Voltage/Current Bricklet 2.0 API
 - Allow to pass non-constant values to parameters with constants
-- Break API to remove enumerate response structure: enumerate callback uses
+- Break API to remove enumerate response structure: Enumerate callback uses
   parameters directly, which is more in line with all other callbacks

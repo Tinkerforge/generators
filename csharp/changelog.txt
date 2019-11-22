@@ -24,13 +24,13 @@
 - Better locking (thanks to Jan)
 
 2012-05-09: 1.1.0 (0d6d8d9)
-- Replaced optional argument with method-overloading to be compatible with
-  older C# versions
+- Replaced optional argument with method-overloading to be compatible with older
+  C# versions
 - Callback methods are only internally visible
 - Add version information to Tinkerforge.dll
 - Silently ignore messages from devices with unknown stack ID
-- Single-return methods return their value instead of using out-parameters,
-  old single-out methods stay for compatibility
+- Single-return methods return their value instead of using out-parameters, old
+  single-out methods stay for compatibility
 
 2012-05-10: 1.1.1 (baa8705)
 - Don't generate RegisterCallback method for devices without callbacks
@@ -59,8 +59,7 @@
 - Add monoflop functionality to Dual Relay Bricklet API
 
 2012-07-03: 1.1.8 (afb45cf)
-- Add time base, all-data method/callback and state callback to Stepper
-  Brick API
+- Add time base, all-data method/callback and state callback to Stepper Brick API
 
 2012-07-13: 1.1.9 (6ac52d1)
 - Fix direction of GetAllDataPeriod method in Stepper Brick API
@@ -87,8 +86,8 @@
 - Add API for Barometer Bricklet
 
 2012-10-01: 1.1.14 (4454bda)
-- Replace Barometer Bricklet calibrate methods with getter/setter for
-  reference air pressure
+- Replace Barometer Bricklet calibrate methods with getter/setter for reference
+  air pressure
 
 2012-10-12: 1.1.15 (5884dd5)
 - Add GetUSBVoltage method to Master Brick API
@@ -114,8 +113,8 @@
 2013-02-19: 2.0.4 (3fd93d3)
 - Reduce scope of request lock to improve concurrency
 - Improve and unify code for response expected flag handling
-- Add Get/SetWifiHostname methods and callbacks for stack/USB voltage and
-  stack current to Master Brick API
+- Add Get/SetWifiHostname methods and callbacks for stack/USB voltage and stack
+  current to Master Brick API
 
 2013-02-22: 2.0.5 (9d5de14)
 - Add Get/SetRange methods to Analog In Bricklet API
@@ -123,17 +122,16 @@
 - Add TinkerforgeException as basis for all other exceptions
 
 2013-04-02: 2.0.6 (eeb1f67)
-- Add enable/disable methods for PositionReached and VelocityReached
-  callbacks to Servo Brick API
+- Add enable/disable methods for PositionReached and VelocityReached callbacks
+  to Servo Brick API
 - Add Get/SetI2CMode (100kHz/400kHz) methods to Temperature Bricklet API
 - Add default text methods to LCD 20x4 Bricklet API
 - Fix auto reconnect on socket receive error
 - Don't dispatch callbacks after disconnect
-- Fix race condition in callback handling that could result in closing the
-  wrong socket
+- Fix race condition in callback handling that could result in closing the wrong
+  socket
 - Don't ignore socket errors when sending request packets
-- Send a request packet at least every 10sec to improve WIFI disconnect
-  detection
+- Send a request packet at least every 10sec to improve WIFI disconnect detection
 
 2013-05-14: 2.0.7 (b847401)
 - Add Ethernet Extension support to Master Brick API
@@ -165,8 +163,8 @@
 - Add Get/SetClockFrequency methods to LED Strip Bricklet API
 - Fix mixup of Get/SetDateTimeCallbackPeriod and Get/SetMotionCallbackPeriod in
   GPS Bricklet API
-- Support addressing types of Intertechno and ELRO Home Easy devices in Remote
-  Switch Bricklet API
+- Support addressing types of Intertechno and ELRO Home Easy devices in
+  Remote Switch Bricklet API
 
 2014-04-08: 2.1.0 (9124f8e)
 - Add authentication support to IPConnection and Master Brick API
@@ -255,8 +253,8 @@
 - Fix int8 unpacking
 
 2017-11-20: 2.1.16 (f235e3f)
-- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button, RGB
-  LED Matrix and Thermal Imaging Bricklet
+- Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button,
+  RGB LED Matrix and Thermal Imaging Bricklet
 - Add Get/SetSBASConfig methods to GPS Bricklet 2.0 API
 
 2018-02-28: 2.1.17 (da741b9)
