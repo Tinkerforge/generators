@@ -71,6 +71,7 @@ class MQTTZipGenerator(mqtt_common.MQTTGeneratorTrait, common.ZipGenerator):
 
         # Copy bindings and readme
         shutil.copy(os.path.join(bindings_dir, 'tinkerforge_mqtt'),           self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'tinkerforge_mqtt.service'),       self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),   self.tmp_dir)
