@@ -37,3 +37,14 @@
 - Add conversion_time symbols to Voltage/Current Bricklet 2.0 API
 - More robust connection handling
 - Fix init file loading
+
+2019-11-22: 2.0.8 (<unknown>)
+- Log Brick Daemon disconnects under --debug
+- Fix symbol translation of IP Connection callbacks
+- Report all errors when reading init file
+- Add "pre/post_connect" init file format
+- Add get_connection_state to IP Connection
+- Add last will (sent if the bindings crash) and shutdown messages
+- Handle SIGTERM/SIGQUIT
+- Fix handling of character arrays
+- Fix names of high-level-callback members
