@@ -150,7 +150,7 @@ The return values are:
 * Rain Fall,
 * Wind Direction,
 * Battery Low (true if battery is low) and
-* Last Change (time since the reception of this data).
+* Last Change (seconds since the reception of this data).
 """,
 'de':
 """
@@ -165,8 +165,8 @@ Die Rückgabewerte sind:
 * Windböengeschwindigkeit,
 * Niederschlag,
 * Windrichtung,
-* Batteriewarnung (true wenn der Batteriestand niedrig) und
-* Letzte Änderung (Zeit seitdem diese Daten empfangen wurden).
+* Batteriewarnung (true wenn der Batteriestand niedrig ist) und
+* Letzte Änderung (Sekunden seitdem diese Daten empfangen wurden).
 """
 }]
 })
@@ -189,7 +189,7 @@ The return values are:
 
 * Temperature,
 * Humidity and
-* Last Change (time since the last reception of data).
+* Last Change (seconds since the last reception of data).
 """,
 'de':
 """
@@ -200,7 +200,7 @@ Die Rückgabewerte sind:
 
 * Temperatur,
 * Luftfeuchte und
-* Letzte Änderung (Zeit seitdem diese Daten empfangen wurden).
+* Letzte Änderung (Sekunden seitdem diese Daten empfangen wurden).
 """
 }]
 })
