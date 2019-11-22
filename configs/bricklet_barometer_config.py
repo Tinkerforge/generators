@@ -600,20 +600,20 @@ Gibt die Averaging-Konfiguration zurück, wie von :func:`Set Averaging` gesetzt.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], []),
+'functions': [('getter', ('Get Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'hPa', None)], []),
               ('getter', ('Get Altitude', 'altitude'), [(('Altitude', 'Altitude'), 'int32', 1, 100.0, 'm', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], None, None),
+'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'hPa', None)], None, None),
               ('callback_period', ('Air Pressure', 'air pressure'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Air Pressure Reached', 'air pressure reached'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], None, 'Enjoy the potentially good weather!'),
+              ('callback', ('Air Pressure Reached', 'air pressure reached'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'hPa', None)], None, 'Enjoy the potentially good weather!'),
               ('callback_threshold', ('Air Pressure', 'air pressure'), [], '>', [(1025, 0)])]
 })
 
@@ -627,7 +627,7 @@ com['openhab'] = {
             'max': 1200,
 
             'label': 'Reference Air Pressure',
-            'description': 'The reference air pressure in mbar for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+            'description': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
         },
         {
             'name': 'Pressure Moving Average Length',

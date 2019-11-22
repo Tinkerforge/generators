@@ -258,7 +258,7 @@ Then the current air pressure has to be measured using the Bricklet
 (``actual air pressure``) at the same time and passed to this function.
 
 After proper calibration the air pressure measurement can achieve an accuracy
-up to 0.2 mbar.
+up to 0.2 hPa.
 
 The calibration is saved in the EEPROM of the Bricklet and only needs to be
 configured once.
@@ -276,7 +276,7 @@ Dann muss der aktuelle Luftdruck gleichzeitig mit dem Bricklet
 (``Actual Air Pressure``) gemessen und die Werte an diese Funktion
 übergeben werden.
 
-Nach einer ordentlichen Kalibrierung kann der Luftdruck mit bis zu 0,2 mbar
+Nach einer ordentlichen Kalibrierung kann der Luftdruck mit bis zu 0,2 hPa
 Genauigkeit gemessen werden
 
 Die Kalibrierung wird im EEPROM des Bricklets gespeichert und muss nur einmal
@@ -362,19 +362,19 @@ Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration` 
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], []),
+'functions': [('getter', ('Get Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'hPa', None)], []),
               ('getter', ('Get Altitude', 'altitude'), [(('Altitude', 'Altitude'), 'int32', 1, 1000.0, 'm', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], None, None),
+'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'hPa', None)], None, None),
               ('callback_configuration', ('Air Pressure', 'air pressure'), [], 1000, False, 'x', [(0, 0)])]
 })
 
 com['examples'].append({
 'name': 'Threshold',
-'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'mbar', None)], None, 'Enjoy the potentially good weather!'),
+'functions': [('callback', ('Air Pressure', 'air pressure'), [(('Air Pressure', 'Air Pressure'), 'int32', 1, 1000.0, 'hPa', None)], None, 'Enjoy the potentially good weather!'),
               ('callback_configuration', ('Air Pressure', 'air pressure'), [], 1000, False, '>', [(1025, 0)])]
 })
 
@@ -414,7 +414,7 @@ com['openhab'] = {
             'max': 1260,
 
             'label': 'Reference Air Pressure',
-            'description': 'The reference air pressure in mbar for the altitude calculation. Valid values are between 260 and 1260. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+            'description': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 260 and 1260. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
         }, {
             'name': 'Data Rate',
             'type': 'integer',

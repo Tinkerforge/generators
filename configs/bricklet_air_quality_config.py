@@ -81,7 +81,7 @@ The values have these ranges and units:
 * IAQ Index Accuracy: 0 = unreliable to 3 = high
 * Temperature: in steps of 0.01 °C
 * Humidity: in steps of 0.01 %RH
-* Air Pressure: in steps of 0.01 mbar
+* Air Pressure: in steps of 0.01 hPa
 """,
 'de':
 """
@@ -101,7 +101,7 @@ Die Werte haben diese Bereiche und Einheiten:
 * IAQ Index Genauigkeit: 0 = unzuverlässig bis 3 = hoch
 * Temperatur: in 0,01 °C Schritten
 * Luftfeuchte: in 0,01 %RH Schritten
-* Luftdruck: in 0,01 mbar Schritten
+* Luftdruck: in 0,01 hPa Schritten
 """
 }]
 })
@@ -414,11 +414,11 @@ add_callback_value_function(
 air_pressure_doc = {
 'en':
 """
-Returns air pressure in steps of 0.01 mbar.
+Returns air pressure in steps of 0.01 hPa.
 """,
 'de':
 """
-Gibt den Luftdruck in 0,01 mbar Schritten zurück.
+Gibt den Luftdruck in 0,01 hPa Schritten zurück.
 """
 }
 
@@ -537,12 +537,12 @@ Gibt die Länge der Hintergrundkalibrierung zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get All Values', 'all values'), [(('IAQ Index', 'IAQ Index'), 'int32', 1, None, None, None), (('IAQ Index Accuracy', 'IAQ Index Accuracy'), 'uint8:constant', 1, None, None, None), (('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None), (('Humidity', 'Humidity'), 'int32', 1, 100.0, '%RH', None), (('Air Pressure', 'Air Pressure'), 'int32', 1, 100.0, 'mbar', None)], [])]
+'functions': [('getter', ('Get All Values', 'all values'), [(('IAQ Index', 'IAQ Index'), 'int32', 1, None, None, None), (('IAQ Index Accuracy', 'IAQ Index Accuracy'), 'uint8:constant', 1, None, None, None), (('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None), (('Humidity', 'Humidity'), 'int32', 1, 100.0, '%RH', None), (('Air Pressure', 'Air Pressure'), 'int32', 1, 100.0, 'hPa', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('All Values', 'all values'), [(('IAQ Index', 'IAQ Index'), 'int32', 1, None, None, None), (('IAQ Index Accuracy', 'IAQ Index Accuracy'), 'uint8:constant', 1, None, None, None), (('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None), (('Humidity', 'Humidity'), 'int32', 1, 100.0, '%RH', None), (('Air Pressure', 'Air Pressure'), 'int32', 1, 100.0, 'mbar', None)], None, None),
+'functions': [('callback', ('All Values', 'all values'), [(('IAQ Index', 'IAQ Index'), 'int32', 1, None, None, None), (('IAQ Index Accuracy', 'IAQ Index Accuracy'), 'uint8:constant', 1, None, None, None), (('Temperature', 'Temperature'), 'int32', 1, 100.0, '°C', None), (('Humidity', 'Humidity'), 'int32', 1, 100.0, '%RH', None), (('Air Pressure', 'Air Pressure'), 'int32', 1, 100.0, 'hPa', None)], None, None),
               ('callback_configuration', ('All Values', 'all values'), [], 1000, False, None, [])]
 })
 
