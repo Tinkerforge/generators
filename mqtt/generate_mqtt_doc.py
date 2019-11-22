@@ -289,7 +289,7 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
         text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant_group, constant, value):
-            return '* "{0}" = {1}\n'.format(constant.get_name().camel, value)
+            return '* "{0}" = {1}\n'.format(constant.get_name().under, value)
 
         text += common.format_constants('', self, lambda element: element.get_name().under,
                                         constants_name=constants,
