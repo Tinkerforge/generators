@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 2107,
     'name': 'CAN V2',
