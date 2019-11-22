@@ -1373,11 +1373,6 @@ units = {
                                          {'en': 'Temperature', 'de': 'Temperatur'},
                                          []),
 
-    'Particles Per Cubic Meter':    Unit({'en': 'Particles per cubic meter', 'de': 'Partikel pro Kubikmeter'},
-                                         '1/m³',
-                                         {'en': 'Particle Number Density', 'de': 'Teilchendichte'},
-                                         []),
-
     'Degree Per Second':            Unit({'en': 'Degree per second', 'de': 'Grad pro Sekunde'},
                                          '°/s',
                                          {'en': 'Anglular velocity', 'de': 'Winkelgeschwindigkeit'},
@@ -1427,6 +1422,11 @@ units = {
                                          'm/s²',
                                          {'en': 'Acceleration', 'de': 'Beschleunigung'},
                                          ['n', 'µ', 'm', 'c', 'k']),
+
+    'Particles Per Cubic Meter':    Unit({'en': 'Particles per cubic meter', 'de': 'Partikel pro Kubikmeter'},
+                                         '1/m³',
+                                         {'en': 'Particle Number Density', 'de': 'Teilchendichte'},
+                                         []),
 
     'Parts Per Million':            Unit({'en': 'Parts per million', 'de': 'Parts per million'},
                                          'ppm',
