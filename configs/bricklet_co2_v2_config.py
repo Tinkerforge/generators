@@ -75,7 +75,7 @@ verwendet werden. Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Set Air Pressure',
-'elements': [('Air Pressure', 'uint16', 1, 'in', {'scale': (100, 1), 'unit': 'Pascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
+'elements': [('Air Pressure', 'uint16', 1, 'in', {'unit': 'Hectopascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -112,7 +112,7 @@ Es ist hinreichend den Wert alle paar Minuten zu aktualisieren.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure',
-'elements': [('Air Pressure', 'uint16', 1, 'out', {'scale': (100, 1), 'unit': 'Pascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
+'elements': [('Air Pressure', 'uint16', 1, 'out', {'unit': 'Hectopascal', 'range': [(0, 0), (700, 1200)], 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

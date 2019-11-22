@@ -73,8 +73,8 @@ add_callback_value_function(
     data_name = 'Air Pressure',
     data_type = 'int32',
     doc       = air_pressure_doc,
-    scale     = (1, 10),
-    unit      = 'Pascal',
+    scale     = (1, 1000),
+    unit      = 'Hectopascal',
     range_    = (260000, 1260000)
 )
 
@@ -191,7 +191,7 @@ Gibt die Moving Average-Konfiguration zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'range': [(0, 0), (260000, 1260000)], 'default': 1013250})],
+'elements': [('Air Pressure', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': [(0, 0), (260000, 1260000)], 'default': 1013250})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -225,7 +225,7 @@ aus dem Q-Schlüssel.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': [(260000, 1260000)], 'default': 1013250})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': [(260000, 1260000)], 'default': 1013250})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -242,8 +242,8 @@ Gibt den Referenzluftdruckwert zurück, wie von :func:`Set Reference Air Pressur
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Measured Air Pressure', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'range': [(0, 0), (260000, 1260000)]}),
-             ('Actual Air Pressure', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'range': [(0, 0), (260000, 1260000)]})],
+'elements': [('Measured Air Pressure', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': [(0, 0), (260000, 1260000)]}),
+             ('Actual Air Pressure', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': [(0, 0), (260000, 1260000)]})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -288,8 +288,8 @@ gesetzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Measured Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': [(0, 0), (260000, 1260000)]}),
-             ('Actual Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': [(0, 0), (260000, 1260000)]})],
+'elements': [('Measured Air Pressure', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': [(0, 0), (260000, 1260000)]}),
+             ('Actual Air Pressure', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': [(0, 0), (260000, 1260000)]})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

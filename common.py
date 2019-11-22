@@ -649,18 +649,6 @@ def format_float(value):
 
     return string
 
-unit_prefixes = [
-    # denominator prefixes must come first, ordered from biggest to smallest denominator
-    ('n', {'en': 'Nano',  'de': 'Nano'},  1, 1000000000),
-    ('µ', {'en': 'Micro', 'de': 'Mikro'}, 1, 1000000),
-    ('m', {'en': 'Milli', 'de': 'Milli'}, 1, 1000),
-    ('c', {'en': 'Centi', 'de': 'Zenti'}, 1, 100),
-
-    # numerator prefixes must come second, ordered from biggest to smallest numerator
-    ('k', {'en': 'Kilo',  'de': 'Kilo'},  0, 1000),
-    ('h', {'en': 'Hecto', 'de': 'Hekto'}, 0, 100)
-]
-
 def format_value_hint(value, scale, unit):
     if sys.hexversion < 0x03000000:
         assert isinstance(value, (int, long)), value
@@ -688,17 +676,21 @@ def format_value_hint(value, scale, unit):
         scaled_value = 0
         modified_scale = scale
         unit_symbol = unit.symbol
+    elif unit.prefix != None:
+        scaled_value = float(value) * scale[0] / scale[1]
+        modified_scale = scale
+        unit_symbol = unit.symbol
     else:
         # find the scale that results in a scaled value with the minimum number of "Vorkommastellen"
         candidate = {unit.symbol: (float(value) * scale[0] / scale[1], scale)}
 
-        for prefix, name, index, divisor, in unit_prefixes:
-            if prefix not in unit.allowed_prefixes:
+        for unit_prefix in unit_prefixes:
+            if unit_prefix.symbol not in unit.allowed_prefixes:
                 continue
 
             divided_scale = list(scale)
-            divided_scale[index] /= float(divisor)
-            candidate[prefix + unit.symbol] = (float(value) * divided_scale[0] / divided_scale[1], divided_scale)
+            divided_scale[unit_prefix.index] /= float(unit_prefix.divisor)
+            candidate[unit_prefix.symbol + unit.symbol] = (float(value) * divided_scale[0] / divided_scale[1], divided_scale)
 
         scaled_value = None
         modified_scale = None
@@ -770,15 +762,16 @@ def normalize_scale(scale, unit):
     unit_name = unit.name
     unit_symbol = unit.symbol
 
-    for prefix, name, index, divisor, in unit_prefixes:
-        if prefix not in unit.allowed_prefixes:
-            continue
+    if unit.prefix == None:
+        for unit_prefix in unit_prefixes:
+            if unit_prefix.symbol not in unit.allowed_prefixes:
+                continue
 
-        if scale[index] % divisor == 0:
-            scale[index] //= divisor
-            unit_name = select_lang(name) + unit_name.lower()
-            unit_symbol = prefix + unit_symbol
-            break
+            if scale[unit_prefix.index] % unit_prefix.divisor == 0:
+                scale[unit_prefix.index] //= unit_prefix.divisor
+                unit_name = unit.get_name_with_prefix(unit_prefix)
+                unit_symbol = unit_prefix.symbol + unit_symbol
+                break
 
     return tuple(scale), unit_name, unit_symbol
 
@@ -1294,19 +1287,36 @@ class FlavoredName(object):
             return self.cache[key]
 
 class Unit(object):
-    def __init__(self, name, symbol, usage, allowed_prefixes, sequence={'en': '{value} {unit}', 'de': '{value} {unit}'}):
+    def __init__(self, name, symbol, usage, allowed_prefixes, sequence={'en': '{value} {unit}', 'de': '{value} {unit}'}, prefix=None):
         assert '{value}' in sequence['en'] and '{value}' in sequence['de'], sequence
         assert '{unit}' in sequence['en'] and '{unit}' in sequence['de'], sequence
 
         self._name = name
-        self.symbol = symbol
+        self._symbol = symbol
         self._usage = usage
         self.allowed_prefixes = allowed_prefixes
         self._sequence = sequence
+        self.prefix = prefix
 
     @property
     def name(self):
-        return select_lang(self._name)
+        if self.prefix == None:
+            return select_lang(self._name)
+
+        return self.get_name_with_prefix(self.prefix)
+
+    def name_as_dict(self):
+        if self.prefix == None:
+            return self._name
+
+        return {'en': self.get_name_with_prefix(self.prefix, 'en'), 'de': self.get_name_with_prefix(self.prefix, 'de')}
+
+    @property
+    def symbol(self):
+        if self.prefix == None:
+            return self._symbol
+
+        return self.prefix.symbol + self._symbol
 
     @property
     def usage(self):
@@ -1315,6 +1325,22 @@ class Unit(object):
     @property
     def sequence(self):
         return select_lang(self._sequence)
+
+    def get_name_with_prefix(self, prefix, lang_override=None):
+        if lang_override != None:
+            name = self._name[lang_override]
+        else:
+            name = select_lang(self._name)
+
+        name_words = name.split(' ')
+        name_words[0] = name_words[0].lower()
+
+        return select_lang(prefix.name) + ' '.join(name_words)
+
+    def copy_with_prefix(self, prefix):
+        assert prefix.symbol in self.allowed_prefixes
+
+        return Unit(self._name, self._symbol, self._usage, self.allowed_prefixes, self._sequence, prefix=prefix)
 
 units = {
     'Ampere':                       Unit({'en': 'Ampere', 'de': 'Ampere'},
@@ -1380,6 +1406,11 @@ units = {
     'Meter':                        Unit({'en': 'Meter', 'de': 'Meter'},
                                          'm',
                                          {'en': 'Length', 'de': 'Länge'},
+                                         ['n', 'µ', 'm', 'c', 'k']),
+
+    'Meter Per Hour':               Unit({'en': 'Meter per hour', 'de': 'Meter pro Stunde'},
+                                         'm/h',
+                                         {'en': 'Speed', 'de': 'Geschwindigkeit'},
                                          ['n', 'µ', 'm', 'c', 'k']),
 
     'Meter Per Second':             Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
@@ -1452,6 +1483,20 @@ units = {
                                          {'en': 'Energy', 'de': 'Energie'},
                                          ['n', 'µ', 'm', 'k'])
 }
+
+UnitPrefix = namedtuple('UnitPrefix', 'symbol name index divisor')
+
+unit_prefixes = [
+    # denominator prefixes must come first, ordered from biggest to smallest denominator
+    UnitPrefix('n', {'en': 'Nano',  'de': 'Nano'},  1, 1000000000),
+    UnitPrefix('µ', {'en': 'Micro', 'de': 'Mikro'}, 1, 1000000),
+    UnitPrefix('m', {'en': 'Milli', 'de': 'Milli'}, 1, 1000),
+    UnitPrefix('c', {'en': 'Centi', 'de': 'Zenti'}, 1, 100),
+
+    # numerator prefixes must come second, ordered from biggest to smallest numerator
+    UnitPrefix('k', {'en': 'Kilo',  'de': 'Kilo'},  0, 1000),
+    UnitPrefix('h', {'en': 'Hecto', 'de': 'Hekto'}, 0, 100)
+]
 
 class Constant(object):
     def __init__(self, raw_data, constant_group):
@@ -1565,7 +1610,24 @@ class Element(object):
         if unit_name != None:
             assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
-            self.unit = units[unit_name]
+            try:
+                self.unit = units[unit_name]
+            except KeyError:
+                for unit_prefix in unit_prefixes:
+                    if unit_name.startswith(unit_prefix.name['en']):
+                        try:
+                            unit_basename = unit_name[len(unit_prefix.name['en']):]
+                            unit_basename_words = unit_basename.split(' ')
+                            unit_basename_words[0] = unit_basename_words[0].capitalize()
+
+                            unit = units[' '.join(unit_basename_words)]
+                        except KeyError:
+                            raise GeneratorError('Invalid Unit: ' + unit_name)
+
+                        assert unit_prefix.symbol in unit.allowed_prefixes, raw_data
+
+                        self.unit = unit.copy_with_prefix(unit_prefix)
+                        break
 
         if 'constant_group' in self.raw_data_extra:
             range_default = 'constants'

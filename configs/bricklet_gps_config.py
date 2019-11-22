@@ -182,7 +182,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Motion',
 'elements': [('Course', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (0, 36000)}),
-             ('Speed', 'uint32', 1, 'out', {'scale': (1, 360), 'unit': 'Meter Per Second'})],
+             ('Speed', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Kilometer Per Hour'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -579,7 +579,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Motion',
 'elements': [('Course', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (0, 36000)}),
-             ('Speed', 'uint32', 1, 'out', {'scale': (1, 360), 'unit': 'Meter Per Second'})],
+             ('Speed', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Kilometer Per Hour'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

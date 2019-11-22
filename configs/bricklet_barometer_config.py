@@ -38,7 +38,7 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': (10000, 1200000)})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -178,8 +178,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Air Pressure Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'default': 0}),
-             ('Max', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'default': 0})],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Hectopascal', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Hectopascal', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -221,8 +221,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'default': 0}),
-             ('Max', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'default': 0})],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -355,7 +355,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'in', {'scale': (1, 10), 'unit': 'Pascal', 'range': [(0, 0), (10000, 1200000)], 'default': 1013250})],
+'elements': [('Air Pressure', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': [(0, 0), (10000, 1200000)], 'default': 1013250})],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
@@ -414,7 +414,7 @@ wird.
 com['packets'].append({
 'type': 'callback',
 'name': 'Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': (10000, 1200000)})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -468,7 +468,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Air Pressure Reached',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': (10000, 1200000)})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': (10000, 1200000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -522,7 +522,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Reference Air Pressure',
-'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 10), 'unit': 'Pascal', 'range': (10000, 1200000), 'default': 1013250})],
+'elements': [('Air Pressure', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Hectopascal', 'range': (10000, 1200000), 'default': 1013250})],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':

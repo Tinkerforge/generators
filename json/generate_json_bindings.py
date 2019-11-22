@@ -99,7 +99,7 @@ class JSONBindingsElement(common.Element):
         else:
             members['unit'] = OrderedDict()
 
-            members['unit']['name'] = unit._name
+            members['unit']['name'] = unit.name_as_dict()
             members['unit']['symbol'] = unit.symbol
             members['unit']['usage'] = unit._usage
             members['unit']['sequence'] = unit._sequence
