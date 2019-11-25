@@ -51,3 +51,12 @@
   Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
 - Add get/set_filter_configuration functions to Accelerometer Bricklet 2.0 API
 - Add CONVERSION_TIME constants to Voltage/Current Bricklet 2.0 API
+
+2019-11-25: 2.0.13 (<unknown>)
+- Add set/get_voltages_callback_configuration functions and voltages callback
+  to HAT Brick API
+- Add set/get_usb_voltage_callback_configuration functions and usb_voltage
+  callback to HAT Zero Brick API
+- Add set/get_statistics_callback_configuration functions and statistics
+  callback to Isolator Bricklet API
+- Report error if authentication secret contains non-ASCII chars

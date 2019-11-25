@@ -38,13 +38,23 @@
 - More robust connection handling
 - Fix init file loading
 
-2019-11-22: 2.0.8 (<unknown>)
+2019-11-25: 2.0.8 (<unknown>)
+- Add set/get_voltages_callback_configuration functions and voltages callback
+  to HAT Brick API
+- Add set/get_usb_voltage_callback_configuration functions and usb_voltage
+  callback to HAT Zero Brick API
+- Add set/get_statistics_callback_configuration functions and statistics
+  callback to Isolator Bricklet API
+- Report error if authentication secret contains non-ASCII chars
 - Log Brick Daemon (dis)connects under --debug
+- Use stable order for init-file lines
 - Fix symbol translation of IP Connection callbacks
 - Report all errors when reading init-file
 - Add pre/post_connect init-file format
 - Add get_connection_state to IP Connection
 - Add last will (sent if the bindings crash) and shutdown messages
+- Correctly reset callbacks
 - Handle SIGTERM/SIGQUIT
 - Fix handling of character arrays
 - Fix names of high-level-callback members
+- Add systemd service file

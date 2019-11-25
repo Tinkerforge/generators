@@ -25,3 +25,14 @@
 - Allow to pass non-constant values to parameters with constants
 - Break API to remove enumerate response structure: Enumerate callback uses
   parameters directly, which is more in line with all other callbacks
+
+2019-11-25: 2.0.5 (<unknown>)
+- Add Set/GetVoltagesCallbackConfiguration functions and Voltages callback to
+  HAT Brick API
+- Add Set/GetUSBVoltageCallbackConfiguration functions and USBVoltage callback
+  to HAT Zero Brick API
+- Add Set/GetStatisticsCallbackConfiguration functions and Statistics callback
+  to Isolator Bricklet API
+- Report error if authentication secret contains non-ASCII chars
+- Don't silently ignore stream-out-of-sync errors in callbacks
+- Replace BrickletError with DeviceError
