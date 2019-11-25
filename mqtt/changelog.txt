@@ -52,8 +52,8 @@
 - Report all errors when reading init-file
 - Add pre/post_connect init-file format
 - Add get_connection_state to IP Connection
-- Add last will (sent if the bindings crash) and shutdown messages
-- Correctly reset callbacks
+- Add last will (sent if the API bindings crash) and shutdown messages
+- Correctly reset registered callbacks
 - Handle SIGTERM/SIGQUIT
 - Fix handling of character arrays
 - Fix names of high-level-callback members
