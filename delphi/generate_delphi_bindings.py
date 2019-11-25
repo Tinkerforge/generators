@@ -1327,6 +1327,10 @@ end;
                                                              offset,
                                                              element.get_cardinality() - 1,
                                                              element.get_name().headless)
+                elif element.get_type() == 'string':
+                    wrapper += '  {0} := LEConvertStringFrom({1}, {2}, packet);\n'.format(element.get_name().headless,
+                                                                                          offset,
+                                                                                          element.get_cardinality())
                 else:
                     wrapper += '  {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_name().headless,
                                                                                   element.get_delphi_le_convert_type(),
