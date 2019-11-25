@@ -26,7 +26,7 @@
 - Break API to remove enumerate response structure: Enumerate callback uses
   parameters directly, which is more in line with all other callbacks
 
-2019-11-25: 2.0.5 (<unknown>)
+2019-11-25: 2.0.5 (b1270ba)
 - Add Set/GetVoltagesCallbackConfiguration functions and Voltages callback to
   HAT Brick API
 - Add Set/GetUSBVoltageCallbackConfiguration functions and USBVoltage callback

@@ -309,7 +309,7 @@
 - Don't leak the get_random_uint32 symbol
 - Break API to stop mixing object and function pointers for callback functions
 
-2019-11-25: 2.1.27 (<unknown>)
+2019-11-25: 2.1.27 (b1270ba)
 - Add set/get_voltages_callback_configuration functions and VOLTAGES callback
   to HAT Brick API
 - Add set/get_usb_voltage_callback_configuration functions and USB_VOLTAGE

@@ -129,7 +129,7 @@
 - Add get/setFilterConfiguration functions to Accelerometer Bricklet 2.0 API
 - Add CONVERSION_TIME constants to Voltage/Current Bricklet 2.0 API
 
-2019-11-25: 2.1.25 (<unknown>)
+2019-11-25: 2.1.25 (b1270ba)
 - Add set/getVoltagesCallbackConfiguration functions and VOLTAGES callback to
   HAT Brick API
 - Add set/getUSBVoltageCallbackConfiguration functions and USB_VOLTAGE callback

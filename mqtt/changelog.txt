@@ -38,7 +38,7 @@
 - More robust connection handling
 - Fix init file loading
 
-2019-11-25: 2.0.8 (<unknown>)
+2019-11-25: 2.0.8 (b1270ba)
 - Add set/get_voltages_callback_configuration functions and voltages callback
   to HAT Brick API
 - Add set/get_usb_voltage_callback_configuration functions and usb_voltage
