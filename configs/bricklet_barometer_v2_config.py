@@ -327,7 +327,7 @@ important to you, we would recommend the 1Hz data rate.
 """,
 'de':
 """
-Konfiguriert die Datenrate und de Luftdrucktiefpassfilter. Die Grenzfrequenz des
+Konfiguriert die Datenrate und des Luftdrucktiefpassfilter. Die Grenzfrequenz des
 Tiefpassfilters (falls aktiviert) kann auf 1/9tel oder 1/20stel der eingestellten
 Datenrate gesetzt werden, um das Rauschen auf den Luftdruckdaten zu verringert.
 
