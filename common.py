@@ -164,14 +164,11 @@ def get_image_size(path):
 
     return Image.open(path).size
 
-def select_lang(d):
-    if lang in d:
-        return d[lang]
+def select_lang(d, language=None):
+    if language == None:
+        language = lang
 
-    if 'en' in d:
-        return d['en']
-
-    return "Missing '{0}' documentation".format(lang)
+    return d[language]
 
 def make_rst_header(device, has_device_identifier_constant=True):
     bindings_display_name = device.get_generator().get_bindings_display_name()
@@ -675,22 +672,49 @@ def format_value_hint(value, scale, unit):
     elif value == 0:
         scaled_value = 0
         modified_scale = scale
-        unit_symbol = unit.symbol
-    elif unit.prefix != None:
-        scaled_value = float(value) * scale[0] / scale[1]
-        modified_scale = scale
-        unit_symbol = unit.symbol
+        unit_symbol = unit.get_symbol()
     else:
-        # find the scale that results in a scaled value with the minimum number of "Vorkommastellen"
-        candidate = {unit.symbol: (float(value) * scale[0] / scale[1], scale)}
+        # find the scale that results in a scaled value with the minimum number of leading digits
+        candidate = {unit.get_symbol(): (float(value) * scale[0] / scale[1], scale)}
 
-        for unit_prefix in unit_prefixes:
-            if unit_prefix.symbol not in unit.allowed_prefixes:
-                continue
+        if unit.get_prefix() == None:
+            for unit_prefix in unit_prefixes:
+                if unit_prefix.symbol not in unit.get_allowed_prefixes():
+                    continue
 
-            divided_scale = list(scale)
-            divided_scale[unit_prefix.index] /= float(unit_prefix.divisor)
-            candidate[unit_prefix.symbol + unit.symbol] = (float(value) * divided_scale[0] / divided_scale[1], divided_scale)
+                divided_scale = list(scale)
+                divided_scale[1 - unit_prefix.index] *= unit_prefix.divisor ** unit.get_numerator_exponent()
+                prefixed_symbol = unit.get_symbol(prefix=unit_prefix)
+
+                assert prefixed_symbol not in candidate
+
+                candidate[prefixed_symbol] = (float(value) * divided_scale[0] / divided_scale[1], divided_scale)
+
+                if unit.get_inverse_prefix() == None:
+                    for unit_inverse_prefix in unit_prefixes:
+                        if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+                            continue
+
+                        divided_scale = list(divided_scale)
+                        divided_scale[unit_inverse_prefix.index] *= unit_inverse_prefix.divisor ** unit.get_denominator_exponent()
+                        prefixed_symbol = unit.get_symbol(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix)
+
+                        assert prefixed_symbol not in candidate
+
+                        candidate[prefixed_symbol] = (float(value) * divided_scale[0] / divided_scale[1], divided_scale)
+
+        if unit.get_inverse_prefix() == None:
+            for unit_inverse_prefix in unit_prefixes:
+                if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+                    continue
+
+                divided_scale = list(scale)
+                divided_scale[unit_inverse_prefix.index] *= unit_inverse_prefix.divisor ** unit.get_denominator_exponent()
+                prefixed_symbol = unit.get_symbol(inverse_prefix=unit_inverse_prefix)
+
+                assert prefixed_symbol not in candidate
+
+                candidate[prefixed_symbol] = (float(value) * divided_scale[0] / divided_scale[1], divided_scale)
 
         scaled_value = None
         modified_scale = None
@@ -724,7 +748,7 @@ def format_value_hint(value, scale, unit):
         formatted_value = formatted_value.replace('.', ',')
 
     if unit != None:
-        formatted_value = unit.sequence.format(value=formatted_value, unit=unit_symbol)
+        formatted_value = unit.get_sequence().format(value=formatted_value, unit=unit_symbol)
 
     return formatted_value
 
@@ -759,21 +783,37 @@ def format_value_with_tooltip(element, value, scale, unit):
 
 def normalize_scale(scale, unit):
     scale = list(scale)
-    unit_name = unit.name
-    unit_symbol = unit.symbol
+    prefix_override = None
+    inverse_prefix_override = None
 
-    if unit.prefix == None:
+    if unit.get_prefix() == None:
         for unit_prefix in unit_prefixes:
-            if unit_prefix.symbol not in unit.allowed_prefixes:
+            if unit_prefix.symbol not in unit.get_allowed_prefixes():
                 continue
 
-            if scale[unit_prefix.index] % unit_prefix.divisor == 0:
-                scale[unit_prefix.index] //= unit_prefix.divisor
-                unit_name = unit.get_name_with_prefix(unit_prefix)
-                unit_symbol = unit_prefix.symbol + unit_symbol
+            divisor = unit_prefix.divisor ** unit.get_numerator_exponent()
+
+            if scale[unit_prefix.index] % divisor == 0:
+                scale[unit_prefix.index] //= divisor
+                prefix_override = unit_prefix
                 break
 
-    return tuple(scale), unit_name, unit_symbol
+    if unit.get_inverse_prefix() == None:
+        for unit_inverse_prefix in unit_prefixes:
+            if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+                continue
+
+            divisor = unit_inverse_prefix.divisor ** unit.get_denominator_exponent()
+
+            if scale[1 - unit_inverse_prefix.index] % divisor == 0:
+                scale[1 - unit_inverse_prefix.index] //= divisor
+                inverse_prefix_override = unit_inverse_prefix
+                break
+
+    unit_title = unit.get_title(prefix=prefix_override, inverse_prefix=inverse_prefix_override)
+    unit_symbol = unit.get_symbol(prefix=prefix_override, inverse_prefix=inverse_prefix_override)
+
+    return tuple(scale), unit_title, unit_symbol
 
 def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
@@ -1287,207 +1327,351 @@ class FlavoredName(object):
             return self.cache[key]
 
 class Unit(object):
-    def __init__(self, name, symbol, usage, allowed_prefixes, sequence={'en': '{value} {unit}', 'de': '{value} {unit}'}, prefix=None):
+    def __init__(self, name, title, symbol, usage, allowed_prefixes, allowed_inverse_prefixes,
+                 sequence={'en': '{value} {unit}', 'de': '{value} {unit}'},
+                 numerator_exponent=1, denominator_exponent=1, prefix=None, inverse_prefix=None):
+        assert len(allowed_prefixes) == 0 or ('{prefix}' in name and '{prefix}' in title['en'] and '{prefix}' in title['en'] and '{prefix}' in symbol), (name, title, symbol)
+        assert len(allowed_inverse_prefixes) == 0 or ('{inverse_prefix}' in name and '{inverse_prefix}' in title['en'] and '{inverse_prefix}' in title['en'] and '{inverse_prefix}' in symbol), (name, title, symbol)
+        assert '{prefix}' not in name or len(allowed_prefixes) > 0, name
+        assert '{inverse_prefix}' not in name or len(allowed_inverse_prefixes) > 0, name
+        assert '{prefix}' not in title['en'] or len(allowed_prefixes) > 0, title['en']
+        assert '{prefix}' not in title['de'] or len(allowed_prefixes) > 0, title['de']
+        assert '{inverse_prefix}' not in title or len(allowed_inverse_prefixes) > 0, title
+        assert '{prefix}' not in symbol or len(allowed_prefixes) > 0, symbol
+        assert '{inverse_prefix}' not in symbol or len(allowed_inverse_prefixes) > 0, symbol
         assert '{value}' in sequence['en'] and '{value}' in sequence['de'], sequence
         assert '{unit}' in sequence['en'] and '{unit}' in sequence['de'], sequence
+        assert isinstance(numerator_exponent, int) and numerator_exponent >= 1, numerator_exponent
+        assert isinstance(denominator_exponent, int) and denominator_exponent >= 1, denominator_exponent
+
+        check_name(name.format(prefix='', inverse_prefix=''))
 
         self._name = name
+        self._title = title
         self._symbol = symbol
         self._usage = usage
-        self.allowed_prefixes = allowed_prefixes
+        self._allowed_prefixes = allowed_prefixes
+        self._allowed_inverse_prefixes = allowed_inverse_prefixes
         self._sequence = sequence
-        self.prefix = prefix
+        self._numerator_exponent = numerator_exponent
+        self._denominator_exponent = denominator_exponent
+        self._prefix = prefix
+        self._inverse_prefix = inverse_prefix
 
-    @property
-    def name(self):
-        if self.prefix == None:
-            return select_lang(self._name)
-
-        return self.get_name_with_prefix(self.prefix)
-
-    def name_as_dict(self):
-        if self.prefix == None:
-            return self._name
-
-        return {'en': self.get_name_with_prefix(self.prefix, 'en'), 'de': self.get_name_with_prefix(self.prefix, 'de')}
-
-    @property
-    def symbol(self):
-        if self.prefix == None:
-            return self._symbol
-
-        return self.prefix.symbol + self._symbol
-
-    @property
-    def usage(self):
-        return select_lang(self._usage)
-
-    @property
-    def sequence(self):
-        return select_lang(self._sequence)
-
-    def get_name_with_prefix(self, prefix, lang_override=None):
-        if lang_override != None:
-            name = self._name[lang_override]
+    def _inject_prefix(self, text, prefix, inverse_prefix, language):
+        if prefix != None:
+            prefix_name = select_lang(prefix.name, language=language)
+        elif self._prefix != None:
+            prefix_name = select_lang(self._prefix.name, language=language)
         else:
-            name = select_lang(self._name)
+            prefix_name = ''
 
-        name_words = name.split(' ')
-        name_words[0] = name_words[0].lower()
+        if inverse_prefix != None:
+            inverse_prefix_name = select_lang(inverse_prefix.name, language=language)
+        elif self._inverse_prefix != None:
+            inverse_prefix_name = select_lang(self._inverse_prefix.name, language=language)
+        else:
+            inverse_prefix_name = ''
 
-        return select_lang(prefix.name) + ' '.join(name_words)
+        text = select_lang(text, language=language)
 
-    def copy_with_prefix(self, prefix):
-        assert prefix.symbol in self.allowed_prefixes
+        for placeholder, replacement in [('{prefix}', prefix_name), ('{inverse_prefix}', inverse_prefix_name)]:
+            if placeholder not in text:
+                continue
 
-        return Unit(self._name, self._symbol, self._usage, self.allowed_prefixes, self._sequence, prefix=prefix)
+            text_parts = text.split(placeholder)
 
-units = {
-    'Ampere':                       Unit({'en': 'Ampere', 'de': 'Ampere'},
-                                         'A',
-                                         {'en': 'Electric current', 'de': 'Elektrische Stromstärke'},
-                                         ['n', 'µ', 'm', 'k']),
+            assert len(text_parts) == 2, text_parts
+            assert len(text_parts[1]) > 0, text_parts
+            assert text_parts[1][0] >= 'A' and text_parts[1][0] <= 'z', text_parts
 
-    'Baud':                         Unit({'en': 'Baud', 'de': 'Baud'},
-                                         'Bd',
-                                         {'en': 'Symbol rate', 'de': 'Symbolrate'},
-                                         ['k']),
+            if len(text_parts[0]) > 0:
+                assert (text_parts[0][-1] >= 'a' and text_parts[0][-1] <= 'z') or text_parts[0][-1] == ' ', text_parts
 
-    'Bit Per Second':               Unit({'en': 'Bit per second', 'de': 'Bit pro Sekunde'},
-                                         'bit/s',
-                                         {'en': 'Data Rate', 'de': 'Datenrate'},
-                                         ['k']),
+                if (text_parts[0][-1] != ' ' and len(replacement) > 0) or language == 'en':
+                    replacement = replacement.lower()
 
-    'Decibel':                      Unit({'en': 'Decibel', 'de': 'Dezibel'},
-                                         'dB',
-                                         {'en': 'Level', 'de': 'Pegel'},
-                                         []),
+            if len(replacement) > 0:
+                text_parts[1] = text_parts[1][0].lower() + text_parts[1][1:]
 
-    'Degree':                       Unit({'en': 'Degree', 'de': 'Grad'},
-                                         '°',
-                                         {'en': 'Angle', 'de': 'Winkel'},
-                                         []),
+            text = replacement.join(text_parts)
 
-    'Degree Celsius':               Unit({'en': 'Degree Celsius', 'de': 'Grad Celsius'},
-                                         '°C',
-                                         {'en': 'Temperature', 'de': 'Temperatur'},
-                                         []),
+        return text
 
-    'Degree Per Second':            Unit({'en': 'Degree per second', 'de': 'Grad pro Sekunde'},
-                                         '°/s',
-                                         {'en': 'Anglular velocity', 'de': 'Winkelgeschwindigkeit'},
-                                         []),
+    def get_name(self, prefix=None, inverse_prefix=None):
+        return self._inject_prefix({'en': self._name}, prefix, inverse_prefix, 'en')
 
-    'Gram':                         Unit({'en': 'Gram', 'de': 'Gramm'},
-                                         'g',
-                                         {'en': 'Mass', 'de': 'Masse'},
-                                         ['n', 'µ', 'm', 'k']),
+    def get_base_title(self, language=None):
+        return select_lang(self._title, language=language).format(prefix='', inverse_prefix='')
 
-    'Gram Per Cubic Meter':         Unit({'en': 'Gram per cubic meter', 'de': 'Gramm pro Kubikmeter'},
-                                         'g/m³',
-                                         {'en': 'Density', 'de': 'Dichte'},
-                                         ['n', 'µ', 'm', 'k']),
+    def get_title(self, prefix=None, inverse_prefix=None, language=None):
+        return self._inject_prefix(self._title, prefix, inverse_prefix, language)
 
-    'Hertz':                        Unit({'en': 'Hertz', 'de': 'Hertz'},
-                                         'Hz',
-                                         {'en': 'Frequency', 'de': 'Frequenz'},
-                                         ['k']),
+    def get_base_symbol(self):
+        return self._symbol.format(prefix='', inverse_prefix='')
 
-    'Kelvin':                       Unit({'en': 'Kelvin', 'de': 'Kelvin'},
-                                         'K',
-                                         {'en': 'Temperature', 'de': 'Temperatur'},
-                                         []),
+    def get_symbol(self, prefix=None, inverse_prefix=None):
+        if prefix != None:
+            prefix_symbol = prefix.symbol
+        elif self._prefix != None:
+            prefix_symbol = self._prefix.symbol
+        else:
+            prefix_symbol = ''
 
-    'Lux':                          Unit({'en': 'Lux', 'de': 'Lux'},
-                                         'lx',
-                                         {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
-                                         []),
+        if inverse_prefix != None:
+            inverse_prefix_symbol = inverse_prefix.symbol
+        elif self._inverse_prefix != None:
+            inverse_prefix_symbol = self._inverse_prefix.symbol
+        else:
+            inverse_prefix_symbol = ''
 
-    'Meter':                        Unit({'en': 'Meter', 'de': 'Meter'},
-                                         'm',
-                                         {'en': 'Length', 'de': 'Länge'},
-                                         ['n', 'µ', 'm', 'c', 'k']),
+        return self._symbol.format(prefix=prefix_symbol, inverse_prefix=inverse_prefix_symbol)
 
-    'Meter Per Hour':               Unit({'en': 'Meter per hour', 'de': 'Meter pro Stunde'},
-                                         'm/h',
-                                         {'en': 'Speed', 'de': 'Geschwindigkeit'},
-                                         ['n', 'µ', 'm', 'c', 'k']),
+    def get_usage(self, language=None):
+        return select_lang(self._usage, language=language)
 
-    'Meter Per Second':             Unit({'en': 'Meter per second', 'de': 'Meter pro Sekunde'},
-                                         'm/s',
-                                         {'en': 'Speed', 'de': 'Geschwindigkeit'},
-                                         ['n', 'µ', 'm', 'c', 'k']),
+    def get_sequence(self, language=None):
+        return select_lang(self._sequence, language=language)
 
-    'Meter Per Second Squared':     Unit({'en': 'Meter per second squared', 'de': 'Meter pro Sekunde Quadrat'},
-                                         'm/s²',
-                                         {'en': 'Acceleration', 'de': 'Beschleunigung'},
-                                         ['n', 'µ', 'm', 'c', 'k']),
+    def get_numerator_exponent(self):
+        return self._numerator_exponent
 
-    'Particles Per Cubic Meter':    Unit({'en': 'Particles per cubic meter', 'de': 'Partikel pro Kubikmeter'},
-                                         '1/m³',
-                                         {'en': 'Particle Number Density', 'de': 'Teilchendichte'},
-                                         []),
+    def get_denominator_exponent(self):
+        return self._denominator_exponent
 
-    'Parts Per Million':            Unit({'en': 'Parts per million', 'de': 'Parts per million'},
-                                         'ppm',
-                                         {'en': 'Fraction', 'de': 'Anteil'},
-                                         []),
+    def get_allowed_prefixes(self):
+        return self._allowed_prefixes
 
-    'Pascal':                       Unit({'en': 'Pascal', 'de': 'Pascal'},
-                                         'Pa',
-                                         {'en': 'Pressure', 'de': 'Druck'},
-                                         ['n', 'µ', 'm', 'h', 'k']),
+    def get_allowed_inverse_prefixes(self):
+        return self._allowed_inverse_prefixes
 
-    'Percent':                      Unit({'en': 'Percent', 'de': 'Prozent'},
-                                         '%',
-                                         {'en': 'Fraction', 'de': 'Anteil'},
-                                         []),
+    def get_prefix(self):
+        return self._prefix
 
-    'Percent Relative Humidity':    Unit({'en': 'Percent relative humidity', 'de': 'Prozent relative Luftfeuchtigkeit'},
-                                         '%',
-                                         {'en': 'Relative Humidity', 'de': 'Relative Luftfeuchtigkeit'},
-                                         []),
+    def get_inverse_prefix(self):
+        return self._inverse_prefix
 
-    'Second':                       Unit({'en': 'Second', 'de': 'Sekunde'},
-                                         's',
-                                         {'en': 'Time', 'de': 'Zeit'},
-                                         ['n', 'µ', 'm']),
+    def clone(self, prefix=None, inverse_prefix=None):
+        assert prefix == None or prefix.symbol in self._allowed_prefixes, prefix
+        assert inverse_prefix == None or inverse_prefix.symbol in self._allowed_inverse_prefixes, inverse_prefix
 
-    'Standard Gravity':             Unit({'en': 'Standard gravity', 'de': 'Normfallbeschleunigung'},
-                                         'gₙ',
-                                         {'en': 'Gravitational acceleration', 'de': 'Fallbeschleunigung'},
-                                         []),
+        return Unit(self._name,
+                    self._title,
+                    self._symbol,
+                    self._usage,
+                    self._allowed_prefixes,
+                    self._allowed_inverse_prefixes,
+                    sequence=self._sequence,
+                    numerator_exponent=self._numerator_exponent,
+                    denominator_exponent=self._denominator_exponent,
+                    prefix=prefix,
+                    inverse_prefix=inverse_prefix)
 
-    'Tesla':                        Unit({'en': 'Tesla', 'de': 'Tesla'},
-                                         'T',
-                                         {'en': 'Magnetic flux density', 'de': 'Magnetische Flussdichte'},
-                                         ['n', 'µ', 'm', 'k']),
+units = [
+    Unit('{prefix}Ampere',
+         {'en': '{prefix}Ampere', 'de': '{prefix}Ampere'},
+         '{prefix}A',
+         {'en': 'Electric current', 'de': 'Elektrische Stromstärke'},
+         ['n', 'µ', 'm', 'k'],
+         []),
 
-    'Volt':                         Unit({'en': 'Volt', 'de': 'Volt'},
-                                         'V',
-                                         {'en': 'Electric potential', 'de': 'Elektrische Spannung'},
-                                         ['n', 'µ', 'm', 'k']),
+    Unit('{prefix}Baud',
+         {'en': '{prefix}Baud', 'de': '{prefix}Baud'},
+         '{prefix}Bd',
+         {'en': 'Symbol rate', 'de': 'Symbolrate'},
+         ['k'],
+         []),
 
-    'Volt Ampere':                  Unit({'en': 'Volt-ampere', 'de': 'Voltampere'},
-                                         'VA',
-                                         {'en': 'Apparent power', 'de': 'Scheinleistung'},
-                                         ['n', 'µ', 'm', 'k']),
+    Unit('{prefix}Bit Per Second',
+         {'en': '{prefix}Bit per second', 'de': '{prefix}Bit pro Sekunde'},
+         '{prefix}bit/s',
+         {'en': 'Data Rate', 'de': 'Datenrate'},
+         ['k'],
+         []),
 
-    'Volt Ampere Reactive':         Unit({'en': 'Volt-ampere reactive', 'de': 'Voltampere reaktiv'},
-                                         'var',
-                                         {'en': 'Reactive power', 'de': 'Blindleistung'},
-                                         []),
+    Unit('Decibel',
+         {'en': 'Decibel', 'de': 'Dezibel'},
+         'dB',
+         {'en': 'Level', 'de': 'Pegel'},
+         [],
+         []),
 
-    'Watt':                         Unit({'en': 'Watt', 'de': 'Watt'},
-                                         'W',
-                                         {'en': 'Power', 'de': 'Leistung'},
-                                         ['n', 'µ', 'm', 'k']),
+    Unit('Degree',
+         {'en': 'Degree', 'de': 'Grad'},
+         '°',
+         {'en': 'Angle', 'de': 'Winkel'},
+         [],
+         []),
 
-    'Watt Hour':                    Unit({'en': 'Watt-hour', 'de': 'Wattstunde'},
-                                         'Wh',
-                                         {'en': 'Energy', 'de': 'Energie'},
-                                         ['n', 'µ', 'm', 'k'])
-}
+    Unit('Degree Celsius',
+         {'en': 'Degree Celsius', 'de': 'Grad Celsius'},
+         '°C',
+         {'en': 'Temperature', 'de': 'Temperatur'},
+         [],
+         []),
+
+    Unit('Degree Per {inverse_prefix}Second',
+         {'en': 'Degree per {inverse_prefix}second', 'de': 'Grad pro {inverse_prefix}Sekunde'},
+         '°/{inverse_prefix}s',
+         {'en': 'Anglular velocity', 'de': 'Winkelgeschwindigkeit'},
+         [],
+         ['n', 'µ', 'm']),
+
+    Unit('{prefix}Gram',
+         {'en': '{prefix}Gram', 'de': '{prefix}Gramm'},
+         '{prefix}g',
+         {'en': 'Mass', 'de': 'Masse'},
+         ['n', 'µ', 'm', 'k'],
+         []),
+
+    Unit('{prefix}Gram Per Cubic Meter',
+         {'en': '{prefix}Gram per cubic meter', 'de': '{prefix}Gramm pro Kubikmeter'},
+         '{prefix}g/m³',
+         {'en': 'Density', 'de': 'Dichte'},
+         ['n', 'µ', 'm', 'k'],
+         []),
+
+    Unit('{prefix}Hertz',
+         {'en': '{prefix}Hertz', 'de': '{prefix}Hertz'},
+         '{prefix}Hz',
+         {'en': 'Frequency', 'de': 'Frequenz'},
+         ['k'],
+         []),
+
+    Unit('Kelvin',
+         {'en': 'Kelvin', 'de': 'Kelvin'},
+         'K',
+         {'en': 'Temperature', 'de': 'Temperatur'},
+         [],
+         []),
+
+    Unit('Lux',
+         {'en': 'Lux', 'de': 'Lux'},
+         'lx',
+         {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
+         [],
+         []),
+
+    Unit('{prefix}Meter',
+         {'en': '{prefix}Meter', 'de': '{prefix}Meter'},
+         '{prefix}m',
+         {'en': 'Length', 'de': 'Länge'},
+         ['n', 'µ', 'm', 'c', 'k'],
+         []),
+
+    Unit('{prefix}Meter Per Hour',
+         {'en': '{prefix}Meter per hour', 'de': '{prefix}Meter pro Stunde'},
+         '{prefix}m/h',
+         {'en': 'Speed', 'de': 'Geschwindigkeit'},
+         ['n', 'µ', 'm', 'c', 'k'],
+         []),
+
+    Unit('{prefix}Meter Per Second',
+         {'en': '{prefix}Meter per second', 'de': '{prefix}Meter pro Sekunde'},
+         '{prefix}m/s',
+         {'en': 'Speed', 'de': 'Geschwindigkeit'},
+         ['n', 'µ', 'm', 'c', 'k'],
+         []),
+
+    Unit('{prefix}Meter Per Second Squared',
+         {'en': '{prefix}Meter per second squared', 'de': '{prefix}Meter pro Sekunde Quadrat'},
+         '{prefix}m/s²',
+         {'en': 'Acceleration', 'de': 'Beschleunigung'},
+         ['n', 'µ', 'm', 'c', 'k'],
+         []),
+
+    Unit('Particles Per Cubic {inverse_prefix}Meter',
+         {'en': 'Particles per cubic {inverse_prefix}meter', 'de': 'Partikel pro Kubik{inverse_prefix}meter'},
+         '1/{inverse_prefix}m³',
+         {'en': 'Particle number density', 'de': 'Teilchendichte'},
+         [],
+         ['n', 'µ', 'm', 'c'],
+         denominator_exponent=3),
+
+    Unit('Parts Per Million',
+         {'en': 'Parts per million', 'de': 'Parts per million'},
+         'ppm',
+         {'en': 'Fraction', 'de': 'Anteil'},
+         [],
+         []),
+
+    Unit('{prefix}Pascal',
+         {'en': '{prefix}Pascal', 'de': '{prefix}Pascal'},
+         '{prefix}Pa',
+         {'en': 'Pressure', 'de': 'Druck'},
+         ['n', 'µ', 'm', 'h', 'k'],
+         []),
+
+    Unit('Percent',
+         {'en': 'Percent', 'de': 'Prozent'},
+         '%',
+         {'en': 'Fraction', 'de': 'Anteil'},
+         [],
+         []),
+
+    Unit('Percent Relative Humidity',
+         {'en': 'Percent relative humidity', 'de': 'Prozent relative Luftfeuchtigkeit'},
+         '%',
+         {'en': 'Relative Humidity', 'de': 'Relative Luftfeuchtigkeit'},
+         [],
+         []),
+
+    Unit('{prefix}Second',
+         {'en': '{prefix}Second', 'de': '{prefix}Sekunde'},
+         '{prefix}s',
+         {'en': 'Time', 'de': 'Zeit'},
+         ['n', 'µ', 'm'],
+         []),
+
+    Unit('Standard Gravity',
+         {'en': 'Standard gravity', 'de': 'Normfallbeschleunigung'},
+         'gₙ',
+         {'en': 'Gravitational acceleration', 'de': 'Fallbeschleunigung'},
+         [],
+         []),
+
+    Unit('{prefix}Tesla',
+         {'en': '{prefix}Tesla', 'de': '{prefix}Tesla'},
+         '{prefix}T',
+         {'en': 'Magnetic flux density', 'de': 'Magnetische Flussdichte'},
+         ['n', 'µ', 'm', 'k'],
+         []),
+
+    Unit('{prefix}Volt',
+         {'en': '{prefix}Volt', 'de': '{prefix}Volt'},
+         '{prefix}V',
+         {'en': 'Electric potential', 'de': 'Elektrische Spannung'},
+         ['n', 'µ', 'm', 'k'],
+         []),
+
+    Unit('{prefix}Volt Ampere',
+         {'en': '{prefix}Volt-ampere', 'de': '{prefix}Voltampere'},
+         '{prefix}VA',
+         {'en': 'Apparent power', 'de': 'Scheinleistung'},
+         ['n', 'µ', 'm', 'k'],
+         []),
+
+    Unit('Volt Ampere Reactive',
+         {'en': 'Volt-ampere reactive', 'de': 'Voltampere reaktiv'},
+         'var',
+         {'en': 'Reactive power', 'de': 'Blindleistung'},
+         [],
+         []),
+
+    Unit('{prefix}Watt',
+         {'en': '{prefix}Watt', 'de': '{prefix}Watt'},
+         '{prefix}W',
+         {'en': 'Power', 'de': 'Leistung'},
+         ['n', 'µ', 'm', 'k'],
+         []),
+
+    Unit('{prefix}Watt Hour',
+         {'en': '{prefix}Watt-hour', 'de': '{prefix}Wattstunde'},
+         '{prefix}Wh',
+         {'en': 'Energy', 'de': 'Energie'},
+         ['n', 'µ', 'm', 'k'],
+         [])
+]
 
 UnitPrefix = namedtuple('UnitPrefix', 'symbol name index divisor')
 
@@ -1615,24 +1799,45 @@ class Element(object):
         if unit_name != None:
             assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
-            try:
-                self.unit = units[unit_name]
-            except KeyError:
+            for unit in units:
+                if unit_name == unit.get_name():
+                    self.unit = unit
+                    break
+
                 for unit_prefix in unit_prefixes:
-                    if unit_name.startswith(unit_prefix.name['en']):
-                        try:
-                            unit_basename = unit_name[len(unit_prefix.name['en']):]
-                            unit_basename_words = unit_basename.split(' ')
-                            unit_basename_words[0] = unit_basename_words[0].capitalize()
+                    if unit_prefix.symbol not in unit.get_allowed_prefixes():
+                        continue
 
-                            unit = units[' '.join(unit_basename_words)]
-                        except KeyError:
-                            raise GeneratorError('Invalid Unit: ' + unit_name)
-
-                        assert unit_prefix.symbol in unit.allowed_prefixes, raw_data
-
-                        self.unit = unit.copy_with_prefix(unit_prefix)
+                    if unit_name == unit.get_name(prefix=unit_prefix):
+                        self.unit = unit.clone(prefix=unit_prefix)
                         break
+
+                    for unit_inverse_prefix in unit_prefixes:
+                        if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+                            continue
+
+                        if unit_name == unit.get_name(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix):
+                            self.unit = unit.clone(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix)
+                            break
+
+                    if self.unit != None:
+                        break
+
+                if self.unit != None:
+                    break
+
+                for unit_inverse_prefix in unit_prefixes:
+                    if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+                        continue
+
+                    if unit_name == unit.get_name(inverse_prefix=unit_inverse_prefix):
+                        self.unit = unit.clone(inverse_prefix=unit_inverse_prefix)
+                        break
+
+                if self.unit != None:
+                    break
+
+            assert self.unit != None, unit_name
 
         if 'constant_group' in self.raw_data_extra:
             range_default = 'constants'
@@ -2181,14 +2386,14 @@ class Packet(object):
 
                 meta.append('{0}: {1}'.format(unit_title, formatted_scale))
             elif scale == None and unit != None:
-                formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.name, unit.usage, unit.symbol)
+                formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.get_title(), unit.get_usage(), unit.get_symbol())
 
-                meta.append('{0}: {1}'.format(unit_title, unit.sequence.format(value='1', unit=formatted_unit)))
+                meta.append('{0}: {1}'.format(unit_title, unit.get_sequence().format(value='1', unit=formatted_unit)))
             elif scale != None and unit != None:
                 normalized_scale, unit_name, unit_symbol = normalize_scale(scale, unit)
-                formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_name, unit.usage, unit_symbol)
+                formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_name, unit.get_usage(), unit_symbol)
 
-                meta.append('{0}: {1}'.format(unit_title, unit.sequence.format(value=format_fraction(*normalized_scale), unit=formatted_unit)))
+                meta.append('{0}: {1}'.format(unit_title, unit.get_sequence().format(value=format_fraction(*normalized_scale), unit=formatted_unit)))
 
             if element.get_type() not in ['bool', 'string']:
                 if constants_hint_override != None:
