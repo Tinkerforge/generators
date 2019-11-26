@@ -40,14 +40,18 @@ class JSONBindingsDevice(common.Device):
         members['category'] = self.get_category().space
         members['device_identifier'] = self.get_device_identifier()
         members['name'] = self.get_name().space
-        members['display_name'] = OrderedDict([('short', self.get_short_display_name()),
-                                               ('long', self.get_long_display_name())])
+        members['display_name'] = OrderedDict()
+        members['display_name']['short'] = self.get_short_display_name()
+        members['display_name']['long'] = self.get_long_display_name()
         members['manufacturer'] = self.get_manufacturer()
-        members['description'] = self.get_description()
+        members['description'] = OrderedDict()
+        members['description']['en'] = self.get_description()['en']
+        members['description']['de'] = self.get_description()['de']
         members['released'] = self.is_released()
         members['documented'] = self.is_documented()
-        members['doc'] = OrderedDict([('en', self.get_doc()['en']),
-                                      ('de', self.get_doc()['de'])])
+        members['doc'] = OrderedDict()
+        members['doc']['en'] = self.get_doc()['en']
+        members['doc']['de'] = self.get_doc()['de']
         members['packets'] = []
         #members['examples'] = [] # FIXME
 
@@ -64,8 +68,11 @@ class JSONBindingsPacket(common.Packet):
         members['name'] = self.get_name().space
         members['function_id'] = self.get_function_id()
         members['since_firmware'] = self.get_since_firmware()
-        members['doc'] = OrderedDict([('type', self.get_doc_type()),
-                                      ('text', self.get_doc_text())])
+        members['doc'] = OrderedDict()
+        members['doc']['type'] = self.get_doc_type()
+        members['doc']['text'] = OrderedDict()
+        members['doc']['text']['en'] = self.get_doc_text()['en']
+        members['doc']['text']['de'] = self.get_doc_text()['de']
         members['elements'] = []
 
         for element in self.get_elements():
@@ -88,7 +95,6 @@ class JSONBindingsElement(common.Element):
             members['scale'] = None
         else:
             members['scale'] = OrderedDict()
-
             members['scale']['numerator'] = scale[0]
             members['scale']['denominator'] = scale[1]
 
@@ -98,11 +104,16 @@ class JSONBindingsElement(common.Element):
             members['unit'] = None
         else:
             members['unit'] = OrderedDict()
-
-            members['unit']['name'] = unit.name_as_dict()
-            members['unit']['symbol'] = unit.symbol
-            members['unit']['usage'] = unit._usage
-            members['unit']['sequence'] = unit._sequence
+            members['unit']['title'] = OrderedDict()
+            members['unit']['title']['en'] = unit.get_title(language='en')
+            members['unit']['title']['de'] = unit.get_title(language='de')
+            members['unit']['symbol'] = unit.get_symbol()
+            members['unit']['usage'] = OrderedDict()
+            members['unit']['usage']['en'] = unit.get_usage(language='en')
+            members['unit']['usage']['de'] = unit.get_usage(language='de')
+            members['unit']['sequence'] = OrderedDict()
+            members['unit']['sequence']['en'] = unit.get_sequence(language='en')
+            members['unit']['sequence']['de'] = unit.get_sequence(language='de')
 
         range_ = self.get_range()
 
@@ -122,7 +133,6 @@ class JSONBindingsElement(common.Element):
             members['constant_group'] = None
         else:
             members['constant_group'] = OrderedDict()
-
             members['constant_group']['name'] = constant_group.get_name().space
             members['constant_group']['constants'] = []
 
