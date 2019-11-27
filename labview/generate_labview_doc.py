@@ -91,8 +91,8 @@ class LabVIEWDocDevice(common.Device):
             outputs = packet.get_labview_parameter_list('out', high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_labview_type(),
                                                      lambda element: element.get_name().headless,
-                                                     parameter_title_override={'en': 'Input', 'de': 'Eingabe'},
-                                                     return_title_override={'en': 'Output', 'de': 'Ausgabe'},
+                                                     parameter_label_override={'en': 'Input', 'de': 'Eingabe'},
+                                                     return_label_override={'en': 'Output', 'de': 'Ausgabe'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      high_level=True)
@@ -117,7 +117,7 @@ class LabVIEWDocDevice(common.Device):
             meta = packet.get_formatted_element_meta(lambda element: element.get_labview_type(),
                                                      lambda element: element.get_name().headless,
                                                      prefix_elements=[('sender', '.NET Refnum ({0})'.format(self.get_labview_class_name()), 1, 'out')],
-                                                     callback_parameter_title_override={'en': 'Callback Output', 'de': 'Callback-Ausgabe'},
+                                                     callback_parameter_label_override={'en': 'Callback Output', 'de': 'Callback-Ausgabe'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      high_level=True)
@@ -283,8 +283,8 @@ Konstanten
         create_meta = common.format_simple_element_meta([('uid', 'String', 1, 'in'),
                                                          ('ipcon', '.NET Refnum (IPConnection)', 1, 'in'),
                                                          (self.get_name().headless, '.NET Refnum ({0})'.format(self.get_labview_class_name()), 1, 'out')],
-                                                        parameter_title_override={'en': 'Input', 'de': 'Eingabe'},
-                                                        return_title_override={'en': 'Output', 'de': 'Ausgabe'})
+                                                        parameter_label_override={'en': 'Input', 'de': 'Eingabe'},
+                                                        return_label_override={'en': 'Output', 'de': 'Ausgabe'})
         create_meta_table = common.make_rst_meta_table(create_meta)
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),

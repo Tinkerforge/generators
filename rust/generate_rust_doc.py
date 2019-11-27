@@ -113,8 +113,8 @@ class RustDocDevice(rust_common.RustDevice):
             meta = packet.get_formatted_element_meta(lambda element: element.get_rust_type(for_doc=True),
                                                      lambda element: element.get_name().under,
                                                      callback_object='conditional',
-                                                     callback_parameter_title_override={'en': 'Event', 'de': 'Event'},
-                                                     callback_object_title_override={'en': 'Event Object', 'de': 'Event-Objekt'},
+                                                     callback_parameter_label_override={'en': 'Event', 'de': 'Event'},
+                                                     callback_object_label_override={'en': 'Event Object', 'de': 'Event-Objekt'},
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)

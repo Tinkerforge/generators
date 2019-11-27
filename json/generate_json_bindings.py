@@ -91,8 +91,8 @@ class JSONBindingsElement(common.Element):
 
         scale = self.get_scale()
 
-        if scale == None:
-            members['scale'] = None
+        if scale in [None, 'dynamic']:
+            members['scale'] = scale
         else:
             members['scale'] = OrderedDict()
             members['scale']['numerator'] = scale[0]
@@ -100,8 +100,8 @@ class JSONBindingsElement(common.Element):
 
         unit = self.get_unit()
 
-        if unit == None:
-            members['unit'] = None
+        if unit in [None, 'dynamic']:
+            members['unit'] = unit
         else:
             members['unit'] = OrderedDict()
             members['unit']['title'] = OrderedDict()

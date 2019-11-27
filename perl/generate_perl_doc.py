@@ -65,14 +65,14 @@ class PerlDocDevice(perl_common.PerlDevice):
             meta = packet.get_formatted_element_meta(lambda element: element.get_perl_type(),
                                                      lambda element: element.get_perl_doc_name(),
                                                      return_object='conditional',
-                                                     return_object_title_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
+                                                     return_object_label_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
                                                      no_out_value={'en': 'undef', 'de': 'undef'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
                                                      high_level=True)
-            meta_table = common.make_rst_meta_table(meta, index_title_match={'en': 'Return Array', 'de': 'Rückgabe-Array'})
+            meta_table = common.make_rst_meta_table(meta, index_label_match={'en': 'Return Array', 'de': 'Rückgabe-Array'})
             desc = packet.get_perl_formatted_doc()
             func = '.. perl:function:: {0}->{1}({2})\n\n{3}{4}'.format(cls,
                                                                        name,

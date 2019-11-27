@@ -96,7 +96,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             meta = packet.get_formatted_element_meta(lambda element: element.get_javascript_type(),
                                                      lambda element: element.get_name().headless,
                                                      output_parameter='never' if packet.is_virtual() else 'always',
-                                                     output_parameter_title_override={'en': 'Callback Parameters', 'de': 'Callback-Parameter'},
+                                                     output_parameter_label_override={'en': 'Callback Parameters', 'de': 'Callback-Parameter'},
                                                      no_out_value={'en': 'undefined', 'de': 'undefined'},
                                                      no_return_value={'en': 'undefined', 'de': 'undefined'},
                                                      explicit_string_cardinality=True,

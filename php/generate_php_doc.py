@@ -77,7 +77,7 @@ class PHPDocDevice(php_common.PHPDevice):
             meta = packet.get_formatted_element_meta(lambda element: element.get_php_type(for_doc=True),
                                                      functools.partial(name_func, out_count),
                                                      return_object='conditional',
-                                                     return_object_title_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
+                                                     return_object_label_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,

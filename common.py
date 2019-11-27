@@ -479,19 +479,19 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     return examples
 
 def format_simple_element_meta(simple_elements, no_out_value=None,
-                               parameter_title_override=None,
-                               return_title_override=None):
-    type_title = select_lang({'en': 'Type', 'de': 'Typ'})
+                               parameter_label_override=None,
+                               return_label_override=None):
+    type_label = select_lang({'en': 'Type', 'de': 'Typ'})
 
-    if parameter_title_override != None:
-        parameter_title = select_lang(parameter_title_override)
+    if parameter_label_override != None:
+        parameter_label = select_lang(parameter_label_override)
     else:
-        parameter_title = select_lang({'en': 'Parameters', 'de': 'Parameter'})
+        parameter_label = select_lang({'en': 'Parameters', 'de': 'Parameter'})
 
-    if return_title_override != None:
-        return_title = select_lang(return_title_override)
+    if return_label_override != None:
+        return_label = select_lang(return_label_override)
     else:
-        return_title = select_lang({'en': 'Returns', 'de': 'Rückgabe'})
+        return_label = select_lang({'en': 'Returns', 'de': 'Rückgabe'})
 
     formatted_meta_in = []
     formatted_meta_out = []
@@ -499,7 +499,7 @@ def format_simple_element_meta(simple_elements, no_out_value=None,
     for simple_element in simple_elements:
         assert simple_element[2] in [None, 1] # FIXME: no list support yet
 
-        meta = (simple_element[0], '{0}: {1}'.format(type_title, simple_element[1]))
+        meta = (simple_element[0], '{0}: {1}'.format(type_label, simple_element[1]))
 
         if simple_element[3] == 'in':
             formatted_meta_in.append(meta)
@@ -514,21 +514,21 @@ def format_simple_element_meta(simple_elements, no_out_value=None,
     formatted_meta = []
 
     if len(formatted_meta_in) > 0:
-        formatted_meta.append((parameter_title, formatted_meta_in))
+        formatted_meta.append((parameter_label, formatted_meta_in))
 
     if len(formatted_meta_out) > 0:
-        formatted_meta.append((return_title, formatted_meta_out))
+        formatted_meta.append((return_label, formatted_meta_out))
 
     return formatted_meta
 
 def merge_meta_sections(items):
     merged_items = []
 
-    for title, values in items:
+    for label, values in items:
         merged = False
 
-        for merged_title, merged_values in merged_items:
-            if merged_title == title:
+        for merged_label, merged_values in merged_items:
+            if merged_label == label:
                 merged_values += values
                 merged = True
                 break
@@ -536,11 +536,11 @@ def merge_meta_sections(items):
         if merged:
             continue
 
-        merged_items.append((title, values))
+        merged_items.append((label, values))
 
     return merged_items
 
-def make_rst_meta_table(items, indent_level=1, index_title_match=None):
+def make_rst_meta_table(items, indent_level=1, index_label_match=None):
     table_template = '''.. raw:: html
 
  <table class="docutils field-list" frame="void" rules="none">
@@ -550,23 +550,23 @@ def make_rst_meta_table(items, indent_level=1, index_title_match=None):
  </tbody>
  </table>
 '''
-    row_template = '<tr class="field"><th class="field-name">{title}:</th><td class="field-body"><ul class="simple">{values}</ul></td></tr>'
+    row_template = '<tr class="field"><th class="field-name">{label}:</th><td class="field-body"><ul class="simple">{values}</ul></td></tr>'
     named_value_template = '<li>{index}<strong>{name}</strong> &#8211; {value}</li>'
     value_template = '<li>{index}{value}</li>'
 
-    if index_title_match != None:
-        index_title_match = select_lang(index_title_match)
+    if index_label_match != None:
+        index_label_match = select_lang(index_label_match)
 
     formatted_rows = []
 
-    for title, values in items:
+    for label, values in items:
         if not isinstance(values, list):
             values = [values]
 
         formatted_values = []
 
         for i, value in enumerate(values):
-            if title == index_title_match:
+            if label == index_label_match:
                 index = '{0}: '.format(i)
             else:
                 index = ''
@@ -576,7 +576,7 @@ def make_rst_meta_table(items, indent_level=1, index_title_match=None):
             else:
                 formatted_values.append(value_template.format(index=index, value=html_escape(value)))
 
-        formatted_rows.append(row_template.format(title=title, values='\n  '.join(formatted_values)))
+        formatted_rows.append(row_template.format(label=label, values='\n  '.join(formatted_values)))
 
     if len(formatted_rows) == 0:
         return ''
@@ -647,13 +647,13 @@ def format_float(value):
     return string
 
 def format_value_hint(value, scale, unit):
+    if scale == None and unit == None:
+        return ''
+
     if sys.hexversion < 0x03000000:
         assert isinstance(value, (int, long)), value
     else:
         assert isinstance(value, int), value
-
-    if scale == None and unit == None:
-        return ''
 
     if scale == None:
         scale = (1, 1)
@@ -661,18 +661,24 @@ def format_value_hint(value, scale, unit):
     assert isinstance(scale, tuple), scale
     assert isinstance(scale[0], int), scale
     assert isinstance(scale[1], int), scale
+    assert unit == None or unit == 'dynamic' or isinstance(unit, Unit), unit
 
-    if unit != None:
-        assert isinstance(unit, Unit), unit
-
-    if unit == None:
+    if unit in [None, 'dynamic']:
         scaled_value = float(value) * scale[0] / scale[1]
         modified_scale = scale
-        unit_symbol = None
+
+        if unit == 'dynamic':
+            unit_symbol = '?'
+        else:
+            unit_symbol = None
     elif value == 0:
         scaled_value = 0
         modified_scale = scale
-        unit_symbol = unit.get_symbol()
+
+        if unit == 'dynamic':
+            unit_symbol = '?'
+        else:
+            unit_symbol = unit.get_symbol()
     else:
         # find the scale that results in a scaled value with the minimum number of leading digits
         candidate = {unit.get_symbol(): (float(value) * scale[0] / scale[1], scale)}
@@ -747,19 +753,16 @@ def format_value_hint(value, scale, unit):
     if lang == 'de':
         formatted_value = formatted_value.replace('.', ',')
 
-    if unit != None:
+    if unit == 'dynamic':
+        formatted_value = '{value} {unit}'.format(value=formatted_value, unit=unit_symbol)
+    elif unit != None:
         formatted_value = unit.get_sequence().format(value=formatted_value, unit=unit_symbol)
 
     return formatted_value
 
 def format_value_with_tooltip(element, value, scale, unit):
     formatted_value = element.format_value(value)
-
-    if scale != None or unit != None:
-        formatted_value_hint = format_value_hint(value, scale, unit)
-    else:
-        formatted_value_hint = ''
-
+    formatted_value_hint = format_value_hint(value, scale, unit)
     result = None
 
     for exponent in [16, 32, 64]:
@@ -1786,7 +1789,9 @@ class Element(object):
 
         scale = self.get_scale()
 
-        if scale != None:
+        if scale == 'dynamic':
+            assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+        elif scale != None:
             assert isinstance(scale, tuple), raw_data
             assert len(scale) == 2, raw_data
             assert isinstance(scale[0], int), raw_data
@@ -1799,7 +1804,9 @@ class Element(object):
 
         unit_name = self.raw_data_extra.get('unit')
 
-        if unit_name != None:
+        if unit_name == 'dynamic':
+            self.unit = 'dynamic'
+        elif unit_name != None:
             assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
             for unit in units:
@@ -1857,7 +1864,7 @@ class Element(object):
             elif self.get_type() not in ['float', 'bool', 'char', 'string']:
                 range_ = 'type'
 
-        if range_ not in [None, 'type', 'constants']:
+        if range_ not in [None, 'type', 'constants', 'dynamic']:
             if isinstance(range_, tuple):
                 range_ = [range_]
 
@@ -2317,12 +2324,12 @@ class Packet(object):
                                    prefix_elements=None,
                                    suffix_elements=None,
                                    stream_length_suffix=None,
-                                   parameter_title_override=None,
-                                   output_parameter_title_override=None,
-                                   return_title_override=None,
-                                   return_object_title_override=None,
-                                   callback_parameter_title_override=None,
-                                   callback_object_title_override=None,
+                                   parameter_label_override=None,
+                                   output_parameter_label_override=None,
+                                   return_label_override=None,
+                                   return_object_label_override=None,
+                                   callback_parameter_label_override=None,
+                                   callback_object_label_override=None,
                                    constants_hint_override=None,
                                    no_in_value=None,
                                    no_out_value=None,
@@ -2337,14 +2344,14 @@ class Packet(object):
         assert return_object in ['never', 'always', 'conditional']
         assert callback_object in ['never', 'always', 'conditional']
 
-        type_title = select_lang({'en': 'Type', 'de': 'Typ'})
-        length_title = select_lang({'en': 'Length', 'de': 'Länge'})
+        type_label = select_lang({'en': 'Type', 'de': 'Typ'})
+        length_label = select_lang({'en': 'Length', 'de': 'Länge'})
         up_to_hint = select_lang({'en': 'up to', 'de': 'bis zu'})
         variable_hint = select_lang({'en': 'variable', 'de': 'variabel'})
-        unit_title = select_lang({'en': 'Unit', 'de': 'Einheit'})
+        unit_label = select_lang({'en': 'Unit', 'de': 'Einheit'})
         to_hint = select_lang({'en': 'to', 'de': 'bis'})
-        range_title = select_lang({'en': 'Range', 'de': 'Wertebereich'})
-        default_title = select_lang({'en': 'Default', 'de': 'Standardwert'})
+        range_label = select_lang({'en': 'Range', 'de': 'Wertebereich'})
+        default_label = select_lang({'en': 'Default', 'de': 'Standardwert'})
         formatted_meta_in = []
         formatted_meta_out = []
         formatted_meta_return = []
@@ -2353,7 +2360,7 @@ class Packet(object):
             for prefix_element in prefix_elements:
                 assert prefix_element[2] == 1 # FIXME: no list support yet
 
-                meta = (prefix_element[0], '{0}: {1}'.format(type_title, prefix_element[1]))
+                meta = (prefix_element[0], '{0}: {1}'.format(type_label, prefix_element[1]))
 
                 if prefix_element[3] == 'in':
                     formatted_meta_in.append(meta)
@@ -2365,38 +2372,62 @@ class Packet(object):
                     assert False, prefix_element[3]
 
         for element in self.get_elements(high_level=high_level):
-            meta = ['{0}: {1}'.format(type_title, bindings_type_func(element))]
+            meta = ['{0}: {1}'.format(type_label, bindings_type_func(element))]
             cardinality = element.get_cardinality()
 
             if cardinality != 1:
                 if element.get_type() == 'string':
                     if explicit_string_cardinality:
-                        meta.append('{0}: {1} {2}'.format(length_title, up_to_hint, cardinality))
+                        meta.append('{0}: {1} {2}'.format(length_label, up_to_hint, cardinality))
                 elif cardinality < 0:
                     if explicit_variable_stream_cardinality:
-                        meta.append('{0}: {1}'.format(length_title, variable_hint))
+                        meta.append('{0}: {1}'.format(length_label, variable_hint))
                 elif element.get_role() == 'stream_data':
                     if explicit_fixed_stream_cardinality:
-                        meta.append('{0}: {1}'.format(length_title, cardinality))
+                        meta.append('{0}: {1}'.format(length_label, cardinality))
                 elif explicit_common_cardinality:
-                    meta.append('{0}: {1}'.format(length_title, cardinality))
+                    meta.append('{0}: {1}'.format(length_label, cardinality))
 
             scale = element.get_scale()
             unit = element.get_unit()
 
             if scale != None and unit == None:
-                formatted_scale = format_fraction(*scale)
+                if scale == 'dynamic':
+                    formatted_scale = '?'
+                else:
+                    formatted_scale = format_fraction(*scale)
 
-                meta.append('{0}: {1}'.format(unit_title, formatted_scale))
+                meta.append('{0}: {1}'.format(unit_label, formatted_scale))
             elif scale == None and unit != None:
-                formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.get_title(), unit.get_usage(), unit.get_symbol())
+                if unit == 'dynamic':
+                    formatted_unit = '?'
+                    sequence = '{value} {unit}'
+                else:
+                    formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.get_title(), unit.get_usage(), unit.get_symbol())
+                    sequence = unit.get_sequence()
 
-                meta.append('{0}: {1}'.format(unit_title, unit.get_sequence().format(value='1', unit=formatted_unit)))
+                meta.append('{0}: {1}'.format(unit_label, sequence.format(value='1', unit=formatted_unit)))
             elif scale != None and unit != None:
-                normalized_scale, unit_name, unit_symbol = normalize_scale(scale, unit)
-                formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_name, unit.get_usage(), unit_symbol)
+                if scale == 'dynamic':
+                    formatted_scale = '?'
 
-                meta.append('{0}: {1}'.format(unit_title, unit.get_sequence().format(value=format_fraction(*normalized_scale), unit=formatted_unit)))
+                    if unit == 'dynamic':
+                        formatted_unit = '?'
+                    else:
+                        formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.get_title(), unit.get_usage(), unit.get_symbol())
+                        sequence = unit.get_sequence()
+                else:
+                    if unit == 'dynamic':
+                        formatted_scale = format_fraction(*scale)
+                        formatted_unit = '?'
+                        sequence = '{value} {unit}'
+                    else:
+                        normalized_scale, unit_title, unit_symbol = normalize_scale(scale, unit)
+                        formatted_scale = format_fraction(*normalized_scale)
+                        formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_title, unit.get_usage(), unit_symbol)
+                        sequence = unit.get_sequence()
+
+                meta.append('{0}: {1}'.format(unit_label, sequence.format(value=formatted_scale, unit=formatted_unit)))
 
             if element.get_type() not in ['bool', 'string']:
                 if constants_hint_override != None:
@@ -2407,7 +2438,9 @@ class Packet(object):
                 range_ = element.get_range()
 
                 if range_ == 'constants':
-                    meta.append('{0}: {1}'.format(range_title, constants_hint[0]))
+                    meta.append('{0}: {1}'.format(range_label, constants_hint[0]))
+                elif range_ == 'dynamic':
+                    meta.append('{0}: ?'.format(range_label))
                 elif range_ != None:
                     if range_ == 'type':
                         range_ = [element.get_type_range()]
@@ -2432,9 +2465,9 @@ class Packet(object):
                             formatted_range.append('{0} {1} {2}'.format(formatted_subrange[0], to_hint, formatted_subrange[1]))
 
                     if element.get_constant_group() != None:
-                        meta.append('{0}: [{1}] {2}'.format(range_title, ', '.join(formatted_range), constants_hint[1]))
+                        meta.append('{0}: [{1}] {2}'.format(range_label, ', '.join(formatted_range), constants_hint[1]))
                     else:
-                        meta.append('{0}: [{1}]'.format(range_title, ', '.join(formatted_range)))
+                        meta.append('{0}: [{1}]'.format(range_label, ', '.join(formatted_range)))
 
             default = element.get_default()
 
@@ -2444,7 +2477,7 @@ class Packet(object):
                 else:
                     formatted_default = element.format_value(default)
 
-                meta.append('{0}: {1}'.format(default_title, formatted_default))
+                meta.append('{0}: {1}'.format(default_label, formatted_default))
 
             if element.get_direction() == 'in':
                 formatted_meta_in.append((name_func(element), ', '.join(meta)))
@@ -2463,7 +2496,7 @@ class Packet(object):
                     else:
                         raise common.GeneratorError('Malformed stream config')
 
-                    meta = (name_func(element) + stream_length_suffix, ', '.join(['{0}: {1}'.format(type_title, length_type)]))
+                    meta = (name_func(element) + stream_length_suffix, ', '.join(['{0}: {1}'.format(type_label, length_type)]))
 
                     if element.get_direction() == 'in':
                         formatted_meta_in.append(meta)
@@ -2474,7 +2507,7 @@ class Packet(object):
             for suffix_element in suffix_elements:
                 assert suffix_element[2] == 1 # FIXME: no list support yet
 
-                meta = (suffix_element[0], '{0}: {1}'.format(type_title, suffix_element[1]))
+                meta = (suffix_element[0], '{0}: {1}'.format(type_label, suffix_element[1]))
 
                 if suffix_element[3] == 'in':
                     formatted_meta_in.append(meta)
@@ -2491,45 +2524,45 @@ class Packet(object):
         if len(formatted_meta_out) == 0 and no_out_value != None:
             formatted_meta_out.append(select_lang(no_out_value))
 
-        function_id_title = select_lang({'en': 'Function ID', 'de': 'Funktions-ID'})
+        function_id_label = select_lang({'en': 'Function ID', 'de': 'Funktions-ID'})
 
-        if parameter_title_override != None:
-            parameter_title = select_lang(parameter_title_override)
+        if parameter_label_override != None:
+            parameter_label = select_lang(parameter_label_override)
         else:
-            parameter_title = select_lang({'en': 'Parameters', 'de': 'Parameter'})
+            parameter_label = select_lang({'en': 'Parameters', 'de': 'Parameter'})
 
-        if output_parameter_title_override != None:
-            output_parameter_title = select_lang(output_parameter_title_override)
+        if output_parameter_label_override != None:
+            output_parameter_label = select_lang(output_parameter_label_override)
         else:
-            output_parameter_title = select_lang({'en': 'Output Parameters', 'de': 'Ausgabeparameter'})
+            output_parameter_label = select_lang({'en': 'Output Parameters', 'de': 'Ausgabeparameter'})
 
-        if return_title_override != None:
-            return_title = select_lang(return_title_override)
+        if return_label_override != None:
+            return_label = select_lang(return_label_override)
         else:
-            return_title = select_lang({'en': 'Returns', 'de': 'Rückgabe'})
+            return_label = select_lang({'en': 'Returns', 'de': 'Rückgabe'})
 
-        if return_object_title_override != None:
-            return_object_title = select_lang(return_object_title_override)
+        if return_object_label_override != None:
+            return_object_label = select_lang(return_object_label_override)
         else:
-            return_object_title = select_lang({'en': 'Return Object', 'de': 'Rückgabeobjekt'})
+            return_object_label = select_lang({'en': 'Return Object', 'de': 'Rückgabeobjekt'})
 
-        if callback_parameter_title_override != None:
-            callback_parameter_title = select_lang(callback_parameter_title_override)
+        if callback_parameter_label_override != None:
+            callback_parameter_label = select_lang(callback_parameter_label_override)
         else:
-            callback_parameter_title = select_lang({'en': 'Callback Parameters', 'de': 'Callback-Parameter'})
+            callback_parameter_label = select_lang({'en': 'Callback Parameters', 'de': 'Callback-Parameter'})
 
-        if callback_object_title_override != None:
-            callback_object_title = select_lang(callback_object_title_override)
+        if callback_object_label_override != None:
+            callback_object_label = select_lang(callback_object_label_override)
         else:
-            callback_object_title = select_lang({'en': 'Callback Object', 'de': 'Callback-Objekt'})
+            callback_object_label = select_lang({'en': 'Callback Object', 'de': 'Callback-Objekt'})
 
         formatted_meta = []
 
         if include_function_id:
-            formatted_meta.append((function_id_title, str(self.get_function_id())))
+            formatted_meta.append((function_id_label, str(self.get_function_id())))
 
         if len(formatted_meta_in) > 0:
-            formatted_meta.append((parameter_title, formatted_meta_in))
+            formatted_meta.append((parameter_label, formatted_meta_in))
 
         has_return = False
 
@@ -2537,41 +2570,41 @@ class Packet(object):
             if self.get_type() == 'function':
                 if output_parameter == 'never':
                     if return_object == 'never':
-                        formatted_meta.append((return_title, formatted_meta_out))
+                        formatted_meta.append((return_label, formatted_meta_out))
                         has_return = True
                     elif return_object == 'always':
-                        formatted_meta.append((return_object_title, formatted_meta_out))
+                        formatted_meta.append((return_object_label, formatted_meta_out))
                     else: # conditional
                         if len(formatted_meta_out) == 1:
-                            formatted_meta.append((return_title, formatted_meta_out))
+                            formatted_meta.append((return_label, formatted_meta_out))
                             has_return = True
                         else:
-                            formatted_meta.append((return_object_title, formatted_meta_out))
+                            formatted_meta.append((return_object_label, formatted_meta_out))
                 elif output_parameter == 'always':
-                    formatted_meta.append((output_parameter_title, formatted_meta_out))
+                    formatted_meta.append((output_parameter_label, formatted_meta_out))
                 else: # conditional
                     if len(formatted_meta_out) == 1:
-                        formatted_meta.append((return_title, formatted_meta_out))
+                        formatted_meta.append((return_label, formatted_meta_out))
                         has_return = True
                     else:
-                        formatted_meta.append((output_parameter_title, formatted_meta_out))
+                        formatted_meta.append((output_parameter_label, formatted_meta_out))
             else: # callback
                 if callback_object == 'never':
-                    formatted_meta.append((callback_parameter_title, formatted_meta_out))
+                    formatted_meta.append((callback_parameter_label, formatted_meta_out))
                 elif callback_object == 'always':
-                    formatted_meta.append((callback_object_title, formatted_meta_out))
+                    formatted_meta.append((callback_object_label, formatted_meta_out))
                 else: # conditional
                     if len(formatted_meta_out) == 1:
-                        formatted_meta.append((callback_parameter_title, formatted_meta_out))
+                        formatted_meta.append((callback_parameter_label, formatted_meta_out))
                     else:
-                        formatted_meta.append((callback_object_title, formatted_meta_out))
+                        formatted_meta.append((callback_object_label, formatted_meta_out))
 
         if len(formatted_meta_return) > 0:
-            formatted_meta.append((return_title, formatted_meta_return))
+            formatted_meta.append((return_label, formatted_meta_return))
             has_return = True
 
         if not has_return and no_return_value != None:
-            formatted_meta.append((return_title, select_lang(no_return_value)))
+            formatted_meta.append((return_label, select_lang(no_return_value)))
 
         return formatted_meta
 

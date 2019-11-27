@@ -140,7 +140,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
             meta = packet.get_formatted_element_meta(lambda element: element.get_matlab_type(),
                                                      lambda element: element.get_name().headless,
                                                      callback_object='always',
-                                                     callback_object_title_override={'en': 'Event Object', 'de': 'Event-Objekt'},
+                                                     callback_object_label_override={'en': 'Event Object', 'de': 'Event-Objekt'},
                                                      no_out_value={'en': 'empty object', 'de': 'leeres Objekt'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,

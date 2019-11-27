@@ -65,8 +65,8 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
             name = packet.get_mqtt_name(skip=skip)
             meta = packet.get_formatted_element_meta(lambda element: element.get_mqtt_type(for_doc=True),
                                                      lambda element: element.get_name().under,
-                                                     parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
-                                                     return_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     parameter_label_override={'en': 'Request', 'de': 'Anfrage'},
+                                                     return_label_override={'en': 'Response', 'de': 'Antwort'},
                                                      no_in_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                      no_out_value={'en': 'no response', 'de': 'keine Antwort'},
                                                      constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
@@ -78,7 +78,7 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
 
             if packet.get_name().space == 'Get Identity':
                 meta += common.format_simple_element_meta([('_display_name', 'string', None, 'out')],
-                                                          return_title_override={'en': 'Response', 'de': 'Antwort'})
+                                                          return_label_override={'en': 'Response', 'de': 'Antwort'})
 
             meta_table = common.make_rst_meta_table(common.merge_meta_sections(meta))
             desc = packet.get_mqtt_formatted_doc()
@@ -129,10 +129,10 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
         for packet in self.get_packets('callback'):
 
             meta = common.format_simple_element_meta([('register', 'bool', 1, 'in')],
-                                                      parameter_title_override={'en': 'Register Request', 'de': 'Registrierungsanfrage'})
+                                                      parameter_label_override={'en': 'Register Request', 'de': 'Registrierungsanfrage'})
             meta += packet.get_formatted_element_meta(lambda element: element.get_mqtt_type(for_doc=True),
                                                       lambda element: element.get_name().under,
-                                                      callback_parameter_title_override={'en': 'Callback Response', 'de': 'Callback-Antwort'},
+                                                      callback_parameter_label_override={'en': 'Callback Response', 'de': 'Callback-Antwort'},
                                                      constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
                                                       no_out_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                       explicit_string_cardinality=True,

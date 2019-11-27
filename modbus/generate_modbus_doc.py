@@ -58,8 +58,8 @@ class ModbusDocDevice(common.Device):
             name = packet.get_name().under
             meta = packet.get_formatted_element_meta(lambda element: element.get_modbus_type(),
                                                      lambda element: element.get_name().under,
-                                                     parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
-                                                     return_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     parameter_label_override={'en': 'Request', 'de': 'Anfrage'},
+                                                     return_label_override={'en': 'Response', 'de': 'Antwort'},
                                                      constants_hint_override={'en': ('See meanings', 'with meanings'), 'de': ('Siehe Bedeutungen', 'mit Bedeutungen')},
                                                      no_in_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                      no_out_value={'en': 'no response', 'de': 'keine Antwort'},
@@ -78,9 +78,9 @@ class ModbusDocDevice(common.Device):
         for packet in self.get_packets('callback'):
             meta = packet.get_formatted_element_meta(lambda element: element.get_modbus_type(),
                                                      lambda element: element.get_name().under,
-                                                     parameter_title_override={'en': 'Request', 'de': 'Anfrage'},
-                                                     return_title_override={'en': 'Response', 'de': 'Antwort'},
-                                                     callback_parameter_title_override={'en': 'Response', 'de': 'Antwort'},
+                                                     parameter_label_override={'en': 'Request', 'de': 'Anfrage'},
+                                                     return_label_override={'en': 'Response', 'de': 'Antwort'},
+                                                     callback_parameter_label_override={'en': 'Response', 'de': 'Antwort'},
                                                      constants_hint_override={'en': ('See meanings', 'with meanings'), 'de': ('Siehe Bedeutungen', 'mit Bedeutungen')},
                                                      no_out_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                      include_function_id=True)

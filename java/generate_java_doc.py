@@ -121,7 +121,7 @@ class JavaDocDevice(java_common.JavaDevice):
             params = packet.get_java_parameters(high_level=True)
             meta = packet.get_formatted_element_meta(lambda element: element.get_java_type(),
                                                      lambda element: element.get_name().headless,
-                                                     callback_parameter_title_override={'en': 'Parameters', 'de': 'Parameter'},
+                                                     callback_parameter_label_override={'en': 'Parameters', 'de': 'Parameter'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
