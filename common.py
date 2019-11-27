@@ -1914,6 +1914,12 @@ class Element(object):
         default = self.get_default()
 
         if default != None:
+            assert self.get_cardinality() == 1 or \
+                   (isinstance(default, list) and \
+                    ((self.get_role() == 'stream_chunk_data' and len(default) <= self.get_cardinality()) or
+                     (self.get_role() == 'stream_data' and len(default) <= abs(self.get_cardinality())) or
+                     len(default) == self.get_cardinality())), raw_data
+
             if not isinstance(default, list):
                 default = [default]
 
