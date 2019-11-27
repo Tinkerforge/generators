@@ -1358,7 +1358,10 @@ class Unit(object):
         self._prefix = prefix
         self._inverse_prefix = inverse_prefix
 
-    def _inject_prefix(self, text, prefix, inverse_prefix, language):
+    def _inject_prefix(self, text, prefix, inverse_prefix, language, space_case=False):
+        if language == None:
+            language = lang
+
         if prefix != None:
             prefix_name = select_lang(prefix.name, language=language)
         elif self._prefix != None:
@@ -1388,7 +1391,7 @@ class Unit(object):
             if len(text_parts[0]) > 0:
                 assert (text_parts[0][-1] >= 'a' and text_parts[0][-1] <= 'z') or text_parts[0][-1] == ' ', text_parts
 
-                if (text_parts[0][-1] != ' ' and len(replacement) > 0) or language == 'en':
+                if text_parts[0][-1] != ' ' or (not space_case and language == 'en'):
                     replacement = replacement.lower()
 
             if len(replacement) > 0:
@@ -1399,7 +1402,7 @@ class Unit(object):
         return text
 
     def get_name(self, prefix=None, inverse_prefix=None):
-        return self._inject_prefix({'en': self._name}, prefix, inverse_prefix, 'en')
+        return self._inject_prefix({'en': self._name}, prefix, inverse_prefix, 'en', space_case=True)
 
     def get_base_title(self, language=None):
         return select_lang(self._title, language=language).format(prefix='', inverse_prefix='')
