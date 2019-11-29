@@ -1878,12 +1878,22 @@ class Element(object):
                 assert subrange != (None, None), raw_data
 
                 if subrange[0] == None:
+                    assert i == 0, raw_data
+
                     subrange = (self.get_type_range()[0], subrange[1])
 
                 if subrange[1] == None:
+                    assert i == len(range_) - 1, raw_data
+
                     subrange = (subrange[0], self.get_type_range()[1])
 
                 assert subrange[0] <= subrange[1], raw_data
+
+                if i > 0:
+                    assert range_[i - 1][1] < subrange[0], raw_data
+
+                if i < len(range_) - 1:
+                    assert subrange[1] < range_[i + 1][0], raw_data
 
                 if self.get_type() == 'char':
                     assert isinstance(subrange[0], str), raw_data
