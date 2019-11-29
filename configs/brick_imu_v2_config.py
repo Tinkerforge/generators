@@ -355,7 +355,7 @@ Gibt die aktuelle Orientierung (w, x, y, z) des IMU Brick als
 `Quaterinonen <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__
 zurück.
 
-Die Rüxkgabewerte müssen mit 16383 (14 Bit) dividiert werden, um
+Die Rückgabewerte müssen mit 16383 (14 Bit) dividiert werden, um
 in den üblichen Wertebereich für Quaternionen (-1,0 bis +1,0) gebracht zu werden.
 
 Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
