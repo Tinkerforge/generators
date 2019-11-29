@@ -1037,14 +1037,14 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`Set Quaternion Period`. The :word:`parameters` are the orientation
-(x, y, z, w) of the IMU Brick in quaternions. See :func:`Get Quaternion`
+(w, x, y, z) of the IMU Brick in quaternions. See :func:`Get Quaternion`
 for details.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Quaternion Period`, ausgelöst. Die :word:`parameters` sind die
-Orientierung (x, y, z, w) des IMU Brick in Quaternionen. Siehe
+Orientierung (w, x, y, z) des IMU Brick in Quaternionen. Siehe
 :func:`Get Quaternion` für Details.
 """
 }]
