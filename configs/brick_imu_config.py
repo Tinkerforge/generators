@@ -217,10 +217,10 @@ Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get Quaternion',
-'elements': [('X', 'float', 1, 'out', {'range': (-1, 1)}),
-             ('Y', 'float', 1, 'out', {'range': (-1, 1)}),
-             ('Z', 'float', 1, 'out', {'range': (-1, 1)}),
-             ('W', 'float', 1, 'out', {'range': (-1, 1)})],
+'elements': [('X', 'float', 1, 'out', {'range': (-1.0, 1.0)}),
+             ('Y', 'float', 1, 'out', {'range': (-1.0, 1.0)}),
+             ('Z', 'float', 1, 'out', {'range': (-1.0, 1.0)}),
+             ('W', 'float', 1, 'out', {'range': (-1.0, 1.0)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -963,10 +963,10 @@ IMU Brick in Eulerwinkeln. Siehe :func:`Get Orientation` für Details.
 com['packets'].append({
 'type': 'callback',
 'name': 'Quaternion',
-'elements': [('X', 'float', 1, 'out', {'range': (-1, 1)}),
-             ('Y', 'float', 1, 'out', {'range': (-1, 1)}),
-             ('Z', 'float', 1, 'out', {'range': (-1, 1)}),
-             ('W', 'float', 1, 'out', {'range': (-1, 1)})],
+'elements': [('X', 'float', 1, 'out', {'range': (-1.0, 1.0)}),
+             ('Y', 'float', 1, 'out', {'range': (-1.0, 1.0)}),
+             ('Z', 'float', 1, 'out', {'range': (-1.0, 1.0)}),
+             ('W', 'float', 1, 'out', {'range': (-1.0, 1.0)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
