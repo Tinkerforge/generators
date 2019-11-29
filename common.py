@@ -1973,7 +1973,7 @@ class Element(object):
 
         if constant_group_name != None:
             assert range_ != None, raw_data
-            assert self.get_type() not in ['float', 'string'], raw_data
+            assert self.get_type() not in ['string'], raw_data
             assert isinstance(constant_group_name, str), raw_data
 
             self.constant_group = self.get_device().get_constant_group(constant_group_name)
