@@ -655,29 +655,35 @@ def format_value_hint(value, scale, unit):
     else:
         assert isinstance(value, int), value
 
-    if scale == None:
-        scale = (1, 1)
+    if scale not in [None, 'dynamic']:
+        assert isinstance(scale, tuple), scale
+        assert isinstance(scale[0], int), scale
+        assert isinstance(scale[1], int), scale
 
-    assert isinstance(scale, tuple), scale
-    assert isinstance(scale[0], int), scale
-    assert isinstance(scale[1], int), scale
     assert unit == None or unit == 'dynamic' or isinstance(unit, Unit), unit
 
-    if unit in [None, 'dynamic']:
-        scaled_value = float(value) * scale[0] / scale[1]
-        modified_scale = scale
-
-        if unit == 'dynamic':
-            unit_symbol = '?'
-        else:
-            unit_symbol = None
-    elif value == 0:
+    if value == 0:
         scaled_value = 0
-        modified_scale = scale
 
-        if unit == 'dynamic':
-            unit_symbol = '?'
+        if scale in [None, 'dynamic']:
+            modified_scale = (1, 1)
         else:
+            modified_scale = scale
+
+        if unit not in [None, 'dynamic']:
+            unit_symbol = unit.get_symbol()
+    elif unit in [None, 'dynamic']:
+        if scale == 'dynamic':
+            scaled_value = value
+            modified_scale = (1, 1)
+        else:
+            scaled_value = float(value) * scale[0] / scale[1]
+            modified_scale = scale
+    elif scale in [None, 'dynamic']:
+        scaled_value = value
+        modified_scale = (1, 1)
+
+        if unit not in [None, 'dynamic']:
             unit_symbol = unit.get_symbol()
     else:
         # find the scale that results in a scaled value with the minimum number of leading digits
@@ -754,7 +760,7 @@ def format_value_hint(value, scale, unit):
         formatted_value = formatted_value.replace('.', ',')
 
     if unit == 'dynamic':
-        formatted_value = '{value} {unit}'.format(value=formatted_value, unit=unit_symbol)
+        formatted_value = '{value} {unit}'.format(value=formatted_value, unit='?')
     elif unit != None:
         formatted_value = unit.get_sequence().format(value=formatted_value, unit=unit_symbol)
 
