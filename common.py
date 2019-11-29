@@ -1958,6 +1958,9 @@ class Element(object):
                     assert len(subrange[1]) == 1, raw_data
                     assert ord(subrange[0]) <= 255, raw_data
                     assert ord(subrange[1]) <= 255, raw_data
+                elif self.get_type() == 'float':
+                    assert isinstance(subrange[0], float), raw_data
+                    assert isinstance(subrange[1], float), raw_data
                 else:
                     assert isinstance(subrange[0], int), raw_data
                     assert isinstance(subrange[1], int), raw_data
