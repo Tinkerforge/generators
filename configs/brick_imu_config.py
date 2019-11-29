@@ -109,9 +109,9 @@ den :cb:`Magnetic Field` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Angular Velocity',
-'elements': [('X', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
-             ('Y', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
-             ('Z', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Y', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Z', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -146,9 +146,9 @@ com['packets'].append({
              ('Mag X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
              ('Mag Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
              ('Mag Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Ang X', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
-             ('Ang Y', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
-             ('Ang Z', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang X', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang Y', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang Z', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
              ('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -913,9 +913,9 @@ com['packets'].append({
              ('Mag X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
              ('Mag Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
              ('Mag Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Ang X', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
-             ('Ang Y', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
-             ('Ang Z', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang X', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang Y', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang Z', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
              ('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

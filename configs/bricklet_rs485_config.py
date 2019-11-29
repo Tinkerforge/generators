@@ -274,7 +274,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Modbus Configuration',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (1, 247), 'default': 1}),
-             ('Master Request Timeout', 'uint32', 1, 'in', {'scale': (1, 1000), 'Unit': 'Second', 'default': 1000})],
+             ('Master Request Timeout', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -298,7 +298,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Modbus Configuration',
 'elements': [('Slave Address', 'uint8', 1, 'out', {'range': (1, 247), 'default': 1}),
-             ('Master Request Timeout', 'uint32', 1, 'out', {'scale': (1, 1000), 'Unit': 'Second', 'default': 1000})],
+             ('Master Request Timeout', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1643,7 +1643,7 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Write Multiple Coils Request Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out, {}'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Starting Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
              ('Coils Length', 'uint16', 1, 'out', {'range': (1, 1968)}),
              ('Coils Chunk Offset', 'uint16', 1, 'out', {}),

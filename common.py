@@ -1601,8 +1601,8 @@ units = [
          []),
 
     Unit('{prefix}Ohm',
-         {'en': 'Ohm', 'de': 'Ohm'},
-         'Ω',
+         {'en': '{prefix}Ohm', 'de': '{prefix}Ohm'},
+         '{prefix}Ω',
          {'en': 'Electrical Resistance', 'de': 'Elektrischer Widerstand'},
          ['n', 'µ', 'm', 'k'],
          []),
@@ -1924,7 +1924,7 @@ class Element(object):
             if isinstance(range_, tuple):
                 range_ = [range_]
 
-            assert self.get_type() not in ['float', 'string'], raw_data
+            assert self.get_type() not in ['bool', 'string'], raw_data
             assert isinstance(range_, list), raw_data
             assert len(range_) > 0, raw_data
 
