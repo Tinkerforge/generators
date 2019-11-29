@@ -228,6 +228,14 @@ class MATLABElement(common.Element):
     }
 
     def format_value(self, value):
+        if isinstance(value, list):
+            result = []
+
+            for subvalue in value:
+                result.append(self.format_value(subvalue))
+
+            return '[{0}]'.format(', '.join(result))
+
         type_ = self.get_type()
 
         if type_ == 'float':
