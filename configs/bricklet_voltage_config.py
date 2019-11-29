@@ -39,13 +39,12 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 50000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the voltage of the sensor. The value is in mV and
-between 0mV and 50000mV.
+Returns the voltage of the sensor.
 
 If you want to get the voltage periodically, it is recommended to use the
 :cb:`Voltage` callback and set the period with
@@ -53,8 +52,7 @@ If you want to get the voltage periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die gemessene Spannung des Sensors zurück. Der Wert ist in mV und im
-Bereich von 0mV bis 50000mV.
+Gibt die gemessene Spannung des Sensors zurück.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Voltage` Callback zu nutzen und die Periode mit
@@ -66,13 +64,12 @@ den :cb:`Voltage` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the value as read by a 12-bit analog-to-digital converter.
-The value is between 0 and 4095.
 
 .. note::
  The value returned by :func:`Get Voltage` is averaged over several samples
@@ -86,8 +83,7 @@ If you want the analog value periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
-Wertebereich ist 0 bis 4095.
+Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück.
 
 .. note::
  Der von :func:`Get Voltage` zurückgegebene Wert ist über mehrere
@@ -191,8 +187,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -210,8 +206,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
  "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -228,8 +222,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Spannung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -238,8 +230,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -257,8 +249,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Analog Value Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -276,8 +268,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -294,8 +284,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn der Analogwert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -304,8 +292,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -376,7 +364,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 50000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -402,7 +390,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Analog Value',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -428,7 +416,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Voltage Reached',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 50000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -455,7 +443,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Analog Value Reached',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

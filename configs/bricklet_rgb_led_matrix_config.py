@@ -35,7 +35,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set Red',
-'elements': [('Red', 'uint8', 64, 'in')],
+'elements': [('Red', 'uint8', 64, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -52,7 +52,7 @@ Setzt die Werte der 64 roten LEDs der Matrix.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Red',
-'elements': [('Red', 'uint8', 64, 'out')],
+'elements': [('Red', 'uint8', 64, 'out', {'default': [0] * 64})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -69,7 +69,7 @@ Gibt die Werte der roten LED zurück, wie von :func:`Set Red` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Green',
-'elements': [('Green', 'uint8', 64, 'in')],
+'elements': [('Green', 'uint8', 64, 'in', {'default': [0] * 64})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -86,7 +86,7 @@ Setzt die Werte der 64 grünen LEDs der Matrix.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Green',
-'elements': [('Green', 'uint8', 64, 'out')],
+'elements': [('Green', 'uint8', 64, 'out', {'default': [0] * 64})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -103,7 +103,7 @@ Gibt die Werte der grünen LED zurück, wie von :func:`Set Green` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Blue',
-'elements': [('Blue', 'uint8', 64, 'in')],
+'elements': [('Blue', 'uint8', 64, 'in', {'default': [0] * 64})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -120,7 +120,7 @@ Setzt die Werte der 64 blauen LEDs der Matrix.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Blue',
-'elements': [('Blue', 'uint8', 64, 'out')],
+'elements': [('Blue', 'uint8', 64, 'out', {'default': [0] * 64})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -137,12 +137,12 @@ Gibt die Werte der blauen LED zurück, wie von :func:`Set Blue` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Duration',
-'elements': [('Frame Duration', 'uint16', 1, 'in')],
+'elements': [('Frame Duration', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the frame duration in ms.
+Sets the frame duration.
 
 Example: If you want to achieve 20 frames per second, you should
 set the frame duration to 50ms (50ms * 20 = 1 second).
@@ -159,12 +159,10 @@ Approach:
 * and so on.
 
 For frame duration of 0 see :func:`Draw Frame`.
-
-Default value: 0 = off.
 """,
 'de':
 """
-Setzt die *Frame Duration* (Dauer des Frames) in ms.
+Setzt die *Frame Duration* (Dauer des Frames).
 
 Beispiel: Wenn 20 Frames pro Sekunde erreicht werden sollen, muss
 die Länge des Frames auf 50ms gesetzt werden (50ms * 20 = 1 Sekunde).
@@ -182,8 +180,6 @@ Vorgehensweise:
 * Und so weiter.
 
 Für eine *Frame Duration* von 0 siehe :func:`Draw Frame`.
-
-Standardwert: 0 = aus.
 """
 }]
 })
@@ -191,7 +187,7 @@ Standardwert: 0 = aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Duration',
-'elements': [('Frame Duration', 'uint16', 1, 'out')],
+'elements': [('Frame Duration', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -251,7 +247,7 @@ Vorgehensweise:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Supply Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -269,7 +265,7 @@ in mV angegeben.
 com['packets'].append({
 'type': 'callback',
 'name': 'Frame Started',
-'elements': [('Frame Number', 'uint32', 1, 'out')],
+'elements': [('Frame Number', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

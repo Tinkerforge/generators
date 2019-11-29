@@ -65,10 +65,10 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Write Low Level',
-'elements': [('Message Length', 'uint16', 1, 'in'),
-             ('Message Chunk Offset', 'uint16', 1, 'in'),
-             ('Message Chunk Data', 'char', 60, 'in'),
-             ('Message Chunk Written', 'uint8', 1, 'out')],
+'elements': [('Message Length', 'uint16', 1, 'in', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Message Chunk Data', 'char', 60, 'in', {}),
+             ('Message Chunk Written', 'uint8', 1, 'out', {})],
 'high_level': {'stream_in': {'name': 'Message', 'short_write': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -98,10 +98,10 @@ bezüglich Baudrate, Parität usw.
 com['packets'].append({
 'type': 'function',
 'name': 'Read Low Level',
-'elements': [('Length', 'uint16', 1, 'in'),
-             ('Message Length', 'uint16', 1, 'out'),
-             ('Message Chunk Offset', 'uint16', 1, 'out'),
-             ('Message Chunk Data', 'char', 60, 'out')],
+'elements': [('Length', 'uint16', 1, 'in', {}),
+             ('Message Length', 'uint16', 1, 'out', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Message Chunk Data', 'char', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -171,7 +171,7 @@ Im Startzustand ist der Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Read Callback Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -190,38 +190,21 @@ Gibt *true* zurück falls :cb:`Read` Callback aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Baudrate', 'uint32', 1, 'in'),
-             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity'}),
-             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits'}),
-             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength'}),
-             ('Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Flowcontrol'})],
+'elements': [('Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (100, 2000000), 'default': 115200}),
+             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity', 'default': 0}),
+             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits', 'default': 1}),
+             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength', 'default': 8}),
+             ('Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Flowcontrol', 'default': 0})],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the configuration for the RS232 communication. Available options:
-
-* Baud rate between 100 and 2000000 baud.
-* Parity of none, odd or even.
-* Stop bits can be 1 or 2.
-* Word length of 5 to 8.
-* Flow control can be off, software or hardware.
-
-The default is: 115200 baud, parity none, 1 stop bit, word length 8.
+Sets the configuration for the RS232 communication.
 """,
 'de':
 """
 Setzt die Konfiguration für die RS232-Kommunikation.
-Verfügbare Optionen sind:
-
-* Baudrate zwischen 100 und 2000000 Baud.
-* Parität von None, Odd und Even.
-* Stopp-Bits von 1 oder 2.
-* Wortlänge zwischen 5 und 8.
-* Flow Control kann aus, Software oder Hardware sein.
-
-Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8.
 """
 }]
 })
@@ -229,11 +212,11 @@ Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Baudrate', 'uint32', 1, 'out'),
-             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity'}),
-             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits'}),
-             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength'}),
-             ('Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Flowcontrol'})],
+'elements': [('Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (100, 2000000), 'default': 115200}),
+             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity', 'default': 0}),
+             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits', 'default': 1}),
+             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength', 'default': 8}),
+             ('Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Flowcontrol', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -250,14 +233,14 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Buffer Config',
-'elements': [('Send Buffer Size', 'uint16', 1, 'in'),
-             ('Receive Buffer Size', 'uint16', 1, 'in')],
+'elements': [('Send Buffer Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (1024, 9216), 'default': 5120}),
+             ('Receive Buffer Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (1024, 9216), 'default': 5120})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets the send and receive buffer size in byte. In total the buffers have to be
-10240 byte (10kb) in size, the minimum buffer size is 1024 byte (1kb) for each.
+10240 byte (10KiB) in size, the minimum buffer size is 1024 byte (1KiB) for each.
 
 The current buffer content is lost if this function is called.
 
@@ -265,14 +248,12 @@ The send buffer holds data that is given by :func:`Write` and
 can not be written yet. The receive buffer holds data that is
 received through RS232 but could not yet be send to the
 user, either by :func:`Read` or through :cb:`Read` callback.
-
-The default configuration is 5120 byte (5kb) per buffer.
 """,
 'de':
 """
 Setzt die Größe des Sende- und Empfangsbuffers. In Summe müssen
-die Buffer eine Größe von 10240 Byte (10kb) haben, die Minimalgröße
-ist 1024 Byte (1kb) für beide.
+die Buffer eine Größe von 10240 Byte (10KiB) haben, die Minimalgröße
+ist 1024 Byte (1KiB) für beide.
 
 Der aktuelle Bufferinhalt geht bei einem Aufruf dieser Funktion verloren.
 
@@ -280,8 +261,6 @@ Der Sendebuffer hält die Daten welche über :func:`Write` übergeben und noch
 nicht geschrieben werden konnten. Der Empfangsbuffer hält Daten welche
 über RS232 empfangen wurden aber noch nicht über :func:`Read` oder
 :cb:`Read` Callback an ein Nutzerprogramm übertragen werden konnten.
-
-Die Standardkonfiguration ist 5120 Byte (5kb) pro Buffer.
 """
 }]
 })
@@ -289,8 +268,8 @@ Die Standardkonfiguration ist 5120 Byte (5kb) pro Buffer.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Buffer Config',
-'elements': [('Send Buffer Size', 'uint16', 1, 'out'),
-             ('Receive Buffer Size', 'uint16', 1, 'out')],
+'elements': [('Send Buffer Size', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216), 'default': 5120}),
+             ('Receive Buffer Size', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216), 'default': 5120})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -307,8 +286,8 @@ Gibt die Buffer-Konfiguration zurück, wie von :func:`Set Buffer Config` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Get Buffer Status',
-'elements': [('Send Buffer Used', 'uint16', 1, 'out'),
-             ('Receive Buffer Used', 'uint16', 1, 'out')],
+'elements': [('Send Buffer Used', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216)}),
+             ('Receive Buffer Used', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -329,8 +308,8 @@ Siehe :func:`Set Buffer Config` zur Konfiguration der Buffergrößen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error Count',
-'elements': [('Error Count Overrun', 'uint32', 1, 'out'),
-             ('Error Count Parity', 'uint32', 1, 'out')],
+'elements': [('Error Count Overrun', 'uint32', 1, 'out', {}),
+             ('Error Count Parity', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -347,9 +326,9 @@ Gibt die aktuelle Anzahl an Overrun und Parity Fehlern zurück.
 com['packets'].append({
 'type': 'callback',
 'name': 'Read Low Level',
-'elements': [('Message Length', 'uint16', 1, 'out'),
-             ('Message Chunk Offset', 'uint16', 1, 'out'),
-             ('Message Chunk Data', 'char', 60, 'out')],
+'elements': [('Message Length', 'uint16', 1, 'out', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Message Chunk Data', 'char', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -371,8 +350,8 @@ Dieser Callback kann durch :func:`Enable Read Callback` aktiviert werden.
 com['packets'].append({
 'type': 'callback',
 'name': 'Error Count',
-'elements': [('Error Count Overrun', 'uint32', 1, 'out'),
-             ('Error Count Parity', 'uint32', 1, 'out')],
+'elements': [('Error Count Overrun', 'uint32', 1, 'out', {}),
+             ('Error Count Parity', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

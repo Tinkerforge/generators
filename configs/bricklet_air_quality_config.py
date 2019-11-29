@@ -56,17 +56,17 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Values',
-'elements': [('IAQ Index', 'int32', 1, 'out'),
+'elements': [('IAQ Index', 'int32', 1, 'out', {'range': (0, 500)}),
              ('IAQ Index Accuracy', 'uint8', 1, 'out', {'constant_group': 'Accuracy'}),
-             ('Temperature', 'int32', 1, 'out'),
-             ('Humidity', 'int32', 1, 'out'),
-             ('Air Pressure', 'int32', 1, 'out')],
+             ('Temperature', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'}),
+             ('Humidity', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Percent Relative Humidity'}),
+             ('Air Pressure', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Hectopascal'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns all values measured by the Air Quality Bricklet. The values are
-IAQ (Indoor Air Quality) Index, IAQ Index Accuracy, Temperature, Humidity and
+IAQ (Indoor Air Quality) Index (higher value means greater level of air pollution), IAQ Index Accuracy, Temperature, Humidity and
 Air Pressure.
 
 .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
@@ -74,19 +74,11 @@ Air Pressure.
    :alt: Air Quality Index description
    :align: center
    :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
-
-The values have these ranges and units:
-
-* IAQ Index: 0 to 500, higher value means greater level of air pollution
-* IAQ Index Accuracy: 0 = unreliable to 3 = high
-* Temperature: in steps of 0.01 °C
-* Humidity: in steps of 0.01 %RH
-* Air Pressure: in steps of 0.01 hPa
 """,
 'de':
 """
 Gibt alle Werte zurück, die das Air Quality Bricklet misst. Diese Werte umfassen:
-IAQ (Indoor Air Quality = Innenraumluftqualität) Index, IAQ Index Genauigkeit,
+IAQ (Indoor Air Quality = Innenraumluftqualität) Index (ein höherer Werte bedeutet eine stärkere Luftverschmutzung), IAQ Index Genauigkeit,
 Temperatur, Luftfeuchte und Luftdruck.
 
 .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
@@ -94,14 +86,6 @@ Temperatur, Luftfeuchte und Luftdruck.
    :alt: Air Quality Index description
    :align: center
    :target: ../../_images/Misc/bricklet_air_quality_iaq_index.png
-
-Die Werte haben diese Bereiche und Einheiten:
-
-* IAQ Index: 0 bis 500, ein höhere Werte bedeutet eine stärkere Luftverschmutzung
-* IAQ Index Genauigkeit: 0 = unzuverlässig bis 3 = hoch
-* Temperatur: in 0,01 °C Schritten
-* Luftfeuchte: in 0,01 %RH Schritten
-* Luftdruck: in 0,01 hPa Schritten
 """
 }]
 })
@@ -109,13 +93,12 @@ Die Werte haben diese Bereiche und Einheiten:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Offset',
-'elements': [('Offset', 'int32', 1, 'in')],
+'elements': [('Offset', 'int32', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets a temperature offset with resolution 1/100 °C. A offset of 10 will decrease
-the measured temperature by 0.1 °C.
+Sets a temperature offset. A offset of 10 will decrease the measured temperature by 0.1 °C.
 
 If you install this Bricklet into an enclosure and you want to measure the ambient
 temperature, you may have to decrease the measured temperature by some value to
@@ -132,8 +115,7 @@ the measurements.
 """,
 'de':
 """
-Setzt ein Temperatur-Offset mit Auflösung 1/100 °C. Ein Offset von 10 verringert
-die gemessene Temperatur um 0,1 °C.
+Setzt ein Temperatur-Offset. Ein Offset von 10 verringert die gemessene Temperatur um 0,1 °C.
 
 Wenn das Bricklet in einem Gehäuse verbaut wird, aber die Umgebungstemperatur
 außerhalb des Gehäuses gemessen werden soll, dann muss vom gemessenen Temperatur
@@ -155,7 +137,7 @@ sollte der Temperatur-Offset unbedingt bestimmt und eingestellt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Offset',
-'elements': [('Offset', 'int32', 1, 'out')],
+'elements': [('Offset', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -229,11 +211,11 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'All Values',
-'elements': [('IAQ Index', 'int32', 1, 'out'),
+'elements': [('IAQ Index', 'int32', 1, 'out', {'range': (0, 500)}),
              ('IAQ Index Accuracy', 'uint8', 1, 'out', {'constant_group': 'Accuracy'}),
-             ('Temperature', 'int32', 1, 'out'),
-             ('Humidity', 'int32', 1, 'out'),
-             ('Air Pressure', 'int32', 1, 'out')],
+             ('Temperature', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'}),
+             ('Humidity', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Percent Relative Humidity'}),
+             ('Air Pressure', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Hectopascal'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -256,14 +238,13 @@ Die :word:`parameters` sind der gleiche wie :func:`Get All Values`.
 com['packets'].append({
 'type': 'function',
 'name': 'Get IAQ Index',
-'elements': [('IAQ Index', 'int32', 1, 'out'),
+'elements': [('IAQ Index', 'int32', 1, 'out', {'range': (0, 500)}),
              ('IAQ Index Accuracy', 'uint8', 1, 'out', {'constant_group': 'Accuracy'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the IAQ index and accuracy. The IAQ index goes from
-0 to 500. The higher the IAQ index, the greater the level of air pollution.
+Returns the IAQ index and accuracy. The higher the IAQ index, the greater the level of air pollution.
 
 .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
    :scale: 100 %
@@ -277,8 +258,7 @@ with :func:`Set IAQ Index Callback Configuration`.
 """,
 'de':
 """
-Gibt den IAQ Index und dessen Genaugkeit zurück. Der IAQ Index hate einen
-Wertebereich von 0 bis 500, ein höhere Werte bedeutet eine stärkere
+Gibt den IAQ Index und dessen Genaugkeit zurück. Ein höherer Werte bedeutet eine stärkere
 Luftverschmutzung.
 
 .. image:: /Images/Misc/bricklet_air_quality_iaq_index.png
@@ -352,7 +332,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'IAQ Index',
-'elements': [('IAQ Index', 'int32', 1, 'out'),
+'elements': [('IAQ Index', 'int32', 1, 'out', {'range': (0, 500)}),
              ('IAQ Index Accuracy', 'uint8', 1, 'out', {'constant_group': 'Accuracy'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -376,11 +356,11 @@ Die :word:`parameters` sind die gleichen wie :func:`Get IAQ Index`.
 temperature_doc = {
 'en':
 """
-Returns temperature in steps of 0.01 °C.
+Returns temperature.
 """,
 'de':
 """
-Gibt die Temperatur in 0,01 °C Schritten zurück.
+Gibt die Temperatur zurück.
 """
 }
 
@@ -389,17 +369,19 @@ add_callback_value_function(
     name      = 'Get Temperature',
     data_name = 'Temperature',
     data_type = 'int32',
-    doc       = temperature_doc
+    doc       = temperature_doc,
+    scale     = (1, 100),
+    unit      = 'Degree Celsius'
 )
 
 humidity_doc = {
 'en':
 """
-Returns relative humidity in steps of 0.01 %RH.
+Returns relative humidity.
 """,
 'de':
 """
-Gibt die relative Luftfeuchtigkeit in 0,01 %RH Schritten zurück.
+Gibt die relative Luftfeuchtigkeit zurück.
 """
 }
 
@@ -408,17 +390,19 @@ add_callback_value_function(
     name      = 'Get Humidity',
     data_name = 'Humidity',
     data_type = 'int32',
-    doc       = humidity_doc
+    doc       = humidity_doc,
+    scale     = (1, 100),
+    unit      = 'Percent Relative Humidity'
 )
 
 air_pressure_doc = {
 'en':
 """
-Returns air pressure in steps of 0.01 hPa.
+Returns air pressure.
 """,
 'de':
 """
-Gibt den Luftdruck in 0,01 hPa Schritten zurück.
+Gibt den Luftdruck Schritten zurück.
 """
 }
 
@@ -427,7 +411,9 @@ add_callback_value_function(
     name      = 'Get Air Pressure',
     data_name = 'Air Pressure',
     data_type = 'int32',
-    doc       = air_pressure_doc
+    doc       = air_pressure_doc,
+    scale     = (1, 100),
+    unit      = 'Hectopascal'
 )
 
 com['packets'].append({
@@ -464,7 +450,7 @@ es vier Tage bis eine volle Kalibrierung wieder hergestellt ist.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Background Calibration Duration',
-'elements': [('Duration', 'uint8', 1, 'in', {'constant_group': 'Duration'})],
+'elements': [('Duration', 'uint8', 1, 'in', {'constant_group': 'Duration', 'default': 1})],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':
@@ -519,7 +505,7 @@ Der Standardwert (seit Firmware-Version 2.0.3) beträgt 28 Tage.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Background Calibration Duration',
-'elements': [('Duration', 'uint8', 1, 'out', {'constant_group': 'Duration'})],
+'elements': [('Duration', 'uint8', 1, 'out', {'constant_group': 'Duration', 'default': 1})],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':

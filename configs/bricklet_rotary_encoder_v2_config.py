@@ -76,7 +76,7 @@ com['packets'][0]['elements'].insert(0, ('Reset', 'bool', 1, 'in'))
 com['packets'].append({
 'type': 'function',
 'name': 'Is Pressed',
-'elements': [('Pressed', 'bool', 1, 'out')],
+'elements': [('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

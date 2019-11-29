@@ -48,8 +48,8 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Switch Socket',
-'elements': [('House Code', 'uint8', 1, 'in'),
-             ('Receiver Code', 'uint8', 1, 'in'),
+'elements': [('House Code', 'uint8', 1, 'in', {'range': (0, 31)}),
+             ('Receiver Code', 'uint8', 1, 'in', {'range': (0, 31)}),
              ('Switch To', 'uint8', 1, 'in', {'constant_group': 'Switch To'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -114,7 +114,7 @@ von busy auf ready wechselt, siehe :func:`Get Switching State`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Repeats',
-'elements': [('Repeats', 'uint8', 1, 'in')],
+'elements': [('Repeats', 'uint8', 1, 'in', {'default': 5})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -125,8 +125,6 @@ that a button of the remote is pressed.
 
 Some dimmers are controlled by the length of a button pressed,
 this can be simulated by increasing the repeats.
-
-The default value is 5.
 """,
 'de':
 """
@@ -137,8 +135,6 @@ gedrückt wird.
 
 Einige Dimmer werden über die Länge des Tastendrucks kontrolliert, dies kann
 simuliert werden indem man die Anzahl der Wiederholungen inkrementiert.
-
-Der Standardwert ist 5.
 """
 }]
 })
@@ -146,7 +142,7 @@ Der Standardwert ist 5.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Repeats',
-'elements': [('Repeats', 'uint8', 1, 'out')],
+'elements': [('Repeats', 'uint8', 1, 'out', {'default': 5})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -163,8 +159,8 @@ Gibt die Anzahl der Wiederholungen zurück, wie von :func:`Set Repeats` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Switch Socket A',
-'elements': [('House Code', 'uint8', 1, 'in'),
-             ('Receiver Code', 'uint8', 1, 'in'),
+'elements': [('House Code', 'uint8', 1, 'in', {'range': (0, 31)}),
+             ('Receiver Code', 'uint8', 1, 'in', {'range': (0, 31)}),
              ('Switch To', 'uint8', 1, 'in', {'constant_group': 'Switch To'})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
@@ -173,8 +169,6 @@ com['packets'].append({
 To switch a type A socket you have to give the house code, receiver code and the
 state (on or off) you want to switch to.
 
-The house code and receiver code have a range of 0 to 31 (5bit).
-
 A detailed description on how you can figure out the house and receiver code
 can be found :ref:`here <remote_switch_bricklet_type_a_house_and_receiver_code>`.
 """,
@@ -182,8 +176,6 @@ can be found :ref:`here <remote_switch_bricklet_type_a_house_and_receiver_code>`
 """
 Um eine Typ A Steckdose zu schalten muss der Housecode, Receivercode sowie
 der Zustand (an oder aus) zu dem geschaltet werden soll übergeben werden.
-
-Der House- und Receivercode hat einen Wertebereich von 0 bis 31 (5Bit).
 
 Eine detaillierte Beschreibung wie man den House- und Receivercode herausfinden
 kann gibt es :ref:`hier <remote_switch_bricklet_type_a_house_and_receiver_code>`.
@@ -194,8 +186,8 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_a_house_and_receiver_code>`
 com['packets'].append({
 'type': 'function',
 'name': 'Switch Socket B',
-'elements': [('Address', 'uint32', 1, 'in'),
-             ('Unit', 'uint8', 1, 'in'),
+'elements': [('Address', 'uint32', 1, 'in', {'range': (0, 2**26-1)}),
+             ('Unit', 'uint8', 1, 'in', {'range': [(0, 15), (255, 255)]}),
              ('Switch To', 'uint8', 1, 'in', {'constant_group': 'Switch To'})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
@@ -204,9 +196,7 @@ com['packets'].append({
 To switch a type B socket you have to give the address, unit and the state
 (on or off) you want to switch to.
 
-The address has a range of 0 to 67108863 (26bit) and the unit has a range
-of 0 to 15 (4bit). To switch all devices with the same address use 255 for
-the unit.
+To switch all devices with the same address use 255 for the unit.
 
 A detailed description on how you can teach a socket the address and unit can
 be found :ref:`here <remote_switch_bricklet_type_b_address_and_unit>`.
@@ -216,9 +206,7 @@ be found :ref:`here <remote_switch_bricklet_type_b_address_and_unit>`.
 Um eine Typ B Steckdose zu schalten muss die Adresse und Unit sowie
 der Zustand (an oder aus) zu dem geschaltet werden soll übergeben werden.
 
-Die Adresse hat einen Wertebereich von 0 bis 67108863 (26Bit) und die Unit hat
-einen Wertebereich von 0 bis 15 (4Bit). Um alle Geräte mit der selben Adresse
-zu schalten kann die Unit auf 255 gesetzt werden.
+Um alle Geräte mit der selben Adresse zu schalten kann die Unit auf 255 gesetzt werden.
 
 Eine detaillierte Beschreibung wie man Adresse und Unit einer Steckdose anlernen
 kann gibt es :ref:`hier <remote_switch_bricklet_type_b_address_and_unit>`.
@@ -229,18 +217,15 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_b_address_and_unit>`.
 com['packets'].append({
 'type': 'function',
 'name': 'Dim Socket B',
-'elements': [('Address', 'uint32', 1, 'in'),
-             ('Unit', 'uint8', 1, 'in'),
-             ('Dim Value', 'uint8', 1, 'in')],
+'elements': [('Address', 'uint32', 1, 'in', {'range': (0, 2**26-1)}),
+             ('Unit', 'uint8', 1, 'in', {'range': [(0, 15), (255, 255)]}),
+             ('Dim Value', 'uint8', 1, 'in', {})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
 """
 To control a type B dimmer you have to give the address, unit and the
 dim value you want to set the dimmer to.
-
-The address has a range of 0 to 67108863 (26bit), the unit and the dim value
-has a range of 0 to 15 (4bit).
 
 A detailed description on how you can teach a dimmer the address and unit can
 be found :ref:`here <remote_switch_bricklet_type_b_address_and_unit>`.
@@ -249,9 +234,6 @@ be found :ref:`here <remote_switch_bricklet_type_b_address_and_unit>`.
 """
 Um eine Typ B Dimmer zu steuern muss die Adresse und Unit sowie
 der Dimmwert auf der Dimmer gesetzt werden soll übergeben werden.
-
-Die Adresse hat einen Wertebereich von 0 bis 67108863 (26Bit), die Unit und
-der Dimmwert haben einen Wertebereich von 0 bis 15 (4Bit).
 
 Eine detaillierte Beschreibung wie man Adresse und Unit einem Dimmer anlernen
 kann gibt es :ref:`hier <remote_switch_bricklet_type_b_address_and_unit>`.
@@ -262,8 +244,8 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_b_address_and_unit>`.
 com['packets'].append({
 'type': 'function',
 'name': 'Switch Socket C',
-'elements': [('System Code', 'char', 1, 'in'),
-             ('Device Code', 'uint8', 1, 'in'),
+'elements': [('System Code', 'char', 1, 'in', {'range': ('A', 'P')}),
+             ('Device Code', 'uint8', 1, 'in', {'range': (1, 16)}),
              ('Switch To', 'uint8', 1, 'in', {'constant_group': 'Switch To'})],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
@@ -272,9 +254,6 @@ com['packets'].append({
 To switch a type C socket you have to give the system code, device code and the
 state (on or off) you want to switch to.
 
-The system code has a range of 'A' to 'P' (4bit) and the device code has a
-range of 1 to 16 (4bit).
-
 A detailed description on how you can figure out the system and device code
 can be found :ref:`here <remote_switch_bricklet_type_c_system_and_device_code>`.
 """,
@@ -282,9 +261,6 @@ can be found :ref:`here <remote_switch_bricklet_type_c_system_and_device_code>`.
 """
 Um eine Typ C Steckdose zu schalten muss der Systemcode, Gerätecode sowie
 der Zustand (an oder aus) zu dem geschaltet werden soll übergeben werden.
-
-Der Systemcode hat einen Wertebereich von 'A' bis 'P' (4Bit) und der Gerätecode
-hat einen Wertebereich von 1 bis 16 (4Bit).
 
 Eine detaillierte Beschreibung wie man den System- und Gerätecode herausfinden
 kann gibt es :ref:`hier <remote_switch_bricklet_type_c_system_and_device_code>`.

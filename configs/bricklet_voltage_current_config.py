@@ -48,16 +48,28 @@ com['constant_groups'].append({
 
 com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 
+com['constant_groups'].append({
+'name': 'Conversion Time',
+'type': 'uint8',
+'constants': [('140us', 0),
+              ('204us', 1),
+              ('332us', 2),
+              ('588us', 3),
+              ('1 1ms', 4),
+              ('2 116ms', 5),
+              ('4 156ms', 6),
+              ('8 244ms', 7)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current',
-'elements': [('Current', 'int32', 1, 'out')],
+'elements': [('Current', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (-20000, 20000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current. The value is in mA
-and between -20000mA and 20000mA.
+Returns the current.
 
 If you want to get the current periodically, it is recommended to use the
 :cb:`Current` callback and set the period with
@@ -65,8 +77,7 @@ If you want to get the current periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die gemessenen Stromstärke zurück. Der Wert ist in mA und im
-Bereich von -20000mA bis 20000mA.
+Gibt die gemessenen Stromstärke zurück.
 
 Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Current` Callback zu nutzen und die Periode mit
@@ -78,13 +89,12 @@ den :cb:`Current` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage',
-'elements': [('Voltage', 'int32', 1, 'out')],
+'elements': [('Voltage', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 36000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the voltage. The value is in mV
-and between 0mV and 36000mV.
+Returns the voltage.
 
 If you want to get the voltage periodically, it is recommended to use the
 :cb:`Voltage` callback and set the period with
@@ -92,8 +102,7 @@ If you want to get the voltage periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die gemessenen Spannung zurück. Der Wert ist in mV und im
-Bereich von 0mV bis 36000mV.
+Gibt die gemessenen Spannung zurück.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Voltage` Callback zu nutzen und die Periode mit
@@ -105,13 +114,12 @@ den :cb:`Voltage` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Power',
-'elements': [('Power', 'int32', 1, 'out')],
+'elements': [('Power', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Watt', 'range': (0, 720000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the power. The value is in mW
-and between 0mV and 720000mW.
+Returns the power.
 
 If you want to get the power periodically, it is recommended to use the
 :cb:`Power` callback and set the period with
@@ -119,8 +127,7 @@ If you want to get the power periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die gemessenen Leistung zurück. Der Wert ist in mW und im
-Bereich von 0mW bis 720000mW.
+Gibt die gemessenen Leistung zurück.
 
 Wenn die Leistung periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Power` Callback zu nutzen und die Periode mit
@@ -132,9 +139,9 @@ den :cb:`Power` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging'}),
-             ('Voltage Conversion Time', 'uint8', 1, 'in'),
-             ('Current Conversion Time', 'uint8', 1, 'in')],
+'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging', 'default': 3}),
+             ('Voltage Conversion Time', 'uint8', 1, 'in', {'constant_group': 'Conversion Time', 'default': 4}),
+             ('Current Conversion Time', 'uint8', 1, 'in', {'constant_group': 'Conversion Time', 'default': 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -142,78 +149,12 @@ com['packets'].append({
 Sets the configuration of the Voltage/Current Bricklet. It is
 possible to configure number of averages as well as
 voltage and current conversion time.
-
-Averaging:
-
-.. csv-table::
- :header: "Value", "Number of Averages"
- :widths: 20, 20
-
- "0",    "1"
- "1",    "4"
- "2",    "16"
- "3",    "64"
- "4",    "128"
- "5",    "256"
- "6",    "512"
- ">=7",  "1024"
-
-Voltage/Current conversion:
-
-.. csv-table::
- :header: "Value", "Conversion time"
- :widths: 20, 20
-
- "0",    "140µs"
- "1",    "204µs"
- "2",    "332µs"
- "3",    "588µs"
- "4",    "1.1ms"
- "5",    "2.116ms"
- "6",    "4.156ms"
- ">=7",  "8.244ms"
-
-The default values are 3, 4 and 4 (64, 1.1ms, 1.1ms) for averaging, voltage
-conversion and current conversion.
 """,
 'de':
 """
 Setzt die Konfiguration des Voltage/Current Bricklet. Es ist
 möglich die Anzahl für die Durchschnittsbildung, und die
 Wandlungszeit für Spannung und Stromstärke zu definieren.
-
-Durchschnittsbildung:
-
-.. csv-table::
- :header: "Wert", "Anzahl"
- :widths: 20, 20
-
- "0",    "1"
- "1",    "4"
- "2",    "16"
- "3",    "64"
- "4",    "128"
- "5",    "256"
- "6",    "512"
- ">=7",  "1024"
-
-Wandlungszeit für Spannung/Stromstärke:
-
-.. csv-table::
- :header: "Wert", "Wandlungszeit"
- :widths: 20, 20
-
- "0",    "140µs"
- "1",    "204µs"
- "2",    "332µs"
- "3",    "588µs"
- "4",    "1.1ms"
- "5",    "2.116ms"
- "6",    "4.156ms"
- ">=7",  "8.244ms"
-
-Die Standardwerte sind 3, 4 und 4 (64, 1.1ms, 1.1ms) für die
-Durchschnittsbildung und die Spannungs/Stromstärkenwandlungszeit.
 """
 }]
 })
@@ -221,9 +162,9 @@ Durchschnittsbildung und die Spannungs/Stromstärkenwandlungszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging'}),
-             ('Voltage Conversion Time', 'uint8', 1, 'out'),
-             ('Current Conversion Time', 'uint8', 1, 'out')],
+'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging', 'default': 3}),
+             ('Voltage Conversion Time', 'uint8', 1, 'out', {'constant_group': 'Conversion Time', 'default': 4}),
+             ('Current Conversion Time', 'uint8', 1, 'out', {'constant_group': 'Conversion Time', 'default': 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -240,8 +181,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Gain Multiplier', 'uint16', 1, 'in'),
-             ('Gain Divisor', 'uint16', 1, 'in')],
+'elements': [('Gain Multiplier', 'uint16', 1, 'in', {}),
+             ('Gain Divisor', 'uint16', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -258,7 +199,7 @@ by setting the multiplier to 1000 and the divisor to 1023.
 """
 Da der Shunt-Widerstand über den die Stromstärke gemessen wird keine
 perfekte Genauigkeit hat, ist es nötig einen Multiplikator und
-einen Divisor zu setzen falls sehr genaue Messwerte nötig sind.
+einen Divisor zu setzen, falls sehr genaue Messwerte nötig sind.
 
 Zum Beispiel: Wenn eine Messung von 1000mA erwartet wird, das
 Voltage/Current Bricklet aber 1023mA zurück gibt, sollte
@@ -271,8 +212,8 @@ werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Gain Multiplier', 'uint16', 1, 'out'),
-             ('Gain Divisor', 'uint16', 1, 'out')],
+'elements': [('Gain Multiplier', 'uint16', 1, 'out', {}),
+             ('Gain Divisor', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -416,8 +357,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Current Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -435,8 +376,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the current is *inside* the min and max values"
  "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -453,8 +392,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Stromstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -463,8 +400,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Current Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -482,8 +419,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Voltage Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -501,8 +438,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
  "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -519,8 +454,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Spannung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -529,8 +462,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Voltage Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -548,8 +481,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Power Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Watt', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Watt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -567,8 +500,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the power is *inside* the min and max values"
  "'<'",    "Callback is triggered when the power is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the power is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -585,8 +516,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Leistung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Leistung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Leistung größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -595,8 +524,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Power Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Watt', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Watt', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -671,7 +600,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current',
-'elements': [('Current', 'int32', 1, 'out')],
+'elements': [('Current', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (-20000, 20000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -698,7 +627,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Voltage',
-'elements': [('Voltage', 'int32', 1, 'out')],
+'elements': [('Voltage', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 36000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -725,7 +654,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Power',
-'elements': [('Power', 'int32', 1, 'out')],
+'elements': [('Power', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Watt', 'range': (0, 720000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -752,7 +681,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current Reached',
-'elements': [('Current', 'int32', 1, 'out')],
+'elements': [('Current', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (-20000, 20000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -779,7 +708,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Voltage Reached',
-'elements': [('Voltage', 'int32', 1, 'out')],
+'elements': [('Voltage', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (0, 36000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -806,7 +735,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Power Reached',
-'elements': [('Power', 'int32', 1, 'out')],
+'elements': [('Power', 'int32', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (-20000, 20000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

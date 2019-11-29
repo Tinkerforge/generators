@@ -139,12 +139,12 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Max Velocity',
-'elements': [('Velocity', 'uint16', 1, 'in')],
+'elements': [('Velocity', 'uint16', 1, 'in', {'unit': 'Steps Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the maximum velocity of the stepper motor in steps per second.
+Sets the maximum velocity of the stepper motor.
 This function does *not* start the motor, it merely sets the maximum
 velocity the stepper motor is accelerated to. To get the motor running use
 either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
@@ -152,7 +152,7 @@ either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
 """,
 'de':
 """
-Setzt die maximale Geschwindigkeit des Schrittmotors in Schritten je Sekunde.
+Setzt die maximale Geschwindigkeit des Schrittmotors.
 Diese Funktion startet *nicht* den Motor, sondern setzt nur die maximale
 Geschwindigkeit auf welche der Schrittmotor beschleunigt wird. Um den Motor zu fahren
 können :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` oder
@@ -164,7 +164,7 @@ können :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` od
 com['packets'].append({
 'type': 'function',
 'name': 'Get Max Velocity',
-'elements': [('Velocity', 'uint16', 1, 'out')],
+'elements': [('Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -181,16 +181,16 @@ Gibt die Geschwindigkeit zurück, wie von :func:`Set Max Velocity` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Velocity',
-'elements': [('Velocity', 'uint16', 1, 'out')],
+'elements': [('Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the *current* velocity of the stepper motor in steps per second.
+Returns the *current* velocity of the stepper motor.
 """,
 'de':
 """
-Gibt die *aktuelle* Geschwindigkeit des Schrittmotors in Schritten je Sekunde zurück.
+Gibt die *aktuelle* Geschwindigkeit des Schrittmotors zurück.
 """
 }]
 })
@@ -198,14 +198,14 @@ Gibt die *aktuelle* Geschwindigkeit des Schrittmotors in Schritten je Sekunde zu
 com['packets'].append({
 'type': 'function',
 'name': 'Set Speed Ramping',
-'elements': [('Acceleration', 'uint16', 1, 'in'),
-             ('Deacceleration', 'uint16', 1, 'in')],
+'elements': [('Acceleration', 'uint16', 1, 'in', {'unit': 'Steps Per Second Squared', 'default': 1000}),
+             ('Deacceleration', 'uint16', 1, 'in', {'unit': 'Steps Per Second Squared', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the acceleration and deacceleration of the stepper motor. The values
-are given in *steps/s²*. An acceleration of 1000 means, that
+Sets the acceleration and deacceleration of the stepper motor.
+An acceleration of 1000 means, that
 every second the velocity is increased by 1000 *steps/s*.
 
 For example: If the current velocity is 0 and you want to accelerate to a
@@ -214,13 +214,11 @@ of 800 *steps/s²*.
 
 An acceleration/deacceleration of 0 means instantaneous
 acceleration/deacceleration (not recommended)
-
-The default value is 1000 for both
 """,
 'de':
 """
-Setzt die Beschleunigung und die Verzögerung des Schrittmotors. Die Werte
-müssen in *Schritten/s²* angegeben werden. Eine Beschleunigung von 1000 bedeutet,
+Setzt die Beschleunigung und die Verzögerung des Schrittmotors.
+Eine Beschleunigung von 1000 bedeutet,
 dass jede Sekunde die Geschwindigkeit um 1000 *Schritte/s* erhöht wird.
 
 Beispiel: Wenn die aktuelle Geschwindigkeit 0 ist und es soll auf eine Geschwindigkeit
@@ -229,8 +227,6 @@ von 8000 *Schritten/s* in 10 Sekunden beschleunigt werden, muss die Beschleunigu
 
 Eine Beschleunigung/Verzögerung von 0 bedeutet ein sprunghaftes Beschleunigen/Verzögern
 (nicht empfohlen).
-
-Der Standardwert ist 1000 für beide Parameter.
 """
 }]
 })
@@ -238,8 +234,8 @@ Der Standardwert ist 1000 für beide Parameter.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Speed Ramping',
-'elements': [('Acceleration', 'uint16', 1, 'out'),
-             ('Deacceleration', 'uint16', 1, 'out')],
+'elements': [('Acceleration', 'uint16', 1, 'out', {'unit': 'Steps Per Second Squared', 'default': 1000}),
+             ('Deacceleration', 'uint16', 1, 'out', {'unit': 'Steps Per Second Squared', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -288,7 +284,7 @@ Ein Aufruf von :func:`Stop` stoppt den Motor.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Position',
-'elements': [('Position', 'int32', 1, 'in')],
+'elements': [('Position', 'int32', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -309,7 +305,7 @@ Startpunkt erreicht wurde (z.B. wenn eine CNC Maschine eine Ecke erreicht).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Position',
-'elements': [('Position', 'int32', 1, 'out')],
+'elements': [('Position', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -334,7 +330,7 @@ gewünschten Wert zu setzen mit :func:`Set Current Position`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Target Position',
-'elements': [('Position', 'int32', 1, 'in')],
+'elements': [('Position', 'int32', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -367,7 +363,7 @@ Ein Aufruf von :func:`Set Target Position` mit dem Parameter *x* ist
 com['packets'].append({
 'type': 'function',
 'name': 'Get Target Position',
-'elements': [('Position', 'int32', 1, 'out')],
+'elements': [('Position', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -384,7 +380,7 @@ Gibt die letzte Zielposition zurück, wie von :func:`Set Target Position` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Steps',
-'elements': [('Steps', 'int32', 1, 'in')],
+'elements': [('Steps', 'int32', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -407,7 +403,7 @@ Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Steps',
-'elements': [('Steps', 'int32', 1, 'out')],
+'elements': [('Steps', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -424,7 +420,7 @@ Gibt die letzten Schritte zurück, wie von :func:`Set Steps` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Remaining Steps',
-'elements': [('Steps', 'int32', 1, 'out')],
+'elements': [('Steps', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -447,8 +443,8 @@ hat, wird 1500 zurückgegeben.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Step Configuration',
-'elements': [('Step Resolution', 'uint8', 1, 'in', {'constant_group': 'Step Resolution'}),
-             ('Interpolation', 'bool', 1, 'in')],
+'elements': [('Step Resolution', 'uint8', 1, 'in', {'constant_group': 'Step Resolution', 'default': 0}),
+             ('Interpolation', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -464,8 +460,6 @@ For maximum torque use full-step without interpolation. For maximum resolution u
 
 If you often change the speed with high acceleration you should turn the
 interpolation off.
-
-The default is 1/256-step with interpolation on.
 """,
 'de':
 """
@@ -481,8 +475,6 @@ Interpolation führt auch dazu, dass der Motor weniger Geräusche erzeugt.
 
 Für den Fall, dass oft die Geschwindigkeit mit sehr hohen Beschleunigungen
 geändert wird, sollte Interpolation ausgeschaltet werden.
-
-Der Standardwert ist 1/256 Schritte mit aktivierter Interpolation.
 """
 }]
 })
@@ -491,7 +483,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Step Configuration',
 'elements': [('Step Resolution', 'uint8', 1, 'out', {'constant_group': 'Step Resolution'}),
-             ('Interpolation', 'bool', 1, 'out')],
+             ('Interpolation', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -571,18 +563,18 @@ Stoppt den Schrittmotor mit der Verzögerung, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Input Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the stack input voltage in mV. The stack input voltage is the
+Returns the stack input voltage. The stack input voltage is the
 voltage that is supplied via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
-Gibt die Eingangsspannung (in mV) des Stapels zurück. Die Eingangsspannung
+Gibt die Eingangsspannung des Stapels zurück. Die Eingangsspannung
 des Stapel wird über diesen bereitgestellt und von einer Step-Down oder
 Step-Up Power Supply erzeugt.
 """
@@ -592,12 +584,12 @@ Step-Up Power Supply erzeugt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get External Input Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the external input voltage in mV. The external input voltage is
+Returns the external input voltage. The external input voltage is
 given via the black power input connector on the Silent Stepper Brick.
 
 If there is an external input voltage and a stack input voltage, the motor
@@ -612,7 +604,7 @@ voltage present, the motor will be driven by this voltage.
 """,
 'de':
 """
-Gibt die externe Eingangsspannung (in mV) zurück. Die externe Eingangsspannung
+Gibt die externe Eingangsspannung zurück. Die externe Eingangsspannung
 wird über die schwarze Stromversorgungsbuchse, in den Silent Stepper Brick,
 eingespeist.
 
@@ -633,14 +625,12 @@ com['packets'].append({
 'type': 'function',
 'function_id': 22,
 'name': 'Set Motor Current',
-'elements': [('Current', 'uint16', 1, 'in')],
+'elements': [('Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (360, 1640), 'default': 800})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the current in mA with which the motor will be driven.
-The minimum value is 360mA, the maximum value 1640mA and the
-default value is 800mA.
+Sets the current with which the motor will be driven.
 
 .. warning::
  Do not set this value above the specifications of your stepper motor.
@@ -648,9 +638,7 @@ default value is 800mA.
 """,
 'de':
 """
-Setzt den Strom in mA mit welchem der Motor angetrieben wird.
-Der minimale Wert ist 360mA, der maximale Wert ist 1640mA und der
-Standardwert ist 800mA.
+Setzt den Strom mit welchem der Motor angetrieben wird.
 
 .. warning::
  Dieser Wert sollte nicht über die Spezifikation des Schrittmotors gesetzt werden.
@@ -662,7 +650,7 @@ Standardwert ist 800mA.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motor Current',
-'elements': [('Current', 'uint16', 1, 'out')],
+'elements': [('Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (360, 1640), 'default': 800})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -718,7 +706,7 @@ Aktivierung erfolgt.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -735,14 +723,14 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Basic Configuration',
-'elements': [('Standstill Current', 'uint16', 1, 'in'), # ihold 0-31
-             ('Motor Run Current', 'uint16', 1, 'in'),  # irun 0-31
-             ('Standstill Delay Time', 'uint16', 1, 'in'), # ihold_delay 0-15 clk cycles
-             ('Power Down Time', 'uint16', 1, 'in'), # tpowerdown 0-255
-             ('Stealth Threshold', 'uint16', 1, 'in'), # tpwmthrs (in full steps/s)
-             ('Coolstep Threshold', 'uint16', 1, 'in'), # tcoolthrs (in full steps/s)
-             ('Classic Threshold', 'uint16', 1, 'in'), # thigh (in full steps/s)
-             ('High Velocity Chopper Mode', 'bool', 1, 'in')], # vhighchm (bool)
+'elements': [('Standstill Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 200}),
+             ('Motor Run Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 800}),
+             ('Standstill Delay Time', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'range': (0, 307), 'default': 0}),
+             ('Power Down Time', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'range': (0, 5222), 'default': 1000}),
+             ('Stealth Threshold', 'uint16', 1, 'in', {'unit': 'Steps Per Second', 'default': 500}),
+             ('Coolstep Threshold', 'uint16', 1, 'in', {'unit': 'Steps Per Second', 'default': 500}),
+             ('Classic Threshold', 'uint16', 1, 'in', {'unit': 'Steps Per Second', 'default': 1000}),
+             ('High Velocity Chopper Mode', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -754,12 +742,12 @@ Sets the basic configuration parameters for the different modes (Stealth, Coolst
   the configured motor phase current will be driven until the configured
   Power Down Time is elapsed. After that the phase current will be reduced to the standstill
   current. The elapsed time for this reduction can be configured with the Standstill Delay Time.
-  The unit is in mA and the maximum allowed value is the configured maximum motor current
+  The maximum allowed value is the configured maximum motor current
   (see :func:`Set Motor Current`).
 
 * Motor Run Current: The value sets the motor current when the motor is running.
   Use a value of at least one half of the global maximum motor current for a good
-  microstep performance. The unit is in mA and the maximum allowed value is the current
+  microstep performance. The maximum allowed value is the current
   motor current. The API maps the entered value to 1/32 ... 32/32 of the maximum
   motor current. This value should be used to change the motor current during motor movement,
   whereas the global maximum motor current should not be changed while the motor is moving
@@ -768,38 +756,24 @@ Sets the basic configuration parameters for the different modes (Stealth, Coolst
 * Standstill Delay Time: Controls the duration for motor power down after a motion
   as soon as standstill is detected and the Power Down Time is expired. A high Standstill Delay
   Time results in a smooth transition that avoids motor jerk during power down.
-  The value range is 0 to 307ms
 
 * Power Down Time: Sets the delay time after a stand still.
-  The value range is 0 to 5222ms.
 
-* Stealth Threshold: Sets the upper threshold for Stealth mode in steps/s. The value range is
-  0-65536 steps/s. If the velocity of the motor goes above this value, Stealth mode is turned
+* Stealth Threshold: Sets the upper threshold for Stealth mode.
+  If the velocity of the motor goes above this value, Stealth mode is turned
   off. Otherwise it is turned on. In Stealth mode the torque declines with high speed.
 
-* Coolstep Threshold: Sets the lower threshold for Coolstep mode in steps/s. The value range is
-  0-65536 steps/s. The Coolstep Threshold needs to be above the Stealth Threshold.
+* Coolstep Threshold: Sets the lower threshold for Coolstep mode.
+  The Coolstep Threshold needs to be above the Stealth Threshold.
 
-* Classic Threshold: Sets the lower threshold for classic mode. The value range is
-  0-65536 steps/s. In classic mode the stepper becomes more noisy, but the torque is maximized.
+* Classic Threshold: Sets the lower threshold for classic mode.
+  In classic mode the stepper becomes more noisy, but the torque is maximized.
 
-* High Velocity Shopper Mode: If High Velocity Shopper Mode is enabled, the stepper control
+* High Velocity Chopper Mode: If High Velocity Chopper Mode is enabled, the stepper control
   is optimized to run the stepper motors at high velocities.
 
 If you want to use all three thresholds make sure that
 Stealth Threshold < Coolstep Threshold < Classic Threshold.
-
-The default values are:
-
-* Standstill Current: 200
-* Motor Run Current: 800
-* Standstill Delay Time: 0
-* Power Down Time: 1000
-* Stealth Threshold: 500
-* Coolstep Threshold: 500
-* Classic Threshold: 1000
-* High Velocity Shopper Mode: false
-
 """,
 'de':
 """
@@ -810,13 +784,13 @@ Setzt die Basiskonfiguration-Parameter für verschiedene Modi (Stealth, Coolstep
   zu verringern. Wenn der Motor steht wird dieser mit dem eingestellte
   Phasenstrom betrieben bis die eingestellte Power Down Time um ist. Danach
   wird der Phasenstrom schrittweise bis zum Standstill Current reduziert. Die
-  dafür benötigte Zeit wird mittels Power Down Time eingestellt. Die Einheit ist
-  mA und der eingestellte Phasenstrom ist das Maximum für diesen Wert
+  dafür benötigte Zeit wird mittels Power Down Time eingestellt.
+  Der eingestellte Phasenstrom ist das Maximum für diesen Wert
   (see :func:`Set Motor Current`).
 
 * Motor Run Current: Dieser Wert setzt den Phasenstrom, wenn der Motor sich dreht.
   Ein Wert von mindestens der Hälfte des maximalen Phasenstrom sollte für gute
-  Ergebnisse im Mikroschrittbetrieb gesetzt werden. Die Einheit ist mA und der maximal
+  Ergebnisse im Mikroschrittbetrieb gesetzt werden. Der maximal
   zulässige Wert ist der maximale Phasenstrom. Der eingegebene Wert wird von der API intern
   in einen Faktor im Bereich von 1/32 ... 32/32 umgerechnet, mit dem der Phasenstrom
   begrenzt wird. Der maximale Phasenstrom sollte im laufenden Betrieb nicht geändert werden.
@@ -825,40 +799,27 @@ Setzt die Basiskonfiguration-Parameter für verschiedene Modi (Stealth, Coolstep
 * Standstill Delay Time:
   Steuert die Zeit für das Verringern des Motorstroms bis zum
   Standstill Current. Eine hohe Standstill Delay Time führt zu einem ruhigen und
-  ruckelfreien Übergang. Der Wertebereich ist 0 bis 307ms.
+  ruckelfreien Übergang.
 
 * Power Down Time: Setzt die Wartezeit nach dem Stehenbleiben.
-  Der Wertebereich ist 0 bis 5222ms.
 
-* Stealth Threshold: Setzt den oberen Grenzwert für den Stealth Modus in Schritte/s.
-  Der Wertebereich ist 0-65536 Schritte/s. Wenn die Geschwindigkeit des Motors über diesen Wert liegt wird
+* Stealth Threshold: Setzt den oberen Grenzwert für den Stealth Modus.
+  Wenn die Geschwindigkeit des Motors über diesem Wert liegt wird
   der Stealth Modus abgeschaltet. Ansonsten angeschaltet. Im Stealth Modus nimmt das Drehmoment mit
   steigender Geschwindigkeit ab.
 
-* Coolstep Threshold: Setzt den unteren Grenzwert für den Coolstep Modus Schritte/s. Der Wertebereich
-  ist 0-65536 Schritte/s. Der Coolstep Grenzwert muss über dem Stealth Grenzwert liegen.
+* Coolstep Threshold: Setzt den unteren Grenzwert für den Coolstep Modus.
+  Der Coolstep Grenzwert muss über dem Stealth Grenzwert liegen.
 
-* Classic Threshold:  Sets den unteren Grenzwert für den Classic Modus. Der Wertebereich ist
-  0-65536 Schritte/s. Im Classic Modus wird der Schrittmotor geräuschvoll aber das Drehmoment wird
+* Classic Threshold:  Sets den unteren Grenzwert für den Classic Modus.
+  Im Classic Modus wird der Schrittmotor geräuschvoll aber das Drehmoment wird
   maximiert.
 
-* High Velocity Shopper Mode: Wenn der High Velocity Shopper Modus aktiviert wird, optimiert der
+* High Velocity Chopper Mode: Wenn der High Velocity Chopper Modus aktiviert wird, optimiert der
   Schrittmotortreiber die Ansteuerung des Motors für hohe Geschwindigkeiten.
 
 Wenn alle drei Grenzwerte (Thresholds) genutzt werden sollen muss sichergestellt werden,
 dass Stealth Threshold < Coolstep Threshold < Classic Threshold.
-
-Die Standardwerte sind:
-
-* Standstill Current: 200
-* Motor Run Current: 800
-* Standstill Delay Time: 0
-* Power Down Time: 1000
-* Stealth Threshold: 500
-* Coolstep Threshold: 500
-* Classic Threshold: 1000
-* High Velocity Shopper Mode: false
-
 """
 }]
 })
@@ -866,14 +827,14 @@ Die Standardwerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Basic Configuration',
-'elements': [('Standstill Current', 'uint16', 1, 'out'), # ihold 0-31 -> max is max motor current
-             ('Motor Run Current', 'uint16', 1, 'out'),  # irun 0-31 -> max is max motor current
-             ('Standstill Delay Time', 'uint16', 1, 'out'), # ihold_delay 0-15 clk cycles -> max 307 ms
-             ('Power Down Time', 'uint16', 1, 'out'), # tpowerdown 0-255 -> max 5222ms
-             ('Stealth Threshold', 'uint16', 1, 'out'), # tpwmthrs (in steps/s)
-             ('Coolstep Threshold', 'uint16', 1, 'out'), # tcoolthrs (in steps/s)
-             ('Classic Threshold', 'uint16', 1, 'out'), # thigh (in steps/s)
-             ('High Velocity Chopper Mode', 'bool', 1, 'out')], # vhighchm (bool)
+'elements': [('Standstill Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 200}),
+             ('Motor Run Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'default': 800}),
+             ('Standstill Delay Time', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'range': (0, 307), 'default': 0}),
+             ('Power Down Time', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'range': (0, 5222), 'default': 1000}),
+             ('Stealth Threshold', 'uint16', 1, 'out', {'unit': 'Steps Per Second', 'default': 500}),
+             ('Coolstep Threshold', 'uint16', 1, 'out', {'unit': 'Steps Per Second', 'default': 500}),
+             ('Classic Threshold', 'uint16', 1, 'out', {'unit': 'Steps Per Second', 'default': 1000}),
+             ('High Velocity Chopper Mode', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -890,15 +851,15 @@ Gibt die Konfiguration zurück, wie von :func:`Set Basic Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Spreadcycle Configuration',
-'elements': [('Slow Decay Duration', 'uint8', 1, 'in'), # toff 0-15
-             ('Enable Random Slow Decay', 'bool', 1, 'in'), # rndtf
-             ('Fast Decay Duration', 'uint8', 1, 'in'), # hstrt and fd3 if chm=1 0-15
-             ('Hysteresis Start Value', 'uint8', 1, 'in'), # hstrt if chm=0 0-7
-             ('Hysteresis End Value', 'int8', 1, 'in'), # hend if chm=0 -3-12
-             ('Sine Wave Offset', 'int8', 1, 'in'), # hend if chm=1 -3-12
-             ('Chopper Mode', 'uint8', 1, 'in', {'constant_group': 'Chopper Mode'}), # chm
-             ('Comparator Blank Time', 'uint8', 1, 'in'), # tbl 0-3
-             ('Fast Decay Without Comparator', 'bool', 1, 'in')], # disfdcc
+'elements': [('Slow Decay Duration', 'uint8', 1, 'in', {'range': (0, 15), 'default': 4}), # toff 0-15
+             ('Enable Random Slow Decay', 'bool', 1, 'in', {'default': False}), # rndtf
+             ('Fast Decay Duration', 'uint8', 1, 'in', {'range': (0, 15), 'default': 0}), # hstrt and fd3 if chm=1 0-15
+             ('Hysteresis Start Value', 'uint8', 1, 'in', {'range': (0, 7), 'default': 0}), # hstrt if chm=0 0-7
+             ('Hysteresis End Value', 'int8', 1, 'in', {'range': (-3, 12), 'default': 0}), # hend if chm=0 -3-12
+             ('Sine Wave Offset', 'int8', 1, 'in', {'range': (-3, 12), 'default': 0}), # hend if chm=1 -3-12
+             ('Chopper Mode', 'uint8', 1, 'in', {'constant_group': 'Chopper Mode', 'default': 0}), # chm
+             ('Comparator Blank Time', 'uint8', 1, 'in', {'range': (0, 3), 'default': 1}), # tbl 0-3
+             ('Fast Decay Without Comparator', 'bool', 1, 'in', {'default': False})], # disfdcc
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -910,22 +871,22 @@ Sets the Spreadcycle configuration parameters. Spreadcycle is a chopper algorith
 controls the motor current flow. More information can be found in the TMC2130 datasheet on page
 47 (7 spreadCycle and Classic Chopper).
 
-* Slow Decay Duration: Controls duration of off time setting of slow decay phase. The value
-  range is 0-15. 0 = driver disabled, all bridges off. Use 1 only with Comparator Blank time >= 2.
+* Slow Decay Duration: Controls duration of off time setting of slow decay phase.
+  0 = driver disabled, all bridges off. Use 1 only with Comparator Blank time >= 2.
 
 * Enable Random Slow Decay: Set to false to fix chopper off time as set by Slow Decay Duration.
   If you set it to true, Decay Duration is randomly modulated.
 
-* Fast Decay Duration: Sets the fast decay duration. The value range is 0-15. This parameters is
+* Fast Decay Duration: Sets the fast decay duration. This parameters is
   only used if the Chopper Mode is set to Fast Decay.
 
-* Hysteresis Start Value: Sets the hysteresis start value. The value range is 0-7. This parameter is
+* Hysteresis Start Value: Sets the hysteresis start value. This parameter is
   only used if the Chopper Mode is set to Spread Cycle.
 
-* Hysteresis End Value: Sets the hysteresis end value. The value range is -3 to 12. This parameter is
+* Hysteresis End Value: Sets the hysteresis end value. This parameter is
   only used if the Chopper Mode is set to Spread Cycle.
 
-* Sine Wave Offset: Sets the sine wave offset. The value range is -3 to 12. This parameters is
+* Sine Wave Offset: Sets the sine wave offset. This parameters is
   only used if the Chopper Mode is set to Fast Decay. 1/512 of the value becomes added to the absolute
   value of the sine wave.
 
@@ -942,19 +903,6 @@ controls the motor current flow. More information can be found in the TMC2130 da
 
 * Fast Decay Without Comparator: If set to true the current comparator usage for termination of the
   fast decay cycle is disabled.
-
-The default values are:
-
-* Slow Decay Duration: 4
-* Enable Random Slow Decay: 0
-* Fast Decay Duration: 0
-* Hysteresis Start Value: 0
-* Hysteresis End Value: 0
-* Sine Wave Offset: 0
-* Chopper Mode: 0
-* Comparator Blank Time: 1
-* Fast Decay Without Comparator: false
-
 """,
 'de':
 """
@@ -965,25 +913,24 @@ Setzt die Spreadcycle Konfigurationsparameter. Spreadcycle ist ein  Chopper-Algo
 den Motorstrom regelt. Weitere Informationen dazu können im TMC2130 Datenblatt auf Seite
 47 (7 spreadCycle and Classic Chopper) gefunden werden.
 
-* Slow Decay Duration: Steuert die Aus-Zeit (off time) in der Slow Decay Phase. Werte sind im Bereich
-  von 0-15 möglich. 0 = Treiber deaktiviert, alle Brücken aus. Nur wenn die Comparator Blank Time >=2
+* Slow Decay Duration: Steuert die Aus-Zeit (off time) in der Slow Decay Phase.
+  0 = Treiber deaktiviert, alle Brücken aus. Nur wenn die Comparator Blank Time >=2
   ist sollte ein Wert von 1 gesetzt werden.
 
 * Enable Random Slow Decay: Muss auf False gesetzt werden um die Aus-Zeit (off time) des Choppers
   auf die gesetzte Slow Decay Duration zu setzen. Wenn dieser Wert auf True gesetzt wird, wird die
   Decay Dauer zufällig variiert.
 
-* Fast Decay Duration: Setzt die Fast Decay Dauer. Werte sind von 0-15 möglich. Dieser Parameter
+* Fast Decay Duration: Setzt die Fast Decay Dauer. Dieser Parameter
   wird nur benutzt, wenn der Spread Cycle als Chopper Modus genutzt wird.
 
-* Hysteresis Start Value: Setzt der Startwert der Hysterese. Der Wertebereich ist 0-7. Dieser Parameter
+* Hysteresis Start Value: Setzt der Startwert der Hysterese. Dieser Parameter
   wird nur benutzt, wenn der Spread Cycle als Chopper Modus genutzt wird.
 
-* Hysteresis End Value: Setzt den Endwert der Hysterese. Der Wertebereich ist -3 bis 12.
-* Sets the hysteresis end value. The value range is -3 to 12. Dieser Parameter
+* Hysteresis End Value: Setzt den Endwert der Hysterese. Dieser Parameter
   wird nur benutzt, wenn der Spread Cycle als Chopper Modus genutzt wird.
 
-* Sinewave Offset: Setzt den Sinuswellen Offset. Der Wertebereich ist -3 bis 12. Der Wert wird nur benutzt,
+* Sinewave Offset: Setzt den Sinuswellen Offset. Der Wert wird nur benutzt,
   wenn als Chopper Modus Fast Decay benutzt wird. 1/512 dieses Werts wird zum Absolutwert der Sinuswelle
   hinzuaddiert.
 
@@ -1000,19 +947,6 @@ den Motorstrom regelt. Weitere Informationen dazu können im TMC2130 Datenblatt 
 
 * Fast Decay Without Comperator: Wenn dieser Wert auf True gesetzt wird, dann wird der Strom-Komparator nicht
   im Fast Decay Modus genutzt.
-
-Die Standardwerte sind:
-
-* Slow Decay Duration: 4
-* Enable Random Slow Decay: 0
-* Fast Decay Duration: 0
-* Hysteresis Start Value: 0
-* Hysteresis End Value: 0
-* Sinewave Offset: 0
-* Chopper Mode: 0
-* Comperator Blank Time: 1
-* Fast Decay Without Comperator: false
-
 """
 }]
 })
@@ -1020,15 +954,15 @@ Die Standardwerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Spreadcycle Configuration',
-'elements': [('Slow Decay Duration', 'uint8', 1, 'out'), # toff 0-15
-             ('Enable Random Slow Decay', 'bool', 1, 'out'), # rndtf
-             ('Fast Decay Duration', 'uint8', 1, 'out'), # hstrt and fd3 if chm=1 0-15
-             ('Hysteresis Start Value', 'uint8', 1, 'out'), # hstrt if chm=0 0-7
-             ('Hysteresis End Value', 'int8', 1, 'out'), # hend if chm=0 -3-12
-             ('Sine Wave Offset', 'int8', 1, 'out'), # hend if chm=1 -3-12
-             ('Chopper Mode', 'uint8', 1, 'out', {'constant_group': 'Chopper Mode'}), # chm
-             ('Comparator Blank Time', 'uint8', 1, 'out'), # tbl 0-3
-             ('Fast Decay Without Comparator', 'bool', 1, 'out')], # disfdcc
+'elements': [('Slow Decay Duration', 'uint8', 1, 'out', {'range': (0, 15), 'default': 4}), # toff 0-15
+             ('Enable Random Slow Decay', 'bool', 1, 'out', {'default': False}), # rndtf
+             ('Fast Decay Duration', 'uint8', 1, 'out', {'range': (0, 15), 'default': 0}), # hstrt and fd3 if chm=1 0-15
+             ('Hysteresis Start Value', 'uint8', 1, 'out', {'range': (0, 7), 'default': 0}), # hstrt if chm=0 0-7
+             ('Hysteresis End Value', 'int8', 1, 'out', {'range': (-3, 12), 'default': 0}), # hend if chm=0 -3-12
+             ('Sine Wave Offset', 'int8', 1, 'out', {'range': (-3, 12), 'default': 0}), # hend if chm=1 -3-12
+             ('Chopper Mode', 'uint8', 1, 'out', {'constant_group': 'Chopper Mode', 'default': 0}), # chm
+             ('Comparator Blank Time', 'uint8', 1, 'out', {'range': (0, 3), 'default': 1}), # tbl 0-3
+             ('Fast Decay Without Comparator', 'bool', 1, 'out', {'default': False})], # disfdcc
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1045,12 +979,12 @@ Gibt die Konfiguration zurück, wie von :func:`Set Basic Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Stealth Configuration',
-'elements': [('Enable Stealth', 'bool', 1, 'in'), # en_pwm_mode
-             ('Amplitude', 'uint8', 1, 'in'), # pwm_ampl
-             ('Gradient', 'uint8', 1, 'in'), # pwm_grad
-             ('Enable Autoscale', 'bool', 1, 'in'), # pwm_autoscale
-             ('Force Symmetric', 'bool', 1, 'in'), # pwm_symmetric
-             ('Freewheel Mode', 'uint8', 1, 'in', {'constant_group': 'Freewheel Mode'})], # freewheel
+'elements': [('Enable Stealth', 'bool', 1, 'in', {'default': True}), # en_pwm_mode
+             ('Amplitude', 'uint8', 1, 'in', {'default': 128}), # pwm_ampl
+             ('Gradient', 'uint8', 1, 'in', {'default': 4}), # pwm_grad
+             ('Enable Autoscale', 'bool', 1, 'in', {'default': True}), # pwm_autoscale
+             ('Force Symmetric', 'bool', 1, 'in', {'default': False}), # pwm_symmetric
+             ('Freewheel Mode', 'uint8', 1, 'in', {'constant_group': 'Freewheel Mode', 'default': 0})], # freewheel
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1064,11 +998,11 @@ Sets the configuration relevant for Stealth mode.
   stealth mode is disabled, even if the speed is below the threshold set in :func:`Set Basic Configuration`.
 
 * Amplitude: If autoscale is disabled, the PWM amplitude is scaled by this value. If autoscale is enabled,
-  this value defines the maximum PWM amplitude change per half wave. The value range is 0-255.
+  this value defines the maximum PWM amplitude change per half wave.
 
 * Gradient: If autoscale is disabled, the PWM gradient is scaled by this value. If autoscale is enabled,
   this value defines the maximum PWM gradient. With autoscale a value above 64 is recommended,
-  otherwise the regulation might not be able to measure the current. The value range is 0-255.
+  otherwise the regulation might not be able to measure the current.
 
 * Enable Autoscale: If set to true, automatic current control is used. Otherwise the user defined
   amplitude and gradient are used.
@@ -1078,16 +1012,6 @@ Sets the configuration relevant for Stealth mode.
 
 * Freewheel Mode: The freewheel mode defines the behavior in stand still if the Standstill Current
   (see :func:`Set Basic Configuration`) is set to 0.
-
-The default values are:
-
-* Enable Stealth: true
-* Amplitude: 128
-* Gradient: 4
-* Enable Autoscale: true
-* Force Symmetric: false
-* Freewheel Mode: 0 (Normal)
-
 """,
 'de':
 """
@@ -1102,12 +1026,10 @@ Setzt die Konfigurationsparameter für den Stealth Modus.
 
 * Amplitude: Wenn Autoscale aktiviert wurde, wird die PWM Amplitude mit diesem Wert skaliert.
   Wenn autoscale deaktiviert ist, definiert dieser Wert die maximale PWM Amplitudenänderungen pro Halbwelle.
-  Der Wertebereich ist 0-255.
 
 * Gradient: Wenn Autoscale deaktiviert wurde, wird der PWM Steigung (Gradient) bei diesem Wert skaliert. Wird
   Autoscale aktiviert, definiert dieser Wert die maximale PWM Steigung. Mit Autoscale wird ein Wert
   über 64 empfohlen, ansonsten kann es sein, dass die Regelung den Strom nicht korrekt messen kann.
-  Der Wertebereich ist 0-255.
 
 * Enable Autoscale: Die automatische Stromregelung ist aktiviert, wenn dieser Wert auf True gesetzt wird.
   Ansonsten werden die vom Nutzer definierten Amplituden und Steigungen genutzt.
@@ -1117,16 +1039,6 @@ Setzt die Konfigurationsparameter für den Stealth Modus.
 
 * Freewheel Mode: Der Freewheel Modus definiert das Verhalten im Stillstand, wenn der Standstill Current
   (siehe :func:`Set Basic Configuration`) auf 0 gesetzt wurde.
-
-Die Standardwerte sind:
-
-* Enable Stealth: true
-* Amplitude: 128
-* Gradient: 4
-* Enable Autoscale: true
-* Force Symmetric: false
-* Freewheel Mode: 0 (Normal)
-
 """
 }]
 })
@@ -1134,12 +1046,12 @@ Die Standardwerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stealth Configuration',
-'elements': [('Enable Stealth', 'bool', 1, 'out'), # en_pwm_mode
-             ('Amplitude', 'uint8', 1, 'out'), # pwm_ampl
-             ('Gradient', 'uint8', 1, 'out'), # pwm_grad
-             ('Enable Autoscale', 'bool', 1, 'out'), # pwm_autoscale
-             ('Force Symmetric', 'bool', 1, 'out'), # pwm_symmetric
-             ('Freewheel Mode', 'uint8', 1, 'out', {'constant_group': 'Freewheel Mode'})], # freewheel (if ihold=0)
+'elements': [('Enable Stealth', 'bool', 1, 'out', {'default': True}), # en_pwm_mode
+             ('Amplitude', 'uint8', 1, 'out', {'default': 128}), # pwm_ampl
+             ('Gradient', 'uint8', 1, 'out', {'default': 4}), # pwm_grad
+             ('Enable Autoscale', 'bool', 1, 'out', {'default': True}), # pwm_autoscale
+             ('Force Symmetric', 'bool', 1, 'out', {'default': False}), # pwm_symmetric
+             ('Freewheel Mode', 'uint8', 1, 'out', {'constant_group': 'Freewheel Mode', 'default': 0})], # freewheel
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1156,13 +1068,13 @@ Gibt die Konfiguration zurück, wie von :func:`Set Stealth Configuration` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Coolstep Configuration',
-'elements': [('Minimum Stallguard Value', 'uint8', 1, 'in'), # semin 0-15
-             ('Maximum Stallguard Value', 'uint8', 1, 'in'), # semax 0-15
-             ('Current Up Step Width', 'uint8', 1, 'in', {'constant_group': 'Current Up Step Increment'}), # seup 0-3
-             ('Current Down Step Width', 'uint8', 1, 'in', {'constant_group': 'Current Down Step Decrement'}), # sedn 0-3
-             ('Minimum Current', 'uint8', 1, 'in', {'constant_group': 'Minimum Current'}), # seimin
-             ('Stallguard Threshold Value', 'int8', 1, 'in'), # sgt -64-63
-             ('Stallguard Mode', 'uint8', 1, 'in', {'constant_group': 'Stallguard Mode'})], # sfilt
+'elements': [('Minimum Stallguard Value', 'uint8', 1, 'in', {'range': (0, 15), 'default': 2}), # semin 0-15
+             ('Maximum Stallguard Value', 'uint8', 1, 'in', {'range': (0, 15), 'default': 10}), # semax 0-15
+             ('Current Up Step Width', 'uint8', 1, 'in', {'constant_group': 'Current Up Step Increment', 'default': 0}), # seup 0-3
+             ('Current Down Step Width', 'uint8', 1, 'in', {'constant_group': 'Current Down Step Decrement', 'default': 0}), # sedn 0-3
+             ('Minimum Current', 'uint8', 1, 'in', {'constant_group': 'Minimum Current', 'default': 0}), # seimin
+             ('Stallguard Threshold Value', 'int8', 1, 'in', {'range': (-64, 63), 'default': 0}), # sgt -64-63
+             ('Stallguard Mode', 'uint8', 1, 'in', {'constant_group': 'Stallguard Mode', 'default': 0})], # sfilt
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1173,7 +1085,7 @@ the values as default!
 Sets the configuration relevant for Coolstep.
 
 * Minimum Stallguard Value: If the Stallguard result falls below this value*32, the motor current
-  is increased to reduce motor load angle. The value range is 0-15. A value of 0 turns Coolstep off.
+  is increased to reduce motor load angle. A value of 0 turns Coolstep off.
 
 * Maximum Stallguard Value: If the Stallguard result goes above
   (Min Stallguard Value + Max Stallguard Value + 1) * 32, the motor current is decreased to save
@@ -1188,23 +1100,12 @@ Sets the configuration relevant for Coolstep.
 * Minimum Current: Sets the minimum current for Coolstep current control. You can choose between
   half and quarter of the run current.
 
-* Stallguard Threshold Value: Sets the level for stall output (see :func:`Get Driver Status`). The value
-  range is -64 to +63. A lower value gives a higher sensitivity. You have to find a suitable value for your
+* Stallguard Threshold Value: Sets the level for stall output (see :func:`Get Driver Status`).
+  A lower value gives a higher sensitivity. You have to find a suitable value for your
   motor by trial and error, 0 works for most motors.
 
 * Stallguard Mode: Set to 0 for standard resolution or 1 for filtered mode. In filtered mode the Stallguard
   signal will be updated every four full-steps.
-
-The default values are:
-
-* Minimum Stallguard Value: 2
-* Maximum Stallguard Value: 10
-* Current Up Step Width: 0
-* Current Down Step Width: 0
-* Minimum Current: 0
-* Stallguard Threshold Value: 0
-* Stallguard Mode: 0
-
 """,
 'de':
 """
@@ -1214,7 +1115,7 @@ geändert werden, wenn man weiß was man tut.
 Setzt die Konfigurationsparameter für Coolstep.
 
 * Minimum Stallguard Value: Wenn der Stallguard-Wert unter diesem Wert*32 fällt wird der Motorstrom
-  erhöht um den Motorbelastungswinkel (motor load angle) zu reduzieren. Der Wertebereich ist 0-15.
+  erhöht um den Motorbelastungswinkel (motor load angle) zu reduzieren.
   Ein Wert von 0 deaktiviert Coolstep.
 
 * Maximum Stallguard Value: Wenn der Stallguard-Wert über (Min Stallguard Value + Max Stallguard Value + 1)*32
@@ -1230,23 +1131,12 @@ Setzt die Konfigurationsparameter für Coolstep.
   Viertel des Motorstroms gewählt werden.
 
 * Stallguard Threshold Value: Setzt den Grenzwert für die Stall-Ausgabe (Motor blockiert)
-  (siehe :func:`Get Driver Status`). Der Wertebereich ist -64 bis +63. Ein niedriger Wert führt zu einer höheren
+  (siehe :func:`Get Driver Status`). Ein niedriger Wert führt zu einer höheren
   Empfindlichkeit. Der korrekte Wert muss typischerweise ausprobiert werden. 0 sollte für die meisten Motoren
   funktionieren.
 
 * Stallguard Mode: Setze 0 für eine Standardauflösung und 1 für Filtered Mode. Im Filtered Modus wird das Stallguard
   Signal nur alle vier Vollschritte aktualisiert.
-
-Die Standardwerte sind:
-
-* Minimum Stallguard Value: 2
-* Maximum Stallguard Value: 10
-* Current Up Step Width: 0
-* Current Down Step Width: 0
-* Minimum Current: 0
-* Stallguard Threshold Value: 0
-* Stallguard Mode: 0
-
 """
 }]
 })
@@ -1254,13 +1144,13 @@ Die Standardwerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Coolstep Configuration',
-'elements': [('Minimum Stallguard Value', 'uint8', 1, 'out'), # semin 0-15
-             ('Maximum Stallguard Value', 'uint8', 1, 'out'), # semax 0-15
-             ('Current Up Step Width', 'uint8', 1, 'out', {'constant_group': 'Current Up Step Increment'}), # seup 0-3
-             ('Current Down Step Width', 'uint8', 1, 'out', {'constant_group': 'Current Down Step Decrement'}), # sedn 0-3
-             ('Minimum Current', 'uint8', 1, 'out', {'constant_group': 'Minimum Current'}), # seimin
-             ('Stallguard Threshold Value', 'int8', 1, 'out'), # sgt -64-63
-             ('Stallguard Mode', 'uint8', 1, 'out', {'constant_group': 'Stallguard Mode'})], # sfilt
+'elements': [('Minimum Stallguard Value', 'uint8', 1, 'out', {'range': (0, 15), 'default': 2}), # semin 0-15
+             ('Maximum Stallguard Value', 'uint8', 1, 'out', {'range': (0, 15), 'default': 10}), # semax 0-15
+             ('Current Up Step Width', 'uint8', 1, 'out', {'constant_group': 'Current Up Step Increment', 'default': 0}), # seup 0-3
+             ('Current Down Step Width', 'uint8', 1, 'out', {'constant_group': 'Current Down Step Decrement', 'default': 0}), # sedn 0-3
+             ('Minimum Current', 'uint8', 1, 'out', {'constant_group': 'Minimum Current', 'default': 0}), # seimin
+             ('Stallguard Threshold Value', 'int8', 1, 'out', {'range': (-64, 63), 'default': 0}), # sgt -64-63
+             ('Stallguard Mode', 'uint8', 1, 'out', {'constant_group': 'Stallguard Mode', 'default': 0})], # sfilt
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1277,8 +1167,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Coolstep Configuration` geset
 com['packets'].append({
 'type': 'function',
 'name': 'Set Misc Configuration',
-'elements': [('Disable Short To Ground Protection', 'bool', 1, 'in'), # diss2g
-             ('Synchronize Phase Frequency', 'uint8', 1, 'in')], # sync 0=off 1-15
+'elements': [('Disable Short To Ground Protection', 'bool', 1, 'in', {'default': False}), # diss2g
+             ('Synchronize Phase Frequency', 'uint8', 1, 'in', {'range': (0, 15), 'default': 0})], # sync 0=off 1-15
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1296,12 +1186,6 @@ Sets miscellaneous configuration parameters.
   the synchronization is turned off. Otherwise the synchronization is done through the formula
   f_sync = f_clk/(value*64). In Classic Mode the synchronization is automatically switched off.
   f_clk is 12.8MHz.
-
-The default values are:
-
-* Disable Short To Ground Protection: 0
-* Synchronize Phase Frequency: 0
-
 """,
 'de':
 """
@@ -1318,12 +1202,6 @@ Setzt verschiedene Parametereinstellungen.
   wird ist die Synchronisation abgeschaltet. Ansonsten wird die Synchronisation mit folgender
   Formel durchgeführt: f_sync = f_clk/(value*64). Im Classic Modus ist die Synchronisation
   automatisch abgeschaltet. f_clk ist 12.8MHz.
-
-Die Standardwerte sind:
-
-* Disable Short To Ground Protection: 0
-* Synchronize Phase Frequency: 0
-
 """
 }]
 })
@@ -1331,8 +1209,8 @@ Die Standardwerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Misc Configuration',
-'elements': [('Disable Short To Ground Protection', 'bool', 1, 'out'), # diss2g
-             ('Synchronize Phase Frequency', 'uint8', 1, 'out')], # sync 0=off 1-15
+'elements': [('Disable Short To Ground Protection', 'bool', 1, 'out', {'default': False}), # diss2g
+             ('Synchronize Phase Frequency', 'uint8', 1, 'out', {'range': (0, 15), 'default': 0})], # sync 0=off 1-15
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1352,11 +1230,11 @@ com['packets'].append({
 'elements': [('Open Load', 'uint8', 1, 'out', {'constant_group': 'Open Load'}), # ola, olb
              ('Short To Ground', 'uint8', 1, 'out', {'constant_group': 'Short To Ground'}), # s2ga, s2gb
              ('Over Temperature', 'uint8', 1, 'out', {'constant_group': 'Over Temperature'}), # otpw, ot
-             ('Motor Stalled', 'bool', 1, 'out'), # stallGuard
-             ('Actual Motor Current', 'uint8', 1, 'out'), # CS ACTUAL
-             ('Full Step Active', 'bool', 1, 'out'), # fsactive
-             ('Stallguard Result', 'uint8', 1, 'out'), # SG_RESULT
-             ('Stealth Voltage Amplitude', 'uint8', 1, 'out')], # PWM_SCALE
+             ('Motor Stalled', 'bool', 1, 'out', {}), # stallGuard
+             ('Actual Motor Current', 'uint8', 1, 'out', {'range': (0, 31)}), # CS ACTUAL
+             ('Full Step Active', 'bool', 1, 'out', {}), # fsactive
+             ('Stallguard Result', 'uint8', 1, 'out', {}), # SG_RESULT
+             ('Stealth Voltage Amplitude', 'uint8', 1, 'out', {})], # PWM_SCALE
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1376,7 +1254,7 @@ Returns the current driver status.
 * Motor Stalled: Is true if a motor stall was detected.
 
 * Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode.
-  The returned value is between 0 and 31. It represents a multiplier of 1/32 to 32/32 of the
+  It represents a multiplier of 1/32 to 32/32 of the
   ``Motor Run Current`` as set by :func:`Set Basic Configuration`. Example: If a ``Motor Run Current``
   of 1000mA was set and the returned value is 15, the ``Actual Motor Current`` is 16/32*1000mA = 500mA.
 
@@ -1408,7 +1286,7 @@ Gibt den aktuellen Treiberstatus zurück.
 * Motor Stalled: Ist True, wenn erkannt wurde, dass der Motor blockiert.
 
 * Actual Motor Current: Gibt die aktuelle Motorstromskalierung im Coolstep Modus aus.
-  Der zurückgegebene Wert ist zwischen 0 und 31. Er repräsentiert einer Multiplikator von 1/32 bis zu 32/32 vom
+  Er repräsentiert einer Multiplikator von 1/32 bis zu 32/32 vom
   ``Motor Run Current``, wie von :func:`Set Basic Configuration` gesetzt. Beispiel: Wenn ein ``Motor Run Current``
   von 1000mA gesetzt wurde und ein Wert von 15 zurückgegeben wird, entspricht das einem ``Actual Motor Current``
   von 16/32*1000mA = 500mA.
@@ -1429,30 +1307,26 @@ Gibt den aktuellen Treiberstatus zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Minimum Voltage',
-'elements': [('Voltage', 'uint16', 1, 'in')],
+'elements': [('Voltage', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 8000})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
+Sets the minimum voltage, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the Silent Stepper
 Brick is 8V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do
 not need this functionality.
-
-The default value is 8V.
 """,
 'de':
 """
-Setzt die minimale Spannung in mV, bei welcher der :cb:`Under Voltage` Callback
+Setzt die minimale Spannung, bei welcher der :cb:`Under Voltage` Callback
 ausgelöst wird. Der kleinste mögliche Wert mit dem der Silent Stepper Brick noch
 funktioniert,
 ist 8V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
 höchstwahrscheinlich nicht benötigt.
-
-Der Standardwert ist 8V.
 """
 }]
 })
@@ -1460,7 +1334,7 @@ Der Standardwert ist 8V.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Minimum Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 8000})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -1477,20 +1351,19 @@ Gibt die minimale Spannung zurück, wie von :func:`Set Minimum Voltage` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Under Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage given
-in mV.
+:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst, wenn die Eingangsspannung unter den, mittels
 :func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
-ist die aktuelle Spannung in mV.
+ist die aktuelle Spannung.
 """
 }]
 })
@@ -1498,7 +1371,7 @@ ist die aktuelle Spannung in mV.
 com['packets'].append({
 'type': 'callback',
 'name': 'Position Reached',
-'elements': [('Position', 'int32', 1, 'out')],
+'elements': [('Position', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1530,30 +1403,26 @@ Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Time Base',
-'elements': [('Time Base', 'uint32', 1, 'in')],
+'elements': [('Time Base', 'uint32', 1, 'in', {'unit': 'Second', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets the time base of the velocity and the acceleration of the Silent Stepper
-Brick (in seconds).
+Brick.
 
 For example, if you want to make one step every 1.5 seconds, you can set
 the time base to 15 and the velocity to 10. Now the velocity is
 10steps/15s = 1steps/1.5s.
-
-The default value is 1.
 """,
 'de':
 """
 Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Silent Stepper
-Brick (in Sekunden).
+Brick.
 
 Beispiel: Wenn aller 1,5 Sekunden ein Schritt gefahren werden soll, kann
 die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die
 Geschwindigkeit 10Schritte/15s = 1Schritt/1,5s.
-
-Der Standardwert ist 1.
 """
 }]
 })
@@ -1561,7 +1430,7 @@ Der Standardwert ist 1.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Time Base',
-'elements': [('Time Base', 'uint32', 1, 'out')],
+'elements': [('Time Base', 'uint32', 1, 'out', {'unit': 'Second', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1578,12 +1447,12 @@ Gibt die Zeitbasis zurück, wie von :func:`Set Time Base` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data',
-'elements': [('Current Velocity', 'uint16', 1, 'out'),
-             ('Current Position', 'int32', 1, 'out'),
-             ('Remaining Steps', 'int32', 1, 'out'),
-             ('Stack Voltage', 'uint16', 1, 'out'),
-             ('External Voltage', 'uint16', 1, 'out'),
-             ('Current Consumption', 'uint16', 1, 'out')],
+'elements': [('Current Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'}),
+             ('Current Position', 'int32', 1, 'out', {}),
+             ('Remaining Steps', 'int32', 1, 'out', {}),
+             ('Stack Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('External Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Current Consumption', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1663,12 +1532,12 @@ Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'All Data',
-'elements': [('Current Velocity', 'uint16', 1, 'out'),
-             ('Current Position', 'int32', 1, 'out'),
-             ('Remaining Steps', 'int32', 1, 'out'),
-             ('Stack Voltage', 'uint16', 1, 'out'),
-             ('External Voltage', 'uint16', 1, 'out'),
-             ('Current Consumption', 'uint16', 1, 'out')],
+'elements': [('Current Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'}),
+             ('Current Position', 'int32', 1, 'out', {}),
+             ('Remaining Steps', 'int32', 1, 'out', {}),
+             ('Stack Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('External Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Current Consumption', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

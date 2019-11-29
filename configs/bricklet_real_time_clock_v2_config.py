@@ -59,31 +59,19 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Date Time',
-'elements': [('Year', 'uint16', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
-             ('Hour', 'uint8', 1, 'in'),
-             ('Minute', 'uint8', 1, 'in'),
-             ('Second', 'uint8', 1, 'in'),
-             ('Centisecond', 'uint8', 1, 'in'),
+'elements': [('Year', 'uint16', 1, 'in', {'range': (2000, 2099)}),
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
+             ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
+             ('Minute', 'uint8', 1, 'in', {'range': (0, 59)}),
+             ('Second', 'uint8', 1, 'in', {'range': (0, 59)}),
+             ('Centisecond', 'uint8', 1, 'in', {'range': (0, 99)}),
              ('Weekday', 'uint8', 1, 'in', {'constant_group': 'Weekday'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the current date (including weekday) and the current time with hundredths
-of a second resolution.
-
-Possible value ranges:
-
-* Year: 2000 to 2099
-* Month: 1 to 12 (January to December)
-* Day: 1 to 31
-* Hour: 0 to 23
-* Minute: 0 to 59
-* Second: 0 to 59
-* Centisecond: 0 to 99
-* Weekday: 1 to 7 (Monday to Sunday)
+Sets the current date (including weekday) and the current time.
 
 If the backup battery is installed then the real-time clock keeps date and
 time even if the Bricklet is not powered by a Brick.
@@ -94,19 +82,7 @@ handled.
 """,
 'de':
 """
-Setzt das aktuelle Datum (inklusive Wochentag) und die aktuelle Zeit mit
-Hundertstelsekunden Auflösung.
-
-Mögliche Wertebereiche:
-
-* Year: 2000 bis 2099
-* Month: 1 bis 12 (Januar bis Dezember)
-* Day: 1 bis 31
-* Hour: 0 bis 23
-* Minute: 0 bis 59
-* Second: 0 bis 59
-* Centisecond: 0 bis 99
-* Weekday: 1 bis 7 (Montag bis Sonntag)
+Setzt das aktuelle Datum (inklusive Wochentag).
 
 Wenn die Backup Batterie eingebaut ist, dann behält die Echtzeituhr Datum und
 Zeit auch dann, wenn kein Brick das Bricklet mit Strom versorgt.
@@ -120,32 +96,32 @@ Schaltsekunden, Zeitzonen und die Sommerzeit werden jedoch nicht behandelt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Date Time',
-'elements': [('Year', 'uint16', 1, 'out'),
-             ('Month', 'uint8', 1, 'out'),
-             ('Day', 'uint8', 1, 'out'),
-             ('Hour', 'uint8', 1, 'out'),
-             ('Minute', 'uint8', 1, 'out'),
-             ('Second', 'uint8', 1, 'out'),
-             ('Centisecond', 'uint8', 1, 'out'),
+'elements': [('Year', 'uint16', 1, 'out', {'range': (2000, 2099)}),
+             ('Month', 'uint8', 1, 'out', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'out', {'range': (1, 31)}),
+             ('Hour', 'uint8', 1, 'out', {'range': (0, 23)}),
+             ('Minute', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Second', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Centisecond', 'uint8', 1, 'out', {'range': (0, 99)}),
              ('Weekday', 'uint8', 1, 'out', {'constant_group': 'Weekday'}),
-             ('Timestamp', 'int64', 1, 'out')],
+             ('Timestamp', 'int64', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the current date (including weekday) and the current time of the
-real-time clock with hundredths of a second resolution.
+real-time.
 
 The timestamp represents the current date and the the current time of the
-real-time clock converted to milliseconds.
+real-time clock converted to milliseconds and is an offset to 2000-01-01 00:00:00.0000.
 """,
 'de':
 """
 Gibt das aktuelle Datum (inklusive Wochentag) und die aktuelle Zeit der
-Echtzeituhr mit Hundertstelsekunden Auflösung zurück.
+Echtzeituhr zurück.
 
 Der Zeitstempel stellt das aktuelle Datum und die aktuelle Zeit der Echtzeituhr
-in Millisekunden umgerechnet dar.
+in Millisekunden umgerechnet dar und ist der Versatz zum 01.01.2000 00:00:00,0000.
 """
 }]
 })
@@ -153,19 +129,20 @@ in Millisekunden umgerechnet dar.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Timestamp',
-'elements': [('Timestamp', 'int64', 1, 'out')],
+'elements': [('Timestamp', 'int64', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the current date and the time of the real-time clock converted to
 milliseconds. The timestamp has an effective resolution of hundredths of a
-second.
+second and is an offset to 2000-01-01 00:00:00.0000.
 """,
 'de':
 """
 Gibt das aktuelle Datum und Zeit der Echtzeituhr in Millisekunden umgerechnet
-zurück. Der Zeitstempel hat eine effektive Auflösung von Hundertstelsekunden.
+zurück. Der Zeitstempel hat eine effektive Auflösung von Hundertstelsekunden
+und ist der Versatz zum 01.01.2000 00:00:00,0000.
 """
 }]
 })
@@ -173,7 +150,7 @@ zurück. Der Zeitstempel hat eine effektive Auflösung von Hundertstelsekunden.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Offset',
-'elements': [('Offset', 'int8', 1, 'in')],
+'elements': [('Offset', 'int8', 1, 'in', {'scale': (217, 100), 'unit': 'Parts Per Million', 'range':(-128, 127)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -241,7 +218,7 @@ gesetzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Offset',
-'elements': [('Offset', 'int8', 1, 'out')],
+'elements': [('Offset', 'int8', 1, 'out', {'scale': (217, 100), 'unit': 'Parts Per Million', 'range':(-128, 127)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -294,13 +271,13 @@ Gibt die Periode zurück, wie von :func:`Set Date Time Callback Configuration` g
 com['packets'].append({
 'type': 'function',
 'name': 'Set Alarm',
-'elements': [('Month', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
-             ('Day', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
-             ('Hour', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
-             ('Minute', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
-             ('Second', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
-             ('Weekday', 'int8', 1, 'in', {'constant_group': 'Alarm Match'}),
-             ('Interval', 'int32', 1, 'in', {'constant_group': 'Alarm Interval'})],
+'elements': [('Month', 'int8', 1, 'in', {'range': [(-1, -1), (2000, 2099)], 'constant_group': 'Alarm Match'}),
+             ('Day', 'int8', 1, 'in', {'range': [(-1, -1), (1, 12)], 'constant_group': 'Alarm Match'}),
+             ('Hour', 'int8', 1, 'in', {'range': [(-1, -1), (1, 31)], 'constant_group': 'Alarm Match'}),
+             ('Minute', 'int8', 1, 'in', {'range': (-1, 23), 'constant_group': 'Alarm Match'}),
+             ('Second', 'int8', 1, 'in', {'range': (-1, 59), 'constant_group': 'Alarm Match'}),
+             ('Weekday', 'int8', 1, 'in', {'range': (-1, 59), 'constant_group': 'Alarm Match'}),
+             ('Interval', 'int32', 1, 'in', {'unit': 'Second', 'constant_group': 'Alarm Interval'})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -368,13 +345,13 @@ wiederholt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Alarm',
-'elements': [('Month', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
-             ('Day', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
-             ('Hour', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
-             ('Minute', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
-             ('Second', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
-             ('Weekday', 'int8', 1, 'out', {'constant_group': 'Alarm Match'}),
-             ('Interval', 'int32', 1, 'out', {'constant_group': 'Alarm Interval'})],
+'elements': [('Month', 'int8', 1, 'out', {'range': [(-1, -1), (2000, 2099)], 'constant_group': 'Alarm Match'}),
+             ('Day', 'int8', 1, 'out', {'range': [(-1, -1), (1, 12)], 'constant_group': 'Alarm Match'}),
+             ('Hour', 'int8', 1, 'out', {'range': [(-1, -1), (1, 31)], 'constant_group': 'Alarm Match'}),
+             ('Minute', 'int8', 1, 'out', {'range': (-1, 23), 'constant_group': 'Alarm Match'}),
+             ('Second', 'int8', 1, 'out', {'range': (-1, 59), 'constant_group': 'Alarm Match'}),
+             ('Weekday', 'int8', 1, 'out', {'range': (-1, 59), 'constant_group': 'Alarm Match'}),
+             ('Interval', 'int32', 1, 'out', {'unit': 'Second', 'constant_group': 'Alarm Interval'})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -391,15 +368,15 @@ Gibt die Alarmkonfiguration zurück, wie von :func:`Set Alarm` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Date Time',
-'elements': [('Year', 'uint16', 1, 'out'),
-             ('Month', 'uint8', 1, 'out'),
-             ('Day', 'uint8', 1, 'out'),
-             ('Hour', 'uint8', 1, 'out'),
-             ('Minute', 'uint8', 1, 'out'),
-             ('Second', 'uint8', 1, 'out'),
-             ('Centisecond', 'uint8', 1, 'out'),
+'elements': [('Year', 'uint16', 1, 'out', {'range': (2000, 2099)}),
+             ('Month', 'uint8', 1, 'out', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'out', {'range': (1, 31)}),
+             ('Hour', 'uint8', 1, 'out', {'range': (0, 23)}),
+             ('Minute', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Second', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Centisecond', 'uint8', 1, 'out', {'range': (0, 99)}),
              ('Weekday', 'uint8', 1, 'out', {'constant_group': 'Weekday'}),
-             ('Timestamp', 'int64', 1, 'out')],
+             ('Timestamp', 'int64', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -420,15 +397,15 @@ die gleichen wie die von :func:`Get Date Time`.
 com['packets'].append({
 'type': 'callback',
 'name': 'Alarm',
-'elements': [('Year', 'uint16', 1, 'out'),
-             ('Month', 'uint8', 1, 'out'),
-             ('Day', 'uint8', 1, 'out'),
-             ('Hour', 'uint8', 1, 'out'),
-             ('Minute', 'uint8', 1, 'out'),
-             ('Second', 'uint8', 1, 'out'),
-             ('Centisecond', 'uint8', 1, 'out'),
+'elements': [('Year', 'uint16', 1, 'out', {'range': (2000, 2099)}),
+             ('Month', 'uint8', 1, 'out', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'out', {'range': (1, 31)}),
+             ('Hour', 'uint8', 1, 'out', {'range': (0, 23)}),
+             ('Minute', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Second', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Centisecond', 'uint8', 1, 'out', {'range': (0, 99)}),
              ('Weekday', 'uint8', 1, 'out', {'constant_group': 'Weekday'}),
-             ('Timestamp', 'int64', 1, 'out')],
+             ('Timestamp', 'int64', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -35,11 +35,11 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sleep Mode',
-'elements': [('Power Off Delay', 'uint32', 1, 'in'),
-             ('Power Off Duration', 'uint32', 1, 'in'),
-             ('Raspberry Pi Off', 'bool', 1, 'in'),
-             ('Bricklets Off', 'bool', 1, 'in'),
-             ('Enable Sleep Indicator', 'bool', 1, 'in')],
+'elements': [('Power Off Delay', 'uint32', 1, 'in', {'unit': 'Second'}),
+             ('Power Off Duration', 'uint32', 1, 'in', {'unit': 'Second'}),
+             ('Raspberry Pi Off', 'bool', 1, 'in', {}),
+             ('Bricklets Off', 'bool', 1, 'in', {}),
+             ('Enable Sleep Indicator', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -52,8 +52,8 @@ Sets the sleep mode.
 
 Parameters:
 
-* Power Off Delay: Time in seconds before the RPi/Bricklets are powered off.
-* Power Off Duration: Duration in seconds that the RPi/Bricklets stay powered off.
+* Power Off Delay: Time before the RPi/Bricklets are powered off.
+* Power Off Duration: Duration that the RPi/Bricklets stay powered off.
 * Raspberry Pi Off: RPi is powered off if set to true.
 * Bricklets Off: Bricklets are powered off if set to true.
 * Enable Sleep Indicator: If set to true, the status LED will blink in a 1s interval
@@ -100,11 +100,11 @@ den RPi nach 10 Sekunden neustartet, wenn dieser abgestürzt oder stecken geblie
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sleep Mode',
-'elements': [('Power Off Delay', 'uint32', 1, 'out'),
-             ('Power Off Duration', 'uint32', 1, 'out'),
-             ('Raspberry Pi Off', 'bool', 1, 'out'),
-             ('Bricklets Off', 'bool', 1, 'out'),
-             ('Enable Sleep Indicator', 'bool', 1, 'out')],
+'elements': [('Power Off Delay', 'uint32', 1, 'out', {'unit': 'Second'}),
+             ('Power Off Duration', 'uint32', 1, 'out', {'unit': 'Second'}),
+             ('Raspberry Pi Off', 'bool', 1, 'out', {}),
+             ('Bricklets Off', 'bool', 1, 'out', {}),
+             ('Enable Sleep Indicator', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -121,21 +121,17 @@ Gibt die Sleep-Mode-Einstellungen zurück, wie von :func:`Set Sleep Mode` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Bricklet Power',
-'elements': [('Bricklet Power', 'bool', 1, 'in')],
+'elements': [('Bricklet Power', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Set to true/false to turn the power supply of the connected Bricklets on/off.
-
-By default the Bricklets are on.
 """,
 'de':
 """
 Kann auf true/false gesetzt werden um die Spannungsversorgung der angeschlossenen
 Bricklets an/aus zu stellen.
-
-Standardmäßig sind die Bricklets an.
 """
 }]
 })
@@ -143,7 +139,7 @@ Standardmäßig sind die Bricklets an.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Bricklet Power',
-'elements': [('Bricklet Power', 'bool', 1, 'out')],
+'elements': [('Bricklet Power', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -161,13 +157,13 @@ Gibt den Status der Stromversorgung der angeschlossenen Bricklets zurück, wie v
 com['packets'].append({
 'type': 'function',
 'name': 'Get Voltages',
-'elements': [('Voltage USB', 'uint16', 1, 'out'),
-             ('Voltage DC', 'uint16', 1, 'out')],
+'elements': [('Voltage USB', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Voltage DC', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the USB supply voltage and the DC input supply voltage in mV.
+Returns the USB supply voltage and the DC input supply voltage.
 
 There are three possible combinations:
 
@@ -184,7 +180,7 @@ There are three possible combinations:
 """,
 'de':
 """
-Gibt die USB- und DC-Input-Versorgungsspannung in mV zurück.
+Gibt die USB- und DC-Input-Versorgungsspannung zurück.
 
 Es gibt drei mögliche Kombinationen:
 
@@ -260,8 +256,8 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Voltages',
-'elements': [('Voltage USB', 'uint16', 1, 'out'),
-             ('Voltage DC', 'uint16', 1, 'out')],
+'elements': [('Voltage USB', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Voltage DC', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [2, 0, 1],
 'doc': ['c', {
 'en':

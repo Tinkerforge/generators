@@ -91,14 +91,16 @@ add_callback_value_function(
     name      = 'Get Illuminance',
     data_name = 'Illuminance',
     data_type = 'uint32',
-    doc       = illuminance_doc
+    doc       = illuminance_doc,
+    scale     = (1, 100),
+    unit      = 'Lux'
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Illuminance Range', 'uint8', 1, 'in', {'constant_group': 'Illuminance Range'}),
-             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time'})],
+'elements': [('Illuminance Range', 'uint8', 1, 'in', {'constant_group': 'Illuminance Range', 'default': 3}),
+             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -123,8 +125,6 @@ is reported by :func:`Get Illuminance` and the :cb:`Illuminance` callback.
 If the measurement is out-of-range or the sensor is saturated then you should
 configure the next higher illuminance range. If the highest range is already
 in use, then start to reduce the integration time.
-
-The default values are 0-8000lux illuminance range and 150ms integration time.
 """,
 'de':
 """
@@ -154,8 +154,6 @@ oder der Sensor gesättigt ist, dann sollte der nächst höhere
 Helligkeitswertebereich eingestellt werden. Wenn der höchste
 Helligkeitswertebereich schon erreicht ist, dann kann noch die Integrationszeit
 verringert werden.
-
-Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 150ms Integrationszeit.
 """
 }]
 })
@@ -163,8 +161,8 @@ Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 150ms Integrationszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Illuminance Range', 'uint8', 1, 'out', {'constant_group': 'Illuminance Range'}),
-             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time'})],
+'elements': [('Illuminance Range', 'uint8', 1, 'out', {'constant_group': 'Illuminance Range', 'default': 3}),
+             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

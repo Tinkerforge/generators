@@ -70,13 +70,12 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature',
-'elements': [('Temperature', 'int32', 1, 'out')],
+'elements': [('Temperature', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-21000, 180000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the temperature of the thermocouple. The value is given in °C/100,
-e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
+Returns the temperature of the thermocouple.
 
 If you want to get the temperature periodically, it is recommended
 to use the :cb:`Temperature` callback and set the period with
@@ -84,9 +83,7 @@ to use the :cb:`Temperature` callback and set the period with
 """,
 'de':
 """
-Gibt die Temperatur des Thermoelements zurück. Der Wert wird in °C/100
-angegeben, z.B. bedeutet ein Wert von 4223 eine gemessene Temperatur von
-42,23 °C.
+Gibt die Temperatur des Thermoelements zurück.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Temperature` Callback zu nutzen und die Periode mit
@@ -141,8 +138,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -160,8 +157,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
  "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -178,8 +173,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -188,8 +181,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -256,7 +249,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature',
-'elements': [('Temperature', 'int32', 1, 'out')],
+'elements': [('Temperature', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-21000, 180000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -283,7 +276,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature Reached',
-'elements': [('Temperature', 'int32', 1, 'out')],
+'elements': [('Temperature', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-21000, 180000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -310,9 +303,9 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging'}),
-             ('Thermocouple Type', 'uint8', 1, 'in', {'constant_group': 'Type'}),
-             ('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option'})],
+'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging', 'default': 16}),
+             ('Thermocouple Type', 'uint8', 1, 'in', {'constant_group': 'Type', 'default': 3}),
+             ('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -340,8 +333,6 @@ be calculated as follows:
 
 * 60Hz: ``time = 82 + (samples - 1) * 16.67``
 * 50Hz: ``time = 98 + (samples - 1) * 20``
-
-The default configuration is 16 samples, K type and 50Hz.
 """,
 'de':
 """
@@ -368,8 +359,6 @@ Frequenz-Filter-Konfiguration. Sie kann wie folgt bestimmt werden:
 
 * 60Hz: ``Zeit = 82 + (Samples - 1) * 16.67``
 * 50Hz: ``Zeit = 98 + (Samples - 1) * 20``
-
-Die Standardkonfiguration ist 16 Samples, Typ K und 50Hz.
 """
 }]
 })
@@ -377,9 +366,9 @@ Die Standardkonfiguration ist 16 Samples, Typ K und 50Hz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging'}),
-             ('Thermocouple Type', 'uint8', 1, 'out', {'constant_group': 'Type'}),
-             ('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option'})],
+'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging', 'default': 16}),
+             ('Thermocouple Type', 'uint8', 1, 'out', {'constant_group': 'Type', 'default': 3}),
+             ('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -396,8 +385,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error State',
-'elements': [('Over Under', 'bool', 1, 'out'),
-             ('Open Circuit', 'bool', 1, 'out')],
+'elements': [('Over Under', 'bool', 1, 'out', {}),
+             ('Open Circuit', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -435,8 +424,8 @@ der Error-Status ändert.
 com['packets'].append({
 'type': 'callback',
 'name': 'Error State',
-'elements': [('Over Under', 'bool', 1, 'out'),
-             ('Open Circuit', 'bool', 1, 'out')],
+'elements': [('Over Under', 'bool', 1, 'out', {}),
+             ('Open Circuit', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

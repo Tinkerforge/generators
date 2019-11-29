@@ -223,6 +223,8 @@ add_callback_value_function(
     data_name = 'Illuminance',
     data_type = 'uint32',
     doc       = illuminance_doc,
+    scale     = 'dynamic',
+    unit      = 'Lux',
     range_    = (0, 103438)
 )
 

@@ -35,18 +35,18 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set RGB Value',
-'elements': [('R', 'uint8', 1, 'in'),
-             ('G', 'uint8', 1, 'in'),
-             ('B', 'uint8', 1, 'in')],
+'elements': [('R', 'uint8', 1, 'in', {}),
+             ('G', 'uint8', 1, 'in', {}),
+             ('B', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the *r*, *g* and *b* values for the LED. Each value can be between 0 and 255.
+Sets the *r*, *g* and *b* values for the LED.
 """,
 'de':
 """
-Setzt die *r*, *g* und *b* Werte für die LED. Jeder Wert kann zwischen 0 und 255 liegen.
+Setzt die *r*, *g* und *b* Werte für die LED.
 """
 }]
 })
@@ -54,9 +54,9 @@ Setzt die *r*, *g* und *b* Werte für die LED. Jeder Wert kann zwischen 0 und 25
 com['packets'].append({
 'type': 'function',
 'name': 'Get RGB Value',
-'elements': [('R', 'uint8', 1, 'out'),
-             ('G', 'uint8', 1, 'out'),
-             ('B', 'uint8', 1, 'out')],
+'elements': [('R', 'uint8', 1, 'out', {}),
+             ('G', 'uint8', 1, 'out', {}),
+             ('B', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

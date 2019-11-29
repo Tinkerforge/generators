@@ -64,15 +64,13 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance',
-'elements': [('Illuminance', 'uint32', 1, 'out')],
+'elements': [('Illuminance', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Lux'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the illuminance of the ambient light sensor. The measurement range goes
 up to about 100000lux, but above 64000lux the precision starts to drop.
-The illuminance is given in lux/100, i.e. a value of 450000 means that an
-illuminance of 4500lux is measured.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
   An illuminance of 0lux indicates that the sensor is saturated and the
@@ -86,8 +84,7 @@ If you want to get the illuminance periodically, it is recommended to use the
 """
 Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück. Der Messbereich
 erstreckt sich bis über 100000Lux, aber ab 64000Lux nimmt die Messgenauigkeit
-ab. Die Beleuchtungsstärke ist in Lux/100 angegeben, d.h. bei einem Wert von
-450000 wurde eine Beleuchtungsstärke von 4500Lux gemessen.
+ab.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
   Eine Beleuchtungsstärke von 0Lux bedeutet, dass der Sensor gesättigt
@@ -147,8 +144,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Illuminance Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint32', 1, 'in'),
-             ('Max', 'uint32', 1, 'in')],
+             ('Min', 'uint32', 1, 'in', {'scale': (1, 100), 'unit': 'Lux', 'default': 0}),
+             ('Max', 'uint32', 1, 'in', {'scale': (1, 100), 'unit': 'Lux', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -166,8 +163,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the illuminance is *inside* the min and max values"
  "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the illuminance is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -184,8 +179,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Beleuchtungsstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Beleuchtungsstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Beleuchtungsstärke größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -194,8 +187,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint32', 1, 'out'),
-             ('Max', 'uint32', 1, 'out')],
+             ('Min', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Lux', 'default': 0}),
+             ('Max', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Lux', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -262,8 +255,8 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Illuminance Range', 'uint8', 1, 'in', {'constant_group': 'Illuminance Range'}),
-             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time'})],
+'elements': [('Illuminance Range', 'uint8', 1, 'in', {'constant_group': 'Illuminance Range', 'default': 3}),
+             ('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -291,8 +284,6 @@ integration time will result in less noise on the data.
 If the measurement is out-of-range or the sensor is saturated then you should
 configure the next higher illuminance range. If the highest range is already
 in use, then start to reduce the integration time.
-
-The default values are 0-8000lux illuminance range and 200ms integration time.
 """,
 'de':
 """
@@ -325,8 +316,6 @@ oder der Sensor gesättigt ist, dann sollte der nächst höhere
 Helligkeitswertebereich eingestellt werden. Wenn der höchste
 Helligkeitswertebereich schon erreicht ist, dann kann noch die Integrationszeit
 verringert werden.
-
-Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 200ms Integrationszeit.
 """
 }]
 })
@@ -334,8 +323,8 @@ Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 200ms Integrationszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Illuminance Range', 'uint8', 1, 'out', {'constant_group': 'Illuminance Range'}),
-             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time'})],
+'elements': [('Illuminance Range', 'uint8', 1, 'out', {'constant_group': 'Illuminance Range', 'default': 3}),
+             ('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -352,7 +341,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Illuminance',
-'elements': [('Illuminance', 'uint32', 1, 'out')],
+'elements': [('Illuminance', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Lux'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -378,7 +367,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Illuminance Reached',
-'elements': [('Illuminance', 'uint32', 1, 'out')],
+'elements': [('Illuminance', 'uint32', 1, 'out', {'scale': (1, 100), 'unit': 'Lux'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -60,12 +60,12 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Max Velocity',
-'elements': [('Velocity', 'uint16', 1, 'in')],
+'elements': [('Velocity', 'uint16', 1, 'in', {'unit': 'Steps Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the maximum velocity of the stepper motor in steps per second.
+Sets the maximum velocity of the stepper motor.
 This function does *not* start the motor, it merely sets the maximum
 velocity the stepper motor is accelerated to. To get the motor running use
 either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
@@ -73,7 +73,7 @@ either :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` or
 """,
 'de':
 """
-Setzt die maximale Geschwindigkeit des Schrittmotors in Schritten je Sekunde.
+Setzt die maximale Geschwindigkeit des Schrittmotors.
 Diese Funktion startet *nicht* den Motor, sondern setzt nur die maximale
 Geschwindigkeit auf welche der Schrittmotor beschleunigt wird. Um den Motor zu fahren
 können :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` oder
@@ -85,7 +85,7 @@ können :func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` od
 com['packets'].append({
 'type': 'function',
 'name': 'Get Max Velocity',
-'elements': [('Velocity', 'uint16', 1, 'out')],
+'elements': [('Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -102,16 +102,16 @@ Gibt die Geschwindigkeit zurück, wie von :func:`Set Max Velocity` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Velocity',
-'elements': [('Velocity', 'uint16', 1, 'out')],
+'elements': [('Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the *current* velocity of the stepper motor in steps per second.
+Returns the *current* velocity of the stepper motor.
 """,
 'de':
 """
-Gibt die *aktuelle* Geschwindigkeit des Schrittmotors in Schritten je Sekunde zurück.
+Gibt die *aktuelle* Geschwindigkeit des Schrittmotors zurück.
 """
 }]
 })
@@ -119,14 +119,14 @@ Gibt die *aktuelle* Geschwindigkeit des Schrittmotors in Schritten je Sekunde zu
 com['packets'].append({
 'type': 'function',
 'name': 'Set Speed Ramping',
-'elements': [('Acceleration', 'uint16', 1, 'in'),
-             ('Deacceleration', 'uint16', 1, 'in')],
+'elements': [('Acceleration', 'uint16', 1, 'in', {'unit': 'Steps Per Second Squared', 'default': 1000}),
+             ('Deacceleration', 'uint16', 1, 'in', {'unit': 'Steps Per Second Squared', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the acceleration and deacceleration of the stepper motor. The values
-are given in *steps/s²*. An acceleration of 1000 means, that
+Sets the acceleration and deacceleration of the stepper motor.
+An acceleration of 1000 means, that
 every second the velocity is increased by 1000 *steps/s*.
 
 For example: If the current velocity is 0 and you want to accelerate to a
@@ -135,13 +135,11 @@ of 800 *steps/s²*.
 
 An acceleration/deacceleration of 0 means instantaneous
 acceleration/deacceleration (not recommended)
-
-The default value is 1000 for both
 """,
 'de':
 """
-Setzt die Beschleunigung und die Verzögerung des Schrittmotors. Die Werte
-müssen in *Schritten/s²* angegeben werden. Eine Beschleunigung von 1000 bedeutet,
+Setzt die Beschleunigung und die Verzögerung des Schrittmotors.
+Eine Beschleunigung von 1000 bedeutet,
 dass jede Sekunde die Geschwindigkeit um 1000 *Schritte/s* erhöht wird.
 
 Beispiel: Wenn die aktuelle Geschwindigkeit 0 ist und es soll auf eine Geschwindigkeit
@@ -150,8 +148,6 @@ von 8000 *Schritten/s* in 10 Sekunden beschleunigt werden, muss die Beschleunigu
 
 Eine Beschleunigung/Verzögerung von 0 bedeutet ein sprunghaftes Beschleunigen/Verzögern
 (nicht empfohlen).
-
-Der Standardwert ist 1000 für beide Parameter.
 """
 }]
 })
@@ -159,8 +155,8 @@ Der Standardwert ist 1000 für beide Parameter.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Speed Ramping',
-'elements': [('Acceleration', 'uint16', 1, 'out'),
-             ('Deacceleration', 'uint16', 1, 'out')],
+'elements': [('Acceleration', 'uint16', 1, 'out', {'unit': 'Steps Per Second Squared', 'default': 1000}),
+             ('Deacceleration', 'uint16', 1, 'out', {'unit': 'Steps Per Second Squared', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -209,7 +205,7 @@ Ein Aufruf von :func:`Stop` stoppt den Motor.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Position',
-'elements': [('Position', 'int32', 1, 'in')],
+'elements': [('Position', 'int32', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -230,7 +226,7 @@ Startpunkt erreicht wurde (z.B. wenn eine CNC Maschine eine Ecke erreicht).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Position',
-'elements': [('Position', 'int32', 1, 'out')],
+'elements': [('Position', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -255,7 +251,7 @@ gewünschten Wert zu setzen mit :func:`Set Current Position`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Target Position',
-'elements': [('Position', 'int32', 1, 'in')],
+'elements': [('Position', 'int32', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -288,7 +284,7 @@ Ein Aufruf von :func:`Set Target Position` mit dem Parameter *x* ist
 com['packets'].append({
 'type': 'function',
 'name': 'Get Target Position',
-'elements': [('Position', 'int32', 1, 'out')],
+'elements': [('Position', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -305,7 +301,7 @@ Gibt die letzte Zielposition zurück, wie von :func:`Set Target Position` gesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Steps',
-'elements': [('Steps', 'int32', 1, 'in')],
+'elements': [('Steps', 'int32', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -328,7 +324,7 @@ Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Steps',
-'elements': [('Steps', 'int32', 1, 'out')],
+'elements': [('Steps', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -345,7 +341,7 @@ Gibt die letzten Schritte zurück, wie von :func:`Set Steps` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Remaining Steps',
-'elements': [('Steps', 'int32', 1, 'out')],
+'elements': [('Steps', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -368,7 +364,7 @@ hat, wird 1500 zurückgegeben.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Step Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Step Mode'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Step Mode', 'default': 8})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -382,8 +378,6 @@ Sets the step mode of the stepper motor. Possible values are:
 
 A higher value will increase the resolution and
 decrease the torque of the stepper motor.
-
-The default value is 8 (Eighth Step).
 """,
 'de':
 """
@@ -396,8 +390,6 @@ Setzt den Schrittmodus des Schrittmotors. Mögliche Werte sind:
 
 Ein höherer Wert erhöht die Auflösung und verringert das
 Drehmoment des Schrittmotors.
-
-Der Standardwert ist 8 (Achtelschritt).
 """
 }]
 })
@@ -405,7 +397,7 @@ Der Standardwert ist 8 (Achtelschritt).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Step Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Step Mode'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Step Mode', 'default': 8})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -485,18 +477,18 @@ Stoppt den Schrittmotor mit der Verzögerung, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Input Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the stack input voltage in mV. The stack input voltage is the
+Returns the stack input voltage. The stack input voltage is the
 voltage that is supplied via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
-Gibt die Eingangsspannung (in mV) des Stapels zurück. Die Eingangsspannung
+Gibt die Eingangsspannung des Stapels zurück. Die Eingangsspannung
 des Stapel wird über diesen bereitgestellt und von einer Step-Down oder
 Step-Up Power Supply erzeugt.
 """
@@ -506,12 +498,12 @@ Step-Up Power Supply erzeugt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get External Input Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the external input voltage in mV. The external input voltage is
+Returns the external input voltage. The external input voltage is
 given via the black power input connector on the Stepper Brick.
 
 If there is an external input voltage and a stack input voltage, the motor
@@ -526,7 +518,7 @@ voltage present, the motor will be driven by this voltage.
 """,
 'de':
 """
-Gibt die externe Eingangsspannung (in mV) zurück. Die externe Eingangsspannung
+Gibt die externe Eingangsspannung zurück. Die externe Eingangsspannung
 wird über die schwarze Stromversorgungsbuchse, in den Stepper Brick, eingespeist.
 
 Sobald eine externe Eingangsspannung und die Spannungsversorgung des Stapels anliegt,
@@ -545,16 +537,16 @@ des Stapels verfügbar sein, erfolgt die Versorgung des Motors über diese.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Consumption',
-'elements': [('Current', 'uint16', 1, 'out')],
+'elements': [('Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the current consumption of the motor in mA.
+Returns the current consumption of the motor.
 """,
 'de':
 """
-Gibt die Stromaufnahme des Motors zurück (in mA).
+Gibt die Stromaufnahme des Motors zurück.
 """
 }]
 })
@@ -562,14 +554,12 @@ Gibt die Stromaufnahme des Motors zurück (in mA).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Motor Current',
-'elements': [('Current', 'uint16', 1, 'in')],
+'elements': [('Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (100, 2291), 'default': 800})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the current in mA with which the motor will be driven.
-The minimum value is 100mA, the maximum value 2291mA and the
-default value is 800mA.
+Sets the current with which the motor will be driven.
 
 .. warning::
  Do not set this value above the specifications of your stepper motor.
@@ -578,8 +568,6 @@ default value is 800mA.
 'de':
 """
 Setzt den Strom in mA mit welchem der Motor angetrieben wird.
-Der minimale Wert ist 100mA, der maximale Wert ist 2291mA und der
-Standardwert ist 800mA.
 
 .. warning::
  Dieser Wert sollte nicht über die Spezifikation des Schrittmotors gesetzt werden.
@@ -591,7 +579,7 @@ Standardwert ist 800mA.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Motor Current',
-'elements': [('Current', 'uint16', 1, 'out')],
+'elements': [('Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (100, 2291), 'default': 800})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -647,7 +635,7 @@ Aktivierung erfolgt.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -664,13 +652,13 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Decay',
-'elements': [('Decay', 'uint16', 1, 'in')],
+'elements': [('Decay', 'uint16', 1, 'in', {'default': 10000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Sets the decay mode of the stepper motor. The possible value range is
-between 0 and 65535. A value of 0 sets the fast decay mode, a value of
+Sets the decay mode of the stepper motor.
+A value of 0 sets the fast decay mode, a value of
 65535 sets the slow decay mode and a value in between sets the mixed
 decay mode.
 
@@ -689,8 +677,6 @@ sound and if it is too high you can often hear a humming sound.
 Generally, fast decay mode (small value) will be noisier but also
 allow higher motor speeds.
 
-The default value is 10000.
-
 .. note::
  There is unfortunately no formula to calculate a perfect decay
  mode for a given stepper motor. If you have problems with loud noises
@@ -699,8 +685,8 @@ The default value is 10000.
 """,
 'de':
 """
-Setzt den Decay Modus (Abklingmodus) des Schrittmotors. Der mögliche
-Wertebereich ist 0 bis 65535. Ein Wert von 0 setzt den Fast Decay Modus
+Setzt den Decay Modus (Abklingmodus) des Schrittmotors.
+Ein Wert von 0 setzt den Fast Decay Modus
 (schneller Stromabbau), ein Wert von 65535 den Slow Decay Modus (langsamer
 Stromabbau) ein Wert dazwischen den Mixed Decay Modus (Nutzung beider Modi).
 
@@ -721,8 +707,6 @@ und wenn er zu hoch ist, oftmals ein brummendes Geräusch.
 Im Allgemeinen ist der Fast Decay Modus (kleine Werte) geräuschvoller, erlaubt aber
 höhere Motorgeschwindigkeiten.
 
-Der Standardwert ist 10000.
-
 .. note::
  Es existiert leider keine Formel zur Berechnung des optimalen Decay Modus eines
  Schrittmotors. Sollten Probleme mit lauten Geräuschen oder einer zu geringen maximalen
@@ -734,7 +718,7 @@ Der Standardwert ist 10000.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Decay',
-'elements': [('Decay', 'uint16', 1, 'out')],
+'elements': [('Decay', 'uint16', 1, 'out', {'default': 10000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -751,28 +735,24 @@ Gibt den Decay Modus zurück, wie von :func:`Set Decay` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Minimum Voltage',
-'elements': [('Voltage', 'uint16', 1, 'in')],
+'elements': [('Voltage', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 8000})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
+Sets the minimum voltage, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the Stepper Brick is 8V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do
 not need this functionality.
-
-The default value is 8V.
 """,
 'de':
 """
-Setzt die minimale Spannung in mV, bei welcher der :cb:`Under Voltage` Callback
+Setzt die minimale Spannung, bei welcher der :cb:`Under Voltage` Callback
 ausgelöst wird. Der kleinste mögliche Wert mit dem der Stepper Brick noch funktioniert,
 ist 8V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
 höchstwahrscheinlich nicht benötigt.
-
-Der Standardwert ist 8V.
 """
 }]
 })
@@ -780,7 +760,7 @@ Der Standardwert ist 8V.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Minimum Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 8000})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -797,20 +777,19 @@ Gibt die minimale Spannung zurück, wie von :func:`Set Minimum Voltage` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Under Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage given
-in mV.
+:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst, wenn die Eingangsspannung unter den, mittels
 :func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
-ist die aktuelle Spannung in mV.
+ist die aktuelle Spannung.
 """
 }]
 })
@@ -818,7 +797,7 @@ ist die aktuelle Spannung in mV.
 com['packets'].append({
 'type': 'callback',
 'name': 'Position Reached',
-'elements': [('Position', 'int32', 1, 'out')],
+'elements': [('Position', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -850,7 +829,7 @@ Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sync Rect',
-'elements': [('Sync Rect', 'bool', 1, 'in')],
+'elements': [('Sync Rect', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 1, 4],
 'doc': ['af', {
 'en':
@@ -869,8 +848,6 @@ For an explanation of synchronous rectification see
  stepper motor with a large inductivity we strongly
  suggest that you disable synchronous rectification. Otherwise the
  Brick may not be able to cope with the load and overheat.
-
-The default value is *false*.
 """,
 'de':
 """
@@ -888,8 +865,6 @@ Für eine Erläuterung der Synchrongleichrichtung siehe
  Schrittmotor mit einer hohen Induktivität genutzt werden sollen, wird
  dringend geraten die Synchrongleichrichtung zu deaktivieren. Sonst kann
  es vorkommen, dass der Brick die Last nicht bewältigen kann und überhitzt.
-
-Der Standardwert ist *false*.
 """
 }]
 })
@@ -897,7 +872,7 @@ Der Standardwert ist *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Sync Rect',
-'elements': [('Sync Rect', 'bool', 1, 'out')],
+'elements': [('Sync Rect', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 1, 4],
 'doc': ['af', {
 'en':
@@ -914,30 +889,24 @@ Gibt zurück ob die Synchrongleichrichtung aktiviert ist.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Time Base',
-'elements': [('Time Base', 'uint32', 1, 'in')],
+'elements': [('Time Base', 'uint32', 1, 'in', {'unit': 'Second', 'default': 1})],
 'since_firmware': [1, 1, 6],
 'doc': ['af', {
 'en':
 """
-Sets the time base of the velocity and the acceleration of the stepper brick
-(in seconds).
+Sets the time base of the velocity and the acceleration of the stepper brick.
 
 For example, if you want to make one step every 1.5 seconds, you can set
 the time base to 15 and the velocity to 10. Now the velocity is
 10steps/15s = 1steps/1.5s.
-
-The default value is 1.
 """,
 'de':
 """
-Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Stepper Brick
-(in Sekunden).
+Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Stepper Brick.
 
 Beispiel: Wenn aller 1,5 Sekunden ein Schritt gefahren werden soll, kann
 die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die
 Geschwindigkeit 10Schritte/15s = 1Schritt/1,5s.
-
-Der Standardwert ist 1.
 """
 }]
 })
@@ -945,7 +914,7 @@ Der Standardwert ist 1.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Time Base',
-'elements': [('Time Base', 'uint32', 1, 'out')],
+'elements': [('Time Base', 'uint32', 1, 'out', {'unit': 'Second', 'default': 1})],
 'since_firmware': [1, 1, 6],
 'doc': ['af', {
 'en':
@@ -962,12 +931,12 @@ Gibt die Zeitbasis zurück, wie von :func:`Set Time Base` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data',
-'elements': [('Current Velocity', 'uint16', 1, 'out'),
-             ('Current Position', 'int32', 1, 'out'),
-             ('Remaining Steps', 'int32', 1, 'out'),
-             ('Stack Voltage', 'uint16', 1, 'out'),
-             ('External Voltage', 'uint16', 1, 'out'),
-             ('Current Consumption', 'uint16', 1, 'out')],
+'elements': [('Current Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'}),
+             ('Current Position', 'int32', 1, 'out', {}),
+             ('Remaining Steps', 'int32', 1, 'out', {}),
+             ('Stack Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('External Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Current Consumption', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
 'since_firmware': [1, 1, 6],
 'doc': ['af', {
 'en':
@@ -1029,12 +998,12 @@ Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'All Data',
-'elements': [('Current Velocity', 'uint16', 1, 'out'),
-             ('Current Position', 'int32', 1, 'out'),
-             ('Remaining Steps', 'int32', 1, 'out'),
-             ('Stack Voltage', 'uint16', 1, 'out'),
-             ('External Voltage', 'uint16', 1, 'out'),
-             ('Current Consumption', 'uint16', 1, 'out')],
+'elements': [('Current Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'}),
+             ('Current Position', 'int32', 1, 'out', {}),
+             ('Remaining Steps', 'int32', 1, 'out', {}),
+             ('Stack Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('External Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Current Consumption', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
 'since_firmware': [1, 1, 6],
 'doc': ['c', {
 'en':

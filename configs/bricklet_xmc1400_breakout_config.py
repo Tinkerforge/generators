@@ -60,11 +60,11 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set GPIO Config',
-'elements': [('Port', 'uint8', 1, 'in'),
-             ('Pin', 'uint8', 1, 'in'),
+'elements': [('Port', 'uint8', 1, 'in', {'range': (0, 4)}),
+             ('Pin', 'uint8', 1, 'in', {'range': 'dynamic'}),
              ('Mode', 'uint8', 1, 'in', {'constant_group': 'GPIO Mode'}),
              ('Input Hysteresis', 'uint8', 1, 'in', {'constant_group': 'GPIO Input Hysteresis'}),
-             ('Output Level', 'bool', 1, 'in')],
+             ('Output Level', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -83,9 +83,9 @@ XMC_GPIO_Init 체bergeben. Siehe communication.c in der Firmware.
 com['packets'].append({
 'type': 'function',
 'name': 'Get GPIO Input',
-'elements': [('Port', 'uint8', 1, 'in'),
-             ('Pin', 'uint8', 1, 'in'),
-             ('Value', 'bool', 1, 'out')],
+'elements': [('Port', 'uint8', 1, 'in', {'range': (0, 4)}),
+             ('Pin', 'uint8', 1, 'in', {'range': 'dynamic'}),
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -105,8 +105,8 @@ XMC_GPIO_GetInput-Aufrufs f체r den gegebenen Port/Pin zur체ck.
 com['packets'].append({
 'type': 'function',
 'name': 'Set ADC Channel Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Enable', 'bool', 1, 'in')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Enable', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -145,8 +145,8 @@ Es gibt 8 ADC-Kan채le und sie korrespondieren zu den folgenden Pinnen:
 com['packets'].append({
 'type': 'function',
 'name': 'Get ADC Channel Config',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Enable', 'bool', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Enable', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -164,8 +164,8 @@ von :func:`Set ADC Channel Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get ADC Channel Value',
-'elements': [('Channel', 'uint8', 1, 'in'),
-             ('Value', 'uint16', 1, 'out')],
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -182,7 +182,7 @@ Gibt den 12-Bit Wert f체r den gegebenen ADC-Kanal des ADC-Treiber-Beispiels zur�
 com['packets'].append({
 'type': 'function',
 'name': 'Get ADC Values',
-'elements': [('Values', 'uint16', 8, 'out')],
+'elements': [('Values', 'uint16', 8, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -262,7 +262,7 @@ Gibt die Callback-Konfiguration zur체ck, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'ADC Values',
-'elements': [('Values', 'uint16', 8, 'out')],
+'elements': [('Values', 'uint16', 8, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -55,15 +55,11 @@ com['constant_groups'].append({
 temperature_doc = {
 'en':
 """
-Returns the temperature of the connected sensor. The value
-has a range of -246 to 849 °C and is given in °C/100,
-e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
+Returns the temperature of the connected sensor.
 """,
 'de':
 """
-Gibt die Temperatur des verbundenen Sensors zurück. Der Wertebereich ist von
--246 bis 849 °C und wird in °C/100 angegeben, z.B. bedeutet
-ein Wert von 4223 eine gemessene Temperatur von 42,23 °C.
+Gibt die Temperatur des verbundenen Sensors zurück.
 """
 }
 
@@ -72,7 +68,10 @@ add_callback_value_function(
     name      = 'Get Temperature',
     data_name = 'Temperature',
     data_type = 'int32',
-    doc       = temperature_doc
+    doc       = temperature_doc,
+    scale     = (1, 100),
+    unit      = 'Degree Celsius',
+    range_    = (-24600, 84900)
 )
 
 resistance_doc = {
@@ -101,13 +100,15 @@ add_callback_value_function(
     name      = 'Get Resistance',
     data_name = 'Resistance',
     data_type = 'int32',
-    doc       = resistance_doc
+    doc       = resistance_doc,
+    scale     = 'dynamic',
+    unit      = 'Ohm'
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Noise Rejection Filter',
-'elements': [('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option'})],
+'elements': [('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -116,8 +117,6 @@ Sets the noise rejection filter to either 50Hz (0) or 60Hz (1).
 Noise from 50Hz or 60Hz power sources (including
 harmonics of the AC power's fundamental frequency) is
 attenuated by 82dB.
-
-Default value is 0 = 50Hz.
 """,
 'de':
 """
@@ -125,8 +124,6 @@ Setzt den Entstörfilter auf 50Hz (0) oder 60Hz (1).
 Störungen von 50Hz oder 60Hz Stromquellen (inklusive
 Oberwellen der Stromquellen-Grundfrequenz) werden
 um 82dB abgeschwächt.
-
-Der Standardwert ist 0 = 50Hz.
 """
 }]
 })
@@ -134,7 +131,7 @@ Der Standardwert ist 0 = 50Hz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Noise Rejection Filter',
-'elements': [('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option'})],
+'elements': [('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -153,7 +150,7 @@ Gibt die Einstellung des Entstörfilters zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Is Sensor Connected',
-'elements': [('Connected', 'bool', 1, 'out')],
+'elements': [('Connected', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -187,7 +184,7 @@ Der Callback wird mit der Funktion
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wire Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Wire Mode'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Wire Mode', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -195,16 +192,12 @@ com['packets'].append({
 Sets the wire mode of the sensor. Possible values are 2, 3 and 4 which
 correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper
 configuration on the Bricklet.
-
-The default value is 2 = 2-wire.
 """,
 'de':
 """
 Stellt die Leiter-Konfiguration des Sensors ein. Mögliche Werte sind 2, 3 und
 4, dies entspricht 2-, 3- und 4-Leiter-Sensoren. Der Wert muss er
 Jumper-Konfiguration am Bricklet entsprechen.
-
-Der Standardwert ist 2 = 2-Leiter.
 """
 }]
 })
@@ -212,7 +205,7 @@ Der Standardwert ist 2 = 2-Leiter.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wire Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Wire Mode'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Wire Mode', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -229,8 +222,8 @@ Gibt die Leiter-Konfiguration zurück, wie von :func:`Set Wire Mode` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average Configuration',
-'elements': [('Moving Average Length Resistance', 'uint16', 1, 'in'),
-             ('Moving Average Length Temperature', 'uint16', 1, 'in')],
+'elements': [('Moving Average Length Resistance', 'uint16', 1, 'in', {'range': (1, 1000), 'default': 1}),
+             ('Moving Average Length Temperature', 'uint16', 1, 'in', {'range': (1, 1000), 'default': 40})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -241,14 +234,11 @@ for the resistance and temperature.
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
 
-The range for the averaging is 1-1000.
-
 New data is gathered every 20ms. With a moving average of length 1000 the resulting
 averaging window has a length of 20s. If you want to do long term measurements the longest
 moving average will give the cleanest results.
 
-The default value is 1 for resistance and 40 for temperature. The default values match
-the non-changeable averaging settings of the old PTC Bricklet 1.0
+The default values match the non-changeable averaging settings of the old PTC Bricklet 1.0
 """,
 'de':
 """
@@ -258,14 +248,11 @@ für den Widerstand und die Temperatur.
 Wenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert.
 Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
-Der Wertebereich liegt bei 1-1000.
-
 Einer neue Wert wird alle 20ms gemessen. Mit einer Mittelwerts-Länge von 1000 hat das
 resultierende gleitende Fenster eine Zeitspanne von 20s. Bei Langzeitmessungen gibt
 ein langer Mittelwert die saubersten Resultate.
 
-Der Standardwert ist 1 für den Widerstand und 40 für die Temperatur. Die Standardwerte entsprechen
-den nicht-änderbaren Mittelwert-Einstellungen des alten PTC Bricklet 1.0.
+Die Standardwerte entsprechen den nicht-änderbaren Mittelwert-Einstellungen des alten PTC Bricklet 1.0.
 """
 }]
 })
@@ -273,8 +260,8 @@ den nicht-änderbaren Mittelwert-Einstellungen des alten PTC Bricklet 1.0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average Configuration',
-'elements': [('Moving Average Length Resistance', 'uint16', 1, 'out'),
-             ('Moving Average Length Temperature', 'uint16', 1, 'out')],
+'elements': [('Moving Average Length Resistance', 'uint16', 1, 'out', {'range': (1, 1000), 'default': 1}),
+             ('Moving Average Length Temperature', 'uint16', 1, 'out', {'range': (1, 1000), 'default': 40})],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -292,7 +279,7 @@ Gibt die Moving Average-Konfiguration zurück, wie von :func:`Set Moving Average
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Connected Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'in')],
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -315,7 +302,7 @@ Standardmäßig ist dieser Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Connected Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -332,7 +319,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Sensor Connected Callback Con
 com['packets'].append({
 'type': 'callback',
 'name': 'Sensor Connected',
-'elements': [('Connected', 'bool', 1, 'out')],
+'elements': [('Connected', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

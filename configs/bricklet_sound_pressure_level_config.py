@@ -60,8 +60,7 @@ com['constant_groups'].append({
 decibel_doc = {
 'en':
 """
-Returns the measured sound pressure in decibels. The values are given in
-dB/10 (tenths dB).
+Returns the measured sound pressure in decibels.
 
 The Bricklet supports the weighting standards dB(A), dB(B), dB(C), dB(D),
 dB(Z) and ITU-R 468. You can configure the weighting with :func:`Set Configuration`.
@@ -70,8 +69,7 @@ By default dB(A) will be used.
 """,
 'de':
 """
-Gibt die gemessenen Schalldruck in Dezibel zurück. Die Werte werden in
-dB/10 (Zehntel dB) zurückgegeben.
+Gibt die gemessenen Schalldruck in Dezibel zurück.
 
 Das Bricklet unterstützt die Gewichtungen dB(A), dB(B), dB(C), dB(D), dB(Z) und
 ITU-R 468. Die Gewichtungsfunktion kann mittels :func:`Set Configuration`
@@ -86,15 +84,18 @@ add_callback_value_function(
     name      = 'Get Decibel',
     data_name = 'Decibel',
     data_type = 'uint16',
-    doc       = decibel_doc
+    doc       = decibel_doc,
+    scale     = (1, 10),
+    unit      = 'Decibel',
+    range_    = (0, 120)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Get Spectrum Low Level',
-'elements': [('Spectrum Length', 'uint16', 1, 'out'),
-             ('Spectrum Chunk Offset', 'uint16', 1, 'out'),
-             ('Spectrum Chunk Data', 'uint16', 30, 'out')],
+'elements': [('Spectrum Length', 'uint16', 1, 'out', {'range': (64, 512)}),
+             ('Spectrum Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Spectrum Chunk Data', 'uint16', 30, 'out', {'scale': 'dynamic', 'unit': 'Decibel'})],
 'high_level': {'stream_out': {'name': 'Spectrum'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -190,9 +191,9 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Spectrum Low Level',
-'elements': [('Spectrum Length', 'uint16', 1, 'out'),
-             ('Spectrum Chunk Offset', 'uint16', 1, 'out'),
-             ('Spectrum Chunk Data', 'uint16', 30, 'out')],
+'elements': [('Spectrum Length', 'uint16', 1, 'out', {'range': (64, 512)}),
+             ('Spectrum Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Spectrum Chunk Data', 'uint16', 30, 'out', {'scale': 'dynamic', 'unit': 'Decibel'})],
 'high_level': {'stream_out': {'name': 'Spectrum'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -216,8 +217,8 @@ Der :word:`parameter` ist der gleiche wie :func:`Get Spectrum`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('FFT Size', 'uint8', 1, 'in', {'constant_group': 'FFT Size'}),
-             ('Weighting', 'uint8', 1, 'in', {'constant_group': 'Weighting'}),
+'elements': [('FFT Size', 'uint8', 1, 'in', {'constant_group': 'FFT Size', 'default': 3}),
+             ('Weighting', 'uint8', 1, 'in', {'constant_group': 'Weighting', 'default': 0}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -244,8 +245,6 @@ dB(A/B/C/D) are the standard dB weighting curves. dB(A) is
 often used to measure volumes at concerts etc. dB(Z) has a
 flat response, no weighting is applied. ITU-R 468 is an ITU
 weighting standard mostly used in the UK and Europe.
-
-The defaults are FFT size 1024 and weighting standard dB(A).
 """,
 'de':
 """
@@ -269,8 +268,6 @@ dB(A/B/C/D) sind Standard-Gewichtungskurven. dB(A) wird of genutzt um
 Lautstärke in Konzerten zu messen. dB(Z) besitzt keine Gewichtung und gibt
 die Daten ungewichtet zurück. ITU-R 468 ist ein ITU Gewichtungsstandard der
 hauptsächlich in UK und Europa verwendet wird.
-
-Die Standardeinstellungen sind FFT Größe 1024 und Gewichtung dB(A).
 """
 }]
 })
@@ -278,8 +275,8 @@ Die Standardeinstellungen sind FFT Größe 1024 und Gewichtung dB(A).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('FFT Size', 'uint8', 1, 'out', {'constant_group': 'FFT Size'}),
-             ('Weighting', 'uint8', 1, 'out', {'constant_group': 'Weighting'}),
+'elements': [('FFT Size', 'uint8', 1, 'out', {'constant_group': 'FFT Size', 'default': 3}),
+             ('Weighting', 'uint8', 1, 'out', {'constant_group': 'Weighting', 'default': 0}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

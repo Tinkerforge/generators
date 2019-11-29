@@ -96,15 +96,18 @@ add_callback_value_function(
     name      = 'Get Temperature',
     data_name = 'Temperature',
     data_type = 'int32',
-    doc       = temperature_doc
+    doc       = temperature_doc,
+    scale     = (1, 100),
+    unit      = 'Degree Celsius',
+    range_    = (-21000, 180000)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging'}),
-             ('Thermocouple Type', 'uint8', 1, 'in', {'constant_group': 'Type'}),
-             ('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option'})],
+'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging', 'default': 16}),
+             ('Thermocouple Type', 'uint8', 1, 'in', {'constant_group': 'Type', 'default': 3}),
+             ('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -132,8 +135,6 @@ be calculated as follows:
 
 * 60Hz: ``time = 82 + (samples - 1) * 16.67``
 * 50Hz: ``time = 98 + (samples - 1) * 20``
-
-The default configuration is 16 samples, K type and 50Hz.
 """,
 'de':
 """
@@ -160,8 +161,6 @@ Frequenz-Filter-Konfiguration. Sie kann wie folgt bestimmt werden:
 
 * 60Hz: ``Zeit = 82 + (Samples - 1) * 16.67``
 * 50Hz: ``Zeit = 98 + (Samples - 1) * 20``
-
-Die Standardkonfiguration ist 16 Samples, Typ K und 50Hz.
 """
 }]
 })
@@ -169,9 +168,9 @@ Die Standardkonfiguration ist 16 Samples, Typ K und 50Hz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging'}),
-             ('Thermocouple Type', 'uint8', 1, 'out', {'constant_group': 'Type'}),
-             ('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option'})],
+'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging', 'default': 16}),
+             ('Thermocouple Type', 'uint8', 1, 'out', {'constant_group': 'Type', 'default': 3}),
+             ('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -188,8 +187,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error State',
-'elements': [('Over Under', 'bool', 1, 'out'),
-             ('Open Circuit', 'bool', 1, 'out')],
+'elements': [('Over Under', 'bool', 1, 'out', {}),
+             ('Open Circuit', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -227,8 +226,8 @@ der Error-Status ändert.
 com['packets'].append({
 'type': 'callback',
 'name': 'Error State',
-'elements': [('Over Under', 'bool', 1, 'out'),
-             ('Open Circuit', 'bool', 1, 'out')],
+'elements': [('Over Under', 'bool', 1, 'out', {}),
+             ('Open Circuit', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

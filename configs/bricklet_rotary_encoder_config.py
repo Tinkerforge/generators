@@ -38,8 +38,8 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Count',
-'elements': [('Reset', 'bool', 1, 'in'),
-             ('Count', 'int32', 1, 'out')],
+'elements': [('Reset', 'bool', 1, 'in', {}),
+             ('Count', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -113,8 +113,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Count Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'default': 0}),
+             ('Max', 'int32', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -160,8 +160,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Count Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'default': 0}),
+             ('Max', 'int32', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -228,7 +228,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Count',
-'elements': [('Count', 'int32', 1, 'out')],
+'elements': [('Count', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -255,7 +255,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Count Reached',
-'elements': [('Count', 'int32', 1, 'out')],
+'elements': [('Count', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -282,7 +282,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Pressed',
-'elements': [('Pressed', 'bool', 1, 'out')],
+'elements': [('Pressed', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

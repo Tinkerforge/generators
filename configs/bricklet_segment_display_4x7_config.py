@@ -34,9 +34,9 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set Segments',
-'elements': [('Segments', 'uint8', 4, 'in'),
-             ('Brightness', 'uint8', 1, 'in'),
-             ('Colon', 'bool', 1, 'in')],
+'elements': [('Segments', 'uint8', 4, 'in', {'range': (0, 0x7F)}),
+             ('Brightness', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Colon', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -78,9 +78,9 @@ Der dritte Parameter aktiviert/deaktiviert den Doppelpunkt auf der Anzeige.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Segments',
-'elements': [('Segments', 'uint8', 4, 'out'),
-             ('Brightness', 'uint8', 1, 'out'),
-             ('Colon', 'bool', 1, 'out')],
+'elements': [('Segments', 'uint8', 4, 'out', {'range': (0, 0x7F)}),
+             ('Brightness', 'uint8', 1, 'out', {'range': (0, 7)}),
+             ('Colon', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -99,24 +99,21 @@ Gibt die Segment-, Helligkeit- und Doppelpunktdaten zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Start Counter',
-'elements': [('Value From', 'int16', 1, 'in'),
-             ('Value To', 'int16', 1, 'in'),
-             ('Increment', 'int16', 1, 'in'),
-             ('Length', 'uint32', 1, 'in')],
+'elements': [('Value From', 'int16', 1, 'in', {'range': (-999, 9999)}),
+             ('Value To', 'int16', 1, 'in', {'range': (-999, 9999)}),
+             ('Increment', 'int16', 1, 'in', {'range': (-999, 9999)}),
+             ('Length', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Starts a counter with the *from* value that counts to the *to*
 value with the each step incremented by *increment*.
-The *length* of the increment is given in ms.
+*length* is the pause between each increment.
 
 Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
 *length* to 1000, a counter that goes from 0 to 100 with one second
 pause between each increment will be started.
-
-The maximum values for *from*, *to* and *increment* is 9999,
-the minimum value is -999.
 
 Using a negative increment allows to count backwards.
 
@@ -125,15 +122,12 @@ You can stop the counter at every time by calling :func:`Set Segments`.
 'de':
 """
 Starter einen Zähler mit dem *from* Wert der bis zum *to* Wert Zählt
-mit einer Schrittweite von *increment*. Das Argument *length* gibt die
-Pause zwischen den Erhöhungen in ms an.
+mit einer Schrittweite von *increment*. Das Argument *length* ist
+die Länge der Pause zwischen zwei Inkrements.
 
 Beispiel: Wenn *from* auf 0, *to* auf 100, *increment* auf 1 und
 *length* auf 1000 gesetzt wird, wird ein Zähler gestartet der von
 0 bis 100 zählt mit Rate von einer Sekunde zwischen jeder Erhöhung.
-
-Der Maximalwert für *from*, *to* und *increment* ist 9999, der Minimalwert
-ist -999.
 
 Wenn das increment negativ ist läuft der Zähler rückwärts.
 
@@ -146,7 +140,7 @@ gestoppt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Counter Value',
-'elements': [('Value', 'uint16', 1, 'out')],
+'elements': [('Value', 'uint16', 1, 'out', {'range': (-999, 9999)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

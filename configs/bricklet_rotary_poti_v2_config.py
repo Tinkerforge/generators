@@ -39,13 +39,13 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 position_doc = {
 'en':
 """
-Returns the position of the rotary potentiometer. The value is in degree
-and between -150° (turned left) and 150° (turned right).
+Returns the position of the rotary potentiometer. The value is
+between -150° (turned left) and 150° (turned right).
 """,
 'de':
 """
-Gibt die Position des Drehpotentiometers zurück. Der Wertebereich ist in Grad
-und ist von -150° (links gedreht) und 150° (rechts gedreht).
+Gibt die Position des Drehpotentiometers zurück. Der Wertebereich ist
+von -150° (links gedreht) und 150° (rechts gedreht).
 """
 }
 
@@ -54,7 +54,9 @@ add_callback_value_function(
     name      = 'Get Position',
     data_name = 'Position',
     data_type = 'int16',
-    doc       = position_doc
+    doc       = position_doc,
+    unit      = 'Degree',
+    range_    = (-150, 150)
 )
 
 com['examples'].append({

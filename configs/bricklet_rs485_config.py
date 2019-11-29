@@ -106,10 +106,10 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Write Low Level',
-'elements': [('Message Length', 'uint16', 1, 'in'),
-             ('Message Chunk Offset', 'uint16', 1, 'in'),
-             ('Message Chunk Data', 'char', 60, 'in'),
-             ('Message Chunk Written', 'uint8', 1, 'out')],
+'elements': [('Message Length', 'uint16', 1, 'in', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Message Chunk Data', 'char', 60, 'in', {}),
+             ('Message Chunk Written', 'uint8', 1, 'out', {})],
 'high_level': {'stream_in': {'name': 'Message', 'short_write': True}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -139,10 +139,10 @@ bezüglich Baudrate, Parität usw.
 com['packets'].append({
 'type': 'function',
 'name': 'Read Low Level',
-'elements': [('Length', 'uint16', 1, 'in'),
-             ('Message Length', 'uint16', 1, 'out'),
-             ('Message Chunk Offset', 'uint16', 1, 'out'),
-             ('Message Chunk Data', 'char', 60, 'out')],
+'elements': [('Length', 'uint16', 1, 'in', {}),
+             ('Message Length', 'uint16', 1, 'out', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Message Chunk Data', 'char', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -212,7 +212,7 @@ Im Startzustand ist der Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Read Callback Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -231,37 +231,20 @@ Gibt *true* zurück falls :cb:`Read` Callback aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set RS485 Configuration',
-'elements': [('Baudrate', 'uint32', 1, 'in'),
-             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity'}),
-             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits'}),
-             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength'}),
-             ('Duplex', 'uint8', 1, 'in', {'constant_group': 'Duplex'})],
+'elements': [('Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (100, 2000000), 'default': 115200}),
+             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity', 'default': 0}),
+             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits', 'default': 1}),
+             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength', 'default': 8}),
+             ('Duplex', 'uint8', 1, 'in', {'constant_group': 'Duplex', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the configuration for the RS485 communication. Available options:
-
-* Baudrate between 100 and 2000000 baud.
-* Parity of none, odd or even.
-* Stopbits can be 1 or 2.
-* Word length of 5 to 8.
-* Half- or Full-Duplex.
-
-The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex.
+Sets the configuration for the RS485 communication.
 """,
 'de':
 """
 Setzt die Konfiguration für die RS485-Kommunikation.
-Verfügbare Optionen sind:
-
-* Baudrate zwischen 100 und 2000000 Baud.
-* Parität von None, Odd und Even.
-* Stop Bits von 1 oder 2.
-* Wortlänge zwischen 5 und 8.
-* Halb- oder Voll-Duplex.
-
-Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Halb-Duplex.
 """
 }]
 })
@@ -269,11 +252,11 @@ Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Halb-Du
 com['packets'].append({
 'type': 'function',
 'name': 'Get RS485 Configuration',
-'elements': [('Baudrate', 'uint32', 1, 'out'),
-             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity'}),
-             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits'}),
-             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength'}),
-             ('Duplex', 'uint8', 1, 'out', {'constant_group': 'Duplex'})],
+'elements': [('Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (100, 2000000), 'default': 115200}),
+             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity', 'default': 0}),
+             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits', 'default': 1}),
+             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength', 'default': 8}),
+             ('Duplex', 'uint8', 1, 'out', {'constant_group': 'Duplex', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -290,8 +273,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set RS485 Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Modbus Configuration',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Master Request Timeout', 'uint32', 1, 'in')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (1, 247), 'default': 1}),
+             ('Master Request Timeout', 'uint32', 1, 'in', {'scale': (1, 1000), 'Unit': 'Second', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -299,18 +282,14 @@ com['packets'].append({
 Sets the configuration for the RS485 Modbus communication. Available options:
 
 * Slave Address: Address to be used as the Modbus slave address in Modbus slave mode. Valid Modbus slave address range is 1 to 247.
-* Master Request Timeout: Specifies how long the master should wait for a response from a slave in milliseconds when in Modbus master mode.
-
-The default is: Slave Address = 1 and Master Request Timeout = 1000 milliseconds (1 second).
+* Master Request Timeout: Specifies how long the master should wait for a response from a slave when in Modbus master mode.
 """,
 'de':
 """
 Setzt die Konfiguration für die RS485 Modbus Kommunikation. Verfügbare Optionen:
 
 * Slave Address: Addresse die vom Modbus-Slave im Modbus-Slave Modus genutzt wird. Der gültige Adressbereich ist 1 bis 247.
-* Master Request Timeout: Spezifiziert wie lange der Modbus-Master auf eine Antwort von einem Modbus-Slave wartet. Die Angabe ist in Millisekunden.
-
-Die Standardwerte sind Slave Address = 1 und Master Request Timeout = 1000 Millisekunden (1 Sekunde).
+* Master Request Timeout: Spezifiziert wie lange der Modbus-Master auf eine Antwort von einem Modbus-Slave wartet.
 """
 }]
 })
@@ -318,8 +297,8 @@ Die Standardwerte sind Slave Address = 1 und Master Request Timeout = 1000 Milli
 com['packets'].append({
 'type': 'function',
 'name': 'Get Modbus Configuration',
-'elements': [('Slave Address', 'uint8', 1, 'out'),
-             ('Master Request Timeout', 'uint32', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'out', {'range': (1, 247), 'default': 1}),
+             ('Master Request Timeout', 'uint32', 1, 'out', {'scale': (1, 1000), 'Unit': 'Second', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -336,7 +315,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Modbus Configuration` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Set Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -346,8 +325,6 @@ Sets the mode of the Bricklet in which it operates. Available options are
 * RS485,
 * Modbus Master RTU and
 * Modbus Slave RTU.
-
-The default is: RS485 mode.
 """,
 'de':
 """
@@ -356,8 +333,6 @@ Setzt den Modus des Bricklets. Verfügbare Optionen sind
 * RS485,
 * Modbus-Master-RTU und
 * Modbus-Slave-RTU.
-
-Der Standardmodus ist RS485.
 """
 }]
 })
@@ -365,7 +340,7 @@ Der Standardmodus ist RS485.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -382,7 +357,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Mode` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Communication LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -409,7 +384,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Communication LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Communication LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -426,7 +401,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Communication LED Config` ges
 com['packets'].append({
 'type': 'function',
 'name': 'Set Error LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Error LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -460,7 +435,7 @@ Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Error LED Config', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -477,15 +452,15 @@ Gibt die Konfiguration zurück, wie von :func:`Set Error LED Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Buffer Config',
-'elements': [('Send Buffer Size', 'uint16', 1, 'in'),
-             ('Receive Buffer Size', 'uint16', 1, 'in')],
+'elements': [('Send Buffer Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (1024, 9216), 'default': 5120}),
+             ('Receive Buffer Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (1024, 9216), 'default': 5120})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets the send and receive buffer size in byte. In sum there is
-10240 byte (10kb) buffer available and the minimum buffer size
-is 1024 byte (1kb) for both.
+10240 byte (10KiB) buffer available and the minimum buffer size
+is 1024 byte (1KiB) for both.
 
 The current buffer content is lost if this function is called.
 
@@ -493,14 +468,12 @@ The send buffer holds data that was given by :func:`Write` and
 could not be written yet. The receive buffer holds data that is
 received through RS485 but could not yet be send to the
 user, either by :func:`Read` or through :cb:`Read` callback.
-
-The default configuration is 5120 byte (5kb) per buffer.
 """,
 'de':
 """
 Setzt die Größe des Senden- und Empfangsbuffers. In Summe können
-die Buffer eine Größe von 10240 Byte (10kb) haben, die Minimumalgröße
-ist 1024 byte (1kb) für beide.
+die Buffer eine Größe von 10240 Byte (10KiB) haben, die Minimalgröße
+ist 1024 Byte (1KiB) für beide.
 
 Der aktuelle Bufferinhalt geht bei einem Aufruf dieser Funktion verloren.
 
@@ -508,8 +481,6 @@ Der Sendenbuffer hält die Daten welche über :func:`Write` übergeben und noch
 nicht geschrieben werden konnten. Der Empfangsbuffer hält Daten welche
 über RS485 empfangen wurden aber noch nicht über :func:`Read` oder
 :cb:`Read` Callback an ein Nutzerprogramm übertragen werden konnten.
-
-Die Standardkonfiguration ist 5120 Byte (5kb) pro Buffer.
 """
 }]
 })
@@ -517,8 +488,8 @@ Die Standardkonfiguration ist 5120 Byte (5kb) pro Buffer.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Buffer Config',
-'elements': [('Send Buffer Size', 'uint16', 1, 'out'),
-             ('Receive Buffer Size', 'uint16', 1, 'out')],
+'elements': [('Send Buffer Size', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216), 'default': 5120}),
+             ('Receive Buffer Size', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216), 'default': 5120})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -535,8 +506,8 @@ Gibt die Buffer-Konfiguration zurück, wie von :func:`Set Buffer Config` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Get Buffer Status',
-'elements': [('Send Buffer Used', 'uint16', 1, 'out'),
-             ('Receive Buffer Used', 'uint16', 1, 'out')],
+'elements': [('Send Buffer Used', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216)}),
+             ('Receive Buffer Used', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -599,7 +570,7 @@ Im Startzustand ist der Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Error Count Callback Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -618,8 +589,8 @@ Gibt *true* zurück falls :cb:`Error Count` Callback aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Get Error Count',
-'elements': [('Overrun Error Count', 'uint32', 1, 'out'),
-             ('Parity Error Count', 'uint32', 1, 'out')],
+'elements': [('Overrun Error Count', 'uint32', 1, 'out', {}),
+             ('Parity Error Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -636,13 +607,13 @@ Gibt die aktuelle Anzahl an Overrun und Parity Fehlern zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Modbus Common Error Count',
-'elements': [('Timeout Error Count', 'uint32', 1, 'out'),
-             ('Checksum Error Count', 'uint32', 1, 'out'),
-             ('Frame Too Big Error Count', 'uint32', 1, 'out'),
-             ('Illegal Function Error Count', 'uint32', 1, 'out'),
-             ('Illegal Data Address Error Count', 'uint32', 1, 'out'),
-             ('Illegal Data Value Error Count', 'uint32', 1, 'out'),
-             ('Slave Device Failure Error Count', 'uint32', 1, 'out')],
+'elements': [('Timeout Error Count', 'uint32', 1, 'out', {}),
+             ('Checksum Error Count', 'uint32', 1, 'out', {}),
+             ('Frame Too Big Error Count', 'uint32', 1, 'out', {}),
+             ('Illegal Function Error Count', 'uint32', 1, 'out', {}),
+             ('Illegal Data Address Error Count', 'uint32', 1, 'out', {}),
+             ('Illegal Data Value Error Count', 'uint32', 1, 'out', {}),
+             ('Slave Device Failure Error Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -677,7 +648,7 @@ Gibt die aktuelle Fehleranzahl für verschiedene Fehlerarten Modbus-Modus zurüc
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Report Exception',
-'elements': [('Request ID', 'uint8', 1, 'in'),
+'elements': [('Request ID', 'uint8', 1, 'in', {}),
              ('Exception Code', 'int8', 1, 'in', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -703,10 +674,10 @@ auf eine Modbus-Master Anfrage zurückzugeben.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Coils Request Low Level',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Coils Length', 'uint16', 1, 'in'),
-             ('Coils Chunk Offset', 'uint16', 1, 'in'),
-             ('Coils Chunk Data', 'bool', 472, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'in', {}),
+             ('Coils Length', 'uint16', 1, 'in', {'range': (1, 2000)}),
+             ('Coils Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Coils Chunk Data', 'bool', 472, 'in', {})],
 'high_level': {'stream_in': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -738,10 +709,10 @@ Request ID des Callbacks aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Read Coils',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Starting Address', 'uint32', 1, 'in'),
-             ('Count', 'uint16', 1, 'in'),
-             ('Request ID', 'uint8', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'in', {'range': (1, 2000)}),
+             ('Request ID', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -770,7 +741,7 @@ Im Modbus-Master Modus kann diese Funktion genutzt werden um Coils vom Slave zu 
 * Starting Address: Nummer der ersten zu lesenden Coil. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
 * Count: Anzahl der zu lesenden Coils.
 
-Nach erfolgreichen ausführen der Leseoperation gibt diese funktion eine Request ID
+Nach erfolgreichen Ausführen der Leseoperation gibt diese Funktion eine Request ID
 zurück die nicht 0 ist. Im Falle eines Fehlers wird eine 0 als Request ID
 zurückgegeben.
 
@@ -785,10 +756,10 @@ zurückgegeben Request ID überein.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Holding Registers Request Low Level',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Holding Registers Length', 'uint16', 1, 'in'),
-             ('Holding Registers Chunk Offset', 'uint16', 1, 'in'),
-             ('Holding Registers Chunk Data', 'uint16', 29, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'in', {}),
+             ('Holding Registers Length', 'uint16', 1, 'in', {'range': (1, 125)}),
+             ('Holding Registers Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Holding Registers Chunk Data', 'uint16', 29, 'in', {})],
 'high_level': {'stream_in': {'name': 'Holding Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -820,10 +791,10 @@ Request ID des Callbacks aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Read Holding Registers',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Starting Address', 'uint32', 1, 'in'),
-             ('Count', 'uint16', 1, 'in'),
-             ('Request ID', 'uint8', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'in', {'range': (1, 125)}),
+             ('Request ID', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -868,7 +839,7 @@ zurückgegeben Request ID überein.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Write Single Coil Request',
-'elements': [('Request ID', 'uint8', 1, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -897,10 +868,10 @@ Request ID des Callbacks aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Write Single Coil',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Coil Address', 'uint32', 1, 'in'),
-             ('Coil Value', 'bool', 1, 'in'),
-             ('Request ID', 'uint8', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Coil Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Coil Value', 'bool', 1, 'in', {}),
+             ('Request ID', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -943,7 +914,7 @@ Im Fehlerfall ist die Request ID 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Write Single Register Request',
-'elements': [('Request ID', 'uint8', 1, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -973,10 +944,10 @@ Request ID des Callbacks aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Write Single Register',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Register Address', 'uint32', 1, 'in'),
-             ('Register Value', 'uint16', 1, 'in'),
-             ('Request ID', 'uint8', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Register Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Register Value', 'uint16', 1, 'in', {}),
+             ('Request ID', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1019,7 +990,7 @@ Im Fehlerfall ist die Request ID 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Write Multiple Coils Request',
-'elements': [('Request ID', 'uint8', 1, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1048,12 +1019,12 @@ Request ID des Callbacks aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Write Multiple Coils Low Level',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Starting Address', 'uint32', 1, 'in'),
-             ('Coils Length', 'uint16', 1, 'in'),
-             ('Coils Chunk Offset', 'uint16', 1, 'in'),
-             ('Coils Chunk Data', 'bool', 440, 'in'),
-             ('Request ID', 'uint8', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Coils Length', 'uint16', 1, 'in', {'range': (1, 1968)}),
+             ('Coils Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Coils Chunk Data', 'bool', 440, 'in', {}),
+             ('Request ID', 'uint8', 1, 'out', {})],
 'high_level': {'stream_in': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1095,7 +1066,7 @@ Im Fehlerfall ist die Request ID 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Write Multiple Registers Request',
-'elements': [('Request ID', 'uint8', 1, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1124,12 +1095,12 @@ Request ID des Callbacks aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Write Multiple Registers Low Level',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Starting Address', 'uint32', 1, 'in'),
-             ('Registers Length', 'uint16', 1, 'in'),
-             ('Registers Chunk Offset', 'uint16', 1, 'in'),
-             ('Registers Chunk Data', 'uint16', 27, 'in'),
-             ('Request ID', 'uint8', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Registers Length', 'uint16', 1, 'in', {'range': (1, 123)}),
+             ('Registers Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Registers Chunk Data', 'uint16', 27, 'in', {}),
+             ('Request ID', 'uint8', 1, 'out', {})],
 'high_level': {'stream_in': {'name': 'Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1172,10 +1143,10 @@ Im Fehlerfall ist die Request ID 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Discrete Inputs Request Low Level',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Discrete Inputs Length', 'uint16', 1, 'in'),
-             ('Discrete Inputs Chunk Offset', 'uint16', 1, 'in'),
-             ('Discrete Inputs Chunk Data', 'bool', 472, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'in', {}),
+             ('Discrete Inputs Length', 'uint16', 1, 'in', {'range': (1, 2000)}),
+             ('Discrete Inputs Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Discrete Inputs Chunk Data', 'bool', 472, 'in', {})],
 'high_level': {'stream_in': {'name': 'Discrete Inputs'}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1207,10 +1178,10 @@ Request ID des Callbacks aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Read Discrete Inputs',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Starting Address', 'uint32', 1, 'in'),
-             ('Count', 'uint16', 1, 'in'),
-             ('Request ID', 'uint8', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'in', {'range': (1, 2000)}),
+             ('Request ID', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1253,10 +1224,10 @@ Im Falle eines Fehlers wird eine 0 als Request ID zurückgegeben.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Input Registers Request Low Level',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Input Registers Length', 'uint16', 1, 'in'),
-             ('Input Registers Chunk Offset', 'uint16', 1, 'in'),
-             ('Input Registers Chunk Data', 'uint16', 29, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'in', {}),
+             ('Input Registers Length', 'uint16', 1, 'in', {'range': (1, 125)}),
+             ('Input Registers Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Input Registers Chunk Data', 'uint16', 29, 'in', {})],
 'high_level': {'stream_in': {'name': 'Input Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1288,10 +1259,10 @@ Request ID des Callbacks aufgerufen werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Modbus Master Read Input Registers',
-'elements': [('Slave Address', 'uint8', 1, 'in'),
-             ('Starting Address', 'uint32', 1, 'in'),
-             ('Count', 'uint16', 1, 'in'),
-             ('Request ID', 'uint8', 1, 'out')],
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'in', {'range': (1, 125)}),
+             ('Request ID', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1334,9 +1305,9 @@ Im Falle eines Fehlers wird eine 0 als Request ID zurückgegeben.
 com['packets'].append({
 'type': 'callback',
 'name': 'Read Low Level',
-'elements': [('Message Length', 'uint16', 1, 'out'),
-             ('Message Chunk Offset', 'uint16', 1, 'out'),
-             ('Message Chunk Data', 'char', 60, 'out')],
+'elements': [('Message Length', 'uint16', 1, 'out', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Message Chunk Data', 'char', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1358,8 +1329,8 @@ Dieser Callback kann durch :func:`Enable Read Callback` aktiviert werden.
 com['packets'].append({
 'type': 'callback',
 'name': 'Error Count',
-'elements': [('Overrun Error Count', 'uint32', 1, 'out'),
-             ('Parity Error Count', 'uint32', 1, 'out')],
+'elements': [('Overrun Error Count', 'uint32', 1, 'out', {}),
+             ('Parity Error Count', 'uint32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1378,9 +1349,9 @@ Er gibt die Anzahl der aufgetreten Overrun and Parity Fehler zurück.
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Read Coils Request',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Starting Address', 'uint32', 1, 'out'),
-             ('Count', 'uint16', 1, 'out')],
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
+             ('Starting Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'out', {'range': (1, 2000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1410,11 +1381,11 @@ Eine Antwort auf diese Anfrage kann mit der Funktion
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Read Coils Response Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
-             ('Coils Length', 'uint16', 1, 'out'),
-             ('Coils Chunk Offset', 'uint16', 1, 'out'),
-             ('Coils Chunk Data', 'bool', 464, 'out')],
+             ('Coils Length', 'uint16', 1, 'out', {'range': (0, 2000)}),
+             ('Coils Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Coils Chunk Data', 'bool', 464, 'out', {})],
 'high_level': {'stream_out': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1454,9 +1425,9 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Read Holding Registers Request',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Starting Address', 'uint32', 1, 'out'),
-             ('Count', 'uint16', 1, 'out')],
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
+             ('Starting Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'out', {'range': (1, 125)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1486,11 +1457,11 @@ Eine Antwort auf diese Anfrage kann mit der Funktion
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Read Holding Registers Response Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
-             ('Holding Registers Length', 'uint16', 1, 'out'),
-             ('Holding Registers Chunk Offset', 'uint16', 1, 'out'),
-             ('Holding Registers Chunk Data', 'uint16', 29, 'out')],
+             ('Holding Registers Length', 'uint16', 1, 'out', {'range': (0, 125)}),
+             ('Holding Registers Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Holding Registers Chunk Data', 'uint16', 29, 'out', {})],
 'high_level': {'stream_out': {'name': 'Holding Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1530,9 +1501,9 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Write Single Coil Request',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Coil Address', 'uint32', 1, 'out'),
-             ('Coil Value', 'bool', 1, 'out')],
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
+             ('Coil Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
+             ('Coil Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1562,7 +1533,7 @@ Eine Antwort auf diese Anfrage kann mit der Funktion
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Write Single Coil Response',
-'elements': [('Request ID', 'uint8', 1, 'out'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1601,9 +1572,9 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Write Single Register Request',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Register Address', 'uint32', 1, 'out'),
-             ('Register Value', 'uint16', 1, 'out')],
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
+             ('Register Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
+             ('Register Value', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1633,7 +1604,7 @@ Eine Antwort auf diese Anfrage kann mit der Funktion
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Write Single Register Response',
-'elements': [('Request ID', 'uint8', 1, 'out'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1672,11 +1643,11 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Write Multiple Coils Request Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Starting Address', 'uint32', 1, 'out'),
-             ('Coils Length', 'uint16', 1, 'out'),
-             ('Coils Chunk Offset', 'uint16', 1, 'out'),
-             ('Coils Chunk Data', 'bool', 440, 'out')],
+'elements': [('Request ID', 'uint8', 1, 'out, {}'),
+             ('Starting Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
+             ('Coils Length', 'uint16', 1, 'out', {'range': (1, 1968)}),
+             ('Coils Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Coils Chunk Data', 'bool', 440, 'out', {})],
 'high_level': {'stream_out': {'name': 'Coils'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1706,7 +1677,7 @@ Eine Antwort auf diese Anfrage kann mit der Funktion
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Write Multiple Coils Response',
-'elements': [('Request ID', 'uint8', 1, 'out'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1745,11 +1716,11 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Write Multiple Registers Request Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Starting Address', 'uint32', 1, 'out'),
-             ('Registers Length', 'uint16', 1, 'out'),
-             ('Registers Chunk Offset', 'uint16', 1, 'out'),
-             ('Registers Chunk Data', 'uint16', 27, 'out')],
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
+             ('Starting Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
+             ('Registers Length', 'uint16', 1, 'out', {'range': (1, 123)}),
+             ('Registers Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Registers Chunk Data', 'uint16', 27, 'out', {})],
 'high_level': {'stream_out': {'name': 'Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1780,7 +1751,7 @@ Eine Antwort auf diese Anfrage kann mit der Funktion
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Write Multiple Registers Response',
-'elements': [('Request ID', 'uint8', 1, 'out'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1819,9 +1790,9 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Read Discrete Inputs Request',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Starting Address', 'uint32', 1, 'out'),
-             ('Count', 'uint16', 1, 'out')],
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
+             ('Starting Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'out', {'range': (1, 2000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1851,11 +1822,11 @@ Eine Antwort auf diese Anfrage kann mit der Funktion
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Read Discrete Inputs Response Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
-             ('Discrete Inputs Length', 'uint16', 1, 'out'),
-             ('Discrete Inputs Chunk Offset', 'uint16', 1, 'out'),
-             ('Discrete Inputs Chunk Data', 'bool', 464, 'out')],
+             ('Discrete Inputs Length', 'uint16', 1, 'out', {'range': (1, 2000)}),
+             ('Discrete Inputs Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Discrete Inputs Chunk Data', 'bool', 464, 'out', {})],
 'high_level': {'stream_out': {'name': 'Discrete Inputs'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1895,9 +1866,9 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Slave Read Input Registers Request',
-'elements': [('Request ID', 'uint8', 1, 'out'),
-             ('Starting Address', 'uint32', 1, 'out'),
-             ('Count', 'uint16', 1, 'out')],
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
+             ('Starting Address', 'uint32', 1, 'out', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'out', {'range': (1, 125)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1927,11 +1898,11 @@ Eine Antwort auf diese Anfrage kann mit der Funktion
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Master Read Input Registers Response Low Level',
-'elements': [('Request ID', 'uint8', 1, 'out'),
+'elements': [('Request ID', 'uint8', 1, 'out', {}),
              ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
-             ('Input Registers Length', 'uint16', 1, 'out'),
-             ('Input Registers Chunk Offset', 'uint16', 1, 'out'),
-             ('Input Registers Chunk Data', 'uint16', 29, 'out')],
+             ('Input Registers Length', 'uint16', 1, 'out', {'range': (1, 125)}),
+             ('Input Registers Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Input Registers Chunk Data', 'uint16', 29, 'out', {})],
 'high_level': {'stream_out': {'name': 'Input Registers'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

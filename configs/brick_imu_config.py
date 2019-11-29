@@ -51,15 +51,15 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the calibrated acceleration from the accelerometer for the
-x, y and z axis in g/1000 (1g = 9.80665m/s²).
+x, y and z axis.
 
 If you want to get the acceleration periodically, it is recommended
 to use the :cb:`Acceleration` callback and set the period with
@@ -68,7 +68,7 @@ to use the :cb:`Acceleration` callback and set the period with
 'de':
 """
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die
-X, Y und Z-Achse in g/1000 zurück (1g = 9,80665m/s²).
+X, Y und Z-Achse zurück.
 
 Wenn die kalibrierten Beschleunigungen periodisch abgefragt werden soll, wird
 empfohlen den :cb:`Acceleration` Callback zu nutzen und die Periode mit
@@ -80,15 +80,15 @@ empfohlen den :cb:`Acceleration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetic Field',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the calibrated magnetic field from the magnetometer for the
-x, y and z axis in mG (Milligauss or Nanotesla).
+x, y and z axis.
 
 If you want to get the magnetic field periodically, it is recommended
 to use the :cb:`Magnetic Field` callback and set the period with
@@ -96,10 +96,10 @@ to use the :cb:`Magnetic Field` callback and set the period with
 """,
 'de':
 """
-Gibt das kalibrierte magnetische Feld des Magnetometers mit den X-, Y- und
-Z-Komponenten in mG zurück (Milligauss oder Nanotesla).
+Gibt das kalibrierte Magnetfeld des Magnetometers mit den X-, Y- und
+Z-Komponenten zurück.
 
-Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
+Wenn das Magnetfeld periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Magnetic Field` Callback zu nutzen und die Periode mit
 :func:`Set Magnetic Field Period` vorzugeben.
 """
@@ -109,9 +109,9 @@ den :cb:`Magnetic Field` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Angular Velocity',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Y', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Z', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -140,24 +140,22 @@ empfohlen den :cb:`Angular Velocity` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data',
-'elements': [('Acc X', 'int16', 1, 'out'),
-             ('Acc Y', 'int16', 1, 'out'),
-             ('Acc Z', 'int16', 1, 'out'),
-             ('Mag X', 'int16', 1, 'out'),
-             ('Mag Y', 'int16', 1, 'out'),
-             ('Mag Z', 'int16', 1, 'out'),
-             ('Ang X', 'int16', 1, 'out'),
-             ('Ang Y', 'int16', 1, 'out'),
-             ('Ang Z', 'int16', 1, 'out'),
-             ('Temperature', 'int16', 1, 'out')],
+'elements': [('Acc X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Acc Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Acc Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Mag X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Mag Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Mag Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Ang X', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang Y', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang Z', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the data from :func:`Get Acceleration`, :func:`Get Magnetic Field`
 and :func:`Get Angular Velocity` as well as the temperature of the IMU Brick.
-
-The temperature is given in °C/100.
 
 If you want to get the data periodically, it is recommended
 to use the :cb:`All Data` callback and set the period with
@@ -167,8 +165,6 @@ to use the :cb:`All Data` callback and set the period with
 """
 Gibt die Daten von :func:`Get Acceleration`, :func:`Get Magnetic Field`
 und :func:`Get Angular Velocity` sowie die Temperatur des IMU Brick zurück.
-
-Die Temperatur wird in °C/100 ausgegeben.
 
 Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
 :cb:`All Data` Callback zu nutzen und die Periode mit
@@ -180,15 +176,15 @@ Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get Orientation',
-'elements': [('Roll', 'int16', 1, 'out'),
-             ('Pitch', 'int16', 1, 'out'),
-             ('Yaw', 'int16', 1, 'out')],
+'elements': [('Roll', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (-18000, 18000)}),
+             ('Pitch', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (-18000, 18000)}),
+             ('Yaw', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (-18000, 18000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the current orientation (roll, pitch, yaw) of the IMU Brick as Euler
-angles in one-hundredth degree. Note that Euler angles always experience a
+angles. Note that Euler angles always experience a
 `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
 We recommend that you use quaternions instead.
@@ -203,7 +199,7 @@ to use the :cb:`Orientation` callback and set the period with
 'de':
 """
 Gibt die aktuelle Orientierung (Roll-, Nick-, Gierwinkel) des IMU Brick in
-Eulerwinkeln (in 1/100 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine
+Eulerwinkeln zurück. Zu beachten ist, dass Eulerwinkel immer eine
 `kardanische Blockade <https://de.wikipedia.org/wiki/Gimbal_Lock>`__ erfahren.
 
 Wir empfehlen die Verwendung von Quaternionen stattdessen.
@@ -221,10 +217,10 @@ Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get Quaternion',
-'elements': [('X', 'float', 1, 'out'),
-             ('Y', 'float', 1, 'out'),
-             ('Z', 'float', 1, 'out'),
-             ('W', 'float', 1, 'out')],
+'elements': [('X', 'float', 1, 'out', {'range': (-1, 1)}),
+             ('Y', 'float', 1, 'out', {'range': (-1, 1)}),
+             ('Z', 'float', 1, 'out', {'range': (-1, 1)}),
+             ('W', 'float', 1, 'out', {'range': (-1, 1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -302,17 +298,16 @@ Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get IMU Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the temperature of the IMU Brick. The temperature is given in
-°C/100.
+Returns the temperature of the IMU Brick.
 """,
 'de':
 """
-Gibt die Temperatur (in °C/100) des IMU Brick zurück.
+Gibt die Temperatur des IMU Brick zurück.
 """
 }]
 })
@@ -354,7 +349,7 @@ Deaktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 com['packets'].append({
 'type': 'function',
 'name': 'Are Leds On',
-'elements': [('Leds', 'bool', 1, 'out')],
+'elements': [('Leds', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -440,12 +435,12 @@ Bisher nicht implementiert.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Convergence Speed',
-'elements': [('Speed', 'uint16', 1, 'in')],
+'elements': [('Speed', 'uint16', 1, 'in', {'unit': 'Degree Per Second', 'default': 30})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the convergence speed of the IMU Brick in °/s. The convergence speed
+Sets the convergence speed of the IMU Brick. The convergence speed
 determines how the different sensor measurements are fused.
 
 If the orientation of the IMU Brick is off by 10° and the convergence speed is
@@ -470,12 +465,10 @@ again.
 
 You might want to play around with the convergence speed in the Brick Viewer to
 get a feeling for a good value for your application.
-
-The default value is 30.
 """,
 'de':
 """
-Setzt die Konvergenzgeschwindigkeit des IMU Brick in °/s. Die
+Setzt die Konvergenzgeschwindigkeit des IMU Brick. Die
 Konvergenzgeschwindigkeit bestimmt wie die unterschiedlichen Sensormessungen
 vereinigt werden.
 
@@ -510,7 +503,7 @@ auszuprobieren.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Convergence Speed',
-'elements': [('Speed', 'uint16', 1, 'out')],
+'elements': [('Speed', 'uint16', 1, 'out', {'unit': 'Degree Per Second', 'default': 30})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -528,7 +521,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
 'elements': [('Typ', 'uint8', 1, 'in', {'constant_group': 'Calibration Type'}),
-             ('Data', 'int16', 10, 'in')],
+             ('Data', 'int16', 10, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -611,7 +604,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
 'elements': [('Typ', 'uint8', 1, 'in', {'constant_group': 'Calibration Type'}),
-             ('Data', 'int16', 10, 'out')],
+             ('Data', 'int16', 10, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -845,9 +838,9 @@ Gibt die Periode zurück, wie von :func:`Set Quaternion Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -868,9 +861,9 @@ Beschleunigungen der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Magnetic Field',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -891,9 +884,9 @@ Magnetfeldkomponenten der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Angular Velocity',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -914,16 +907,16 @@ Winkelgeschwindigkeiten der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'All Data',
-'elements': [('Acc X', 'int16', 1, 'out'),
-             ('Acc Y', 'int16', 1, 'out'),
-             ('Acc Z', 'int16', 1, 'out'),
-             ('Mag X', 'int16', 1, 'out'),
-             ('Mag Y', 'int16', 1, 'out'),
-             ('Mag Z', 'int16', 1, 'out'),
-             ('Ang X', 'int16', 1, 'out'),
-             ('Ang Y', 'int16', 1, 'out'),
-             ('Ang Z', 'int16', 1, 'out'),
-             ('Temperature', 'int16', 1, 'out')],
+'elements': [('Acc X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Acc Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Acc Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
+             ('Mag X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Mag Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Mag Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Ang X', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang Y', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Ang Z', 'int16', 1, 'out', {'scale': (10000, 14375), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -946,9 +939,9 @@ des IMU Brick.
 com['packets'].append({
 'type': 'callback',
 'name': 'Orientation',
-'elements': [('Roll', 'int16', 1, 'out'),
-             ('Pitch', 'int16', 1, 'out'),
-             ('Yaw', 'int16', 1, 'out')],
+'elements': [('Roll', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (-18000, 18000)}),
+             ('Pitch', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (-18000, 18000)}),
+             ('Yaw', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': (-18000, 18000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -970,10 +963,10 @@ IMU Brick in Eulerwinkeln. Siehe :func:`Get Orientation` für Details.
 com['packets'].append({
 'type': 'callback',
 'name': 'Quaternion',
-'elements': [('X', 'float', 1, 'out'),
-             ('Y', 'float', 1, 'out'),
-             ('Z', 'float', 1, 'out'),
-             ('W', 'float', 1, 'out')],
+'elements': [('X', 'float', 1, 'out', {'range': (-1, 1)}),
+             ('Y', 'float', 1, 'out', {'range': (-1, 1)}),
+             ('Z', 'float', 1, 'out', {'range': (-1, 1)}),
+             ('W', 'float', 1, 'out', {'range': (-1, 1)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1054,7 +1047,7 @@ Standardmäßig sind die Berechnungen an.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Orientation Calculation On',
-'elements': [('Orientation Calculation On', 'bool', 1, 'out')],
+'elements': [('Orientation Calculation On', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':

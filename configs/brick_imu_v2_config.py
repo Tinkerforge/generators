@@ -107,15 +107,15 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the calibrated acceleration from the accelerometer for the
-x, y and z axis in 1/100 m/s².
+x, y and z axis.
 
 If you want to get the acceleration periodically, it is recommended
 to use the :cb:`Acceleration` callback and set the period with
@@ -124,7 +124,7 @@ to use the :cb:`Acceleration` callback and set the period with
 'de':
 """
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die
-X-, Y- und Z-Achse in 1/100 m/s².
+X-, Y- und Z-Achse zurück.
 
 Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Acceleration` Callback zu nutzen und die Periode mit
@@ -136,15 +136,15 @@ den :cb:`Acceleration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetic Field',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the calibrated magnetic field from the magnetometer for the
-x, y and z axis in 1/16 µT (Microtesla).
+x, y and z axis.
 
 If you want to get the magnetic field periodically, it is recommended
 to use the :cb:`Magnetic Field` callback and set the period with
@@ -152,10 +152,10 @@ to use the :cb:`Magnetic Field` callback and set the period with
 """,
 'de':
 """
-Gibt das kalibrierte magnetische Feld des Magnetometers für die X-, Y- und
-Z-Komponenten in 1/16 µT zurück (Microtesla).
+Gibt das kalibrierte Magnetfeld des Magnetometers für die X-, Y- und
+Z-Komponenten zurück.
 
-Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
+Wenn das Magnetfeld periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Magnetic Field` Callback zu nutzen und die Periode mit
 :func:`Set Magnetic Field Period` vorzugeben.
 """
@@ -165,15 +165,15 @@ den :cb:`Magnetic Field` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Angular Velocity',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the calibrated angular velocity from the gyroscope for the
-x, y and z axis in 1/16 °/s.
+x, y and z axis.
 
 If you want to get the angular velocity periodically, it is recommended
 to use the :cb:`Angular Velocity` acallback nd set the period with
@@ -182,7 +182,7 @@ to use the :cb:`Angular Velocity` acallback nd set the period with
 'de':
 """
 Gibt die kalibrierte Winkelgeschwindigkeiten des Gyroskops für die X-, Y- und
-Z-Achse in 1/16 °/s zurück.
+Z-Achse zurück.
 
 Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird
 empfohlen den :cb:`Angular Velocity` Callback zu nutzen und die Periode mit
@@ -194,18 +194,18 @@ empfohlen den :cb:`Angular Velocity` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature',
-'elements': [('Temperature', 'int8', 1, 'out')],
+'elements': [('Temperature', 'int8', 1, 'out', {'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the temperature of the IMU Brick. The temperature is given in
-°C. The temperature is measured in the core of the BNO055 IC, it is not the
+Returns the temperature of the IMU Brick.
+The temperature is measured in the core of the BNO055 IC, it is not the
 ambient temperature
 """,
 'de':
 """
-Gibt die Temperatur (in °C) des IMU Brick zurück. Die Temperatur wird im Kern
+Gibt die Temperatur des IMU Brick zurück. Die Temperatur wird im Kern
 des BNO055 ICs gemessen, es handelt sich nicht um die Umgebungstemperatur.
 """
 }]
@@ -214,24 +214,18 @@ des BNO055 ICs gemessen, es handelt sich nicht um die Umgebungstemperatur.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Orientation',
-'elements': [('Heading', 'int16', 1, 'out'),
-             ('Roll', 'int16', 1, 'out'),
-             ('Pitch', 'int16', 1, 'out')],
+'elements': [('Heading', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360)}),
+             ('Roll', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-90, 90)}),
+             ('Pitch', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-180, 180)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the current orientation (heading, roll, pitch) of the IMU Brick as
-independent Euler angles in 1/16 degree. Note that Euler angles always
+independent Euler angles. Note that Euler angles always
 experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
 We recommend that you use quaternions instead, if you need the absolute
 orientation.
-
-The rotation angle has the following ranges:
-
-* heading: 0° to 360°
-* roll: -90° to +90°
-* pitch: -180° to +180°
 
 If you want to get the orientation periodically, it is recommended
 to use the :cb:`Orientation` callback and set the period with
@@ -240,16 +234,10 @@ to use the :cb:`Orientation` callback and set the period with
 'de':
 """
 Gibt die aktuelle Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in
-unabhängigen Eulerwinkeln (in 1/16 °) zurück. Zu beachten ist, dass Eulerwinkel
+unabhängigen Eulerwinkeln zurück. Zu beachten ist, dass Eulerwinkel
 immer eine `kardanische Blockade <https://de.wikipedia.org/wiki/Gimbal_Lock>`__
 erfahren. Wir empfehlen daher stattdessen Quaternionen zu verwenden, wenn die
 absolute Lage im Raum bestimmt werden soll.
-
-Die Rotationswinkel haben den folgenden Wertebereich:
-
-* Gierwinkel: 0° bis 360°
-* Rollwinkel: -90° bis +90°
-* Nickwinkel: -180° bis +180°
 
 Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 :cb:`Orientation` Callback zu nutzen und die Periode mit
@@ -261,15 +249,15 @@ Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get Linear Acceleration',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the linear acceleration of the IMU Brick for the
-x, y and z axis in 1/100 m/s².
+x, y and z axis.
 
 The linear acceleration is the acceleration in each of the three
 axis of the IMU Brick with the influences of gravity removed.
@@ -284,7 +272,7 @@ to use the :cb:`Linear Acceleration` callback and set the period with
 'de':
 """
 Gibt die lineare Beschleunigungen des IMU Brick für die
-X-, Y- und Z-Achse in 1/100 m/s² zurück.
+X-, Y- und Z-Achse zurück.
 
 Die lineare Beschleunigung ist die Beschleunigung in jede der drei
 Achsen. Der Einfluss von Erdbeschleunigung ist entfernt.
@@ -302,15 +290,15 @@ den :cb:`Linear Acceleration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Gravity Vector',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the current gravity vector of the IMU Brick for the
-x, y and z axis in 1/100 m/s².
+x, y and z axis.
 
 The gravity vector is the acceleration that occurs due to gravity.
 Influences of additional linear acceleration are removed.
@@ -325,7 +313,7 @@ to use the :cb:`Gravity Vector` callback and set the period with
 'de':
 """
 Gibt den Vektor der Erdbeschleunigung des IMU Brick für die
-X-, Y- und Z-Achse in 1/100 m/s² zurück.
+X-, Y- und Z-Achse zurück.
 
 Die Erdbeschleunigung ist die Beschleunigung die auf Grund von Schwerkraft
 entsteht. Einflüsse von linearen Beschleunigungen sind entfernt.
@@ -343,10 +331,10 @@ den :cb:`Gravity Vector` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Quaternion',
-'elements': [('W', 'int16', 1, 'out'),
-             ('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('W', 'int16', 1, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
+             ('X', 'int16', 1, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -380,29 +368,33 @@ Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data',
-'elements': [('Acceleration', 'int16', 3, 'out'),
-             ('Magnetic Field', 'int16', 3, 'out'),
-             ('Angular Velocity', 'int16', 3, 'out'),
-             ('Euler Angle', 'int16', 3, 'out'),
-             ('Quaternion', 'int16', 4, 'out'),
-             ('Linear Acceleration', 'int16', 3, 'out'),
-             ('Gravity Vector', 'int16', 3, 'out'),
-             ('Temperature', 'int8', 1, 'out'),
-             ('Calibration Status', 'uint8', 1, 'out')],
+'elements': [('Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Magnetic Field', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
+                                                    {'name': 'Y', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
+                                                    {'name': 'Z', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)}]),
+             ('Angular Velocity', 'int16', 3, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
+             ('Euler Angle', 'int16', 3, 'out', [{'name': 'Heading', 'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360)},
+                                                 {'name': 'Roll', 'scale': (1, 16), 'unit': 'Degree', 'range': (-90, 90)},
+                                                 {'name': 'Pitch', 'scale': (1, 16), 'unit': 'Degree', 'range': (-180, 180)}]),
+             ('Quaternion', 'int16', 4, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
+             ('Linear Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Gravity Vector', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Temperature', 'int8', 1, 'out', {'unit': 'Degree Celsius'}),
+             ('Calibration Status', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Return all of the available data of the IMU Brick.
 
-* acceleration in 1/100 m/s² (see :func:`Get Acceleration`)
-* magnetic field in 1/16 µT (see :func:`Get Magnetic Field`)
-* angular velocity in 1/16 °/s (see :func:`Get Angular Velocity`)
-* Euler angles in 1/16 ° (see :func:`Get Orientation`)
-* quaternion 1/16383 (see :func:`Get Quaternion`)
-* linear acceleration 1/100 m/s² (see :func:`Get Linear Acceleration`)
-* gravity vector 1/100 m/s² (see :func:`Get Gravity Vector`)
-* temperature in 1 °C (see :func:`Get Temperature`)
+* acceleration (see :func:`Get Acceleration`)
+* magnetic field (see :func:`Get Magnetic Field`)
+* angular velocity (see :func:`Get Angular Velocity`)
+* Euler angles (see :func:`Get Orientation`)
+* quaternion (see :func:`Get Quaternion`)
+* linear acceleration (see :func:`Get Linear Acceleration`)
+* gravity vector (see :func:`Get Gravity Vector`)
+* temperature (see :func:`Get Temperature`)
 * calibration status (see below)
 
 The calibration status consists of four pairs of two bits. Each pair
@@ -428,17 +420,17 @@ to use the :cb:`All Data` callback and set the period with
 """
 Gibt alle Daten zurück die dem IMU Brick zur Verfügung stehen.
 
-* Beschleunigung in 1/100 m/s² (see :func:`Get Acceleration`)
-* Magnetfeld in 1/16 µT (see :func:`Get Magnetic Field`)
-* Winkelgeschwindigkeit in 1/16 °/s (see :func:`Get Angular Velocity`)
-* Eulerwinkel in 1/16 ° (see :func:`Get Orientation`)
-* Quaternion 1/16383 (see :func:`Get Quaternion`)
-* Lineare Beschleunigung 1/100 m/s² (see :func:`Get Linear Acceleration`)
-* Erdbeschleunigungsvektor 1/100 m/s² (see :func:`Get Gravity Vector`)
-* Temperatur in 1 °C (see :func:`Get Temperature`)
+* Beschleunigung (see :func:`Get Acceleration`)
+* Magnetfeld (see :func:`Get Magnetic Field`)
+* Winkelgeschwindigkeit (see :func:`Get Angular Velocity`)
+* Eulerwinkel (see :func:`Get Orientation`)
+* Quaternion (see :func:`Get Quaternion`)
+* Lineare Beschleunigung (see :func:`Get Linear Acceleration`)
+* Erdbeschleunigungsvektor (see :func:`Get Gravity Vector`)
+* Temperatur (see :func:`Get Temperature`)
 * Kalibrierungsstatus (siehe unten)
 
-Der Kalibrierungsstatus besteht aus vier paaren von je zwei Bits. Jedes
+Der Kalibrierungsstatus besteht aus vier Paaren von je zwei Bits. Jedes
 Paar von Bits repräsentiert den Status der aktuellen Kalibrierung.
 
 * Bit 0-1: Magnetometer
@@ -497,7 +489,7 @@ Deaktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 com['packets'].append({
 'type': 'function',
 'name': 'Are Leds On',
-'elements': [('Leds', 'bool', 1, 'out')],
+'elements': [('Leds', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -515,7 +507,7 @@ Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind.
 com['packets'].append({
 'type': 'function',
 'name': 'Save Calibration',
-'elements': [('Calibration Done', 'bool', 1, 'out')],
+'elements': [('Calibration Done', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -875,9 +867,9 @@ Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -898,9 +890,9 @@ Beschleunigungen der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Magnetic Field',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -921,9 +913,9 @@ Magnetfeldkomponenten der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Angular Velocity',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -944,7 +936,7 @@ Winkelgeschwindigkeiten der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature',
-'elements': [('Temperature', 'int8', 1, 'out')],
+'elements': [('Temperature', 'int8', 1, 'out', {'unit': 'Degree Celsius'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -964,9 +956,9 @@ Temperatur.
 com['packets'].append({
 'type': 'callback',
 'name': 'Linear Acceleration',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -987,9 +979,9 @@ die linearen Beschleunigungen der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Gravity Vector',
-'elements': [('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1010,9 +1002,9 @@ Erdbeschleunigungsvektor-Werte der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Orientation',
-'elements': [('Heading', 'int16', 1, 'out'),
-             ('Roll', 'int16', 1, 'out'),
-             ('Pitch', 'int16', 1, 'out')],
+'elements': [('Heading', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360)}),
+             ('Roll', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-90, 90)}),
+             ('Pitch', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-180, 180)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1035,10 +1027,10 @@ Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in Eulerwinkeln. Siehe
 com['packets'].append({
 'type': 'callback',
 'name': 'Quaternion',
-'elements': [('W', 'int16', 1, 'out'),
-             ('X', 'int16', 1, 'out'),
-             ('Y', 'int16', 1, 'out'),
-             ('Z', 'int16', 1, 'out')],
+'elements': [('W', 'int16', 1, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
+             ('X', 'int16', 1, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1061,15 +1053,19 @@ Orientierung (x, y, z, w) des IMU Brick in Quaternionen. Siehe
 com['packets'].append({
 'type': 'callback',
 'name': 'All Data',
-'elements': [('Acceleration', 'int16', 3, 'out'),
-             ('Magnetic Field', 'int16', 3, 'out'),
-             ('Angular Velocity', 'int16', 3, 'out'),
-             ('Euler Angle', 'int16', 3, 'out'),
-             ('Quaternion', 'int16', 4, 'out'),
-             ('Linear Acceleration', 'int16', 3, 'out'),
-             ('Gravity Vector', 'int16', 3, 'out'),
-             ('Temperature', 'int8', 1, 'out'),
-             ('Calibration Status', 'uint8', 1, 'out')],
+'elements': [('Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Magnetic Field', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
+                                                    {'name': 'Y', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
+                                                    {'name': 'Z', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)}]),
+             ('Angular Velocity', 'int16', 3, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
+             ('Euler Angle', 'int16', 3, 'out', [{'name': 'Heading', 'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360)},
+                                                 {'name': 'Roll', 'scale': (1, 16), 'unit': 'Degree', 'range': (-90, 90)},
+                                                 {'name': 'Pitch', 'scale': (1, 16), 'unit': 'Degree', 'range': (-180, 180)}]),
+             ('Quaternion', 'int16', 4, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
+             ('Linear Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Gravity Vector', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Temperature', 'int8', 1, 'out', {'unit': 'Degree Celsius'}),
+             ('Calibration Status', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1090,11 +1086,11 @@ gleichen wie bei :func:`Get All Data`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Configuration',
-'elements': [('Magnetometer Rate', 'uint8', 1, 'in', {'constant_group': 'Magnetometer Rate'}),
-             ('Gyroscope Range', 'uint8', 1, 'in', {'constant_group': 'Gyroscope Range'}),
-             ('Gyroscope Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Gyroscope Bandwidth'}),
-             ('Accelerometer Range', 'uint8', 1, 'in', {'constant_group': 'Accelerometer Range'}),
-             ('Accelerometer Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Accelerometer Bandwidth'})],
+'elements': [('Magnetometer Rate', 'uint8', 1, 'in', {'constant_group': 'Magnetometer Rate', 'default': 5}),
+             ('Gyroscope Range', 'uint8', 1, 'in', {'constant_group': 'Gyroscope Range', 'default': 0}),
+             ('Gyroscope Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Gyroscope Bandwidth', 'default': 7}),
+             ('Accelerometer Range', 'uint8', 1, 'in', {'constant_group': 'Accelerometer Range', 'default': 1}),
+             ('Accelerometer Bandwidth', 'uint8', 1, 'in', {'constant_group': 'Accelerometer Bandwidth', 'default': 3})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
@@ -1102,14 +1098,6 @@ com['packets'].append({
 Sets the available sensor configuration for the Magnetometer, Gyroscope and
 Accelerometer. The Accelerometer Range is user selectable in all fusion modes,
 all other configurations are auto-controlled in fusion mode.
-
-The default values are:
-
-* Magnetometer Rate 20Hz
-* Gyroscope Range 2000°/s
-* Gyroscope Bandwidth 32Hz
-* Accelerometer Range +/-4G
-* Accelerometer Bandwidth 62.5Hz
 """,
 'de':
 """
@@ -1117,14 +1105,6 @@ Setzt die verfügbaren Sensor-Konfigurationen für Magnetometer, Gyroskop und
 Beschleunigungssensor. Der Beschleunigungssensor-Wertebereich ist in allen
 Fusion-Modi wählbar, während alle anderen Konfigurationen im Fusion-Modus
 automatisch kontrolliert werden.
-
-Die Standardwerte sind:
-
-* Magnetometer-Rate 20Hz
-* Gyroskop-Wertebereich 2000°/s
-* Gyroskop-Bandweite 32Hz
-* Beschleunigungssensor-Wertebereich +/-4G
-* Beschleunigungssensor-Bandweite 62.5Hz
 """
 }]
 })
@@ -1132,11 +1112,11 @@ Die Standardwerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Configuration',
-'elements': [('Magnetometer Rate', 'uint8', 1, 'out', {'constant_group': 'Magnetometer Rate'}),
-             ('Gyroscope Range', 'uint8', 1, 'out', {'constant_group': 'Gyroscope Range'}),
-             ('Gyroscope Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Gyroscope Bandwidth'}),
-             ('Accelerometer Range', 'uint8', 1, 'out', {'constant_group': 'Accelerometer Range'}),
-             ('Accelerometer Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Accelerometer Bandwidth'})],
+'elements': [('Magnetometer Rate', 'uint8', 1, 'out', {'constant_group': 'Magnetometer Rate', 'default': 5}),
+             ('Gyroscope Range', 'uint8', 1, 'out', {'constant_group': 'Gyroscope Range', 'default': 0}),
+             ('Gyroscope Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Gyroscope Bandwidth', 'default': 7}),
+             ('Accelerometer Range', 'uint8', 1, 'out', {'constant_group': 'Accelerometer Range', 'default': 1}),
+             ('Accelerometer Bandwidth', 'uint8', 1, 'out', {'constant_group': 'Accelerometer Bandwidth', 'default': 3})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
@@ -1153,7 +1133,7 @@ Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration` 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Fusion Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Sensor Fusion'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Sensor Fusion', 'default': 1})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
@@ -1172,8 +1152,6 @@ magnetometer calibration. This mode is the same as the normal fusion mode,
 but the fast magnetometer calibration is turned off. So to find the orientation
 the first time will likely take longer, but small magnetic influences might
 not affect the automatic calibration as much.
-
-By default sensor fusion is on.
 """,
 'de':
 """
@@ -1193,8 +1171,6 @@ Magnetometer-Kalibrierung ausgewählt werden. Dieser Modus ist der gleiche wie d
 die Orientierung zu finden mag beim ersten start länger dauern, allerdings mag
 es sein das kleine magnetische einflüsse die automatische Kalibrierung nicht
 so stark stören.
-
-Standardmäßig ist der Fusion-Modus aktiviert.
 """
 }]
 })
@@ -1202,7 +1178,7 @@ Standardmäßig ist der Fusion-Modus aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Fusion Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Sensor Fusion'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Sensor Fusion', 'default': 1})],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':

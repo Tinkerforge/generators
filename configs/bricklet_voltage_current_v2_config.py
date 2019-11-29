@@ -66,13 +66,11 @@ com['constant_groups'].append({
 current_doc = {
 'en':
 """
-Returns the current. The value is in mA
-and between -20000mA and 20000mA.
+Returns the current.
 """,
 'de':
 """
-Gibt die gemessenen Stromstärke zurück. Der Wert ist in mA und im
-Bereich von -20000mA bis 20000mA.
+Gibt die gemessenen Stromstärke zurück.
 """
 }
 
@@ -81,19 +79,20 @@ add_callback_value_function(
     name      = 'Get Current',
     data_name = 'Current',
     data_type = 'int32',
-    doc       = current_doc
+    doc       = current_doc,
+    scale     = (1, 1000),
+    unit      = 'Ampere',
+    range_    = (-20000, 20000)
 )
 
 voltage_doc = {
 'en':
 """
-Returns the voltage. The value is in mV
-and between 0mV and 36000mV.
+Returns the voltage.
 """,
 'de':
 """
-Gibt die gemessenen Spannung zurück. Der Wert ist in mV und im
-Bereich von 0mV bis 36000mV.
+Gibt die gemessenen Spannung zurück.
 """
 }
 
@@ -102,19 +101,20 @@ add_callback_value_function(
     name      = 'Get Voltage',
     data_name = 'Voltage',
     data_type = 'int32',
-    doc       = voltage_doc
+    doc       = voltage_doc,
+    scale     = (1, 1000),
+    unit      = 'Volt',
+    range_    = (0, 36000)
 )
 
 power_doc = {
 'en':
 """
-Returns the power. The value is in mW
-and between 0mV and 720000mW.
+Returns the power.
 """,
 'de':
 """
-Gibt die gemessenen Leistung zurück. Der Wert ist in mW und im
-Bereich von 0mW bis 720000mW.
+Gibt die gemessenen Leistung zurück.
 """
 }
 
@@ -123,15 +123,18 @@ add_callback_value_function(
     name      = 'Get Power',
     data_name = 'Power',
     data_type = 'int32',
-    doc       = power_doc
+    doc       = power_doc,
+    scale     = (1, 1000),
+    unit      = 'Watt',
+    range_    = (0, 720000)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging'}),
-             ('Voltage Conversion Time', 'uint8', 1, 'in', {'constant_group': 'Conversion Time'}),
-             ('Current Conversion Time', 'uint8', 1, 'in', {'constant_group': 'Conversion Time'})],
+'elements': [('Averaging', 'uint8', 1, 'in', {'constant_group': 'Averaging', 'default': 3}),
+             ('Voltage Conversion Time', 'uint8', 1, 'in', {'constant_group': 'Conversion Time', 'default': 4}),
+             ('Current Conversion Time', 'uint8', 1, 'in', {'constant_group': 'Conversion Time', 'default': 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -139,78 +142,12 @@ com['packets'].append({
 Sets the configuration of the Voltage/Current Bricklet 2.0. It is
 possible to configure number of averages as well as
 voltage and current conversion time.
-
-Averaging:
-
-.. csv-table::
- :header: "Value", "Number of Averages"
- :widths: 20, 20
-
- "0",    "1"
- "1",    "4"
- "2",    "16"
- "3",    "64"
- "4",    "128"
- "5",    "256"
- "6",    "512"
- ">=7",  "1024"
-
-Voltage/Current conversion:
-
-.. csv-table::
- :header: "Value", "Conversion time"
- :widths: 20, 20
-
- "0",    "140µs"
- "1",    "204µs"
- "2",    "332µs"
- "3",    "588µs"
- "4",    "1.1ms"
- "5",    "2.116ms"
- "6",    "4.156ms"
- ">=7",  "8.244ms"
-
-The default values are 3, 4 and 4 (64, 1.1ms, 1.1ms) for averaging, voltage
-conversion and current conversion.
 """,
 'de':
 """
 Setzt die Konfiguration des Voltage/Current Bricklet 2.0. Es ist
 möglich die Anzahl für die Durchschnittsbildung, und die
 Wandlungszeit für Spannung und Stromstärke zu definieren.
-
-Durchschnittsbildung:
-
-.. csv-table::
- :header: "Wert", "Anzahl"
- :widths: 20, 20
-
- "0",    "1"
- "1",    "4"
- "2",    "16"
- "3",    "64"
- "4",    "128"
- "5",    "256"
- "6",    "512"
- ">=7",  "1024"
-
-Wandlungszeit für Spannung/Stromstärke:
-
-.. csv-table::
- :header: "Wert", "Wandlungszeit"
- :widths: 20, 20
-
- "0",    "140µs"
- "1",    "204µs"
- "2",    "332µs"
- "3",    "588µs"
- "4",    "1.1ms"
- "5",    "2.116ms"
- "6",    "4.156ms"
- ">=7",  "8.244ms"
-
-Die Standardwerte sind 3, 4 und 4 (64, 1.1ms, 1.1ms) für die
-Durchschnittsbildung und die Spannungs/Stromstärkenwandlungszeit.
 """
 }]
 })
@@ -218,9 +155,9 @@ Durchschnittsbildung und die Spannungs/Stromstärkenwandlungszeit.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging'}),
-             ('Voltage Conversion Time', 'uint8', 1, 'out'),
-             ('Current Conversion Time', 'uint8', 1, 'out')],
+'elements': [('Averaging', 'uint8', 1, 'out', {'constant_group': 'Averaging', 'default': 3}),
+             ('Voltage Conversion Time', 'uint8', 1, 'out', {'constant_group': 'Conversion Time', 'default': 4}),
+             ('Current Conversion Time', 'uint8', 1, 'out', {'constant_group': 'Conversion Time', 'default': 4})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -237,10 +174,10 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Voltage Multiplier', 'uint16', 1, 'in'),
-             ('Voltage Divisor', 'uint16', 1, 'in'),
-             ('Current Multiplier', 'uint16', 1, 'in'),
-             ('Current Divisor', 'uint16', 1, 'in')],
+'elements': [('Voltage Multiplier', 'uint16', 1, 'in', {}),
+             ('Voltage Divisor', 'uint16', 1, 'in', {}),
+             ('Current Multiplier', 'uint16', 1, 'in', {}),
+             ('Current Divisor', 'uint16', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -277,10 +214,10 @@ gespeichert und muss nur einmal gesetzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Voltage Multiplier', 'uint16', 1, 'out'),
-             ('Voltage Divisor', 'uint16', 1, 'out'),
-             ('Current Multiplier', 'uint16', 1, 'out'),
-             ('Current Divisor', 'uint16', 1, 'out')],
+'elements': [('Voltage Multiplier', 'uint16', 1, 'out', {}),
+             ('Voltage Divisor', 'uint16', 1, 'out', {}),
+             ('Current Multiplier', 'uint16', 1, 'out', {}),
+             ('Current Divisor', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

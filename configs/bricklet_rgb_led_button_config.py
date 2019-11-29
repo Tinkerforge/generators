@@ -42,22 +42,18 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Color',
-'elements': [('Red', 'uint8', 1, 'in'),
-             ('Green', 'uint8', 1, 'in'),
-             ('Blue', 'uint8', 1, 'in')],
+'elements': [('Red', 'uint8', 1, 'in', {'default': 0}),
+             ('Green', 'uint8', 1, 'in', {'default': 0}),
+             ('Blue', 'uint8', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Sets the color of the LED.
-
-By default the LED is off (0, 0, 0).
 """,
 'de':
 """
 Setzt die LED-Farbe.
-
-Standardmäßig ist die LED aus (0, 0, 0).
 """
 }]
 })
@@ -65,9 +61,9 @@ Standardmäßig ist die LED aus (0, 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Color',
-'elements': [('Red', 'uint8', 1, 'out'),
-             ('Green', 'uint8', 1, 'out'),
-             ('Blue', 'uint8', 1, 'out')],
+'elements': [('Red', 'uint8', 1, 'out', {'default': 0}),
+             ('Green', 'uint8', 1, 'out', {'default': 0}),
+             ('Blue', 'uint8', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -124,34 +120,26 @@ Das :word:`parameter` ist der aktuelle Zustand des Knopfes.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Color Calibration',
-'elements': [('Red', 'uint8', 1, 'in'),
-             ('Green', 'uint8', 1, 'in'),
-             ('Blue', 'uint8', 1, 'in')],
+'elements': [('Red', 'uint8', 1, 'in', {'unit': 'Percent', 'range': (0, 100), 'default': 100}),
+             ('Green', 'uint8', 1, 'in', {'unit': 'Percent', 'range': (0, 100), 'default': 100}),
+             ('Blue', 'uint8', 1, 'in', {'unit': 'Percent', 'range': (0, 100), 'default': 55})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets a color calibration. Some colors appear brighter then others,
-so a calibration may be necessary for nice uniform colors.
-
-The values range from 0% to 100%.
+so a calibration may be necessary for uniform colors.
 
 The calibration is saved in flash. You don't need to call this
 function on every startup.
-
-Default value is (100, 100, 55).
 """,
 'de':
 """
 Setzt die Farbwert-Kalibrierung. Einige Farben erscheinen heller als andere,
 daher kann eine Kalibrierung nötig sein um gleichmäßige Farben zu erzielen.
 
-Der Wertebereich ist 0% bis 100%
-
 Die Kalibrierung wird im Flash des Bricklets gespeichert und muss daher nicht
 bei jedem Start erneut vorgenommen werden.
-
-Standardwert ist (100, 100, 55).
 """
 }]
 })
@@ -159,9 +147,9 @@ Standardwert ist (100, 100, 55).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Color Calibration',
-'elements': [('Red', 'uint8', 1, 'out'),
-             ('Green', 'uint8', 1, 'out'),
-             ('Blue', 'uint8', 1, 'out')],
+'elements': [('Red', 'uint8', 1, 'out', {'unit': 'Percent', 'range': (0, 100), 'default': 100}),
+             ('Green', 'uint8', 1, 'out', {'unit': 'Percent', 'range': (0, 100), 'default': 100}),
+             ('Blue', 'uint8', 1, 'out', {'unit': 'Percent', 'range': (0, 100), 'default': 55})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

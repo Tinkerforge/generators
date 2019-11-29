@@ -98,9 +98,9 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Write',
-'elements': [('Message', 'char', 60, 'in'),
-             ('Length', 'uint8', 1, 'in'),
-             ('Written', 'uint8', 1, 'out')],
+'elements': [('Message', 'char', 60, 'in', {}),
+             ('Length', 'uint8', 1, 'in', {'range': (0, 60)}),
+             ('Written', 'uint8', 1, 'out', {'range': (0, 60)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -133,8 +133,8 @@ bezüglich Baudrate, Parität usw.
 com['packets'].append({
 'type': 'function',
 'name': 'Read',
-'elements': [('Message', 'char', 60, 'out'),
-             ('Length', 'uint8', 1, 'out')],
+'elements': [('Message', 'char', 60, 'out', {}),
+             ('Length', 'uint8', 1, 'out', {'range': (0, 60)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -204,7 +204,7 @@ Im Startzustand ist der Callback deaktiviert
 com['packets'].append({
 'type': 'function',
 'name': 'Is Read Callback Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -223,39 +223,26 @@ Gibt *true* zurück falls :cb:`Read` Callback aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Baudrate', 'uint8', 1, 'in', {'constant_group': 'Baudrate'}),
-             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity'}),
-             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits'}),
-             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength'}),
-             ('Hardware Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Hardware Flowcontrol'}),
-             ('Software Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Software Flowcontrol'})],
+'elements': [('Baudrate', 'uint8', 1, 'in', {'constant_group': 'Baudrate', 'default': 11}),
+             ('Parity', 'uint8', 1, 'in', {'constant_group': 'Parity', 'default': 0}),
+             ('Stopbits', 'uint8', 1, 'in', {'constant_group': 'Stopbits', 'default': 1}),
+             ('Wordlength', 'uint8', 1, 'in', {'constant_group': 'Wordlength', 'default': 8}),
+             ('Hardware Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Hardware Flowcontrol', 'default': 0}),
+             ('Software Flowcontrol', 'uint8', 1, 'in', {'constant_group': 'Software Flowcontrol', 'default': 0})],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the configuration for the RS232 communication. Available options:
+Sets the configuration for the RS232 communication.
 
-* Baudrate between 300 and 230400 baud.
-* Parity of none, odd, even or forced parity.
-* Stopbits can be 1 or 2.
-* Word length of 5 to 8.
-* Hard-/Software flow control can either be on or off but not both simultaneously on.
-
-The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
+Hard-/Software flow control can either be on or off but not both simultaneously on.
 """,
 'de':
 """
 Setzt die Konfiguration für die RS232-Kommunikation.
-Verfügbare Optionen sind:
 
-* Baudrate zwischen 300 und 230400 Baud.
-* Parität von None, Odd, Even und Forced Parity.
-* Stop Bits von 1 oder 2.
-* Wortlänge zwischen 5 und 8.
-* Hard-/Software Flow Control kann entweder an oder aus sein aber nicht beides gleichzeitig an.
-
-Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/Software Flow Control aus.
+Hard-/Software Flow Control kann entweder an oder aus sein aber nicht beides gleichzeitig an.
 """
 }]
 })
@@ -263,12 +250,12 @@ Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/S
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Baudrate', 'uint8', 1, 'out', {'constant_group': 'Baudrate'}),
-             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity'}),
-             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits'}),
-             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength'}),
-             ('Hardware Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Hardware Flowcontrol'}),
-             ('Software Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Software Flowcontrol'})],
+'elements': [('Baudrate', 'uint8', 1, 'out', {'constant_group': 'Baudrate', 'default': 11}),
+             ('Parity', 'uint8', 1, 'out', {'constant_group': 'Parity', 'default': 0}),
+             ('Stopbits', 'uint8', 1, 'out', {'constant_group': 'Stopbits', 'default': 1}),
+             ('Wordlength', 'uint8', 1, 'out', {'constant_group': 'Wordlength', 'default': 8}),
+             ('Hardware Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Hardware Flowcontrol', 'default': 0}),
+             ('Software Flowcontrol', 'uint8', 1, 'out', {'constant_group': 'Software Flowcontrol', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -285,8 +272,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Read',
-'elements': [('Message', 'char', 60, 'out'),
-             ('Length', 'uint8', 1, 'out')],
+'elements': [('Message', 'char', 60, 'out', {}),
+             ('Length', 'uint8', 1, 'out', {'range': (1, 60)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -330,18 +317,18 @@ Mögliche Fehler sind Overrun-, Parity- oder Framing-Fehler.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Break Condition',
-'elements': [('Break Time', 'uint16', 1, 'in')],
+'elements': [('Break Time', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
 Sets a break condition (the TX output is forced to a logic 0 state).
-The parameter sets the hold-time of the break condition (in ms).
+The parameter sets the hold-time of the break condition.
 """,
 'de':
 """
 Setzt eine Break Condition (die TX-Ausgabe wird fest of logisch 0 gezwungen).
-Der Parameter setzt die Haltezeit der Break Condition (in ms).
+Der Parameter setzt die Haltezeit der Break Condition.
 """
 }]
 })

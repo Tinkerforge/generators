@@ -47,7 +47,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Velocity',
-'elements': [('Velocity', 'int16', 1, 'in')],
+'elements': [('Velocity', 'int16', 1, 'in', {'scale': (100, 32767), 'unit': 'Percent', 'range': (-32767, 32767), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -61,8 +61,6 @@ The velocity describes the duty cycle of the PWM with which the motor is
 controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
 You can not only control the duty cycle of the PWM but also the frequency,
 see :func:`Set PWM Frequency`.
-
-The default velocity is 0.
 """,
 'de':
 """
@@ -76,8 +74,6 @@ Die Geschwindigkeit beschreibt das Tastverhältnis der PWM für die
 Motoransteuerung. Z.B. entspricht ein Geschwindigkeitswert von 3277 einer PWM
 mit einem Tastverhältnis von 10%. Weiterhin kann neben dem Tastverhältnis auch
 die Frequenz der PWM verändert werden, siehe :func:`Set PWM Frequency`.
-
-Der Standardwert für die Geschwindigkeit ist 0.
 """
 }]
 })
@@ -85,7 +81,7 @@ Der Standardwert für die Geschwindigkeit ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Velocity',
-'elements': [('Velocity', 'int16', 1, 'out')],
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (100, 32767), 'unit': 'Percent', 'range': (-32767, 32767), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -102,7 +98,7 @@ Gibt die Geschwindigkeit zurück, wie gesetzt von :func:`Set Velocity`.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Velocity',
-'elements': [('Velocity', 'int16', 1, 'out')],
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (100, 32767), 'unit': 'Percent', 'range': (-32767, 32767), 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -123,7 +119,7 @@ neuen Zielwert, wie von :func:`Set Velocity` vorgegeben, beschleunigt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration',
-'elements': [('Acceleration', 'uint16', 1, 'in')],
+'elements': [('Acceleration', 'uint16', 1, 'in', {'scale':(100, 32767), 'unit': 'Percent Per Second', 'default': 10000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -138,8 +134,6 @@ an acceleration of 1600.
 
 If acceleration is set to 0, there is no speed ramping, i.e. a new velocity
 is immediately given to the motor.
-
-The default acceleration is 10000.
 """,
 'de':
 """
@@ -154,8 +148,6 @@ Beschleunigung auf 1600 einzustellen.
 
 Eine Beschleunigung von 0 bedeutet ein direkter Sprung des Motors auf die
 Zielgeschwindigkeit. Es Wird keine Beschleunigungsrampe gefahren.
-
-Der Standardwert für die Beschleunigung beträgt 10000.
 """
 }]
 })
@@ -163,7 +155,7 @@ Der Standardwert für die Beschleunigung beträgt 10000.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('Acceleration', 'uint16', 1, 'out')],
+'elements': [('Acceleration', 'uint16', 1, 'out', {'scale':(100, 32767), 'unit': 'Percent Per Second', 'default': 10000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -180,13 +172,13 @@ Gibt die Beschleunigung zurück, wie gesetzt von :func:`Set Acceleration`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set PWM Frequency',
-'elements': [('Frequency', 'uint16', 1, 'in')],
+'elements': [('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'scale': (1, 20000), 'default': 15000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Sets the frequency (in Hz) of the PWM with which the motor is driven.
-The possible range of the frequency is 1-20000Hz. Often a high frequency
+Sets the frequency of the PWM with which the motor is driven.
+Often a high frequency
 is less noisy and the motor runs smoother. However, with a low frequency
 there are less switches and therefore fewer switching losses. Also with
 most motors lower frequencies enable higher torque.
@@ -194,12 +186,11 @@ most motors lower frequencies enable higher torque.
 If you have no idea what all this means, just ignore this function and use
 the default frequency, it will very likely work fine.
 
-The default frequency is 15 kHz.
 """,
 'de':
 """
-Setzt die Frequenz (in Hz) der PWM, welche den Motor steuert.
-Der Wertebereich der Frequenz ist 1-20000Hz. Oftmals ist eine
+Setzt die Frequenz der PWM, welche den Motor steuert.
+Oftmals ist eine
 hohe Frequenz geräuschärmer und der Motor läuft dadurch ruhiger. Trotz dessen
 führt eine geringe Frequenz zu weniger Schaltvorgängen und somit zu
 weniger Schaltverlusten. Bei einer Vielzahl von Motoren ermöglichen
@@ -207,8 +198,6 @@ geringere Frequenzen höhere Drehmomente.
 
 Im Allgemeinen kann diese Funktion ignoriert werden, da der Standardwert
 höchstwahrscheinlich zu einem akzeptablen Ergebnis führt.
-
-Der Standardwert der Frequenz ist 15 kHz.
 """
 }]
 })
@@ -216,16 +205,16 @@ Der Standardwert der Frequenz ist 15 kHz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get PWM Frequency',
-'elements': [('Frequency', 'uint16', 1, 'out')],
+'elements': [('Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'scale': (1, 20000), 'default': 15000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the PWM frequency (in Hz) as set by :func:`Set PWM Frequency`.
+Returns the PWM frequency as set by :func:`Set PWM Frequency`.
 """,
 'de':
 """
-Gibt die PWM Frequenz (in Hz) zurück, wie gesetzt von :func:`Set PWM Frequency`.
+Gibt die PWM Frequenz zurück, wie gesetzt von :func:`Set PWM Frequency`.
 """
 }]
 })
@@ -264,18 +253,18 @@ Ein Aufruf von :func:`Set Velocity` mit 0 erlaubt einen normalen Stopp des Motor
 com['packets'].append({
 'type': 'function',
 'name': 'Get Stack Input Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the stack input voltage in mV. The stack input voltage is the
+Returns the stack input voltage. The stack input voltage is the
 voltage that is supplied via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
-Gibt die Eingangsspannung (in mV) des Stapels zurück. Die Eingangsspannung
+Gibt die Eingangsspannung des Stapels zurück. Die Eingangsspannung
 des Stapel wird über diesen bereitgestellt und von einer Step-Down oder
 Step-Up Power Supply erzeugt.
 """
@@ -285,12 +274,12 @@ Step-Up Power Supply erzeugt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get External Input Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the external input voltage in mV. The external input voltage is
+Returns the external input voltage. The external input voltage is
 given via the black power input connector on the DC Brick.
 
 If there is an external input voltage and a stack input voltage, the motor
@@ -305,7 +294,7 @@ voltage present, the motor will be driven by this voltage.
 """,
 'de':
 """
-Gibt die externe Eingangsspannung (in mV) zurück. Die externe Eingangsspannung
+Gibt die externe Eingangsspannung zurück. Die externe Eingangsspannung
 wird über die schwarze Stromversorgungsbuchse, in den DC Brick, eingespeist.
 
 Sobald eine externe Eingangsspannung und die Spannungsversorgung des Stapels anliegt,
@@ -324,16 +313,16 @@ des Stapels verfügbar sein, erfolgt die Versorgung des Motors über diese.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Consumption',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the current consumption of the motor in mA.
+Returns the current consumption of the motor.
 """,
 'de':
 """
-Gibt die Stromaufnahme des Motors zurück (in mA).
+Gibt die Stromaufnahme des Motors zurück.
 """
 }]
 })
@@ -380,7 +369,7 @@ Aktivierung erfolgt.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -397,28 +386,24 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Minimum Voltage',
-'elements': [('Voltage', 'uint16', 1, 'in')],
+'elements': [('Voltage', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 6000})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
+Sets the minimum voltage, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the DC Brick is 6V.
 You can use this function to detect the discharge of a battery that is used
 to drive the motor. If you have a fixed power supply, you likely do not need
 this functionality.
-
-The default value is 6V.
 """,
 'de':
 """
-Setzt die minimale Spannung in mV, bei welcher der :cb:`Under Voltage` Callback
+Setzt die minimale Spannung, bei welcher der :cb:`Under Voltage` Callback
 ausgelöst wird. Der kleinste mögliche Wert mit dem der DC Brick noch funktioniert,
 ist 6V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
 höchstwahrscheinlich nicht benötigt.
-
-Der Standardwert ist 6V.
 """
 }]
 })
@@ -426,7 +411,7 @@ Der Standardwert ist 6V.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Minimum Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'default': 6000})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -443,7 +428,7 @@ Gibt die minimale Spannung zurück, wie von :func:`Set Minimum Voltage` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Drive Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Drive Mode'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Drive Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -463,8 +448,6 @@ with slower velocities.
 In Drive/Coast mode, the motor is always either driving or freewheeling.
 Advantages are: Less current consumption and less demands on the motor and
 driver chip.
-
-The default value is 0 = Drive/Brake.
 """,
 'de':
 """
@@ -483,8 +466,6 @@ Geschwindigkeiten zu fahren.
 Im Fahren/Leerlauf Modus wir der Motor entweder gefahren oder befindet sich
 im Leerlauf. Vorteile sind die geringere Stromaufnahme und geringere
 Belastung des Motors und der Treiberstufe.
-
-Der Standardwert ist 0 = Fahren/Bremsen.
 """
 }]
 })
@@ -492,7 +473,7 @@ Der Standardwert ist 0 = Fahren/Bremsen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Drive Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Drive Mode'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Drive Mode', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -509,22 +490,18 @@ Gibt den Fahrmodus zurück, wie von :func:`Set Drive Mode` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Velocity Period',
-'elements': [('Period', 'uint16', 1, 'in')],
+'elements': [('Period', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
 Sets a period in ms with which the :cb:`Current Velocity` callback is triggered.
 A period of 0 turns the callback off.
-
-The default value is 0.
 """,
 'de':
 """
 Setzt die Periode in ms mit welcher der :cb:`Current Velocity` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
-
-Der Standardwert ist 0.
 """
 }]
 })
@@ -532,7 +509,7 @@ Der Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Current Velocity Period',
-'elements': [('Period', 'uint16', 1, 'out')],
+'elements': [('Period', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -549,20 +526,19 @@ Gibt die Periode zurück, wie von :func:`Set Current Velocity Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Under Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage given
-in mV.
+:func:`Set Minimum Voltage`. The :word:`parameter` is the current voltage.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst, wenn die Eingangsspannung unter den, mittels
 :func:`Set Minimum Voltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
-ist die aktuelle Spannung in mV.
+ist die aktuelle Spannung.
 """
 }]
 })
@@ -615,7 +591,7 @@ erneut zu fahren.
 com['packets'].append({
 'type': 'callback',
 'name': 'Velocity Reached',
-'elements': [('Velocity', 'int16', 1, 'out')],
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (100, 32767), 'unit': 'Percent', 'range': (-32767, 32767)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -652,7 +628,7 @@ wenn die konfigurierte Geschwindigkeit letztendlich erreicht ist.
 com['packets'].append({
 'type': 'callback',
 'name': 'Current Velocity',
-'elements': [('Velocity', 'int16', 1, 'out')],
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (100, 32767), 'unit': 'Percent', 'range': (-32767, 32767)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -833,7 +809,7 @@ com['openhab'] = {
             'type': 'decimal',
             'unit': 'V',
             'label': 'Minimum Voltage',
-            'description': 'The minimum voltage in V, below which the Unter Voltage channel is triggered. The minimum possible value that works with the DC Brick is 5V. You can use this function to detect the discharge of a battery that is used to drive the stepper motor. If you have a fixed power supply, you likely do not need this functionality. The default value is 5V.',
+            'description': 'The minimum voltage in V, below which the Under Voltage channel is triggered. The minimum possible value that works with the DC Brick is 5V. You can use this function to detect the discharge of a battery that is used to drive the stepper motor. If you have a fixed power supply, you likely do not need this functionality. The default value is 5V.',
             'default': 5,
         }
     ],
@@ -859,9 +835,9 @@ com['openhab'] = {
 
             'is_trigger_channel': True
         },  {
-            'id': 'Unter Voltage',
+            'id': 'Under Voltage',
             'type': 'system.trigger',
-            'label': 'Unter Voltage',
+            'label': 'Under Voltage',
 
             'callbacks': [{
                 'packet': 'Under Voltage',

@@ -1495,6 +1495,13 @@ units = [
          ['k'],
          []),
 
+    Unit('{prefix}Byte',
+         {'en': '{prefix}Byte', 'de': '{prefix}Byte'},
+         '{prefix}B',
+         {'en': 'Data Size', 'de': 'Datenmenge'},
+         ['Ki', 'Mi', 'Gi'],
+         []),
+
     Unit('Decibel',
          {'en': 'Decibel', 'de': 'Dezibel'},
          'dB',
@@ -1519,7 +1526,14 @@ units = [
     Unit('Degree Per {inverse_prefix}Second',
          {'en': 'Degree per {inverse_prefix}second', 'de': 'Grad pro {inverse_prefix}Sekunde'},
          '°/{inverse_prefix}s',
-         {'en': 'Anglular velocity', 'de': 'Winkelgeschwindigkeit'},
+         {'en': 'Angular velocity', 'de': 'Winkelgeschwindigkeit'},
+         [],
+         ['n', 'µ', 'm']),
+
+    Unit('Degree Per {inverse_prefix}Second Squared',
+         {'en': 'Degree per {inverse_prefix}second squared', 'de': 'Grad pro {inverse_prefix}Sekunde Quadrat'},
+         '°/{inverse_prefix}s',
+         {'en': 'Angular velocity', 'de': 'Winkelgeschwindigkeit'},
          [],
          ['n', 'µ', 'm']),
 
@@ -1586,6 +1600,13 @@ units = [
          ['n', 'µ', 'm', 'c', 'k'],
          []),
 
+    Unit('{prefix}Ohm',
+         {'en': 'Ohm', 'de': 'Ohm'},
+         'Ω',
+         {'en': 'Electrical Resistance', 'de': 'Elektrischer Widerstand'},
+         ['n', 'µ', 'm', 'k'],
+         []),
+
     Unit('Particles Per Cubic {inverse_prefix}Meter',
          {'en': 'Particles per cubic {inverse_prefix}meter', 'de': 'Partikel pro Kubik{inverse_prefix}meter'},
          '1/{inverse_prefix}m³',
@@ -1615,6 +1636,13 @@ units = [
          [],
          []),
 
+    Unit('Percent Per Second',
+         {'en': 'Percent Per Second', 'de': 'Prozent pro Sekunde'},
+         '%',
+         {'en': 'Duty Cycle Change', 'de': 'Tastverhältnisänderung'},
+         [],
+         []),
+
     Unit('Percent Relative Humidity',
          {'en': 'Percent relative humidity', 'de': 'Prozent relative Luftfeuchtigkeit'},
          '%',
@@ -1636,11 +1664,32 @@ units = [
          [],
          []),
 
+    Unit('Steps Per {inverse_prefix}Second',
+         {'en': 'Steps per {inverse_prefix}second', 'de': 'Schritte pro {inverse_prefix}Sekunde'},
+         '1/{inverse_prefix}s',
+         {'en': 'Velocity', 'de': 'Geschwindigkeit'},
+         [],
+         ['n', 'µ', 'm']),
+
+     Unit('Steps Per {inverse_prefix}Second Squared',
+         {'en': 'Steps per {inverse_prefix}second squared', 'de': 'Schritte pro {inverse_prefix}Sekunde Quadrat'},
+         '1/{inverse_prefix}s²',
+         {'en': 'Acceleration', 'de': 'Beschleunigung'},
+         [],
+         ['n', 'µ', 'm']),
+
     Unit('{prefix}Tesla',
          {'en': '{prefix}Tesla', 'de': '{prefix}Tesla'},
          '{prefix}T',
          {'en': 'Magnetic flux density', 'de': 'Magnetische Flussdichte'},
          ['n', 'µ', 'm', 'k'],
+         []),
+
+    Unit('UV Index',
+         {'en': 'UV Index', 'de': 'UV-Index'},
+         '',
+         {'en': 'Strength of sunburn-producing ultraviolet radiation', 'de': 'Sonnenbrandwirksame solare Bestrahlungsstärke'},
+         [],
          []),
 
     Unit('{prefix}Volt',
@@ -1675,6 +1724,13 @@ units = [
          {'en': '{prefix}Watt-hour', 'de': '{prefix}Wattstunde'},
          '{prefix}Wh',
          {'en': 'Energy', 'de': 'Energie'},
+         ['n', 'µ', 'm', 'k'],
+         []),
+
+    Unit('{prefix}Watt Per Square Meter',
+         {'en': '{prefix}Watt per square meter', 'de': '{prefix}Watt pro Quadratmeter'},
+         '{prefix}W/m²',
+         {'en': 'Irradiance', 'de': 'Bestrahlungsstärke'},
          ['n', 'µ', 'm', 'k'],
          [])
 ]

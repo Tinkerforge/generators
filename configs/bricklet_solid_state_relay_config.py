@@ -34,7 +34,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set State',
-'elements': [('State', 'bool', 1, 'in')],
+'elements': [('State', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -59,7 +59,7 @@ Der Standardwert ist *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
-'elements': [('State', 'bool', 1, 'out')],
+'elements': [('State', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -76,14 +76,14 @@ Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Monoflop',
-'elements': [('State', 'bool', 1, 'in'),
-             ('Time', 'uint32', 1, 'in')],
+'elements': [('State', 'bool', 1, 'in', {}),
+             ('Time', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
 """
 The first parameter  is the desired state of the relay (*true* means on
-and *false* means off). The second parameter indicates the time (in ms) that
+and *false* means off). The second parameter indicates the time that
 the relay should hold the state.
 
 If this function is called with the parameters (true, 1500):
@@ -99,7 +99,7 @@ connection is lost, the relay will turn off in at most two seconds.
 """
 Der erste Parameter ist der gewünschte Zustand des Relais
 (*true* bedeutet ein und *false* aus). Der zweite Parameter stellt die Zeit
-(in ms) dar, welche das Relais den Zustand halten soll.
+dar, welche das Relais den Zustand halten soll.
 
 Wenn diese Funktion mit den Parametern (true, 1500) aufgerufen wird:
 Das Relais wird angeschaltet und nach 1,5s wieder ausgeschaltet.
@@ -117,9 +117,9 @@ getrennt wird, wird das Relais nach spätestens zwei Sekunden ausschalten.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Monoflop',
-'elements': [('State', 'bool', 1, 'out'),
-             ('Time', 'uint32', 1, 'out'),
-             ('Time Remaining', 'uint32', 1, 'out')],
+'elements': [('State', 'bool', 1, 'out', {}),
+             ('Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Time Remaining', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -144,7 +144,7 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('State', 'bool', 1, 'out')],
+'elements': [('State', 'bool', 1, 'out', {})],
 'since_firmware': [1, 1, 1],
 'doc': ['c', {
 'en':

@@ -38,13 +38,12 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Intensity',
-'elements': [('Intensity', 'uint16', 1, 'out')],
+'elements': [('Intensity', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current sound intensity. The value has a range of
-0 to 4095.
+Returns the current sound intensity.
 
 The value corresponds to the
 `upper envelop <https://en.wikipedia.org/wiki/Envelope_(waves)>`__
@@ -56,8 +55,7 @@ If you want to get the intensity periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die aktuelle Schallintensität zurück. Der Wertebereich
-ist von 0 bis 4095.
+Gibt die aktuelle Schallintensität zurück.
 
 Der Wert entspricht der
 `Hüllkurve <https://de.wikipedia.org/wiki/H%C3%BCllkurvendemodulator>`__
@@ -116,8 +114,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Intensity Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in'),
-             ('Max', 'uint16', 1, 'in')],
+             ('Min', 'uint16', 1, 'in', {'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -135,8 +133,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the intensity is *inside* the min and max values"
  "'<'",    "Callback is triggered when the intensity is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the intensity is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -153,8 +149,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Intensität *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst, wenn die Intensität kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Intensität größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -163,8 +157,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Intensity Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out'),
-             ('Max', 'uint16', 1, 'out')],
+             ('Min', 'uint16', 1, 'out', {'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -231,7 +225,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Intensity',
-'elements': [('Intensity', 'uint16', 1, 'out')],
+'elements': [('Intensity', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -257,7 +251,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Intensity Reached',
-'elements': [('Intensity', 'uint16', 1, 'out')],
+'elements': [('Intensity', 'uint16', 1, 'out', {'range': (0, 4095)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

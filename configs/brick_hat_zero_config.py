@@ -40,11 +40,11 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 voltage_doc = {
 'en':
 """
-Returns the USB supply voltage of the Raspberry Pi in mV.
+Returns the USB supply voltage of the Raspberry Pi.
 """,
 'de':
 """
-Gibt die USB-Versorgungsspannung des Raspberry Pi in mV zurück.
+Gibt die USB-Versorgungsspannung des Raspberry Pi zurück.
 """
 }
 
@@ -54,7 +54,9 @@ add_callback_value_function(
     data_name = 'Voltage',
     data_type = 'uint16',
     doc       = voltage_doc,
-    callback_since_firmware = [2, 0, 1]
+    callback_since_firmware = [2, 0, 1],
+    scale     = (1, 1000),
+    unit      = 'Volt'
 )
 
 com['examples'].append({

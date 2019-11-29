@@ -38,13 +38,13 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get UV Light',
-'elements': [('UV Light', 'uint32', 1, 'out')],
+'elements': [('UV Light', 'uint32', 1, 'out', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'range': (0, 32800000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the UV light intensity of the sensor, the intensity is given
-in 1/10 mW/m². The sensor has already weighted the intensity with the erythemal
+Returns the UV light intensity of the sensor.
+The sensor has already weighted the intensity with the erythemal
 action spectrum to get the skin-affecting irradiation.
 
 To get UV index you just have to divide the value by 250. For example, a UV
@@ -56,8 +56,8 @@ If you want to get the intensity periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die UV-Licht-Intensität des Sensors zurück. Die Intensität wird
-in der Einheit 1/10 mW/m² gegeben. Der Sensor hat die Intensität bereits mit
+Gibt die UV-Licht-Intensität des Sensors zurück.
+Der Sensor hat die Intensität bereits mit
 dem Erythem-Wirkungsspektrum gewichtet, um die hautbeeinflussende
 Bestrahlungsstärke zu bestimmen.
 
@@ -118,8 +118,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set UV Light Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint32', 1, 'in'),
-             ('Max', 'uint32', 1, 'in')],
+             ('Min', 'uint32', 1, 'in', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'default': 0}),
+             ('Max', 'uint32', 1, 'in', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -137,8 +137,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the intensity is *inside* the min and max values"
  "'<'",    "Callback is triggered when the intensity is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the intensity is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -155,8 +153,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Intensität *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Intensität kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Intensität größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -165,8 +161,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get UV Light Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint32', 1, 'out'),
-             ('Max', 'uint32', 1, 'out')],
+             ('Min', 'uint32', 1, 'out', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'default': 0}),
+             ('Max', 'uint32', 1, 'out', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -233,7 +229,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'UV Light',
-'elements': [('UV Light', 'uint32', 1, 'out')],
+'elements': [('UV Light', 'uint32', 1, 'out', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'range': (0, 32800000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -260,7 +256,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'UV Light Reached',
-'elements': [('UV Light', 'uint32', 1, 'out')],
+'elements': [('UV Light', 'uint32', 1, 'out', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'range': (0, 32800000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

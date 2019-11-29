@@ -50,8 +50,8 @@ com['constant_groups'].append({
 uva_doc = {
 'en':
 """
-Returns the UVA intensity of the sensor, the intensity is given
-in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
+Returns the UVA intensity of the sensor.
+The sensor has not weighted the intensity with the erythemal
 action spectrum to get the skin-affecting irradiation. Therefore, you cannot
 just divide the value by 250 to get the UVA index. To get the UV index use
 :func:`Get UVI`.
@@ -64,8 +64,8 @@ If you want to get the intensity periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die UVA Intensität des Sensors zurück. Die Intensität wird in der Einheit
-1/10 mW/m² gegeben. Der Sensor hat die Intensität nicht mit dem
+Gibt die UVA Intensität des Sensors zurück.
+Der Sensor hat die Intensität nicht mit dem
 Erythem-Wirkungsspektrum gewichtet, daher handelt es sich nicht um die
 hautbeeinflussende Bestrahlungsstärke. Der Wert kann nicht einfach durch 250
 geteilt werden, um den UVA Index zu bestimmen. Um den UV Index zu bestimmen kann
@@ -85,14 +85,17 @@ add_callback_value_function(
     name      = 'Get UVA',
     data_name = 'UVA',
     data_type = 'int32',
-    doc       = uva_doc
+    doc       = uva_doc,
+    scale     = (1, 10000),
+    unit      = 'Watt Per Square Meter',
+    range_    = (-1, 32800000)
 )
 
 uvb_doc = {
 'en':
 """
-Returns the UVB intensity of the sensor, the intensity is given
-in 1/10 mW/m². The sensor has not weighted the intensity with the erythemal
+Returns the UVB intensity of the sensor.
+The sensor has not weighted the intensity with the erythemal
 action spectrum to get the skin-affecting irradiation. Therefore, you cannot
 just divide the value by 250 to get the UVB index. To get the UV index use
 :func:`Get UVI`.
@@ -105,8 +108,8 @@ If you want to get the intensity periodically, it is recommended to use the
 """,
 'de':
 """
-Gibt die UVB Intensität des Sensors zurück. Die Intensität wird in der Einheit
-1/10 mW/m² gegeben. Der Sensor hat die Intensität nicht mit dem
+Gibt die UVB Intensität des Sensors zurück.
+Der Sensor hat die Intensität nicht mit dem
 Erythem-Wirkungsspektrum gewichtet, daher handelt es sich nicht um die
 hautbeeinflussende Bestrahlungsstärke. Der Wert kann nicht einfach durch 250
 geteilt werde, um den UVB Index zu bestimmen. Um den UV Index zu bestimmen kann
@@ -126,7 +129,10 @@ add_callback_value_function(
     name      = 'Get UVB',
     data_name = 'UVB',
     data_type = 'int32',
-    doc       = uvb_doc
+    doc       = uvb_doc,
+    scale     = (1, 10000),
+    unit      = 'Watt Per Square Meter',
+    range_    = (-1, 32800000)
 )
 
 uvi_doc = {
@@ -158,13 +164,16 @@ add_callback_value_function(
     name      = 'Get UVI',
     data_name = 'UVI',
     data_type = 'int32',
-    doc       = uvi_doc
+    doc       = uvi_doc,
+    scale     = (1, 10),
+    unit      = 'UV Index',
+    range_    = (-1, None)
 )
 
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time'})],
+'elements': [('Integration Time', 'uint8', 1, 'in', {'constant_group': 'Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -177,8 +186,6 @@ contains less noise but updates less often.
 With a longer integration time (especially 800 ms) and a higher UV intensity the
 sensor can be saturated. If this happens the UVA/UVB/UVI readings are all -1.
 In this case you need to choose a shorter integration time.
-
-Default value: 400 ms.
 """,
 'de':
 """
@@ -192,8 +199,6 @@ Mit einer längeren Integrationszeit (ins besondere 800 ms) und einer höheren U
 Intensität kann der Sensor gesättigt (saturated) sein. Falls dies auftritt dann
 sind die UVA/UVB/UVI Messwerte alle -1. In diesem Fall muss eine kürzere
 Integrationszeit gewählt werden.
-
-Standardwert: 400 ms.
 """
 }]
 })
@@ -201,7 +206,7 @@ Standardwert: 400 ms.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time'})],
+'elements': [('Integration Time', 'uint8', 1, 'out', {'constant_group': 'Integration Time', 'default': 3})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

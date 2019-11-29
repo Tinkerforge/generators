@@ -479,7 +479,7 @@ Gibt die Einstellungen zurück, wie von :func:`Set Config` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Illuminance',
-'elements': [('Illuminance', 'uint32', 1, 'out', {'range': (0, 103438)})], # range end as by the firmware implementation
+'elements': [('Illuminance', 'uint32', 1, 'out', {'scale': 'dynamic', 'unit': 'Lux', 'range': (0, 103438)})], # range end as by the firmware implementation
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -625,7 +625,7 @@ Gibt die Periode zurück, wie von :func:`Set Color Temperature Callback Period` 
 com['packets'].append({
 'type': 'callback',
 'name': 'Illuminance',
-'elements': [('Illuminance', 'uint32', 1, 'out', {'range': (0, 103438)})], # range end as by the firmware implementation
+'elements': [('Illuminance', 'uint32', 1, 'out', {'scale': 'dynamic', 'unit': 'Lux', 'range': (0, 103438)})], # range end as by the firmware implementation
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

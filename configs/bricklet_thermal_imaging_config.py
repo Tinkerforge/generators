@@ -60,8 +60,8 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get High Contrast Image Low Level',
-'elements': [('Image Chunk Offset', 'uint16', 1, 'out'),
-             ('Image Chunk Data', 'uint8', 62, 'out')],
+'elements': [('Image Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Image Chunk Data', 'uint8', 62, 'out', {})],
 'high_level': {'stream_out': {'name': 'Image', 'fixed_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -106,8 +106,8 @@ Bevor die Funktion genutzt werden kann muss diese mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Image Low Level',
-'elements': [('Image Chunk Offset', 'uint16', 1, 'out'),
-             ('Image Chunk Data', 'uint16', 31, 'out')],
+'elements': [('Image Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Image Chunk Data', 'uint16', 31, 'out', {'scale': 'dynamic', 'unit': 'Kelvin', 'range': (-1000, 1400)})],
 'high_level': {'stream_out': {'name': 'Image', 'fixed_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -152,11 +152,11 @@ Bevor die Funktion genutzt werden kann muss diese mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Get Statistics',
-'elements': [('Spotmeter Statistics', 'uint16', 4, 'out'), # mean, max, min, pixel count
-             ('Temperatures', 'uint16', 4, 'out'), # focal plain array, focal plain array at last ffc, housing, housing at last ffc
+'elements': [('Spotmeter Statistics', 'uint16', 4, 'out', {'scale': 'dynamic', 'unit': 'dynamic'}), # mean, max, min, pixel count
+             ('Temperatures', 'uint16', 4, 'out', {'scale': 'dynamic', 'unit': 'Kelvin'}), # focal plain array, focal plain array at last ffc, housing, housing at last ffc
              ('Resolution', 'uint8', 1, 'out', {'constant_group': 'Resolution'}),
              ('FFC Status', 'uint8', 1, 'out', {'constant_group': 'FFC Status'}),
-             ('Temperature Warning', 'bool', 2, 'out') # shutter lockout, overtemp
+             ('Temperature Warning', 'bool', 2, 'out', {}) # shutter lockout, overtemp
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -282,7 +282,7 @@ Gibt die Auflösung zurück, wie von :func:`Set Resolution` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Spotmeter Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'in')],
+'elements': [('Region Of Interest', 'uint8', 4, 'in', {'range': 'dynamic', 'default' : [39, 29, 40, 30]})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -295,21 +295,17 @@ Sets the spotmeter region of interest. The 4 values are
 * Index 3: Row end (has to be smaller then 60).
 
 The spotmeter statistics can be read out with :func:`Get Statistics`.
-
-The default region of interest is (39, 29, 40, 30).
 """,
 'de':
 """
 Setzt die Spotmeter Region (*Spotmeter Region of Interest*). Die 4 Werte sind
 
-* Index 0: Spaltenstart (muss kleiner sein wie Spaltenende).
-* Index 1: Zeilenstart (muss kleine sein wie Zeilenende).
-* Index 2: Spaltenende (muss kleiner sein wie 80).
-* Index 3: Zeilenende (muss kleiner sein wie 60).
+* Index 0: Spaltenstart (muss kleiner als das Spaltenende sein).
+* Index 1: Zeilenstart (muss kleiner als das Zeilenende sein).
+* Index 2: Spaltenende (muss kleiner als 80 sein).
+* Index 3: Zeilenende (muss kleiner als 60 sein).
 
 Die Spotmeter Statistiken können mittels :func:`Get Statistics` ausgelesen werden.
-
-Der Standardwert für die Spotmeter Region ist (39, 29, 40, 30).
 """
 }]
 })
@@ -317,7 +313,7 @@ Der Standardwert für die Spotmeter Region ist (39, 29, 40, 30).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Spotmeter Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'out')],
+'elements': [('Region Of Interest', 'uint8', 4, 'out', {'range': 'dynamic', 'default' : [39, 29, 40, 30]})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -334,10 +330,10 @@ Gibt die Spotmeter Konfiguration zurück, wie von :func:`Set Spotmeter Config` g
 com['packets'].append({
 'type': 'function',
 'name': 'Set High Contrast Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'in'),
-             ('Dampening Factor', 'uint16', 1, 'in'),
-             ('Clip Limit', 'uint16', 2, 'in'),
-             ('Empty Counts', 'uint16', 1, 'in')],
+'elements': [('Region Of Interest', 'uint8', 4, 'in', {'range': 'dynamic', 'default': [0, 0, 79, 59]}),
+             ('Dampening Factor', 'uint16', 1, 'in', {'range': (0, 256), 'default': 64}),
+             ('Clip Limit', 'uint16', 2, 'in', {'range': 'dynamic', 'default': [4800, 512]}),
+             ('Empty Counts', 'uint16', 1, 'in', {'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -380,13 +376,6 @@ non-linear (equalized) transfer function.
 Empty Counts: This parameter specifies the maximum number of pixels in a bin that will be
 interpreted as an empty bin. Histogram bins with this number of pixels or less will be
 processed as an empty bin.
-
-The default values are
-
-* Region Of Interest = (0, 0, 79, 59),
-* Dampening Factor = 64,
-* Clip Limit = (4800, 512) and
-* Empty Counts = 2.
 """,
 'de':
 """
@@ -431,13 +420,6 @@ Transferfunktion.
 Empty Counts: Dieser Parameter spezifiziert die maximale Anzahl von Pixeln in einer Klasse, damit
 die Klasse als leere Klasse interpretiert wird. Jede Histogrammklasse mit dieser Anzahl an Pixeln oder
 weniger wird als leere Klasse behandelt.
-
-Die Standardwerte sind:
-
-* Region Of Interest = (0, 0, 79, 59),
-* Dampening Factor = 64,
-* Clip Limit = (4800, 512) und
-* Empty Counts = 2.
 """
 }]
 })
@@ -445,10 +427,10 @@ Die Standardwerte sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get High Contrast Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'out'),
-             ('Dampening Factor', 'uint16', 1, 'out'),
-             ('Clip Limit', 'uint16', 2, 'out'),
-             ('Empty Counts', 'uint16', 1, 'out')],
+'elements': [('Region Of Interest', 'uint8', 4, 'out', {'range': 'dynamic', 'default': [0, 0, 79, 59]}),
+             ('Dampening Factor', 'uint16', 1, 'out', {'range': (0, 256), 'default': 64}),
+             ('Clip Limit', 'uint16', 2, 'out', {'range': 'dynamic', 'default': [4800, 512]}),
+             ('Empty Counts', 'uint16', 1, 'out', {'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -466,7 +448,7 @@ Gibt die High Contrast Konfiguration zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Image Transfer Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Image Transfer'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Image Transfer', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -481,8 +463,6 @@ Corresponding functions:
 * Manual Temperature Image: :func:`Get Temperature Image`.
 * Callback High Contrast Image: :cb:`High Contrast Image` callback.
 * Callback Temperature Image: :cb:`Temperature Image` callback.
-
-The default is Manual High Contrast Image (0).
 """,
 'de':
 """
@@ -497,8 +477,6 @@ Zugehörige Funktionen:
 * Manual Temperature Image: :func:`Get Temperature Image`.
 * Callback High Contrast Image: :cb:`High Contrast Image` callback.
 * Callback Temperature Image: :cb:`Temperature Image` callback.
-
-Der Standardwert ist Manual High Contrast Image (0).
 """
 }]
 })
@@ -506,7 +484,7 @@ Der Standardwert ist Manual High Contrast Image (0).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Image Transfer Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Image Transfer'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Image Transfer', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -523,8 +501,8 @@ Gibt die Image Transfer Konfiguration zurück, wie von :func:`Set Image Transfer
 com['packets'].append({
 'type': 'callback',
 'name': 'High Contrast Image Low Level',
-'elements': [('Image Chunk Offset', 'uint16', 1, 'out'),
-             ('Image Chunk Data', 'uint8', 62, 'out')],
+'elements': [('Image Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Image Chunk Data', 'uint8', 62, 'out', {})],
 'high_level': {'stream_out': {'name': 'Image', 'fixed_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -559,8 +537,8 @@ solcher direkt dargestellt werden.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature Image Low Level',
-'elements': [('Image Chunk Offset', 'uint16', 1, 'out'),
-             ('Image Chunk Data', 'uint16', 31, 'out')],
+'elements': [('Image Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Image Chunk Data', 'uint16', 31, 'out', {'scale': 'dynamic', 'unit': 'Kelvin', 'range': (-1000, 1400)})],
 'high_level': {'stream_out': {'name': 'Image', 'fixed_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

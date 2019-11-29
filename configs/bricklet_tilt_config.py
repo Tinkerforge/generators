@@ -116,7 +116,7 @@ Deaktiviert den :cb:`Tilt State` Callback.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Tilt State Callback Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

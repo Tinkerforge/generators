@@ -53,14 +53,12 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature',
-'elements': [('Temperature', 'int32', 1, 'out')],
+'elements': [('Temperature', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-24600, 84900)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the temperature of connected sensor. The value
-has a range of -246 to 849 °C and is given in °C/100,
-e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
+Returns the temperature of connected sensor.
 
 If you want to get the temperature periodically, it is recommended
 to use the :cb:`Temperature` callback and set the period with
@@ -68,9 +66,7 @@ to use the :cb:`Temperature` callback and set the period with
 """,
 'de':
 """
-Gibt die Temperatur des verbundenen Sensors zurück. Der Wertebereich ist von
--246 bis 849 °C und wird in °C/100 angegeben, z.B. bedeutet
-ein Wert von 4223 eine gemessene Temperatur von 42,23 °C.
+Gibt die Temperatur des verbundenen Sensors zurück.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Temperature` Callback zu nutzen und die Periode mit
@@ -82,7 +78,7 @@ den :cb:`Temperature` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Resistance',
-'elements': [('Resistance', 'int32', 1, 'out')],
+'elements': [('Resistance', 'int32', 1, 'out', {'scale': 'dynamic', 'unit': 'Ohm'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -202,8 +198,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -221,8 +217,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
  "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -239,8 +233,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -249,8 +241,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -268,8 +260,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Resistance Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'in'),
-             ('Max', 'int32', 1, 'in')],
+             ('Min', 'int32', 1, 'in', {'scale': 'dynamic', 'unit': 'Ohm', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': 'dynamic', 'unit': 'Ohm', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -287,8 +279,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
  "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -305,8 +295,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst, wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -315,8 +303,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Resistance Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'int32', 1, 'out'),
-             ('Max', 'int32', 1, 'out')],
+             ('Min', 'int32', 1, 'out', {'scale': 'dynamic', 'unit': 'Ohm','default': 0}),
+             ('Max', 'int32', 1, 'out', {'scale': 'dynamic', 'unit': 'Ohm','default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -387,7 +375,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature',
-'elements': [('Temperature', 'int32', 1, 'out')],
+'elements': [('Temperature', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-24600, 84900)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -413,7 +401,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Temperature Reached',
-'elements': [('Temperature', 'int32', 1, 'out')],
+'elements': [('Temperature', 'int32', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius', 'range': (-24600, 84900)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -440,7 +428,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Resistance',
-'elements': [('Resistance', 'int32', 1, 'out')],
+'elements': [('Resistance', 'int32', 1, 'out', {'scale': 'dynamic', 'unit': 'Ohm'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -466,7 +454,7 @@ der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Resistance Reached',
-'elements': [('Resistance', 'int32', 1, 'out')],
+'elements': [('Resistance', 'int32', 1, 'out', {'scale': 'dynamic', 'unit': 'Ohm'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -493,7 +481,7 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Noise Rejection Filter',
-'elements': [('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option'})],
+'elements': [('Filter', 'uint8', 1, 'in', {'constant_group': 'Filter Option', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -502,8 +490,6 @@ Sets the noise rejection filter to either 50Hz (0) or 60Hz (1).
 Noise from 50Hz or 60Hz power sources (including
 harmonics of the AC power's fundamental frequency) is
 attenuated by 82dB.
-
-Default value is 0 = 50Hz.
 """,
 'de':
 """
@@ -511,8 +497,6 @@ Setzt den Entstörfilter auf 50Hz (0) oder 60Hz (1).
 Störungen von 50Hz oder 60Hz Stromquellen (inklusive
 Oberwellen der Stromquellen-Grundfrequenz) werden
 um 82dB abgeschwächt.
-
-Der Standardwert ist 0 = 50Hz.
 """
 }]
 })
@@ -520,7 +504,7 @@ Der Standardwert ist 0 = 50Hz.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Noise Rejection Filter',
-'elements': [('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option'})],
+'elements': [('Filter', 'uint8', 1, 'out', {'constant_group': 'Filter Option', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -539,7 +523,7 @@ Gibt die Einstellung des Entstörfilters zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Is Sensor Connected',
-'elements': [('Connected', 'bool', 1, 'out')],
+'elements': [('Connected', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -564,7 +548,7 @@ verbunden oder der Sensor selbst ist fehlerhaft.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wire Mode',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Wire Mode'})],
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Wire Mode', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -572,16 +556,12 @@ com['packets'].append({
 Sets the wire mode of the sensor. Possible values are 2, 3 and 4 which
 correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper
 configuration on the Bricklet.
-
-The default value is 2 = 2-wire.
 """,
 'de':
 """
 Stellt die Leiter-Konfiguration des Sensors ein. Mögliche Werte sind 2, 3 und
 4, dies entspricht 2-, 3- und 4-Leiter-Sensoren. Der Wert muss er
 Jumper-Konfiguration am Bricklet entsprechen.
-
-Der Standardwert ist 2 = 2-Leiter.
 """
 }]
 })
@@ -589,7 +569,7 @@ Der Standardwert ist 2 = 2-Leiter.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wire Mode',
-'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Wire Mode'})],
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Wire Mode', 'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -606,22 +586,18 @@ Gibt die Leiter-Konfiguration zurück, wie von :func:`Set Wire Mode` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Connected Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'in')],
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
 'en':
 """
 If you enable this callback, the :cb:`Sensor Connected` callback is triggered
 every time a Pt sensor is connected/disconnected.
-
-By default this callback is disabled.
 """,
 'de':
 """
 Wenn dieser Callback aktiviert ist, wird der :cb:`Sensor Connected` Callback
 jedes mal ausgelöst, wenn ein Pt-Sensor verbunden/getrennt wird.
-
-Standardmäßig ist dieser Callback deaktiviert.
 """
 }]
 })
@@ -629,7 +605,7 @@ Standardmäßig ist dieser Callback deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Connected Callback Configuration',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [2, 0, 2],
 'doc': ['ccf', {
 'en':
@@ -646,7 +622,7 @@ Gibt die Konfiguration zurück, wie von :func:`Set Sensor Connected Callback Con
 com['packets'].append({
 'type': 'callback',
 'name': 'Sensor Connected',
-'elements': [('Connected', 'bool', 1, 'out')],
+'elements': [('Connected', 'bool', 1, 'out', {})],
 'since_firmware': [2, 0, 2],
 'doc': ['c', {
 'en':

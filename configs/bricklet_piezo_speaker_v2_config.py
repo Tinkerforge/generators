@@ -104,11 +104,11 @@ aktualisierten Werte zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Alarm',
-'elements': [('Start Frequency', 'uint16', 1, 'in'),
-             ('End Frequency', 'uint16', 1, 'in'),
-             ('Step Size', 'uint16', 1, 'in'),
-             ('Step Delay', 'uint16', 1, 'in'),
-             ('Volume', 'uint8', 1, 'in'),
+'elements': [('Start Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (50, 14999)}),
+             ('End Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (51, 15000)}),
+             ('Step Size', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (50, 14950)}),
+             ('Step Delay', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Volume', 'uint8', 1, 'in', {'range': (0, 10)}),
              ('Duration', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -118,11 +118,11 @@ Creates an alarm (a tone that goes back and force between two specified frequenc
 
 The following parameters can be set:
 
-* Start Frequency: Start frequency of the alarm in Hz.
-* End Frequency: End frequency of the alarm in Hz.
-* Step Size: Size of one step of the sweep between the start/end frequencies in Hz.
-* Step Delay: Delay between two steps (duration of time that one tone is used in a sweep) in ms.
-* Duration: Duration of the alarm in ms.
+* Start Frequency: Start frequency of the alarm.
+* End Frequency: End frequency of the alarm.
+* Step Size: Size of one step of the sweep between the start/end frequencies.
+* Step Delay: Delay between two steps (duration of time that one tone is used in a sweep).
+* Duration: Duration of the alarm.
 
 A duration of 0 stops the current alarm if any is ongoing.
 A duration of 4294967295 results in an infinite alarm.
@@ -148,14 +148,12 @@ Example 2: 10 seconds of soft siren sound with slow build-up
 * Volume = 0
 * Duration = 10000
 
-The ranges are:
+The following conditions must be met:
 
-* Start Frequency: 50Hz - 14999Hz (has to be smaller than end frequency)
-* End Frequency: 51Hz - 15000Hz (has to be bigger than start frequency)
-* Step Size: 1Hz - 65535Hz (has to be small enough to fit into the frequency range)
-* Step Delay: 1ms - 65535ms (has to be small enough to fit into the duration)
-* Volume: 0 - 10
-* Duration: 0ms - 4294967295ms
+* Start Frequency: has to be smaller than end frequency
+* End Frequency: has to be bigger than start frequency
+* Step Size: has to be small enough to fit into the frequency range
+* Step Delay: has to be small enough to fit into the duration
 """,
 'de':
 """
@@ -192,14 +190,12 @@ zu entwerfen.
 * *Volume* = 0
 * *Duration* = 10000
 
-Die Wertebereiche sind:
+Die folgenden Einschränkungen müssen eingehalten werden:
 
-* *Start Frequency*: 50Hz - 14999Hz (muss kleiner als *End Frequency* sein)
-* *End Frequency*: 51Hz - 15000Hz (muss größer als *Start Frequency* sein)
-* *Step Size*: 1Hz - 65535Hz (muss klein genug sein um in den Frequenzbereich zu passen)
-* *Step Delay*: 1ms - 65535ms (muss kleiner als *Duration* sein)
-* *Volume*: 0 - 10
-* *Duration*: 0ms - 4294967295ms
+* *Start Frequency*: muss kleiner als *End Frequency* sein
+* *End Frequency*: muss größer als *Start Frequency* sein
+* *Step Size*: muss klein genug sein um in den Frequenzbereich zu passen
+* *Step Delay*: muss kleiner als *Duration* sein
 """
 }]
 })
@@ -207,30 +203,30 @@ Die Wertebereiche sind:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Alarm',
-'elements': [('Start Frequency', 'uint16', 1, 'out'),
-             ('End Frequency', 'uint16', 1, 'out'),
-             ('Step Size', 'uint16', 1, 'out'),
-             ('Step Delay', 'uint16', 1, 'out'),
-             ('Volume', 'uint8', 1, 'out'),
+'elements': [('Start Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': (50, 14999)}),
+             ('End Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': (51, 15000)}),
+             ('Step Size', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': (50, 14950)}),
+             ('Step Delay', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Volume', 'uint8', 1, 'out', {'range': (0, 10)}),
              ('Duration', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'}),
-             ('Duration Remaining', 'uint32', 1, 'out'),
-             ('Current Frequency', 'uint16', 1, 'out')],
+             ('Duration Remaining', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'}),
+             ('Current Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': (50, 15000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the last alarm settings as set by :func:`Set Alarm`. If an alarm is currently
-running it also returns the remaining duration of the alarm in ms as well as the
-current frequency of the alarm in Hz.
+running it also returns the remaining duration of the alarm as well as the
+current frequency of the alarm.
 
-If the volume is updated during a beep (with :func:`Update Volume`)
+If the volume is updated during an alarm (with :func:`Update Volume`)
 this function returns the updated value.
 """,
 'de':
 """
 Gibt die letzten Alarm-Einstellungen zurück, wie von :func:`Set Alarm` gesetzt. Wenn ein
-Alarm aktuell läuft, wird auch die verbleibende Zeit des Alarms in ms sowie die aktuelle
-Frequenz in Hz zurück gegeben.
+Alarm aktuell läuft, wird auch die verbleibende Zeit des Alarms sowie die aktuelle
+Frequenz zurück gegeben.
 
 Wenn die Lautstärke während eines Alarms aktualisiert wird (mit :func:`Update Volume`),
 gibt diese Funktion die aktualisierten Werte zurück.
@@ -241,17 +237,16 @@ gibt diese Funktion die aktualisierten Werte zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Update Volume',
-'elements': [('Volume', 'uint8', 1, 'in')],
+'elements': [('Volume', 'uint8', 1, 'in', {'range': (0, 10)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Updates the volume of an ongoing beep or alarm. The range of the volume is 0 to 10.
+Updates the volume of an ongoing beep or alarm.
 """,
 'de':
 """
-Aktualisiert die Lautstärke eines aktuell laufenden Beep oder Alarm. Der
-Wertebereich der Lautstärke ist 0 bis 10.
+Aktualisiert die Lautstärke eines aktuell laufenden Beep oder Alarm.
 """
 }]
 })
@@ -259,17 +254,16 @@ Wertebereich der Lautstärke ist 0 bis 10.
 com['packets'].append({
 'type': 'function',
 'name': 'Update Frequency',
-'elements': [('Frequency', 'uint16', 1, 'in')],
+'elements': [('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (50, 15000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Updates the frequency of an ongoing beep. The range of the frequency is 50Hz to 15000Hz.
+Updates the frequency of an ongoing beep.
 """,
 'de':
 """
-Aktualisiert die Frequenz eines aktuell laufenden Beeps. Der Wertebereich der
-Frequenz ist 50Hz bis 15000Hz.
+Aktualisiert die Frequenz eines aktuell laufenden Beeps.
 """
 }]
 })
