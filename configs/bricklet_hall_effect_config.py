@@ -47,11 +47,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns *true* if a magnetic field of 35 Gauss (3.5mT) or greater is detected.
+Returns *true* if a magnetic field of 3.5 millitesla or greater is detected.
 """,
 'de':
 """
-Gibt *true* zurück wenn ein Magnetfeld mit 35 Gauss (3,5mT) oder größer
+Gibt *true* zurück wenn ein Magnetfeld mit 3,5 Millitesla oder größer
 detektiert wird.
 """
 }]
@@ -101,8 +101,8 @@ both are counted. Possible edge types are:
 * 1 = falling
 * 2 = both
 
-A magnetic field of 35 Gauss (3.5mT) or greater causes a falling edge and a
-magnetic field of 25 Gauss (2.5mT) or smaller causes a rising edge.
+A magnetic field of 3.5 millitesla or greater causes a falling edge and a
+magnetic field of 2.5 millitesla or smaller causes a rising edge.
 
 If a magnet comes near the Bricklet the signal goes low (falling edge), if
 a magnet is removed from the vicinity the signal goes high (rising edge).
@@ -122,8 +122,8 @@ sind:
 * 1 = fallend
 * 2 = beide
 
-Wird ein Magnet in die Nähe des Bricklets gebracht (>35 Gauss) erzeugt dies ein *low*-Signal
-(fallende Flanke), wenn ein Magnet vom Bricklet entfernt (<25 Gauss) wird entsteht ein
+Wird ein Magnet in die Nähe des Bricklets gebracht (>3,5 Millitesla) erzeugt dies ein *low*-Signal
+(fallende Flanke), wenn ein Magnet vom Bricklet entfernt (<2,5 Millitesla) wird entsteht ein
 *high*-Signal (steigende Flanke).
 
 Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
@@ -386,7 +386,7 @@ com['openhab'] = {
                         'label': 'Refresh Value Every N-th Edge.',
                     }]),
         oh_generic_channel_type('Magnetic Field Detected', 'Switch', 'Magnetic Field Detected',
-                     description='Enabled if a magnetic field of 35 Gauss (3.5mT) or greater is detected.',
+                     description='Enabled if a magnetic field of 3.5 millitesla or greater is detected.',
                      read_only=True),
     ],
     'actions': ['Get Value', 'Get Edge Count', 'Get Edge Count Config']
