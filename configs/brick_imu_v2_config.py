@@ -214,9 +214,9 @@ des BNO055 ICs gemessen, es handelt sich nicht um die Umgebungstemperatur.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Orientation',
-'elements': [('Heading', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360)}),
-             ('Roll', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-90, 90)}),
-             ('Pitch', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-180, 180)})],
+'elements': [('Heading', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360 * 16)}),
+             ('Roll', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-90 * 16, 90 * 16)}),
+             ('Pitch', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-180 * 16, 180 * 16)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -373,9 +373,9 @@ com['packets'].append({
                                                     {'name': 'Y', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Z', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)}]),
              ('Angular Velocity', 'int16', 3, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
-             ('Euler Angle', 'int16', 3, 'out', [{'name': 'Heading', 'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360)},
-                                                 {'name': 'Roll', 'scale': (1, 16), 'unit': 'Degree', 'range': (-90, 90)},
-                                                 {'name': 'Pitch', 'scale': (1, 16), 'unit': 'Degree', 'range': (-180, 180)}]),
+             ('Euler Angle', 'int16', 3, 'out', [{'name': 'Heading', 'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360 * 16)},
+                                                 {'name': 'Roll', 'scale': (1, 16), 'unit': 'Degree', 'range': (-90 * 16, 90 * 16)},
+                                                 {'name': 'Pitch', 'scale': (1, 16), 'unit': 'Degree', 'range': (-180 * 16, 180 * 16)}]),
              ('Quaternion', 'int16', 4, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
              ('Linear Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
              ('Gravity Vector', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
@@ -1002,9 +1002,9 @@ Erdbeschleunigungsvektor-Werte der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Orientation',
-'elements': [('Heading', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360)}),
-             ('Roll', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-90, 90)}),
-             ('Pitch', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-180, 180)})],
+'elements': [('Heading', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360 * 16)}),
+             ('Roll', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-90 * 16, 90 * 16)}),
+             ('Pitch', 'int16', 1, 'out', {'scale': (1, 16), 'unit': 'Degree', 'range': (-180 * 16, 180 * 16)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1058,9 +1058,9 @@ com['packets'].append({
                                                     {'name': 'Y', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Z', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)}]),
              ('Angular Velocity', 'int16', 3, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
-             ('Euler Angle', 'int16', 3, 'out', [{'name': 'Heading', 'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360)},
-                                                 {'name': 'Roll', 'scale': (1, 16), 'unit': 'Degree', 'range': (-90, 90)},
-                                                 {'name': 'Pitch', 'scale': (1, 16), 'unit': 'Degree', 'range': (-180, 180)}]),
+             ('Euler Angle', 'int16', 3, 'out', [{'name': 'Heading', 'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360 * 16)},
+                                                 {'name': 'Roll', 'scale': (1, 16), 'unit': 'Degree', 'range': (-90 * 16, 90 * 16)},
+                                                 {'name': 'Pitch', 'scale': (1, 16), 'unit': 'Degree', 'range': (-180 * 16, 180 * 16)}]),
              ('Quaternion', 'int16', 4, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
              ('Linear Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
              ('Gravity Vector', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
