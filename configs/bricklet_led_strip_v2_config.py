@@ -80,8 +80,8 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set LED Values Low Level',
-'elements': [('Index', 'uint16', 1, 'in'),
-             ('Value Length', 'uint16', 1, 'in'),
+'elements': [('Index', 'uint16', 1, 'in', {'range': (0, 6144)}),
+             ('Value Length', 'uint16', 1, 'in', {'range': (0, 6144)}),
              ('Value Chunk Offset', 'uint16', 1, 'in'),
              ('Value Chunk Data', 'uint8', 58, 'in')],
 'high_level': {'stream_in': {'name': 'Value'}},
@@ -90,7 +90,7 @@ com['packets'].append({
 'en':
 """
 Sets the RGB(W) values for the LEDs starting from *index*.
-You can set at most 2048 RGB values or 1536 RGBW values.
+You can set at most 2048 RGB values or 1536 RGBW values (6144 byte each).
 
 To make the colors show correctly you need to configure the chip type
 (see :func:`Set Chip Type`) and a channel mapping (see :func:`Set Channel Mapping`)
@@ -118,7 +118,7 @@ This approach ensures that you can change the LED colors with a fixed frame rate
 'de':
 """
 Setzt die RGB(W) Werte der LEDs beginnend beim *index*.
-Es können bis zu 2048 RGB Werte oder 1536 RGBW Werte gesetzt werden.
+Es können bis zu 2048 RGB Werte oder 1536 RGBW Werte (jeweils 6144 Byte) gesetzt werden.
 
 Damit die Farben richtig angezeigt werden muss den LEDs entsprechend der
 richtig Chip Type (siehe :func:`Set Chip Type`) und das richtige Channel Mapping
@@ -151,9 +151,9 @@ angezeigt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get LED Values Low Level',
-'elements': [('Index', 'uint16', 1, 'in'),
-             ('Length', 'uint16', 1, 'in'),
-             ('Value Length', 'uint16', 1, 'out'),
+'elements': [('Index', 'uint16', 1, 'in', {'range': (0, 6144)}),
+             ('Length', 'uint16', 1, 'in', {'range': (0, 6144)}),
+             ('Value Length', 'uint16', 1, 'out', {'range': (0, 6144)}),
              ('Value Chunk Offset', 'uint16', 1, 'out'),
              ('Value Chunk Data', 'uint8', 60, 'out')],
 'high_level': {'stream_out': {'name': 'Value'}},
@@ -185,12 +185,12 @@ durch 3 (RGB) oder 4 (RGBW) teilbarer Index übergeben wird).
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Duration',
-'elements': [('Duration', 'uint16', 1, 'in')],
+'elements': [('Duration', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the frame duration in ms.
+Sets the frame duration.
 
 Example: If you want to achieve 20 frames per second, you should
 set the frame duration to 50ms (50ms * 20 = 1 second).
@@ -201,7 +201,7 @@ Default value: 100ms (10 frames per second).
 """,
 'de':
 """
-Setzt die *frame duration* (Länge des Frames) in ms.
+Setzt die *frame duration* (Länge des Frames).
 
 Beispiel: Wenn 20 Frames pro Sekunde erreicht werden sollen, muss
 die Länge des Frames auf 50ms gesetzt werden (50ms * 20 = 1 Sekunde).
@@ -216,16 +216,16 @@ Standardwert: 100ms (10 Frames pro Sekunde).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Duration',
-'elements': [('Duration', 'uint16', 1, 'out')],
+'elements': [('Duration', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 100})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the frame duration in ms as set by :func:`Set Frame Duration`.
+Returns the frame duration as set by :func:`Set Frame Duration`.
 """,
 'de':
 """
-Gibt die *frame duration* (Länge des Frames) in ms zurück, wie von
+Gibt die *frame duration* (Länge des Frames) zurück, wie von
 :func:`Set Frame Duration` gesetzt.
 """
 }]
@@ -234,17 +234,16 @@ Gibt die *frame duration* (Länge des Frames) in ms zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get Supply Voltage',
-'elements': [('Voltage', 'uint16', 1, 'out')],
+'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current supply voltage of the LEDs. The voltage is given in mV.
+Returns the current supply voltage of the LEDs.
 """,
 'de':
 """
-Gibt die aktuelle Versorgungsspannung der LEDs zurück. Die Spannung ist
-in mV angegeben.
+Gibt die aktuelle Versorgungsspannung der LEDs zurück.
 """
 }]
 })
@@ -252,7 +251,7 @@ in mV angegeben.
 com['packets'].append({
 'type': 'callback',
 'name': 'Frame Started',
-'elements': [('Length', 'uint16', 1, 'out')],
+'elements': [('Length', 'uint16', 1, 'out', {'range': (0, 6144)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -281,13 +280,12 @@ Für eine Erklärung des generellen Ansatzes siehe :func:`Set LED Values`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Clock Frequency',
-'elements': [('Frequency', 'uint32', 1, 'in')],
+'elements': [('Frequency', 'uint32', 1, 'in', {'unit': 'Hertz', 'scale': (10000, 2*10**6), 'default': 1666666})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the frequency of the clock in Hz. The range is 10000Hz (10kHz) up to
-2000000Hz (2MHz).
+Sets the frequency of the clock.
 
 The Bricklet will choose the nearest achievable frequency, which may
 be off by a few Hz. You can get the exact frequency that is used by
@@ -299,13 +297,10 @@ Bricklet shorter or by reducing the frequency.
 
 With a decreasing frequency your maximum frames per second will decrease
 too.
-
-The default value is 1.66MHz.
 """,
 'de':
 """
-Setzt die Frequenz der Clock-Leitung in Hz. Der erlaubte Wertebereich
-beläuft von sich 10000Hz (10kHz) bis 2000000Hz (2MHz).
+Setzt die Frequenz der Clock-Leitung.
 
 Das Bricklet wählt die nächst mögliche erreichbare Frequenz. Diese
 kann ein paar Hz neben des gesetzten Wertes liegen. Die exakte Frequenz
@@ -317,8 +312,6 @@ Verbindung zwischen Bricklet und LEDs verringert oder in dem man die
 Frequenz reduziert.
 
 Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerate ab.
-
-Der Standardwert ist 1,66MHz
 """
 }]
 })
@@ -326,7 +319,7 @@ Der Standardwert ist 1,66MHz
 com['packets'].append({
 'type': 'function',
 'name': 'Get Clock Frequency',
-'elements': [('Frequency', 'uint32', 1, 'out')],
+'elements': [('Frequency', 'uint32', 1, 'out', {'unit': 'Hertz', 'scale': (10000, 2*10**6), 'default': 1666666})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -344,7 +337,7 @@ Gibt die aktuell genutzte Clock-Frequenz zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Chip Type',
-'elements': [('Chip', 'uint16', 1, 'in', {'constant_group': 'Chip Type'})],
+'elements': [('Chip', 'uint16', 1, 'in', {'constant_group': 'Chip Type', 'default': 2801})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -358,8 +351,6 @@ Sets the type of the LED driver chip. We currently support the chips
 * WS2813 / WS2815 (Chip Type = WS2812)
 * LPD8806 and
 * APA102 / DotStar.
-
-The default value is WS2801 (2801).
 """,
 'de':
 """
@@ -373,8 +364,6 @@ wir die folgenden Chips
 * WS2813 / WS2815 (Chip Type = WS2812)
 * LPD8806 and
 * APA102 / DotStar.
-
-Der Standardwert ist WS2801 (2801).
 """
 }]
 })
@@ -382,7 +371,7 @@ Der Standardwert ist WS2801 (2801).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Chip Type',
-'elements': [('Chip', 'uint16', 1, 'out', {'constant_group': 'Chip Type'})],
+'elements': [('Chip', 'uint16', 1, 'out', {'constant_group': 'Chip Type', 'default': 2801})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -400,7 +389,7 @@ Gibt den aktuell genutzten Typ des Chips zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel Mapping',
-'elements': [('Mapping', 'uint8', 1, 'in', {'constant_group': 'Channel Mapping'})],
+'elements': [('Mapping', 'uint8', 1, 'in', {'constant_group': 'Channel Mapping', 'default': 36})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -420,8 +409,6 @@ and an additional 5-bit channel for the overall brightness of the RGB LED
 making them 4-channel chips. Internally the brightness channel is the first
 channel, therefore one of the Wxyz channel mappings should be used. Then
 the W channel controls the brightness.
-
-The default value is BGR (36).
 """,
 'de':
 """
@@ -443,8 +430,6 @@ einen zusätzlichen 5-Bit Kanal für die Helligkeit der RGB LED. Dadurch ist der
 APA102 insgesamt ein 4-Kanal Chip. Intern ist der Helligkeitskanal der erste
 Kanal. Daher sollte eines der Wxyz Channel Mappings verwendet werden. Dann kann
 über den W Kanal die Helligkeit eingestellt werden.
-
-Der Standardwert ist BGR (36).
 """
 }]
 })
@@ -452,7 +437,7 @@ Der Standardwert ist BGR (36).
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel Mapping',
-'elements': [('Mapping', 'uint8', 1, 'out', {'constant_group': 'Channel Mapping'})],
+'elements': [('Mapping', 'uint8', 1, 'out', {'constant_group': 'Channel Mapping', 'default': 36})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -470,20 +455,16 @@ Gibt die aktuell genutzten Channel Mapping zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Started Callback Configuration',
-'elements': [('Enable', 'bool', 1, 'in')],
+'elements': [('Enable', 'bool', 1, 'in', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
 Enables/disables the :cb:`Frame Started` callback.
-
-By default the callback is enabled.
 """,
 'de':
 """
 Aktiviert/deaktiviert den :cb:`Frame Started` Callback.
-
-Standardmäßig ist der Callback aktiviert.
 """
 }]
 })
@@ -491,7 +472,7 @@ Standardmäßig ist der Callback aktiviert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Started Callback Configuration',
-'elements': [('Enable', 'bool', 1, 'out')],
+'elements': [('Enable', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
