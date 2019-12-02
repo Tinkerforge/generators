@@ -209,7 +209,7 @@ com['packets'].append({
 'name': 'Dim Socket B',
 'elements': [('Address', 'uint32', 1, 'in', {'range': (0, 2**26-1)}),
              ('Unit', 'uint8', 1, 'in', {'range': [(0, 15), (255, 255)]}),
-             ('Dim Value', 'uint8', 1, 'in', {'constant_group': 'Switch To'})],
+             ('Dim Value', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
