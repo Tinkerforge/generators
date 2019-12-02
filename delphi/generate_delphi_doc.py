@@ -169,14 +169,14 @@ property of the device object:
 
  .. code-block:: delphi
 
-  procedure TExample.MyCallback(sender: {1}; const param: word);
+  procedure TExample.MyCallback(sender: {1}; const value: longint);
   begin
-    WriteLn(param);
+    WriteLn(Format('Value: %d', [value]));
   end;
 
   {2}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
 
-The available callback property and their type of parameters are described below.
+The available callback properties and their parameter types are described below.
 
 .. note::
  Using callbacks for recurring events is *always* preferred
@@ -197,9 +197,9 @@ eine Prozedur einem Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: delphi
 
-  procedure TExample.MyCallback(sender: {1}; const param: word);
+  procedure TExample.MyCallback(sender: {1}; const value: longint);
   begin
-    WriteLn(param);
+    WriteLn(Format('Value: %d', [value]));
   end;
 
   {2}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;

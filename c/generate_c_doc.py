@@ -210,11 +210,14 @@ device. The registration is done with the :c:func:`{1}_register_callback` functi
 
  .. code-block:: c
 
-    void my_callback(int p, void *user_data) {{
-        printf("parameter: %d\\n", p);
+    void my_callback(int value, void *user_data) {{
+        printf("Value: %d\\n", value);
     }}
 
-    {1}_register_callback(&{1}, {2}_CALLBACK_EXAMPLE, (void (*)(void))my_callback, NULL);
+    {1}_register_callback(&{1},
+    {4}                   {2}_CALLBACK_EXAMPLE,
+    {4}                   (void (*)(void))my_callback,
+    {4}                   NULL);
 
 The available constants with corresponding function signatures are described below.
 
@@ -237,11 +240,14 @@ Funktion durchgeführt werden:
 
  .. code-block:: c
 
-    void my_callback(int p, void *user_data) {{
-        printf("parameter: %d\\n", p);
+    void my_callback(int value, void *user_data) {{
+        printf("Value: %d\\n", value);
     }}
 
-    {1}_register_callback(&{1}, {2}_CALLBACK_EXAMPLE, (void (*)(void))my_callback, NULL);
+    {1}_register_callback(&{1},
+    {4}                   {2}_CALLBACK_EXAMPLE,
+    {4}                   (void (*)(void))my_callback,
+    {4}                   NULL);
 
 Die verfügbaren Konstanten mit den zugehörigen Funktionssignaturen werden weiter
 unten beschrieben.
@@ -416,7 +422,8 @@ Konstanten
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,
                                                         self.get_name().upper,
-                                                        c)
+                                                        c,
+                                                        ' ' * len(self.get_name().under))
 
         article = 'ein'
 
