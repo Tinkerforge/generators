@@ -77,9 +77,9 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetic Flux Density',
-'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
-             ('Y', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
-             ('Z', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla', 'range': (-80000, 80000)}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla', 'range': (-80000, 80000)}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla', 'range': (-80000, 80000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -161,9 +161,9 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Magnetic Flux Density',
-'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
-             ('Y', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
-             ('Z', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla', 'range': (-80000, 80000)}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla', 'range': (-80000, 80000)}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10**8), 'unit': 'Tesla', 'range': (-80000, 80000)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
