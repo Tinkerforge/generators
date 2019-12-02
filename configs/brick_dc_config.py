@@ -495,12 +495,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets a period in ms with which the :cb:`Current Velocity` callback is triggered.
+Sets a period with which the :cb:`Current Velocity` callback is triggered.
 A period of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :cb:`Current Velocity` Callback
+Setzt die Periode mit welcher der :cb:`Current Velocity` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 """
 }]

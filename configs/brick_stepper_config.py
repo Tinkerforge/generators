@@ -567,7 +567,7 @@ Sets the current with which the motor will be driven.
 """,
 'de':
 """
-Setzt den Strom in mA mit welchem der Motor angetrieben wird.
+Setzt den Strom mit welchem der Motor angetrieben wird.
 
 .. warning::
  Dieser Wert sollte nicht über die Spezifikation des Schrittmotors gesetzt werden.

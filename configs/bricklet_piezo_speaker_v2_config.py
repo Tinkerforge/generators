@@ -162,11 +162,11 @@ hin und her läuft).
 
 Die folgenden Parameter können genutzt werden:
 
-* *Start Frequency*: Startfrequenz des Alarms in Hz.
-* *End Frequency*: Endfrequenz des Alarms in Hz.
-* *Step Size*: Schrittgröße eines Schritts im Frequenzdurchlauf zwischen Start-/Endfrequenz in Hz.
-* *Step Delay*: Zeit zwischen zwei Schritten (Dauer eines Tons im Frequenzdurchlauf) in ms.
-* *Duration*: Dauer des Alarm in ms
+* *Start Frequency*: Startfrequenz des Alarms.
+* *End Frequency*: Endfrequenz des Alarms.
+* *Step Size*: Schrittgröße eines Schritts im Frequenzdurchlauf zwischen Start-/Endfrequenz.
+* *Step Delay*: Zeit zwischen zwei Schritten (Dauer eines Tons im Frequenzdurchlauf).
+* *Duration*: Dauer des Alarm.
 
 Nachfolgend gibt es zwei Beispiele zum ausprobieren. Diese Beispiele können
 als Startpunkt genutzt werden um ein Alarm-Signal passend für die eigene Anwendung

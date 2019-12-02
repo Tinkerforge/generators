@@ -326,7 +326,7 @@ too.
 """,
 'de':
 """
-Setzt die Frequenz der Clock-Leitung in Hz. Der erlaubte Wertebereich
+Setzt die Frequenz der Clock-Leitung. Der erlaubte Wertebereich
 beläuft von sich 10000Hz (10kHz) bis 2000000Hz (2MHz).
 
 Das Bricklet wählt die nächst mögliche erreichbare Frequenz. Diese

@@ -523,8 +523,6 @@ both are counted if the pin is configured for input. Possible edge types are:
 * 1 = falling
 * 2 = both
 
-The debounce time is given in ms.
-
 Configuring an edge counter resets its value to 0.
 
 If you don't know what any of this means, just leave it at default. The
@@ -541,8 +539,6 @@ konfiguriert sind. Mögliche Flankentypen sind:
 * 0 = steigend (Standard)
 * 1 = fallend
 * 2 = beide
-
-Die Entprellzeit (debounce) wird in ms angegeben.
 
 Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 

@@ -192,11 +192,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the frame duration in ms as set by :func:`Set Frame Duration`.
+Returns the frame duration as set by :func:`Set Frame Duration`.
 """,
 'de':
 """
-Gibt die *Frame Duration* (Dauer des Frames) in ms zurück, wie von
+Gibt die *Frame Duration* (Dauer des Frames) zurück, wie von
 :func:`Set Frame Duration` gesetzt.
 """
 }]
@@ -252,12 +252,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the current supply voltage of the Bricklet. The voltage is given in mV.
+Returns the current supply voltage of the Bricklet.
 """,
 'de':
 """
-Gibt die aktuelle Versorgungsspannung des Bricklets zurück. Die Spannung ist
-in mV angegeben.
+Gibt die aktuelle Versorgungsspannung des Bricklets zurück.
 """
 }]
 })

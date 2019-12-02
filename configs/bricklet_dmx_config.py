@@ -235,7 +235,7 @@ This setting is only used in master mode.
 """,
 'de':
 """
-Setzt die Dauer eines Frames in ms.
+Setzt die Dauer eines Frames.
 
 Beispiel: Wenn 20 Frames pro Sekunde erreicht werden sollen,
 muss die *frame duration* auf 50ms gesetzt werden (50ms * 20 = 1 Sekunde).

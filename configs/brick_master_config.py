@@ -809,7 +809,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the configuration of the RS485 Extension. Speed is given in baud. The
+Sets the configuration of the RS485 Extension. The
 Master Brick will try to match the given baud rate as exactly as possible.
 The maximum recommended baud rate is 2000000 (2MBd).
 Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
@@ -823,8 +823,8 @@ you have to restart the Master Brick after configuration.
 """,
 'de':
 """
-Setzt die Schnittstellenkonfiguration der RS485 Extension. Die Geschwindigkeit
-wird in Baud angegeben. Der Master Brick versucht die vorgegebene Baudrate so
+Setzt die Schnittstellenkonfiguration der RS485 Extension.
+Der Master Brick versucht die vorgegebene Baudrate so
 genau wie möglich zu erreichen. Die maximale empfohlene Baudrate ist 2000000
 (2MBd). Mögliche Werte für die Parität sind 'n' (keine), 'e' (gerade) und
 'o' (ungerade).
@@ -1012,7 +1012,7 @@ possible to set the WEP ``key_index`` (1-4). If you don't know your
 
 If you choose WPA Enterprise as encryption, you have to set ``eap_options`` and
 the length of the certificates (for other encryption types these parameters
-are ignored). The certificate length are given in byte and the certificates
+are ignored). The certificates
 themselves can be set with :func:`Set Wifi Certificate`. ``eap_options`` consist
 of the outer authentication (bits 1-2), inner authentication (bit 3) and
 certificate type (bits 4-5):
@@ -1059,8 +1059,8 @@ Es ist möglich den ``key_index`` zu setzen (1-4). Fall der ``key_index``
 unbekannt ist, ist er wahrscheinlich 1.
 
 Wenn WPA Enterprise als ``encryption`` gewählt wird, müssen ``eap_options`` und
-die Länge der Zertifikate gesetzt werden. Die Länge wird in Byte angegeben
-und die Zertifikate selbst können mit :func:`Set Wifi Certificate` übertragen
+die Länge der Zertifikate gesetzt werden. Die Zertifikate selbst können mit
+:func:`Set Wifi Certificate` übertragen
 werden. Die ``eap_options`` bestehen aus Outer Authentication (Bits 1-2),
 Inner Authentication (Bit 3) und Certificate Type (Bits 4-5):
 
@@ -1964,7 +1964,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`Set USB Voltage Callback Period`. The :word:`parameter` is the USB
-voltage in mV.
+voltage.
 
 The :cb:`USB Voltage` callback is only triggered if the USB voltage has changed
 since the last triggering.
@@ -1975,7 +1975,7 @@ Does not work with hardware version 2.1.
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set USB Voltage Callback Period`, ausgelöst. Der :word:`parameter` ist
-die USB Spannung in mV.
+die USB Spannung.
 
 Der :cb:`USB Voltage` Callback wird nur ausgelöst, wenn sich die USB Spannung
 seit der letzten Auslösung geändert hat.

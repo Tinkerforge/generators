@@ -323,7 +323,7 @@ information in it that can be utilized by the FFT.
 
 Otherwise you have to use the following formulas that depend on the configured
 resolution (8/16 bit) and the full scale range (see :func:`Set Configuration`) to calculate
-the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
+the data in gₙ/10000 (same unit that is returned by :func:`Get Acceleration`):
 
 * 16 bit, full scale 2g: acceleration = value*625/1024
 * 16 bit, full scale 4g: acceleration = value*1250/1024
@@ -371,7 +371,7 @@ in diesem Rauschen können allerdings Frequenzinformation enthalten sein die fü
 einen FFT relevant seien können.
 
 Andernfalls können die folgenden Formeln benutzt werden um die Daten wieder
-in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
+in der Einheit gₙ/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
 umzuwandeln. Die Formeln hängen ab von der eingestelleten Auflösung (8/16-Bit) und dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 
@@ -446,7 +446,7 @@ information in it that can be utilized by the FFT.
 
 Otherwise you have to use the following formulas that depend on the
 full scale range (see :func:`Set Configuration`) to calculate
-the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
+the data in gₙ/10000 (same unit that is returned by :func:`Get Acceleration`):
 
 * Full scale 2g: acceleration = value*625/1024
 * Full scale 4g: acceleration = value*1250/1024
@@ -474,7 +474,7 @@ in diesem Rauschen können allerdings Frequenzinformation enthalten sein die fü
 einen FFT relevant seien können.
 
 Andernfalls können die folgenden Formeln benutzt werden um die Daten wieder
-in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
+in der Einheit gₙ/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
 umzuwandeln. Die Formeln hängen ab von dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 
@@ -513,7 +513,7 @@ information in it that can be utilized by the FFT.
 
 Otherwise you have to use the following formulas that depend on the
 full scale range (see :func:`Set Configuration`) to calculate
-the data in g/10000 (same unit that is returned by :func:`Get Acceleration`):
+the data in gₙ/10000 (same unit that is returned by :func:`Get Acceleration`):
 
 * Full scale 2g: acceleration = value*256*625/1024
 * Full scale 4g: acceleration = value*256*1250/1024
@@ -541,7 +541,7 @@ in diesem Rauschen können allerdings Frequenzinformation enthalten sein die fü
 einen FFT relevant seien können.
 
 Andernfalls können die folgenden Formeln benutzt werden um die Daten wieder
-in der Einheit g/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
+in der Einheit gₙ/10000 (gleiche Einheit wie von :func:`Get Acceleration` zurückgegeben)
 umzuwandeln. Die Formeln hängen ab von dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 

@@ -400,7 +400,7 @@ Returns the last valid touch position:
 * Pressure: Amount of pressure applied by the user
 * X: Touch position on x-axis
 * Y: Touch position on y-axis
-* Age: Age of touch press in ms (how long ago it was)
+* Age: Age of touch press (how long ago it was)
 """,
 'de':
 """
@@ -409,7 +409,7 @@ Gibt die letzte gültige Touch-Position zurück:
 * Pressure: Anpressdruck des Touches
 * X: Touch-Position auf der X-Achse
 * Y: Touch-Position auf der Y-Achse
-* Age: Alter des Touches in ms (wie lange ist die Erkennung des Touches her)
+* Age: Alter des Touches (wie lange ist die Erkennung des Touches her)
 """
 }]
 })

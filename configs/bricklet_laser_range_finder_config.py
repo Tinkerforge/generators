@@ -715,7 +715,7 @@ very little reflection (e.g. glass) and set it to a high value if you want to me
 the distance to something with a very high reflection (e.g. mirror). Set this to 0 to
 use the default algorithm. The other allowed values are 1-255.
 
-Set the **Measurement Frequency** in Hz to force a fixed measurement rate. If set to 0,
+Set the **Measurement Frequency** to force a fixed measurement rate. If set to 0,
 the Laser Range Finder Bricklet will use the optimal frequency according to the other
 configurations and the actual measured distance. Since the rate is not fixed in this case,
 the velocity measurement is not stable. For a stable velocity measurement you should
@@ -748,7 +748,7 @@ niedrig gesetzt werden. Um den Abstand zu einem Objekt mit sehr hoher Reflektivi
 (z.B. Spiegel) kann der Wert sehr hoch gesetzt werden. Mit einem Wert von 0 wird der Standardalgorithmus
 genutzt. Ansonsten ist der erlaubte Wertebereich 1-255.
 
-Der **Measurement Frequency** Parameter wird in Hz gesetzt. Er erzwingt eine feste Messfrequenz.
+Der **Measurement Frequency** Parameter wird gesetzt. Er erzwingt eine feste Messfrequenz.
 Wenn der Wert auf 0 gesetzt wird, nutzt das Laser Range Finder Bricklet die optimale Frequenz je nach
 Konfiguration und aktuell gemessener Distanz. Da die Messrate in diesem Fall nicht fest ist, ist die
 Geschwindigkeitsmessung nicht stabil. Für eine stabile Geschwindigkeitsmessung sollte eine feste

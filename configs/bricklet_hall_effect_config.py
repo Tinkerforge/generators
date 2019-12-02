@@ -107,8 +107,6 @@ magnetic field of 25 Gauss (2.5mT) or smaller causes a rising edge.
 If a magnet comes near the Bricklet the signal goes low (falling edge), if
 a magnet is removed from the vicinity the signal goes high (rising edge).
 
-The debounce time is given in ms.
-
 Configuring an edge counter resets its value to 0.
 
 If you don't know what any of this means, just leave it at default. The
@@ -127,8 +125,6 @@ sind:
 Wird ein Magnet in die Nähe des Bricklets gebracht (>35 Gauss) erzeugt dies ein *low*-Signal
 (fallende Flanke), wenn ein Magnet vom Bricklet entfernt (<25 Gauss) wird entsteht ein
 *high*-Signal (steigende Flanke).
-
-Die Entprellzeit (debounce) wird in ms angegeben.
 
 Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 

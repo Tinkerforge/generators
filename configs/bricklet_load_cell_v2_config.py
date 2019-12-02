@@ -63,11 +63,11 @@ com['constant_groups'].append({
 weight_doc = {
 'en':
 """
-Returns the currently measured weight in grams.
+Returns the currently measured weight.
 """,
 'de':
 """
-Gibt das aktuell gemessene Gewicht in Gramm zurück.
+Gibt das aktuell gemessene Gewicht zurück.
 """
 }
 

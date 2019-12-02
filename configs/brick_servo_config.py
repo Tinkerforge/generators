@@ -201,7 +201,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the maximum velocity of the specified servo in °/100s. The velocity
+Sets the maximum velocity of the specified servo. The velocity
 is accelerated according to the value set by :func:`Set Acceleration`.
 
 The minimum velocity is 0 (no movement) and the maximum velocity is 65535.
@@ -209,7 +209,7 @@ With a value of 65535 the position will be set immediately (no velocity).
 """,
 'de':
 """
-Setzt die maximale Geschwindigkeit des angegebenen Servos in °/100s.
+Setzt die maximale Geschwindigkeit des angegebenen Servos.
 Die Geschwindigkeit wird entsprechend mit dem Wert, wie von
 :func:`Set Acceleration` gesetzt, beschleunigt.
 

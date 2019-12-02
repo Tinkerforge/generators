@@ -378,7 +378,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the default text counter in ms. This counter is decremented each
+Sets the default text counter. This counter is decremented each
 ms by the LCD firmware. If the counter reaches 0, the default text
 (see :func:`Set Default Text`) is shown on the LCD.
 
@@ -394,7 +394,7 @@ A negative counter turns the default text functionality off.
 """,
 'de':
 """
-Setzt den Standard-Text-Zähler in ms. Der Zähler wird von der LCD
+Setzt den Standard-Text-Zähler. Der Zähler wird von der LCD
 Firmware einmal pro ms dekrementiert. Wenn der Zähler 0 erreicht
 wird der Standard-Text auf dem LCD angezeigt (siehe :func:`Set Default Text`).
 

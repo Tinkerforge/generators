@@ -476,7 +476,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length of a string object in bytes and the resulting error code.
+Returns the length of a string object and the resulting error code.
 """,
 'de':
 """
@@ -962,7 +962,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Set the current seek position of a file object in bytes relative to ``origin``.
+Set the current seek position of a file object relative to ``origin``.
 
 Possible file origins are:
 
@@ -991,7 +991,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the current seek position of a file object in bytes and returns the
+Returns the current seek position of a file object and returns the
 resulting error code.
 
 If the file object was created by :func:`Create Pipe` then it has no seek
