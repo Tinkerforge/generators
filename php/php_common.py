@@ -141,9 +141,13 @@ class PHPElement(common.Element):
 
         return str(value)
 
-    def get_php_type(self, for_doc=False):
+    def get_php_type(self, for_doc=False, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
         php_type = PHPElement.php_type[self.get_type()]
-        cardinality = self.get_cardinality()
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
 
         if for_doc and cardinality != 1 and self.get_type() != 'string':
             return 'array({0}, ...)'.format(php_type)

@@ -85,9 +85,11 @@ class MQTTElement(common.Element):
     def format_value(self, value):
         return json.dumps(value, separators=(',', ':'))
 
-    def get_mqtt_type(self, for_doc=False):
+    def get_mqtt_type(self, for_doc=False, cardinality=None):
         mqtt_type = MQTTElement.mqtt_types[self.get_type()]
-        cardinality = self.get_cardinality()
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
 
         if cardinality == 1 or self.get_type() == 'string':
             return mqtt_type

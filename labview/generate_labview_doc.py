@@ -398,16 +398,20 @@ class LabVIEWDocElement(common.Element):
 
         return str(value)
 
-    def get_labview_type(self):
-        t = LabVIEWDocElement.labview_types[self.get_type()]
-        c = self.get_cardinality()
+    def get_labview_type(self, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
 
-        if c > 1 and t != 'String':
-            t += '[{0}]'.format(c)
-        elif c < 0:
-            t += '[]'
+        labview_type = LabVIEWDocElement.labview_types[self.get_type()]
 
-        return t
+        if cardinality == None:
+            cardinality = self.get_cardinality()
+
+        if cardinality > 1 and labview_type != 'String':
+            labview_type += '[{0}]'.format(cardinality)
+        elif cardinality < 0:
+            labview_type += '[]'
+
+        return labview_type
 
 class LabVIEWDocGenerator(common.DocGenerator):
     def get_bindings_name(self):

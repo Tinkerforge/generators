@@ -187,8 +187,13 @@ class CSharpElement(common.Element):
 
         return str(value)
 
-    def get_csharp_type(self):
-        return get_csharp_type(self.get_type(), self.get_cardinality())
+    def get_csharp_type(self, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
+
+        return get_csharp_type(self.get_type(), cardinality)
 
     def get_csharp_le_converter_type(self):
         converter_type = CSharpElement.csharp_le_converter_types[self.get_type()]

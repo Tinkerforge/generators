@@ -428,12 +428,16 @@ class VBNETDocElement(common.Element):
 
         return str(value)
 
-    def get_vbnet_type(self, context='default'):
+    def get_vbnet_type(self, context='default', cardinality=None):
         assert context in ['default', 'meta'], context
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
 
         vbnet_type = VBNETDocElement.vbnet_types[self.get_type()]
 
-        if context == 'meta' and self.get_cardinality() != 1 and self.get_type() != 'string':
+        if cardinality == None:
+            cardinality = self.get_cardinality()
+
+        if context == 'meta' and cardinality != 1 and self.get_type() != 'string':
             vbnet_type += ' Array'
 
         return vbnet_type

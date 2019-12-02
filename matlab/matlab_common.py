@@ -249,8 +249,13 @@ class MATLABElement(common.Element):
 
         return str(value)
 
-    def get_matlab_type(self):
-        return get_matlab_type(self.get_type(), self.get_cardinality(),
+    def get_matlab_type(self, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
+
+        return get_matlab_type(self.get_type(), cardinality,
                                legacy=self.get_device().has_matlab_legacy_types())
 
     def get_matlab_byte_buffer_method_suffix(self):

@@ -132,9 +132,13 @@ class PythonElement(common.Element):
     def get_python_name(self):
         return self.get_name().under
 
-    def get_python_type(self):
+    def get_python_type(self, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
         python_type = PythonElement.python_types[self.get_type()]
-        cardinality = self.get_cardinality()
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
 
         if cardinality == 1 or self.get_type() == 'string':
             return python_type

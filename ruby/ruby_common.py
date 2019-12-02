@@ -111,9 +111,13 @@ class RubyElement(common.Element):
 
         return str(value)
 
-    def get_ruby_type(self):
+    def get_ruby_type(self, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
         ruby_type = RubyElement.ruby_types[self.get_type()]
-        cardinality = self.get_cardinality()
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
 
         if cardinality == 1 or self.get_type() == 'string':
             return ruby_type

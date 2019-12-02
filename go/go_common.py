@@ -238,8 +238,12 @@ class GoElement(common.Element):
 
         return name
 
-    def get_go_type(self, ignore_cardinality=False, ignore_constant_group=False, context='default'):
+    def get_go_type(self, ignore_cardinality=False, ignore_constant_group=False, context='default', cardinality=None):
         assert context in ['default', 'meta'], context
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
 
         if not ignore_constant_group and self.get_constant_group() is not None:
             return self.get_constant_group().get_name().camel
@@ -255,12 +259,12 @@ class GoElement(common.Element):
         else:
             element_type = self.get_type()
 
-        if self.get_cardinality() > 1 and not ignore_cardinality:
+        if cardinality > 1 and not ignore_cardinality:
             if context == 'meta' and self.get_role() == 'stream_data':
                 element_type = "[]{}".format(element_type)
             else:
-                element_type = "[{count}]{type}".format(type=element_type, count=self.get_cardinality())
-        elif self.get_cardinality() < 0 and not ignore_cardinality:
+                element_type = "[{count}]{type}".format(type=element_type, count=cardinality)
+        elif cardinality < 0 and not ignore_cardinality:
             element_type = "[]{}".format(element_type)
 
         return element_type

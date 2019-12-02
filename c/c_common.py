@@ -150,10 +150,14 @@ class CElement(common.Element):
 
         return name
 
-    def get_c_type(self, context):
+    def get_c_type(self, context, cardinality=None):
         assert context in ['default', 'signature', 'struct', 'meta']
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
 
         type_ = self.get_type()
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
 
         if type_ == 'string':
             if self.get_direction() == 'in' and context in ['signature', 'meta']:
@@ -171,9 +175,9 @@ class CElement(common.Element):
             type_ = 'uint8_t'
 
         if context == 'meta':
-            if self.get_cardinality() > 1:
-                type_ += '[{}]'.format(self.get_cardinality())
-            elif self.get_cardinality() < 0:
+            if cardinality > 1:
+                type_ += '[{}]'.format(cardinality)
+            elif cardinality < 0:
                 type_ += ' *'
 
         return type_

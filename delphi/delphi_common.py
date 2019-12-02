@@ -153,15 +153,13 @@ delphi_types = {
     'string': ('string',   'String')
 }
 
-def get_delphi_type(type_, context='default', cardinality=None):
+def get_delphi_type(type_, cardinality, context='default'):
     assert context in ['default', 'meta'], context
 
     delphi_type = delphi_types[type_]
 
     if context == 'default':
         return delphi_type
-
-    assert isinstance(cardinality, int), cardinality
 
     if cardinality != 1 and type_ != 'string':
         if cardinality > 0:
@@ -209,8 +207,13 @@ class DelphiElement(common.Element):
 
         return str(value)
 
-    def get_delphi_type(self, context='default'):
-        return get_delphi_type(self.get_type(), context, self.get_cardinality())
+    def get_delphi_type(self, context='default', cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
+
+        return get_delphi_type(self.get_type(), cardinality, context=context)
 
     def get_delphi_le_convert_type(self):
         return DelphiElement.delphi_le_convert_types[self.get_type()]

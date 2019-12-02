@@ -257,16 +257,21 @@ class ModbusDocElement(common.Element):
 
         return str(value)
 
-    def get_modbus_type(self):
-        t = self.get_type()
+    def get_modbus_type(self, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
 
-        if t == 'string':
-            t = 'char'
+        modbus_type = self.get_type()
 
-        if self.get_cardinality() == 1:
-            return t
+        if cardinality == None:
+            cardinality = self.get_cardinality()
 
-        return t + '[' + str(self.get_cardinality()) + ']'
+        if modbus_type == 'string':
+            modbus_type = 'char'
+
+        if cardinality == 1:
+            return modbus_type
+
+        return modbus_type + '[' + str(cardinality) + ']'
 
 class ModbusDocGenerator(common.DocGenerator):
     def get_bindings_name(self):

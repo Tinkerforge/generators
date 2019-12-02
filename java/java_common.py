@@ -283,8 +283,13 @@ class JavaElement(common.Element):
 
         return str(value)
 
-    def get_java_type(self):
-        return get_java_type(self.get_type(), self.get_cardinality(),
+    def get_java_type(self, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
+
+        return get_java_type(self.get_type(), cardinality,
                              legacy=self.get_device().has_java_legacy_types(),
                              octave=self.get_generator().is_octave())
 
@@ -305,9 +310,9 @@ class JavaElement(common.Element):
                                   octave=self.get_generator().is_octave())
 
         if cardinality == None:
-            return 'new {0}[{1}]'.format(java_type, self.get_cardinality())
-        else:
-            return 'new {0}[{1}]'.format(java_type, cardinality)
+            cardinality = self.get_cardinality()
+
+        return 'new {0}[{1}]'.format(java_type, cardinality)
 
     def get_java_default_item_value(self):
         if self.get_generator().is_octave() and self.get_type() == 'char':

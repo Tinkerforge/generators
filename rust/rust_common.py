@@ -285,7 +285,12 @@ class RustElement(common.Element):
             return name + "_"
         return name
 
-    def get_rust_type(self, ignore_cardinality=False, for_doc=False):
+    def get_rust_type(self, ignore_cardinality=False, for_doc=False, cardinality=None):
+        assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
+
+        if cardinality == None:
+            cardinality = self.get_cardinality()
+
         if self.get_type() == 'string':
             return 'String'
         elif self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
@@ -298,10 +303,10 @@ class RustElement(common.Element):
             element_type = self.get_type()
 
         if not ignore_cardinality:
-            if self.get_cardinality() > 1:
-                return "[{type}; {count}]".format(type=element_type, count=self.get_cardinality())
+            if cardinality > 1:
+                return "[{type}; {count}]".format(type=element_type, count=cardinality)
 
-            if self.get_cardinality() < 1:
+            if cardinality < 1:
                 if self.get_direction() == 'in':
                     return "&[{type}]".format(type=element_type)
                 else:
