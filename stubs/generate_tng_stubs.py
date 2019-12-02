@@ -444,6 +444,12 @@ void communication_init(void);
     def get_element_class(self):
         return c_common.CElement
 
+    def get_doc_null_value_name(self):
+        return 'NULL'
+
+    def get_doc_formatted_param(self, element):
+        return element.get_name().under
+
     def copy_templates_to(self, folder_dst):
         folder_src = os.path.join(self.get_root_dir(), 'tng_templates')
         shutil.copytree(os.path.join(folder_src, 'software'), os.path.join(folder_dst, 'software'))
