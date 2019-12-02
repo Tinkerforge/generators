@@ -232,8 +232,8 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
         if name == self.get_device().get_initial_name():
             name += '_'
 
-        return template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
-                               type1=delphi_common.get_delphi_type(self.get_type().split(':')[0])[1],
+        return template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0], 1)[0],
+                               type1=delphi_common.get_delphi_type(self.get_type().split(':')[0], 1)[1],
                                array_end=self.get_cardinality() - 1,
                                name=name)
 
@@ -313,8 +313,8 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
         if name == self.get_device().get_initial_name():
             name += '_'
 
-        return template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0])[0],
-                               type1=delphi_common.get_delphi_type(self.get_type().split(':')[0])[1],
+        return template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0], 1)[0],
+                               type1=delphi_common.get_delphi_type(self.get_type().split(':')[0], 1)[1],
                                array_end=self.get_cardinality() - 1), name
 
     def get_delphi_variable_name(self):
