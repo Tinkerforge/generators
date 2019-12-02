@@ -280,7 +280,7 @@ Für eine Erklärung des generellen Ansatzes siehe :func:`Set LED Values`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Clock Frequency',
-'elements': [('Frequency', 'uint32', 1, 'in', {'unit': 'Hertz', 'scale': (10000, 2*10**6), 'default': 1666666})],
+'elements': [('Frequency', 'uint32', 1, 'in', {'unit': 'Hertz', 'range': (10000, 2*10**6), 'default': 1666666})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -319,7 +319,7 @@ Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerate ab.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Clock Frequency',
-'elements': [('Frequency', 'uint32', 1, 'out', {'unit': 'Hertz', 'scale': (10000, 2*10**6), 'default': 1666666})],
+'elements': [('Frequency', 'uint32', 1, 'out', {'unit': 'Hertz', 'range': (10000, 2*10**6), 'default': 1666666})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
