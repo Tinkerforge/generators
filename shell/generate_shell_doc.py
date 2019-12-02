@@ -69,8 +69,8 @@ class ShellDocDevice(shell_common.ShellDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).dash
             params = packet.get_shell_parameter_list(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_shell_doc_type(),
-                                                     lambda element: '<{0}>'.format(element.get_name().dash) if element.get_direction() == 'in' else element.get_name().dash,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_shell_doc_type(cardinality=cardinality),
+                                                     lambda element, index=None: '<{0}>'.format(element.get_name(index=index).dash) if element.get_direction() == 'in' else element.get_name(index=index).dash,
                                                      return_label_override={'en': 'Output', 'de': 'Ausgabe'},
                                                      constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
                                                      no_out_value={'en': 'no output', 'de': 'keine Ausgabe'},
@@ -100,8 +100,8 @@ class ShellDocDevice(shell_common.ShellDevice):
             if packet.is_virtual():
                 continue
 
-            meta = packet.get_formatted_element_meta(lambda element: element.get_shell_doc_type(),
-                                                     lambda element: element.get_name().dash,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_shell_doc_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).dash,
                                                      callback_parameter_label_override={'en': 'Output', 'de': 'Ausgabe'},
                                                      constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
                                                      no_out_value={'en': 'no output', 'de': 'keine Ausgabe'},
@@ -419,12 +419,23 @@ class ShellDocPacket(shell_common.ShellPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        def constant_format(prefix, constant_group, constant, value):
+        def format_element_name(element, index):
+            if element.get_direction() == 'in':
+                template = '<{0}>'
+            else:
+                template = '{0}'
+
+            if index == None:
+                return template.format(element.get_name().dash)
+
+            return template.format(element.get_name().dash) + '[{0}]'.format(index)
+
+        def format_constant(prefix, constant_group, constant, value):
             return '* **{0}**-{1} = {2}\n'.format(constant_group.get_name().dash, constant.get_name().dash, value)
 
-        text += common.format_constants('', self, lambda element: '<{0}>'.format(element.get_name().dash) if element.get_direction() == 'in' else element.get_name().dash,
+        text += common.format_constants('', self, format_element_name,
                                         constants_name=constants,
-                                        constant_format_func=constant_format)
+                                        constant_format_func=format_constant)
 
         text += common.format_since_firmware(self.get_device(), self)
 

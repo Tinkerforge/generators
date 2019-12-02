@@ -499,7 +499,7 @@ def format_simple_element_meta(simple_elements, no_out_value=None,
     for simple_element in simple_elements:
         assert simple_element[2] in [None, 1] # FIXME: no list support yet
 
-        meta = (simple_element[0], '{0}: {1}'.format(type_label, simple_element[1]))
+        meta = ('plain', simple_element[0], '{0}: {1}'.format(type_label, simple_element[1]))
 
         if simple_element[3] == 'in':
             formatted_meta_in.append(meta)
@@ -514,21 +514,21 @@ def format_simple_element_meta(simple_elements, no_out_value=None,
     formatted_meta = []
 
     if len(formatted_meta_in) > 0:
-        formatted_meta.append((parameter_label, formatted_meta_in))
+        formatted_meta.append(('plain', parameter_label, formatted_meta_in))
 
     if len(formatted_meta_out) > 0:
-        formatted_meta.append((return_label, formatted_meta_out))
+        formatted_meta.append(('plain', return_label, formatted_meta_out))
 
     return formatted_meta
 
 def merge_meta_sections(items):
     merged_items = []
 
-    for label, values in items:
+    for style, label, values in items:
         merged = False
 
-        for merged_label, merged_values in merged_items:
-            if merged_label == label:
+        for merged_style, merged_label, merged_values in merged_items:
+            if merged_style == style and merged_label == label:
                 merged_values += values
                 merged = True
                 break
@@ -536,11 +536,11 @@ def merge_meta_sections(items):
         if merged:
             continue
 
-        merged_items.append((label, values))
+        merged_items.append((style, label, values))
 
     return merged_items
 
-def make_rst_meta_table(items, indent_level=1, index_label_match=None):
+def make_rst_meta_table(items, indent_level=1, index_format_func=str):
     table_template = '''.. raw:: html
 
  <table class="docutils field-list" frame="void" rules="none">
@@ -553,28 +553,43 @@ def make_rst_meta_table(items, indent_level=1, index_label_match=None):
     row_template = '<tr class="field"><th class="field-name">{label}:</th><td class="field-body"><ul class="simple">{values}</ul></td></tr>'
     named_value_template = '<li>{index}<strong>{name}</strong> &#8211; {value}</li>'
     value_template = '<li>{index}{value}</li>'
-
-    if index_label_match != None:
-        index_label_match = select_lang(index_label_match)
-
     formatted_rows = []
 
-    for label, values in items:
+    for style, label, values in items:
         if not isinstance(values, list):
             values = [values]
 
         formatted_values = []
+        outer_i = 0
+        inner_i = 0
 
-        for i, value in enumerate(values):
-            if label == index_label_match:
-                index = '{0}: '.format(i)
+        for value in values:
+            if style == 'index':
+                index = '{0}: '.format(index_format_func(outer_i))
             else:
                 index = ''
 
             if isinstance(value, tuple):
-                formatted_values.append(named_value_template.format(index=index, name=html_escape(value[0]), value=html_escape(value[1])))
+                if value[0] == 'index':
+                    assert outer_i > 0, outer_i
+
+                    if inner_i == 0:
+                        formatted_values.append('<ul class="simple-inner">')
+
+                    index = '{0}: '.format(index_format_func(inner_i))
+                    inner_i += 1
+                else:
+                    if inner_i != 0:
+                        formatted_values.append('</ul>')
+
+                    inner_i = 0
+
+                formatted_values.append(named_value_template.format(index=index, name=html_escape(value[1]), value=html_escape(value[2])))
             else:
                 formatted_values.append(value_template.format(index=index, value=html_escape(value)))
+
+            if not isinstance(value, tuple) or value[0] != 'index':
+                outer_i += 1
 
         formatted_rows.append(row_template.format(label=label, values='\n  '.join(formatted_values)))
 
@@ -837,7 +852,7 @@ def format_since_firmware(device, packet):
 
     return '\n.. versionadded:: {1}.{2}.{3}$nbsp;({0})\n'.format(suffix, *since)
 
-def default_constant_format(prefix, constant_group, constant, value):
+def format_constant_default(prefix, constant_group, constant, value):
     if prefix.endswith('_'):
         # sphinx interprets trailing underscores as link markers, escape trailing underscores
         prefix = prefix[:-1] + '\\_'
@@ -848,7 +863,7 @@ def default_constant_format(prefix, constant_group, constant, value):
 def format_constants(prefix, packet, element_name_func,
                      constants_intro=None,
                      constants_name=None,
-                     constant_format_func=default_constant_format):
+                     constant_format_func=format_constant_default):
     if constants_intro == None:
         constants_intro = {
             'en': """
@@ -867,17 +882,18 @@ Die folgenden **{0}** sind für diese Funktion verfügbar:
     constants = []
 
     for element in packet.get_elements():
-        constant_group = element.get_constant_group()
+        for index in element.get_indices():
+            constant_group = element.get_constant_group(index=index)
 
-        if constant_group == None:
-            continue
+            if constant_group == None:
+                continue
 
-        constants.append(select_lang({'en': '\nFor **{0}**:\n\n', 'de': '\nFür **{0}**:\n\n'}).format(element_name_func(element)))
+            constants.append(select_lang({'en': '\nFor **{0}**:\n\n', 'de': '\nFür **{0}**:\n\n'}).format(element_name_func(element, index)))
 
-        for constant in constant_group.get_constants():
-            value = element.format_value(constant.get_value())
+            for constant in constant_group.get_constants():
+                value = element.format_value(constant.get_value())
 
-            constants.append(constant_format_func(prefix, constant_group, constant, value))
+                constants.append(constant_format_func(prefix, constant_group, constant, value))
 
     if len(constants) == 0:
         return ''
@@ -1828,194 +1844,233 @@ class ConstantGroup(object):
 class Element(object):
     def __init__(self, raw_data, packet, level, role):
         self.raw_data = raw_data
-        self.raw_data_extra = {}
         self.packet = packet
         self.level = level
         self.role = role
-        self.unit = None
-        self.range_ = None
-        self.constant_group = None
+        self._extra = []
 
         check_name(raw_data[0])
 
         self.name = FlavoredName(raw_data[0])
 
-        if len(raw_data) != 4 and len(raw_data) != 5:
-            raise GeneratorError('Invalid Element: ' + repr(raw_data))
+        assert len(raw_data) == 4 or len(raw_data) == 5, raw_data
 
         if len(self.raw_data) > 4:
-            self.raw_data_extra = self.raw_data[4]
+            raw_data_extra = self.raw_data[4]
+        else:
+            raw_data_extra = {}
 
-        assert isinstance(self.raw_data_extra, dict), self.raw_data_extra
-        assert len(set(self.raw_data_extra.keys()) - set(['scale', 'unit', 'range', 'constant_group', 'default'])) == 0, self.raw_data_extra
+        assert isinstance(raw_data_extra, (dict, list)), raw_data
 
-        scale = self.get_scale()
+        if isinstance(raw_data_extra, list):
+            assert len(raw_data_extra) == self.get_cardinality(), raw_data
+            assert self.get_cardinality() > 1, raw_data
+        else:
+            raw_data_extra = [raw_data_extra]
 
-        if scale == 'dynamic':
-            assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
-        elif scale != None:
-            assert isinstance(scale, tuple), raw_data
-            assert len(scale) == 2, raw_data
-            assert isinstance(scale[0], int), raw_data
-            assert isinstance(scale[1], int), raw_data
-            assert scale[0] >= 1, raw_data
-            assert scale[1] >= 1, raw_data
-            assert scale[0] != scale[1], raw_data
-            assert gcd(*scale) == 1, raw_data
-            assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+        constant_group_names = set()
 
-        unit_name = self.raw_data_extra.get('unit')
+        for extra in raw_data_extra:
+            assert len(set(extra.keys()) - set(['name', 'scale', 'unit', 'range', 'constant_group', 'default'])) == 0, raw_data
 
-        if unit_name == 'dynamic':
-            self.unit = 'dynamic'
-        elif unit_name != None:
-            assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+            name = extra.get('name')
 
-            for unit in units:
-                if unit_name == unit.get_name():
-                    self.unit = unit
-                    break
+            if name != None:
+                assert isinstance(name, str), raw_data
 
-                for unit_prefix in unit_prefixes:
-                    if unit_prefix.symbol not in unit.get_allowed_prefixes():
-                        continue
+                check_name(name)
 
-                    if unit_name == unit.get_name(prefix=unit_prefix):
-                        self.unit = unit.clone(prefix=unit_prefix)
+            scale = extra.get('scale')
+
+            if scale == 'dynamic':
+                assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+            elif scale != None:
+                assert isinstance(scale, tuple), raw_data
+                assert len(scale) == 2, raw_data
+                assert isinstance(scale[0], int), raw_data
+                assert isinstance(scale[1], int), raw_data
+                assert scale[0] >= 1, raw_data
+                assert scale[1] >= 1, raw_data
+                assert scale[0] != scale[1], raw_data
+                assert gcd(*scale) == 1, raw_data
+                assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+
+            unit_name = extra.get('unit')
+
+            if unit_name == None:
+                unit = None
+            elif unit_name == 'dynamic':
+                unit = 'dynamic'
+            else:
+                assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+
+                unit = None
+
+                for candidate in units:
+                    if unit_name == candidate.get_name():
+                        unit = candidate
+                        break
+
+                    for unit_prefix in unit_prefixes:
+                        if unit_prefix.symbol not in candidate.get_allowed_prefixes():
+                            continue
+
+                        if unit_name == candidate.get_name(prefix=unit_prefix):
+                            unit = candidate.clone(prefix=unit_prefix)
+                            break
+
+                        for unit_inverse_prefix in unit_prefixes:
+                            if unit_inverse_prefix.symbol not in candidate.get_allowed_inverse_prefixes():
+                                continue
+
+                            if unit_name == candidate.get_name(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix):
+                                unit = candidate.clone(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix)
+                                break
+
+                        if unit != None:
+                            break
+
+                    if unit != None:
                         break
 
                     for unit_inverse_prefix in unit_prefixes:
-                        if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+                        if unit_inverse_prefix.symbol not in candidate.get_allowed_inverse_prefixes():
                             continue
 
-                        if unit_name == unit.get_name(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix):
-                            self.unit = unit.clone(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix)
+                        if unit_name == candidate.get_name(inverse_prefix=unit_inverse_prefix):
+                            unit = candidate.clone(inverse_prefix=unit_inverse_prefix)
                             break
 
-                    if self.unit != None:
+                    if unit != None:
                         break
 
-                if self.unit != None:
-                    break
+                assert unit != None, unit_name
 
-                for unit_inverse_prefix in unit_prefixes:
-                    if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
-                        continue
-
-                    if unit_name == unit.get_name(inverse_prefix=unit_inverse_prefix):
-                        self.unit = unit.clone(inverse_prefix=unit_inverse_prefix)
-                        break
-
-                if self.unit != None:
-                    break
-
-            assert self.unit != None, unit_name
-
-        if 'constant_group' in self.raw_data_extra:
-            range_default = 'constants'
-        elif self.get_type() not in ['float', 'bool', 'char', 'string']:
-            range_default = 'type'
-        else:
-            range_default = None
-
-        range_ = self.raw_data_extra.get('range')
-
-        if range_ == None:
-            if 'constant_group' in self.raw_data_extra:
-                range_ = 'constants'
+            if 'constant_group' in extra:
+                range_default = 'constants'
             elif self.get_type() not in ['float', 'bool', 'char', 'string']:
-                range_ = 'type'
+                range_default = 'type'
+            else:
+                range_default = None
 
-        if range_ not in [None, 'type', 'constants', 'dynamic']:
-            if isinstance(range_, tuple):
-                range_ = [range_]
+            range_ = extra.get('range')
 
-            assert self.get_type() not in ['bool', 'string'], raw_data
-            assert isinstance(range_, list), raw_data
-            assert len(range_) > 0, raw_data
+            if range_ == None:
+                if 'constant_group' in extra:
+                    range_ = 'constants'
+                elif self.get_type() not in ['float', 'bool', 'char', 'string']:
+                    range_ = 'type'
 
-            for i, subrange in enumerate(list(range_)):
-                assert isinstance(subrange, tuple), raw_data
-                assert len(subrange) == 2, raw_data
-                assert subrange != (None, None), raw_data
+            if range_ not in [None, 'type', 'constants', 'dynamic']:
+                if isinstance(range_, tuple):
+                    range_ = [range_]
 
-                if subrange[0] == None:
-                    assert i == 0, raw_data
+                assert self.get_type() not in ['bool', 'string'], raw_data
+                assert isinstance(range_, list), raw_data
+                assert len(range_) > 0, raw_data
 
-                    subrange = (self.get_type_range()[0], subrange[1])
+                for i, subrange in enumerate(list(range_)):
+                    assert isinstance(subrange, tuple), raw_data
+                    assert len(subrange) == 2, raw_data
+                    assert subrange != (None, None), raw_data
 
-                if subrange[1] == None:
-                    assert i == len(range_) - 1, raw_data
+                    if subrange[0] == None:
+                        assert i == 0, raw_data
 
-                    subrange = (subrange[0], self.get_type_range()[1])
+                        subrange = (self.get_type_range()[0], subrange[1])
 
-                assert subrange[0] <= subrange[1], raw_data
+                    if subrange[1] == None:
+                        assert i == len(range_) - 1, raw_data
 
-                if i > 0:
-                    assert range_[i - 1][1] < subrange[0], raw_data
+                        subrange = (subrange[0], self.get_type_range()[1])
 
-                if i < len(range_) - 1:
-                    assert subrange[1] < range_[i + 1][0], raw_data
+                    assert subrange[0] <= subrange[1], raw_data
 
-                if self.get_type() == 'char':
-                    assert isinstance(subrange[0], str), raw_data
-                    assert isinstance(subrange[1], str), raw_data
-                    assert len(subrange[0]) == 1, raw_data
-                    assert len(subrange[1]) == 1, raw_data
-                    assert ord(subrange[0]) <= 255, raw_data
-                    assert ord(subrange[1]) <= 255, raw_data
-                elif self.get_type() == 'float':
-                    assert isinstance(subrange[0], float), raw_data
-                    assert isinstance(subrange[1], float), raw_data
-                else:
-                    assert isinstance(subrange[0], int), raw_data
-                    assert isinstance(subrange[1], int), raw_data
+                    if i > 0:
+                        assert range_[i - 1][1] < subrange[0], raw_data
 
-                range_[i] = subrange
+                    if i < len(range_) - 1:
+                        assert subrange[1] < range_[i + 1][0], raw_data
 
-        self.range_ = range_
-
-        constant_group_name = self.raw_data_extra.get('constant_group')
-
-        if constant_group_name != None:
-            assert range_ != None, raw_data
-            assert self.get_type() not in ['string'], raw_data
-            assert isinstance(constant_group_name, str), raw_data
-
-            self.constant_group = self.get_device().get_constant_group(constant_group_name)
-
-            assert self.constant_group.get_type() == self.get_type(), raw_data
-
-        default = self.get_default()
-
-        if default != None:
-            assert self.get_cardinality() == 1 or \
-                   (isinstance(default, list) and \
-                    ((self.get_role() == 'stream_chunk_data' and len(default) <= self.get_cardinality()) or
-                     (self.get_role() == 'stream_data' and len(default) <= abs(self.get_cardinality())) or
-                     len(default) == self.get_cardinality())), raw_data
-
-            if not isinstance(default, list):
-                default = [default]
-
-            for subdefault in default:
-                if self.get_type().startswith('int') or self.get_type().startswith('int'):
-                    if sys.hexversion < 0x03000000:
-                        assert isinstance(subdefault, (int, long)), raw_data
+                    if self.get_type() == 'char':
+                        assert isinstance(subrange[0], str), raw_data
+                        assert isinstance(subrange[1], str), raw_data
+                        assert len(subrange[0]) == 1, raw_data
+                        assert len(subrange[1]) == 1, raw_data
+                        assert ord(subrange[0]) <= 255, raw_data
+                        assert ord(subrange[1]) <= 255, raw_data
+                    elif self.get_type() == 'float':
+                        assert isinstance(subrange[0], float), raw_data
+                        assert isinstance(subrange[1], float), raw_data
                     else:
-                        assert isinstance(subdefault, int), raw_data
-                elif self.get_type() == 'float':
-                    assert isinstance(subdefault, float), raw_data
-                elif self.get_type() == 'bool':
-                    assert isinstance(subdefault, bool), raw_data
-                elif self.get_type() == 'char':
-                    assert isinstance(subdefault, str), raw_data
-                    assert len(subdefault) == 1, raw_data
-                    assert ord(subdefault) <= 255, raw_data
-                elif self.get_type() == 'string':
-                    assert isinstance(subdefault, str), raw_data
+                        assert isinstance(subrange[0], int), raw_data
+                        assert isinstance(subrange[1], int), raw_data
 
-            # FIXME: check if default value is in range
+                    range_[i] = subrange
+
+            constant_group_name = extra.get('constant_group')
+
+            constant_group_names.add(constant_group_name)
+
+            if constant_group_name == None:
+                constant_group = None
+            else:
+                assert range_ != None, raw_data
+                assert self.get_type() not in ['string'], raw_data
+                assert isinstance(constant_group_name, str), raw_data
+
+                constant_group = self.get_device().get_constant_group(constant_group_name)
+
+                assert constant_group.get_type() == self.get_type(), raw_data
+
+            default = extra.get('default')
+
+            if default != None:
+                if self.get_cardinality() != 1:
+                    if self.get_type() == 'string':
+                        assert isinstance(default, str) and len(default) <= self.get_cardinality(), raw_data
+                    else:
+                        assert isinstance(default, list) and \
+                               ((self.get_role() == 'stream_chunk_data' and len(default) <= self.get_cardinality()) or
+                                (self.get_role() == 'stream_data' and len(default) <= abs(self.get_cardinality())) or
+                                len(default) == self.get_cardinality()), raw_data
+
+                assert len(raw_data_extra) == 1 or not isinstance(default, list), raw_data
+
+                if not isinstance(default, list):
+                    default = [default]
+
+                for subdefault in default:
+                    if self.get_type().startswith('int') or self.get_type().startswith('int'):
+                        if sys.hexversion < 0x03000000:
+                            assert isinstance(subdefault, (int, long)), raw_data
+                        else:
+                            assert isinstance(subdefault, int), raw_data
+                    elif self.get_type() == 'float':
+                        assert isinstance(subdefault, float), raw_data
+                    elif self.get_type() == 'bool':
+                        assert isinstance(subdefault, bool), raw_data
+                    elif self.get_type() == 'char':
+                        assert isinstance(subdefault, str), raw_data
+                        assert len(subdefault) == 1, raw_data
+                        assert ord(subdefault) <= 255, raw_data
+
+                if len(default) == 1:
+                    default = default[0]
+
+                # FIXME: check if default value is in range
+                # FIXME: add tooltip for contants
+
+            self._extra.append({'name': name, 'scale': scale, 'unit': unit, 'range': range_, 'constant_group': constant_group, 'default': default})
+
+        # FIXME: enforce that there is at most one contant group per element and
+        #        not one per index, because some generators cannot handle that yet
+        assert len(constant_group_names) <= 1, constant_group_names
+
+        if len(self._extra) == 0:
+            self._extra = {}
+        elif len(self._extra) == 1:
+            self._extra = self._extra[0]
 
     def get_packet(self): # parent
         return self.packet
@@ -2026,7 +2081,31 @@ class Element(object):
     def get_generator(self):
         return self.packet.get_generator()
 
+    def is_struct(self):
+        return isinstance(self._extra, list)
+
+    def get_indices(self):
+        if self.is_struct():
+            indices = list(range(self.get_cardinality()))
+        else:
+            indices = [None]
+
+        return indices
+
     def get_name(self, *args, **kwargs):
+        if 'index' in kwargs:
+            index = kwargs['index']
+
+            del kwargs['index']
+
+            if index != None:
+                name = self._get_extra(index).get('name')
+
+                if name == None:
+                    return None
+
+                return FlavoredName(name).get(*args, **kwargs)
+
         return self.name.get(*args, **kwargs)
 
     def get_type(self):
@@ -2066,20 +2145,28 @@ class Element(object):
     def get_level(self):
         return self.level
 
-    def get_constant_group(self):
-        return self.constant_group
+    def _get_extra(self, index):
+        assert not self.is_struct() or isinstance(index, int), index
 
-    def get_scale(self):
-        return self.raw_data_extra.get('scale')
+        if index == None:
+            return self._extra
 
-    def get_unit(self):
-        return self.unit
+        return self._extra[index]
 
-    def get_range(self):
-        return self.range_
+    def get_scale(self, index=None):
+        return self._get_extra(index).get('scale')
 
-    def get_default(self):
-        return self.raw_data_extra.get('default')
+    def get_unit(self, index=None):
+        return self._get_extra(index).get('unit')
+
+    def get_range(self, index=None):
+        return self._get_extra(index).get('range')
+
+    def get_constant_group(self, index=None):
+        return self._get_extra(index).get('constant_group')
+
+    def get_default(self, index=None):
+        return self._get_extra(index).get('default')
 
     def get_item_size(self):
         item_sizes = {
@@ -2337,10 +2424,11 @@ class Packet(object):
         self.constant_groups = []
 
         for element in self.elements:
-            constant_group = element.get_constant_group()
+            for index in element.get_indices():
+                constant_group = element.get_constant_group(index=index)
 
-            if constant_group != None and constant_group not in self.constant_groups:
-                self.constant_groups.append(constant_group)
+                if constant_group != None and constant_group not in self.constant_groups:
+                    self.constant_groups.append(constant_group)
 
         self.add_high_level_callback_note()
 
@@ -2409,6 +2497,7 @@ class Packet(object):
                                    output_parameter_label_override=None,
                                    return_label_override=None,
                                    return_object_label_override=None,
+                                   return_object_is_array=False,
                                    callback_parameter_label_override=None,
                                    callback_object_label_override=None,
                                    constants_hint_override=None,
@@ -2441,7 +2530,7 @@ class Packet(object):
             for prefix_element in prefix_elements:
                 assert prefix_element[2] == 1 # FIXME: no list support yet
 
-                meta = (prefix_element[0], '{0}: {1}'.format(type_label, prefix_element[1]))
+                meta = ('plain', prefix_element[0], '{0}: {1}'.format(type_label, prefix_element[1]))
 
                 if prefix_element[3] == 'in':
                     formatted_meta_in.append(meta)
@@ -2469,101 +2558,121 @@ class Packet(object):
                 elif explicit_common_cardinality:
                     meta.append('{0}: {1}'.format(length_label, cardinality))
 
-            scale = element.get_scale()
-            unit = element.get_unit()
+            if element.is_struct():
+                assert cardinality > 1
 
-            if scale != None and unit == None:
-                if scale == 'dynamic':
-                    formatted_scale = '?'
+                if element.get_direction() == 'in':
+                    formatted_meta_in.append(('plain', name_func(element), ', '.join(meta)))
                 else:
-                    formatted_scale = format_fraction(*scale)
+                    formatted_meta_out.append(('plain', name_func(element), ', '.join(meta)))
 
-                meta.append('{0}: {1}'.format(unit_label, formatted_scale))
-            elif scale == None and unit != None:
-                if unit == 'dynamic':
-                    formatted_unit = '?'
-                    sequence = '{value} {unit}'
-                else:
-                    formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.get_title(), unit.get_usage(), unit.get_symbol())
-                    sequence = unit.get_sequence()
+            for index in element.get_indices():
+                if index != None:
+                    meta = ['{0}: {1}'.format(type_label, bindings_type_func(element, cardinality=1))]
 
-                meta.append('{0}: {1}'.format(unit_label, sequence.format(value='1', unit=formatted_unit)))
-            elif scale != None and unit != None:
-                if scale == 'dynamic':
-                    formatted_scale = '?'
+                scale = element.get_scale(index=index)
+                unit = element.get_unit(index=index)
 
-                    if unit == 'dynamic':
-                        formatted_unit = '?'
+                if scale != None and unit == None:
+                    if scale == 'dynamic':
+                        formatted_scale = '?'
                     else:
-                        formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.get_title(), unit.get_usage(), unit.get_symbol())
-                        sequence = unit.get_sequence()
-                else:
-                    if unit == 'dynamic':
                         formatted_scale = format_fraction(*scale)
+
+                    meta.append('{0}: {1}'.format(unit_label, formatted_scale))
+                elif scale == None and unit != None:
+                    if unit == 'dynamic':
                         formatted_unit = '?'
                         sequence = '{value} {unit}'
                     else:
-                        normalized_scale, unit_title, unit_symbol = normalize_scale(scale, unit)
-                        formatted_scale = format_fraction(*normalized_scale)
-                        formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_title, unit.get_usage(), unit_symbol)
+                        formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.get_title(), unit.get_usage(), unit.get_symbol())
                         sequence = unit.get_sequence()
 
-                meta.append('{0}: {1}'.format(unit_label, sequence.format(value=formatted_scale, unit=formatted_unit)))
+                    meta.append('{0}: {1}'.format(unit_label, sequence.format(value='1', unit=formatted_unit)))
+                elif scale != None and unit != None:
+                    if scale == 'dynamic':
+                        formatted_scale = '?'
 
-            if element.get_type() not in ['bool', 'string']:
-                if constants_hint_override != None:
-                    constants_hint = select_lang(constants_hint_override)
-                else:
-                    constants_hint = select_lang({'en': ('See constants', 'with constants'), 'de': ('Siehe Konstanten', 'mit Konstanten')})
-
-                range_ = element.get_range()
-
-                if range_ == 'constants':
-                    meta.append('{0}: {1}'.format(range_label, constants_hint[0]))
-                elif range_ == 'dynamic':
-                    meta.append('{0}: ?'.format(range_label))
-                elif range_ != None:
-                    if range_ == 'type':
-                        range_ = [element.get_type_range()]
-
-                    formatted_range = []
-
-                    for subrange in range_:
-                        assert isinstance(subrange, tuple), range_
-
-                        formatted_subrange = [None, None]
-
-                        if element.get_type().startswith('int') or element.get_type().startswith('uint'):
-                            for i, value in enumerate(subrange):
-                                formatted_subrange[i] = format_value_with_tooltip(element, value, scale, unit)
+                        if unit == 'dynamic':
+                            formatted_unit = '?'
+                            sequence = '{value} {unit}'
                         else:
-                            for i, value in enumerate(subrange):
-                                formatted_subrange[i] = element.format_value(value)
-
-                        if subrange[0] == subrange[1]:
-                            formatted_range.append(formatted_subrange[0])
-                        else:
-                            formatted_range.append('{0} {1} {2}'.format(formatted_subrange[0], to_hint, formatted_subrange[1]))
-
-                    if element.get_constant_group() != None:
-                        meta.append('{0}: [{1}] {2}'.format(range_label, ', '.join(formatted_range), constants_hint[1]))
+                            formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit.get_title(), unit.get_usage(), unit.get_symbol())
+                            sequence = unit.get_sequence()
                     else:
-                        meta.append('{0}: [{1}]'.format(range_label, ', '.join(formatted_range)))
+                        if unit == 'dynamic':
+                            formatted_scale = format_fraction(*scale)
+                            formatted_unit = '?'
+                            sequence = '{value} {unit}'
+                        else:
+                            normalized_scale, unit_title, unit_symbol = normalize_scale(scale, unit)
+                            formatted_scale = format_fraction(*normalized_scale)
+                            formatted_unit = '⟨abbr title=«{0} ({1})»⟩{2}⟨/abbr⟩'.format(unit_title, unit.get_usage(), unit_symbol)
+                            sequence = unit.get_sequence()
 
-            default = element.get_default()
+                    meta.append('{0}: {1}'.format(unit_label, sequence.format(value=formatted_scale, unit=formatted_unit)))
 
-            if default != None:
-                if element.get_type().startswith('int') or element.get_type().startswith('uint'):
-                    formatted_default = format_value_with_tooltip(element, default, scale, unit)
+                if element.get_type() not in ['bool', 'string']:
+                    if constants_hint_override != None:
+                        constants_hint = select_lang(constants_hint_override)
+                    else:
+                        constants_hint = select_lang({'en': ('See constants', 'with constants'), 'de': ('Siehe Konstanten', 'mit Konstanten')})
+
+                    range_ = element.get_range(index=index)
+
+                    if range_ == 'constants':
+                        meta.append('{0}: {1}'.format(range_label, constants_hint[0]))
+                    elif range_ == 'dynamic':
+                        meta.append('{0}: ?'.format(range_label))
+                    elif range_ != None:
+                        if range_ == 'type':
+                            range_ = [element.get_type_range()]
+
+                        formatted_range = []
+
+                        for subrange in range_:
+                            assert isinstance(subrange, tuple), range_
+
+                            formatted_subrange = [None, None]
+
+                            if element.get_type().startswith('int') or element.get_type().startswith('uint'):
+                                for i, value in enumerate(subrange):
+                                    formatted_subrange[i] = format_value_with_tooltip(element, value, scale, unit)
+                            else:
+                                for i, value in enumerate(subrange):
+                                    formatted_subrange[i] = element.format_value(value)
+
+                            if subrange[0] == subrange[1]:
+                                formatted_range.append(formatted_subrange[0])
+                            else:
+                                formatted_range.append('{0} {1} {2}'.format(formatted_subrange[0], to_hint, formatted_subrange[1]))
+
+                        if element.get_constant_group(index=index) != None:
+                            meta.append('{0}: [{1}] {2}'.format(range_label, ', '.join(formatted_range), constants_hint[1]))
+                        else:
+                            meta.append('{0}: [{1}]'.format(range_label, ', '.join(formatted_range)))
+
+                default = element.get_default(index=index)
+
+                if default != None:
+                    if element.get_type().startswith('int') or element.get_type().startswith('uint'):
+                        formatted_default = format_value_with_tooltip(element, default, scale, unit)
+                    else:
+                        formatted_default = element.format_value(default)
+
+                    meta.append('{0}: {1}'.format(default_label, formatted_default))
+
+                if index == None:
+                    style = 'plain'
                 else:
-                    formatted_default = element.format_value(default)
+                    style = 'index'
 
-                meta.append('{0}: {1}'.format(default_label, formatted_default))
+                name = name_func(element, index=index)
 
-            if element.get_direction() == 'in':
-                formatted_meta_in.append((name_func(element), ', '.join(meta)))
-            else:
-                formatted_meta_out.append((name_func(element), ', '.join(meta)))
+                if element.get_direction() == 'in':
+                    formatted_meta_in.append((style, name, ', '.join(meta)))
+                else:
+                    formatted_meta_out.append((style, name, ', '.join(meta)))
 
             if stream_length_suffix != None:
                 length_elements = self.get_elements(role='stream_length')
@@ -2577,7 +2686,7 @@ class Packet(object):
                     else:
                         raise common.GeneratorError('Malformed stream config')
 
-                    meta = (name_func(element) + stream_length_suffix, ', '.join(['{0}: {1}'.format(type_label, length_type)]))
+                    meta = ('plain', name_func(element) + stream_length_suffix, ', '.join(['{0}: {1}'.format(type_label, length_type)]))
 
                     if element.get_direction() == 'in':
                         formatted_meta_in.append(meta)
@@ -2588,7 +2697,7 @@ class Packet(object):
             for suffix_element in suffix_elements:
                 assert suffix_element[2] == 1 # FIXME: no list support yet
 
-                meta = (suffix_element[0], '{0}: {1}'.format(type_label, suffix_element[1]))
+                meta = ('plain', suffix_element[0], '{0}: {1}'.format(type_label, suffix_element[1]))
 
                 if suffix_element[3] == 'in':
                     formatted_meta_in.append(meta)
@@ -2640,10 +2749,10 @@ class Packet(object):
         formatted_meta = []
 
         if include_function_id:
-            formatted_meta.append((function_id_label, str(self.get_function_id())))
+            formatted_meta.append(('plain', function_id_label, str(self.get_function_id())))
 
         if len(formatted_meta_in) > 0:
-            formatted_meta.append((parameter_label, formatted_meta_in))
+            formatted_meta.append(('plain', parameter_label, formatted_meta_in))
 
         has_return = False
 
@@ -2651,41 +2760,41 @@ class Packet(object):
             if self.get_type() == 'function':
                 if output_parameter == 'never':
                     if return_object == 'never':
-                        formatted_meta.append((return_label, formatted_meta_out))
+                        formatted_meta.append(('plain', return_label, formatted_meta_out))
                         has_return = True
                     elif return_object == 'always':
-                        formatted_meta.append((return_object_label, formatted_meta_out))
+                        formatted_meta.append(('index' if return_object_is_array else 'plain', return_object_label, formatted_meta_out))
                     else: # conditional
                         if len(formatted_meta_out) == 1:
-                            formatted_meta.append((return_label, formatted_meta_out))
+                            formatted_meta.append(('plain', return_label, formatted_meta_out))
                             has_return = True
                         else:
-                            formatted_meta.append((return_object_label, formatted_meta_out))
+                            formatted_meta.append(('index' if return_object_is_array else 'plain', return_object_label, formatted_meta_out))
                 elif output_parameter == 'always':
-                    formatted_meta.append((output_parameter_label, formatted_meta_out))
+                    formatted_meta.append(('plain', output_parameter_label, formatted_meta_out))
                 else: # conditional
                     if len(formatted_meta_out) == 1:
-                        formatted_meta.append((return_label, formatted_meta_out))
+                        formatted_meta.append(('plain', return_label, formatted_meta_out))
                         has_return = True
                     else:
-                        formatted_meta.append((output_parameter_label, formatted_meta_out))
+                        formatted_meta.append(('plain', output_parameter_label, formatted_meta_out))
             else: # callback
                 if callback_object == 'never':
-                    formatted_meta.append((callback_parameter_label, formatted_meta_out))
+                    formatted_meta.append(('plain', callback_parameter_label, formatted_meta_out))
                 elif callback_object == 'always':
-                    formatted_meta.append((callback_object_label, formatted_meta_out))
+                    formatted_meta.append(('plain', callback_object_label, formatted_meta_out))
                 else: # conditional
                     if len(formatted_meta_out) == 1:
-                        formatted_meta.append((callback_parameter_label, formatted_meta_out))
+                        formatted_meta.append(('plain', callback_parameter_label, formatted_meta_out))
                     else:
-                        formatted_meta.append((callback_object_label, formatted_meta_out))
+                        formatted_meta.append(('plain', callback_object_label, formatted_meta_out))
 
         if len(formatted_meta_return) > 0:
-            formatted_meta.append((return_label, formatted_meta_return))
+            formatted_meta.append(('plain', return_label, formatted_meta_return))
             has_return = True
 
         if not has_return and no_return_value != None:
-            formatted_meta.append((return_label, select_lang(no_return_value)))
+            formatted_meta.append(('plain', return_label, select_lang(no_return_value)))
 
         return formatted_meta
 

@@ -71,12 +71,12 @@ class MathematicaDocDevice(common.Device):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
             params = packet.get_mathematica_parameter_list(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_mathematica_type(),
-                                                     lambda element: element.get_mathematica_description_name(),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_mathematica_type(),
+                                                     lambda element, index=None: element.get_mathematica_description_name(index=index),
                                                      output_parameter='conditional',
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
-            meta_table = common.make_rst_meta_table(meta)
+            meta_table = common.make_rst_meta_table(meta, index_format_func=lambda index: str(index + 1))
             ret = packet.get_mathematica_return(high_level=True)
             doc = packet.get_mathematica_formatted_doc()
 
@@ -95,12 +95,12 @@ class MathematicaDocDevice(common.Device):
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
             params = packet.get_mathematica_parameter_list(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_mathematica_type(),
-                                                     lambda element: element.get_mathematica_description_name(),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_mathematica_type(),
+                                                     lambda element, index=None: element.get_mathematica_description_name(index=index),
                                                      prefix_elements=[('sender', 'NETObject[{0}]'.format(self.get_mathematica_class_name()), 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
-            meta_table = common.make_rst_meta_table(meta)
+            meta_table = common.make_rst_meta_table(meta, index_format_func=lambda index: str(index + 1))
             doc = packet.get_mathematica_formatted_doc()
 
             callbacks.append(callback.format(self.get_mathematica_class_name(),
@@ -332,7 +332,7 @@ Konstanten
         create_meta = common.format_simple_element_meta([('uid', 'String', 1, 'in'),
                                                          ('ipcon', 'NETObject[IPConnection]', 1, 'in'),
                                                          (self.get_name().headless, 'NETObject[{0}]'.format(self.get_mathematica_class_name()), 1, 'out')])
-        create_meta_table = common.make_rst_meta_table(create_meta)
+        create_meta_table = common.make_rst_meta_table(create_meta, index_format_func=lambda index: str(index + 1))
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_mathematica_class_name(),
@@ -395,11 +395,17 @@ class MathematicaDocPacket(common.Packet):
 
         prefix = self.get_device().get_mathematica_class_name() + '`'
 
-        def constant_format(prefix, constant_group, constant, value):
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().headless
+
+            return '{0}[[{1}]]'.format(element.get_name().headless, index)
+
+        def format_constant(prefix, constant_group, constant, value):
             return '* {0}\\ **{1}**\\ U{2} = {3}\n'.format(prefix, constant_group.get_name().upper.replace('_', 'U'),
                                                            constant.get_name().upper.replace('_', 'U'), value)
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().headless, constant_format_func=constant_format)
+        text += common.format_constants(prefix, self, format_element_name, constant_format_func=format_constant)
 
         text += common.format_since_firmware(self.get_device(), self)
 
@@ -494,10 +500,10 @@ class MathematicaDocElement(common.Element):
 
         return name
 
-    def get_mathematica_description_name(self):
-        name = self.get_name().headless
+    def get_mathematica_description_name(self, index=None):
+        name = self.get_name(index=index).headless
 
-        if self.get_cardinality() != 1 and self.get_type() != 'string':
+        if self.get_cardinality() != 1 and self.get_type() != 'string' and index == None:
             name += 'i'
 
         return name

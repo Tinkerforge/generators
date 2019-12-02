@@ -63,8 +63,8 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
 
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_mqtt_name(skip=skip)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_mqtt_type(for_doc=True),
-                                                     lambda element: element.get_name().under,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_mqtt_type(for_doc=True, cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).under,
                                                      parameter_label_override={'en': 'Request', 'de': 'Anfrage'},
                                                      return_label_override={'en': 'Response', 'de': 'Antwort'},
                                                      no_in_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
@@ -130,10 +130,10 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
 
             meta = common.format_simple_element_meta([('register', 'bool', 1, 'in')],
                                                       parameter_label_override={'en': 'Register Request', 'de': 'Registrierungsanfrage'})
-            meta += packet.get_formatted_element_meta(lambda element: element.get_mqtt_type(for_doc=True),
-                                                      lambda element: element.get_name().under,
+            meta += packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_mqtt_type(for_doc=True, cardinality=cardinality),
+                                                      lambda element, index=None: element.get_name(index=index).under,
                                                       callback_parameter_label_override={'en': 'Callback Response', 'de': 'Callback-Antwort'},
-                                                     constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
+                                                      constants_hint_override={'en': ('See symbols', 'with symbols'), 'de': ('Siehe Symbole', 'mit Symbolen')},
                                                       no_out_value={'en': 'empty payload', 'de': 'keine Nutzdaten'},
                                                       explicit_string_cardinality=True,
                                                       explicit_variable_stream_cardinality=True,
@@ -288,12 +288,18 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
 
         text = common.handle_rst_substitutions(text, self)
 
-        def constant_format(prefix, constant_group, constant, value):
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().under
+
+            return '{0}[{1}]'.format(element.get_name().under, index)
+
+        def format_constant(prefix, constant_group, constant, value):
             return '* "{0}" = {1}\n'.format(constant.get_name().under, value)
 
-        text += common.format_constants('', self, lambda element: element.get_name().under,
+        text += common.format_constants('', self, format_element_name,
                                         constants_name=constants,
-                                        constant_format_func=constant_format)
+                                        constant_format_func=format_constant)
 
         text += common.format_since_firmware(self.get_device(), self)
         text = text.replace('|device_identifier_constant|\n', '')

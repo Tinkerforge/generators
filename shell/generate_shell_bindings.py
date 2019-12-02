@@ -186,7 +186,8 @@ def call_{0}_{1}(ctx, argv):
                 for element in packet.get_elements(direction='out'):
                     output_names.append("'{0}'".format(element.get_name().dash))
 
-                    constant_group = element.get_constant_group()
+                    # FIXME: currently common.py enforces that there is at most one contant group per element and not one per index
+                    constant_group = element.get_constant_group(index=element.get_indices()[0])
 
                     if constant_group != None:
                         symbols = []
@@ -418,7 +419,8 @@ def dispatch_{0}_{1}(ctx, argv):
             for element in packet.get_elements(direction='out'):
                 output_names.append("'{0}'".format(element.get_name().dash))
 
-                constant_group = element.get_constant_group()
+                # FIXME: currently common.py enforces that there is at most one contant group per element and not one per index
+                constant_group = element.get_constant_group(index=element.get_indices()[0])
 
                 if constant_group != None:
                     symbols = []

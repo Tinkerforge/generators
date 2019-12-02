@@ -66,8 +66,8 @@ class VBNETDocDevice(common.Device):
             ret_type = packet.get_vbnet_return_type(high_level=True)
             name = packet.get_name(skip=skip).camel
             params = packet.get_vbnet_parameter_list(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_vbnet_type(context='meta'),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_vbnet_type(context='meta', cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      output_parameter='conditional',
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -98,8 +98,8 @@ class VBNETDocDevice(common.Device):
             skip = -2 if packet.has_high_level() else 0
             desc = packet.get_vbnet_formatted_doc()
             params = packet.get_vbnet_parameter_list(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_vbnet_type(context='meta'),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_vbnet_type(context='meta', cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      prefix_elements=[('sender', self.get_vbnet_class_name(), 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -339,7 +339,13 @@ class VBNETDocPacket(common.Packet):
 
         prefix = self.get_device().get_vbnet_class_name() + '.'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().headless
+
+            return '{0}({1})'.format(element.get_name().headless, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

@@ -88,59 +88,67 @@ class JSONBindingsElement(common.Element):
         members['type'] = self.get_type()
         members['cardinality'] = self.get_cardinality()
         members['direction'] = self.get_direction()
+        members['extra'] = []
 
-        scale = self.get_scale()
+        for index in self.get_indices():
+            extra = OrderedDict()
+            extra['index'] = index
+            extra['name'] = self.get_name(index=index).space
 
-        if scale in [None, 'dynamic']:
-            members['scale'] = scale
-        else:
-            members['scale'] = OrderedDict()
-            members['scale']['numerator'] = scale[0]
-            members['scale']['denominator'] = scale[1]
+            scale = self.get_scale(index=index)
 
-        unit = self.get_unit()
+            if scale in [None, 'dynamic']:
+                extra['scale'] = scale
+            else:
+                extra['scale'] = OrderedDict()
+                extra['scale']['numerator'] = scale[0]
+                extra['scale']['denominator'] = scale[1]
 
-        if unit in [None, 'dynamic']:
-            members['unit'] = unit
-        else:
-            members['unit'] = OrderedDict()
-            members['unit']['title'] = OrderedDict()
-            members['unit']['title']['en'] = unit.get_title(language='en')
-            members['unit']['title']['de'] = unit.get_title(language='de')
-            members['unit']['symbol'] = unit.get_symbol()
-            members['unit']['usage'] = OrderedDict()
-            members['unit']['usage']['en'] = unit.get_usage(language='en')
-            members['unit']['usage']['de'] = unit.get_usage(language='de')
-            members['unit']['sequence'] = OrderedDict()
-            members['unit']['sequence']['en'] = unit.get_sequence(language='en')
-            members['unit']['sequence']['de'] = unit.get_sequence(language='de')
+            unit = self.get_unit(index=index)
 
-        range_ = self.get_range()
+            if unit in [None, 'dynamic']:
+                extra['unit'] = unit
+            else:
+                extra['unit'] = OrderedDict()
+                extra['unit']['title'] = OrderedDict()
+                extra['unit']['title']['en'] = unit.get_title(language='en')
+                extra['unit']['title']['de'] = unit.get_title(language='de')
+                extra['unit']['symbol'] = unit.get_symbol()
+                extra['unit']['usage'] = OrderedDict()
+                extra['unit']['usage']['en'] = unit.get_usage(language='en')
+                extra['unit']['usage']['de'] = unit.get_usage(language='de')
+                extra['unit']['sequence'] = OrderedDict()
+                extra['unit']['sequence']['en'] = unit.get_sequence(language='en')
+                extra['unit']['sequence']['de'] = unit.get_sequence(language='de')
 
-        if not isinstance(range_, list):
-            members['range'] = range_
-        else:
-            members['range'] = []
+            range_ = self.get_range(index=index)
 
-            for subrange in range_:
-                members['range'].append(OrderedDict([('minimum', subrange[0]), ('maximum', subrange[1])]))
+            if not isinstance(range_, list):
+                extra['range'] = range_
+            else:
+                extra['range'] = []
 
-        members['default'] = self.get_default()
+                for subrange in range_:
+                    extra['range'].append(OrderedDict([('minimum', subrange[0]), ('maximum', subrange[1])]))
 
-        constant_group = self.get_constant_group()
+            extra['default'] = self.get_default(index=index)
 
-        if constant_group == None:
-            members['constant_group'] = None
-        else:
-            members['constant_group'] = OrderedDict()
-            members['constant_group']['name'] = constant_group.get_name().space
-            members['constant_group']['constants'] = []
+            constant_group = self.get_constant_group(index=index)
 
-            for constant in constant_group.get_constants():
-                members['constant_group']['constants'].append(OrderedDict([
-                    ('name', constant.get_name().space),
-                    ('value', constant.get_value())
-                ]))
+            if constant_group == None:
+                extra['constant_group'] = None
+            else:
+                extra['constant_group'] = OrderedDict()
+                extra['constant_group']['name'] = constant_group.get_name().space
+                extra['constant_group']['constants'] = []
+
+                for constant in constant_group.get_constants():
+                    extra['constant_group']['constants'].append(OrderedDict([
+                        ('name', constant.get_name().space),
+                        ('value', constant.get_value())
+                    ]))
+
+            members['extra'].append(extra)
 
         return members
 

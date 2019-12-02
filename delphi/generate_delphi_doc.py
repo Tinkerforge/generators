@@ -64,8 +64,8 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
             params = '; '.join(packet.get_delphi_parameters('doc', high_level=True))
-            meta = packet.get_formatted_element_meta(lambda element: element.get_delphi_type(context='meta'),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_delphi_type(context='meta', cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      output_parameter='conditional',
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
@@ -112,8 +112,8 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
             params = '; '.join(packet.get_delphi_parameters('doc', high_level=True))
-            meta = packet.get_formatted_element_meta(lambda element: element.get_delphi_type(context='meta'),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_delphi_type(context='meta', cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      prefix_elements=[('sender', cls, 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
@@ -361,7 +361,13 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         prefix = '{0}_{1}_'.format(self.get_device().get_category().upper,
                                    self.get_device().get_name().upper)
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().headless
+
+            return '{0}[{1}]'.format(element.get_name().headless, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

@@ -129,8 +129,8 @@ class PythonElement(common.Element):
 
         return str(value)
 
-    def get_python_name(self):
-        return self.get_name().under
+    def get_python_name(self, index=None):
+        return self.get_name(index=index).under
 
     def get_python_type(self, cardinality=None):
         assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality

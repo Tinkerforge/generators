@@ -245,8 +245,9 @@ class GoElement(common.Element):
         if cardinality == None:
             cardinality = self.get_cardinality()
 
-        if not ignore_constant_group and self.get_constant_group() is not None:
-            return self.get_constant_group().get_name().camel
+        # FIXME: currently common.py enforces that there is at most one contant group per element and not one per index
+        if not ignore_constant_group and self.get_constant_group(index=self.get_indices()[0]) is not None:
+            return self.get_constant_group(index=self.get_indices()[0]).get_name().camel
 
         if self.get_type() == 'char':
             element_type = 'rune'

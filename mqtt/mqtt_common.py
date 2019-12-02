@@ -110,7 +110,9 @@ class MQTTElement(common.Element):
 
     def get_symbols(self):
         symbols = []
-        constant_group = self.get_constant_group()
+
+        # FIXME: currently common.py enforces that there is at most one contant group per element and not one per index
+        constant_group = self.get_constant_group(index=self.get_indices()[0])
 
         if constant_group != None:
             symbols = ["{}: {}".format(repr(c.get_value()), repr(c.get_name().under)) for c in constant_group.get_constants()]

@@ -61,8 +61,8 @@ class PythonDocDevice(python_common.PythonDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).under
             params = packet.get_python_parameters(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_python_type(),
-                                                     lambda element: element.get_python_name(),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_python_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_python_name(index=index),
                                                      return_object='conditional',
                                                      no_out_value={'en': 'None', 'de': 'None'},
                                                      explicit_string_cardinality=True,
@@ -87,8 +87,8 @@ class PythonDocDevice(python_common.PythonDevice):
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
-            meta = packet.get_formatted_element_meta(lambda element: element.get_python_type(),
-                                                     lambda element: element.get_python_name(),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_python_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_python_name(index=index),
                                                      no_out_value={'en': 'no parameters', 'de': 'keine Parameter'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -396,7 +396,13 @@ class PythonDocPacket(python_common.PythonPacket):
 
         prefix = self.get_device().get_python_class_name() + '.'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().under)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().under
+
+            return '{0}[{1}]'.format(element.get_name().under, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

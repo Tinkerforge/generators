@@ -89,8 +89,8 @@ class LabVIEWDocDevice(common.Device):
             name = packet.get_name(skip=skip).camel
             inputs = packet.get_labview_parameter_list('in', high_level=True)
             outputs = packet.get_labview_parameter_list('out', high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_labview_type(),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_labview_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      parameter_label_override={'en': 'Input', 'de': 'Eingabe'},
                                                      return_label_override={'en': 'Output', 'de': 'Ausgabe'},
                                                      explicit_string_cardinality=True,
@@ -114,8 +114,8 @@ class LabVIEWDocDevice(common.Device):
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
             outputs = packet.get_labview_parameter_list('out', high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_labview_type(),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_labview_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      prefix_elements=[('sender', '.NET Refnum ({0})'.format(self.get_labview_class_name()), 1, 'out')],
                                                      callback_parameter_label_override={'en': 'Callback Output', 'de': 'Callback-Ausgabe'},
                                                      explicit_string_cardinality=True,
@@ -347,7 +347,13 @@ class LabVIEWDocPacket(common.Packet):
 
         prefix = self.get_device().get_labview_class_name() + '.'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().headless
+
+            return '{0}[{1}]'.format(element.get_name().headless, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

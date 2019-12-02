@@ -142,10 +142,10 @@ class CElement(common.Element):
 
         return str(value)
 
-    def get_c_name(self):
-        name = self.get_name().under
+    def get_c_name(self, index=None):
+        name = self.get_name(index=index).under
 
-        if self.get_direction() == 'out' and self.get_packet().get_type() == 'function':
+        if self.get_direction() == 'out' and self.get_packet().get_type() == 'function' and index == None:
             name = 'ret_' + name
 
         return name

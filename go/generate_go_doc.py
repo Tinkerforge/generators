@@ -63,8 +63,8 @@ class GoDocDevice(go_common.GoDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).camel
             params = packet.get_go_parameters(high_level=True, ignore_constant_group=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_go_type(ignore_constant_group=True, context='meta'),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_go_type(ignore_constant_group=True, context='meta', cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      suffix_elements=[('err', 'error', 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -103,8 +103,8 @@ class GoDocDevice(go_common.GoDevice):
             skip = -2 if packet.has_high_level() else 0
             desc = packet.get_go_formatted_doc()
             result_type = packet.get_go_return_type(high_level=packet.has_high_level(), ignore_constant_group=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_go_type(ignore_constant_group=True, context='meta'),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_go_type(ignore_constant_group=True, context='meta', cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      suffix_elements=[('registrationId', 'uint64', 1, 'return')],
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -369,12 +369,18 @@ class GoDocPacket(go_common.GoPacket):
 
         prefix = self.get_device().get_go_package() + '.'
 
-        def constant_format(prefix, constant_group, constant, value):
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().headless
+
+            return '{0}[{1}]'.format(element.get_name().headless, index)
+
+        def format_constant(prefix, constant_group, constant, value):
             return '* {0}\\ **{1}**\\ {2} = {3}\n'.format(prefix, constant_group.get_name().camel,
                                                           constant.get_name().camel_constant_safe, value)
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().headless,
-                                        constant_format_func=constant_format)
+        text += common.format_constants(prefix, self, format_element_name,
+                                        constant_format_func=format_constant)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

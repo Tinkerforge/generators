@@ -67,16 +67,17 @@ class RubyDocDevice(ruby_common.RubyDevice):
                 params = '(' + params + ')'
 
             ret_desc = packet.get_ruby_return_desc(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_ruby_type(),
-                                                     lambda element: element.get_name().under,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_ruby_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).under,
                                                      return_object='conditional',
                                                      return_object_label_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
+                                                     return_object_is_array=True,
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
                                                      high_level=True)
-            meta_table = common.make_rst_meta_table(meta, index_label_match={'en': 'Return Array', 'de': 'Rückgabe-Array'})
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_ruby_formatted_doc()
             func = '.. rb:function:: {0}#{1}{2}{3}\n\n{4}{5}'.format(cls,
                                                                      name,
@@ -95,8 +96,8 @@ class RubyDocDevice(ruby_common.RubyDevice):
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
-            meta = packet.get_formatted_element_meta(lambda element: element.get_ruby_type(),
-                                                     lambda element: element.get_name().under,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_ruby_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).under,
                                                      no_out_value={'en': 'no parameters', 'de': 'keine Parameter'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -369,7 +370,13 @@ class RubyDocPacket(ruby_common.RubyPacket):
 
         prefix = self.get_device().get_ruby_class_name() + '::'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().under)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().under
+
+            return '{0}[{1}]'.format(element.get_name().under, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

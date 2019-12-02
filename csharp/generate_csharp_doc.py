@@ -59,8 +59,8 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
                 continue
 
             signature = packet.get_csharp_method_signature(print_full_name=True, is_doc=True, high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_csharp_type(),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_csharp_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      output_parameter='conditional',
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -89,8 +89,8 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
             skip = -2 if packet.has_high_level() else 0
             desc = packet.get_csharp_formatted_doc(1)
             params = packet.get_csharp_parameters(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_csharp_type(),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_csharp_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      prefix_elements=[('sender', self.get_csharp_class_name(), 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -361,7 +361,13 @@ class CSharpDocPacket(csharp_common.CSharpPacket):
 
         prefix = self.get_device().get_csharp_class_name() + '.'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().headless
+
+            return '{0}[{1}]'.format(element.get_name().headless, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, shift_right)

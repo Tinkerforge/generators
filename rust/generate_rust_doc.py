@@ -72,8 +72,8 @@ class RustDocDevice(rust_common.RustDevice):
             else:
                 params = '&self{}'.format(plist)
 
-            meta = packet.get_formatted_element_meta(lambda element: element.get_rust_type(for_doc=True),
-                                                     lambda element: element.get_name().under,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_rust_type(for_doc=True, cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).under,
                                                      return_object='conditional',
                                                      explicit_string_cardinality=True,
                                                      high_level=True)
@@ -110,8 +110,8 @@ class RustDocDevice(rust_common.RustDevice):
         device = self.get_rust_name()
 
         for packet in self.get_packets('callback'):
-            meta = packet.get_formatted_element_meta(lambda element: element.get_rust_type(for_doc=True),
-                                                     lambda element: element.get_name().under,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_rust_type(for_doc=True, cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).under,
                                                      callback_object='conditional',
                                                      callback_parameter_label_override={'en': 'Event', 'de': 'Event'},
                                                      callback_object_label_override={'en': 'Event Object', 'de': 'Event-Objekt'},
@@ -373,7 +373,13 @@ class RustDocPacket(rust_common.RustPacket):
 
         prefix = self.get_device().get_rust_module_name().upper() + '_'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().under)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().under
+
+            return '{0}[{1}]'.format(element.get_name().under, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

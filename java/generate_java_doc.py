@@ -62,8 +62,8 @@ class JavaDocDevice(java_common.JavaDevice):
             ret_type = packet.get_java_return_type(True, high_level=True)
             name = packet.get_name(skip=skip).headless
             params = packet.get_java_parameters(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_java_type(),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_java_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      return_object='conditional',
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -119,8 +119,8 @@ class JavaDocDevice(java_common.JavaDevice):
         for packet in self.get_packets('callback'):
             desc = packet.get_java_formatted_doc(2)
             params = packet.get_java_parameters(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_java_type(),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_java_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      callback_parameter_label_override={'en': 'Parameters', 'de': 'Parameter'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -431,7 +431,13 @@ class JavaDocPacket(java_common.JavaPacket):
 
         prefix = self.get_device().get_java_class_name() + '.'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().headless
+
+            return '{0}[{1}]'.format(element.get_name().headless, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, shift_right)

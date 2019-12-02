@@ -77,15 +77,15 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
             ret_type = packet.get_matlab_return_type(True, high_level=True)
             name = packet.get_name(skip=skip).headless
             params = packet.get_matlab_parameter_list(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_matlab_type(),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_matlab_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      return_object='conditional',
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
                                                      high_level=True)
-            meta_table = common.make_rst_meta_table(meta)
+            meta_table = common.make_rst_meta_table(meta, index_format_func=lambda index: str(index + 1))
             desc = packet.get_matlab_formatted_doc(1)
             func = '.. matlab:function:: {0} {1}::{2}({3})\n\n{4}{5}'.format(ret_type,
                                                                              cls,
@@ -137,8 +137,8 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
             desc = packet.get_matlab_formatted_doc(1)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_matlab_type(),
-                                                     lambda element: element.get_name().headless,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_matlab_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).headless,
                                                      callback_object='always',
                                                      callback_object_label_override={'en': 'Event Object', 'de': 'Event-Objekt'},
                                                      no_out_value={'en': 'empty object', 'de': 'leeres Objekt'},
@@ -147,7 +147,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
                                                      high_level=True)
-            meta_table = common.make_rst_meta_table(meta, indent_level=1)
+            meta_table = common.make_rst_meta_table(meta, indent_level=1, index_format_func=lambda index: str(index + 1))
             cbs += common.select_lang(cb).format(cls,
                                                  packet.get_name(skip=skip).camel,
                                                  meta_table,
@@ -431,7 +431,7 @@ Konstanten
         create_meta = common.format_simple_element_meta([('uid', 'String', 1, 'in'),
                                                          ('ipcon', 'IPConnection', 1, 'in'),
                                                          (self.get_name().headless, self.get_matlab_class_name(), 1, 'out')])
-        create_meta_table = common.make_rst_meta_table(create_meta)
+        create_meta_table = common.make_rst_meta_table(create_meta, index_format_func=lambda index: str(index + 1))
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_matlab_class_name(),
@@ -492,7 +492,13 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
 
         prefix = self.get_device().get_matlab_class_name() + '.'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_name().headless)
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().headless
+
+            return '{0}({1})'.format(element.get_name().headless, index + 1)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, shift_right)

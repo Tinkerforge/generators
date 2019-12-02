@@ -55,10 +55,10 @@ class PHPDocDevice(php_common.PHPDevice):
         methods = ''
         cls = self.get_php_class_name()
 
-        def name_func(out_count, element):
-            name = element.get_name().under
+        def name_func(out_count, element, index=None):
+            name = element.get_name(index=index).under
 
-            if element.get_direction() == 'out' and element.get_packet().get_type() == 'function' and out_count > 1:
+            if element.get_direction() == 'out' and element.get_packet().get_type() == 'function' and out_count > 1 and index == None:
                 name = "'{0}'".format(name)
             else:
                 name = '${0}'.format(name)
@@ -74,7 +74,7 @@ class PHPDocDevice(php_common.PHPDevice):
             ret_type = packet.get_php_return_type(high_level=True)
             name = packet.get_name(skip=skip).headless
             params = packet.get_php_parameters(context='doc', high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_php_type(for_doc=True),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_php_type(for_doc=True, cardinality=cardinality),
                                                      functools.partial(name_func, out_count),
                                                      return_object='conditional',
                                                      return_object_label_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
@@ -122,8 +122,8 @@ class PHPDocDevice(php_common.PHPDevice):
                 params += "[mixed $user_data]"
 
             signature = common.select_lang(signature_str).format(params)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_php_type(for_doc=True),
-                                                     lambda element: '$' + element.get_name().under,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_php_type(for_doc=True, cardinality=cardinality),
+                                                     lambda element, index=None: '$' + element.get_name(index=index).under,
                                                      suffix_elements=[('$user_data', 'mixed', 1, 'out')],
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -415,7 +415,13 @@ class PHPDocPacket(php_common.PHPPacket):
 
         prefix = self.get_device().get_php_class_name() + '::'
 
-        text += common.format_constants(prefix, self, lambda element: '$' + element.get_name().under)
+        def format_element_name(element, index):
+            if index == None:
+                return '$' + element.get_name().under
+
+            return '${0}[{1}]'.format(element.get_name().under, index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)

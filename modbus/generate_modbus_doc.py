@@ -56,8 +56,8 @@ class ModbusDocDevice(common.Device):
                 continue
 
             name = packet.get_name().under
-            meta = packet.get_formatted_element_meta(lambda element: element.get_modbus_type(),
-                                                     lambda element: element.get_name().under,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_modbus_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).under,
                                                      parameter_label_override={'en': 'Request', 'de': 'Anfrage'},
                                                      return_label_override={'en': 'Response', 'de': 'Antwort'},
                                                      constants_hint_override={'en': ('See meanings', 'with meanings'), 'de': ('Siehe Bedeutungen', 'mit Bedeutungen')},
@@ -76,8 +76,8 @@ class ModbusDocDevice(common.Device):
         cls = self.get_modbus_name()
 
         for packet in self.get_packets('callback'):
-            meta = packet.get_formatted_element_meta(lambda element: element.get_modbus_type(),
-                                                     lambda element: element.get_name().under,
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_modbus_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_name(index=index).under,
                                                      parameter_label_override={'en': 'Request', 'de': 'Anfrage'},
                                                      return_label_override={'en': 'Response', 'de': 'Antwort'},
                                                      callback_parameter_label_override={'en': 'Response', 'de': 'Antwort'},
@@ -210,7 +210,13 @@ Die folgenden **{0}** sind für die Elemente dieser Funktion definiert:
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
-        def constant_format(prefix, constant_group, constant, value):
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_name().under
+
+            return '{0}[{1}]'.format(element.get_name().under, index)
+
+        def format_constant(prefix, constant_group, constant, value):
             text = ''
 
             for word in constant.get_name().space.split(' '):
@@ -224,10 +230,10 @@ Die folgenden **{0}** sind für die Elemente dieser Funktion definiert:
 
             return '* {0} = {1}\n'.format(value, text)
 
-        text += common.format_constants('', self, lambda element: element.get_name().under,
+        text += common.format_constants('', self, format_element_name,
                                         constants_intro=constants_intro,
                                         constants_name=constants,
-                                        constant_format_func=constant_format)
+                                        constant_format_func=format_constant)
 
         return common.shift_right(text, 1)
 

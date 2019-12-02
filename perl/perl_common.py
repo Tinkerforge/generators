@@ -118,10 +118,10 @@ class PerlElement(common.Element):
 
         return '[{0}, ...]'.format(perl_type)
 
-    def get_perl_doc_name(self):
-        name = self.get_name().under
+    def get_perl_doc_name(self, index=None):
+        name = self.get_name(index=index).under
 
-        if self.get_cardinality() == 1 or self.get_type() == 'string':
+        if self.get_cardinality() == 1 or self.get_type() == 'string' or index != None:
             prefix = '$'
         else:
             prefix = '@'

@@ -62,17 +62,18 @@ class PerlDocDevice(perl_common.PerlDevice):
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).under
             params = packet.get_perl_parameters(high_level=True)
-            meta = packet.get_formatted_element_meta(lambda element: element.get_perl_type(),
-                                                     lambda element: element.get_perl_doc_name(),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_perl_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_perl_doc_name(index=index),
                                                      return_object='conditional',
                                                      return_object_label_override={'en': 'Return Array', 'de': 'Rückgabe-Array'},
+                                                     return_object_is_array=True,
                                                      no_out_value={'en': 'undef', 'de': 'undef'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
                                                      explicit_fixed_stream_cardinality=True,
                                                      explicit_common_cardinality=True,
                                                      high_level=True)
-            meta_table = common.make_rst_meta_table(meta, index_label_match={'en': 'Return Array', 'de': 'Rückgabe-Array'})
+            meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_perl_formatted_doc()
             func = '.. perl:function:: {0}->{1}({2})\n\n{3}{4}'.format(cls,
                                                                        name,
@@ -89,8 +90,8 @@ class PerlDocDevice(perl_common.PerlDevice):
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
-            meta = packet.get_formatted_element_meta(lambda element: element.get_perl_type(),
-                                                     lambda element: element.get_perl_doc_name(),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_perl_type(cardinality=cardinality),
+                                                     lambda element, index=None: element.get_perl_doc_name(index=index),
                                                      no_out_value={'en': 'no parameters', 'de': 'keine Parameter'},
                                                      explicit_string_cardinality=True,
                                                      explicit_variable_stream_cardinality=True,
@@ -428,7 +429,13 @@ class PerlDocPacket(common.Packet):
 
         prefix = self.get_device().get_perl_class_name() + '->'
 
-        text += common.format_constants(prefix, self, lambda element: element.get_perl_doc_name())
+        def format_element_name(element, index):
+            if index == None:
+                return element.get_perl_doc_name()
+
+            return '{0}[{1}]'.format(element.get_perl_doc_name(), index)
+
+        text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)
