@@ -369,7 +369,7 @@ Er gibt die Anzahl der aufgetreten Overrun und Parity Fehler zurück.
 
 com['examples'].append({
 'name': 'Loopback',
-'description': 'For this example connect the RX pin to the TX pin on the same Bricklet',
+'description': 'For this example connect the RX1 and TX pin to receive the send message',
 'functions': [('callback', ('Read', 'read'), [(('Message', 'Message'), 'char', -65535, None, None, None)], None, None), # FIXME: wrong message type
               ('setter', 'Enable Read Callback', [], 'Enable read callback', None),
               ('setter', 'Write', [('char', ['t', 'e', 's', 't'])], 'Write "test" string', None)],
