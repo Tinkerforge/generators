@@ -3176,16 +3176,16 @@ werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi2 Firmware Version',
-'elements': [('Firmware Version', 'uint8', 3, 'out')],
+'elements': [('Firmware Version', 'uint8', 3, 'out',  [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}])],
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':
 """
-Returns the current version of the WIFI Extension 2.0 firmware (major, minor, revision).
+Returns the current version of the WIFI Extension 2.0 firmware.
 """,
 'de':
 """
-Gibt die aktuelle Version der WIFI Extension 2.0 Firmware zurück (major, minor, revision).
+Gibt die aktuelle Version der WIFI Extension 2.0 Firmware zurück.
 """
 }]
 })

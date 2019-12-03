@@ -116,7 +116,8 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated acceleration from the accelerometer for the
-x, y and z axis.
+x, y and z axis. The acceleration is in the range configured with
+:func:`Set Sensor Configuration`.
 
 If you want to get the acceleration periodically, it is recommended
 to use the :cb:`Acceleration` callback and set the period with
@@ -125,7 +126,8 @@ to use the :cb:`Acceleration` callback and set the period with
 'de':
 """
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die
-X-, Y- und Z-Achse zurück.
+X-, Y- und Z-Achse zurück. Die Beschleunigungen liegen im Wertebereich, der mit
+:func:`Set Sensor Configuration` konfiguriert wurde.
 
 Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Acceleration` Callback zu nutzen und die Periode mit
@@ -174,7 +176,8 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated angular velocity from the gyroscope for the
-x, y and z axis.
+x, y and z axis. The angular velocity is in the range configured with
+:func:`Set Sensor Configuration`.
 
 If you want to get the angular velocity periodically, it is recommended
 to use the :cb:`Angular Velocity` acallback nd set the period with
@@ -183,7 +186,8 @@ to use the :cb:`Angular Velocity` acallback nd set the period with
 'de':
 """
 Gibt die kalibrierte Winkelgeschwindigkeiten des Gyroskops für die X-, Y- und
-Z-Achse zurück.
+Z-Achse zurück. Die Winkelgeschwindigkeiten liegen im Wertebereich, der mit
+:func:`Set Sensor Configuration` konfiguriert wurde.
 
 Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird
 empfohlen den :cb:`Angular Velocity` Callback zu nutzen und die Periode mit
@@ -258,7 +262,8 @@ com['packets'].append({
 'en':
 """
 Returns the linear acceleration of the IMU Brick for the
-x, y and z axis.
+x, y and z axis. The acceleration is in the range configured with
+:func:`Set Sensor Configuration`.
 
 The linear acceleration is the acceleration in each of the three
 axis of the IMU Brick with the influences of gravity removed.
@@ -273,7 +278,8 @@ to use the :cb:`Linear Acceleration` callback and set the period with
 'de':
 """
 Gibt die lineare Beschleunigungen des IMU Brick für die
-X-, Y- und Z-Achse zurück.
+X-, Y- und Z-Achse zurück. Die Beschleunigungen liegen im Wertebereich, der mit
+:func:`Set Sensor Configuration` konfiguriert wurde.
 
 Die lineare Beschleunigung ist die Beschleunigung in jede der drei
 Achsen. Der Einfluss von Erdbeschleunigung ist entfernt.
@@ -291,9 +297,9 @@ den :cb:`Linear Acceleration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Gravity Vector',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -369,17 +375,28 @@ Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data',
-'elements': [('Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+'elements': [('Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                  {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                  {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
              ('Magnetic Field', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Y', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Z', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)}]),
-             ('Angular Velocity', 'int16', 3, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
+             ('Angular Velocity', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'},
+                                                      {'name': 'Y', 'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'},
+                                                      {'name': 'Z', 'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}]),
              ('Euler Angle', 'int16', 3, 'out', [{'name': 'Heading', 'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360 * 16)},
                                                  {'name': 'Roll', 'scale': (1, 16), 'unit': 'Degree', 'range': (-90 * 16, 90 * 16)},
                                                  {'name': 'Pitch', 'scale': (1, 16), 'unit': 'Degree', 'range': (-180 * 16, 180 * 16)}]),
-             ('Quaternion', 'int16', 4, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
-             ('Linear Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Gravity Vector', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Quaternion', 'int16', 4, 'out', [{'name': 'W', 'scale': (1, 16383), 'range': (-16383, 16383)},
+                                                {'name': 'X', 'scale': (1, 16383), 'range': (-16383, 16383)},
+                                                {'name': 'Y', 'scale': (1, 16383), 'range': (-16383, 16383)},
+                                                {'name': 'Z', 'scale': (1, 16383), 'range': (-16383, 16383)}]),
+             ('Linear Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                         {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                         {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
+             ('Gravity Vector', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)},
+                                                    {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)},
+                                                    {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}]),
              ('Temperature', 'int8', 1, 'out', {'unit': 'Degree Celsius'}),
              ('Calibration Status', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
@@ -980,9 +997,9 @@ die linearen Beschleunigungen der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Gravity Vector',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1054,17 +1071,28 @@ Orientierung (w, x, y, z) des IMU Brick in Quaternionen. Siehe
 com['packets'].append({
 'type': 'callback',
 'name': 'All Data',
-'elements': [('Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+'elements': [('Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                  {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                  {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
              ('Magnetic Field', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Y', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Z', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)}]),
-             ('Angular Velocity', 'int16', 3, 'out', {'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}),
+             ('Angular Velocity', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'},
+                                                      {'name': 'Y', 'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'},
+                                                      {'name': 'Z', 'scale': (1, 16), 'unit': 'Degree Per Second', 'range': 'dynamic'}]),
              ('Euler Angle', 'int16', 3, 'out', [{'name': 'Heading', 'scale': (1, 16), 'unit': 'Degree', 'range': (0, 360 * 16)},
                                                  {'name': 'Roll', 'scale': (1, 16), 'unit': 'Degree', 'range': (-90 * 16, 90 * 16)},
                                                  {'name': 'Pitch', 'scale': (1, 16), 'unit': 'Degree', 'range': (-180 * 16, 180 * 16)}]),
-             ('Quaternion', 'int16', 4, 'out', {'scale': (1, 16383), 'range': (-16383, 16383)}),
-             ('Linear Acceleration', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Gravity Vector', 'int16', 3, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
+             ('Quaternion', 'int16', 4, 'out', [{'name': 'W', 'scale': (1, 16383), 'range': (-16383, 16383)},
+                                                {'name': 'X', 'scale': (1, 16383), 'range': (-16383, 16383)},
+                                                {'name': 'Y', 'scale': (1, 16383), 'range': (-16383, 16383)},
+                                                {'name': 'Z', 'scale': (1, 16383), 'range': (-16383, 16383)}]),
+             ('Linear Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                         {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                         {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
+             ('Gravity Vector', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                    {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
+                                                    {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
              ('Temperature', 'int8', 1, 'out', {'unit': 'Degree Celsius'}),
              ('Calibration Status', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],

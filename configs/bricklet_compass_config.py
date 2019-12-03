@@ -243,8 +243,10 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Calibration',
-'elements': [('Offset', 'int16', 3, 'in', {'scale': (1, 10**8), 'unit': 'Tesla'}),
-             ('Gain', 'int16', 3, 'in', {})],
+'elements': [('Offset', 'int16', 3, 'in', [{'name': 'X', 'scale': (1, 10**8), 'unit': 'Tesla'},
+                                           {'name': 'Y', 'scale': (1, 10**8), 'unit': 'Tesla'},
+                                           {'name': 'Z', 'scale': (1, 10**8), 'unit': 'Tesla'}]),
+             ('Gain', 'int16', 3, 'in', [{'name': 'X'}, {'name': 'Y'}, {'name': 'Z'}])],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -273,8 +275,10 @@ nur einmal durchgeführt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Calibration',
-'elements': [('Offset', 'int16', 3, 'out', {'scale': (1, 10**8), 'unit': 'Tesla'}),
-             ('Gain', 'int16', 3, 'out', {})],
+'elements': [('Offset', 'int16', 3, 'in', [{'name': 'X', 'scale': (1, 10**8), 'unit': 'Tesla'},
+                                           {'name': 'Y', 'scale': (1, 10**8), 'unit': 'Tesla'},
+                                           {'name': 'Z', 'scale': (1, 10**8), 'unit': 'Tesla'}]),
+             ('Gain', 'int16', 3, 'in', [{'name': 'X'}, {'name': 'Y'}, {'name': 'Z'}])],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

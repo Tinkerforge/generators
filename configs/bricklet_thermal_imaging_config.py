@@ -152,11 +152,17 @@ Bevor die Funktion genutzt werden kann muss diese mittels
 com['packets'].append({
 'type': 'function',
 'name': 'Get Statistics',
-'elements': [('Spotmeter Statistics', 'uint16', 4, 'out', {'scale': 'dynamic', 'unit': 'dynamic'}), # mean, max, min, pixel count
-             ('Temperatures', 'uint16', 4, 'out', {'scale': 'dynamic', 'unit': 'Kelvin'}), # focal plain array, focal plain array at last ffc, housing, housing at last ffc
+'elements': [('Spotmeter Statistics', 'uint16', 4, 'out', [{'name': 'Mean Temperature', 'scale': 'dynamic', 'unit': 'Kelvin'},
+                                                           {'name': 'Max Temperature', 'scale': 'dynamic', 'unit': 'Kelvin'},
+                                                           {'name': 'Min Temperature', 'scale': 'dynamic', 'unit': 'Kelvin'},
+                                                           {'name': 'Pixel Count', 'range': (0, 80*60)}]),
+             ('Temperatures', 'uint16', 4, 'out', [{'name': 'Focal Plain Array', 'scale': 'dynamic', 'unit': 'Kelvin'},
+                                                   {'name': 'Focal Plain Array Last FFC', 'scale': 'dynamic', 'unit': 'Kelvin'},
+                                                   {'name': 'Housing', 'scale': 'dynamic', 'unit': 'Kelvin'},
+                                                   {'name': 'Housing Last FFC', 'scale': 'dynamic', 'unit': 'Kelvin'}]),
              ('Resolution', 'uint8', 1, 'out', {'constant_group': 'Resolution'}),
              ('FFC Status', 'uint8', 1, 'out', {'constant_group': 'FFC Status'}),
-             ('Temperature Warning', 'bool', 2, 'out', {}) # shutter lockout, overtemp
+             ('Temperature Warning', 'bool', 2, 'out', [{'name': 'Shutter Lockout'}, {'name': 'Overtemperature Shut Down Imminent'}])
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -278,7 +284,10 @@ Gibt die Auflösung zurück, wie von :func:`Set Resolution` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Spotmeter Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'in', {'range': 'dynamic', 'default' : [39, 29, 40, 30]})],
+'elements': [('Region Of Interest', 'uint8', 4, 'in', [{'name': 'First Column', 'range': (0, 79), 'default': 39},
+                                                       {'name': 'First Row', 'range': (0, 59), 'default': 29},
+                                                       {'name': 'Last Column', 'range': (1, 80), 'default': 40},
+                                                       {'name': 'Last Row', 'range': (1, 60), 'default': 30}])],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -309,7 +318,10 @@ Die Spotmeter Statistiken können mittels :func:`Get Statistics` ausgelesen werd
 com['packets'].append({
 'type': 'function',
 'name': 'Get Spotmeter Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'out', {'range': 'dynamic', 'default' : [39, 29, 40, 30]})],
+'elements': [('Region Of Interest', 'uint8', 4, 'out', [{'name': 'First Column', 'range': (0, 78), 'default': 39},
+                                                        {'name': 'First Row', 'range': (0, 58), 'default': 29},
+                                                        {'name': 'Last Column', 'range': (1, 79), 'default': 40},
+                                                        {'name': 'Last Row', 'range': (1, 59), 'default': 30}])],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -326,9 +338,13 @@ Gibt die Spotmeter Konfiguration zurück, wie von :func:`Set Spotmeter Config` g
 com['packets'].append({
 'type': 'function',
 'name': 'Set High Contrast Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'in', {'range': 'dynamic', 'default': [0, 0, 79, 59]}),
+'elements': [('Region Of Interest', 'uint8', 4, 'in', [{'name': 'First Column', 'range': (0, 78), 'default': 0},
+                                                       {'name': 'First Row', 'range': (0, 58), 'default': 0},
+                                                       {'name': 'Last Column', 'range': (1, 79), 'default': 79},
+                                                       {'name': 'Last Row', 'range': (1, 59), 'default': 59}]),
              ('Dampening Factor', 'uint16', 1, 'in', {'range': (0, 256), 'default': 64}),
-             ('Clip Limit', 'uint16', 2, 'in', {'range': 'dynamic', 'default': [4800, 512]}),
+             ('Clip Limit', 'uint16', 2, 'in', [{'name': 'AGC HEQ Clip Limit High', 'range': (0, 4800), 'default': 4800},
+                                                {'name': 'AGC HEQ Clip Limit Low', 'range': (0, 1024), 'default': 512}]),
              ('Empty Counts', 'uint16', 1, 'in', {'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -423,9 +439,13 @@ weniger wird als leere Klasse behandelt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get High Contrast Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'out', {'range': 'dynamic', 'default': [0, 0, 79, 59]}),
+'elements': [('Region Of Interest', 'uint8', 4, 'out', [{'name': 'First Column', 'range': (0, 78), 'default': 0},
+                                                        {'name': 'First Row', 'range': (0, 58), 'default': 0},
+                                                        {'name': 'Last Column', 'range': (1, 79), 'default': 79},
+                                                        {'name': 'Last Row', 'range': (1, 59), 'default': 59}]),
              ('Dampening Factor', 'uint16', 1, 'out', {'range': (0, 256), 'default': 64}),
-             ('Clip Limit', 'uint16', 2, 'out', {'range': 'dynamic', 'default': [4800, 512]}),
+             ('Clip Limit', 'uint16', 2, 'out', [{'name': 'AGC HEQ Clip Limit High', 'range': (0, 4800), 'default': 4800},
+                                                 {'name': 'AGC HEQ Clip Limit Low', 'range': (0, 1024), 'default': 512}]),
              ('Empty Counts', 'uint16', 1, 'out', {'default': 2})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
