@@ -586,7 +586,7 @@ half or a ninth of the output data rate.
 """
 Konfiguriert den IIR Bypass Filter Modus und die Low Pass Filter Roll Off Corner Frequenz.
 
-Der Filter kann angewendet oder umgangen werden und die Frequenz kann die halbe ein ein Neuntel
+Der Filter kann angewendet oder umgangen werden und die Frequenz kann die halbe oder ein Neuntel
 der Ausgabe-Datenrate sein.
 
 .. image:: /Images/Bricklets/bricklet_accelerometer_v2_filter.png
