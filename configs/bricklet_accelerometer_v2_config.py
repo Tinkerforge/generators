@@ -327,16 +327,16 @@ Otherwise you have to use the following formulas that depend on the configured
 resolution (8/16 bit) and the full scale range (see :func:`Set Configuration`) to calculate
 the data in gₙ/10000 (same unit that is returned by :func:`Get Acceleration`):
 
-* 16 bit, full scale 2g: acceleration = value*625/1024
-* 16 bit, full scale 4g: acceleration = value*1250/1024
-* 16 bit, full scale 8g: acceleration = value*2500/1024
+* 16 bit, full scale 2g: acceleration = value * 625 / 1024
+* 16 bit, full scale 4g: acceleration = value * 1250 / 1024
+* 16 bit, full scale 8g: acceleration = value * 2500 / 1024
 
 If a resolution of 8 bit is used, only the 8 most significant bits will be
 transferred, so you can use the following formulas:
 
-* 8 bit, full scale 2g: acceleration = value*256*625/1024
-* 8 bit, full scale 4g: acceleration = value*256*1250/1024
-* 8 bit, full scale 8g: acceleration = value*256*2500/1024
+* 8 bit, full scale 2g: acceleration = value * 256 * 625 / 1024
+* 8 bit, full scale 4g: acceleration = value * 256 * 1250 / 1024
+* 8 bit, full scale 8g: acceleration = value * 256 * 2500 / 1024
 
 If no axis is enabled, both callbacks are disabled. If one of the continuous
 callbacks is enabled, the :cb:`Acceleration` callback is disabled.
@@ -377,16 +377,16 @@ in der Einheit gₙ/10000 (gleiche Einheit wie von :func:`Get Acceleration` zur�
 umzuwandeln. Die Formeln hängen ab von der eingestelleten Auflösung (8/16-Bit) und dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 
-* 16-Bit, Wertebereich 2g: Beschleunigung = Rohwert*625/1024
-* 16-Bit, Wertebereich 4g: Beschleunigung = Rohwert*1250/1024
-* 16-Bit, Wertebereich 8g: Beschleunigung = Rohwert*2500/1024
+* 16-Bit, Wertebereich 2g: Beschleunigung = Rohwert * 625 / 1024
+* 16-Bit, Wertebereich 4g: Beschleunigung = Rohwert * 1250 / 1024
+* 16-Bit, Wertebereich 8g: Beschleunigung = Rohwert * 2500 / 1024
 
 Bei einer Auflösung von 8-Bit werden nur die 8 höchstwertigen Bits übertragen, daher
 sehen die Formeln wie folgt aus:
 
-* 8-Bit, Wertebereich 2g: Beschleunigung = Rohwert*256*625/1024
-* 8-Bit, Wertebereich 4g: Beschleunigung = Rohwert*256*1250/1024
-* 8-Bit, Wertebereich 8g: Beschleunigung = Rohwert*256*2500/1024
+* 8-Bit, Wertebereich 2g: Beschleunigung = Rohwert * 256 * 625 / 1024
+* 8-Bit, Wertebereich 4g: Beschleunigung = Rohwert * 256 * 1250 / 1024
+* 8-Bit, Wertebereich 8g: Beschleunigung = Rohwert * 256 * 2500 / 1024
 
 Wenn keine Achse aktiviert is, sind beide Callbacks deaktiviert. Wenn einer der
 "Continuous Callbacks" genutzt wird, wird der :cb:`Acceleration`-Callback
@@ -450,16 +450,16 @@ Otherwise you have to use the following formulas that depend on the
 full scale range (see :func:`Set Configuration`) to calculate
 the data in gₙ/10000 (same unit that is returned by :func:`Get Acceleration`):
 
-* Full scale 2g: acceleration = value*625/1024
-* Full scale 4g: acceleration = value*1250/1024
-* Full scale 8g: acceleration = value*2500/1024
+* Full scale 2g: acceleration = value * 625 / 1024
+* Full scale 4g: acceleration = value * 1250 / 1024
+* Full scale 8g: acceleration = value * 2500 / 1024
 
 The data is formated in the sequence "x, y, z, x, y, z, ..." depending on
 the enabled axis. Examples:
 
-* x, y, z enabled: "x, y, z," repeated 10 times
-* x, z enabled: "x, z," repeated 15 times
-* y enabled: "y," repeated 30 times
+* x, y, z enabled: "x, y, z, ..." 10x repeated
+* x, z enabled: "x, z, ..." 15x repeated
+* y enabled: "y, ..." 30x repeated
 
 """,
 'de':
@@ -480,16 +480,16 @@ in der Einheit gₙ/10000 (gleiche Einheit wie von :func:`Get Acceleration` zur�
 umzuwandeln. Die Formeln hängen ab von dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 
-* Wertebereich 2g: Beschleunigung = Rohwert*625/1024
-* Wertebereich 4g: Beschleunigung = Rohwert*1250/1024
-* Wertebereich 8g: Beschleunigung = Rohwert*2500/1024
+* Wertebereich 2g: Beschleunigung = Rohwert * 625 / 1024
+* Wertebereich 4g: Beschleunigung = Rohwert * 1250 / 1024
+* Wertebereich 8g: Beschleunigung = Rohwert * 2500 / 1024
 
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig
 von den aktivierten Achsen. Beispiele:
 
-* x, y, z aktiviert: "x, y, z," zehnmal wiederholt
-* x, z aktiviert: "x, z," fünfzehnmal wiederholt
-* y aktiviert: "y," dreißigmal wiederholt
+* x, y, z aktiviert: "x, y, z, ..." 10x wiederholt
+* x, z aktiviert: "x, z, ..." 15x wiederholt
+* y aktiviert: "y, ..." 30x wiederholt
 
 """
 }]
@@ -517,16 +517,16 @@ Otherwise you have to use the following formulas that depend on the
 full scale range (see :func:`Set Configuration`) to calculate
 the data in gₙ/10000 (same unit that is returned by :func:`Get Acceleration`):
 
-* Full scale 2g: acceleration = value*256*625/1024
-* Full scale 4g: acceleration = value*256*1250/1024
-* Full scale 8g: acceleration = value*256*2500/1024
+* Full scale 2g: acceleration = value * 256 * 625 / 1024
+* Full scale 4g: acceleration = value * 256 * 1250 / 1024
+* Full scale 8g: acceleration = value * 256 * 2500 / 1024
 
 The data is formated in the sequence "x, y, z, x, y, z, ..." depending on
 the enabled axis. Examples:
 
-* x, y, z enabled: "x, y, z, ... 20x ..., x, y, z"
-* x, z enabled: "x, z, ... 30x ..., x, z"
-* y enabled: "y, ... 60x ..., y"
+* x, y, z enabled: "x, y, z, ..." 20x repeated
+* x, z enabled: "x, z, ..." 30x repeated
+* y enabled: "y, ..." 60x repeated
 
 """,
 'de':
@@ -547,16 +547,16 @@ in der Einheit gₙ/10000 (gleiche Einheit wie von :func:`Get Acceleration` zur�
 umzuwandeln. Die Formeln hängen ab von dem
 eingestellten Wertebereich (siehe :func:`Set Configuration`):
 
-* Wertebereich 2g: Beschleunigung = Rohwert*256*625/1024
-* Wertebereich 4g: Beschleunigung = Rohwert*256*1250/1024
-* Wertebereich 8g: Beschleunigung = Rohwert*256*2500/1024
+* Wertebereich 2g: Beschleunigung = Rohwert * 256 * 625 / 1024
+* Wertebereich 4g: Beschleunigung = Rohwert * 256 * 1250 / 1024
+* Wertebereich 8g: Beschleunigung = Rohwert * 256 * 2500 / 1024
 
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig
 von den aktivierten Achsen. Beispiele:
 
-* x, y, z aktiviert: "x, y, z, ... 20x ..., x, y, z"
-* x, z aktiviert: "x, z, ... 30x ..., x, z"
-* y aktiviert: "y, ... 60x ..., y"
+* x, y, z aktiviert: "x, y, z, ..." 20x wiederholt
+* x, z aktiviert: "x, z, ..." 30x wiederholt
+* y aktiviert: "y, ..." 60x wiederholt
 
 """
 }]
