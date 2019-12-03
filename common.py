@@ -1893,6 +1893,7 @@ class Element(object):
 
             if name != None:
                 assert isinstance(name, str), raw_data
+                assert len(raw_data_extra) > 1, raw_data
 
                 check_name(name)
 
