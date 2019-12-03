@@ -6,6 +6,8 @@
 
 # Common Device communication config
 
+from copy import deepcopy
+
 common_constant_groups = []
 
 common_constant_groups.append({
@@ -73,18 +75,18 @@ common_packets.append({
 'type': 'function',
 'function_id': -1,
 'name': 'Get API Version',
-'elements': [('API Version', 'uint8', 3, 'out')],
+'elements': [('API Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}])],
 'since_firmware': None,
 'doc': ['af', {
 'en':
 """
-Returns the version of the API definition (major, minor, revision) implemented
+Returns the version of the API definition implemented
 by this API bindings. This is neither the release version of this API bindings
 nor does it tell you anything about the represented Brick or Bricklet.
 """,
 'de':
 """
-Gibt die Version der API Definition (Major, Minor, Revision) zurück, die diese
+Gibt die Version der API Definition zurück, die diese
 API Bindings implementieren. Dies ist weder die Release-Version dieser API
 Bindings noch gibt es in irgendeiner Weise Auskunft über den oder das
 repräsentierte(n) Brick oder Bricklet.
@@ -98,7 +100,7 @@ common_packets.append({
 'function_id': -1,
 'name': 'Get Response Expected',
 'elements': [('Function Id', 'uint8', 1, 'in', {'constant_group': 'Function'}),
-             ('Response Expected', 'bool', 1, 'out')],
+             ('Response Expected', 'bool', 1, 'out', {})],
 'since_firmware': None,
 'doc': ['af', {
 'en':
@@ -147,7 +149,7 @@ common_packets.append({
 'function_id': -1,
 'name': 'Set Response Expected',
 'elements': [('Function Id', 'uint8', 1, 'in', {'constant_group': 'Function'}),
-             ('Response Expected', 'bool', 1, 'in')],
+             ('Response Expected', 'bool', 1, 'in', {})],
 'since_firmware': None,
 'doc': ['af', {
 'en':
@@ -185,7 +187,7 @@ common_packets.append({
 'type': 'function',
 'function_id': -1,
 'name': 'Set Response Expected All',
-'elements': [('Response Expected', 'bool', 1, 'in')],
+'elements': [('Response Expected', 'bool', 1, 'in', {})],
 'since_firmware': None,
 'doc': ['af', {
 'en':
@@ -206,8 +208,8 @@ common_packets.append({
 'type': 'function',
 'function_id': 231,
 'name': 'Set SPITFP Baudrate Config',
-'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'in'),
-             ('Minimum Dynamic Baudrate', 'uint32', 1, 'in')],
+'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'in', {'default': True}),
+             ('Minimum Dynamic Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 400000})],
 'since_firmware': {'*': [2, 0, 0],
                    'DC': [2, 3, 5],
                    'IMU': [2, 3, 5],
@@ -237,10 +239,6 @@ the dynamic baudrate off to get the highest possible performance.
 The maximum value of the baudrate can be set per port with the function
 :func:`Set SPITFP Baudrate`. If the dynamic baudrate is disabled, the baudrate
 as set by :func:`Set SPITFP Baudrate` will be used statically.
-
-The minimum dynamic baudrate has a value range of 400000 to 2000000 baud.
-
-By default dynamic baudrate is enabled and the minimum dynamic baudrate is 400000.
 """,
 'de':
 """
@@ -263,10 +261,6 @@ dynamische Baudrate zum maximieren der Performance ausgestellt werden.
 Die maximale Baudrate kann pro Port mit der Funktion :func:`Set SPITFP Baudrate`.
 gesetzt werden. Falls die dynamische Baudrate nicht aktiviert ist, wird die Baudrate
 wie von :func:`Set SPITFP Baudrate` gesetzt statisch verwendet.
-
-Die minimale dynamische Baudrate hat einen Wertebereich von 400000 bis 2000000 Baud.
-
-Standardmäßig ist die dynamische Baudrate aktiviert und die minimale dynamische Baudrate ist 400000.
 """
 }]
 })
@@ -276,8 +270,8 @@ common_packets.append({
 'type': 'function',
 'function_id': 232,
 'name': 'Get SPITFP Baudrate Config',
-'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'out'),
-             ('Minimum Dynamic Baudrate', 'uint32', 1, 'out')],
+'elements': [('Enable Dynamic Baudrate', 'bool', 1, 'out', {'default': True}),
+             ('Minimum Dynamic Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 400000})],
 'since_firmware': {'*': [2, 0, 0],
                    'DC': [2, 3, 5],
                    'IMU': [2, 3, 5],
@@ -304,7 +298,7 @@ common_packets.append({
 'function_id': 233,
 'name': 'Get Send Timeout Count',
 'elements': [('Communication Method', 'uint8', 1, 'in', {'constant_group': 'Communication Method'}),
-             ('Timeout Count', 'uint32', 1, 'out')],
+             ('Timeout Count', 'uint32', 1, 'out', {})],
 'since_firmware': {'*': [2, 0, 0],
                    'DC': [2, 3, 3],
                    'IMU': [2, 3, 3],
@@ -334,70 +328,188 @@ Im normalen Betrieb sollten alle Zähler fast immer auf 0 stehen bleiben.
 }]
 })
 
-common_packets.append({
-'feature': 'comcu_bricklet_host',
+set_spitfp_baudrate = {
+    'feature': 'comcu_bricklet_host',
+    'type': 'function',
+    'function_id': 234,
+    'name': 'Set SPITFP Baudrate',
+    'elements': [('Bricklet Port', 'char', 1, 'in', {}),
+                ('Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
+    'since_firmware': {'*': [2, 0, 0],
+                    'DC': [2, 3, 3],
+                    'IMU': [2, 3, 3],
+                    'IMU V2': [2, 0, 5],
+                    'Master': [2, 4, 3],
+                    'Servo': [2, 3, 2],
+                    'Stepper': [2, 3, 3]},
+    'doc': ['af', {
+    'en':
+    """
+    Sets the baudrate for a specific Bricklet port.
+
+    If you want to increase the throughput of Bricklets you can increase
+    the baudrate. If you get a high error count because of high
+    interference (see :func:`Get SPITFP Error Count`) you can decrease the
+    baudrate.
+
+    If the dynamic baudrate feature is enabled, the baudrate set by this
+    function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
+
+    Regulatory testing is done with the default baudrate. If CE compatibility
+    or similar is necessary in you applications we recommend to not change
+    the baudrate.
+    """,
+    'de':
+    """
+    Setzt die Baudrate eines spezifischen Bricklet Ports .
+
+    Für einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden.
+    Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist
+    (siehe :func:`Get SPITFP Error Count`) kann die Baudrate verringert werden.
+
+    Wenn das Feature der dynamische Baudrate aktiviert ist, setzt diese Funktion
+    die maximale Baudrate (siehe :func:`Set SPITFP Baudrate Config`).
+
+    EMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine
+    CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die
+    Baudrate nicht zu ändern.
+    """
+    }]
+}
+
+get_spitfp_baudrate = {
+    'feature': 'comcu_bricklet_host',
+    'type': 'function',
+    'function_id': 235,
+    'name': 'Get SPITFP Baudrate',
+    'elements': [('Bricklet Port', 'char', 1, 'in', {}),
+                ('Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
+    'since_firmware': {'*': [2, 0, 0],
+                    'DC': [2, 3, 3],
+                    'IMU': [2, 3, 3],
+                    'IMU V2': [2, 0, 5],
+                    'Master': [2, 4, 3],
+                    'Servo': [2, 3, 2],
+                    'Stepper': [2, 3, 3]},
+    'doc': ['af', {
+    'en':
+    """
+    Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
+    """,
+    'de':
+    """
+    Gibt die Baudrate für einen Bricklet Port zurück, siehe
+    :func:`Set SPITFP Baudrate`.
+    """
+    }]
+}
+
+get_spitfp_error_count = {
+    'feature': 'comcu_bricklet_host',
+    'type': 'function',
+    'function_id': 237,
+    'name': 'Get SPITFP Error Count',
+    'elements': [('Bricklet Port', 'char', 1, 'in', {}),
+                ('Error Count ACK Checksum', 'uint32', 1, 'out', {}),
+                ('Error Count Message Checksum', 'uint32', 1, 'out', {}),
+                ('Error Count Frame', 'uint32', 1, 'out', {}),
+                ('Error Count Overflow', 'uint32', 1, 'out', {})],
+    'since_firmware': {'*': [2, 0, 0],
+                    'DC': [2, 3, 3],
+                    'IMU': [2, 3, 3],
+                    'IMU V2': [2, 0, 5],
+                    'Master': [2, 4, 3],
+                    'Servo': [2, 3, 2],
+                    'Stepper': [2, 3, 3]},
+    'doc': ['af', {
+    'en':
+    """
+    Returns the error count for the communication between Brick and Bricklet.
+
+    The errors are divided into
+
+    * ACK checksum errors,
+    * message checksum errors,
+    * framing errors and
+    * overflow errors.
+
+    The errors counts are for errors that occur on the Brick side. All
+    Bricklets have a similar function that returns the errors on the Bricklet side.
+    """,
+    'de':
+    """
+    Gibt die Anzahl der Fehler die während der Kommunikation zwischen Brick und
+    Bricklet aufgetreten sind zurück.
+
+    Die Fehler sind aufgeteilt in
+
+    * ACK-Checksummen Fehler,
+    * Message-Checksummen Fehler,
+    * Framing Fehler und
+    * Overflow Fehler.
+
+    Die Fehlerzähler sind für Fehler die auf der Seite des Bricks auftreten.
+    Jedes Bricklet hat eine ähnliche Funktion welche die Fehler auf Brickletseite
+    ausgibt.
+    """
+    }]
+}
+
+get_protocol1_bricklet_name = {
+'feature': 'eeprom_bricklet_host',
 'type': 'function',
-'function_id': 234,
-'name': 'Set SPITFP Baudrate',
-'elements': [('Bricklet Port', 'char', 1, 'in'),
-             ('Baudrate', 'uint32', 1, 'in')],
+'function_id': 241,
+'name': 'Get Protocol1 Bricklet Name',
+'elements': [('Port', 'char', 1, 'in', {}),
+             ('Protocol Version', 'uint8', 1, 'out', {}),
+             ('Firmware Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}]),
+             ('Name', 'string', 40, 'out', {})],
 'since_firmware': {'*': [2, 0, 0],
-                   'DC': [2, 3, 3],
-                   'IMU': [2, 3, 3],
-                   'IMU V2': [2, 0, 5],
-                   'Master': [2, 4, 3],
-                   'Servo': [2, 3, 2],
-                   'Stepper': [2, 3, 3]},
+                   'DC': [2, 0, 0],
+                   'IMU': [2, 0, 0],
+                   'Master': [2, 0, 0],
+                   'Servo': [2, 0, 0],
+                   'Stepper': [2, 0, 0]},
 'doc': ['af', {
 'en':
 """
-Sets the baudrate for a specific Bricklet port ('a' - 'd'). The
-baudrate can be in the range 400000 to 2000000.
+Returns the firmware and protocol version and the name of the Bricklet for a
+given port.
 
-If you want to increase the throughput of Bricklets you can increase
-the baudrate. If you get a high error count because of high
-interference (see :func:`Get SPITFP Error Count`) you can decrease the
-baudrate.
-
-If the dynamic baudrate feature is enabled, the baudrate set by this
-function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
-
-Regulatory testing is done with the default baudrate. If CE compatibility
-or similar is necessary in you applications we recommend to not change
-the baudrate.
-
-The default baudrate for all ports is 1400000.
+This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
+plugins.
 """,
 'de':
 """
-Setzt die Baudrate eines spezifischen Bricklet Ports ('a' - 'd'). Die
-Baudrate hat einen möglichen Wertebereich von 400000 bis 2000000.
+Gibt die Firmware und Protokoll Version und den Namen des Bricklets für einen
+gegebenen Port zurück.
 
-Für einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden.
-Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist
-(siehe :func:`Get SPITFP Error Count`) kann die Baudrate verringert werden.
-
-Wenn das Feature der dynamische Baudrate aktiviert ist, setzt diese Funktion
-die maximale Baudrate (siehe :func:`Set SPITFP Baudrate Config`).
-
-EMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine
-CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die
-Baudrate nicht zu ändern.
-
-Die Standardbaudrate für alle Ports ist 1400000.
+Der einzige Zweck dieser Funktion ist es, automatischen Flashen von Bricklet
+v1.x.y Plugins zu ermöglichen.
 """
 }]
-})
+}
+
+for i in [2, 4]:
+    for blueprint in [set_spitfp_baudrate,
+                      get_spitfp_baudrate,
+                      get_spitfp_error_count,
+                      get_protocol1_bricklet_name]:
+        pkt = deepcopy(blueprint)
+        pkt['feature'] += '_{}_ports'.format(i)
+        pkt['elements'][0][4]['range'] = ('a', chr(ord('a') + i - 1))
+
+        common_packets.append(pkt)
 
 common_packets.append({
 'feature': 'comcu_bricklet',
 'type': 'function',
 'function_id': 234,
 'name': 'Get SPITFP Error Count',
-'elements': [('Error Count Ack Checksum', 'uint32', 1, 'out'),
-             ('Error Count Message Checksum', 'uint32', 1, 'out'),
-             ('Error Count Frame', 'uint32', 1, 'out'),
-             ('Error Count Overflow', 'uint32', 1, 'out')],
+'elements': [('Error Count Ack Checksum', 'uint32', 1, 'out', {}),
+             ('Error Count Message Checksum', 'uint32', 1, 'out', {}),
+             ('Error Count Frame', 'uint32', 1, 'out', {}),
+             ('Error Count Overflow', 'uint32', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -438,7 +550,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 234,
 'name': 'Get Timestamp',
-'elements': [('Timestamp', 'uint64', 1, 'out')],
+'elements': [('Timestamp', 'uint64', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -448,33 +560,6 @@ TODO
 'de':
 """
 TODO
-"""
-}]
-})
-
-common_packets.append({
-'feature': 'comcu_bricklet_host',
-'type': 'function',
-'function_id': 235,
-'name': 'Get SPITFP Baudrate',
-'elements': [('Bricklet Port', 'char', 1, 'in'),
-             ('Baudrate', 'uint32', 1, 'out')],
-'since_firmware': {'*': [2, 0, 0],
-                   'DC': [2, 3, 3],
-                   'IMU': [2, 3, 3],
-                   'IMU V2': [2, 0, 5],
-                   'Master': [2, 4, 3],
-                   'Servo': [2, 3, 2],
-                   'Stepper': [2, 3, 3]},
-'doc': ['af', {
-'en':
-"""
-Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
-""",
-'de':
-"""
-Gibt die Baudrate für einen Bricklet Port zurück, siehe
-:func:`Set SPITFP Baudrate`.
 """
 }]
 })
@@ -506,11 +591,11 @@ Setzt den Bootloader-Modus und gibt den Status zurück nachdem die
 Modusänderungsanfrage bearbeitet wurde.
 
 Mit dieser Funktion ist es möglich vom Bootloader- in den Firmware-Modus zu
-wechseln und umgekehrt. Ein Welchsel vom Bootlodaer- in der den Firmware-Modus
+wechseln und umgekehrt. Ein Welchsel vom Bootloader- in der den Firmware-Modus
 ist nur möglich wenn Entry-Funktion, Device Identifier und CRC vorhanden und
 korrekt sind.
 
-Diese Funktion wird vom Brick Viewer während des flashens benutzt. In einem
+Diese Funktion wird vom Brick Viewer während des Flashens benutzt. In einem
 normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 """
 }]
@@ -558,63 +643,13 @@ Gibt den aktuellen Bootloader-Modus zurück, siehe :func:`Set Bootloader Mode`.
 }]
 })
 
-common_packets.append({
-'feature': 'comcu_bricklet_host',
-'type': 'function',
-'function_id': 237,
-'name': 'Get SPITFP Error Count',
-'elements': [('Bricklet Port', 'char', 1, 'in'),
-             ('Error Count ACK Checksum', 'uint32', 1, 'out'),
-             ('Error Count Message Checksum', 'uint32', 1, 'out'),
-             ('Error Count Frame', 'uint32', 1, 'out'),
-             ('Error Count Overflow', 'uint32', 1, 'out')],
-'since_firmware': {'*': [2, 0, 0],
-                   'DC': [2, 3, 3],
-                   'IMU': [2, 3, 3],
-                   'IMU V2': [2, 0, 5],
-                   'Master': [2, 4, 3],
-                   'Servo': [2, 3, 2],
-                   'Stepper': [2, 3, 3]},
-'doc': ['af', {
-'en':
-"""
-Returns the error count for the communication between Brick and Bricklet.
-
-The errors are divided into
-
-* ACK checksum errors,
-* message checksum errors,
-* framing errors and
-* overflow errors.
-
-The errors counts are for errors that occur on the Brick side. All
-Bricklets have a similar function that returns the errors on the Bricklet side.
-""",
-'de':
-"""
-Gibt die Anzahl der Fehler die während der Kommunikation zwischen Brick und
-Bricklet aufgetreten sind zurück.
-
-Die Fehler sind aufgeteilt in
-
-* ACK-Checksummen Fehler,
-* Message-Checksummen Fehler,
-* Framing Fehler und
-* Overflow Fehler.
-
-Die Fehlerzähler sind für Fehler die auf der Seite des Bricks auftreten.
-Jedes Bricklet hat eine ähnliche Funktion welche die Fehler auf Brickletseite
-ausgibt.
-"""
-}]
-})
 
 common_packets.append({
 'feature': 'tng',
 'type': 'function',
 'function_id': 237,
 'name': 'Set Write Firmware Pointer',
-'elements': [('Pointer', 'uint32', 1, 'in')],
+'elements': [('Pointer', 'uint32', 1, 'in', {'unit': 'Byte'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -633,7 +668,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 237,
 'name': 'Set Write Firmware Pointer',
-'elements': [('Pointer', 'uint32', 1, 'in')],
+'elements': [('Pointer', 'uint32', 1, 'in', {'unit': 'Byte'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -697,8 +732,8 @@ common_packets.append({
 'type': 'function',
 'function_id': 238,
 'name': 'Write Firmware',
-'elements': [('Data', 'uint8', 64, 'in'),
-             ('Status', 'uint8', 1, 'out')],
+'elements': [('Data', 'uint8', 64, 'in', {}),
+             ('Status', 'uint8', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -717,8 +752,8 @@ common_packets.append({
 'type': 'function',
 'function_id': 238,
 'name': 'Write Firmware',
-'elements': [('Data', 'uint8', 64, 'in'),
-             ('Status', 'uint8', 1, 'out')],
+'elements': [('Data', 'uint8', 64, 'in', {}),
+             ('Status', 'uint8', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -786,7 +821,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 239,
 'name': 'Set Status LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Status LED Config'})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Status LED Config', 'default': 3})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -817,7 +852,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 240,
 'name': 'Is Status LED Enabled',
-'elements': [('Enabled', 'bool', 1, 'out')],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': True})],
 'since_firmware': {'*': [2, 0, 0],
                    'DC': [2, 3, 1],
                    'IMU': [2, 3, 1],
@@ -841,7 +876,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 240,
 'name': 'Get Status LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Status LED Config'})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Status LED Config', 'default': 3})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -856,46 +891,11 @@ Gibt die Konfiguration zurück, wie von :func:`Set Status LED Config` gesetzt.
 })
 
 common_packets.append({
-'feature': 'eeprom_bricklet_host',
-'type': 'function',
-'function_id': 241,
-'name': 'Get Protocol1 Bricklet Name',
-'elements': [('Port', 'char', 1, 'in'),
-             ('Protocol Version', 'uint8', 1, 'out'),
-             ('Firmware Version', 'uint8', 3, 'out'),
-             ('Name', 'string', 40, 'out')],
-'since_firmware': {'*': [2, 0, 0],
-                   'DC': [2, 0, 0],
-                   'IMU': [2, 0, 0],
-                   'Master': [2, 0, 0],
-                   'Servo': [2, 0, 0],
-                   'Stepper': [2, 0, 0]},
-'doc': ['af', {
-'en':
-"""
-Returns the firmware and protocol version and the name of the Bricklet for a
-given port.
-
-This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
-plugins.
-""",
-'de':
-"""
-Gibt die Firmware und Protokoll Version und den Namen des Bricklets für einen
-gegebenen Port zurück.
-
-Der einzige Zweck dieser Funktion ist es, automatischen Flashen von Bricklet
-v1.x.y Plugins zu ermöglichen.
-"""
-}]
-})
-
-common_packets.append({
 'feature': 'brick_chip_temperature',
 'type': 'function',
 'function_id': 242,
 'name': 'Get Chip Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree Celsius'})],
 'since_firmware': {'*': [2, 0, 0],
                    'DC': [1, 1, 3],
                    'IMU': [1, 0, 7],
@@ -905,7 +905,7 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Returns the temperature in °C/10 as measured inside the microcontroller. The
+Returns the temperature as measured inside the microcontroller. The
 value returned is not the ambient temperature!
 
 The temperature is only proportional to the real temperature and it has an
@@ -914,7 +914,7 @@ temperature changes.
 """,
 'de':
 """
-Gibt die Temperatur in °C/10, gemessen im Mikrocontroller, aus. Der
+Gibt die Temperatur, gemessen im Mikrocontroller, aus. Der
 Rückgabewert ist nicht die Umgebungstemperatur.
 
 Die Temperatur ist lediglich proportional zur echten Temperatur und hat eine
@@ -929,12 +929,12 @@ common_packets.append({
 'type': 'function',
 'function_id': 242,
 'name': 'Get Chip Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')],
+'elements': [('Temperature', 'int16', 1, 'out', {'unit': 'Degree Celsius'})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
 """
-Returns the temperature in °C as measured inside the microcontroller. The
+Returns the temperature as measured inside the microcontroller. The
 value returned is not the ambient temperature!
 
 The temperature is only proportional to the real temperature and it has bad
@@ -943,7 +943,7 @@ temperature changes.
 """,
 'de':
 """
-Gibt die Temperatur in °C, gemessen im Mikrocontroller, aus. Der
+Gibt die Temperatur, gemessen im Mikrocontroller, aus. Der
 Rückgabewert ist nicht die Umgebungstemperatur.
 
 Die Temperatur ist lediglich proportional zur echten Temperatur und hat eine
@@ -1047,7 +1047,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 248,
 'name': 'Write UID',
-'elements': [('UID', 'uint32', 1, 'in')],
+'elements': [('UID', 'uint32', 1, 'in', {})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -1075,7 +1075,7 @@ common_packets.append({
 'type': 'function',
 'function_id': 249,
 'name': 'Read UID',
-'elements': [('UID', 'uint32', 1, 'out')],
+'elements': [('UID', 'uint32', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
 'doc': ['af', {
 'en':
@@ -1099,12 +1099,12 @@ common_packets.append({
 'type': 'function',
 'function_id': 255,
 'name': 'Get Identity',
-'elements': [('Uid', 'string', 8, 'out'),
-             ('Connected Uid', 'string', 8, 'out'),
-             ('Position', 'char', 1, 'out'),
-             ('Hardware Version', 'uint8', 3, 'out'),
-             ('Firmware Version', 'uint8', 3, 'out'),
-             ('Device Identifier', 'uint16', 1, 'out')],
+'elements': [('Uid', 'string', 8, 'out', {}),
+             ('Connected Uid', 'string', 8, 'out', {}),
+             ('Position', 'char', 1, 'out', {'range': ('0', '8')}),
+             ('Hardware Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}]),
+             ('Firmware Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}]),
+             ('Device Identifier', 'uint16', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
 'prototype_in_device': True,
 'doc': ['af', {
@@ -1114,7 +1114,7 @@ Returns the UID, the UID where the Brick is connected to,
 the position, the hardware and firmware version as well as the
 device identifier.
 
-The position can be '0'-'8' (stack position).
+The position is the position in the stack from '0' (bottom) to '8' (top).
 
 The device identifier numbers can be found :ref:`here <device_identifier>`.
 |device_identifier_constant|
@@ -1125,7 +1125,7 @@ Gibt die UID, die UID zu der der Brick verbunden ist, die
 Position, die Hard- und Firmware Version sowie den Device Identifier
 zurück.
 
-Die Position kann '0'-'8' (Stack Position) sein.
+Die Position ist die Position im Stack von '0' (unterster Brick) bis '8' (oberster Brick).
 
 Eine Liste der Device Identifier Werte ist :ref:`hier <device_identifier>` zu
 finden. |device_identifier_constant|
@@ -1140,12 +1140,12 @@ common_packets.append({
 'type': 'function',
 'function_id': 255,
 'name': 'Get Identity',
-'elements': [('Uid', 'string', 8, 'out'),
-             ('Connected Uid', 'string', 8, 'out'),
-             ('Position', 'char', 1, 'out'),
-             ('Hardware Version', 'uint8', 3, 'out'),
-             ('Firmware Version', 'uint8', 3, 'out'),
-             ('Device Identifier', 'uint16', 1, 'out')],
+'elements': [('Uid', 'string', 8, 'out', {}),
+             ('Connected Uid', 'string', 8, 'out', {}),
+             ('Position', 'char', 1, 'out', {'range': [('a', 'h'), ('i', 'i'), ('z', 'z')]}),
+             ('Hardware Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}]),
+             ('Firmware Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}]),
+             ('Device Identifier', 'uint16', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
 'prototype_in_device': True,
 'doc': ['af', {

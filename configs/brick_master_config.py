@@ -31,8 +31,9 @@ com = {
         'brick_reset',
         'brick_chip_temperature',
         'send_timeout_count',
-        'eeprom_bricklet_host',
-        'comcu_bricklet_host'
+        'eeprom_bricklet_host_4_ports',
+        'comcu_bricklet_host',
+        'comcu_bricklet_host_4_ports'
     ],
     'constant_groups': [],
     'packets': [],
