@@ -53,7 +53,7 @@ else:
     base = os.path.join(root, bindings)
     tmp = tempfile.mkdtemp()
 
-    if os.system('bash -cx "pushd {0} && diff -ur doc_old/ doc/ > {1}/diff1.diff; popd"'.format(base, tmp)) != 0:
+    if os.system('bash -cx "pushd {0} && diff -U 15 -r doc_old/ doc/ > {1}/diff1.diff; popd"'.format(base, tmp)) != 0:
         print('diff old vs new failed')
         sys.exit(1)
 
@@ -98,10 +98,10 @@ else:
             continue
 
         if len(filtered_lines) == 4 and \
-        filtered_lines[0].startswith('diff -ur ') and \
-        filtered_lines[1].startswith('--- ') and \
-        filtered_lines[2].startswith('+++ ') and \
-        filtered_lines[3].endswith('// dropped header hunk\n'):
+           filtered_lines[0].startswith('diff -U 15 -r ') and \
+           filtered_lines[1].startswith('--- ') and \
+           filtered_lines[2].startswith('+++ ') and \
+           filtered_lines[3].endswith('// dropped header hunk\n'):
             filtered += [filtered_lines[0].rstrip() + ' // dropped header diff\n']
         else:
             filtered += filtered_lines
