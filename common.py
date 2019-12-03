@@ -680,23 +680,32 @@ def format_value_hint(value, scale, unit):
     if value == 0:
         scaled_value = 0
 
-        if scale in [None, 'dynamic']:
+        if scale == None:
             modified_scale = (1, 1)
+        elif scale == 'dynamic':
+            modified_scale = 'dynamic'
         else:
             modified_scale = scale
 
         if unit not in [None, 'dynamic']:
             unit_symbol = unit.get_symbol()
     elif unit in [None, 'dynamic']:
-        if scale == 'dynamic':
+        if scale == None:
             scaled_value = value
             modified_scale = (1, 1)
+        elif scale == 'dynamic':
+            scaled_value = value
+            modified_scale = 'dynamic'
         else:
             scaled_value = float(value) * scale[0] / scale[1]
             modified_scale = scale
     elif scale in [None, 'dynamic']:
         scaled_value = value
-        modified_scale = (1, 1)
+
+        if scale == None:
+            modified_scale = (1, 1)
+        elif scale == 'dynamic':
+            modified_scale = 'dynamic'
 
         if unit not in [None, 'dynamic']:
             unit_symbol = unit.get_symbol()
@@ -764,20 +773,26 @@ def format_value_hint(value, scale, unit):
                     modified_scale = modified_scale_candidate
                     unit_symbol = unit_symbol_candidate
 
-    digits = int(math.ceil(math.log10(modified_scale[1]) - math.log10(modified_scale[0])))
-
-    if digits >= 1:
-        formatted_value = '{{0:.{0}f}}'.format(digits).format(round(scaled_value, digits))
+    if modified_scale == 'dynamic':
+        if unit in [None, 'dynamic']:
+            formatted_value = '?'
+        else:
+            formatted_value = unit.get_sequence().format(value='?', unit=unit_symbol)
     else:
-        formatted_value = str(int(scaled_value))
+        digits = int(math.ceil(math.log10(modified_scale[1]) - math.log10(modified_scale[0])))
 
-    if lang == 'de':
-        formatted_value = formatted_value.replace('.', ',')
+        if digits >= 1:
+            formatted_value = '{{0:.{0}f}}'.format(digits).format(round(scaled_value, digits))
+        else:
+            formatted_value = str(int(scaled_value))
 
-    if unit == 'dynamic':
-        formatted_value = '{value} {unit}'.format(value=formatted_value, unit='?')
-    elif unit != None:
-        formatted_value = unit.get_sequence().format(value=formatted_value, unit=unit_symbol)
+        if lang == 'de':
+            formatted_value = formatted_value.replace('.', ',')
+
+        if unit == 'dynamic':
+            formatted_value = '{value} {unit}'.format(value=formatted_value, unit='?')
+        elif unit != None:
+            formatted_value = unit.get_sequence().format(value=formatted_value, unit=unit_symbol)
 
     return formatted_value
 
