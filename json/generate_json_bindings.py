@@ -58,14 +58,24 @@ class JSONBindingsDevice(common.Device):
         for packet in self.get_packets():
             members['packets'].append(packet.get_json_members())
 
+            if packet.has_high_level():
+                members['packets'].append(packet.get_json_members(high_level=True))
+
         return json.dumps(members, indent=2)
 
 class JSONBindingsPacket(common.Packet):
-    def get_json_members(self):
+    def get_json_members(self, high_level=False):
         members = OrderedDict()
 
+        if high_level:
+            members['level'] = 'high'
+        elif self.has_high_level():
+            members['level'] = 'low'
+        else:
+            members['level'] = 'normal'
+
         members['type'] = self.get_type()
-        members['name'] = self.get_name().space
+        members['name'] = self.get_name(skip=-2 if high_level else 0).space
         members['function_id'] = self.get_function_id()
         members['since_firmware'] = self.get_since_firmware()
         members['doc'] = OrderedDict()
@@ -75,7 +85,7 @@ class JSONBindingsPacket(common.Packet):
         members['doc']['text']['de'] = self.get_doc_text()['de']
         members['elements'] = []
 
-        for element in self.get_elements():
+        for element in self.get_elements(high_level=high_level):
             members['elements'].append(element.get_json_members())
 
         return members
@@ -84,10 +94,12 @@ class JSONBindingsElement(common.Element):
     def get_json_members(self):
         members = OrderedDict()
 
+        members['level'] = self.get_level()
         members['name'] = self.get_name().space
         members['type'] = self.get_type()
         members['cardinality'] = self.get_cardinality()
         members['direction'] = self.get_direction()
+        members['role'] = self.get_role()
         members['extra'] = []
 
         for index in self.get_indices():
