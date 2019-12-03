@@ -1155,7 +1155,10 @@ Returns the UID, the UID where the Bricklet is connected to,
 the position, the hardware and firmware version as well as the
 device identifier.
 
-The position can be 'a', 'b', 'c' or 'd'.
+The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
+The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
+connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+position 'z'.
 
 The device identifier numbers can be found :ref:`here <device_identifier>`.
 |device_identifier_constant|
@@ -1166,7 +1169,10 @@ Gibt die UID, die UID zu der das Bricklet verbunden ist, die
 Position, die Hard- und Firmware Version sowie den Device Identifier
 zurück.
 
-Die Position kann 'a', 'b', 'c' oder 'd' sein.
+Die Position 'a', 'b', 'c', 'd', 'e', 'f', 'g' oder 'h' (Bricklet Anschluss)
+sein. Der Raspberry Pi HAT (Zero) Brick ist immer an Position 'i' und das
+Bricklet hinter einem :ref:`Isolator Bricklet <isolator_bricklet>` ist immer an
+Position 'z'.
 
 Eine Liste der Device Identifier Werte ist :ref:`hier <device_identifier>` zu
 finden. |device_identifier_constant|
