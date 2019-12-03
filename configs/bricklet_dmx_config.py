@@ -623,6 +623,16 @@ com['openhab'] = {
 
             'is_trigger_channel': True,
         }, {
+            'id': 'Frame Available',
+            'label': 'Frame Available',
+            'type': 'system.trigger',
+
+            'callbacks': [{
+                'packet': 'Frame Available',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
             'id': 'Overrun Error Count',
             'label': 'Overrun Error Count',
             'type': 'Overrun Error Count',
