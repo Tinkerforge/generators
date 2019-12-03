@@ -429,7 +429,7 @@ Gibt die Konfiguration für kontinuierliche Beschleunigungswerte zurück, wie mi
 com['packets'].append({
 'type': 'callback',
 'name': 'Continuous Acceleration 16 Bit',
-'elements': [('Acceleration', 'int16', 30, 'out', {})],
+'elements': [('Acceleration', 'int16', 30, 'out', {'scale': 'dynamic', 'unit': 'Standard Gravity', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -455,9 +455,9 @@ the data in gₙ/10000 (same unit that is returned by :func:`Get Acceleration`):
 The data is formated in the sequence "x, y, z, x, y, z, ..." depending on
 the enabled axis. Examples:
 
-* x, y, z enabled: "x, y, z, ... 10x ..., x, y, z"
-* x, z enabled: "x, z, ... 15x ..., x, z"
-* y enabled: "y, ... 30x ..., y"
+* x, y, z enabled: "x, y, z," repeated 10 times
+* x, z enabled: "x, z," repeated 15 times
+* y enabled: "y," repeated 30 times
 
 """,
 'de':
@@ -485,9 +485,9 @@ eingestellten Wertebereich (siehe :func:`Set Configuration`):
 Die Daten sind in der Sequenz "x, y, z, x, y, z, ..." formatiert, abhängig
 von den aktivierten Achsen. Beispiele:
 
-* x, y, z aktiviert: "x, y, z, ... 10x ..., x, y, z"
-* x, z aktiviert: "x, z, ... 15x ..., x, z"
-* y aktiviert: "y, ... 30x ..., y"
+* x, y, z aktiviert: "x, y, z," zehnmal wiederholt
+* x, z aktiviert: "x, z," fünfzehnmal wiederholt
+* y aktiviert: "y," dreißigmal wiederholt
 
 """
 }]
@@ -496,7 +496,7 @@ von den aktivierten Achsen. Beispiele:
 com['packets'].append({
 'type': 'callback',
 'name': 'Continuous Acceleration 8 Bit',
-'elements': [('Acceleration', 'int8', 60, 'out', {})],
+'elements': [('Acceleration', 'int8', 60, 'out', {'scale': 'dynamic', 'unit': 'Standard Gravity', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
