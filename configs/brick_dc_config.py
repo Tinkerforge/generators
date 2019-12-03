@@ -172,7 +172,7 @@ Gibt die Beschleunigung zurück, wie gesetzt von :func:`Set Acceleration`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set PWM Frequency',
-'elements': [('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'scale': (1, 20000), 'default': 15000})],
+'elements': [('Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (1, 20000), 'default': 15000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -205,7 +205,7 @@ höchstwahrscheinlich zu einem akzeptablen Ergebnis führt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get PWM Frequency',
-'elements': [('Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'scale': (1, 20000), 'default': 15000})],
+'elements': [('Frequency', 'uint16', 1, 'out', {'unit': 'Hertz', 'range': (1, 20000), 'default': 15000})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
