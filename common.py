@@ -1887,6 +1887,18 @@ class Element(object):
         constant_group_names = set()
 
         for extra in raw_data_extra:
+            # possible extra config, all values are optional
+            #
+            # name:           non-empty string following the general name rules, allowed for indexed extra config only
+            # scale:          2-tuple of int values representing a fraction, or 'dynamic', or 'unknown'
+            # unit:           non-empty string representing an optionally prefixed unit name, or 'dynamic', or 'unknown'
+            # range:          2-tuple of int values representing an inclusive min/max range, or a list of non-overlapping 2-tuples, or 'dynamic', or 'unknown'
+            # constant_group: non-empty string representing a constant group name
+            # default:        default value
+            #
+            # 'dynamic':      this value should be used when a scale/unit/range is not fixed, but depends some other runtime config
+            # 'unknown':      this value must only be used during development, as a reminder to insert a proper value in the future
+
             assert len(set(extra.keys()) - set(['name', 'scale', 'unit', 'range', 'constant_group', 'default'])) == 0, raw_data
 
             name = extra.get('name')
