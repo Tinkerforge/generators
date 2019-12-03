@@ -1898,6 +1898,9 @@ class Element(object):
 
             scale = extra.get('scale')
 
+            if scale == 'unknown':
+                scale = None
+
             if scale == 'dynamic':
                 assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
             elif scale != None:
@@ -1912,6 +1915,9 @@ class Element(object):
                 assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
             unit_name = extra.get('unit')
+
+            if unit_name == 'unknown':
+                unit_name = None
 
             if unit_name == None:
                 unit = None
@@ -1970,6 +1976,9 @@ class Element(object):
                 range_default = None
 
             range_ = extra.get('range')
+
+            if range_ == 'unknown':
+                range_ = None
 
             if range_ == None:
                 if 'constant_group' in extra:
