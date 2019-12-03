@@ -93,15 +93,16 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)}),
-             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)}),
-             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the acceleration in x, y and z direction. The values
-are given in gₙ/10000 (1gₙ = 9.80665m/s²).
+are given in gₙ/10000 (1gₙ = 9.80665m/s²). The range is
+configured with :func:`Set Configuration`.
 
 If you want to get the acceleration periodically, it is recommended
 to use the :cb:`Acceleration` callback and set the period with
@@ -110,7 +111,8 @@ to use the :cb:`Acceleration` callback and set the period with
 'de':
 """
 Gibt die Beschleunigung in X-, Y- und Z-Richtung zurück. Die Werte
-haben die Einheit gₙ/10000 (1gₙ = 9,80665m/s²).
+haben die Einheit gₙ/10000 (1gₙ = 9,80665m/s²). Der Wertebereich
+wird mit :func:`Set Configuration` konfiguriert.
 
 Wenn die Beschleunigungswerte periodisch abgefragt werden sollen, wird empfohlen
 den :cb:`Acceleration` Callback zu nutzen und die Periode mit
@@ -270,9 +272,9 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Info LED Config` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)}),
-             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)}),
-             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': (-80000, 80000)})],
+'elements': [('X', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Y', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Z', 'int32', 1, 'out', {'scale': (1, 10000), 'unit': 'Standard Gravity', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -285,9 +287,9 @@ The :word:`parameters` are the same as :func:`Get Acceleration`.
 'de':
 """
 Dieser Callback wird periodisch ausgelöst abhängig von der mittels
-:func:`Set Acceleration Callback Configuration` gesetzten Konfiguration
+:func:`Set Acceleration Callback Configuration` gesetzten Konfiguration.
 
-Die :word:`parameters` sind der gleiche wie :func:`Get Acceleration`.
+Die :word:`parameters` sind die gleichen wie :func:`Get Acceleration`.
 """
 }]
 })

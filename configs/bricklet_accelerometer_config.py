@@ -73,15 +73,16 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the acceleration in x, y and z direction. The values
-are given in gₙ/1000 (1gₙ = 9.80665m/s²).
+are given in gₙ/1000 (1gₙ = 9.80665m/s²). The range is
+configured with :func:`Set Configuration`.
 
 If you want to get the acceleration periodically, it is recommended
 to use the :cb:`Acceleration` callback and set the period with
@@ -90,7 +91,8 @@ to use the :cb:`Acceleration` callback and set the period with
 'de':
 """
 Gibt die Beschleunigung in X-, Y- und Z-Richtung zurück. Die Werte
-haben die Einheit gₙ/1000 (1gₙ = 9,80665m/s²).
+haben die Einheit gₙ/1000 (1gₙ = 9,80665m/s²). Der Wertebereich
+wird mit :func:`Set Configuration` konfiguriert.
 
 Wenn die Beschleunigungswerte periodisch abgefragt werden sollen, wird empfohlen
 den :cb:`Acceleration` Callback zu nutzen und die Periode mit
@@ -386,16 +388,17 @@ Gibt *true* zurück wenn die LED aktiviert ist, *false* sonst.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered periodically with the period that is set by
 :func:`Set Acceleration Callback Period`. The :word:`parameters` are the
-X, Y and Z acceleration.
+X, Y and Z acceleration. The range is
+configured with :func:`Set Configuration`.
 
 The :cb:`Acceleration` callback is only triggered if the acceleration has
 changed since the last triggering.
@@ -404,7 +407,8 @@ changed since the last triggering.
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Acceleration Callback Period`, ausgelöst. Die :word:`parameters`
-sind die Beschleunigungen der X-, Y- und Z-Achse.
+sind die Beschleunigungen der X-, Y- und Z-Achse. Der Wertebereich
+wird mit :func:`Set Configuration` konfiguriert.
 
 Der :cb:`Acceleration` Callback wird nur ausgelöst, wenn sich die Beschleunigung
 seit der letzten Auslösung geändert hat.
@@ -415,16 +419,17 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration Reached',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': (-16000, 16000)})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered when the threshold as set by
 :func:`Set Acceleration Callback Threshold` is reached.
-The :word:`parameters` are the X, Y and Z acceleration.
+The :word:`parameters` are the X, Y and Z acceleration. The range is
+configured with :func:`Set Configuration`.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`Set Debounce Period`.
@@ -433,7 +438,8 @@ with the period as set by :func:`Set Debounce Period`.
 """
 Dieser Callback wird ausgelöst, wenn der Schwellwert, wie von
 :func:`Set Acceleration Callback Threshold` gesetzt, erreicht wird.
-Die :word:`parameters` sind die Beschleunigungen der X-, Y- und Z-Achse.
+Die :word:`parameters` sind die Beschleunigungen der X-, Y- und Z-Achse. Der Wertebereich
+wird mit :func:`Set Configuration` konfiguriert.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`Set Debounce Period` gesetzt, ausgelöst.
