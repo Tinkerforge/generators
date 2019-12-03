@@ -2694,16 +2694,16 @@ It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """
 Setzt die allgemeine Konfiguration der WIFI Extension 2.0.
 
-Das ``port`` Parameter setzt die Portnummer auf den das Anwendungsprogramm sich
+Der ``port`` Parameter setzt die Portnummer auf die sich das Anwendungsprogramm
 verbindet. Der Standardwert ist 4223.
 
-Das ``websocket_port`` Parameter setzt die WebSocket-Portnummer auf den das
-JavaScript Anwendungsprogramm sich verbindet. Der Standardwert ist 4280.
+Der ``websocket_port`` Parameter setzt die WebSocket-Portnummer auf den sich das
+JavaScript Anwendungsprogramm verbindet. Der Standardwert ist 4280.
 
-Das ``website_port`` Parameter setzt die Portnummer für die Webseite der
+Der ``website_port`` Parameter setzt die Portnummer für die Webseite der
 WIFI Extension 2.0. Der Standardwert ist 80.
 
-Das ``phy_mode`` Parameter setzt den zu verwendenden WLAN-Modus. Mögliche Werte
+Der ``phy_mode`` Parameter setzt den zu verwendenden WLAN-Modus. Mögliche Werte
 sinf B, G und N. Der Standardwert ist G.
 
 Die ``sleep_mode`` und ``website`` Parameter werden momentan nicht verwendet.
@@ -2819,21 +2819,21 @@ It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """
 Setzt die Client-spezifische Konfiguration der WIFI Extension 2.0.
 
-Das ``enable`` Parameter aktiviert oder deaktiviert den Client-Teil der
+Der ``enable`` Parameter aktiviert oder deaktiviert den Client-Teil der
 WIFI Extension 2.0. Der Standardwert ist *true*.
 
-Das ``ssid`` Parameter die SSID (bis zu 32 Zeichen) des Access Points zu dem
+Der ``ssid`` Parameter die SSID (bis zu 32 Zeichen) des Access Points zu dem
 die WLAN Verbindung hergestellt werden soll.
 
 Wenn die ``ip``, ``subnet_mask`` und ``gateway`` Parameter alle auf Null gesetzt
 sind, dann wird DHCP verwendet. Andernfalls kann mit diese drei Parametern eine
 statische IP Adresse eingestellt werden. Die Standardeinstellung ist DHCP.
 
-Wenn das ``mac_address`` Parameter auf Null gesetzt ist, dann wird die
+Wenn der ``mac_address`` Parameter auf Null gesetzt ist, dann wird die
 voreingestellt MAC Adresse verwendet. Andernfalls kann mit diesem Parameter
 eine eigene MAC Adresse eingestellt werden.
 
-Wenn das ``bssid`` Parameter auf Null gesetzt ist, dann verbindet sich die
+Wenn der ``bssid`` Parameter auf Null gesetzt ist, dann verbindet sich die
 WIFI Extension 2.0 mit einem Access Point wenn die eingestellt SSID
 übereinstimmt. Andernfalls kann dieses Parameter verwendet werden, damit sich
 die WIFI Extension 2.0 nur dann mit einem Access Point verbindet, wenn SSID
@@ -3029,28 +3029,28 @@ It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """
 Setzt die Access-Point-spezifische Konfiguration der WIFI Extension 2.0.
 
-Das ``enable`` Parameter aktiviert oder deaktiviert den Access-Point-Teil der
+Der ``enable`` Parameter aktiviert oder deaktiviert den Access-Point-Teil der
 WIFI Extension 2.0. Der Standardwert ist *true*.
 
-Das ``ssid`` Parameter die SSID (bis zu 32 Zeichen) des Access Points.
+Der ``ssid`` Parameter die SSID (bis zu 32 Zeichen) des Access Points.
 
 Wenn die ``ip``, ``subnet_mask`` und ``gateway`` Parameter alle auf Null gesetzt
 sind, dann wird ein DHCP Server aktiviert. Andernfalls kann mit diese drei
 Parametern eine statische IP Adresse eingestellt werden. Die Standardeinstellung
 ist DHCP.
 
-Das ``encryption`` Parameter legt den Verschlüsselungsmodus fest. Mögliche Werte
+Der ``encryption`` Parameter legt den Verschlüsselungsmodus fest. Mögliche Werte
 sind Open (keine  Verschlüsselung), WEP oder WPA/WPA2 PSK. Der Standardwert ist
 WPA/WPA2 PSK. Mit der :func:`Set Wifi2 AP Password` Kann das
 Verschlüsselungspasswort gesetzt werden.
 
-Das ``hidden`` Parameter legt fest, oder der Access Point seine SSID versteckt
+Der ``hidden`` Parameter legt fest, oder der Access Point seine SSID versteckt
 oder zeigt. Der Standardwert ist *false*.
 
-Das ``channel`` Parameter gibt den Kanal (1 to 13) des Access Points and.
+Der ``channel`` Parameter gibt den Kanal (1 to 13) des Access Points and.
 Der Standardwert ist 1.
 
-Wenn das ``mac_address`` Parameter auf Null gesetzt ist, dann wird die
+Wenn der ``mac_address`` Parameter auf Null gesetzt ist, dann wird die
 voreingestellt MAC Adresse verwendet. Andernfalls kann mit diesem Parameter
 eine eigene MAC Adresse eingestellt werden.
 
@@ -3297,7 +3297,7 @@ Benötigt WIFI Extension 2.0 Firmware 2.1.0.
 
 Set die Mesh-Konfiguration der WIFI Extension 2.0.
 
-Das ``enable`` Parameter aktiviert oder deaktiviert den Mesh-Teil der
+Der ``enable`` Parameter aktiviert oder deaktiviert den Mesh-Teil der
 WIFI Extension 2.0. Der Mesh-Teil kann nicht
 zusammen mit dem Client- und Access-Point-Teil aktiviert werden.
 
@@ -3306,7 +3306,7 @@ auf Null gesetzt sind, dann wird DHCP verwendet. Andernfalls kann mit diese
 drei Parametern eine statische IP Adresse eingestellt werden. Die
 Standardeinstellung ist DHCP.
 
-Wenn das ``router_bssid`` Parameter auf Null gesetzt ist, dann verbindet sich
+Wenn der ``router_bssid`` Parameter auf Null gesetzt ist, dann verbindet sich
 die WIFI Extension 2.0 mit einem Access Point wenn die eingestellt SSID
 übereinstimmt, siehe :func:`Set Wifi2 Mesh Router SSID`. Andernfalls kann dieses
 Parameter verwendet werden, damit sich die WIFI Extension 2.0 nur dann mit

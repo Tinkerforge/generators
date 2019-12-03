@@ -190,7 +190,7 @@ die LED die 1-Wire Kommunikation durch Aufblinken an.
 
 Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
 
-Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
+Wenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.
 """
 }]
 })

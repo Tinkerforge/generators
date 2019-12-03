@@ -530,7 +530,7 @@ angegeben. Dieser kann genutzt werden um die genaue Position der Geste zu
 ermitteln (z.B. ob ein Wischen von oben nach unten auf der linken oder rechten
 des Bildschirms erkannt wurde).
 
-Das Age Parameter gibt das Alter der Geste an (wie lange ist die Erkennung
+Der Age Parameter gibt das Alter der Geste an (wie lange ist die Erkennung
 der Geste her).
 """
 }]
@@ -959,7 +959,7 @@ im Wertebereich von 1 bis 64 und die x-Position im Wertebereich von
 
 Die minimale Länge des Sliders ist 8.
 
-Das :word:`parameter` value ist die Startposition des Sliders. Diese kann
+Der :word:`parameter` value ist die Startposition des Sliders. Diese kann
 zwischen 0 und length-8 liegen.
 
 Der Callback für Slider-Events kann mit der Funktion

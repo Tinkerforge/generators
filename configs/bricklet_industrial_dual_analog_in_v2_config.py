@@ -77,7 +77,7 @@ channels. Valid values for the ``channel`` parameter are 0 and 1.
 """
 Das Bricklet hat zwei Eingangskanäle. Funktionen die
 sich direkt auf einen der Kanäle beziehen haben einen ``channel`` Parameter,
-um den Kanal anzugeben. Gültige Werte für das ``channel`` Parameter sind 0
+um den Kanal anzugeben. Gültige Werte für der ``channel`` Parameter sind 0
 und 1.
 """
 }
@@ -302,12 +302,12 @@ die Kanal-LED auf Kanalstatus eingestellt ist, siehe :func:`Set Channel LED Conf
 Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
 
 Im Schwellwertmodus kann ein positiver oder negativer Schwellwert definiert werden.
-Für einen positiven Schwellwert muss das "min" Parameter auf den gewünschten
+Für einen positiven Schwellwert muss der "min" Parameter auf den gewünschten
 Schwellwert in mV gesetzt werden, über dem die LED eingeschaltet werden soll.
 Der "max" Parameter muss auf 0 gesetzt werden. Beispiel: Bei einem positiven
 Schwellwert von 10V wird die LED eingeschaltet sobald die gemessene Spannung
 über 10V steigt und wieder ausgeschaltet sobald der Strom unter 10V fällt.
-Für einen negativen Schwellwert muss das "max" Parameter auf den gewünschten
+Für einen negativen Schwellwert muss der "max" Parameter auf den gewünschten
 Schwellwert in mV gesetzt werden, unter dem die LED eingeschaltet werden soll.
 Der "max" Parameter muss auf 0 gesetzt werden. Beispiel: Bei einem negativen
 Schwellwert von 10mA wird die LED eingeschaltet sobald die gemessene Spannung

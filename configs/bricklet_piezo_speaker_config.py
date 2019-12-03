@@ -61,7 +61,7 @@ the best possible match by applying the calibration (see :func:`Calibrate`).
 Erzeugt einen Piepton mit der gegebenen Frequenz für die angegebene Dauer.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
-   Eine *durarion* von 0 stoppt den aktuellen Piepton, das *frequency* Parameter
+   Eine *durarion* von 0 stoppt den aktuellen Piepton, der *frequency* Parameter
    wird ignoriert. Eine *durarion* von 4294967295 führt zu einem unendlich
    langen Piepton.
 

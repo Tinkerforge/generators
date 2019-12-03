@@ -356,7 +356,7 @@ kein Fix da ist, geht die LED aus.
 Die LED kann auch permanent an/aus gestellt werden, einen Herzschlag anzeigen
 oder im Rythmus des PPS (Puls pro Sekunde) Ausgangs des GPS Moduls blinken.
 
-Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
+Wenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.
 """
 }]
 })

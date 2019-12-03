@@ -136,7 +136,7 @@ Bricklet Bit 0 bis 10 des ``identifier`` Parameters als Standard 11-Bit
 Identifier. Für Extended-Frames verwendet das Bricklet Bit 0 bis 28 des
 ``identifier`` Parameters als Extended 29-Bit Identifier.
 
-Das ``data`` Parameter kann bis zu 15 Bytes lang sein. Für Data-Frames werden
+Der ``data`` Parameter kann bis zu 15 Bytes lang sein. Für Data-Frames werden
 davon bis zu 8 Bytes als die eigentlichen Daten verwendet. Das Längenfeld (DLC)
 im Daten- oder Remote-Frame wird auf die eigentliche Länge des ``data``
 Parameters gesetzt. Dies erlaubt es Daten- und Remote-Frames mit Überlänge zu
@@ -746,7 +746,7 @@ oder gesendeten Frames.
 
 Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.
 
-Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
+Wenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.
 """
 }]
 })
@@ -805,7 +805,7 @@ aufgerufen wird, geht die LED wieder aus bis der nächste Error auftritt.
 Die LED kann auch permanent an/aus gestellt werden oder einen Herzschlag
 anzeigen.
 
-Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
+Wenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.
 """
 }]
 })

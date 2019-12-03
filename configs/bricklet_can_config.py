@@ -114,7 +114,7 @@ Bricklet Bit 0 bis 10 des ``identifier`` Parameters als Standard 11-Bit
 Identifier. Für Extended-Frames verwendet das Bricklet zusätzlich Bit 11 bis 28
 des ``identifier`` Parameters als Extended 18-Bit Identifier.
 
-Für Remote-Frames wird das ``data`` Parameter ignoriert.
+Für Remote-Frames wird der ``data`` Parameter ignoriert.
 
 Gibt *true* zurück, wenn der Frame dem Schreib-Buffer erfolgreich hinzugefügt
 wurde. Gibt *false* zurück wenn Frame nicht hinzugefügt werden konnte, weil
