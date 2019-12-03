@@ -345,35 +345,35 @@ set_spitfp_baudrate = {
     'doc': ['af', {
     'en':
     """
-    Sets the baudrate for a specific Bricklet port.
+Sets the baudrate for a specific Bricklet port.
 
-    If you want to increase the throughput of Bricklets you can increase
-    the baudrate. If you get a high error count because of high
-    interference (see :func:`Get SPITFP Error Count`) you can decrease the
-    baudrate.
+If you want to increase the throughput of Bricklets you can increase
+the baudrate. If you get a high error count because of high
+interference (see :func:`Get SPITFP Error Count`) you can decrease the
+baudrate.
 
-    If the dynamic baudrate feature is enabled, the baudrate set by this
-    function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
+If the dynamic baudrate feature is enabled, the baudrate set by this
+function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
 
-    Regulatory testing is done with the default baudrate. If CE compatibility
-    or similar is necessary in you applications we recommend to not change
-    the baudrate.
-    """,
+Regulatory testing is done with the default baudrate. If CE compatibility
+or similar is necessary in you applications we recommend to not change
+the baudrate.
+""",
     'de':
     """
-    Setzt die Baudrate eines spezifischen Bricklet Ports .
+Setzt die Baudrate eines spezifischen Bricklet Ports .
 
-    Für einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden.
-    Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist
-    (siehe :func:`Get SPITFP Error Count`) kann die Baudrate verringert werden.
+Für einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden.
+Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist
+(siehe :func:`Get SPITFP Error Count`) kann die Baudrate verringert werden.
 
-    Wenn das Feature der dynamische Baudrate aktiviert ist, setzt diese Funktion
-    die maximale Baudrate (siehe :func:`Set SPITFP Baudrate Config`).
+Wenn das Feature der dynamische Baudrate aktiviert ist, setzt diese Funktion
+die maximale Baudrate (siehe :func:`Set SPITFP Baudrate Config`).
 
-    EMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine
-    CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die
-    Baudrate nicht zu ändern.
-    """
+EMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine
+CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die
+Baudrate nicht zu ändern.
+"""
     }]
 }
 
@@ -385,22 +385,22 @@ get_spitfp_baudrate = {
     'elements': [('Bricklet Port', 'char', 1, 'in', {}),
                 ('Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
     'since_firmware': {'*': [2, 0, 0],
-                    'DC': [2, 3, 3],
-                    'IMU': [2, 3, 3],
-                    'IMU V2': [2, 0, 5],
-                    'Master': [2, 4, 3],
-                    'Servo': [2, 3, 2],
-                    'Stepper': [2, 3, 3]},
+                       'DC': [2, 3, 3],
+                       'IMU': [2, 3, 3],
+                       'IMU V2': [2, 0, 5],
+                       'Master': [2, 4, 3],
+                       'Servo': [2, 3, 2],
+                       'Stepper': [2, 3, 3]},
     'doc': ['af', {
     'en':
     """
-    Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
-    """,
+Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
+""",
     'de':
     """
-    Gibt die Baudrate für einen Bricklet Port zurück, siehe
-    :func:`Set SPITFP Baudrate`.
-    """
+Gibt die Baudrate für einen Bricklet Port zurück, siehe
+:func:`Set SPITFP Baudrate`.
+"""
     }]
 }
 
@@ -415,43 +415,43 @@ get_spitfp_error_count = {
                 ('Error Count Frame', 'uint32', 1, 'out', {}),
                 ('Error Count Overflow', 'uint32', 1, 'out', {})],
     'since_firmware': {'*': [2, 0, 0],
-                    'DC': [2, 3, 3],
-                    'IMU': [2, 3, 3],
-                    'IMU V2': [2, 0, 5],
-                    'Master': [2, 4, 3],
-                    'Servo': [2, 3, 2],
-                    'Stepper': [2, 3, 3]},
+                       'DC': [2, 3, 3],
+                       'IMU': [2, 3, 3],
+                       'IMU V2': [2, 0, 5],
+                       'Master': [2, 4, 3],
+                       'Servo': [2, 3, 2],
+                       'Stepper': [2, 3, 3]},
     'doc': ['af', {
     'en':
     """
-    Returns the error count for the communication between Brick and Bricklet.
+Returns the error count for the communication between Brick and Bricklet.
 
-    The errors are divided into
+The errors are divided into
 
-    * ACK checksum errors,
-    * message checksum errors,
-    * framing errors and
-    * overflow errors.
+* ACK checksum errors,
+* message checksum errors,
+* framing errors and
+* overflow errors.
 
-    The errors counts are for errors that occur on the Brick side. All
-    Bricklets have a similar function that returns the errors on the Bricklet side.
-    """,
+The errors counts are for errors that occur on the Brick side. All
+Bricklets have a similar function that returns the errors on the Bricklet side.
+""",
     'de':
     """
-    Gibt die Anzahl der Fehler die während der Kommunikation zwischen Brick und
-    Bricklet aufgetreten sind zurück.
+Gibt die Anzahl der Fehler die während der Kommunikation zwischen Brick und
+Bricklet aufgetreten sind zurück.
 
-    Die Fehler sind aufgeteilt in
+Die Fehler sind aufgeteilt in
 
-    * ACK-Checksummen Fehler,
-    * Message-Checksummen Fehler,
-    * Framing Fehler und
-    * Overflow Fehler.
+* ACK-Checksummen Fehler,
+* Message-Checksummen Fehler,
+* Framing Fehler und
+* Overflow Fehler.
 
-    Die Fehlerzähler sind für Fehler die auf der Seite des Bricks auftreten.
-    Jedes Bricklet hat eine ähnliche Funktion welche die Fehler auf Brickletseite
-    ausgibt.
-    """
+Die Fehlerzähler sind für Fehler die auf der Seite des Bricks auftreten.
+Jedes Bricklet hat eine ähnliche Funktion welche die Fehler auf Brickletseite
+ausgibt.
+"""
     }]
 }
 
