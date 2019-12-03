@@ -42,16 +42,12 @@ com['packets'].append({
 Sets the state of the relays *true* means on and *false* means off.
 
 A running monoflop timer will be aborted if this function is called.
-
-The default value is *false*.
 """,
 'de':
 """
 Setzt den Zustand des Relais, *true* bedeutet ein und *false* aus.
 
 Ein laufender Monoflop Timer wird abgebrochen, wenn diese Funktion aufgerufen wird.
-
-Der Standardwert ist *false*.
 """
 }]
 })

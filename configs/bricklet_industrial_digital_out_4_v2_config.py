@@ -235,8 +235,6 @@ Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
 ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
 angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
 ein High-Signal am Kanal anliegt und sonst aus.
-
-Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })

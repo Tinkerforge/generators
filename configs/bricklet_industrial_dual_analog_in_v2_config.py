@@ -236,8 +236,6 @@ gemessenen Wertes skaliert werden.
 
 Das Verhalten des Kanalstatus kann mittels :func:`Set Channel LED Status Config`
 eingestellt werden.
-
-Standardmäßig sind die LEDs für alle Kanäle auf Kanalstatus konfiguriert.
 """
 }]
 })

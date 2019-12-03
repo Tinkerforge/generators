@@ -97,7 +97,7 @@ com['packets'].append({
 The edge type parameter configures if rising edges, falling edges or
 both are counted. Possible edge types are:
 
-* 0 = rising (default)
+* 0 = rising
 * 1 = falling
 * 2 = both
 
@@ -118,7 +118,7 @@ Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
 steigende, fallende oder beide Flanken gezählt werden. Mögliche Flankentypen
 sind:
 
-* 0 = steigend (Standard)
+* 0 = steigend
 * 1 = fallend
 * 2 = beide
 
@@ -156,7 +156,7 @@ Gibt den Flankentyp sowie die Entprellzeit zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Edge Interrupt',
-'elements': [('Edges', 'uint32', 1, 'in', {})],
+'elements': [('Edges', 'uint32', 1, 'in', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -166,8 +166,6 @@ Sets the number of edges until an interrupt is invoked.
 If *edges* is set to n, an interrupt is invoked for every n-th detected edge.
 
 If *edges* is set to 0, the interrupt is disabled.
-
-Default value is 0.
 """,
 'de':
 """
@@ -178,8 +176,6 @@ Wenn *edges* auf n gesetzt ist, wird der Interrupt nach jeder
 n-ten detektierten Flanke aufgerufen.
 
 Wenn *edges* auf 0 gesetzt ist, wird der Interrupt deaktiviert.
-
-Standardwert ist 0.
 """
 }]
 })
@@ -187,7 +183,7 @@ Standardwert ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Edge Interrupt',
-'elements': [('Edges', 'uint32', 1, 'out', {})],
+'elements': [('Edges', 'uint32', 1, 'out', {'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

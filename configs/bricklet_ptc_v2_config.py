@@ -286,15 +286,11 @@ com['packets'].append({
 """
 If you enable this callback, the :cb:`Sensor Connected` callback is triggered
 every time a Pt sensor is connected/disconnected.
-
-By default this callback is disabled.
 """,
 'de':
 """
 Wenn dieser Callback aktiviert ist, wird der :cb:`Sensor Connected` Callback
 jedes mal ausgelöst, wenn ein Pt-Sensor verbunden/getrennt wird.
-
-Standardmäßig ist dieser Callback deaktiviert.
 """
 }]
 })

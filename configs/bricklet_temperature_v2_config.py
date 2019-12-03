@@ -69,21 +69,17 @@ add_callback_value_function(
 com['packets'].append({
 'type': 'function',
 'name': 'Set Heater Configuration',
-'elements': [('Heater Config', 'uint8', 1, 'in', {'constant_group': 'Heater Config'})],
+'elements': [('Heater Config', 'uint8', 1, 'in', {'constant_group': 'Heater Config', 'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Enables/disables the heater. The heater can be used to test the sensor.
-
-By default the heater is disabled.
 """,
 'de':
 """
 Aktiviert/deaktiviert das Heizelement. Das Heizelement kann genutzt werden
 um den Sensor zu testen.
-
-Standardmäßig ist das Heizelement deaktiviert.
 """
 }]
 })

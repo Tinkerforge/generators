@@ -132,8 +132,6 @@ The following options are possible:
  "'i'",    "Callback is triggered when the count is *inside* the min and max values"
  "'<'",    "Callback is triggered when the count is smaller than the min value (max is ignored)"
  "'>'",    "Callback is triggered when the count is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
 """,
 'de':
 """
@@ -150,8 +148,6 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst, wenn die Zählerwert *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst, wenn die Zählerwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst, wenn die Zählerwert größer als der min Wert ist (max wird ignoriert)"
-
-Der Standardwert ist ('x', 0, 0).
 """
 }]
 })

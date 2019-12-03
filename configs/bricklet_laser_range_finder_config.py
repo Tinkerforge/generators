@@ -755,9 +755,6 @@ Geschwindigkeitsmessung nicht stabil. Für eine stabile Geschwindigkeitsmessung 
 Messfrequenz eingestellt werden. Je niedriger die Frequenz ist, desto größer ist die Auflösung
 der Geschwindigkeitsmessung. Der erlaubte Wertbereich ist 10Hz-500Hz (und 0 um die feste
 Messfrequenz auszustellen).
-
-Die Standardwerte für Acquisition Count, Enable Quick Termination, Threshold Value und
-Measurement Frequency sind 128, false, 0 und 0.
 """
 }]
 })

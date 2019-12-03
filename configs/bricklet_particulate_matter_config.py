@@ -133,8 +133,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Enables/Disables the fan and the laser diode of the sensors. The sensor is
-enabled by default.
+Enables/Disables the fan and the laser diode of the sensors.
 
 The sensor takes about 30 seconds after it is enabled to settle and produce stable
 values.
@@ -145,8 +144,7 @@ laser diode off between the measurements.
 """,
 'de':
 """
-Aktiviert/deaktiviert den Lüfter und die Laserdiode des Sensors. Der Sensor
-ist standardmäßig aktiv.
+Aktiviert/deaktiviert den Lüfter und die Laserdiode des Sensors.
 
 Der Sensor benötigt ca. 30 Sekunden nach der Aktivierung um sich einzuschwingen
 und stabile Werte zu produzieren.

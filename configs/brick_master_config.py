@@ -885,7 +885,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'in', {}),
              ('Subnet Mask', 'uint8', 4, 'in', {}),
              ('Gateway', 'uint8', 4, 'in', {}),
-             ('Port', 'uint16', 1, 'in', {})],
+             ('Port', 'uint16', 1, 'in', {'default': 4223})],
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
@@ -910,8 +910,7 @@ element of the array is the least significant byte of the address). If
 ``connection`` is set to one of the DHCP options then ``ip``, ``subnet_mask``
 and ``gateway`` are ignored, you can set them to 0.
 
-The last parameter is the port that your program will connect to. The
-default port, that is used by brickd, is 4223.
+The last parameter is the port that your program will connect to.
 
 The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
@@ -941,7 +940,7 @@ werden. Dabei ist das erste Element im Array das niederwertigste Byte. Falls
 ``subnet_mask`` und ``gateway`` ignoriert.
 
 Der letzte Parameter ist der Port auf den das Anwendungsprogramm sich
-verbindet. Der Standardport von brickd ist 4223.
+verbindet.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt. Dass
 bedeutet, der Master Brick muss nach einer Konfiguration neu gestartet werden.
@@ -960,7 +959,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'out', {}),
              ('Subnet Mask', 'uint8', 4, 'out', {}),
              ('Gateway', 'uint8', 4, 'out', {}),
-             ('Port', 'uint16', 1, 'out', {})],
+             ('Port', 'uint16', 1, 'out', {'default': 4223})],
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
@@ -2092,7 +2091,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'in', {}),
              ('Subnet Mask', 'uint8', 4, 'in', {}),
              ('Gateway', 'uint8', 4, 'in', {}),
-             ('Port', 'uint16', 1, 'in', {})],
+             ('Port', 'uint16', 1, 'in', {'default': 4223})],
 'since_firmware': [2, 1, 0],
 'doc': ['af', {
 'en':
@@ -2113,8 +2112,7 @@ array is the least significant byte of the address). If ``connection`` is set
 to the DHCP options then ``ip``, ``subnet_mask`` and ``gateway`` are ignored,
 you can set them to 0.
 
-The last parameter is the port that your program will connect to. The
-default port, that is used by brickd, is 4223.
+The last parameter is the port that your program will connect to.
 
 The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
@@ -2140,7 +2138,7 @@ werden. Dabei ist das erste Element im Array das niederwertigste Byte. Falls
 und ``gateway`` ignoriert.
 
 Der letzte Parameter ist der Port auf den das Anwendungsprogramm sich
-verbindet. Der Standardport von brickd ist 4223.
+verbindet.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
@@ -2159,7 +2157,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'out', {}),
              ('Subnet Mask', 'uint8', 4, 'out', {}),
              ('Gateway', 'uint8', 4, 'out', {}),
-             ('Port', 'uint16', 1, 'out', {})],
+             ('Port', 'uint16', 1, 'out', {'default': 4223})],
 'since_firmware': [2, 1, 0],
 'doc': ['af', {
 'en':
@@ -2663,16 +2661,16 @@ com['packets'].append({
 Sets the general configuration of the WIFI Extension 2.0.
 
 The ``port`` parameter sets the port number that your programm will connect
-to. The default value is 4223.
+to.
 
 The ``websocket_port`` parameter sets the WebSocket port number that your
-JavaScript programm will connect to. The default value is 4280.
+JavaScript programm will connect to.
 
 The ``website_port`` parameter sets the port number for the website of the
-WIFI Extension 2.0. The default value is 80.
+WIFI Extension 2.0.
 
 The ``phy_mode`` parameter sets the specific wireless network mode to be used.
-Possible values are B, G and N. The default value is G.
+Possible values are B, G and N.
 
 The ``sleep_mode`` parameter is currently unused.
 
@@ -2695,16 +2693,16 @@ It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 Setzt die allgemeine Konfiguration der WIFI Extension 2.0.
 
 Der ``port`` Parameter setzt die Portnummer auf die sich das Anwendungsprogramm
-verbindet. Der Standardwert ist 4223.
+verbindet.
 
-Der ``websocket_port`` Parameter setzt die WebSocket-Portnummer auf den sich das
-JavaScript Anwendungsprogramm verbindet. Der Standardwert ist 4280.
+Der ``websocket_port`` Parameter setzt die WebSocket-Portnummer auf die sich das
+JavaScript Anwendungsprogramm verbindet.
 
 Der ``website_port`` Parameter setzt die Portnummer für die Webseite der
-WIFI Extension 2.0. Der Standardwert ist 80.
+WIFI Extension 2.0.
 
 Der ``phy_mode`` Parameter setzt den zu verwendenden WLAN-Modus. Mögliche Werte
-sinf B, G und N. Der Standardwert ist G.
+sinf B, G und N.
 
 Die ``sleep_mode`` und ``website`` Parameter werden momentan nicht verwendet.
 
@@ -2790,7 +2788,7 @@ com['packets'].append({
 Sets the client specific configuration of the WIFI Extension 2.0.
 
 The ``enable`` parameter enables or disables the client part of the
-WIFI Extension 2.0. The default value is *true*.
+WIFI Extension 2.0.
 
 The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point
 to connect to.
@@ -2986,7 +2984,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'in', {'default': [0, 0, 0, 0]}),
              ('Subnet Mask', 'uint8', 4, 'in', {}),
              ('Gateway', 'uint8', 4, 'in', {}),
-             ('Encryption', 'uint8', 1, 'in', {'constant_group': 'Wifi2 AP Encryption'}),
+             ('Encryption', 'uint8', 1, 'in', {'constant_group': 'Wifi2 AP Encryption', 'default': 4}),
              ('Hidden', 'bool', 1, 'in', {'default': False}),
              ('Channel', 'uint8', 1, 'in', {'default': 1}),
              ('MAC Address', 'uint8', 6, 'in', {})],
@@ -2997,7 +2995,7 @@ com['packets'].append({
 Sets the access point specific configuration of the WIFI Extension 2.0.
 
 The ``enable`` parameter enables or disables the access point part of the
-WIFI Extension 2.0. The default value is true.
+WIFI Extension 2.0.
 
 The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point.
 
@@ -3007,8 +3005,8 @@ Otherwise those three parameters can be used to configure a static IP address.
 The default configuration is DHCP.
 
 The ``encryption`` parameter sets the encryption mode to be used. Possible
-values are Open (no encryption), WEP or WPA/WPA2 PSK. The default value is
-WPA/WPA2 PSK. Use the :func:`Set Wifi2 AP Password` function to set the encryption
+values are Open (no encryption), WEP or WPA/WPA2 PSK.
+Use the :func:`Set Wifi2 AP Password` function to set the encryption
 password.
 
 The ``hidden`` parameter makes the access point hide or show its SSID.
@@ -3040,15 +3038,14 @@ Parametern eine statische IP Adresse eingestellt werden. Die Standardeinstellung
 ist DHCP.
 
 Der ``encryption`` Parameter legt den Verschlüsselungsmodus fest. Mögliche Werte
-sind Open (keine  Verschlüsselung), WEP oder WPA/WPA2 PSK. Der Standardwert ist
-WPA/WPA2 PSK. Mit der :func:`Set Wifi2 AP Password` Kann das
+sind Open (keine  Verschlüsselung), WEP oder WPA/WPA2 PSK.
+Mit der :func:`Set Wifi2 AP Password` Kann das
 Verschlüsselungspasswort gesetzt werden.
 
 Der ``hidden`` Parameter legt fest, oder der Access Point seine SSID versteckt
-oder zeigt. Der Standardwert ist *false*.
+oder zeigt.
 
 Der ``channel`` Parameter gibt den Kanal (1 to 13) des Access Points and.
-Der Standardwert ist 1.
 
 Wenn der ``mac_address`` Parameter auf Null gesetzt ist, dann wird die
 voreingestellt MAC Adresse verwendet. Andernfalls kann mit diesem Parameter
@@ -3072,7 +3069,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'out', {'default': [0, 0, 0, 0]}),
              ('Subnet Mask', 'uint8', 4, 'out', {}),
              ('Gateway', 'uint8', 4, 'out', {}),
-             ('Encryption', 'uint8', 1, 'out', {'constant_group': 'Wifi2 AP Encryption'}),
+             ('Encryption', 'uint8', 1, 'out', {'constant_group': 'Wifi2 AP Encryption', 'default': 4}),
              ('Hidden', 'bool', 1, 'out', {'default': False}),
              ('Channel', 'uint8', 1, 'out', {'default': 1}),
              ('MAC Address', 'uint8', 6, 'out', {})],

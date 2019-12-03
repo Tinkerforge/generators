@@ -123,7 +123,7 @@ traffic that is produced by the :cb:`Touch State` callback.
 
 Disabling electrodes will also reduce power consumption.
 
-Default: 8191 = 0x1FFF = 0b1111111111111 (all electrodes enabled)
+Default: 8191 = 0x1FFF = 0b1111111111111 (all electrodes and proximity feature enabled)
 """,
 'de':
 """
@@ -139,7 +139,7 @@ der durch den :cb:`Touch State` Callback ausgelöst wird.
 
 Eine deaktivierte Elektrode verringert zusätzlich den Stromverbrauch.
 
-Standardwert: 8191 = 0x1FFF = 0b1111111111111 (alle Elektroden aktiviert)
+Standardwert: 8191 = 0x1FFF = 0b1111111111111 (alle Elektroden und Proximity-Feature aktiviert)
 """
 }]
 })

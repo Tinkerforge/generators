@@ -527,7 +527,7 @@ period of about 20ms.
 
 If your servo comes with a datasheet that specifies a period, you should
 set it accordingly. If you don't have a datasheet and you have no idea
-what the correct period is, the default value (19.5ms) will most likely
+what the correct period is, the default value will most likely
 work fine.
 """,
 'de':
@@ -542,7 +542,7 @@ Die meisten Servos werden mit einer Periode von 20ms betrieben.
 Wenn im Datenblatt des Servos die Periode spezifiziert ist, sollte dieser
 Wert entsprechend gesetzt werden. Sollte der Servo ohne ein Datenblatt
 vorliegen und die korrekte Periode unbekannt sein, wird der Standardwert
-(19,5ms) meinst funktionieren.
+meist funktionieren.
 """
 }]
 })

@@ -251,7 +251,7 @@ Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
 steigende, fallende oder beide Flanken gezählt werden. Mögliche Flankentypen
 sind:
 
-* 0 = steigend (Standard)
+* 0 = steigend
 * 1 = fallend
 * 2 = beide
 

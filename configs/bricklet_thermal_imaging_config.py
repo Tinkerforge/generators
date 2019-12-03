@@ -232,7 +232,7 @@ Temperaturwarnungs-Status:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Resolution',
-'elements': [('Resolution', 'uint8', 1, 'in', {'constant_group': 'Resolution'})],
+'elements': [('Resolution', 'uint8', 1, 'in', {'constant_group': 'Resolution', 'default': 1})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -244,8 +244,6 @@ Sets the resolution. The Thermal Imaging Bricklet can either measure
 
 The accuracy is specified for -10°C to 450°C in the
 first range and -10°C and 140°C in the second range.
-
-The default value is 0 to 655 Kelvin.
 """,
 'de':
 """
@@ -256,8 +254,6 @@ Setzt die Auflösung. Das Thermal Imaging Bricklet kann entweder
 
 Die Genauigkeit ist spezifiziert von -10°C bis 450°C im ersten Auflösungsbereich
 und von -10°C bis 140°C im zweiten Bereich.
-
-Der Standardwert ist 0 bis 655 Kelvin.
 """
 }]
 })
