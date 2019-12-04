@@ -53,8 +53,8 @@ Callback = namedtuple('Callback', ['packet', 'filter', 'transform'])
 SetterRefresh = namedtuple('SetterRefresh', ['channel', 'delay'])
 
 Param = namedtuple('Param', ['name', 'type', 'context', 'default', 'description', 'groupName', 'label',
-                                'pattern', 'unit', 'unitLabel', 'advanced', 'limitToOptions', 'multiple',
-                                'readOnly', 'required', 'verify', 'min', 'max', 'step', 'options', 'filter'])
+                             'unit', 'unitLabel', 'advanced', 'limitToOptions',
+                             'min', 'max', 'step', 'options'])
 ParamGroup = namedtuple('ParamGroup', 'name context advanced label description')
 
 
@@ -66,20 +66,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'description': None,
             'groupName': None,
             'label': None,
-            'pattern': None,
             'unit': None,
             'unitLabel': None,
             'advanced': None,
             'limitToOptions': None,
-            'multiple': None,
-            'readOnly': None,
-            'required': None,
-            'verify': None,
             'min': None,
             'max': None,
             'step': None,
             'options': None,
-            'filter': None,
         }
 
         channel_defaults = {
@@ -802,12 +796,12 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         with_calls = []
         # Strings
-        for x in ['context', 'default', 'description', 'groupName', 'label', 'pattern', 'unit', 'unitLabel']:
+        for x in ['context', 'default', 'description', 'groupName', 'label', 'unit', 'unitLabel']:
             if param._asdict()[x] is not None:
                 with_calls.append('.with{camel}("{val}")'.format(camel=x[0].upper() + x[1:], val=param._asdict()[x]))
 
         # Bools
-        for x in ['advanced', 'limitToOptions', 'multiple', 'readOnly', 'required', 'verify']:
+        for x in ['advanced', 'limitToOptions']:
             if param._asdict()[x] is not None:
                 with_calls.append('.with{camel}({val})'.format(camel=x[0].upper() + x[1:], val=str(param._asdict()[x]).lower()))
 
@@ -818,9 +812,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         if param.options is not None:
             with_calls.append('.withOptions(Arrays.asList({}))'.format(', '.join('new ParameterOption("{}", "{}")'.format(val, label) for label, val in param.options)))
-
-        if param.filter is not None:
-            with_calls.append('.withFilterCriteria(Arrays.asList({}))'.format(', '.join('new FilterCriteria({}, {})'.format(val, label) for label, val in param.options)))
 
         return template.format(name=name, type_upper=param.type.upper(), with_calls=''.join(with_calls))
 
