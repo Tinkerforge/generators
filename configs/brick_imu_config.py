@@ -81,9 +81,9 @@ empfohlen den :cb:`Acceleration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetic Field',
-'elements': [('X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -144,9 +144,9 @@ com['packets'].append({
 'elements': [('Acc X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
              ('Acc Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
              ('Acc Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
-             ('Mag X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Mag Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Mag Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Mag X', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
+             ('Mag Y', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
+             ('Mag Z', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
              ('Ang X', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
              ('Ang Y', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
              ('Ang Z', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
@@ -862,9 +862,9 @@ Beschleunigungen der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Magnetic Field',
-'elements': [('X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -911,9 +911,9 @@ com['packets'].append({
 'elements': [('Acc X', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
              ('Acc Y', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
              ('Acc Z', 'int16', 1, 'out', {'scale': (1, 1000), 'unit': 'Standard Gravity'}),
-             ('Mag X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Mag Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Mag Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
+             ('Mag X', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
+             ('Mag Y', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
+             ('Mag Z', 'int16', 1, 'out', {'scale': (1, 10**7), 'unit': 'Tesla'}),
              ('Ang X', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
              ('Ang Y', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
              ('Ang Z', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
