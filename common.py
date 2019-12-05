@@ -662,7 +662,7 @@ def format_float(value):
     return string
 
 def format_value_hint(value, scale, unit):
-    if scale == None and unit == None:
+    if scale == (1, 1) and unit == None:
         return ''
 
     if sys.hexversion < 0x03000000:
@@ -670,7 +670,7 @@ def format_value_hint(value, scale, unit):
     else:
         assert isinstance(value, int), value
 
-    if scale not in [None, 'dynamic']:
+    if scale not in [(1, 1), 'dynamic']:
         assert isinstance(scale, tuple), scale
         assert isinstance(scale[0], int), scale
         assert isinstance(scale[1], int), scale
@@ -679,21 +679,12 @@ def format_value_hint(value, scale, unit):
 
     if value == 0:
         scaled_value = 0
-
-        if scale == None:
-            modified_scale = (1, 1)
-        elif scale == 'dynamic':
-            modified_scale = 'dynamic'
-        else:
-            modified_scale = scale
+        modified_scale = scale
 
         if unit not in [None, 'dynamic']:
             unit_symbol = unit.get_symbol()
     elif unit in [None, 'dynamic']:
-        if scale == None:
-            scaled_value = value
-            modified_scale = (1, 1)
-        elif scale == 'dynamic':
+        if scale == 'dynamic':
             scaled_value = value
             modified_scale = 'dynamic'
         else:
@@ -706,9 +697,6 @@ def format_value_hint(value, scale, unit):
         if unit not in [None, 'dynamic']:
             unit_symbol = unit.get_symbol()
     else:
-        if scale == None:
-            scale = (1, 1)
-
         # find the scale that results in a scaled value with the minimum number of leading digits
         candidate = {unit.get_symbol(): (float(value) * scale[0] / scale[1], scale)}
 
@@ -1918,14 +1906,14 @@ class Element(object):
 
                 check_name(name)
 
-            scale = extra.get('scale')
+            scale = extra.get('scale', (1, 1))
 
             if scale == 'unknown':
                 scale = None
 
             if scale == 'dynamic':
                 assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
-            elif scale != None:
+            elif scale != (1, 1):
                 assert isinstance(scale, tuple), raw_data
                 assert len(scale) == 2, raw_data
                 assert isinstance(scale[0], int), raw_data
@@ -2620,14 +2608,14 @@ class Packet(object):
                 scale = element.get_scale(index=index)
                 unit = element.get_unit(index=index)
 
-                if scale != None and unit == None:
+                if scale != (1, 1) and unit == None:
                     if scale == 'dynamic':
                         formatted_scale = '?'
                     else:
                         formatted_scale = format_fraction(*scale)
 
                     meta.append('{0}: {1}'.format(unit_label, formatted_scale))
-                elif scale == None and unit != None:
+                elif scale == (1, 1) and unit != None:
                     if unit == 'dynamic':
                         formatted_unit = '?'
                         sequence = '{value} {unit}'
@@ -2636,7 +2624,7 @@ class Packet(object):
                         sequence = unit.get_sequence()
 
                     meta.append('{0}: {1}'.format(unit_label, sequence.format(value='1', unit=formatted_unit)))
-                elif scale != None and unit != None:
+                elif scale != (1, 1) and unit != None:
                     if scale == 'dynamic':
                         formatted_scale = '?'
 

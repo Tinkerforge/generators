@@ -20,7 +20,7 @@ def add_callback_value_function(packets, name, data_name, data_type, doc,
                                 callback_since_firmware=None,
                                 callback_config_getter_since_firmware=None,
                                 callback_config_setter_since_firmware=None,
-                                scale=None,
+                                scale=(1, 1),
                                 unit=None,
                                 range_=None):
     name_get = name
