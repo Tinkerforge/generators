@@ -1568,10 +1568,11 @@ units = [
 
     Unit('Degree Per {inverse_prefix}Second Squared',
          {'en': 'Degree per {inverse_prefix}second squared', 'de': 'Grad pro {inverse_prefix}Sekunde Quadrat'},
-         '°/{inverse_prefix}s',
-         {'en': 'Angular velocity', 'de': 'Winkelgeschwindigkeit'},
+         '°/{inverse_prefix}s²',
+         {'en': 'Angular acceleration', 'de': 'Winkelbeschleunigung'},
          [],
-         ['n', 'µ', 'm']),
+         ['n', 'µ', 'm'],
+         denominator_exponent=2),
 
     Unit('{prefix}Gram',
          {'en': '{prefix}Gram', 'de': '{prefix}Gramm'},
@@ -1712,7 +1713,8 @@ units = [
          '1/{inverse_prefix}s²',
          {'en': 'Acceleration', 'de': 'Beschleunigung'},
          [],
-         ['n', 'µ', 'm']),
+         ['n', 'µ', 'm'],
+         denominator_exponent=2),
 
     Unit('{prefix}Tesla',
          {'en': '{prefix}Tesla', 'de': '{prefix}Tesla'},
