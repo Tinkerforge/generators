@@ -103,11 +103,19 @@ vf_str = {
 Virtual Functions
 ^^^^^^^^^^^^^^^^^
 
+Virtual functions don't communicate with the device itself, but operate only on
+the API bindings device object. They can be called without the corresponding
+IP Connection object being connected.
+
 {0}
 """,
     'de': """
 Virtuelle Funktionen
 ^^^^^^^^^^^^^^^^^^^^
+
+Virtuelle Funktionen kommunizieren nicht mit dem Gerät selbst, sie arbeiten nur
+auf dem API Bindings Objekt. Dadurch können sie auch aufgerufen werden, ohne das
+das dazugehörige IP Connection Objekt verbunden ist.
 
 {0}
 """
