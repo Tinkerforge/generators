@@ -3054,6 +3054,9 @@ class Device(object):
             if packet.get_function_id() >= 0:
                 self.all_packets_without_doc_only.append(packet)
 
+        self.all_packets = sorted(self.all_packets, key=lambda packet: packet.get_function_id() if packet.get_function_id() > 0 else 1000)
+        self.all_packets_without_doc_only = sorted(self.all_packets_without_doc_only, key=lambda packet: packet.get_function_id() if packet.get_function_id() > 0 else 1000)
+
         if not self.is_released() and self.get_api_version() != [2, 0, 0]:
             raise GeneratorError('Unreleased device must have API version 2.0.0')
 
