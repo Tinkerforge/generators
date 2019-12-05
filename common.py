@@ -1535,7 +1535,7 @@ units = [
          {'en': '{prefix}Byte', 'de': '{prefix}Byte'},
          '{prefix}B',
          {'en': 'Data Size', 'de': 'Datenmenge'},
-         ['Ki', 'Mi', 'Gi'],
+         ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei'],
          []),
 
     Unit('Decibel',
@@ -1783,9 +1783,16 @@ unit_prefixes = [
     UnitPrefix('c', {'en': 'Centi', 'de': 'Zenti'}, 1, 100),
 
     # numerator prefixes must come second, ordered from biggest to smallest numerator
-    UnitPrefix('M', {'en': 'Mega',  'de': 'Mega'},  0, 1000000),
-    UnitPrefix('k', {'en': 'Kilo',  'de': 'Kilo'},  0, 1000),
-    UnitPrefix('h', {'en': 'Hecto', 'de': 'Hekto'}, 0, 100)
+    UnitPrefix('Ei', {'en': 'Exbi',  'de': 'Exbi'},  0, 2**60),
+    UnitPrefix('Pi', {'en': 'Pebi',  'de': 'Pebi'},  0, 2**50),
+    UnitPrefix('Ti', {'en': 'Tebi',  'de': 'Tebi'},  0, 2**40),
+    UnitPrefix('Gi', {'en': 'Gibi',  'de': 'Gibi'},  0, 2**30),
+    UnitPrefix('G',  {'en': 'Giga',  'de': 'Giga'},  0, 1000000000),
+    UnitPrefix('Mi', {'en': 'Mebi',  'de': 'Mebi'},  0, 2**20),
+    UnitPrefix('M',  {'en': 'Mega',  'de': 'Mega'},  0, 1000000),
+    UnitPrefix('Ki', {'en': 'Kibi',  'de': 'Kibi'},  0, 2**10),
+    UnitPrefix('k',  {'en': 'Kilo',  'de': 'Kilo'},  0, 1000),
+    UnitPrefix('h',  {'en': 'Hecto', 'de': 'Hekto'}, 0, 100)
 ]
 
 class Constant(object):
