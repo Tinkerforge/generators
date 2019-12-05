@@ -699,17 +699,16 @@ def format_value_hint(value, scale, unit):
         else:
             scaled_value = float(value) * scale[0] / scale[1]
             modified_scale = scale
-    elif scale in [None, 'dynamic']:
+    elif scale == 'dynamic':
         scaled_value = value
-
-        if scale == None:
-            modified_scale = (1, 1)
-        elif scale == 'dynamic':
-            modified_scale = 'dynamic'
+        modified_scale = 'dynamic'
 
         if unit not in [None, 'dynamic']:
             unit_symbol = unit.get_symbol()
     else:
+        if scale == None:
+            scale = (1, 1)
+
         # find the scale that results in a scaled value with the minimum number of leading digits
         candidate = {unit.get_symbol(): (float(value) * scale[0] / scale[1], scale)}
 
