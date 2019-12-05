@@ -1522,14 +1522,14 @@ units = [
          {'en': '{prefix}Baud', 'de': '{prefix}Baud'},
          '{prefix}Bd',
          {'en': 'Symbol rate', 'de': 'Symbolrate'},
-         ['k'],
+         ['k', 'M'],
          []),
 
     Unit('{prefix}Bit Per Second',
          {'en': '{prefix}Bit per second', 'de': '{prefix}Bit pro Sekunde'},
          '{prefix}bit/s',
          {'en': 'Data Rate', 'de': 'Datenrate'},
-         ['k'],
+         ['k', 'M'],
          []),
 
     Unit('{prefix}Byte',
@@ -1592,7 +1592,7 @@ units = [
          {'en': '{prefix}Hertz', 'de': '{prefix}Hertz'},
          '{prefix}Hz',
          {'en': 'Frequency', 'de': 'Frequenz'},
-         ['k'],
+         ['k', 'M'],
          []),
 
     Unit('Kelvin',
@@ -1641,7 +1641,7 @@ units = [
          {'en': '{prefix}Ohm', 'de': '{prefix}Ohm'},
          '{prefix}Ω',
          {'en': 'Electrical Resistance', 'de': 'Elektrischer Widerstand'},
-         ['n', 'µ', 'm', 'k'],
+         ['n', 'µ', 'm', 'k', 'M'],
          []),
 
     Unit('Particles Per Cubic {inverse_prefix}Meter',
@@ -1663,7 +1663,7 @@ units = [
          {'en': '{prefix}Pascal', 'de': '{prefix}Pascal'},
          '{prefix}Pa',
          {'en': 'Pressure', 'de': 'Druck'},
-         ['n', 'µ', 'm', 'h', 'k'],
+         ['n', 'µ', 'm', 'h', 'k', 'M'],
          []),
 
     Unit('Percent',
@@ -1719,7 +1719,7 @@ units = [
          {'en': '{prefix}Tesla', 'de': '{prefix}Tesla'},
          '{prefix}T',
          {'en': 'Magnetic flux density', 'de': 'Magnetische Flussdichte'},
-         ['n', 'µ', 'm', 'k'],
+         ['n', 'µ', 'm', 'k', 'M'],
          []),
 
     Unit('UV Index',
@@ -1733,14 +1733,14 @@ units = [
          {'en': '{prefix}Volt', 'de': '{prefix}Volt'},
          '{prefix}V',
          {'en': 'Electric potential', 'de': 'Elektrische Spannung'},
-         ['n', 'µ', 'm', 'k'],
+         ['n', 'µ', 'm', 'k', 'M'],
          []),
 
     Unit('{prefix}Volt Ampere',
          {'en': '{prefix}Volt-ampere', 'de': '{prefix}Voltampere'},
          '{prefix}VA',
          {'en': 'Apparent power', 'de': 'Scheinleistung'},
-         ['n', 'µ', 'm', 'k'],
+         ['n', 'µ', 'm', 'k', 'M'],
          []),
 
     Unit('Volt Ampere Reactive',
@@ -1754,21 +1754,21 @@ units = [
          {'en': '{prefix}Watt', 'de': '{prefix}Watt'},
          '{prefix}W',
          {'en': 'Power', 'de': 'Leistung'},
-         ['n', 'µ', 'm', 'k'],
+         ['n', 'µ', 'm', 'k', 'M'],
          []),
 
     Unit('{prefix}Watt Hour',
          {'en': '{prefix}Watt-hour', 'de': '{prefix}Wattstunde'},
          '{prefix}Wh',
          {'en': 'Energy', 'de': 'Energie'},
-         ['n', 'µ', 'm', 'k'],
+         ['n', 'µ', 'm', 'k', 'M'],
          []),
 
     Unit('{prefix}Watt Per Square Meter',
          {'en': '{prefix}Watt per square meter', 'de': '{prefix}Watt pro Quadratmeter'},
          '{prefix}W/m²',
          {'en': 'Irradiance', 'de': 'Bestrahlungsstärke'},
-         ['n', 'µ', 'm', 'k'],
+         ['n', 'µ', 'm', 'k', 'M'],
          [])
 ]
 
@@ -1782,6 +1782,7 @@ unit_prefixes = [
     UnitPrefix('c', {'en': 'Centi', 'de': 'Zenti'}, 1, 100),
 
     # numerator prefixes must come second, ordered from biggest to smallest numerator
+    UnitPrefix('M', {'en': 'Mega',  'de': 'Mega'},  0, 1000000),
     UnitPrefix('k', {'en': 'Kilo',  'de': 'Kilo'},  0, 1000),
     UnitPrefix('h', {'en': 'Hecto', 'de': 'Hekto'}, 0, 100)
 ]
