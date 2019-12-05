@@ -1906,23 +1906,25 @@ class Element(object):
 
                 check_name(name)
 
-            scale = extra.get('scale', (1, 1))
+            if 'scale' not in extra:
+                scale = (1, 1)
+            else:
+                scale = extra['scale']
 
-            if scale == 'unknown':
-                scale = None
-
-            if scale == 'dynamic':
-                assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
-            elif scale != (1, 1):
-                assert isinstance(scale, tuple), raw_data
-                assert len(scale) == 2, raw_data
-                assert isinstance(scale[0], int), raw_data
-                assert isinstance(scale[1], int), raw_data
-                assert scale[0] >= 1, raw_data
-                assert scale[1] >= 1, raw_data
-                assert scale[0] != scale[1], raw_data
-                assert gcd(*scale) == 1, raw_data
-                assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+                if scale == 'unknown':
+                    scale = (1, 1)
+                elif scale == 'dynamic':
+                    assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
+                else:
+                    assert isinstance(scale, tuple), raw_data
+                    assert len(scale) == 2, raw_data
+                    assert isinstance(scale[0], int), raw_data
+                    assert isinstance(scale[1], int), raw_data
+                    assert scale[0] >= 1, raw_data
+                    assert scale[1] >= 1, raw_data
+                    assert scale[0] != scale[1], raw_data
+                    assert gcd(*scale) == 1, raw_data
+                    assert self.get_type() not in ['float', 'bool', 'char', 'string'], raw_data
 
             unit_name = extra.get('unit')
 

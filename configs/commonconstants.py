@@ -20,7 +20,7 @@ def add_callback_value_function(packets, name, data_name, data_type, doc,
                                 callback_since_firmware=None,
                                 callback_config_getter_since_firmware=None,
                                 callback_config_setter_since_firmware=None,
-                                scale=(1, 1),
+                                scale=None,
                                 unit=None,
                                 range_=None):
     name_get = name
@@ -43,10 +43,12 @@ def add_callback_value_function(packets, name, data_name, data_type, doc,
         callback_config_setter_since_firmware = callback_since_firmware[:]
 
     getter_element_info = {
-        'scale': scale,
         'unit': unit,
         'range': range_
     }
+
+    if scale != None:
+        getter_element_info['scale'] = scale
 
     getter = {
         'type': 'function',
@@ -73,6 +75,14 @@ verwendet werden. Der Callback wird mit der Funktion
 :func:`{1} Callback Configuration` konfiguriert.
 """.format(name, name_set)
 
+    callback_config_setter_min_max_element_info = {
+        'unit': unit,
+        'default': 0
+    }
+
+    if scale != None:
+        callback_config_setter_min_max_element_info['scale'] = scale
+
     callback_config_setter = {
         'type': 'function',
         'name': (name_set + ' Callback Configuration'),
@@ -80,8 +90,8 @@ verwendet werden. Der Callback wird mit der Funktion
         'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
                      ('Value Has To Change', 'bool', 1, 'in', {'default': False}),
                      ('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-                     ('Min', data_type, 1, 'in', {'scale': scale, 'unit': unit, 'default': 0}),
-                     ('Max', data_type, 1, 'in', {'scale': scale, 'unit': unit, 'default': 0})],
+                     ('Min', data_type, 1, 'in', callback_config_setter_min_max_element_info),
+                     ('Max', data_type, 1, 'in', callback_config_setter_min_max_element_info)],
         'since_firmware': callback_config_setter_since_firmware,
         'doc': ['ccf', {
         'en': """
@@ -149,6 +159,14 @@ ausgelöst.
     if channel_count > 1:
         callback_config_setter['elements'].insert(0, ('Channel', 'uint8', 1, 'in', {'range': (0, channel_count - 1)}))
 
+    callback_config_getter_min_max_element_info = {
+        'unit': unit,
+        'default': 0
+    }
+
+    if scale != None:
+        callback_config_getter_min_max_element_info['scale'] = scale
+
     callback_config_getter = {
         'type': 'function',
         'name': (name_get + ' Callback Configuration'),
@@ -156,8 +174,8 @@ ausgelöst.
         'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
                      ('Value Has To Change', 'bool', 1, 'out', {'default': False}),
                      ('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-                     ('Min', data_type, 1, 'out', {'scale': scale, 'unit': unit, 'default': 0}),
-                     ('Max', data_type, 1, 'out', {'scale': scale, 'unit': unit, 'default': 0})],
+                     ('Min', data_type, 1, 'out', callback_config_getter_min_max_element_info),
+                     ('Max', data_type, 1, 'out', callback_config_getter_min_max_element_info)],
         'since_firmware': callback_config_getter_since_firmware,
         'doc': ['ccf', {
         'en': """
