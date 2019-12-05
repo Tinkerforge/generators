@@ -271,10 +271,10 @@ weiter unten beschrieben.
 API
 ---
 
-Generally, every method of the JavaScript bindings can take two optional
+Generally, every function of the JavaScript bindings can take two optional
 parameters, ``returnCallback`` and ``errorCallback``. These are two user
 defined callback functions. The ``returnCallback`` function is called with the
-results as arguments, if the method returns its results asynchronously. The
+results as arguments, if the function returns its results asynchronously. The
 ``errorCallback`` is called with an error code in case of an error. The error
 code can be one of the following values:
 
@@ -301,10 +301,10 @@ The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 API
 ---
 
-Allgemein kann jede Methode der JavaScript Bindings zwei optionale Parameter
+Allgemein kann jede Funktion der JavaScript Bindings zwei optionale Parameter
 haben, ``returnCallback`` und ``errorCallback``. Dies sind benutzerdefinierte
 Callback-Funktionen. Die ``returnCallback``-Funktion wird mit dem Ergebnissen
-der Methode als Argumente aufgerufen, falls die Methode ihre
+der Funktion als Argumente aufgerufen, falls die Funktion ihre
 Ergebnisse asynchron zurückgibt. Die ``errorCallback``-Funktion wird im
 Fehlerfall mit einem Fehlercode aufgerufen. Der Fehlercode kann einer der
 folgenden Werte sein:

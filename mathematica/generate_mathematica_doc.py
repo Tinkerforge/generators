@@ -238,7 +238,7 @@ unten beschrieben.
 API
 ---
 
-Generally, every method of the Mathematica bindings that returns a value can
+Generally, every function of the Mathematica bindings that returns a value can
 throw a ``Tinkerforge.TimeoutException``. This exception gets thrown if the
 device did not respond. If a cable based connection is used, it is
 unlikely that this exception gets thrown (assuming nobody plugs the
@@ -246,7 +246,7 @@ device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
 Since .NET/Link does not support multiple return values directly, we use the
-``out`` keyword to return multiple values from a method. For further
+``out`` keyword to return multiple values from a function. For further
 information about the ``out`` keyword in .NET/Link see the corresponding
 Mathematica `.NET/Link documentation
 <https://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromTheWolframLanguage.html#15993>`__.

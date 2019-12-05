@@ -237,7 +237,7 @@ weiter unten beschrieben.
 API
 ---
 
-All methods listed below are thread-safe.
+All functions listed below are thread-safe.
 
 {1}
 
@@ -249,7 +249,7 @@ All methods listed below are thread-safe.
 API
 ---
 
-Alle folgend aufgelisteten Methoden sind Thread-sicher.
+Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
 {1}
 

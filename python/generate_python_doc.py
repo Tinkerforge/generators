@@ -230,7 +230,7 @@ weiter unten beschrieben.
 API
 ---
 
-Generally, every method of the Python bindings can throw an
+Generally, every function of the Python bindings can throw an
 ``tinkerforge.ip_connection.Error`` exception that has a ``value`` and a
 ``description`` property. ``value`` can have different values:
 
@@ -245,7 +245,7 @@ Generally, every method of the Python bindings can throw an
 * Error.INVALID_UID = -13
 * Error.NON_ASCII_CHAR_IN_SECRET = -14
 
-All methods listed below are thread-safe.
+All functions listed below are thread-safe.
 
 {1}
 

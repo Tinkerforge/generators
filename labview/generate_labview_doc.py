@@ -202,7 +202,7 @@ unten beschrieben.
 API
 ---
 
-Generally, every method of the LabVIEW bindings that outputs a value can
+Generally, every function of the LabVIEW bindings that outputs a value can
 report a ``Tinkerforge.TimeoutException``. This error gets reported if the
 device did not respond. If a cable based connection is used, it is
 unlikely that this exception gets thrown (assuming nobody plugs the

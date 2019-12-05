@@ -269,7 +269,7 @@ error code:
 * Error->INVALID_UID = 61
 * Error->NON_ASCII_CHAR_IN_SECRET = 71
 
-All methods listed below are thread-safe.
+All functions listed below are thread-safe.
 
 {1}
 
