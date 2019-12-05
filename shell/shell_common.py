@@ -162,7 +162,9 @@ class ShellElement(common.Element):
 
     def get_shell_help(self):
         symbols_doc = ''
-        constant_group = self.get_constant_group()
+
+        # FIXME: currently common.py enforces that there is at most one contant group per element and not one per index
+        constant_group = self.get_constant_group(index=self.get_indices()[0])
 
         if constant_group != None:
             symbols = []
@@ -192,7 +194,9 @@ class ShellElement(common.Element):
     def get_shell_type_converter(self):
         type_converter = ShellElement.shell_type_converters[self.get_type()]
         default_item = ShellElement.shell_default_items[self.get_type()]
-        constant_group = self.get_constant_group()
+
+        # FIXME: currently common.py enforces that there is at most one contant group per element and not one per index
+        constant_group = self.get_constant_group(index=self.get_indices()[0])
 
         if constant_group != None:
             symbols = {}
