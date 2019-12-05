@@ -50,15 +50,15 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_csharp_methods(self, type_):
-        methods = ''
-        func_start = '.. csharp:function:: '
+    def get_csharp_functions(self, type_):
+        functions = []
+        template = '.. csharp:function:: {0}\n\n{1}{2}\n'
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
                 continue
 
-            signature = packet.get_csharp_method_signature(print_full_name=True, is_doc=True, high_level=True)
+            signature = packet.get_csharp_function_signature(print_full_name=True, is_doc=True, high_level=True)
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_csharp_type(cardinality=cardinality),
                                                      lambda element, index=None: element.get_name(index=index).headless,
                                                      output_parameter='conditional',
@@ -69,21 +69,14 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_csharp_formatted_doc(1)
-            func = '{0}{1}\n\n{2}{3}'.format(func_start, signature, meta_table, desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(signature, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_csharp_callbacks(self):
-        cb = """
-.. csharp:function:: event {0}::{1}Callback({0} sender{2})
-
-{3}
-
-{4}
-"""
-
-        cbs = ''
+        callbacks = []
+        template = '.. csharp:function:: event {0}::{1}Callback({0} sender{2})\n\n{3}\n\n{4}\n'
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
@@ -99,13 +92,13 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
 
-            cbs += cb.format(self.get_csharp_class_name(),
-                             packet.get_name(skip=skip).camel,
-                             common.wrap_non_empty(', ', params, ''),
-                             meta_table,
-                             desc)
+            callbacks.append(template.format(self.get_csharp_class_name(),
+                                             packet.get_name(skip=skip).camel,
+                                             common.wrap_non_empty(', ', params, ''),
+                                             meta_table,
+                                             desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_csharp_api(self):
         create_str = {
@@ -304,9 +297,9 @@ Konstanten
                                                     self.get_name().headless,
                                                     create_meta_table)
 
-        bf = self.get_csharp_methods('bf')
-        af = self.get_csharp_methods('af')
-        ccf = self.get_csharp_methods('ccf')
+        bf = self.get_csharp_functions('bf')
+        af = self.get_csharp_functions('af')
+        ccf = self.get_csharp_functions('ccf')
         c = self.get_csharp_callbacks()
         api_str = ''
 
@@ -316,10 +309,10 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(common.ccf_str).format('', ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_csharp_class_name(),
                                                         self.get_name().headless,

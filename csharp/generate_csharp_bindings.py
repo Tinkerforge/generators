@@ -578,7 +578,7 @@ namespace Tinkerforge
             else:
                 method_tail = template_noresponse
 
-            methods += template.format(packet.get_csharp_method_signature(),
+            methods += template.format(packet.get_csharp_function_signature(),
                                        size,
                                        name_upper,
                                        write_convs,

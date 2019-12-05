@@ -70,7 +70,7 @@ class CSharpPacket(common.Packet):
         else:
             return None
 
-    def get_csharp_method_signature(self, print_full_name=False, is_doc=False, high_level=False):
+    def get_csharp_function_signature(self, print_full_name=False, is_doc=False, high_level=False):
         sig_format = "{5}{4}{0} {1}{2}({3})"
         ret_count = len(self.get_elements(direction='out', high_level=high_level))
         params = self.get_csharp_parameters(high_level=high_level)

@@ -51,8 +51,9 @@ class PerlDocDevice(perl_common.PerlDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_perl_methods(self, type_):
-        methods = ''
+    def get_perl_functions(self, type_):
+        functions = []
+        template = '.. perl:function:: {0}->{1}({2})\n\n{3}{4}\n'
         cls = self.get_perl_class_name()
 
         for packet in self.get_packets('function'):
@@ -75,17 +76,14 @@ class PerlDocDevice(perl_common.PerlDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_perl_formatted_doc()
-            func = '.. perl:function:: {0}->{1}({2})\n\n{3}{4}'.format(cls,
-                                                                       name,
-                                                                       params,
-                                                                       meta_table,
-                                                                       desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(cls, name, params, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_perl_callbacks(self):
-        cbs = ''
+        callbacks = []
+        template = '.. perl:attribute:: {0}->CALLBACK_{1}\n\n{2}{3}\n'
         cls = self.get_perl_class_name()
 
         for packet in self.get_packets('callback'):
@@ -100,13 +98,10 @@ class PerlDocDevice(perl_common.PerlDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_perl_formatted_doc()
-            func = '.. perl:attribute:: {0}->CALLBACK_{1}\n\n{2}{3}'.format(cls,
-                                                                            packet.get_name(skip=skip).upper,
-                                                                            meta_table,
-                                                                            desc)
-            cbs += func + '\n'
 
-        return cbs
+            callbacks.append(template.format(cls, packet.get_name(skip=skip).upper, meta_table, desc))
+
+        return ''.join(callbacks)
 
     def get_perl_api(self):
         create_str = {
@@ -366,9 +361,9 @@ Konstanten
                                                       self.get_perl_class_name(),
                                                       reg_meta_table)
 
-        bf = self.get_perl_methods('bf')
-        af = self.get_perl_methods('af')
-        ccf = self.get_perl_methods('ccf')
+        bf = self.get_perl_functions('bf')
+        af = self.get_perl_functions('af')
+        ccf = self.get_perl_functions('ccf')
         c = self.get_perl_callbacks()
         api_str = ''
 

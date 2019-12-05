@@ -47,12 +47,13 @@ class TCPIPDocDevice(common.Device):
 
         return self.specialize_doc_rst_links(text, specializer, prefix='tcpip')
 
-    def get_tcpip_methods(self, typ):
-        methods = ''
+    def get_tcpip_functions(self, type_):
+        functions = []
+        template = '.. tcpip:function:: {0}.{1}\n\n{2}{3}\n'
         cls = self.get_tcpip_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ or packet.get_function_id() < 0:
+            if packet.get_doc_type() != type_ or packet.is_virtual():
                 continue
 
             name = packet.get_name().under
@@ -66,14 +67,14 @@ class TCPIPDocDevice(common.Device):
                                                      include_function_id=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_tcpip_formatted_doc()
-            func = '.. tcpip:function:: {0}.{1}\n\n{2}{3}'.format(cls, name, meta_table, desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(cls, name, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_tcpip_callbacks(self):
-        cbs = ''
-        func_start = '.. tcpip:function:: '
+        callbacks = []
+        template = '.. tcpip:function:: {0}.CALLBACK_{1}\n\n{2}{3}\n'
         cls = self.get_tcpip_name()
 
         for packet in self.get_packets('callback'):
@@ -87,13 +88,10 @@ class TCPIPDocDevice(common.Device):
                                                      include_function_id=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_tcpip_formatted_doc()
-            func = '.. tcpip:function:: {0}.CALLBACK_{1}\n\n{2}{3}'.format(cls,
-                                                                           packet.get_name().upper,
-                                                                           meta_table,
-                                                                           desc)
-            cbs += func + '\n'
 
-        return cbs
+            callbacks.append(template.format(cls, packet.get_name().upper, meta_table, desc))
+
+        return ''.join(callbacks)
 
     def get_tcpip_api(self):
         c_str = {
@@ -144,9 +142,9 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
 """
         }
 
-        bf = self.get_tcpip_methods('bf')
-        af = self.get_tcpip_methods('af')
-        ccf = self.get_tcpip_methods('ccf')
+        bf = self.get_tcpip_functions('bf')
+        af = self.get_tcpip_functions('af')
+        ccf = self.get_tcpip_functions('ccf')
         c = self.get_tcpip_callbacks()
         api_str = ''
 
@@ -156,10 +154,10 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(common.ccf_str).format('', ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         c)
 

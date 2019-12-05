@@ -47,12 +47,13 @@ class ModbusDocDevice(common.Device):
 
         return self.specialize_doc_rst_links(text, specializer, prefix='modbus')
 
-    def get_modbus_methods(self, typ):
-        methods = ''
+    def get_modbus_functions(self, type_):
+        functions = []
+        template = '.. modbus:function:: {0}.{1}\n\n{2}{3}\n'
         cls = self.get_modbus_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ or packet.get_function_id() < 0:
+            if packet.get_doc_type() != type_ or packet.is_virtual():
                 continue
 
             name = packet.get_name().under
@@ -66,13 +67,14 @@ class ModbusDocDevice(common.Device):
                                                      include_function_id=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_modbus_formatted_doc()
-            func = '.. modbus:function:: {0}.{1}\n\n{2}{3}'.format(cls, name, meta_table, desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(cls, name, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_modbus_callbacks(self):
-        cbs = ''
+        callbacks = []
+        template = '.. modbus:function:: {0}.CALLBACK_{1}\n\n{2}{3}\n'
         cls = self.get_modbus_name()
 
         for packet in self.get_packets('callback'):
@@ -86,13 +88,10 @@ class ModbusDocDevice(common.Device):
                                                      include_function_id=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_modbus_formatted_doc()
-            func = '.. modbus:function:: {0}.CALLBACK_{1}\n\n{2}{3}'.format(cls,
-                                                                            packet.get_name().upper,
-                                                                            meta_table,
-                                                                            desc)
-            cbs += func + '\n'
 
-        return cbs
+            callbacks.append(template.format(cls, packet.get_name().upper, meta_table, desc))
+
+        return ''.join(callbacks)
 
     def get_modbus_api(self):
         c_str = {
@@ -143,9 +142,9 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
 """
         }
 
-        bf = self.get_modbus_methods('bf')
-        af = self.get_modbus_methods('af')
-        ccf = self.get_modbus_methods('ccf')
+        bf = self.get_modbus_functions('bf')
+        af = self.get_modbus_functions('af')
+        ccf = self.get_modbus_functions('ccf')
         c = self.get_modbus_callbacks()
         api_str = ''
 
@@ -155,10 +154,10 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(common.ccf_str).format('', ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         c)
 

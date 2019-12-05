@@ -54,16 +54,13 @@ class ShellDocDevice(shell_common.ShellDevice):
         return common.make_rst_examples(title_from_filename, self,
                                         language_from_filename=language_from_filename)
 
-    def get_shell_methods(self, typ):
-        methods = ''
-        func_start = '.. sh:function:: '
+    def get_shell_functions(self, type_):
+        functions = []
+        template = '.. sh:function:: tinkerforge call {0} <uid> {1} {2}\n\n{3}{4}\n'
         device_name = self.get_shell_device_name()
 
         for packet in self.get_packets('function'):
-            if packet.is_virtual():
-                continue
-
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_ or packet.is_virtual():
                 continue
 
             skip = -2 if packet.has_high_level() else 0
@@ -81,19 +78,14 @@ class ShellDocDevice(shell_common.ShellDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_shell_formatted_doc()
-            func = '{0}tinkerforge call {1} <uid> {2} {3}\n\n{4}{5}'.format(func_start,
-                                                                            device_name,
-                                                                            name,
-                                                                            params,
-                                                                            meta_table,
-                                                                            desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(device_name, name, params, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_shell_callbacks(self):
-        cbs = ''
-        func_start = '.. sh:callback:: '
+        callbacks = []
+        template = '.. sh:callback:: tinkerforge dispatch {0} <uid> {1}\n\n{2}{3}\n'
         device_name = self.get_shell_device_name()
 
         for packet in self.get_packets('callback'):
@@ -114,14 +106,9 @@ class ShellDocDevice(shell_common.ShellDevice):
             desc = packet.get_shell_formatted_doc()
             skip = -2 if packet.has_high_level() else 0
 
-            func = '{0} tinkerforge dispatch {1} <uid> {2}\n\n{3}{4}'.format(func_start,
-                                                                             device_name,
-                                                                             packet.get_name(skip).dash,
-                                                                             meta_table,
-                                                                             desc)
-            cbs += func + '\n'
+            callbacks.append(template.format(device_name, packet.get_name(skip).dash, meta_table, desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_shell_api(self):
         c_str = {
@@ -361,9 +348,9 @@ Befehlsstruktur dargestellt.
 """
         }
 
-        bf = self.get_shell_methods('bf')
-        af = self.get_shell_methods('af')
-        ccf = self.get_shell_methods('ccf')
+        bf = self.get_shell_functions('bf')
+        af = self.get_shell_functions('af')
+        ccf = self.get_shell_functions('ccf')
         c = self.get_shell_callbacks()
         api_str = ''
 
@@ -373,10 +360,10 @@ Befehlsstruktur dargestellt.
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(common.ccf_str).format('', ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_shell_device_name(),
                                                         c)

@@ -51,8 +51,9 @@ class PHPDocDevice(php_common.PHPDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_php_methods(self, typ):
-        methods = ''
+    def get_php_functions(self, type_):
+        functions = []
+        template = '.. php:function:: {0} {1}::{2}({3})\n\n{4}{5}\n'
         cls = self.get_php_class_name()
 
         def name_func(out_count, element, index=None):
@@ -66,7 +67,7 @@ class PHPDocDevice(php_common.PHPDevice):
             return name
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
 
             skip = -2 if packet.has_high_level() else 0
@@ -85,18 +86,16 @@ class PHPDocDevice(php_common.PHPDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_php_formatted_doc()
-            func = '.. php:function:: {0} {1}::{2}({3})\n\n{4}{5}'.format(ret_type,
-                                                                          cls,
-                                                                          name,
-                                                                          params,
-                                                                          meta_table,
-                                                                          desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(ret_type, cls, name, params, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_php_callbacks(self):
-        signature_str = {
+        callbacks = []
+        template = '.. php:member:: int {0}::CALLBACK_{1}\n\n{2}{3}{4}\n'
+        cls = self.get_php_class_name()
+        signature_template = {
             'en':  """
  .. code-block:: php
 
@@ -109,9 +108,6 @@ class PHPDocDevice(php_common.PHPDevice):
 """
         }
 
-        cbs = ''
-        cls = self.get_php_class_name()
-
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
             params = packet.get_php_parameters(context='doc', high_level=True)
@@ -121,7 +117,7 @@ class PHPDocDevice(php_common.PHPDevice):
             else:
                 params += "[mixed $user_data]"
 
-            signature = common.select_lang(signature_str).format(params)
+            signature = common.select_lang(signature_template).format(params)
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_php_type(for_doc=True, cardinality=cardinality),
                                                      lambda element, index=None: '$' + element.get_name(index=index).under,
                                                      suffix_elements=[('$user_data', 'mixed', 1, 'out')],
@@ -132,14 +128,14 @@ class PHPDocDevice(php_common.PHPDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_php_formatted_doc()
-            func = '.. php:member:: int {0}::CALLBACK_{1}\n\n{2}{3}{4}'.format(cls,
-                                                                               packet.get_name(skip=skip).upper,
-                                                                               signature,
-                                                                               meta_table,
-                                                                               desc)
-            cbs += func + '\n'
 
-        return cbs
+            callbacks.append(template.format(cls,
+                                             packet.get_name(skip=skip).upper,
+                                             signature,
+                                             meta_table,
+                                             desc))
+
+        return ''.join(callbacks)
 
     def get_php_api(self):
         create_str = {
@@ -360,9 +356,9 @@ Konstanten
                                                       self.get_php_class_name(),
                                                       red_meta_table)
 
-        bf = self.get_php_methods('bf')
-        af = self.get_php_methods('af')
-        ccf = self.get_php_methods('ccf')
+        bf = self.get_php_functions('bf')
+        af = self.get_php_functions('af')
+        ccf = self.get_php_functions('ccf')
         c = self.get_php_callbacks()
         api_str = ''
 

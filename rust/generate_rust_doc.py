@@ -50,11 +50,10 @@ class RustDocDevice(rust_common.RustDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_rust_methods(self, type_):
-        methods = ''
-        func_start = '.. rust:function:: '
-
-        synchronous_methods = ["get_api_version", "get_response_expected", "set_response_expected", "set_response_expected_all"]
+    def get_rust_functions(self, type_):
+        functions = []
+        template = '.. rust:function:: {struct_name}::{func_name}({params})-> {returns}\n\n{meta_table}{desc}\n'
+        synchronous_functions = ["get_api_version", "get_response_expected", "set_response_expected", "set_response_expected_all"]
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
@@ -65,7 +64,7 @@ class RustDocDevice(rust_common.RustDevice):
             plist = common.wrap_non_empty(', ', packet.get_rust_parameters(high_level=True), '')
             returns = packet.get_rust_return_type(high_level=packet.has_high_level())
 
-            if not packet.has_high_level() and name not in synchronous_methods:
+            if not packet.has_high_level() and name not in synchronous_functions:
                 returns = "ConvertingReceiver<" + returns + ">"
             if "et_response_expected" in name:
                 params = '&mut self{}'.format(plist)
@@ -79,14 +78,20 @@ class RustDocDevice(rust_common.RustDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_rust_formatted_doc()
-            func = '{start}{struct_name}::{func_name}({params})-> {returns}\n\n{meta_table}{desc}'.format(start=func_start, struct_name=self.get_rust_name(), func_name=name, params=params, returns=returns, meta_table=meta_table, desc=desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(struct_name=self.get_rust_name(),
+                                             func_name=name,
+                                             params=params,
+                                             returns=returns,
+                                             meta_table=meta_table,
+                                             desc=desc))
+
+        return ''.join(functions)
 
     def get_rust_callbacks(self):
-        cb = {
-        'en': """
+        callbacks = []
+        template = {
+            'en': """
 .. rust:function:: {device}::get_{callback_name_under}_callback_receiver(&self) -> {receiver_type}<{result_type}>
 
 {meta_table}
@@ -105,8 +110,6 @@ class RustDocDevice(rust_common.RustDevice):
 {desc}
 """
         }
-
-        cbs = ''
         device = self.get_rust_name()
 
         for packet in self.get_packets('callback'):
@@ -129,15 +132,15 @@ class RustDocDevice(rust_common.RustDevice):
                 receiver_type = "ConvertingCallbackReceiver"
                 result_type = packet.get_rust_return_type()
 
-            cbs += common.select_lang(cb).format(device=device,
-                                                 callback_name_under=packet.get_name(skip=skip).under,
-                                                 callback_name_space=packet.get_name(skip=skip).space,
-                                                 receiver_type=receiver_type,
-                                                 result_type=result_type,
-                                                 meta_table=meta_table,
-                                                 desc=desc)
+            callbacks.append(common.select_lang(template).format(device=device,
+                                                                 callback_name_under=packet.get_name(skip=skip).under,
+                                                                 callback_name_space=packet.get_name(skip=skip).space,
+                                                                 receiver_type=receiver_type,
+                                                                 result_type=result_type,
+                                                                 meta_table=meta_table,
+                                                                 desc=desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_rust_api(self):
         create_str = {
@@ -304,9 +307,9 @@ Konstanten
                                                     device_camel=self.get_rust_name(),
                                                     device_under=self.get_name().under,
                                                     meta_table=create_meta_table)
-        bf = self.get_rust_methods('bf')
-        af = self.get_rust_methods('af')
-        ccf = self.get_rust_methods('ccf')
+        bf = self.get_rust_functions('bf')
+        af = self.get_rust_functions('af')
+        ccf = self.get_rust_functions('ccf')
         c = self.get_rust_callbacks()
         api_str = ''
 
@@ -317,7 +320,7 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
 
         if c:
-            if len(ccf) > 0:
+            if ccf:
                 api_str += common.select_lang(common.ccf_str).format("", ccf)
 
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),

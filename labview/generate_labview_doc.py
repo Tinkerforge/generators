@@ -77,8 +77,8 @@ class LabVIEWDocDevice(common.Device):
                                         display_name_fixer=display_name_fixer)
 
     def get_labview_functions(self, type_):
-        function = '.. labview:function:: {0}.{1}({2}){3}\n\n{4}{5}\n'
         functions = []
+        template = '.. labview:function:: {0}.{1}({2}){3}\n\n{4}{5}\n'
         cls = self.get_labview_class_name()
 
         for packet in self.get_packets('function'):
@@ -99,17 +99,13 @@ class LabVIEWDocDevice(common.Device):
             meta_table = common.make_rst_meta_table(meta)
             doc = packet.get_labview_formatted_doc()
 
-            functions.append(function.format(cls, name, inputs, common.wrap_non_empty(' ->  ', outputs, ''), meta_table, doc))
+            functions.append(template.format(cls, name, inputs, common.wrap_non_empty(' ->  ', outputs, ''), meta_table, doc))
 
         return ''.join(functions)
 
     def get_labview_callbacks(self):
-        callback = """
-.. labview:function:: event {0}.{1}Callback -> sender{2}
-
-{3}{4}
-"""
         callbacks = []
+        template = '.. labview:function:: event {0}.{1}Callback -> sender{2}\n\n{3}{4}\n'
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
@@ -124,7 +120,7 @@ class LabVIEWDocDevice(common.Device):
             meta_table = common.make_rst_meta_table(meta)
             doc = packet.get_labview_formatted_doc()
 
-            callbacks.append(callback.format(self.get_labview_class_name(),
+            callbacks.append(template.format(self.get_labview_class_name(),
                                              packet.get_name(skip=skip).camel,
                                              common.wrap_non_empty(', ', outputs, ''),
                                              meta_table,
@@ -304,10 +300,10 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(common.ccf_str).format('', ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         c)
 

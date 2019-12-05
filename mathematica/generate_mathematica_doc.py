@@ -60,8 +60,8 @@ class MathematicaDocDevice(common.Device):
                                         url_fixer=url_fixer, display_name_fixer=display_name_fixer)
 
     def get_mathematica_functions(self, type_):
-        function = '.. mathematica:function:: {0}@{1}[{2}] -> {3}\n\n{4}{5}\n'
         functions = []
+        template = '.. mathematica:function:: {0}@{1}[{2}] -> {3}\n\n{4}{5}\n'
         cls = self.get_mathematica_class_name()
 
         for packet in self.get_packets('function'):
@@ -80,17 +80,13 @@ class MathematicaDocDevice(common.Device):
             ret = packet.get_mathematica_return(high_level=True)
             doc = packet.get_mathematica_formatted_doc()
 
-            functions.append(function.format(cls, name, params, ret, meta_table, doc))
+            functions.append(template.format(cls, name, params, ret, meta_table, doc))
 
         return ''.join(functions)
 
     def get_mathematica_callbacks(self):
-        callback = """
-.. mathematica:function:: event {0}@{1}Callback[sender{2}]
-
-{3}{4}
-"""
         callbacks = []
+        template = '.. mathematica:function:: event {0}@{1}Callback[sender{2}]\n\n{3}{4}\n'
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
@@ -103,7 +99,7 @@ class MathematicaDocDevice(common.Device):
             meta_table = common.make_rst_meta_table(meta, index_format_func=lambda index: str(index + 1))
             doc = packet.get_mathematica_formatted_doc()
 
-            callbacks.append(callback.format(self.get_mathematica_class_name(),
+            callbacks.append(template.format(self.get_mathematica_class_name(),
                                              packet.get_name(skip=skip).camel,
                                              common.wrap_non_empty(', ', params, ''),
                                              meta_table,
@@ -351,10 +347,10 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(common.ccf_str).format('', ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().headless,
                                                         c)

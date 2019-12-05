@@ -66,9 +66,9 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
                                         language_from_filename=language_from_filename,
                                         add_html_test_link=True)
 
-    def get_javascript_methods(self, type_):
-        methods = ''
-        func_start = '.. javascript:function:: '
+    def get_javascript_functions(self, type_):
+        functions = []
+        template = '.. javascript:function:: {0}.{1}({2}{3})\n\n{4}\n{5}\n'
         cls = self.get_javascript_class_name()
 
         for packet in self.get_packets('function'):
@@ -106,21 +106,13 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
 
-            func = '{0}{1}.{2}({3}{4})\n\n{5}\n{6}'.format(func_start,
-                                                           cls,
-                                                           name,
-                                                           params,
-                                                           callbacks,
-                                                           meta_table,
-                                                           desc)
+            functions.append(template.format(cls, name, params, callbacks, meta_table, desc))
 
-            methods += func + '\n'
-
-        return methods
+        return ''.join(functions)
 
     def get_javascript_callbacks(self):
-        cbs = ''
-        func_start = '.. javascript:attribute:: '
+        callbacks = []
+        template = '.. javascript:attribute:: {0}.CALLBACK_{1}\n\n{2}\n{3}\n'
         cls = self.get_javascript_class_name()
 
         for packet in self.get_packets('callback'):
@@ -136,14 +128,9 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_javascript_formatted_doc()
 
-            func = '{0}{1}.CALLBACK_{2}\n\n{3}\n{4}'.format(func_start,
-                                                            cls,
-                                                            packet.get_name(skip=skip).upper,
-                                                            meta_table,
-                                                            desc)
-            cbs += func + '\n'
+            callbacks.append(template.format(cls, packet.get_name(skip=skip).upper, meta_table, desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_javascript_api(self):
         create_str = {
@@ -388,9 +375,9 @@ Konstanten
                                                       self.get_javascript_class_name(),
                                                       reg_meta_table)
 
-        bf = self.get_javascript_methods('bf')
-        af = self.get_javascript_methods('af')
-        ccf = self.get_javascript_methods('ccf')
+        bf = self.get_javascript_functions('bf')
+        af = self.get_javascript_functions('af')
+        ccf = self.get_javascript_functions('ccf')
         c = self.get_javascript_callbacks()
         api_str = ''
 

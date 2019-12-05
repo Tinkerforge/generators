@@ -50,10 +50,10 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_delphi_methods(self, type_):
-        methods = ''
-        function = '.. delphi:function:: function {0}.{1}({2}): {3}\n\n{4}\n{5}'
-        procedure = '.. delphi:function:: procedure {0}.{1}({2})\n\n{3}\n{4}'
+    def get_delphi_functions(self, type_):
+        functions = []
+        template_function = '.. delphi:function:: function {0}.{1}({2}): {3}\n\n{4}\n{5}\n'
+        template_procedure = '.. delphi:function:: procedure {0}.{1}({2})\n\n{3}\n{4}\n'
         cls = self.get_delphi_class_name()
 
         for packet in self.get_packets('function'):
@@ -73,28 +73,17 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             desc = packet.get_delphi_formatted_doc()
 
             if len(ret_type) > 0:
-                method = function.format(cls, name, params, ret_type, meta_table, desc)
+                function = template_function.format(cls, name, params, ret_type, meta_table, desc)
             else:
-                method = procedure.format(cls, name, params, meta_table, desc)
+                function = template_procedure.format(cls, name, params, meta_table, desc)
 
-            methods += method + '\n'
+            functions.append(function)
 
-        return methods
+        return ''.join(functions)
 
     def get_delphi_callbacks(self):
-        cbs = ''
-        cb = {
-            'en': """.. delphi:function:: property {0}.On{1}
-
- .. code-block:: delphi
-
-  procedure(sender: {0}{2}) of object;
-
-{3}
-
-{4}
-""",
-            'de': """.. delphi:function:: property {0}.On{1}
+        callbacks = []
+        template = """.. delphi:function:: property {0}.On{1}
 
  .. code-block:: delphi
 
@@ -104,8 +93,6 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
 
 {4}
 """
-        }
-
         cls = self.get_delphi_class_name()
 
         for packet in self.get_packets('callback'):
@@ -120,9 +107,9 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_delphi_formatted_doc()
 
-            cbs += common.select_lang(cb).format(cls, name, common.wrap_non_empty('; ', params, ''), meta_table, desc)
+            callbacks.append(template.format(cls, name, common.wrap_non_empty('; ', params, ''), meta_table, desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_delphi_api(self):
         create_str = {
@@ -301,9 +288,9 @@ Konstanten
                                                     self.get_name().headless,
                                                     create_meta_table)
 
-        bf = self.get_delphi_methods('bf')
-        af = self.get_delphi_methods('af')
-        ccf = self.get_delphi_methods('ccf')
+        bf = self.get_delphi_functions('bf')
+        af = self.get_delphi_functions('af')
+        ccf = self.get_delphi_functions('ccf')
         c = self.get_delphi_callbacks()
         api_str = ''
 
@@ -314,8 +301,8 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
 
         if c:
-            if len(ccf) > 0:
-                api_str += common.select_lang(common.ccf_str).format(ccf, '')
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
 
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_delphi_class_name(),

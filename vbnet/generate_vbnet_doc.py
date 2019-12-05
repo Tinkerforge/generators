@@ -52,14 +52,14 @@ class VBNETDocDevice(common.Device):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_vbnet_methods(self, typ):
-        methods = ''
-        function = '.. vbnet:function:: Function {0}.{1}({2}) As {3}\n\n{4}{5}'
-        sub = '.. vbnet:function:: Sub {0}.{1}({2})\n\n{3}{4}'
+    def get_vbnet_functions(self, type_):
+        functions = []
+        template_function = '.. vbnet:function:: Function {0}.{1}({2}) As {3}\n\n{4}{5}\n'
+        template_sub = '.. vbnet:function:: Sub {0}.{1}({2})\n\n{3}{4}\n'
         cls = self.get_vbnet_class_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
 
             skip = -2 if packet.has_high_level() else 0
@@ -78,21 +78,17 @@ class VBNETDocDevice(common.Device):
             desc = packet.get_vbnet_formatted_doc()
 
             if len(ret_type) > 0:
-                method = function.format(cls, name, params, ret_type, meta_table, desc)
+                function = template_function.format(cls, name, params, ret_type, meta_table, desc)
             else:
-                method = sub.format(cls, name, params, meta_table, desc)
+                function = template_sub.format(cls, name, params, meta_table, desc)
 
-            methods += method + '\n'
+            functions.append(function)
 
-        return methods
+        return ''.join(functions)
 
     def get_vbnet_callbacks(self):
-        cb = """
-.. vbnet:function:: Event {0}.{1}Callback(ByVal sender As {0}{2})
-
-{3}{4}
-"""
-        cbs = ''
+        callbacks = []
+        template = '.. vbnet:function:: Event {0}.{1}Callback(ByVal sender As {0}{2})\n\n{3}{4}\n'
 
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
@@ -108,13 +104,13 @@ class VBNETDocDevice(common.Device):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
 
-            cbs += cb.format(self.get_vbnet_class_name(),
-                             packet.get_name(skip=skip).camel,
-                             common.wrap_non_empty(', ', params, ''),
-                             meta_table,
-                             desc)
+            callbacks.append(template.format(self.get_vbnet_class_name(),
+                                             packet.get_name(skip=skip).camel,
+                                             common.wrap_non_empty(', ', params, ''),
+                                             meta_table,
+                                             desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_vbnet_api(self):
         create_str = {
@@ -281,9 +277,9 @@ Konstanten
                                                     self.get_vbnet_class_name(),
                                                     self.get_name().headless)
 
-        bf = self.get_vbnet_methods('bf')
-        af = self.get_vbnet_methods('af')
-        ccf = self.get_vbnet_methods('ccf')
+        bf = self.get_vbnet_functions('bf')
+        af = self.get_vbnet_functions('af')
+        ccf = self.get_vbnet_functions('ccf')
         c = self.get_vbnet_callbacks()
         api_str = ''
 
@@ -293,10 +289,10 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(common.ccf_str).format('', ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_vbnet_class_name(),
                                                         self.get_name().headless,

@@ -65,8 +65,9 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         return common.make_rst_examples(title_from_filename, self,
                                         language_from_filename=language_from_filename)
 
-    def get_matlab_methods(self, type_):
-        methods = ''
+    def get_matlab_functions(self, type_):
+        functions = []
+        template = '.. matlab:function:: {0} {1}::{2}({3})\n\n{4}{5}\n'
         cls = self.get_matlab_class_name()
 
         for packet in self.get_packets('function'):
@@ -87,18 +88,14 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta, index_format_func=lambda index: str(index + 1))
             desc = packet.get_matlab_formatted_doc(1)
-            func = '.. matlab:function:: {0} {1}::{2}({3})\n\n{4}{5}'.format(ret_type,
-                                                                             cls,
-                                                                             name,
-                                                                             params,
-                                                                             meta_table,
-                                                                             desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(ret_type, cls, name, params, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_matlab_callbacks(self):
-        cb = {
+        callbacks = []
+        template = {
             'en': """
 .. matlab:member:: callback {0}::{1}Callback
 
@@ -130,8 +127,6 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
 """
         }
-
-        cbs = ''
         cls = self.get_matlab_class_name()
 
         for packet in self.get_packets('callback'):
@@ -148,12 +143,13 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
                                                      explicit_common_cardinality=True,
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta, indent_level=1, index_format_func=lambda index: str(index + 1))
-            cbs += common.select_lang(cb).format(cls,
+
+            callbacks.append(common.select_lang(template).format(cls,
                                                  packet.get_name(skip=skip).camel,
                                                  meta_table,
-                                                 desc)
+                                                 desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_matlab_api(self):
         create_str = {
@@ -438,9 +434,9 @@ Konstanten
                                                     self.get_name().headless,
                                                     create_meta_table)
 
-        bf = self.get_matlab_methods('bf')
-        af = self.get_matlab_methods('af')
-        ccf = self.get_matlab_methods('ccf')
+        bf = self.get_matlab_functions('bf')
+        af = self.get_matlab_functions('af')
+        ccf = self.get_matlab_functions('ccf')
         c = self.get_matlab_callbacks()
         api_str = ''
 
@@ -450,10 +446,10 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(ccf_str).format(ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(ccf_str).format(ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(), c)
 
         article = 'ein'

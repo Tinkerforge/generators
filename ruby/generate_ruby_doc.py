@@ -50,22 +50,18 @@ class RubyDocDevice(ruby_common.RubyDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_ruby_methods(self, typ):
-        methods = ''
-        func_start = '.. rb:function:: '
+    def get_ruby_functions(self, type_):
+        functions = []
+        template = '.. rb:function:: {0}#{1}{2}{3}\n\n{4}{5}\n'
         cls = self.get_ruby_class_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != typ:
+            if packet.get_doc_type() != type_:
                 continue
 
             skip = -2 if packet.has_high_level() else 0
             name = packet.get_name(skip=skip).under
             params = packet.get_ruby_parameters(high_level=True)
-
-            if len(params) > 0:
-                params = '(' + params + ')'
-
             ret_desc = packet.get_ruby_return_desc(high_level=True)
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_ruby_type(cardinality=cardinality),
                                                      lambda element, index=None: element.get_name(index=index).under,
@@ -79,19 +75,14 @@ class RubyDocDevice(ruby_common.RubyDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_ruby_formatted_doc()
-            func = '.. rb:function:: {0}#{1}{2}{3}\n\n{4}{5}'.format(cls,
-                                                                     name,
-                                                                     params,
-                                                                     ret_desc,
-                                                                     meta_table,
-                                                                     desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(cls, name, common.wrap_non_empty('(', params, ')'), ret_desc, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_ruby_callbacks(self):
-        cbs = ''
-        func_start = '.. rb:attribute:: '
+        callbacks = []
+        template = '.. rb:attribute:: {0}::CALLBACK_{1}\n\n{2}{3}\n'
         cls = self.get_ruby_class_name()
 
         for packet in self.get_packets('callback'):
@@ -107,13 +98,9 @@ class RubyDocDevice(ruby_common.RubyDevice):
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_ruby_formatted_doc()
 
-            func = '.. rb:attribute:: {0}::CALLBACK_{1}\n\n{2}{3}'.format(cls,
-                                                                          packet.get_name(skip=skip).upper,
-                                                                          meta_table,
-                                                                          desc)
-            cbs += func + '\n'
+            callbacks.append(template.format(cls, packet.get_name(skip=skip).upper, meta_table, desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_ruby_api(self):
         create_str = {
@@ -315,9 +302,9 @@ Konstanten
                                                       self.get_ruby_class_name(),
                                                       reg_meta_table)
 
-        bf = self.get_ruby_methods('bf')
-        af = self.get_ruby_methods('af')
-        ccf = self.get_ruby_methods('ccf')
+        bf = self.get_ruby_functions('bf')
+        af = self.get_ruby_functions('af')
+        ccf = self.get_ruby_functions('ccf')
         c = self.get_ruby_callbacks()
         api_str = ''
 

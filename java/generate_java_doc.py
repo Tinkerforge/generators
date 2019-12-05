@@ -50,8 +50,9 @@ class JavaDocDevice(java_common.JavaDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_java_methods(self, type_):
-        methods = ''
+    def get_java_functions(self, type_):
+        functions = []
+        template = '.. java:function:: {0} {1}::{2}({3})\n\n{4}\n{5}\n'
         cls = self.get_java_class_name()
 
         for packet in self.get_packets('function'):
@@ -72,18 +73,14 @@ class JavaDocDevice(java_common.JavaDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_java_formatted_doc(1)
-            func = '.. java:function:: {0} {1}::{2}({3})\n\n{4}\n{5}'.format(ret_type,
-                                                                             cls,
-                                                                             name,
-                                                                             params,
-                                                                             meta_table,
-                                                                             desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(ret_type, cls, name, params, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_java_callbacks(self):
-        cb = {
+        callbacks = []
+        template = {
             'en': """
 .. java:function:: class {0}::{1}Listener()
 
@@ -112,8 +109,6 @@ class JavaDocDevice(java_common.JavaDevice):
 {5}
 """
         }
-
-        cbs = ''
         cls = self.get_java_class_name()
 
         for packet in self.get_packets('callback'):
@@ -130,14 +125,14 @@ class JavaDocDevice(java_common.JavaDevice):
             meta_table = common.make_rst_meta_table(meta, indent_level=2)
             skip = -2 if packet.has_high_level() else 0
 
-            cbs += common.select_lang(cb).format(cls,
-                                                 packet.get_name(skip=skip).camel,
-                                                 packet.get_name(skip=skip).headless,
-                                                 params,
-                                                 meta_table,
-                                                 desc)
+            callbacks.append(common.select_lang(template).format(cls,
+                                                                 packet.get_name(skip=skip).camel,
+                                                                 packet.get_name(skip=skip).headless,
+                                                                 params,
+                                                                 meta_table,
+                                                                 desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_java_api(self):
         create_str = {
@@ -370,9 +365,9 @@ Konstanten
                                                     self.get_name().headless,
                                                     create_meta_table)
 
-        bf = self.get_java_methods('bf')
-        af = self.get_java_methods('af')
-        ccf = self.get_java_methods('ccf')
+        bf = self.get_java_functions('bf')
+        af = self.get_java_functions('af')
+        ccf = self.get_java_functions('ccf')
         c = self.get_java_callbacks()
         api_str = ''
 
@@ -382,10 +377,10 @@ Konstanten
         if af:
             api_str += common.select_lang(common.af_str).format(af)
 
-        if ccf:
-            api_str += common.select_lang(ccf_str).format(ccf)
-
         if c:
+            if ccf:
+                api_str += common.select_lang(ccf_str).format(ccf)
+
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_java_class_name(),
                                                         c)

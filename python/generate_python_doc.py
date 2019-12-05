@@ -50,8 +50,9 @@ class PythonDocDevice(python_common.PythonDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_python_methods(self, type_):
-        methods = []
+    def get_python_functions(self, type_):
+        functions = []
+        template = '.. py:function:: {0}.{1}({2})\n\n{3}{4}\n'
         cls = self.get_python_class_name()
 
         for packet in self.get_packets('function'):
@@ -72,17 +73,14 @@ class PythonDocDevice(python_common.PythonDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_python_formatted_doc()
-            func = '.. py:function:: {0}.{1}({2})\n\n{3}{4}\n'.format(cls,
-                                                                      name,
-                                                                      params,
-                                                                      meta_table,
-                                                                      desc)
-            methods.append(func)
 
-        return ''.join(methods)
+            functions.append(template.format(cls, name, params, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_python_callbacks(self):
-        cbs = ''
+        callbacks = []
+        template = '.. py:attribute:: {0}.CALLBACK_{1}\n\n{2}{3}\n'
         cls = self.get_python_class_name()
 
         for packet in self.get_packets('callback'):
@@ -98,13 +96,9 @@ class PythonDocDevice(python_common.PythonDevice):
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_python_formatted_doc()
 
-            func = '.. py:attribute:: {0}.CALLBACK_{1}\n\n{2}{3}'.format(cls,
-                                                                         packet.get_name(skip=skip).upper,
-                                                                         meta_table,
-                                                                         desc)
-            cbs += func + '\n'
+            callbacks.append(template.format(cls, packet.get_name(skip=skip).upper, meta_table, desc))
 
-        return cbs
+        return ''.join(callbacks)
 
     def get_python_api(self):
         create_str = {
@@ -341,9 +335,9 @@ Konstanten
                                                       self.get_category().camel,
                                                       reg_meta_table)
 
-        bf = self.get_python_methods('bf')
-        af = self.get_python_methods('af')
-        ccf = self.get_python_methods('ccf')
+        bf = self.get_python_functions('bf')
+        af = self.get_python_functions('af')
+        ccf = self.get_python_functions('ccf')
         c = self.get_python_callbacks()
         api_str = ''
 

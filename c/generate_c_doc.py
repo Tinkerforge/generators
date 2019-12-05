@@ -51,7 +51,8 @@ class CDocDevice(common.Device):
         return common.make_rst_examples(title_from_filename, self)
 
     def get_c_functions(self, type_):
-        functions = ''
+        functions = []
+        template = '.. c:function:: int {0}({1})\n\n{2}{3}\n'
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
@@ -61,7 +62,6 @@ class CDocDevice(common.Device):
             name = '{0}_{1}'.format(self.get_name().under, packet.get_name(skip=skip).under)
             plist = common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), '')
             params = '{0} *{1}{2}'.format(self.get_name().camel, self.get_name().under, plist)
-
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_c_type('meta', cardinality=cardinality),
                                                      lambda element, index=None: element.get_c_name(index=index),
                                                      output_parameter='always',
@@ -71,13 +71,15 @@ class CDocDevice(common.Device):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_c_formatted_doc()
-            func = '.. c:function:: int {0}({1})\n\n{2}{3}'.format(name, params, meta_table, desc)
-            functions += func + '\n'
 
-        return functions
+            functions.append(template.format(name, params, meta_table, desc))
+
+        return ''.join(functions)
 
     def get_c_callbacks(self):
-        param_format = {
+        callbacks = []
+        tempate = '.. c:var:: {0}_CALLBACK_{1}\n{2}\n{3}\n{4}\n'
+        param_tempate = {
             'en': """
  .. code-block:: c
 
@@ -90,8 +92,6 @@ class CDocDevice(common.Device):
 """
         }
 
-        cbs = ''
-
         for packet in self.get_packets('callback'):
             plist = packet.get_c_parameters(high_level=True)
 
@@ -100,7 +100,7 @@ class CDocDevice(common.Device):
             else:
                 plist += ', void *user_data'
 
-            params = common.select_lang(param_format).format(plist)
+            params = common.select_lang(param_tempate).format(plist)
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_c_type('meta', cardinality=cardinality),
                                                      lambda element, index=None: element.get_c_name(index=index),
                                                      suffix_elements=[('user_data', 'void *', 1, 'out')],
@@ -109,14 +109,14 @@ class CDocDevice(common.Device):
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_c_formatted_doc()
             skip = -2 if packet.has_high_level() else 0
-            func = '.. c:var:: {0}_CALLBACK_{1}\n{2}\n{3}\n{4}'.format(self.get_name().upper,
-                                                                       packet.get_name(skip=skip).upper,
-                                                                       params,
-                                                                       meta_table,
-                                                                       desc)
-            cbs += func + '\n'
 
-        return cbs
+            callbacks.append(tempate.format(self.get_name().upper,
+                                            packet.get_name(skip=skip).upper,
+                                            params,
+                                            meta_table,
+                                            desc))
+
+        return ''.join(callbacks)
 
     def get_c_api(self):
         create_str = {

@@ -50,15 +50,12 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
 
         return common.make_rst_examples(title_from_filename, self, language_from_filename=lambda f: None)
 
-    def get_mqtt_methods(self, type_):
-        methods = ''
-        func_start = '.. mqtt:function:: '
+    def get_mqtt_functions(self, type_):
+        functions = []
+        template = '.. mqtt:function:: request/{struct_name}/<UID>/{func_name}\n\n{meta_table}{desc}\n'
 
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != type_:
-                continue
-
-            if packet.is_virtual():
+            if packet.get_doc_type() != type_ or packet.is_virtual():
                 continue
 
             skip = -2 if packet.has_high_level() else 0
@@ -90,17 +87,22 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
  The display name contains the {}'s name in a human readable form.""",
                     'de': """Falls die symbolische Ausgabe nicht deaktiviert wurde, wird der Device Identifier auf den entsprechenden Namen im Format, welches die Topics verwenden, abgebildet.
 
- Der Display Name enthält den Anzeigenamen des {}."""}
+ Der Display Name enthält den Anzeigenamen des {}."""
+                }
+
                 desc += common.select_lang(get_id_desc).format(self.get_short_display_name())
 
-            func = '{start}request/{struct_name}/<UID>/{func_name}\n\n{meta_table}{desc}'.format(start=func_start, struct_name=self.get_mqtt_device_name(), func_name=name, meta_table=meta_table, desc=desc)
-            methods += func + '\n'
+            functions.append(template.format(struct_name=self.get_mqtt_device_name(),
+                                             func_name=name,
+                                             meta_table=meta_table,
+                                             desc=desc))
 
-        return methods
+        return ''.join(functions)
 
     def get_mqtt_callbacks(self):
-        cb = {
-        'en': """
+        callbacks = []
+        template = {
+            'en': """
 .. mqtt:function:: register/{device}/<UID>/{callback_name_under}\n\n{meta_table}\n
 
  A callback can be registered for this event by publishing to the ``.../register/{device}/<UID>/{callback_name_under}[/<SUFFIX>]`` topic with the payload "true".
@@ -123,11 +125,10 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
 {desc}
 """
         }
-
-        cbs = ''
         device = self.get_mqtt_device_name()
-        for packet in self.get_packets('callback'):
 
+        for packet in self.get_packets('callback'):
+            skip = -2 if packet.has_high_level() else 0
             meta = common.format_simple_element_meta([('register', 'bool', 1, 'in')],
                                                       parameter_label_override={'en': 'Register Request', 'de': 'Registrierungsanfrage'})
             meta += packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_mqtt_type(for_doc=True, cardinality=cardinality),
@@ -143,16 +144,13 @@ class MQTTDocDevice(mqtt_common.MQTTDevice):
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_mqtt_formatted_doc()
 
-            if packet.has_high_level():
-                skip = -2
-            else:
-                skip = 0
+            callbacks.append(common.select_lang(template).format(device=device,
+                                                                 callback_name_under=packet.get_mqtt_name(skip=skip),
+                                                                 meta_table=meta_table,
+                                                                 desc=desc))
 
-            cbs += common.select_lang(cb).format(device=device,
-                                                 callback_name_under=packet.get_mqtt_name(skip=skip),
-                                                 meta_table=meta_table,
-                                                 desc=desc)
-        return cbs
+        return ''.join(callbacks)
+
     def get_mqtt_api(self):
         c_str = {
             'en': """
@@ -226,9 +224,9 @@ Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../respon
 """
         }
 
-        bf = self.get_mqtt_methods('bf')
-        af = self.get_mqtt_methods('af')
-        ccf = self.get_mqtt_methods('ccf')
+        bf = self.get_mqtt_functions('bf')
+        af = self.get_mqtt_functions('af')
+        ccf = self.get_mqtt_functions('ccf')
         c = self.get_mqtt_callbacks()
         api_str = ''
 
@@ -239,8 +237,8 @@ Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../respon
             api_str += common.select_lang(common.af_str).format(af)
 
         if c:
-            if len(ccf) > 0:
-                api_str += common.select_lang(common.ccf_str).format("", ccf)
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
 
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,

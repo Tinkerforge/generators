@@ -52,9 +52,9 @@ class GoDocDevice(go_common.GoDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_go_methods(self, type_):
-        methods = ''
-        func_start = '.. go:function:: '
+    def get_go_functions(self, type_):
+        functions = []
+        template = '.. go:function:: func (*{struct_name}) {func_name}({params}) ({returns})\n\n{meta_table}\n{desc}\n'
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
@@ -73,32 +73,21 @@ class GoDocDevice(go_common.GoDevice):
             meta_table = common.make_rst_meta_table(meta)
             returns = packet.get_go_return_type(high_level=True, ignore_constant_group=True)
             desc = packet.get_go_formatted_doc()
-            func = '{start}func (*{struct_name}) {func_name}({params}) ({returns})\n\n{meta_table}\n{desc}' \
-                   .format(start=func_start, struct_name=self.get_go_name(), func_name=name, params=params, returns=returns, meta_table=meta_table, desc=desc)
-            methods += func + '\n'
 
-        return methods
+            functions.append(template.format(struct_name=self.get_go_name(),
+                                             func_name=name,
+                                             params=params,
+                                             returns=returns,
+                                             meta_table=meta_table,
+                                             desc=desc))
+
+        return ''.join(functions)
 
     def get_go_callbacks(self):
-        cb = {
-        'en': """
-.. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationId uint64)
-
-{meta}
-
-{desc}
-""",
-            'de': """
-.. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationId uint64)
-
-{meta}
-
-{desc}
-"""
-        }
-
-        cbs = ''
+        callbacks = []
+        template = '.. go:function:: func (*{device}) Register{callback_name_camel}Callback(func({result_type})) (registrationId uint64)\n\n{meta}\n\n{desc}\n'
         device = self.get_go_name()
+
         for packet in self.get_packets('callback'):
             skip = -2 if packet.has_high_level() else 0
             desc = packet.get_go_formatted_doc()
@@ -112,13 +101,15 @@ class GoDocDevice(go_common.GoDevice):
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
 
-            cbs += common.select_lang(cb).format(device=device,
-                                                 callback_name_camel=packet.get_name(skip=skip).camel,
-                                                 callback_name_space=packet.get_name(skip=skip).space,
-                                                 result_type=result_type,
-                                                 meta=meta_table,
-                                                 desc=desc)
-        return cbs
+            callbacks.append(template.format(device=device,
+                                             callback_name_camel=packet.get_name(skip=skip).camel,
+                                             callback_name_space=packet.get_name(skip=skip).space,
+                                             result_type=result_type,
+                                             meta=meta_table,
+                                             desc=desc))
+
+        return ''.join(callbacks)
+
     def get_go_api(self):
         create_str = {
             'en': """
@@ -297,9 +288,9 @@ Konstanten
                                                     device_name_under=self.get_go_package(),
                                                     device_name_camel=self.get_go_name(),
                                                     meta=create_meta_table)
-        bf = self.get_go_methods('bf')
-        af = self.get_go_methods('af')
-        ccf = self.get_go_methods('ccf')
+        bf = self.get_go_functions('bf')
+        af = self.get_go_functions('af')
+        ccf = self.get_go_functions('ccf')
         c = self.get_go_callbacks()
         api_str = ''
 
@@ -310,8 +301,8 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
 
         if c:
-            if len(ccf) > 0:
-                api_str += common.select_lang(common.ccf_str).format("", ccf)
+            if ccf:
+                api_str += common.select_lang(common.ccf_str).format('', ccf)
 
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().under,
