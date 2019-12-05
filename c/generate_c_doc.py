@@ -50,8 +50,8 @@ class CDocDevice(common.Device):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_c_methods(self, type_):
-        methods = ''
+    def get_c_functions(self, type_):
+        functions = ''
 
         for packet in self.get_packets('function'):
             if packet.get_doc_type() != type_:
@@ -72,9 +72,9 @@ class CDocDevice(common.Device):
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_c_formatted_doc()
             func = '.. c:function:: int {0}({1})\n\n{2}{3}'.format(name, params, meta_table, desc)
-            methods += func + '\n'
+            functions += func + '\n'
 
-        return methods
+        return functions
 
     def get_c_callbacks(self):
         param_format = {
@@ -405,9 +405,9 @@ Konstanten
                                                       self.get_name().under,
                                                       self.get_name().camel,
                                                       red_meta_table)
-        bf = self.get_c_methods('bf')
-        af = self.get_c_methods('af')
-        ccf = self.get_c_methods('ccf')
+        bf = self.get_c_functions('bf')
+        af = self.get_c_functions('af')
+        ccf = self.get_c_functions('ccf')
         c = self.get_c_callbacks()
         api_str = ''
 
