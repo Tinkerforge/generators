@@ -228,6 +228,7 @@ Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../respon
         af = self.get_mqtt_functions('af')
         ccf = self.get_mqtt_functions('ccf')
         c = self.get_mqtt_callbacks()
+        vf = self.get_mqtt_functions('vf')
         api_str = ''
 
         if bf:
@@ -244,6 +245,9 @@ Das Objekt wird auf dem zugehörigen Antwort-Topic veröffentlicht: ``.../respon
                                                         self.get_name().under,
                                                         self.get_name().upper,
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

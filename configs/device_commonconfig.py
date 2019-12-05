@@ -77,7 +77,7 @@ common_packets.append({
 'name': 'Get API Version',
 'elements': [('API Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}])],
 'since_firmware': None,
-'doc': ['af', {
+'doc': ['vf', {
 'en':
 """
 Returns the version of the API definition implemented
@@ -102,7 +102,7 @@ common_packets.append({
 'elements': [('Function Id', 'uint8', 1, 'in', {'constant_group': 'Function'}),
              ('Response Expected', 'bool', 1, 'out', {})],
 'since_firmware': None,
-'doc': ['af', {
+'doc': ['vf', {
 'en':
 """
 Returns the response expected flag for the function specified by the function
@@ -151,7 +151,7 @@ common_packets.append({
 'elements': [('Function Id', 'uint8', 1, 'in', {'constant_group': 'Function'}),
              ('Response Expected', 'bool', 1, 'in', {})],
 'since_firmware': None,
-'doc': ['af', {
+'doc': ['vf', {
 'en':
 """
 Changes the response expected flag of the function specified by the
@@ -189,7 +189,7 @@ common_packets.append({
 'name': 'Set Response Expected All',
 'elements': [('Response Expected', 'bool', 1, 'in', {})],
 'since_firmware': None,
-'doc': ['af', {
+'doc': ['vf', {
 'en':
 """
 Changes the response expected flag for all setter and callback configuration

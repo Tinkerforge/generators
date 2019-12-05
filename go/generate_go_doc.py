@@ -292,6 +292,7 @@ Konstanten
         af = self.get_go_functions('af')
         ccf = self.get_go_functions('ccf')
         c = self.get_go_callbacks()
+        vf = self.get_go_functions('vf')
         api_str = ''
 
         if bf:
@@ -308,6 +309,9 @@ Konstanten
                                                         self.get_name().under,
                                                         self.get_name().upper,
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

@@ -306,6 +306,7 @@ Konstanten
         af = self.get_ruby_functions('af')
         ccf = self.get_ruby_functions('ccf')
         c = self.get_ruby_callbacks()
+        vf = self.get_ruby_functions('vf')
         api_str = ''
 
         if bf:
@@ -320,6 +321,9 @@ Konstanten
                                                         self.get_ruby_class_name(),
                                                         self.get_name().under,
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

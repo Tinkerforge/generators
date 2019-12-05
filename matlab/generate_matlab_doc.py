@@ -438,6 +438,7 @@ Konstanten
         af = self.get_matlab_functions('af')
         ccf = self.get_matlab_functions('ccf')
         c = self.get_matlab_callbacks()
+        vf = self.get_matlab_functions('vf')
         api_str = ''
 
         if bf:
@@ -451,6 +452,9 @@ Konstanten
                 api_str += common.select_lang(ccf_str).format(ccf)
 
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(), c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

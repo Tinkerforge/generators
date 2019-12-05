@@ -369,6 +369,7 @@ Konstanten
         af = self.get_java_functions('af')
         ccf = self.get_java_functions('ccf')
         c = self.get_java_callbacks()
+        vf = self.get_java_functions('vf')
         api_str = ''
 
         if bf:
@@ -384,6 +385,9 @@ Konstanten
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_java_class_name(),
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

@@ -409,6 +409,7 @@ Konstanten
         af = self.get_c_functions('af')
         ccf = self.get_c_functions('ccf')
         c = self.get_c_callbacks()
+        vf = self.get_c_functions('vf')
         api_str = ''
 
         if bf:
@@ -424,6 +425,9 @@ Konstanten
                                                         self.get_name().upper,
                                                         c,
                                                         ' ' * len(self.get_name().under))
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

@@ -292,6 +292,7 @@ Konstanten
         af = self.get_delphi_functions('af')
         ccf = self.get_delphi_functions('ccf')
         c = self.get_delphi_callbacks()
+        vf = self.get_delphi_functions('vf')
         api_str = ''
 
         if bf:
@@ -308,6 +309,9 @@ Konstanten
                                                         self.get_delphi_class_name(),
                                                         self.get_name().headless,
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

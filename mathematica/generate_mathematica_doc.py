@@ -339,6 +339,7 @@ Konstanten
         af = self.get_mathematica_functions('af')
         ccf = self.get_mathematica_functions('ccf')
         c = self.get_mathematica_callbacks()
+        vf = self.get_mathematica_functions('vf')
         api_str = ''
 
         if bf:
@@ -354,6 +355,9 @@ Konstanten
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_name().headless,
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

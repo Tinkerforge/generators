@@ -365,6 +365,7 @@ Konstanten
         af = self.get_perl_functions('af')
         ccf = self.get_perl_functions('ccf')
         c = self.get_perl_callbacks()
+        vf = self.get_perl_functions('vf')
         api_str = ''
 
         if bf:
@@ -379,6 +380,9 @@ Konstanten
                                                         self.get_perl_class_name(),
                                                         self.get_name().under,
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

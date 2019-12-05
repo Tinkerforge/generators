@@ -98,6 +98,21 @@ Konfigurationsfunktionen für Callbacks
 """
 }
 
+vf_str = {
+    'en': """
+Virtual Functions
+^^^^^^^^^^^^^^^^^
+
+{0}
+""",
+    'de': """
+Virtuelle Funktionen
+^^^^^^^^^^^^^^^^^^^^
+
+{0}
+"""
+}
+
 lang = 'en'
 
 html_escape_table = {
@@ -2327,7 +2342,8 @@ class Packet(object):
     valid_doc_types = set(['bf',
                            'af',
                            'ccf',
-                           'c'])
+                           'c',
+                           'vf'])
 
     def __init__(self, raw_data, device):
         self.raw_data = raw_data

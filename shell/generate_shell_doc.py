@@ -352,6 +352,7 @@ Befehlsstruktur dargestellt.
         af = self.get_shell_functions('af')
         ccf = self.get_shell_functions('ccf')
         c = self.get_shell_callbacks()
+        vf = self.get_shell_functions('vf')
         api_str = ''
 
         if bf:
@@ -367,6 +368,9 @@ Befehlsstruktur dargestellt.
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_shell_device_name(),
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         call_meta = common.format_simple_element_meta([('<uid>', 'String', 1, 'in'),
                                                        ('<function>', 'String', 1, 'in')])

@@ -311,6 +311,7 @@ Konstanten
         af = self.get_rust_functions('af')
         ccf = self.get_rust_functions('ccf')
         c = self.get_rust_callbacks()
+        vf = self.get_rust_functions('vf')
         api_str = ''
 
         if bf:
@@ -327,6 +328,9 @@ Konstanten
                                                         self.get_name().under,
                                                         self.get_name().upper,
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 

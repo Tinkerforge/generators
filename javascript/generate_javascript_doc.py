@@ -379,6 +379,7 @@ Konstanten
         af = self.get_javascript_functions('af')
         ccf = self.get_javascript_functions('ccf')
         c = self.get_javascript_callbacks()
+        vf = self.get_javascript_functions('vf')
         api_str = ''
 
         if bf:
@@ -393,6 +394,9 @@ Konstanten
                                                         self.get_javascript_class_name(),
                                                         self.get_name().headless,
                                                         c)
+
+        if vf:
+            api_str += common.select_lang(common.vf_str).format(vf)
 
         article = 'ein'
 
