@@ -885,9 +885,9 @@ Magnetfeldkomponenten der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Angular Velocity',
-'elements': [('X', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Y', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'}),
-             ('Z', 'int16', 1, 'out', {'scale':(1, 10**9), 'unit': 'Tesla'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Y', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)}),
+             ('Z', 'int16', 1, 'out', {'scale': (8, 115), 'unit': 'Degree Per Second', 'range': (-28750, 28750)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
