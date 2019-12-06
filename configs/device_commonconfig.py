@@ -1142,7 +1142,7 @@ common_packets.append({
 'name': 'Get Identity',
 'elements': [('Uid', 'string', 8, 'out', {}),
              ('Connected Uid', 'string', 8, 'out', {}),
-             ('Position', 'char', 1, 'out', {'range': [('a', 'i'), ('z', 'z')]}),
+             ('Position', 'char', 1, 'out', {'range': [('a', 'h'), ('i', 'i'), ('z', 'z')]}),
              ('Hardware Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}]),
              ('Firmware Version', 'uint8', 3, 'out', [{'name': 'Major'}, {'name': 'Minor'}, {'name': 'Revision'}]),
              ('Device Identifier', 'uint16', 1, 'out', {})],
