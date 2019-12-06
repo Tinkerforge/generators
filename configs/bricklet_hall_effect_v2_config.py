@@ -248,6 +248,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Counter Config',
+            'element': 'Low Threshold',
+
             'name': 'Low Threshold',
             'type': 'integer',
 
@@ -256,6 +259,9 @@ com['openhab'] = {
             'label': 'Low Threshold',
             'description': 'The low threshold in µT. If the measured magnetic flux density goes below the low threshold, the count of the counter is increased by 1.',
         }, {
+            'packet': 'Set Counter Config',
+            'element': 'High Threshold',
+
             'name': 'High Threshold',
             'type': 'integer',
 
@@ -264,6 +270,9 @@ com['openhab'] = {
             'label': 'High Threshold',
             'description': 'The high threshold in µT. If the measured magnetic flux density goes above the high threshold, the count of the counter is increased by 1.',
         }, {
+            'packet': 'Set Counter Config',
+            'element': 'Debounce',
+
             'name': 'Debounce',
             'type': 'integer',
 

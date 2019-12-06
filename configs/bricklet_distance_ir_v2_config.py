@@ -274,6 +274,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
+            'packet': 'Set Moving Average Configuration',
+            'element': 'Moving Average Length',
+
             'name': 'Moving Average Length',
             'type': 'integer',
             'default': 25,
@@ -284,6 +287,9 @@ com['openhab'] = {
             'description': 'Sets the length of a moving averaging for the distance.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>New data is gathered every ~10ms. With a moving average of length 1000 the resulting averaging window has a length of approximately 10s. If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 25.',
         },
         {
+            'packet': 'Set Distance LED Config',
+            'element': 'Config',
+
             'name': 'Distance LED Config',
             'type': 'integer',
             'options': [('Off', 0),

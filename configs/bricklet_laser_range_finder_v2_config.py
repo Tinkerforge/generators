@@ -370,6 +370,9 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set Distance LED Config` gese
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [{
+            'packet': 'Set Moving Average',
+            'element': 'Distance Average Length',
+
             'name': 'Distance Moving Average Length',
             'type': 'integer',
             'default': 10,
@@ -379,6 +382,9 @@ com['openhab'] = {
             'label': 'Distance Moving Average Length',
             'groupName': 'average'
         }, {
+            'packet': 'Set Moving Average',
+            'element': 'Velocity Average Length',
+
             'name': 'Velocity Moving Average Length',
             'type': 'integer',
             'default': 10,
@@ -388,6 +394,9 @@ com['openhab'] = {
             'label': 'Velocity Moving Average Length',
             'groupName': 'average'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Acquisition Count',
+
             'name': 'Acquisition Count',
             'type': 'integer',
             'min': 1,
@@ -398,6 +407,9 @@ com['openhab'] = {
             'description': 'The Acquisition Count defines the number of times the Laser Range Finder Bricklet will integrate acquisitions to find a correlation record peak. With a higher count, the Bricklet can measure longer distances. With a lower count, the rate increases. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Enable Quick Termination',
+
             'name': 'Enable Quick Termination',
             'type': 'boolean',
             'default': 'false',
@@ -406,6 +418,9 @@ com['openhab'] = {
             'description': 'If you enable Quick Termination, the distance measurement will be terminated early if a high peak was already detected. This means that a higher measurement rate can be achieved and long distances can be measured at the same time. However, the chance of false-positive distance measurements increases. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Threshold Value',
+
             'name': 'Threshold Value',
             'type': 'integer',
             'min': 0,
@@ -424,6 +439,9 @@ com['openhab'] = {
             'description': 'For a stable velocity measurement you should set a fixed measurement frequency. See Measurement Frequency for details. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Measurement Frequency',
+
             'name': 'Measurement Frequency',
             'type': 'integer',
             'min': 10,
@@ -434,6 +452,9 @@ com['openhab'] = {
             'description': 'Set the Measurement Frequency in Hz to force a fixed measurement rate. If set to 0, the Laser Range Finder Bricklet will use the optimal frequency according to the other configurations and the actual measured distance. Since the rate is not fixed in this case, the velocity measurement is not stable. For a stable velocity measurement you should set a fixed measurement frequency. The lower the frequency, the higher is the resolution of the calculated velocity. The allowed values are 10Hz-500Hz. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor'
         }, {
+            'packet': 'Set Distance LED Config',
+            'element': 'Config',
+
             'name': 'Distance LED Config',
             'type': 'integer',
             'default': 3,

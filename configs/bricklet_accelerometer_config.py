@@ -468,6 +468,9 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
     'params': [{
+            'packet': 'Set Configuration',
+            'element': 'Data Rate',
+
             'name': 'Data Rate',
             'type': 'integer',
             'options': [('Off', 0),
@@ -485,6 +488,9 @@ com['openhab'] = {
             'label': 'Data Rate',
             'description': 'The data rate of 0Hz to 1600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Full Scale',
+
             'name': 'Full Scale Range',
             'type': 'integer',
             'options': [('2g', 0),
@@ -497,6 +503,9 @@ com['openhab'] = {
             'label': 'Full Scale Range',
             'description': 'Full scale range of -2g to +2g up to -16g to +16g. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Filter Bandwidth',
+
             'name': 'Frequency Filter',
             'type': 'integer',
             'options': [('800Hz', 0),

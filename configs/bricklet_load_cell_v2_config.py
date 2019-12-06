@@ -295,6 +295,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Moving Average',
+            'element': 'Average',
+
             'name': 'Moving Average',
             'type': 'integer',
             'default': 4,
@@ -304,6 +307,9 @@ com['openhab'] = {
             'label': 'Moving Average',
             'description': 'The length of a moving averaging for the weight value.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Rate',
+
             'name': 'Measurement Rate',
             'type': 'integer',
             'options': [('10Hz', 0),
@@ -314,6 +320,9 @@ com['openhab'] = {
             'label': 'Measurement Rate',
             'description': 'The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.',
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Gain',
+
             'name': 'Gain',
             'type': 'integer',
             'options': [('128x', 0),
@@ -325,6 +334,9 @@ com['openhab'] = {
             'label': 'Gain',
             'description': "The gain can be 128x, 64x or 32x. It represents a measurement range of ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an excitation voltage of 5V and most load cells use an output of 2mV/V. That means the voltage range is ±15mV for most load cells (i.e. gain of 128x is best). If you don't know what all of this means you should keep it at 128x, it will most likely be correct.",
         }, {
+            'packet': 'Set Info LED Config',
+            'element': 'Config',
+
             'name': 'Info LED',
             'type': 'integer',
             'options': [('Off', 0),

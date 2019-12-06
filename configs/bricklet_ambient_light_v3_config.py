@@ -198,6 +198,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Configuration',
+            'element': 'Illuminance Range',
+
             'name': 'Illuminance Range',
             'type': 'integer',
             'options': [('Unlimited', 6),
@@ -213,6 +216,9 @@ com['openhab'] = {
             'label': 'Illuminance Range',
             'description': 'The unlimited illuminance range allows to measure up to about 100000lux, but above 64000lux the precision starts to drop.<br/><br/>A smaller illuminance range increases the resolution of the data.<br/><br/>If the actual measure illuminance is out-of-range then the current illuminance range maximum +0.01lux is reported. For example, 800001 for the 0-8000lux range.<br/><br/>If the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Integration Time',
+
             'name': 'Integration Time',
             'type': 'integer',
             'options': [('50ms', 0),

@@ -699,6 +699,9 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.HSBType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [{
+            'packet': 'Set Config',
+            'element': 'Gain',
+
             'name': 'Gain',
             'type': 'integer',
             'options': [('1x', 0),
@@ -711,6 +714,9 @@ com['openhab'] = {
             'label': 'Gain',
             'description': 'Increasing the gain enables the sensor to detect a color from a higher distance.',
         }, {
+            'packet': 'Set Config',
+            'element': 'Integration Time',
+
             'name': 'Integration Time',
             'type': 'integer',
             'options': [('2ms', 0),

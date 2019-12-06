@@ -569,6 +569,9 @@ com['openhab'] = {
                                                'org.eclipse.smarthome.core.library.types.DecimalType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+        'packet': 'Set Remote Configuration',
+        'element': 'Remote Type',
+
         'name': 'Remote Type',
         'type': 'integer',
         'options': [('A', 0),
@@ -580,6 +583,9 @@ com['openhab'] = {
         'label': 'Remote Type',
         'description': 'Type A, B or C depending on the type of remote you want to receive.',
     }, {
+        'packet': 'Set Remote Configuration',
+        'element': 'Minimum Repeats',
+
         'name': 'Minimum Repeats',
         'type': 'integer',
         'default': 2,

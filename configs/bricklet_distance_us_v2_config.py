@@ -175,6 +175,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
+            'packet': 'Set Update Rate',
+            'element': 'Update Rate',
+
             'name': 'Update Rate',
             'type': 'integer',
             'default': 0,
@@ -185,6 +188,9 @@ com['openhab'] = {
             'label': 'Update Rate',
             'description': 'With 2 Hz update rate the noise is about +-1mm, while with 10 Hz update rate the noise increases to about +-5mm.',
         }, {
+            'packet': 'Set Distance LED Config',
+            'element': 'Config',
+
             'name': 'Distance LED Config',
             'type': 'integer',
             'default': 3,

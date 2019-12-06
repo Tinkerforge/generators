@@ -403,6 +403,9 @@ com['openhab'] = {
             'label': 'Output Configuration',
             'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Voltage Range',
+
             'name': 'Voltage Range',
             'type': 'integer',
             'options': [('0 To 5V', 0),
@@ -414,6 +417,9 @@ com['openhab'] = {
             'label': 'Voltage Range',
             'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Current Range',
+
             'name': 'Current Range',
             'type': 'integer',
             'options': [('4 To 20mA', 0),
@@ -426,6 +432,9 @@ com['openhab'] = {
             'label': 'Current Range',
             'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
         }, {
+            'packet': 'Set Out LED Config',
+            'element': 'Config',
+
             'name': 'Out LED Config',
             'type': 'integer',
             'options': [('Off', 0),
@@ -438,6 +447,9 @@ com['openhab'] = {
             'label': 'Output LED Configuration',
             'description': 'You can turn the Out LED off, on or show a heartbeat. You can also set the LED to Out Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the output value (voltage or current).',
         }, {
+            'packet': 'Set Out LED Status Config',
+            'element': 'Config',
+
             'name': 'Out LED Status Mode',
             'type': 'integer',
             'options': [('Threshold', 0),
@@ -448,6 +460,9 @@ com['openhab'] = {
             'label': 'Output LED Status Mode',
             'description': out_led_status_description.replace('\n', '<br/>').replace('"', '\\\"'),
         }, {
+            'packet': 'Set Out LED Status Config',
+            'element': 'Min',
+
             'name': 'Out LED Status Minimum',
             'type': 'decimal',
             'min': 0,
@@ -457,6 +472,9 @@ com['openhab'] = {
             'label': 'Output LED Status Maximum',
             'description': 'See LED Status Mode for further explaination.',
         }, {
+            'packet': 'Set Out LED Status Config',
+            'element': 'Max',
+
             'name': 'Out LED Status Maximum',
             'type': 'decimal',
             'min': 0,

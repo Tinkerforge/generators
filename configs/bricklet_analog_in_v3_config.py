@@ -204,6 +204,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Oversampling',
+            'element': 'Oversampling',
+
             'name': 'Oversampling',
             'type': 'integer',
             'options': [('32x', 0),

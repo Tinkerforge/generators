@@ -631,6 +631,9 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
     'params': [{
+            'packet': 'Set Configuration',
+            'element': 'Data Rate',
+
             'name': 'Data Rate',
             'type': 'integer',
             'options': [('0.781Hz', 0),
@@ -654,6 +657,9 @@ com['openhab'] = {
             'label': 'Data Rate',
             'description': 'The data rate of 0.781Hz to 25600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Full Scale',
+
             'name': 'Full Scale Range',
             'type': 'integer',
             'options': [('2g', 0),
@@ -664,6 +670,9 @@ com['openhab'] = {
             'label': 'Full Scale Range',
             'description': 'Full scale range of -2g to +2g up to -8g to +8g. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
+            'packet': 'Set Info LED Config',
+            'element': 'Config',
+
             'name': 'Info LED Mode',
             'type': 'integer',
             'options': [('Off', 0),
@@ -674,12 +683,18 @@ com['openhab'] = {
             'label': 'Info LED Mode',
             'description': 'Configures the info LED (marked as \\\"Force\\\" on the Bricklet) to be either turned off, turned on, or blink in heartbeat mode.'
         }, {
+            'packet': 'Set Filter Configuration',
+            'element': 'IIR Bypass',
+
             'name': 'IIR Filter',
             'type': 'boolean',
             'default': 'true',
             'label': 'IIR Filter',
             'description': 'Enable to apply the IIR filter.'
         }, {
+            'packet': 'Set Filter Configuration',
+            'element': 'Low Pass Filter',
+
             'name': 'Low Pass Filter',
             'type': 'integer',
             'options': [('Ninth', 0),

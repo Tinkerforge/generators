@@ -1242,6 +1242,9 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
     'params': [{
+            'packet': 'Set Sensor Configuration',
+            'element': 'Magnetometer Rate',
+
             'name': 'Magnetometer Rate',
             'type': 'integer',
             'options':[('2Hz', 0),
@@ -1257,6 +1260,9 @@ com['openhab'] = {
             'label': 'Magnetometer Rate',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Gyroscope Range',
+
             'name': 'Gyroscope Range',
             'type': 'integer',
             'options':[('2000°/s', 0),
@@ -1269,6 +1275,9 @@ com['openhab'] = {
             'label': 'Gyroscope Range',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Gyroscope Bandwidth',
+
             'name': 'Gyroscope Bandwidth',
             'type': 'integer',
             'options':[('523Hz', 0),
@@ -1284,6 +1293,9 @@ com['openhab'] = {
             'label': 'Gyroscope Bandwidth',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Accelerometer Range',
+
             'name': 'Accelerometer Range',
             'type': 'integer',
             'options':[('±2G', 0),
@@ -1295,6 +1307,9 @@ com['openhab'] = {
             'label': 'Accelerometer Range',
             'description': 'This option is user selectable in all fusion modes.'
         }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Accelerometer Bandwidth',
+
             'name': 'Accelerometer Bandwidth',
             'type': 'integer',
             'options':[('7.81Hz', 0),
@@ -1310,6 +1325,9 @@ com['openhab'] = {
             'label': 'Accelerometer Bandwidth',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
+            'packet': 'Set Sensor Fusion Mode',
+            'element': 'Mode',
+
             'name': 'Sensor Fusion Mode',
             'type': 'integer',
             'options':[('Off', 0),

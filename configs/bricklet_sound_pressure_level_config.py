@@ -314,6 +314,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
          {
+            'packet': 'Set Configuration',
+            'element': 'FFT Size',
+
             'name': 'FFT Size',
             'type': 'integer',
             'default': 3,
@@ -327,6 +330,9 @@ com['openhab'] = {
             'description': 'With different FFT sizes the Bricklet has a different amount of samples per second and the size of the FFT bins changes. The higher the FFT size the more precise is the result of the dB(X) calculation.',
         },
         {
+            'packet': 'Set Configuration',
+            'element': 'Weighting',
+
             'name': 'Weighting',
             'type': 'integer',
             'default': 0,

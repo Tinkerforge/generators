@@ -434,6 +434,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Sample Rate',
+            'element': 'Rate',
+
             'name': 'Sample Rate',
             'type': 'integer',
             'options': [('240 SPS', 0),
@@ -447,6 +450,9 @@ com['openhab'] = {
             'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
             'advanced': 'true'
         }, {
+            'packet': 'Set Gain',
+            'element': 'Gain',
+
             'name': 'Gain',
             'type': 'integer',
             'options': [('1x', 0),

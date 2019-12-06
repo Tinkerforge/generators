@@ -667,6 +667,10 @@ def counter_channel(idx):
 
 def enable_config(idx):
     return {
+            'packet': 'Set All Counter Active',
+            'element': 'Active',
+            'element_index': idx,
+
             'name': 'Enable Channel {}'.format(idx),
             'type': 'boolean',
             'default': 'true',

@@ -254,6 +254,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
+            'packet': 'Set Configuration',
+            'element': 'Averaging',
+
             'name': 'Averaging',
             'type': 'integer',
             'options': [('1', 0),
@@ -270,6 +273,9 @@ com['openhab'] = {
             'label': 'Averaging',
             'description': 'Configures the number of samples to average over.'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Voltage Conversion Time',
+
             'name': 'Voltage Conversion Time',
             'type': 'integer',
             'options': [('140µs', 0),
@@ -286,6 +292,9 @@ com['openhab'] = {
             'label': 'Voltage Conversion Time',
             'description': 'Configures the voltage conversion time.'
         }, {
+             'packet': 'Set Configuration',
+            'element': 'Current Conversion Time',
+
             'name': 'Current Conversion Time',
             'type': 'integer',
             'options': [('140µs', 0),

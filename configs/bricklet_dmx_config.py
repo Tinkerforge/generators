@@ -565,6 +565,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set DMX Mode',
+            'element': 'DMX Mode',
+
             'name': 'DMX Mode',
             'type': 'integer',
             'options': [('Master', 0),
@@ -575,6 +578,9 @@ com['openhab'] = {
             'label': 'DMX Mode',
             'description': "Sets the DMX mode to either master or slave.",
         }, {
+            'packet': 'Set Communication LED Config',
+            'element': 'Config',
+
             'name': 'Communication LED Config',
             'type': 'integer',
             'options': [('Off', 0),
@@ -587,6 +593,9 @@ com['openhab'] = {
             'label': 'Communication LED Config',
             'description': "By default the LED shows communication traffic, it flickers once for every 10 received data packets. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
+            'packet': 'Set Error LED Config',
+            'element': 'Config',
+
             'name': 'Error LED Config',
             'type': 'integer',
             'options': [('Off', 0),
@@ -599,6 +608,9 @@ com['openhab'] = {
             'label': 'Error LED Config',
             'description': "By default the error LED turns on if there is any error (see FrameErrorCountListener callback). If you call this function with the Show-Error option again, the LED will turn off until the next error occurs. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
+            'packet': 'Set Frame Duration',
+            'element': 'Frame Duration',
+
             'name': 'Frame Duration',
             'type': 'integer',
             'default': 100,

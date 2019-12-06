@@ -538,6 +538,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Temperature Offset',
+            'element': 'Offset',
+
             'name': 'Temperature Offset',
             'type': 'decimal',
             'default': 0,

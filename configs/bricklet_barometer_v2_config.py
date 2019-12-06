@@ -389,6 +389,9 @@ com['openhab'] = {
     }],
     'params': [
         {
+            'packet': 'Set Moving Average Configuration',
+            'element': 'Moving Average Length Air Pressure',
+
             'name': 'Air Pressure Moving Average Length',
             'type': 'integer',
             'default': 100,
@@ -398,6 +401,9 @@ com['openhab'] = {
             'label': 'Air Pressure Moving Average Length',
             'groupName': 'average'
         }, {
+            'packet':'Set Moving Average Configuration',
+            'element': 'Moving Average Length Temperature',
+
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
             'default': 100,
@@ -407,6 +413,9 @@ com['openhab'] = {
             'label': 'Temperature Moving Average Length',
             'groupName': 'average'
         }, {
+            'packet': 'Set Reference Air Pressure',
+            'element': 'Air Pressure',
+
             'name': 'Reference Air Pressure',
             'type': 'decimal',
             'default': 1013.25,
@@ -416,6 +425,9 @@ com['openhab'] = {
             'label': 'Reference Air Pressure',
             'description': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 260 and 1260. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
         }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Data Rate',
+
             'name': 'Data Rate',
             'type': 'integer',
             'options': [('Off', 0),
@@ -430,6 +442,9 @@ com['openhab'] = {
             'label': 'Data Rate',
             'description': "Configures the data rate. A higher data rate will result in a less precise temperature because of self-heating of the sensor. If the accuracy of the temperature reading is important to you, we would recommend the 1Hz data rate.",
         }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Air Pressure Low Pass Filter',
+
             'name': 'Air Pressure Low Pass Filter',
             'type': 'integer',
             'options': [('Off', 0),

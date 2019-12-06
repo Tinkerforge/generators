@@ -225,6 +225,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
+            'packet': 'Set Display Configuration',
+            'element': 'Contrast',
+
             'name': 'Contrast',
             'type': 'integer',
             'default': 143,
@@ -235,6 +238,9 @@ com['openhab'] = {
             'description': "Sets the contrast of the display (0-255).",
         },
         {
+            'packet': 'Set Display Configuration',
+            'element': 'Invert',
+
             'name': 'Invert',
             'type': 'boolean',
             'default': 'false',

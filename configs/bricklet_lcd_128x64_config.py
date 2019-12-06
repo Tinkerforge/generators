@@ -1732,6 +1732,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Display Configuration',
+            'element': 'Contrast',
+
             'name': 'Contrast',
             'type': 'integer',
             'default': 14,
@@ -1741,6 +1744,9 @@ com['openhab'] = {
             'label': 'Contrast',
             'description': "Sets the contrast of the display (0-63).",
         }, {
+            'packet': 'Set Display Configuration',
+            'element': 'Backlight',
+
             'name': 'Default Backlight Intensity',
             'type': 'integer',
             'default': 100,
@@ -1750,6 +1756,9 @@ com['openhab'] = {
             'label': 'Default Backlight Intensity',
             'description': "Sets the default backlight intensity of the display (0-100).",
         }, {
+            'packet': 'Set Display Configuration',
+            'element': 'Invert',
+
             'name': 'Invert',
             'type': 'boolean',
             'default': 'false',
@@ -1757,6 +1766,9 @@ com['openhab'] = {
             'label': 'Invert',
             'description': 'Inverts the color (black/white) of the display.',
         }, {
+            'packet': 'Set Display Configuration',
+            'element': 'Automatic Draw',
+
             'name': 'Automatic Draw',
             'type': 'boolean',
             'default': 'true',
@@ -1764,6 +1776,9 @@ com['openhab'] = {
             'label': 'Automatic Draw',
             'description': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',
         }, {
+            'packet': 'Set Touch LED Config',
+            'element': 'Config',
+
             'name': 'Touch LED Config',
             'type': 'integer',
             'options': [('Off', 0),

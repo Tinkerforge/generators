@@ -247,6 +247,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+        'packet': 'Set Communication LED Config',
+        'element': 'Config',
+
         'name': 'Communication LED Config',
         'type': 'integer',
         'options': [('Off', 0),

@@ -354,6 +354,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
          {
+            'packet': 'Set I2C Mode',
+            'element': 'Mode',
+
             'name': 'I2C Mode',
             'type': 'integer',
             'default': 0,

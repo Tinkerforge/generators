@@ -514,6 +514,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
+            'packet': 'Set Config',
+            'element': 'Cursor',
+
             'name': 'Show Cursor',
             'type': 'boolean',
             'default': 'false',
@@ -522,6 +525,9 @@ com['openhab'] = {
             'description': "Configures if the cursor (shown as '_') should be visible. The cursor position is one character behind the the last text written.",
         },
         {
+            'packet': 'Set Config',
+            'element': 'Blinking',
+
             'name': 'Show Blinking Cursor',
             'type': 'boolean',
             'default': 'false',

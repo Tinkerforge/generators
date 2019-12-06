@@ -1624,6 +1624,9 @@ com['openhab'] = {
     'params': [
         update_interval("All Data", "all data"),
         {
+            'packet': 'Set Minimum Voltage',
+            'element': 'Voltage',
+
             'name': 'Minimum Voltage',
             'type': 'decimal',
             'unit': 'V',

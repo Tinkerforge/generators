@@ -729,6 +729,9 @@ com['openhab'] = {
     this.setFrameDuration(cfg.frameDuration);
     this.setClockFrequency(cfg.clockFrequency.longValue());""",
     'params': [ {
+            'packet': 'Set Chip Type',
+            'element': 'Chip',
+
             'name': 'Chip Type',
             'type': 'integer',
             'options': [('WS2801', 2801),
@@ -742,6 +745,9 @@ com['openhab'] = {
             'label': 'LED Driver Chip Type',
             'description': 'The type of the LED driver chip. We currently support the chips<br/><br/><ul><li>WS2801</li><li>WS2811</li><li>WS2812 / SK6812 / NeoPixel RGB</li><li>SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812)</li><li>LPD8806</li><li>APA102 / DotStar</li></ul>'
         }, {
+            'packet': 'Set Channel Mapping',
+            'element': 'Mapping',
+
             'name': 'Channel Mapping',
             'type': 'integer',
             'options': [('RGB', 6),
@@ -780,12 +786,18 @@ com['openhab'] = {
             'label': 'LED Channel Mapping',
             'description': 'The channel mapping for the connected LEDs.<br><br>If the mapping has 4 colors, the LED Values channel expects 4 values per pixel and if the mapping has 3 colors it expects 3 values per pixel.<br/><br/>The LED Values channel always expects the order RGB(W). The connected LED driver chips might have their 3 or 4 channels in a different order. For example, the WS2801 chips typically use BGR order, then WS2812 chips typically use GRB order and the APA102 chips typically use WBGR order.<br/><br/>The APA102 chips are special. They have three 8-bit channels for RGB and an additional 5-bit channel for the overall brightness of the RGB LED making them 4-channel chips. Internally the brightness channel is the first channel, therefore one of the Wxyz channel mappings should be used. Then the W channel controls the brightness.'
         }, {
+            'packet': 'Set Frame Duration',
+            'element': 'Duration',
+
             'name': 'Frame Duration',
             'type': 'integer',
             'default': 100,
             'label': 'Frame Duration',
             'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger.'
         }, {
+            'packet': 'Set Clock Frequency',
+            'element': 'Frequency',
+
             'name': 'Clock Frequency',
             'type': 'integer',
             'default': 1666666,

@@ -308,6 +308,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Configuration',
+            'element': 'Data Rate',
+
             'name': 'Data Rate',
             'type': 'integer',
             'default': 0,
@@ -320,6 +323,9 @@ com['openhab'] = {
             'label': 'Data Rate',
             'description': 'The data rate that is used by the magnetometer. The lower the data rate, the lower is the noise on the data.',
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Background Calibration',
+
             'name': 'Background Calibration',
             'type': 'boolean',
             'default': 'true',

@@ -665,6 +665,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
+            'packet': 'Set Wire Mode',
+            'element': 'Mode',
+
             'name': 'Wire Mode',
             'type': 'integer',
             'options': [('2-wire', 2),
@@ -677,6 +680,9 @@ com['openhab'] = {
             'description': 'The wire mode of the sensor. Possible values are 2, 3 and 4 which correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper configuration on the Bricklet.',
         },
         {
+            'packet': 'Set Noise Rejection Filter',
+            'element': 'Filter',
+
             'name': 'Noise Rejection Filter Frequency',
             'type': 'integer',
             'options': [('50 Hz', 0),

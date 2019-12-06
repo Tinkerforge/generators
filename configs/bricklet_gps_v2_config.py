@@ -827,6 +827,9 @@ com['openhab'] = {
                  'java.time.ZoneId'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Fix LED Config',
+            'element': 'Config',
+
             'name': 'Fix LED Config',
             'type': 'integer',
             'options': [('Off', 0),
@@ -839,6 +842,9 @@ com['openhab'] = {
             'description': 'The fix LED configuration. By default the LED shows if the Bricklet got a GPS fix yet. If a fix is established the LED turns on. If there is no fix then the LED is turned off.</br></br>You can also turn the LED permanently on/off, show a heartbeat or let it blink in sync with the PPS (pulse per second) output of the GPS module.<br/><br/>If the Bricklet is in bootloader mode, the LED is off.',
             'default': 3,
         }, {
+            'packet': 'Set SBAS Config',
+            'element': 'SBAS Config',
+
             'name': 'Enable SBAS',
             'type': 'boolean',
             'default': 'true',

@@ -256,6 +256,9 @@ com['openhab'] = {
     'imports': oh_generic_trigger_channel_imports() + oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [
         {
+            'packet': 'Set LED State',
+            'element': 'LED L',
+
             'name': 'Left LED State',
             'type': 'integer',
             'default': 1,
@@ -268,6 +271,9 @@ com['openhab'] = {
                          ('Channel - Default Off', 3)],
         },
         {
+            'packet': 'Set LED State',
+            'element': 'LED R',
+
             'name': 'Right LED State',
             'type': 'integer',
             'default': 1,

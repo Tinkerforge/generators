@@ -815,6 +815,9 @@ velocity_channel['predicate'] = 'this.getSensorHardwareVersion() == 3 || cfg.mod
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [{
+            'packet': 'Set Moving Average',
+            'element': 'Distance Average Length',
+
             'name': 'Distance Moving Average Length',
             'type': 'integer',
             'default': 10,
@@ -824,6 +827,9 @@ com['openhab'] = {
             'label': 'Distance Moving Average Length',
             'groupName': 'average'
         }, {
+            'packet': 'Set Moving Average',
+            'element': 'Velocity Average Length',
+
             'name': 'Velocity Moving Average Length',
             'type': 'integer',
             'default': 10,
@@ -833,6 +839,9 @@ com['openhab'] = {
             'label': 'Velocity Moving Average Length',
             'groupName': 'average'
         }, {
+            'packet': 'Set Mode',
+            'element': 'Mode',
+
             'name': 'Mode',
             'type': 'integer',
             'options': [('Distance', 0),
@@ -847,6 +856,9 @@ com['openhab'] = {
             'description': 'The LIDAR-Lite sensor (hardware version 1) has five different modes. One mode is for distance measurements and four modes are for velocity measurements with different ranges.<br/><br/>The following modes are available:<br/><ul><li>0: Distance is measured with resolution 1.0 cm and range 0-400 cm</li><li>1: Velocity is measured with resolution 0.1 m/s and range is 0-12.7 m/s</li><li>2: Velocity is measured with resolution 0.25 m/s and range is 0-31.75 m/s</li><li>3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s</li><li>4: Velocity is measured with resolution 1.0 m/s and range is 0-127 m/s</li></ul>This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 3.',
             'groupName': 'sensor1'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Acquisition Count',
+
             'name': 'Acquisition Count',
             'type': 'integer',
             'min': 1,
@@ -857,6 +869,10 @@ com['openhab'] = {
             'description': 'The Acquisition Count defines the number of times the Laser Range Finder Bricklet will integrate acquisitions to find a correlation record peak. With a higher count, the Bricklet can measure longer distances. With a lower count, the rate increases. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor3'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Enable Quick Termination',
+
+
             'name': 'Enable Quick Termination',
             'type': 'boolean',
             'default': 'false',
@@ -865,6 +881,9 @@ com['openhab'] = {
             'description': 'If you enable Quick Termination, the distance measurement will be terminated early if a high peak was already detected. This means that a higher measurement rate can be achieved and long distances can be measured at the same time. However, the chance of false-positive distance measurements increases. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor3'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Threshold Value',
+
             'name': 'Threshold Value',
             'type': 'integer',
             'min': 0,
@@ -883,6 +902,9 @@ com['openhab'] = {
             'description': 'For a stable velocity measurement you should set a fixed measurement frequency. See Measurement Frequency for details. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor3'
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Measurement Frequency',
+
             'name': 'Measurement Frequency',
             'type': 'integer',
             'min': 10, # Disallow 0 intentionally: controlled by "enable fixed measurement frequency"

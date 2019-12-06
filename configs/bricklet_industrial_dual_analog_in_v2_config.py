@@ -438,6 +438,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
+            'packet': 'Set Sample Rate',
+            'element': 'Rate',
+
             'name': 'Sample Rate',
             'type': 'integer',
             'options': [('976 SPS', 0),

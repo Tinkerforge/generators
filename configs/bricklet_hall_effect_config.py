@@ -308,6 +308,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Edge Count Config',
+            'element': 'Edge Type',
+
             'name': 'Edge Type',
             'type': 'integer',
             'options':[('Rising', 0),
@@ -319,6 +322,9 @@ com['openhab'] = {
             'label': 'Edge Type',
             'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
         }, {
+            'packet': 'Set Edge Count Config',
+            'element': 'Debounce',
+
             'name': 'Debounce',
             'type': 'integer',
 

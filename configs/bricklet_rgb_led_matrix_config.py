@@ -289,6 +289,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': """this.setFrameDuration(cfg.frameDuration);""",
     'params': [ {
+            'packet': 'Set Frame Duration',
+            'element': 'Frame Duration',
+
             'name': 'Frame Duration',
             'type': 'integer',
             'default': 0,

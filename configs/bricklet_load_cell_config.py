@@ -525,6 +525,8 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Moving Average',
+            'element': 'Average',
             'name': 'Moving Average',
             'type': 'integer',
             'default': 4,

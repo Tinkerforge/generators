@@ -213,6 +213,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Sensitivity',
+            'element': 'Sensitivity',
+
             'name': 'Sensitivity',
             'type': 'integer',
             'default': 50,

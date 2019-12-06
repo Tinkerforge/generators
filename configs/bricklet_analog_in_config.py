@@ -592,6 +592,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Averaging',
+            'element': 'Average',
+
             'name': 'Average Length',
             'type': 'integer',
             'default': 50,
@@ -599,6 +602,9 @@ com['openhab'] = {
             'label': 'Average Length',
             'description': 'The length of a averaging for the voltage value.<br/><br/>Setting the length to 0 will turn the averaging completely off. If the averaging is off, there is more noise on the data, but the data is without delay.<br/><br/>The default value is 50.'
         },{
+            'packet': 'Set Range',
+            'element': 'Range',
+
             'name': 'Measurement Range',
             'type': 'integer',
             'options': [('Automatic', 0),

@@ -521,6 +521,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Moving Average',
+            'element': 'Average',
+
             'name': 'Moving Average Length',
             'type': 'integer',
             'default': 50,

@@ -620,6 +620,9 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ["java.math.BigDecimal"],
     'params': [{
+            'packet': 'Set Reference Air Pressure',
+            'element': 'Air Pressure',
+
             'name': 'Reference Air Pressure',
             'type': 'decimal',
             'default': 1013.25,
@@ -630,6 +633,9 @@ com['openhab'] = {
             'description': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
         },
         {
+            'packet': 'Set Averaging',
+            'element': 'Moving Average Pressure',
+
             'name': 'Pressure Moving Average Length',
             'type': 'integer',
             'default': 25,
@@ -640,6 +646,9 @@ com['openhab'] = {
             'groupName': 'average'
         },
         {
+            'packet': 'Set Averaging',
+            'element': 'Average Pressure',
+
             'name': 'Pressure Average Length',
             'type': 'integer',
             'default': 10,
@@ -650,6 +659,9 @@ com['openhab'] = {
             'groupName': 'average'
         },
         {
+            'packet': 'Set Averaging',
+            'element': 'Average Temperature',
+
             'name': 'Temperature Average Length',
             'type': 'integer',
             'default': 10,

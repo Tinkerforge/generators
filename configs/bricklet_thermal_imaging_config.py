@@ -598,6 +598,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
+            'packet': 'Set Image Transfer Config',
+            'element': 'Config',
+
             'name': 'Image Type',
             'type': 'integer',
             'options': [('High Contrast Image', 0),
@@ -608,6 +611,9 @@ com['openhab'] = {
             'label': 'Image Type',
             'description': 'The necessary bandwidth of this Bricklet is too high to use the high contrast and temperature image at the same time. You have to configure the one you want to use, the Bricklet will optimize the internal configuration accordingly.',
         }, {
+            'packet': 'Set Resolution',
+            'element': 'Resolution',
+
             'name': 'Resolution',
             'type': 'integer',
             'options': [('0 To 6553 Kelvin', 0),
@@ -618,6 +624,10 @@ com['openhab'] = {
             'label': 'Resolution',
             'description': 'The Thermal Imaging Bricklet can either measure<ul><li>from 0 to 6553 Kelvin (-273.15°C to +6279.85°C) with 0.1°C resolution or</li><li>from 0 to 655 Kelvin (-273.15°C to +381.85°C) with 0.01°C resolution.</li></ul><br/>The accuracy is specified for -10°C to 450°C in the first range and -10°C and 140°C in the second range.',
         }, {
+            'packet': 'Set Spotmeter Config',
+            'element': 'Region Of Interest',
+            'element_index': 0,
+
             'name': 'Spotmeter Column Start',
             'type': 'integer',
             'min': 0,
@@ -627,6 +637,10 @@ com['openhab'] = {
             'label': 'Spotmeter Column Start',
             'description': 'First column of the spotmeter region of interest.',
         }, {
+            'packet': 'Set Spotmeter Config',
+            'element': 'Region Of Interest',
+            'element_index': 1,
+
             'name': 'Spotmeter Row Start',
             'type': 'integer',
             'min': 0,
@@ -636,6 +650,10 @@ com['openhab'] = {
             'label': 'Spotmeter Row Start',
             'description': 'First row of the spotmeter region of interest.',
         }, {
+            'packet': 'Set Spotmeter Config',
+            'element': 'Region Of Interest',
+            'element_index': 2,
+
             'name': 'Spotmeter Column End',
             'type': 'integer',
             'min': 0,
@@ -645,6 +663,10 @@ com['openhab'] = {
             'label': 'Spotmeter Column End',
             'description': 'Last column of the spotmeter region of interest.',
         }, {
+            'packet': 'Set Spotmeter Config',
+            'element': 'Region Of Interest',
+            'element_index': 3,
+
             'name': 'Spotmeter Row End',
             'type': 'integer',
             'min': 0,

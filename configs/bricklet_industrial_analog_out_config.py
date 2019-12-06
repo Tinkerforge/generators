@@ -283,6 +283,9 @@ com['openhab'] = {
             'label': 'Output Configuration',
             'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Voltage Range',
+
             'name': 'Voltage Range',
             'type': 'integer',
             'options': [('0 To 5V', 0),
@@ -294,6 +297,9 @@ com['openhab'] = {
             'label': 'Voltage Range',
             'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
         }, {
+            'packet': 'Set Configuration',
+            'element': 'Current Range',
+
             'name': 'Current Range',
             'type': 'integer',
             'options': [('4 To 20mA', 0),

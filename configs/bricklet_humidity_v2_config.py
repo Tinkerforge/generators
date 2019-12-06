@@ -283,6 +283,9 @@ com['openhab'] = {
     }],
     'params': [
         {
+            'packet': 'Set Moving Average Configuration',
+            'element': 'Moving Average Length Humidity',
+
             'name': 'Humidity Moving Average Length',
             'type': 'integer',
             'default': 5,
@@ -293,6 +296,9 @@ com['openhab'] = {
             'groupName': 'average'
         },
         {
+            'packet': 'Set Moving Average Configuration',
+            'element': 'Moving Average Length Temperature',
+
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
             'default': 5,
@@ -303,6 +309,9 @@ com['openhab'] = {
             'groupName': 'average'
         },
         {
+            'packet': 'Set Samples Per Second',
+            'element': 'SPS',
+
             'name': 'Sample Rate',
             'type': 'integer',
             'options': [('20 SPS', 0),

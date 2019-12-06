@@ -1083,6 +1083,9 @@ com['openhab'] = {
             'label': 'Enable Orientation',
             'description': 'Turns the orientation calculation of the IMU Brick on or off. The trigonometric functions that are needed to calculate the orientation are very expensive. We recommend to turn the orientation calculation off if the orientation is not needed, to free calculation time for the sensor fusion algorithm.'
         }, {
+            'packet': 'Set Convergence Speed',
+            'element': 'Speed',
+
             'name': 'Convergence Speed',
             'type': 'integer',
             'min': 0,

@@ -959,6 +959,9 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
+            'packet': 'Set Minimum Voltage',
+            'element': 'Voltage',
+
             'name': 'Minimum Voltage',
             'type': 'decimal',
             'unit': 'V',
