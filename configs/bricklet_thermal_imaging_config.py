@@ -707,7 +707,7 @@ com['openhab'] = {
         'id': 'Spotmeter Mean Temperature',
         'label': 'Spotmeter Mean Temperature',
         'type': 'Temperature',
-
+        'description': 'Mean temperature in the spotmeter region of interest.',
 
         'getters': [{
             'packet': 'Get Statistics',
@@ -719,6 +719,7 @@ com['openhab'] = {
         'id': 'Spotmeter Maximum Temperature',
         'label': 'Spotmeter Maximum Temperature',
         'type': 'Temperature',
+        'description': 'Maximum temperature in the spotmeter region of interest.',
 
         'getters': [{
             'packet': 'Get Statistics',
@@ -730,6 +731,7 @@ com['openhab'] = {
         'id': 'Spotmeter Minimum Temperature',
         'label': 'Spotmeter Minimum Temperature',
         'type': 'Temperature',
+        'description': 'Minimum temperature in the spotmeter region of interest.',
 
         'getters': [{
             'packet': 'Get Statistics',
@@ -740,6 +742,7 @@ com['openhab'] = {
     }, {
         'id': 'Spotmeter ROI Pixel Count',
         'type': 'Spotmeter ROI Pixel Count',
+        'description': 'Number of pixels in the spotmeter region of interest.',
 
         'getters': [{
             'packet': 'Get Statistics',
@@ -751,6 +754,7 @@ com['openhab'] = {
         'id': 'Focal Plain Array Temperature',
         'label': 'Focal Plain Array Temperature',
         'type': 'Temperature',
+        'description': 'Current Focal Plain Array temperature',
 
         'getters': [{
             'packet': 'Get Statistics',
@@ -762,6 +766,7 @@ com['openhab'] = {
         'id': 'Focal Plain Array Temperature FFC',
         'label': 'Focal Plain Array Temperature (last FFC)',
         'type': 'Temperature',
+        'description': 'Focal Plain Array temperature at last FFC (Flat Field Correction).',
 
         'getters': [{
             'packet': 'Get Statistics',
@@ -773,6 +778,7 @@ com['openhab'] = {
         'id': 'Housing Temperature',
         'label': 'Housing Temperature',
         'type': 'Temperature',
+        'description': 'Current Housing temperature.',
 
         'getters': [{
             'packet': 'Get Statistics',
@@ -784,6 +790,7 @@ com['openhab'] = {
         'id': 'Housing Temperature FFC',
         'label': 'Housing Temperature (last FFC)',
         'type': 'Temperature',
+        'description': 'Housing temperature at last FFC (Flat Field Correction).',
 
         'getters': [{
             'packet': 'Get Statistics',
