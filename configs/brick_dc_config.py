@@ -811,7 +811,7 @@ com['openhab'] = {
             'unit': 'V',
             'label': 'Minimum Voltage',
             'description': 'The minimum voltage in V, below which the Under Voltage channel is triggered. The minimum possible value that works with the DC Brick is 5V. You can use this function to detect the discharge of a battery that is used to drive the stepper motor. If you have a fixed power supply, you likely do not need this functionality. The default value is 5V.',
-            'default': 5,
+            'default': 6,
         }
     ],
     'init_code': """this.setMinimumVoltage((int)(cfg.minimumVoltage.doubleValue() * 1000.0));""",

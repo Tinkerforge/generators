@@ -529,7 +529,7 @@ com['openhab'] = {
             'type': 'integer',
             'default': 4,
             'min': 1,
-            'max': 100,
+            'max': 40,
 
             'label': 'Moving Average',
             'description': 'The length of a moving averaging for the weight value.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'

@@ -504,7 +504,7 @@ com['openhab'] = {
                         ('200Hz', 2),
                         ('50Hz', 3)],
             'limitToOptions': 'true',
-            'default': 0,
+            'default': 2,
             'label': 'Frequency Filter',
             'description': 'Filter bandwidth between 50Hz and 800Hz.'
         },

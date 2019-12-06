@@ -608,7 +608,7 @@ com['openhab'] = {
                         ('Up To 45V', 4),
                         ('Up To 3V', 5)],
             'limitToOptions': 'true',
-            'default': '0',
+            'default': 0,
 
             'label': 'Measurement Range',
             'description': 'The measurement range.<br/><br/>Possible ranges are: <ul><li>Automatically switched</li><li>0V - 6.05V, ~1.48mV resolution</li><li>0V - 10.32V, ~2.52mV resolution</li><li>0V - 36.30V, ~8.86mV resolution</li><li>- 45.00V, ~11.25mV resolution</li><li>0V - 3.3V, ~0.81mV resolution</li>',

@@ -259,7 +259,7 @@ com['openhab'] = {
             'name': 'High Threshold',
             'type': 'integer',
 
-            'default': '2000',
+            'default': 2000,
 
             'label': 'High Threshold',
             'description': 'The high threshold in µT. If the measured magnetic flux density goes above the high threshold, the count of the counter is increased by 1.',
@@ -267,7 +267,7 @@ com['openhab'] = {
             'name': 'Debounce',
             'type': 'integer',
 
-            'default': '100000',
+            'default': 100000,
 
             'label': 'Debounce Time',
             'description': 'The debounce time in µs is the minimum time between two count increments.',

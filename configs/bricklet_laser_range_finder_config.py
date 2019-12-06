@@ -885,9 +885,9 @@ com['openhab'] = {
         }, {
             'name': 'Measurement Frequency',
             'type': 'integer',
-            'min': 10,
+            'min': 10, # Disallow 0 intentionally: controlled by "enable fixed measurement frequency"
             'max': 500,
-            'default': 10,
+            'default': 10, # Disallow 0 intentionally: controlled by "enable fixed measurement frequency"
 
             'label': 'Measurement Frequency',
             'description': 'Set the Measurement Frequency in Hz to force a fixed measurement rate. If set to 0, the Laser Range Finder Bricklet will use the optimal frequency according to the other configurations and the actual measured distance. Since the rate is not fixed in this case, the velocity measurement is not stable. For a stable velocity measurement you should set a fixed measurement frequency. The lower the frequency, the higher is the resolution of the calculated velocity. The allowed values are 10Hz-500Hz. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',

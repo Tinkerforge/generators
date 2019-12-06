@@ -217,7 +217,7 @@ com['openhab'] = {
         {
             'name': 'Left LED State',
             'type': 'integer',
-            'default': 0,
+            'default': 1,
 
             'label': 'Left LED State',
             'description': """<ul><li>Auto Toggle - Default On: Enables auto toggle. LED initially enabled</li><li>Auto Toggle - Default Off: Enables auto toggle. LED initially disabled</li><li>Channel - Default On: Creates a control channel. LED initially enabled.</li><li>Channel - Default Off: Creates a control channel. LED initially disabled.</li></ul>""",
@@ -229,7 +229,7 @@ com['openhab'] = {
         {
             'name': 'Right LED State',
             'type': 'integer',
-            'default': 0,
+            'default': 1,
 
             'label': 'Right LED State',
             'description': """<ul><li>Auto Toggle - Default On: Enables auto toggle. LED initially enabled</li><li>Auto Toggle - Default Off: Enables auto toggle. LED initially disabled</li><li>Channel - Default On: Creates a control channel. LED initially enabled.</li><li>Channel - Default Off: Creates a control channel. LED initially disabled.</li></ul>""",

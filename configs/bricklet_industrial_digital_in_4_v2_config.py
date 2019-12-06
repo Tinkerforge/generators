@@ -459,7 +459,7 @@ com['openhab'] = {
                                     ('Show Heartbeat', 2),
                                     ('Show Channel Status', 3)],
                         'limitToOptions': 'true',
-                        'default': '3',
+                        'default': 3,
 
                         'label': 'LED Configuration',
                         'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
@@ -474,7 +474,7 @@ com['openhab'] = {
                                        ('Falling', 1),
                                        ('Both', 2)],
                             'limitToOptions': 'true',
-                            'default': '0',
+                            'default': 0,
 
                             'label': 'Edge Type',
                             'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
@@ -482,7 +482,7 @@ com['openhab'] = {
                             'name': 'Debounce',
                             'type': 'integer',
 
-                            'default': '100',
+                            'default': 100,
 
                             'label': 'Debounce Time',
                             'description': 'The debounce time in ms.',

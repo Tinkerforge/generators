@@ -397,7 +397,7 @@ com['openhab'] = {
                         ('16x', 2),
                         ('60x', 3)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Gain',
             'description': 'Increasing the gain enables the sensor to detect a color from a higher distance.',
@@ -410,7 +410,7 @@ com['openhab'] = {
                         ('154ms', 3),
                         ('700ms', 4)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Integration Time',
             'description': 'The integration time provides a trade-off between conversion time and accuracy. With a longer integration time the values read will be more accurate but it will take longer time to get the conversion results.',

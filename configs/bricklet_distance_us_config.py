@@ -354,8 +354,8 @@ com['openhab'] = {
         {
             'name': 'Moving Average Length',
             'type': 'integer',
-            'default': 0,
-            'min': 1,
+            'default': 20,
+            'min': 0,
             'max': 100,
 
             'label': 'Moving Average Length',

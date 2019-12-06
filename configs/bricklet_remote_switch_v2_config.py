@@ -261,7 +261,7 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_c_system_and_device_code>`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Remote Configuration',
-'elements': [('Remote Type', 'uint8', 1, 'in', {'constant_group': 'Remote Type', 'default': 'A'}),
+'elements': [('Remote Type', 'uint8', 1, 'in', {'constant_group': 'Remote Type', 'default': 0}),
              ('Minimum Repeats', 'uint16', 1, 'in', {'default': 2}),
              ('Callback Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
@@ -575,14 +575,14 @@ com['openhab'] = {
                     ('B', 1),
                     ('C', 2)],
         'limitToOptions': 'true',
-        'default': '0',
+        'default': 0,
 
         'label': 'Remote Type',
         'description': 'Type A, B or C depending on the type of remote you want to receive.',
     }, {
         'name': 'Minimum Repeats',
         'type': 'integer',
-        'default': '2',
+        'default': 2,
 
         'label': 'Minimum Repeats',
         'description': 'The minimum number of repeated data packets until the Remote Status channels trigger.',

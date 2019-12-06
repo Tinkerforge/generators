@@ -374,7 +374,7 @@ com['openhab'] = {
             'type': 'integer',
             'default': 10,
             'min': 0,
-            'max': 30,
+            'max': 255,
 
             'label': 'Distance Moving Average Length',
             'groupName': 'average'
@@ -383,7 +383,7 @@ com['openhab'] = {
             'type': 'integer',
             'default': 10,
             'min': 0,
-            'max': 30,
+            'max': 255,
 
             'label': 'Velocity Moving Average Length',
             'groupName': 'average'

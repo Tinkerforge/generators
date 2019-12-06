@@ -310,7 +310,7 @@ com['openhab'] = {
     'params': [{
             'name': 'Data Rate',
             'type': 'integer',
-            'default': '0',
+            'default': 0,
             'options': [('100Hz', 0),
                         ('200Hz', 1),
                         ('400Hz', 2),

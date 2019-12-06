@@ -484,7 +484,7 @@ com['openhab'] = {
                             ('Falling', 1),
                             ('Both', 2)],
                 'limitToOptions': 'true',
-                'default': '0',
+                'default': 0,
 
                 'label': 'Edge Type',
                 'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
@@ -492,7 +492,7 @@ com['openhab'] = {
                 'name': 'Debounce',
                 'type': 'integer',
 
-                'default': '100',
+                'default': 100,
 
                 'label': 'Debounce Time',
                 'description': 'The debounce time in ms.',

@@ -408,7 +408,7 @@ com['openhab'] = {
                         ('15 SPS', 2),
                         ('4 SPS', 3)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Sample Rate',
             'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",

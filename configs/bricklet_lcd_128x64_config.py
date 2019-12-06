@@ -1734,18 +1734,18 @@ com['openhab'] = {
     'params': [{
             'name': 'Contrast',
             'type': 'integer',
-            'default': '14',
-            'min': '0',
-            'max': '63',
+            'default': 14,
+            'min': 0,
+            'max': 63,
 
             'label': 'Contrast',
             'description': "Sets the contrast of the display (0-63).",
         }, {
             'name': 'Default Backlight Intensity',
             'type': 'integer',
-            'default': '100',
-            'min': '0',
-            'max': '100',
+            'default': 100,
+            'min': 0,
+            'max': 100,
 
             'label': 'Default Backlight Intensity',
             'description': "Sets the default backlight intensity of the display (0-100).",

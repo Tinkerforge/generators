@@ -391,7 +391,7 @@ com['openhab'] = {
                                     ('Show Heartbeat', 2),
                                     ('Show Channel Status', 3)],
                         'limitToOptions': 'true',
-                        'default': '3',
+                        'default': 3,
 
                         'label': 'LED Configuration',
                         'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to \\\"Channel Status\\\". In this mode the LED is on if the channel is high and off otherwise.',

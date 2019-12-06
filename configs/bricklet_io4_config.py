@@ -687,7 +687,7 @@ def pin_config(idx):
                 ('Output (Initial low)', 0)
             ],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Pin Configuration {}'.format(idx),
             'description': 'Configures the direction of pin {}. Inputs without pull-up will be floating if nothing is connected. Outputs can have an initial state of low or high.'.format(idx),
@@ -743,7 +743,7 @@ com['openhab'] = {
                             ('Falling', 1),
                             ('Both', 2)],
                 'limitToOptions': 'true',
-                'default': '0',
+                'default': 0,
 
                 'label': 'Edge Type',
                 'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
@@ -751,7 +751,7 @@ com['openhab'] = {
                 'name': 'Debounce',
                 'type': 'integer',
 
-                'default': '100',
+                'default': 100,
 
                 'label': 'Debounce Time',
                 'description': 'The debounce time in ms.',

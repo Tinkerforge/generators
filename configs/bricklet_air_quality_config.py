@@ -541,8 +541,6 @@ com['openhab'] = {
             'name': 'Temperature Offset',
             'type': 'decimal',
             'default': 0,
-            'min': 0,
-            'max': 100,
 
             'label': 'Temperature Offset',
             'description': 'If you install this Bricklet into an enclosure and you want to measure the ambient temperature, you may have to decrease the measured temperature by some value to compensate for the error because of the heating inside of the enclosure.<br/><br/>We recommend that you leave the parts in the enclosure running for at least 24 hours such that a temperature equilibrium can be reached. After that you can measure the temperature directly outside of enclosure and set the difference as offset.<br/><br/>This temperature offset is used to calculate the relative humidity and IAQ index measurements. In case the Bricklet is installed in an enclosure, we recommend to measure and set the temperature offset to imporve the accuracy of the measurements.'

@@ -451,7 +451,7 @@ com['openhab'] = {
                         ('2 SPS', 6),
                         ('1 SPS', 7)],
             'limitToOptions': 'true',
-            'default': '6',
+            'default': 6,
 
             'label': 'Sample Rate',
             'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",

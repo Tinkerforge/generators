@@ -658,9 +658,9 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('2g', 0),
                         ('4g', 1),
-                        ('8g', 3)],
+                        ('8g', 2)],
             'limitToOptions': 'true',
-            'default': 1,
+            'default': 0,
             'label': 'Full Scale Range',
             'description': 'Full scale range of -2g to +2g up to -8g to +8g. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
@@ -685,7 +685,7 @@ com['openhab'] = {
             'options': [('Ninth', 0),
                         ('Half', 1)],
             'limitToOptions': 'true',
-            'default': 1,
+            'default': 0,
             'label': 'Low Pass Filter Corner Frequency',
             'description': 'The low pass filter roll off corner frequency can be half or a ninth of the output data rate.'
         },

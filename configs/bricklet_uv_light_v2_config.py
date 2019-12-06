@@ -252,7 +252,7 @@ com['openhab'] = {
                         ('400ms', 3),
                         ('800ms', 4)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Integration Time',
             'description': "The integration time can be configured between 50 and 800 ms. With a shorter integration time the sensor reading updates more often but contains more noise. With a longer integration the sensor reading contains less noise but updates less often.<br/><br/>With a longer integration time (especially 800 ms) and a higher UV intensity the sensor can be saturated. If this happens the UVA/UVB/UVI readings are all -1. In this case you need to choose a shorter integration time.",

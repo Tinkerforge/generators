@@ -278,7 +278,7 @@ com['openhab'] = {
                 ('Voltage', '1'),
             ],
             'limitToOptions': 'true',
-            'default': '1',
+            'default': 1,
 
             'label': 'Output Configuration',
             'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
@@ -289,7 +289,7 @@ com['openhab'] = {
                         ('0 To 10V', 1)
             ],
             'limitToOptions': 'true',
-            'default': '1',
+            'default': 1,
 
             'label': 'Voltage Range',
             'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
@@ -301,7 +301,7 @@ com['openhab'] = {
                         ('0 To 24mA', 2)
             ],
             'limitToOptions': 'true',
-            'default': '1',
+            'default': 0,
 
             'label': 'Current Range',
             'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',

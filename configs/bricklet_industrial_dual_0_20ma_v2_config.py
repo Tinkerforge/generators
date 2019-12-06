@@ -391,7 +391,7 @@ def led_status_config():
                         ('Show Heartbeat', 2),
                         ('Show Channel Status', 3)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'LED Configuration',
             'description': """Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Show Channel Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the measured value.""",
@@ -402,7 +402,7 @@ def led_status_config():
             'options': [('Threshold', 0),
                         ('Intensity', 1)],
             'limitToOptions': 'true',
-            'default': '1',
+            'default': 1,
 
             'label': 'LED Status Mode',
             'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
@@ -411,9 +411,9 @@ def led_status_config():
             'name': 'LED Status Minimum',
             'type': 'integer',
             'min': '-35',
-            'max': '35',
+            'max': 35,
             'unit': 'V',
-            'default': '0',
+            'default': 0,
 
             'label': 'LED Status Maximum',
             'description': 'See LED Status Mode for further explaination.',
@@ -422,9 +422,9 @@ def led_status_config():
             'name': 'LED Status Maximum',
             'type': 'integer',
             'min': '-35',
-            'max': '35',
+            'max': 35,
             'unit': 'V',
-            'default': '10',
+            'default': 10,
 
             'label': 'LED Status Maximum',
             'description': 'See LED Status Mode for further explaination.',
@@ -441,7 +441,7 @@ com['openhab'] = {
                         ('15 SPS', 2),
                         ('4 SPS', 3)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Sample Rate',
             'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
@@ -454,7 +454,7 @@ com['openhab'] = {
                         ('4x', 2),
                         ('8x', 3)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Gain',
             'description': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.<br/><br/>Example: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",

@@ -410,7 +410,7 @@ com['openhab'] = {
             'name': 'Reference Air Pressure',
             'type': 'decimal',
             'default': 1013.25,
-            'min': 260,
+            'min': 260, # Disallow 0 intentionally.
             'max': 1260,
 
             'label': 'Reference Air Pressure',
@@ -425,7 +425,7 @@ com['openhab'] = {
                         ('50Hz', 4),
                         ('75Hz', 5)],
             'limitToOptions': 'true',
-            'default': '4',
+            'default': 4,
 
             'label': 'Data Rate',
             'description': "Configures the data rate. A higher data rate will result in a less precise temperature because of self-heating of the sensor. If the accuracy of the temperature reading is important to you, we would recommend the 1Hz data rate.",
@@ -436,7 +436,7 @@ com['openhab'] = {
                         ('1/9th', 1),
                         ('1/20th', 2)],
             'limitToOptions': 'true',
-            'default': '1',
+            'default': 1,
 
             'label': 'Air Pressure Low Pass Filter',
             'description': "Configures the air pressure low pass filter. The low pass filter cut-off frequency (if enabled) can be set to 1/9th or 1/20th of the configure data rate to decrease the noise on the air pressure data.",

@@ -291,9 +291,9 @@ com['openhab'] = {
     'params': [ {
             'name': 'Frame Duration',
             'type': 'integer',
-            'default': 100,
+            'default': 0,
             'label': 'Frame Duration',
-            'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger.'
+            'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger. 0 disables the callback.'
         }],
     'channels': [{
             'id': 'Frame Started',

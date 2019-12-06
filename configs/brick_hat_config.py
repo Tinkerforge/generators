@@ -370,7 +370,7 @@ com['openhab'] = {
             'params': [{
                     'name': 'Power Off Delay',
                     'type': 'integer',
-                    'default': '60',
+                    'default': 60,
 
                     'label': 'Power Off Delay',
                     'description': 'Time in seconds before the RPi/Bricklets are powered off.',
@@ -378,7 +378,7 @@ com['openhab'] = {
                 }, {
                     'name': 'Power Off Duration',
                     'type': 'integer',
-                    'default': '10',
+                    'default': 10,
 
                     'label': 'Power Off Duration',
                     'description': 'Duration in seconds that the RPi/Bricklets stay powered off.',

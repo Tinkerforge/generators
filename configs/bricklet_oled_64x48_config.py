@@ -226,9 +226,9 @@ com['openhab'] = {
         {
             'name': 'Contrast',
             'type': 'integer',
-            'default': '143',
-            'min': '0',
-            'max': '255',
+            'default': 143,
+            'min': 0,
+            'max': 255,
 
             'label': 'Contrast',
             'description': "Sets the contrast of the display (0-255).",

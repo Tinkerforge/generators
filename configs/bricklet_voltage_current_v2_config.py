@@ -265,7 +265,7 @@ com['openhab'] = {
                         ('512', 6),
                         ('1024', 7)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Averaging',
             'description': 'Configures the number of samples to average over.'
@@ -281,7 +281,7 @@ com['openhab'] = {
                         ('4.156ms', 6),
                         ('8.244ms', 7)],
             'limitToOptions': 'true',
-            'default': '4',
+            'default': 4,
 
             'label': 'Voltage Conversion Time',
             'description': 'Configures the voltage conversion time.'
@@ -297,7 +297,7 @@ com['openhab'] = {
                         ('4.156ms', 6),
                         ('8.244ms', 7)],
             'limitToOptions': 'true',
-            'default': '4',
+            'default': 4,
 
             'label': 'Current Conversion Time',
             'description': 'Configures the current conversion time.'

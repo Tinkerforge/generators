@@ -296,9 +296,6 @@ def relay_channel(channel):
         'init_code': """this.setChannelLEDConfig({}, channelCfg.channelLEDConfig);""".format(channel)
     }
 
-def monoflop_params(channel):
-    return []
-
 def monoflop_channel(channel):
     return {
         'id': 'Monoflop relay {}'.format(channel),
@@ -341,7 +338,6 @@ relay_channel_type['params'] = [
 com['openhab'] = {
     'imports': oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
-    'params': sum([monoflop_params(i) for i in range(0, 4)], []), #flatten param lists
     'channels': [relay_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)],
     'channel_types': [
         relay_channel_type,

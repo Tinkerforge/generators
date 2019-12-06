@@ -291,7 +291,7 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Distance', 3)],
             'limitToOptions': 'true',
-            'default': '3',
+            'default': 3,
 
             'label': 'Distance LED Config',
             'description': "Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).",

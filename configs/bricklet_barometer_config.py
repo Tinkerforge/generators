@@ -623,7 +623,7 @@ com['openhab'] = {
             'name': 'Reference Air Pressure',
             'type': 'decimal',
             'default': 1013.25,
-            'min': 10,
+            'min': 10, # Disallow 0 intentionally.
             'max': 1200,
 
             'label': 'Reference Air Pressure',
@@ -652,7 +652,7 @@ com['openhab'] = {
         {
             'name': 'Temperature Average Length',
             'type': 'integer',
-            'default': 25,
+            'default': 10,
             'min': 0,
             'max': 255,
 

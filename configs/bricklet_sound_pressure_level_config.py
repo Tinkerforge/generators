@@ -316,7 +316,7 @@ com['openhab'] = {
          {
             'name': 'FFT Size',
             'type': 'integer',
-            'default': '3',
+            'default': 3,
             'options': [('128', 0),
               ('256', 1),
               ('512', 2),
@@ -329,7 +329,7 @@ com['openhab'] = {
         {
             'name': 'Weighting',
             'type': 'integer',
-            'default': '0',
+            'default': 0,
             'options': [('dB(A)', 0),
               ('dB(B)', 1),
               ('dB(C)', 2),

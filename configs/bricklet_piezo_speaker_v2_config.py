@@ -407,24 +407,24 @@ com['openhab'] = {
                      params=[{
                         'name': 'Default Frequency',
                         'type': 'integer',
-                        'default': '2000',
-                        'min': '50',
-                        'max': '15000',
+                        'default': 2000,
+                        'min': 50,
+                        'max': 15000,
                         'label': 'Default Frequency',
                         'description': 'The frequency in Hz to start the beep with. The range of the frequency is 50Hz to 15000Hz.'
                      }, {
                         'name': 'Default Volume',
                         'type': 'integer',
-                        'default': '0',
-                        'min': '0',
-                        'max': '10',
+                        'default': 0,
+                        'min': 0,
+                        'max': 10,
                         'label': 'Default Volume',
                         'description': 'The volume to start the beep with. The range of the volume is 0 to 10.'
                      },  {
                         'name': 'Duration',
                         'type': 'decimal',
-                        'default': '0',
-                        'min': '0',
+                        'default': 0,
+                        'min': 0,
                         'max': '4294967295L',
                         'step': '1',
                         'label': 'Duration',
@@ -437,48 +437,48 @@ com['openhab'] = {
                      params=[{
                         'name': 'Start Frequency',
                         'type': 'integer',
-                        'default': '250',
-                        'min': '50',
-                        'max': '14999',
+                        'default': 250,
+                        'min': 50,
+                        'max': 14999,
                         'label': 'Start Frequency',
                         'description': 'Start frequency of the alarm in Hz. The range of the start frequency is 50Hz to 14999Hz. (has to be smaller than end frequency)'
                      }, {
                         'name': 'End Frequency',
                         'type': 'integer',
-                        'default': '750',
-                        'min': '51',
-                        'max': '15000',
+                        'default': 750,
+                        'min': 51,
+                        'max': 15000,
                         'label': 'End Frequency',
                         'description': 'End frequency of the alarm in Hz. The range of the end frequency is 51Hz to 15000Hz. (has to be bigger than start frequency)'
                      }, {
                         'name': 'Step Size',
                         'type': 'integer',
-                        'default': '1',
-                        'min': '1',
-                        'max': '65535',
+                        'default': 1,
+                        'min': 1,
+                        'max': 65535,
                         'label': 'Step Size',
                         'description': 'Size of one step of the sweep between the start/end frequencies in Hz. 1Hz - 65536Hz (has to be small enough to fit into the frequency range)'
                      }, {
                         'name': 'Step Delay',
                         'type': 'integer',
-                        'default': '1',
-                        'min': '1',
-                        'max': '65535',
+                        'default': 1,
+                        'min': 1,
+                        'max': 65535,
                         'label': 'Step Delay',
                         'description': 'Delay between two steps (duration of time that one tone is used in a sweep) in ms. 1ms - 65535ms (has to be small enough to fit into the duration)'
                      },{
                         'name': 'Default Volume',
                         'type': 'integer',
-                        'default': '0',
-                        'min': '0',
-                        'max': '10',
+                        'default': 0,
+                        'min': 0,
+                        'max': 10,
                         'label': 'Default Volume',
                         'description': 'The volume to start the alarm with. The range of the volume is 0 to 10.'
                      }, {
                         'name': 'Duration',
                         'type': 'integer',
-                        'default': '0',
-                        'min': '0',
+                        'default': 0,
+                        'min': 0,
                         'max': '4294967295L',
                         'label': 'Duration',
                         'description': 'The duration in ms to sound the alarm for. A duration of 0 stops the current alarm if any is ongoing. A duration of 4294967295 results in an infinite alarm.'

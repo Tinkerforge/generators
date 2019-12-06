@@ -126,7 +126,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Info LED Config',
-'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Info LED Config', 'default': 2})],
+'elements': [('Config', 'uint8', 1, 'in', {'constant_group': 'Info LED Config', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -145,7 +145,7 @@ im Herzschlagmodus betrieben werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Info LED Config',
-'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Info LED Config', 'default': 2})],
+'elements': [('Config', 'uint8', 1, 'out', {'constant_group': 'Info LED Config', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -309,7 +309,7 @@ com['openhab'] = {
             'options': [('10Hz', 0),
                         ('80Hz', 1)],
             'limitToOptions': 'true',
-            'default': '0',
+            'default': 0,
 
             'label': 'Measurement Rate',
             'description': 'The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.',
@@ -320,7 +320,7 @@ com['openhab'] = {
                         ('64x', 1),
                         ('32x', 2)],
             'limitToOptions': 'true',
-            'default': '0',
+            'default': 0,
 
             'label': 'Gain',
             'description': "The gain can be 128x, 64x or 32x. It represents a measurement range of ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an excitation voltage of 5V and most load cells use an output of 2mV/V. That means the voltage range is ±15mV for most load cells (i.e. gain of 128x is best). If you don't know what all of this means you should keep it at 128x, it will most likely be correct.",
@@ -331,7 +331,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2)],
             'limitToOptions': 'true',
-            'default': '1',
+            'default': 0,
 
             'label': 'Info LED',
             'description': 'Configures the info LED to be either turned off, turned on, or blink in heartbeat mode.',
