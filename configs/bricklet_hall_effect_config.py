@@ -344,7 +344,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Edge Count',
-                'packet_params': ['cfg.resetOnRead'],
+                'packet_params': ['channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 
             'callbacks': [{
